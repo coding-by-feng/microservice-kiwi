@@ -1,0 +1,30 @@
+server:
+  port: 7771
+
+spring:
+  application:
+    name: kiwi-config
+  profiles:
+    active: native
+  cloud:
+    config:
+      server:
+        native:
+          search-locations: classpath:/config
+
+
+# 注册中心配置
+eureka:
+  instance:
+    prefer-ip-address: true
+    hostname: kiwi-eureka
+  client:
+    service-url:
+      defaultZone: http://codingByFeng:123456@${eureka.instance.hostname}:8762/eureka
+
+# 暴露监控点
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'

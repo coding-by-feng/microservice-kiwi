@@ -1,0 +1,13 @@
+server:
+  port: 5003
+spring:
+  application:
+    name: kiwi-generator
+  datasource:
+    url: jdbc:mysql://kiwi-mysql:3306/kiwi_db
+    username: root
+    password: raubbhWy
+    type: com.zaxxer.hikari.HikariDataSource
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+

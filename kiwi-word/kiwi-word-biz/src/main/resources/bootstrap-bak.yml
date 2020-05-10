@@ -1,0 +1,16 @@
+server:
+  port: 5001
+
+spring:
+  application:
+    name: kiwi-word-biz
+
+# 数据源
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password: raubbhWy
+    url: jdbc:mysql://kiwi-mysql:3306/kiwi_db?characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowMultiQueries=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=Asia/Shanghai
+
+

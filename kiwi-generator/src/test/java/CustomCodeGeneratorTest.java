@@ -21,14 +21,13 @@ import java.util.Map;
  * @Author codingByFeng
  * @Date 2019-09-16 16:33
  */
-@RunWith(SpringRunner.class)
-@SpringBootTest(classes = MybatisPlusConfigurer.class)
+// @RunWith(SpringRunner.class)
+// @SpringBootTest(classes = MybatisPlusConfigurer.class)
 public class CustomCodeGeneratorTest {
 
-    @Autowired
+    // @Autowired
     private SysGeneratorService sysGeneratorService;
 
-    @Test
     public void test() {
         String tableName = "word_star_rel";
         GenerateConfig config = new GenerateConfig();

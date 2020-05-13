@@ -36,7 +36,7 @@ import reactor.netty.resources.ConnectionProvider;
  */
 public class FluxTest {
 
-    @Test
+    // @Test
     public void Test1() {
         ConnectableFlux<Object> publish = Flux.create(fluxSink -> {
             while (true) {
@@ -45,13 +45,13 @@ public class FluxTest {
         }).publish();
     }
 
-    @Test
+    // @Test
     public void Test2() {
         Flux<Integer> ints = Flux.range(1, 3);
         ints.subscribe(System.out::println);
     }
 
-    @Test
+    // @Test
     public void Test3() {
         Flux<Integer> ints = Flux.range(1, 4)
                 .map(i -> {
@@ -62,7 +62,7 @@ public class FluxTest {
                 error -> System.err.println("Error: " + error));
     }
 
-    @Test
+    // @Test
     public void Test4() {
 
         final HttpClient httpClient = HttpClient.create(ConnectionProvider.newConnection());
@@ -92,7 +92,7 @@ public class FluxTest {
         System.out.println("Test4----------->end");
     }
 
-    @Test
+    // @Test
     public void test5() {
         Flux.just("a", "b", "c").log().subscribe(new Subscriber<String>() {
 
@@ -119,7 +119,7 @@ public class FluxTest {
         });
     }
 
-    @Test
+    // @Test
     public void test() {
         FluxTest fluxTest = new FluxTest();
         fluxTest.getClass().getName();

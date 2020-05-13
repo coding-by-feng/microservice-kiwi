@@ -13,7 +13,7 @@ import org.junit.Test;
  */
 public class FetchTest {
 
-    @Test
+    // @Test
     @SneakyThrows
     public void test(){
         IJsoupService jsoupService = new JsoupService();

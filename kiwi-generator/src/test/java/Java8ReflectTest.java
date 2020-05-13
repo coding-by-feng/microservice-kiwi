@@ -10,7 +10,7 @@ import java.lang.reflect.Parameter;
  * @Date 2019-09-11 11:11
  */
 public class Java8ReflectTest {
-    @Test
+    // @Test
     @SneakyThrows
     public void test1() {
         Method method = GeneratorTest.class.getMethod("main", String[].class);

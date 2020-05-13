@@ -15,9 +15,21 @@
     <version>1.0-SNAPSHOT</version>
     <name>microservice-kiwi</name>
 
+<!--
     <modules>
-        <module>kiwi-cloud-service</module>
+        <module>kiwi-eureka</module>
+        <module>kiwi-config</module>
+        <module>kiwi-upms</module>
+        <module>kiwi-security</module>
+        <module>kiwi-common</module>
+        <module>kiwi-auth</module>
+        <module>kiwi-word</module>
+        <module>kiwi-flow</module>
+        <module>kiwi-gateway</module>
+        <module>kiwi-visual</module>
+        <module>kiwi-generator</module>
     </modules>
+-->
 
     <properties>
         <spring-boot.version>2.1.7.RELEASE</spring-boot.version>

@@ -28,7 +28,7 @@ import org.junit.Test;
  */
 public class JasyptTest {
 
-    @Test
+    // @Test
     public void testEncrypt() {
         StandardPBEStringEncryptor standardPBEStringEncryptor = new StandardPBEStringEncryptor();
         EnvironmentPBEConfig config = new EnvironmentPBEConfig();
@@ -41,7 +41,7 @@ public class JasyptTest {
         System.out.println(encryptedText);
     }
 
-    @Test
+    // @Test
     public void testDe() {
         StandardPBEStringEncryptor standardPBEStringEncryptor = new StandardPBEStringEncryptor();
         EnvironmentPBEConfig config = new EnvironmentPBEConfig();

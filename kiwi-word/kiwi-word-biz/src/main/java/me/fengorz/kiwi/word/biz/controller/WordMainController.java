@@ -18,6 +18,7 @@
  */
 package me.fengorz.kiwi.word.biz.controller;
 
+import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
@@ -32,6 +33,7 @@ import me.fengorz.kiwi.word.biz.service.operate.IWordOperateService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -50,6 +52,7 @@ import java.util.stream.Stream;
 @RestController
 @AllArgsConstructor
 @RequestMapping("/word/main")
+@Validated
 @Slf4j
 public class WordMainController extends BaseController {
 
@@ -75,7 +78,7 @@ public class WordMainController extends BaseController {
      * @return
      */
     @PostMapping("/getOne")
-    public R getOne(@RequestBody WordMainDO condition) {
+    public R getOne(WordMainDO condition) {
         return R.ok(wordMainService.getOne(new QueryWrapper<>(condition)));
     }
 

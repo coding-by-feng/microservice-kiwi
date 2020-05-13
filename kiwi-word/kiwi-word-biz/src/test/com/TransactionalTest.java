@@ -42,7 +42,7 @@ public class TransactionalTest {
     @Autowired
     private TestService testService;
 
-    @Test
+    // @Test
     @SneakyThrows
     public void test() {
 

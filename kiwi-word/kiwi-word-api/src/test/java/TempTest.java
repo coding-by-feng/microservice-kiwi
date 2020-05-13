@@ -32,7 +32,7 @@ public class TempTest {
         System.out.println("success");
     }
 
-    @Test
+    // @Test
     public void test3() {
         WordFetchQueueDO wordFetchQueue = new WordFetchQueueDO();
         this.subTest3(wordFetchQueue, 100);
@@ -43,12 +43,12 @@ public class TempTest {
         wordFetchQueue.setFetchStatus(status);
     }
 
-    @Test
+    // @Test
     public void test4() {
         System.out.println(StringUtils.repeat("a", 10));
     }
 
-    @Test
+    // @Test
     public void test5() {
         // System.out.println(ClassUtil.getClassPath());
         // System.out.println(ThreadUtil.getStackTrace());
@@ -58,7 +58,7 @@ public class TempTest {
         System.out.println(EnhancedLogUtils.getLineNumber());
     }
 
-    @Test
+    // @Test
     public void test6() {
         FetchWordResultDTO fetchWordResultDTO = new FetchWordResultDTO();
         ValidatorFactory factory = Validation.buildDefaultValidatorFactory();

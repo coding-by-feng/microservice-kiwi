@@ -19,19 +19,27 @@
 
 package me.fengorz.kiwi.common.sdk.bean;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.api.constant.WordConstant;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.WordUtils;
+import org.springframework.beans.BeanUtils;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 /**
- * @Description TODO
+ * @Description Bean工具类
  * @Author codingByFeng
  * @Date 2019/11/2 4:46 PM
  */
-public class EnhancedBeanUtils {
+@Slf4j
+public class EnhancedBeanUtils extends BeanUtils {
 
     public static Object mapConvertPOJO(Map map, Class pojoClass) {
         ObjectMapper mapper = new ObjectMapper();
@@ -133,4 +141,90 @@ public class EnhancedBeanUtils {
     public static String defaultColumnToBeanProperty(String columnName) {
         return columnToBeanProperty(columnName, WordConstant.DELIMITER_STR_);
     }
+
+    public static <T, E> T convertFrom(E source, Class<T> requiredType, String... ignoreProperties) {
+        if (source == null) {
+            return null;
+        } else {
+            Object target = null;
+
+            try {
+                target = requiredType.newInstance();
+                copyProperties(source, target, ignoreProperties);
+            } catch (IllegalAccessException | InstantiationException var5) {
+                var5.printStackTrace();
+            }
+
+            return (T) target;
+        }
+    }
+
+    public static <T, E> T convertFrom(E source, Class<T> requiredType, Consumer<T> consumer, String... ignoreProperties) {
+        if (source == null) {
+            return null;
+        } else {
+            Object target = null;
+
+            try {
+                target = requiredType.newInstance();
+                copyProperties(source, target, ignoreProperties);
+                consumer.accept((T) target);
+            } catch (IllegalAccessException | InstantiationException var6) {
+                var6.printStackTrace();
+            }
+
+            return (T) target;
+        }
+    }
+
+    public static <T, E> List<T> convertFrom(List<E> sourceList, Class<T> requiredType, String... ignoreProperties) {
+        if (sourceList == null) {
+            return null;
+        } else {
+            List<T> targetList = new ArrayList();
+            if (!sourceList.isEmpty()) {
+                sourceList.forEach((source) -> {
+                    targetList.add(convertFrom(source, requiredType, ignoreProperties));
+                });
+            }
+
+            return targetList;
+        }
+    }
+
+    public static <T, E> List<T> convertFrom(List<E> sourceList, Class<T> requiredType, Consumer<T> consumer, String... ignoreProperties) {
+        if (sourceList == null) {
+            return null;
+        } else {
+            List<T> targetList = new ArrayList();
+            if (!sourceList.isEmpty()) {
+                sourceList.forEach((source) -> {
+                    targetList.add(convertFrom(source, requiredType, consumer, ignoreProperties));
+                });
+            }
+
+            return targetList;
+        }
+    }
+
+    public static <T, E> IPage<T> convertFrom(IPage<E> sourcePage, Class<T> requiredType) {
+        if (sourcePage == null) {
+            return null;
+        } else {
+            IPage<T> page = new Page(sourcePage.getCurrent(), sourcePage.getSize(), sourcePage.getTotal());
+            page.setRecords(convertFrom(sourcePage.getRecords(), requiredType));
+            return page;
+        }
+    }
+
+    public static <T, E> IPage<T> convertFrom(IPage<E> sourcePage, Class<T> requiredType, Consumer<T> consumer) {
+        if (sourcePage == null) {
+            return null;
+        } else {
+            IPage<T> page = new Page(sourcePage.getCurrent(), sourcePage.getSize(), sourcePage.getTotal());
+            page.setRecords(convertFrom(sourcePage.getRecords(), requiredType, consumer));
+            return page;
+        }
+    }
+
 }

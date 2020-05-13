@@ -17,24 +17,24 @@ import org.springframework.transaction.annotation.Transactional;
  * @Author codingByFeng
  * @Date 2019/10/28 10:21 AM
  */
-@RunWith(SpringRunner.class)
-@SpringBootTest(classes = {RabbitMQConfig.class, QueueConfig.class})
+// @RunWith(SpringRunner.class)
+// @SpringBootTest(classes = {RabbitMQConfig.class, QueueConfig.class})
 @Slf4j
 public class QueueTest {
 
-    @Autowired
+    // @Autowired
     private WordFetchProducer wordFetchProducer;
 
-    @Autowired
+    // @Autowired
     private ScheduledProducer scheduledProducer;
 
     public void main() {
         SpringApplication.run(QueueTest.class);
     }
 
-    @Test
+    // @Test
     @SneakyThrows
-    @Transactional
+    // @Transactional
     public void test() {
         // Long id = 1L;
         // while (id < 100L) {

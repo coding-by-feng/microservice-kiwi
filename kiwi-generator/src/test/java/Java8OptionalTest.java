@@ -18,7 +18,7 @@ public class Java8OptionalTest {
     /*
      * isPresent()返回是否为empty
      */
-    @Test
+    // @Test
     @SneakyThrows
     public void whenCreatesEmptyOptional_thenCorrect() {
         Optional<String> empty = Optional.empty();
@@ -27,7 +27,7 @@ public class Java8OptionalTest {
         System.out.println(empty);
     }
 
-    @Test
+    // @Test
     @SneakyThrows
     public void givenNonNull_whenCreatesOptional_thenCorrect() {
         String test = "test";
@@ -40,7 +40,7 @@ public class Java8OptionalTest {
     /*
      * of()不允许传入null
      */
-    @Test(expected = NullPointerException.class)
+    // @Test(expected = NullPointerException.class)
     public void givenNull_whenThrowsErrorOnCreate_thenCorrect() {
         String name = null;
         Optional<String> opt = Optional.of(name);
@@ -49,7 +49,7 @@ public class Java8OptionalTest {
     /*
      * 允许null转为Optional
      */
-    @Test
+    // @Test
     public void givenNonNull_whenCreatesNullable_thenCorrect() {
         String name = null;
         Optional<String> opt = Optional.ofNullable(name);
@@ -60,7 +60,7 @@ public class Java8OptionalTest {
     /*
      * 检查非空新写法
      */
-    @Test
+    // @Test
     public void givenOptional_whenIfPresentWorks_thenCorrect() {
         Optional<String> opt = Optional.of("baeldung");
 
@@ -75,7 +75,7 @@ public class Java8OptionalTest {
      * 三目运算符通过Optional的两种写法的区别
      * 当值存在时，orElse相比于orElseGet，多创建了一个对象,使用orElse时照常执行。
      */
-    @Test
+    // @Test
     public void whenOrElseWorks_thenCorrect() {
         String notEmpty = "ne";
         System.out.println(Optional.ofNullable(notEmpty).orElse(getNewValue()));
@@ -86,7 +86,7 @@ public class Java8OptionalTest {
     /*
      * null的话抛出自定义异常
      */
-    @Test
+    // @Test
     public void whenOrElseThrowWorks_thenCorrect() {
         String nullValue = null;
         Optional.ofNullable(nullValue).orElseThrow(IllegalArgumentException::new);
@@ -95,7 +95,7 @@ public class Java8OptionalTest {
     /*
      * null的时候调用get会抛异常，感觉有点违背Optional的设计初衷
      */
-    @Test
+    // @Test
     public void givenOptionalWithNull_whenGetThrowsException_thenCorrect() {
         System.out.println(Optional.ofNullable(null).get());
     }
@@ -103,7 +103,7 @@ public class Java8OptionalTest {
     /*
      * 接收一个函数式接口，当符合接口时，则返回一个Optional对象，否则返回一个空的Optional对象。
      */
-    @Test
+    // @Test
     public void filterTest() {
         Assert.assertTrue(isStandard(new Peri(88)));
         Assert.assertTrue(isStandard(new Peri(90)));
@@ -112,7 +112,7 @@ public class Java8OptionalTest {
     /*
      * 值存在的话，map可以将其值转换为另外一个值
      */
-    @Test
+    // @Test
     public void mapTest() {
         Optional.ofNullable("33").map(o -> "3").ifPresent(e -> {
                     System.out.println(e);
@@ -123,7 +123,7 @@ public class Java8OptionalTest {
     /*
      * map()加filter()判断是否登录成功
      */
-    @Test
+    // @Test
     public void mapAndFilterDealLogin() {
         String username = "admin";
         String inputPassword = "123456";
@@ -139,7 +139,7 @@ public class Java8OptionalTest {
     /*
      * map不会自动多层Optionnal封装解包，flatmap可以自动解包
      */
-    @Test
+    // @Test
     @SneakyThrows
     public void mapAndflatmap() {
 

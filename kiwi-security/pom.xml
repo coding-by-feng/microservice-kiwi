@@ -22,19 +22,24 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>kiwi-common</artifactId>
         <groupId>me.fengorz</groupId>
+        <artifactId>kiwi-cloud-service</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>kiwi-common-security</artifactId>
+    <artifactId>kiwi-security</artifactId>
     <packaging>jar</packaging>
 
     <dependencies>
         <dependency>
             <groupId>me.fengorz</groupId>
             <artifactId>kiwi-common-sdk</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>me.fengorz</groupId>
+            <artifactId>kiwi-upms-api</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
 
@@ -46,11 +51,6 @@
         <dependency>
             <groupId>org.springframework.security.oauth.boot</groupId>
             <artifactId>spring-security-oauth2-autoconfigure</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>me.fengorz</groupId>
-            <artifactId>kiwi-upms-api</artifactId>
-            <version>1.0-SNAPSHOT</version>
         </dependency>
     </dependencies>
 

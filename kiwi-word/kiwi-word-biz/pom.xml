@@ -18,12 +18,12 @@
             <artifactId>kiwi-word-api</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
-        <!-- myself end -->
         <dependency>
             <groupId>me.fengorz</groupId>
-            <artifactId>kiwi-common-security</artifactId>
+            <artifactId>kiwi-security</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
+        <!-- myself end -->
         <dependency>
             <groupId>me.fengorz</groupId>
             <artifactId>kiwi-common-log</artifactId>

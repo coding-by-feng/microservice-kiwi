@@ -15,7 +15,6 @@
     <version>1.0-SNAPSHOT</version>
     <name>microservice-kiwi</name>
 
-<!--
     <modules>
         <module>kiwi-eureka</module>
         <module>kiwi-config</module>
@@ -29,11 +28,12 @@
         <module>kiwi-visual</module>
         <module>kiwi-generator</module>
     </modules>
--->
 
+<!--
     <modules>
         <module>kiwi-cloud-service</module>
     </modules>
+-->
 
 
     <properties>

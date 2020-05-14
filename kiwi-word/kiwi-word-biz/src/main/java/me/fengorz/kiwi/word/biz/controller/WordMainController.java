@@ -36,6 +36,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.constraints.NotBlank;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -143,10 +144,7 @@ public class WordMainController extends BaseController {
 
     @SysLog("模糊查询单词列表")
     @PostMapping("/fuzzyQueryList")
-    public R fuzzyQueryList(String wordName, Page page) {
-        if (StrUtil.isBlank(wordName)) {
-            return R.failed("wordName must not be blank");
-        }
+    public R fuzzyQueryList(@NotBlank String wordName, Page page) {
         return R.ok(Stream.of(this.wordMainService.fuzzyQueryList(page, wordName)).flatMap(wordMains -> {
                     List<Map> list = new ArrayList<>();
                     for (WordMainDO wordMainDO : wordMains) {

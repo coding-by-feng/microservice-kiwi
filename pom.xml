@@ -23,11 +23,11 @@
         <module>kiwi-security</module>
         <module>kiwi-common</module>
         <module>kiwi-auth</module>
-        <module>kiwi-word</module>
-        <module>kiwi-flow</module>
         <module>kiwi-gateway</module>
-        <module>kiwi-visual</module>
-        <module>kiwi-generator</module>
+        <module>kiwi-word</module>
+        <!--<module>kiwi-flow</module>-->
+        <!--<module>kiwi-visual</module>-->
+        <!--<module>kiwi-generator</module>-->
     </modules>
 
 <!--

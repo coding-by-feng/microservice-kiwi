@@ -16,13 +16,17 @@
     <name>microservice-kiwi</name>
 
     <modules>
+<!--
         <module>kiwi-cloud-service</module>
+-->
+<!--
         <module>kiwi-eureka</module>
         <module>kiwi-config</module>
         <module>kiwi-common</module>
         <module>kiwi-visual</module>
         <module>kiwi-gateway</module>
         <module>kiwi-generator</module>
+-->
 <!--
         <module>kiwi-security</module>
         <module>kiwi-upms</module>

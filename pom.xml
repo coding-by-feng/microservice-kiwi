@@ -16,7 +16,9 @@
     <name>microservice-kiwi</name>
 
     <modules>
+<!--
         <module>kiwi-cloud-service</module>
+-->
 <!--
         <module>kiwi-eureka</module>
         <module>kiwi-config</module>

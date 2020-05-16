@@ -9,7 +9,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: fengorz
     password: fengORZ123
-    url: jdbc:mysql://rm-2ze1069p422u9507g125010.mysql.rds.aliyuncs.com:3306/kiwi_db?characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=Asia/Shanghai
+    url: jdbc:mysql://rm-2ze1069p422u9507gso.mysql.rds.aliyuncs.com:3306/kiwi_db
     hikari:
       max-lifetime: 30000
   redis:

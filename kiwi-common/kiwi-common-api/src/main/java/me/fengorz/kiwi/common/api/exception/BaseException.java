@@ -19,11 +19,11 @@
 
 package me.fengorz.kiwi.common.api.exception;
 
-import me.fengorz.kiwi.common.api.ReturnCode;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
+import me.fengorz.kiwi.common.api.ReturnCode;
 
 /**
  * @Description 异常基类

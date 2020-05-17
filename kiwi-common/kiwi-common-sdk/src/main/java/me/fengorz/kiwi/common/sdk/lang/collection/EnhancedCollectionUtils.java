@@ -16,24 +16,23 @@
  *
  *
  */
-package me.fengorz.kiwi.word.biz.service;
 
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.extension.service.IService;
-import me.fengorz.kiwi.word.api.entity.WordMainDO;
+package me.fengorz.kiwi.common.sdk.lang.collection;
 
-import java.util.List;
+import cn.hutool.core.collection.CollectionUtil;
+
 import java.util.Map;
 
 /**
- * 单词主表
- *
- * @author codingByFeng
- * @date 2019-10-31 20:32:07
+ * @Description 集合工具类
+ * @Author zhanshifeng
+ * @Date 2020/5/17 9:31 AM
  */
-public interface IWordMainService extends IService<WordMainDO> {
+public class EnhancedCollectionUtils extends CollectionUtil {
 
-    WordMainDO getOneByWordName(String wordName);
+    public static <K, V> Map<K, V> putAndReturn(Map<K, V> map, K k, V v) {
+        map.put(k, v);
+        return map;
+    }
 
-    List<Map> fuzzyQueryList(Page page, String wordName);
 }

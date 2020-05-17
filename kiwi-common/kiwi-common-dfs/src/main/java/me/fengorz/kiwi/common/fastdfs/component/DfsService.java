@@ -24,10 +24,10 @@ import com.github.tobato.fastdfs.domain.fdfs.StorePath;
 import com.github.tobato.fastdfs.domain.proto.storage.DownloadByteArray;
 import com.github.tobato.fastdfs.service.AppendFileStorageClient;
 import com.github.tobato.fastdfs.service.FastFileStorageClient;
-import me.fengorz.kiwi.common.fastdfs.exception.DfsOperateDeleteException;
-import me.fengorz.kiwi.common.fastdfs.exception.DfsOperateException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import me.fengorz.kiwi.common.fastdfs.exception.DfsOperateDeleteException;
+import me.fengorz.kiwi.common.fastdfs.exception.DfsOperateException;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayInputStream;

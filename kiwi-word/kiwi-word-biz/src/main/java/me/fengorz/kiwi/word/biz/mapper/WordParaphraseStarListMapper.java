@@ -21,13 +21,8 @@ package me.fengorz.kiwi.word.biz.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import me.fengorz.kiwi.common.api.constant.MapperConstant;
-import me.fengorz.kiwi.word.api.dto.mapper.in.SelectStarListItemDTO;
 import me.fengorz.kiwi.word.api.entity.WordParaphraseStarListDO;
 import me.fengorz.kiwi.word.api.vo.star.ParaphraseStarItemVO;
-import org.apache.ibatis.annotations.Param;
-
-import java.util.List;
 
 /**
  * 单词本

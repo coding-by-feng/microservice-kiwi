@@ -1,10 +1,9 @@
+import lombok.SneakyThrows;
 import me.fengorz.kiwi.common.sdk.json.EnhancedJsonUtils;
 import me.fengorz.kiwi.word.api.dto.fetch.FetchWordResultDTO;
 import me.fengorz.kiwi.word.api.dto.fetch.WordMessageDTO;
 import me.fengorz.kiwi.word.crawler.service.IJsoupService;
 import me.fengorz.kiwi.word.crawler.service.impl.JsoupService;
-import lombok.SneakyThrows;
-import org.junit.Test;
 
 /**
  * @Description TODO

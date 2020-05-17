@@ -22,8 +22,6 @@ package me.fengorz.kiwi.common.log.annotation;
 import java.lang.annotation.*;
 
 /**
- * @author lengleng
- * @date 2019/2/1
  * 操作日志注解
  */
 @Target(ElementType.METHOD)

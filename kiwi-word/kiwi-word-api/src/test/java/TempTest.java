@@ -3,7 +3,6 @@ import me.fengorz.kiwi.word.api.dto.fetch.FetchWordResultDTO;
 import me.fengorz.kiwi.word.api.entity.WordFetchQueueDO;
 import me.fengorz.kiwi.word.api.util.CrawlerUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.junit.Test;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;

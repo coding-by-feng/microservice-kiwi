@@ -33,7 +33,7 @@ import java.nio.charset.StandardCharsets;
  * @Author codingByFeng
  * @Date 2019-09-06 15:49
  */
-public class EnhancedDecodeUtils {
+public class KiwiDecodeUtils {
 
     public static String decryptAES(String data, String pass) {
         AES aes = new AES(Mode.CBC, Padding.NoPadding,

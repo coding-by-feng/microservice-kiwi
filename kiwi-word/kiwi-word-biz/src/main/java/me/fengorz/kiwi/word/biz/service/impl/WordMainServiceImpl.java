@@ -18,17 +18,23 @@
  */
 package me.fengorz.kiwi.word.biz.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import lombok.AllArgsConstructor;
 import me.fengorz.kiwi.common.api.constant.CommonConstants;
+import me.fengorz.kiwi.common.sdk.lang.collection.EnhancedCollectionUtils;
 import me.fengorz.kiwi.word.api.entity.WordMainDO;
 import me.fengorz.kiwi.word.biz.mapper.WordMainMapper;
 import me.fengorz.kiwi.word.biz.service.IWordMainService;
-import lombok.AllArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * 单词主表
@@ -40,25 +46,38 @@ import java.util.List;
 @AllArgsConstructor
 public class WordMainServiceImpl extends ServiceImpl<WordMainMapper, WordMainDO> implements IWordMainService {
 
+    public static final String VALUE = "value";
+
     @Override
+    public boolean save(WordMainDO entity) {
+        return super.save(entity);
+    }
+
+    @Override
+    @Cacheable
     public WordMainDO getOneByWordName(String wordName) {
         return this.getOne(
-                new QueryWrapper<>(
-                        new WordMainDO()
-                                .setWordName(wordName)
-                                .setIsDel(CommonConstants.FALSE)
-                )
+                new LambdaQueryWrapper<WordMainDO>().eq(WordMainDO::getWordName, wordName)
+                        .eq(WordMainDO::getIsDel, CommonConstants.FALSE)
         );
     }
 
     @Override
-    public List<WordMainDO> fuzzyQueryList(Page page, String wordName) {
-        // 这个查询不去全部字典，只查询word_name
-        QueryWrapper<WordMainDO> wordMainQueryWrapper = new QueryWrapper<>();
-        // wordMainQueryWrapper.likeRight("word_name", wordName).select("word_name");
-        wordMainQueryWrapper.likeRight("word_name", wordName).eq("is_del", CommonConstants.FALSE)
-                .select(WordMainDO.class, tableFieldInfo -> "word_name".equals(tableFieldInfo.getColumn()));
-        return this.page(page, wordMainQueryWrapper).getRecords();
-        // return this.listObjs(wordMainQueryWrapper, Object::toString);
+    public List<Map> fuzzyQueryList(Page page, String wordName) {
+        LambdaQueryWrapper queryWrapper = new LambdaQueryWrapper<WordMainDO>()
+                .likeRight(WordMainDO::getWordName, wordName)
+                .eq(WordMainDO::getIsDel, CommonConstants.FALSE)
+                .orderByAsc(WordMainDO::getWordName)
+                .select(WordMainDO::getWordName);
+
+        List<WordMainDO> records = this.page(page, queryWrapper).getRecords();
+        if (EnhancedCollectionUtils.isEmpty(records)) {
+            return Collections.emptyList();
+        }
+
+        return records.parallelStream()
+                .map(wordMainDO ->
+                        EnhancedCollectionUtils.putAndReturn(new HashMap<>(), VALUE, wordMainDO.getWordName())
+                ).collect(Collectors.toList());
     }
 }

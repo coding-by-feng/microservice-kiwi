@@ -20,13 +20,13 @@
 package me.fengorz.kiwi.word.crawler.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
+import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.word.api.common.CrawlerConstants;
 import me.fengorz.kiwi.word.api.dto.fetch.*;
 import me.fengorz.kiwi.word.api.exception.JsoupFetchConnectException;
 import me.fengorz.kiwi.word.api.exception.JsoupFetchResultException;
 import me.fengorz.kiwi.word.api.util.CrawlerAssertUtils;
 import me.fengorz.kiwi.word.crawler.service.IJsoupService;
-import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;

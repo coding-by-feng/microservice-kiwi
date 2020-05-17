@@ -20,12 +20,12 @@ package me.fengorz.kiwi.admin.controller;
 
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import lombok.AllArgsConstructor;
 import me.fengorz.kiwi.admin.api.entity.SysUserRoleRel;
 import me.fengorz.kiwi.admin.service.SysUserRoleRelService;
 import me.fengorz.kiwi.common.api.R;
-import me.fengorz.kiwi.common.sdk.controller.BaseController;
 import me.fengorz.kiwi.common.log.annotation.SysLog;
-import lombok.AllArgsConstructor;
+import me.fengorz.kiwi.common.sdk.controller.BaseController;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 

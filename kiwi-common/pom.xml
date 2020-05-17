@@ -17,6 +17,7 @@
         <module>kiwi-common-dfs</module>
         <module>kiwi-common-api</module>
         <module>kiwi-common-sdk</module>
+        <module>kiwi-common-cache</module>
     </modules>
 
 

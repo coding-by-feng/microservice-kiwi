@@ -18,30 +18,25 @@
  */
 package me.fengorz.kiwi.word.biz.controller;
 
-import cn.hutool.core.bean.BeanUtil;
-import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.api.R;
 import me.fengorz.kiwi.common.api.exception.ServiceException;
-import me.fengorz.kiwi.common.sdk.controller.BaseController;
 import me.fengorz.kiwi.common.log.annotation.SysLog;
+import me.fengorz.kiwi.common.sdk.controller.BaseController;
 import me.fengorz.kiwi.word.api.entity.WordMainDO;
 import me.fengorz.kiwi.word.biz.service.IWordMainService;
 import me.fengorz.kiwi.word.biz.service.operate.IWordOperateService;
-import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotBlank;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Stream;
 
 
 /**
@@ -144,17 +139,8 @@ public class WordMainController extends BaseController {
 
     @SysLog("模糊查询单词列表")
     @PostMapping("/fuzzyQueryList")
-    public R fuzzyQueryList(@NotBlank String wordName, Page page) {
-        return R.ok(Stream.of(this.wordMainService.fuzzyQueryList(page, wordName)).flatMap(wordMains -> {
-                    List<Map> list = new ArrayList<>();
-                    for (WordMainDO wordMainDO : wordMains) {
-                        Map map = new HashMap();
-                        map.put("value", wordMainDO.getWordName());
-                        list.add(map);
-                    }
-                    return Stream.of(list.toArray());
-                })
-        );
+    public R<List<Map>> fuzzyQueryList(@NotBlank String wordName, Page<WordMainDO> page) {
+        return R.ok(this.wordMainService.fuzzyQueryList(page, wordName));
     }
 
 }

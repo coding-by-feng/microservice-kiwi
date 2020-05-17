@@ -1,17 +1,11 @@
 import me.fengorz.kiwi.common.api.exception.CheckedException;
-import me.fengorz.kiwi.generator.config.MybatisPlusConfigurer;
+import me.fengorz.kiwi.generator.CustomCodeGenerator;
 import me.fengorz.kiwi.generator.entity.GenerateAbility;
 import me.fengorz.kiwi.generator.entity.GenerateConfig;
 import me.fengorz.kiwi.generator.service.SysGeneratorService;
-import me.fengorz.kiwi.generator.CustomCodeGenerator;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.List;
 import java.util.Map;

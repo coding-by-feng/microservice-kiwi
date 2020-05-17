@@ -38,8 +38,6 @@ public class SecurityConstants {
     public final String KEY_HEADER_FROM = "from";
     public final String KEY_HEADER_BASIC_ = "Basic ";
 
-    public final String FORWARD_SLASH = "/";
-    public final String BACK_SLASH = "\\";
     /**
      * 验证码Redis key前缀
      */

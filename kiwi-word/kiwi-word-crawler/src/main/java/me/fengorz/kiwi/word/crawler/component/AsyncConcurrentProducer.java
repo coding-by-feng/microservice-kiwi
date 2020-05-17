@@ -25,9 +25,8 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.api.R;
 import me.fengorz.kiwi.common.api.constant.CommonConstants;
-import me.fengorz.kiwi.common.api.constant.WordConstant;
 import me.fengorz.kiwi.common.sdk.util.bean.KiwiBeanUtils;
-import me.fengorz.kiwi.word.api.common.CrawlerConstants;
+import me.fengorz.kiwi.word.api.common.WordCrawlerConstants;
 import me.fengorz.kiwi.word.api.dto.fetch.WordMessageDTO;
 import me.fengorz.kiwi.word.api.dto.remote.WordFetchQueuePageDTO;
 import me.fengorz.kiwi.word.api.entity.WordFetchQueueDO;
@@ -52,7 +51,7 @@ public class AsyncConcurrentProducer {
 
     public void fetch() {
         WordFetchQueueDO wordFetchQueue = new WordFetchQueueDO();
-        wordFetchQueue.setFetchStatus(CrawlerConstants.STATUS_TO_FETCH);
+        wordFetchQueue.setFetchStatus(WordCrawlerConstants.STATUS_TO_FETCH);
         wordFetchQueue.setIsValid(CommonConstants.TRUE);
         WordFetchQueuePageDTO wordFetchQueuePage = new WordFetchQueuePageDTO().
                 setWordFetchQueue(wordFetchQueue).setPage(new Page(1, 20));
@@ -61,14 +60,13 @@ public class AsyncConcurrentProducer {
         if (result != null && result.isOK()) {
             Optional.ofNullable(result.getData()).ifPresent(o -> {
                 Map map = (Map) o;
-                List<LinkedHashMap> list = (List<LinkedHashMap>) map.get(WordConstant.KEY_RECORDS);
+                List<LinkedHashMap> list = (List<LinkedHashMap>) map.get(WordCrawlerConstants.RECORDS);
                 list.forEach(hashMap -> {
                     WordFetchQueueDO word = (WordFetchQueueDO) KiwiBeanUtils.mapConvertPOJO(hashMap, WordFetchQueueDO.class);
                     this.fetchWord(word);
                 });
             });
         }
-
 
 
     }
@@ -84,11 +82,11 @@ public class AsyncConcurrentProducer {
             throw new IllegalArgumentException("AsyncConcurrentProducer.fetchWord wordFetchQueue can not null!!");
         }
         if (StrUtil.isBlank(wordFetchQueue.getWordName())) {
-            wordFetchQueue.setFetchStatus(CrawlerConstants.STATUS_ERROR);
+            wordFetchQueue.setFetchStatus(WordCrawlerConstants.STATUS_ERROR);
             wordFetchQueue.setFetchResult("word_name cann't be null");
             wordFetchQueue.setIsValid(CommonConstants.FALSE);
         } else {
-            wordFetchQueue.setFetchStatus(CrawlerConstants.STATUS_FETCHING);
+            wordFetchQueue.setFetchStatus(WordCrawlerConstants.STATUS_FETCHING);
         }
 
         R updateResult = this.remoteWordFetchService.updateQueueById(wordFetchQueue);

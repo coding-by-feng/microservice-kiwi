@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 export const tableOption = {
-  border: true,
-  index: true,
-  indexLabel: '序号',
-  stripe: true,
-  menuAlign: 'center',
-  align: 'center',
-  column: [
-#foreach ($column in $columns)
-	  {
-      label: '$column.comments',
-      prop: '$column.lowerAttrName'
-    },
-#end
-  ]
+    border: true,
+    index: true,
+    indexLabel: '序号',
+    stripe: true,
+    menuAlign: 'center',
+    align: 'center',
+    column: [
+        #foreach ($column in $columns)
+            {
+                label: '$column.comments',
+                prop: '$column.lowerAttrName'
+            },
+        #end
+    ]
 }

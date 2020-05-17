@@ -28,7 +28,7 @@ import cn.hutool.json.JSONUtil;
  */
 public final class KiwiJsonUtils {
 
-    public static String toJsonStr(Object obj){
+    public static String toJsonStr(Object obj) {
         return JSONUtil.toJsonStr(obj);
     }
 

@@ -16,23 +16,23 @@
         <dependency>
             <groupId>me.fengorz</groupId>
             <artifactId>kiwi-word-api</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>${kiwi-word.version}</version>
         </dependency>
         <dependency>
             <groupId>me.fengorz</groupId>
             <artifactId>kiwi-bdf</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>${kiwi-bdf.version}</version>
         </dependency>
         <dependency>
             <groupId>me.fengorz</groupId>
             <artifactId>kiwi-common-dfs</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>${kiwi-common.version}</version>
         </dependency>
         <!--myself end-->
         <dependency>
             <groupId>org.jsoup</groupId>
             <artifactId>jsoup</artifactId>
-            <version>1.12.1</version>
+            <version>${jsoup.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>

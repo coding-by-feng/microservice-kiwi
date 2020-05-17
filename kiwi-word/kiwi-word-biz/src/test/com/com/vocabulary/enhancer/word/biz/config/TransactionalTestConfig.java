@@ -17,7 +17,9 @@
  *
  */
 
-package me.fengorz.kiwi.word.biz.config;import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
+package me.fengorz.kiwi.word.biz.config;
+
+import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
 import com.zaxxer.hikari.HikariDataSource;
 import lombok.SneakyThrows;
 import org.apache.ibatis.session.SqlSessionFactory;

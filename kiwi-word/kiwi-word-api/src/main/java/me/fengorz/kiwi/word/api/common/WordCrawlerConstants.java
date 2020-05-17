@@ -19,9 +19,10 @@
 
 package me.fengorz.kiwi.word.api.common;
 
-public interface CrawlerConstants {
+public interface WordCrawlerConstants {
 
     String VOCABULARY_ENHANCER_CRAWLER_BIZ = "kiwi-word-biz";
+    String RECORDS = "records";
 
     /*待抓取*/
     int STATUS_TO_FETCH = 0;

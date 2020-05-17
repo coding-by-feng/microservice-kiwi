@@ -28,6 +28,7 @@ import java.io.Serializable;
 
 /**
  * 响应体
+ *
  * @param <T>
  */
 @ToString
@@ -54,7 +55,7 @@ public class R<T> implements Serializable {
         return CommonConstants.SUCCESS == this.code;
     }
 
-    public boolean isFail(){
+    public boolean isFail() {
         return !isOK();
     }
 

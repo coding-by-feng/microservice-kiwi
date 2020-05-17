@@ -35,16 +35,16 @@ import lombok.EqualsAndHashCode;
 @TableName("sys_role_menu_rel")
 public class SysRoleMenuRel extends Model<SysRoleMenuRel> {
 
-  private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
     /**
-   * 角色ID
-   */
+     * 角色ID
+     */
     @TableId
     private Integer roleId;
     /**
-   * 菜单ID
-   */
+     * 菜单ID
+     */
     private Integer menuId;
-  
+
 }

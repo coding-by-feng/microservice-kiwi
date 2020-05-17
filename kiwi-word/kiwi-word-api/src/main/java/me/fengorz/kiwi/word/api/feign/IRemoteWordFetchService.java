@@ -20,7 +20,7 @@
 package me.fengorz.kiwi.word.api.feign;
 
 import me.fengorz.kiwi.common.api.R;
-import me.fengorz.kiwi.word.api.common.CrawlerConstants;
+import me.fengorz.kiwi.word.api.common.WordCrawlerConstants;
 import me.fengorz.kiwi.word.api.dto.fetch.FetchWordResultDTO;
 import me.fengorz.kiwi.word.api.dto.remote.WordFetchQueuePageDTO;
 import me.fengorz.kiwi.word.api.entity.WordFetchQueueDO;
@@ -30,7 +30,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-@FeignClient(contextId = "remoteWordFetchService", value = CrawlerConstants.VOCABULARY_ENHANCER_CRAWLER_BIZ, fallbackFactory = RemoteWordFetchServiceFallbackFactory.class)
+@FeignClient(contextId = "remoteWordFetchService", value = WordCrawlerConstants.VOCABULARY_ENHANCER_CRAWLER_BIZ, fallbackFactory = RemoteWordFetchServiceFallbackFactory.class)
 public interface IRemoteWordFetchService {
 
     String WORD_FETCH_QUEUE = "/word/fetch/queue";

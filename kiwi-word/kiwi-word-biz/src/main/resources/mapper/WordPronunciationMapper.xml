@@ -36,7 +36,7 @@
         (select wm.word_id from word_main wm where wm.word_name=#{wordName})
     </update>
 
-    <delete id="deleteByWordName" parameterType="java.lang.String" >
+    <delete id="deleteByWordName" parameterType="java.lang.String">
         delete from word_pronunciation where word_id =
         (select wm.word_id from word_main wm where wm.word_name=#{wordName})
     </delete>

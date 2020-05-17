@@ -34,14 +34,14 @@ import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.web.client.RestTemplate;
 
 /**
- * @date 2019/03/08
- *
  * <p>
  * 1. 支持remoteTokenServices 负载均衡
  * 2. 支持 获取用户全部信息
+ *
+ * @author zhanshifeng
  */
 @Slf4j
-public class EnhancerResourceServerConfigurerAdapter extends ResourceServerConfigurerAdapter {
+public class KiwiResourceServerConfigurerAdapter extends ResourceServerConfigurerAdapter {
     @Autowired
     protected ResourceAuthExceptionEntryPoint resourceAuthExceptionEntryPoint;
     @Autowired
@@ -77,7 +77,7 @@ public class EnhancerResourceServerConfigurerAdapter extends ResourceServerConfi
     @Override
     public void configure(ResourceServerSecurityConfigurer resources) {
         DefaultAccessTokenConverter accessTokenConverter = new DefaultAccessTokenConverter();
-        UserAuthenticationConverter userTokenConverter = new EnhancerUserAuthenticationConverter(this.filterIgnorePropertiesConfig);
+        UserAuthenticationConverter userTokenConverter = new KiwiUserAuthenticationConverter(this.filterIgnorePropertiesConfig);
         accessTokenConverter.setUserTokenConverter(userTokenConverter);
 
         remoteTokenServices.setRestTemplate(lbRestTemplate);

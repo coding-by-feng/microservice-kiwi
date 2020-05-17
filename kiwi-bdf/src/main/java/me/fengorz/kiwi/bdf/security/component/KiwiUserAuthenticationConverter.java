@@ -41,7 +41,7 @@ import java.util.Map;
  * 根据checktoken 的结果转化用户信息
  */
 @AllArgsConstructor
-public class EnhancerUserAuthenticationConverter implements UserAuthenticationConverter {
+public class KiwiUserAuthenticationConverter implements UserAuthenticationConverter {
     private static final String N_A = "N/A";
 
     private final FilterIgnorePropertiesConfig filterIgnorePropertiesConfig;

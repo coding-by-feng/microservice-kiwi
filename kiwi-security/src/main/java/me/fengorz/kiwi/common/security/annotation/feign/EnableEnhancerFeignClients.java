@@ -17,7 +17,7 @@
  *
  */
 
-package me.fengorz.kiwi.common.security.annotation;
+package me.fengorz.kiwi.common.security.annotation.feign;
 
 import me.fengorz.kiwi.common.api.constant.CommonConstants;
 import org.springframework.cloud.openfeign.EnableFeignClients;
@@ -25,8 +25,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 import java.lang.annotation.*;
 
 /**
- * @author lengleng
- * @date 2019/2/1
+ *
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)

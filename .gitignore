@@ -110,6 +110,14 @@ buildNumber.properties
 # https://github.com/takari/maven-wrapper#usage-without-binary-jar
 .mvn/wrapper/maven-wrapper.jar
 
+### Example user template template
+### Example user template
+
+# IntelliJ project files
+.idea
+*.iml
+out
+gen
 ### macOS template
 # General
 .DS_Store
@@ -138,6 +146,22 @@ Network Trash Folder
 Temporary Items
 .apdisk
 
+### Example user template template
+### Example user template
+
+# IntelliJ project files
+.idea
+*.iml
+out
+gen
+### Example user template template
+### Example user template
+
+# IntelliJ project files
+.idea
+*.iml
+out
+gen
 ### Example user template template
 ### Example user template
 

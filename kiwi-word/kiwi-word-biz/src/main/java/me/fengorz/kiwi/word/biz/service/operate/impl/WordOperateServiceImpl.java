@@ -17,7 +17,7 @@
  *
  */
 
-package me.fengorz.kiwi.word.biz.service.impl;
+package me.fengorz.kiwi.word.biz.service.operate.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollUtil;

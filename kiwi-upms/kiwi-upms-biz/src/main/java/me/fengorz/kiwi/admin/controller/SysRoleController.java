@@ -24,7 +24,7 @@ import lombok.AllArgsConstructor;
 import me.fengorz.kiwi.admin.api.entity.SysRole;
 import me.fengorz.kiwi.admin.service.SysRoleService;
 import me.fengorz.kiwi.common.api.R;
-import me.fengorz.kiwi.common.log.annotation.SysLog;
+import me.fengorz.kiwi.common.api.annotation.log.SysLog;
 import me.fengorz.kiwi.common.sdk.controller.BaseController;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;

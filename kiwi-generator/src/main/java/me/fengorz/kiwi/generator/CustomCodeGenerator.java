@@ -21,8 +21,8 @@ package me.fengorz.kiwi.generator;
 
 import com.baomidou.mybatisplus.core.toolkit.Constants;
 import lombok.SneakyThrows;
-import me.fengorz.kiwi.common.sdk.time.EnhancedDateFormatUtils;
-import me.fengorz.kiwi.common.sdk.time.EnhancedDateUtils;
+import me.fengorz.kiwi.common.sdk.util.time.EnhancedDateFormatUtils;
+import me.fengorz.kiwi.common.sdk.util.time.EnhancedDateUtils;
 import me.fengorz.kiwi.generator.common.ToolConstants;
 import me.fengorz.kiwi.generator.entity.ColumnEntity;
 import me.fengorz.kiwi.generator.entity.GenerateAbility;

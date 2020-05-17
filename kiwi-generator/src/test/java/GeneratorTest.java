@@ -1,4 +1,4 @@
-import me.fengorz.kiwi.common.sdk.bean.KiwiBeanUtils;
+import me.fengorz.kiwi.common.sdk.util.bean.KiwiBeanUtils;
 
 /**
  * @Description TODO

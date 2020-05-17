@@ -1,5 +1,6 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
   me.fengorz.kiwi.common.sdk.config.FilterIgnorePropertiesConfig,\
   me.fengorz.kiwi.common.sdk.config.RedisTemplateConfig, \
-  me.fengorz.kiwi.common.sdk.handler.GlobalExceptionHandler \
+  me.fengorz.kiwi.common.sdk.exception.handler.GlobalExceptionHandler, \
+  me.fengorz.kiwi.common.sdk.cache.redis.CacheKeyGenerator
   

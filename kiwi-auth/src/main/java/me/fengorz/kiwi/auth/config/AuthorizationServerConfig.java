@@ -20,10 +20,10 @@
 package me.fengorz.kiwi.auth.config;
 
 import lombok.AllArgsConstructor;
+import me.fengorz.kiwi.bdf.security.component.KiwiWebResponseExceptionTranslator;
+import me.fengorz.kiwi.bdf.security.service.KiwiClientDetailsService;
 import me.fengorz.kiwi.common.api.constant.SecurityConstants;
 import me.fengorz.kiwi.common.api.entity.EnhancerUser;
-import me.fengorz.kiwi.bdf.security.component.EnhancerWebResponseExceptionTranslator;
-import me.fengorz.kiwi.bdf.security.service.EnhancerClientDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -65,7 +65,7 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 
     @Override
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
-        EnhancerClientDetailsService clientDetailsService = new EnhancerClientDetailsService(dataSource);
+        KiwiClientDetailsService clientDetailsService = new KiwiClientDetailsService(dataSource);
         clientDetailsService.setSelectClientDetailsSql(SecurityConstants.DEFAULT_SELECT_STATEMENT);
         clientDetailsService.setFindClientDetailsSql(SecurityConstants.DEFAULT_FIND_STATEMENT);
         clients.withClientDetails(clientDetailsService);
@@ -81,7 +81,7 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
                 .authenticationManager(authenticationManager)
                 .reuseRefreshTokens(false)
                 // TODO codingByFeng 这个API作用什么？
-                .exceptionTranslator(new EnhancerWebResponseExceptionTranslator());
+                .exceptionTranslator(new KiwiWebResponseExceptionTranslator());
     }
 
     @Bean

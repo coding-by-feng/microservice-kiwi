@@ -17,9 +17,11 @@
  *
  */
 
-package me.fengorz.kiwi.common.sdk.config;
+package me.fengorz.kiwi.bdf.cache.redis.config;
 
 import lombok.AllArgsConstructor;
+import me.fengorz.kiwi.bdf.cache.redis.CacheKeyGenerator;
+import me.fengorz.kiwi.common.api.constant.CacheConstants;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration;
 import org.springframework.cache.annotation.EnableCaching;
@@ -31,7 +33,7 @@ import org.springframework.data.redis.serializer.JdkSerializationRedisSerializer
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 /**
- * @Description TODO
+ * @Description 缓存配置类
  * @Author codingByFeng
  * @Date 2019-09-29 10:39
  */
@@ -39,9 +41,14 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 @Configuration
 @AllArgsConstructor
 @AutoConfigureBefore(RedisAutoConfiguration.class)
-public class RedisTemplateConfig {
+public class CacheConfig {
 
     private final RedisConnectionFactory factory;
+
+    @Bean(name = CacheConstants.CACHE_KEY_GENERATOR_BEAN)
+    public CacheKeyGenerator cacheKeyGenerator() {
+        return new CacheKeyGenerator();
+    }
 
     @Bean
     public RedisTemplate<String, Object> redisTemplate() {

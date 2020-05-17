@@ -39,13 +39,11 @@ import org.springframework.security.web.util.ThrowableAnalyzer;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 
 /**
- * @author lengleng
- * @date 2019/2/1
  * 异常处理,重写oauth 默认实现
  */
 @Slf4j
 @NoArgsConstructor
-public class EnhancerWebResponseExceptionTranslator implements WebResponseExceptionTranslator {
+public class KiwiWebResponseExceptionTranslator implements WebResponseExceptionTranslator {
 
     private ThrowableAnalyzer throwableAnalyzer = new DefaultThrowableAnalyzer();
 
@@ -107,7 +105,7 @@ public class EnhancerWebResponseExceptionTranslator implements WebResponseExcept
             return new ResponseEntity<>(e, headers,
                     HttpStatus.valueOf(status));
         }
-        return new ResponseEntity<>(new EnhancerAuth2Exception(e.getMessage(), e.getOAuth2ErrorCode()), headers,
+        return new ResponseEntity<>(new KiwiAuth2Exception(e.getMessage(), e.getOAuth2ErrorCode()), headers,
                 HttpStatus.valueOf(status));
 
     }

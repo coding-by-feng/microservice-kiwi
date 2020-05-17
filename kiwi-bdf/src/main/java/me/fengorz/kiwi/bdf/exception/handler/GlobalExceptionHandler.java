@@ -17,7 +17,7 @@
  *
  */
 
-package me.fengorz.kiwi.common.sdk.exception.handler;
+package me.fengorz.kiwi.bdf.exception.handler;
 
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.api.R;

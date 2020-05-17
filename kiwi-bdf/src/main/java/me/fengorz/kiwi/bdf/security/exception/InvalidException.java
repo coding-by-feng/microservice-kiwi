@@ -20,27 +20,27 @@
 package me.fengorz.kiwi.bdf.security.exception;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import me.fengorz.kiwi.bdf.security.component.EnhancerAuth2ExceptionSerializer;
+import me.fengorz.kiwi.bdf.security.component.KiwiAuth2ExceptionSerializer;
 
 /**
  * @author lengleng
  * @date 2019/2/1
  */
-@JsonSerialize(using = EnhancerAuth2ExceptionSerializer.class)
-public class InvalidException extends EnhancerAuth2Exception {
+@JsonSerialize(using = KiwiAuth2ExceptionSerializer.class)
+public class InvalidException extends KiwiAuth2Exception {
 
-	public InvalidException(String msg, Throwable t) {
-		super(msg);
-	}
+    public InvalidException(String msg, Throwable t) {
+        super(msg);
+    }
 
-	@Override
-	public String getOAuth2ErrorCode() {
-		return "invalid_exception";
-	}
+    @Override
+    public String getOAuth2ErrorCode() {
+        return "invalid_exception";
+    }
 
-	@Override
-	public int getHttpErrorCode() {
-		return 426;
-	}
+    @Override
+    public int getHttpErrorCode() {
+        return 426;
+    }
 
 }

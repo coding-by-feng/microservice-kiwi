@@ -14,7 +14,7 @@ public class FetchTest {
 
     // @Test
     @SneakyThrows
-    public void test(){
+    public void test() {
         IJsoupService jsoupService = new JsoupService();
         FetchWordResultDTO test = jsoupService.fetchWordInfo(new WordMessageDTO().setWord("mandatory"));
         System.out.println(KiwiJsonUtils.toJsonStr(test));

@@ -22,14 +22,19 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.AllArgsConstructor;
+import me.fengorz.kiwi.common.api.annotation.cache.KiwiCacheKey;
+import me.fengorz.kiwi.common.api.annotation.cache.KiwiCacheKeyPrefix;
+import me.fengorz.kiwi.common.api.constant.CacheConstants;
 import me.fengorz.kiwi.common.api.constant.CommonConstants;
 import me.fengorz.kiwi.common.sdk.util.lang.collection.EnhancedCollectionUtils;
+import me.fengorz.kiwi.word.api.common.WordConstants;
 import me.fengorz.kiwi.word.api.entity.WordMainDO;
 import me.fengorz.kiwi.word.biz.mapper.WordMainMapper;
 import me.fengorz.kiwi.word.biz.service.IWordMainService;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -42,8 +47,9 @@ import java.util.stream.Collectors;
  * @author codingByFeng
  * @date 2019-10-31 20:32:07
  */
-@Service("wordMainService")
 @AllArgsConstructor
+@Service("wordMainService")
+@KiwiCacheKeyPrefix(WordConstants.CACHE_KEY_PREFIX_WORD_MAIN)
 public class WordMainServiceImpl extends ServiceImpl<WordMainMapper, WordMainDO> implements IWordMainService {
 
     public static final String VALUE = "value";
@@ -51,6 +57,12 @@ public class WordMainServiceImpl extends ServiceImpl<WordMainMapper, WordMainDO>
     @Override
     public boolean save(WordMainDO entity) {
         return super.save(entity);
+    }
+
+    @Override
+    @Cacheable(cacheNames = WordConstants.CACHE_NAMES, keyGenerator = CacheConstants.CACHE_KEY_GENERATOR_BEAN, unless = "#result == null")
+    public WordMainDO getById(@KiwiCacheKey Serializable id) {
+        return super.getById(id);
     }
 
     @Override

@@ -45,14 +45,12 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * @Description TODO
- * @Author codingByFeng
- * @Date 2019-09-25 16:50
+ * @author zhanshifeng
  */
 @Slf4j
 @Service
 @AllArgsConstructor
-public class EnhancerUserDetailServiceImpl implements UserDetailsService {
+public class KiwiUserDetailServiceImpl implements UserDetailsService {
     private final CacheManager cacheManager;
     private final RemoteUserService remoteUserService;
 

@@ -32,41 +32,41 @@ import org.springframework.web.bind.annotation.*;
 @FeignClient(contextId = "remote${caseTableName}Service", value = "${serviceId}", fallbackFactory = Remote${caseTableName}ServiceFallbackFactory.class)
 public interface IRemote${caseTableName}Service {
 
-    String ${tableNameUpper} = '/${controllerRootPath}';
+    String ${tableNameUpper} ='/${controllerRootPath}';
 
     /*
      * 分页查询
      */
-    @GetMapping(${tableNameUpper} + "/page")
+    @GetMapping(${tableNameUpper} +"/page")
     R get${caseTableName}Page(Page page, ${className} ${classname});
 
     /*
      * 根据条件查询单个实体
      */
-    @PostMapping(${tableNameUpper} + "/getOne")
+    @PostMapping(${tableNameUpper} +"/getOne")
     R getOne(@RequestBody ${className} condition);
 
     /*
      * 通过id查询${comments}
      */
-    @GetMapping(${tableNameUpper} + "/{${pk.lowerAttrName}}")
+    @GetMapping(${tableNameUpper} +"/{${pk.lowerAttrName}}")
     R getById(@PathVariable("${pk.lowerAttrName}") ${pk.attrType} ${pk.lowerAttrName});
 
     /*
      * 新增
      */
-    @PostMapping(${tableNameUpper} + "/save")
+    @PostMapping(${tableNameUpper} +"/save")
     R save(@RequestBody ${className} ${classname});
 
     /*
      * 修改
      */
-    @PutMapping(${tableNameUpper} + "/updateById")
+    @PutMapping(${tableNameUpper} +"/updateById")
     R updateById(@RequestBody ${className} ${classname});
 
     /*
      * 通过id删除
      */
-    @DeleteMapping(${tableNameUpper} + "/${pk.lowerAttrName}}")
+    @DeleteMapping(${tableNameUpper} +"/${pk.lowerAttrName}}")
     R removeById(@PathVariable ${pk.attrType} ${pk.lowerAttrName});
 }

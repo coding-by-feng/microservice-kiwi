@@ -35,16 +35,16 @@ import lombok.EqualsAndHashCode;
 @TableName("sys_user_role_rel")
 public class SysUserRoleRel extends Model<SysUserRoleRel> {
 
-  private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
     /**
-   * 用户ID
-   */
+     * 用户ID
+     */
     @TableId
     private Integer userId;
     /**
-   * 角色ID
-   */
+     * 角色ID
+     */
     private Integer roleId;
-  
+
 }

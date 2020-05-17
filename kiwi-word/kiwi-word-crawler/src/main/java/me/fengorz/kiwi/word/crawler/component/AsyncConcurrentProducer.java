@@ -26,7 +26,7 @@ import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.api.R;
 import me.fengorz.kiwi.common.api.constant.CommonConstants;
 import me.fengorz.kiwi.common.api.constant.WordConstant;
-import me.fengorz.kiwi.common.sdk.bean.KiwiBeanUtils;
+import me.fengorz.kiwi.common.sdk.util.bean.KiwiBeanUtils;
 import me.fengorz.kiwi.word.api.common.CrawlerConstants;
 import me.fengorz.kiwi.word.api.dto.fetch.WordMessageDTO;
 import me.fengorz.kiwi.word.api.dto.remote.WordFetchQueuePageDTO;

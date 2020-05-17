@@ -1,4 +1,4 @@
-import me.fengorz.kiwi.common.sdk.log.EnhancedLogUtils;
+import me.fengorz.kiwi.common.sdk.util.log.EnhancedLogUtils;
 import me.fengorz.kiwi.word.api.dto.fetch.FetchWordResultDTO;
 import me.fengorz.kiwi.word.api.entity.WordFetchQueueDO;
 import me.fengorz.kiwi.word.api.util.CrawlerUtils;

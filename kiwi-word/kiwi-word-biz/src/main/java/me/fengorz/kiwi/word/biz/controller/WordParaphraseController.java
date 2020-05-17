@@ -22,7 +22,7 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.AllArgsConstructor;
 import me.fengorz.kiwi.common.api.R;
-import me.fengorz.kiwi.common.log.annotation.SysLog;
+import me.fengorz.kiwi.common.api.annotation.log.SysLog;
 import me.fengorz.kiwi.common.sdk.controller.BaseController;
 import me.fengorz.kiwi.word.api.entity.WordParaphraseDO;
 import me.fengorz.kiwi.word.biz.service.IWordParaphraseService;

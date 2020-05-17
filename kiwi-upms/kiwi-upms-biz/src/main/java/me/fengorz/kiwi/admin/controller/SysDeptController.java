@@ -24,7 +24,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.AllArgsConstructor;
 import me.fengorz.kiwi.admin.api.entity.SysDept;
 import me.fengorz.kiwi.admin.service.SysDeptService;
-import me.fengorz.kiwi.common.log.annotation.SysLog;
+import me.fengorz.kiwi.common.api.annotation.log.SysLog;
 import me.fengorz.kiwi.common.sdk.controller.BaseController;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;

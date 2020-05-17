@@ -14,15 +14,27 @@
         <option value="$PROJECT_DIR$/kiwi-common/kiwi-common-security/pom.xml" />
         <option value="$PROJECT_DIR$/kiwi-auth/pom.xml" />
         <option value="$PROJECT_DIR$/kiwi-flow/pom.xml" />
+        <option value="$PROJECT_DIR$/kiwi-security/pom.xml" />
+        <option value="$PROJECT_DIR$/kiwi-cloud-service/pom.xml" />
+        <option value="$PROJECT_DIR$/kiwi-common/pom.xml" />
+        <option value="$PROJECT_DIR$/kiwi-config/pom.xml" />
+        <option value="$PROJECT_DIR$/kiwi-generator/pom.xml" />
+        <option value="$PROJECT_DIR$/kiwi-visual/pom.xml" />
+        <option value="$PROJECT_DIR$/kiwi-gateway/pom.xml" />
+        <option value="$PROJECT_DIR$/kiwi-upms/kiwi-upms-api/pom.xml" />
+        <option value="$PROJECT_DIR$/kiwi-upms/kiwi-upms-biz/pom.xml" />
+        <option value="$PROJECT_DIR$/kiwi-eureka/pom.xml" />
+        <option value="$PROJECT_DIR$/kiwi-bdf/pom.xml" />
       </list>
     </option>
     <option name="ignoredFiles">
       <set>
+        <option value="$PROJECT_DIR$/kiwi-common/kiwi-common-cache/pom.xml" />
         <option value="$PROJECT_DIR$/kiwi-common/kiwi-common-core/pom.xml" />
       </set>
     </option>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_8" default="false" project-jdk-name="OpenJ9_1.8" project-jdk-type="JavaSDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_8" default="false" project-jdk-name="HotSpot_1.8" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/out" />
   </component>
 </project>

@@ -4,18 +4,15 @@
     <file url="file://$PROJECT_DIR$" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/kiwi-auth/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/kiwi-auth/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/kiwi-bdf/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/kiwi-common" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/kiwi-common/kiwi-common-api/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/kiwi-common/kiwi-common-api/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/kiwi-common/kiwi-common-dfs" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/kiwi-common/kiwi-common-dfs/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/kiwi-common/kiwi-common-dfs/src/main/resources" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/kiwi-common/kiwi-common-log" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/kiwi-common/kiwi-common-log/src/main/java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/kiwi-common/kiwi-common-log/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/kiwi-common/kiwi-common-sdk/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/kiwi-common/kiwi-common-sdk/src/main/resources" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/kiwi-common/kiwi-common-security/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/kiwi-config" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/kiwi-config/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/kiwi-config/src/main/resources" charset="UTF-8" />
@@ -26,7 +23,6 @@
     <file url="file://$PROJECT_DIR$/kiwi-flow/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/kiwi-flow/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/kiwi-flow/src/main/resources/mybatis.cfg.xml" charset="GBK" />
-    <file url="file://$PROJECT_DIR$/kiwi-flow/src/test/java/SqlSessionFactoryUtil.java" charset="GBK" />
     <file url="file://$PROJECT_DIR$/kiwi-gateway" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/kiwi-gateway/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/kiwi-gateway/src/main/resources" charset="UTF-8" />

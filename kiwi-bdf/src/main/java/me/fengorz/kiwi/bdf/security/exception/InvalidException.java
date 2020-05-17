@@ -17,23 +17,30 @@
  *
  */
 
-package me.fengorz.kiwi.admin;
+package me.fengorz.kiwi.bdf.security.exception;
 
-import me.fengorz.kiwi.bdf.feign.annotation.EnableEnhancerFeignClients;
-import me.fengorz.kiwi.bdf.security.annotation.EnableEnhancerResourceServer;
-import org.springframework.boot.SpringApplication;
-import org.springframework.cloud.client.SpringCloudApplication;
-
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import me.fengorz.kiwi.bdf.security.component.EnhancerAuth2ExceptionSerializer;
 
 /**
- * @Author codingByFeng
- * @Date 2019-09-19 17:09
+ * @author lengleng
+ * @date 2019/2/1
  */
-@EnableEnhancerResourceServer
-@EnableEnhancerFeignClients
-@SpringCloudApplication
-public class UpmsApplication {
-    public static void main(String[] args) {
-        SpringApplication.run(UpmsApplication.class, args);
-    }
+@JsonSerialize(using = EnhancerAuth2ExceptionSerializer.class)
+public class InvalidException extends EnhancerAuth2Exception {
+
+	public InvalidException(String msg, Throwable t) {
+		super(msg);
+	}
+
+	@Override
+	public String getOAuth2ErrorCode() {
+		return "invalid_exception";
+	}
+
+	@Override
+	public int getHttpErrorCode() {
+		return 426;
+	}
+
 }

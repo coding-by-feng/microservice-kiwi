@@ -19,8 +19,8 @@
 
 package me.fengorz.kiwi.word.biz;
 
-import me.fengorz.kiwi.common.security.annotation.feign.EnableEnhancerFeignClients;
-import me.fengorz.kiwi.common.security.annotation.security.EnableEnhancerResourceServer;
+import me.fengorz.kiwi.bdf.feign.annotation.EnableEnhancerFeignClients;
+import me.fengorz.kiwi.bdf.security.annotation.EnableEnhancerResourceServer;
 import org.springframework.boot.SpringApplication;
 import org.springframework.cloud.client.SpringCloudApplication;
 

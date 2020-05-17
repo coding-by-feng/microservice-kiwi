@@ -17,23 +17,19 @@
  *
  */
 
-package me.fengorz.kiwi.admin;
+package me.fengorz.kiwi.common.sdk.util.json;
 
-import me.fengorz.kiwi.bdf.feign.annotation.EnableEnhancerFeignClients;
-import me.fengorz.kiwi.bdf.security.annotation.EnableEnhancerResourceServer;
-import org.springframework.boot.SpringApplication;
-import org.springframework.cloud.client.SpringCloudApplication;
-
+import cn.hutool.json.JSONUtil;
 
 /**
+ * @Description TODO
  * @Author codingByFeng
- * @Date 2019-09-19 17:09
+ * @Date 2019/10/25 11:17 AM
  */
-@EnableEnhancerResourceServer
-@EnableEnhancerFeignClients
-@SpringCloudApplication
-public class UpmsApplication {
-    public static void main(String[] args) {
-        SpringApplication.run(UpmsApplication.class, args);
+public final class KiwiJsonUtils {
+
+    public static String toJsonStr(Object obj){
+        return JSONUtil.toJsonStr(obj);
     }
+
 }

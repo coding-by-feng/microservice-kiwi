@@ -33,7 +33,7 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>../kiwi-security</module>
+        <module>../kiwi-bdf</module>
         <module>../kiwi-upms</module>
         <module>../kiwi-word</module>
         <module>../kiwi-auth</module>

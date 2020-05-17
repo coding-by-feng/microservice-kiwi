@@ -1,5 +1,5 @@
 import lombok.SneakyThrows;
-import me.fengorz.kiwi.common.sdk.util.json.EnhancedJsonUtils;
+import me.fengorz.kiwi.common.sdk.util.json.KiwiJsonUtils;
 import me.fengorz.kiwi.word.api.dto.fetch.FetchWordResultDTO;
 import me.fengorz.kiwi.word.api.dto.fetch.WordMessageDTO;
 import me.fengorz.kiwi.word.crawler.service.IJsoupService;
@@ -17,7 +17,7 @@ public class FetchTest {
     public void test(){
         IJsoupService jsoupService = new JsoupService();
         FetchWordResultDTO test = jsoupService.fetchWordInfo(new WordMessageDTO().setWord("mandatory"));
-        System.out.println(EnhancedJsonUtils.toJsonStr(test));
+        System.out.println(KiwiJsonUtils.toJsonStr(test));
     }
 
 }

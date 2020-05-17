@@ -17,7 +17,7 @@
  *
  */
 
-package me.fengorz.kiwi.common.security.annotation;
+package me.fengorz.kiwi.common.security.annotation.security;
 
 import me.fengorz.kiwi.common.security.component.EnhancerResourceServerAutoConfiguration;
 import me.fengorz.kiwi.common.security.component.EnhancerSecurityBeanDefinitionRegistrar;

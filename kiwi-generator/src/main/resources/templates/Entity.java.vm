@@ -21,9 +21,9 @@ import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
-#if(${hasBigDecimal})
-import java.math.BigDecimal;
-#end
+    #if(${hasBigDecimal})
+    import java.math.BigDecimal;
+    #end
 import java.time.LocalDateTime;
 
 /**
@@ -38,16 +38,16 @@ import java.time.LocalDateTime;
 @Accessors(chain = true)
 public class ${className} extends Model<${className}> {
 
-  private static final long serialVersionUID = 1L;
+private static final long serialVersionUID=1L;
 
-  #foreach ($column in $columns)
-  /**
-   * $column.comments
-   */
-  #if($column.columnName == $pk.columnName)
-  @TableId
-  #end
-  private $column.attrType $column.lowerAttrName;
-  #end
+#foreach ($column in $columns)
+/**
+ * $column.comments
+ */
+    #if($column.columnName == $pk.columnName)
+    @TableId
+    #end
+private $column.attrType $column.lowerAttrName;
+#end
 
 }

@@ -17,20 +17,10 @@
  *
  */
 
-package me.fengorz.kiwi.common.api.annotation.log;
+package me.fengorz.kiwi.common.api.constant;
 
-import java.lang.annotation.*;
+public interface CacheConstants {
 
-/**
- * 操作日志注解
- *
- * @author zhanshifeng
- */
-@Target(ElementType.METHOD)
-@Retention(RetentionPolicy.RUNTIME)
-@Documented
-public @interface SysLog {
-
-    String value();
+    String CACHE_KEY_GENERATOR_BEAN = "cacheKeyGenerator";
 
 }

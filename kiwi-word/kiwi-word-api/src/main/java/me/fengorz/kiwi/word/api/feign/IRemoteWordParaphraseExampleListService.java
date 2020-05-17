@@ -20,7 +20,7 @@ package me.fengorz.kiwi.word.api.feign;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import me.fengorz.kiwi.common.api.R;
-import me.fengorz.kiwi.word.api.common.CrawlerConstants;
+import me.fengorz.kiwi.word.api.common.WordCrawlerConstants;
 import me.fengorz.kiwi.word.api.entity.WordExampleStarListDO;
 import me.fengorz.kiwi.word.api.feign.factory.RemoteWordParaphraseExampleListServiceFallbackFactory;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -28,12 +28,10 @@ import org.springframework.web.bind.annotation.*;
 
 
 /**
- * 
- *
  * @author codingByFeng
  * @date 2019-12-08 23:27:12
  */
-@FeignClient(contextId = "remoteWordParaphraseExampleListDOService", value = CrawlerConstants.VOCABULARY_ENHANCER_CRAWLER_BIZ, fallbackFactory = RemoteWordParaphraseExampleListServiceFallbackFactory.class)
+@FeignClient(contextId = "remoteWordParaphraseExampleListDOService", value = WordCrawlerConstants.VOCABULARY_ENHANCER_CRAWLER_BIZ, fallbackFactory = RemoteWordParaphraseExampleListServiceFallbackFactory.class)
 public interface IRemoteWordParaphraseExampleListService {
 
     String WORD_PARAPHRASE_EXAMPLE_LIST = "/word/paraphrase/example/list";

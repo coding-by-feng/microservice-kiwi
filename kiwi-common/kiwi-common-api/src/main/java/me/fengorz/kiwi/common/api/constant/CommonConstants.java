@@ -37,6 +37,8 @@ public interface CommonConstants {
     String FORWARD_SLASH = "/";
     String BACK_SLASH = "\\";
 
+    String DELIMITER_STR = "_";
+
     String TRUE = "Y";
     String FALSE = "N";
 
@@ -69,7 +71,7 @@ public interface CommonConstants {
     String MENU = "0";
 
     /*
-    *
+     *
      * 编码
      */
     String UTF8 = "UTF-8";

@@ -20,7 +20,7 @@
 package me.fengorz.kiwi.word.biz;
 
 import me.fengorz.kiwi.bdf.feign.annotation.EnableEnhancerFeignClients;
-import me.fengorz.kiwi.bdf.security.annotation.EnableEnhancerResourceServer;
+import me.fengorz.kiwi.bdf.security.annotation.KiwiEnhancerResourceServer;
 import org.springframework.boot.SpringApplication;
 import org.springframework.cloud.client.SpringCloudApplication;
 
@@ -29,7 +29,7 @@ import org.springframework.cloud.client.SpringCloudApplication;
  * @Author codingByFeng
  * @Date 2019/10/30 3:02 PM
  */
-@EnableEnhancerResourceServer
+@KiwiEnhancerResourceServer
 @EnableEnhancerFeignClients
 @SpringCloudApplication
 public class WordBizApplication {

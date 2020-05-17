@@ -37,60 +37,60 @@ import java.time.LocalDateTime;
 @TableName("sys_user")
 public class SysUser extends Model<SysUser> {
 
-  private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
     /**
-   * 主键ID
-   */
+     * 主键ID
+     */
     @TableId
     private Integer userId;
     /**
-   * 用户名
-   */
+     * 用户名
+     */
     private String username;
     /**
-   * 
-   */
+     *
+     */
     private String password;
     /**
-   * 随机盐
-   */
+     * 随机盐
+     */
     private String salt;
     /**
-   * 简介
-   */
+     * 简介
+     */
     private String phone;
     /**
-   * 头像
-   */
+     * 头像
+     */
     private String avatar;
     /**
-   * 部门ID
-   */
+     * 部门ID
+     */
     private Integer deptId;
     /**
-   * 创建时间
-   */
+     * 创建时间
+     */
     private LocalDateTime createTime;
     /**
-   * 修改时间
-   */
+     * 修改时间
+     */
     private LocalDateTime updateTime;
     /**
-   * 0-正常，9-锁定
-   */
+     * 0-正常，9-锁定
+     */
     private String lockFlag;
     /**
-   * 0-正常，1-删除
-   */
+     * 0-正常，1-删除
+     */
     private String delFlag;
     /**
-   * 微信openid
-   */
+     * 微信openid
+     */
     private String wxOpenid;
     /**
-   * QQ openid
-   */
+     * QQ openid
+     */
     private String qqOpenid;
-  
+
 }

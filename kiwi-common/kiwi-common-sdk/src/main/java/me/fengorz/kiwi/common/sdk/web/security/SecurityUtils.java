@@ -47,6 +47,7 @@ public class SecurityUtils {
 
     /**
      * 获取当前登录的用户
+     *
      * @return
      */
     public EnhancerUser getCurrentUser() {
@@ -59,6 +60,7 @@ public class SecurityUtils {
 
     /**
      * 获取当前登录的用户ID
+     *
      * @return
      */
     public Integer getCurrentUserId() {

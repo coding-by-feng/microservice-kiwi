@@ -36,7 +36,7 @@ import me.fengorz.kiwi.common.fastdfs.exception.DfsOperateException;
 import me.fengorz.kiwi.common.sdk.CommonUtils;
 import me.fengorz.kiwi.common.sdk.util.validate.KiwiAssertUtils;
 import me.fengorz.kiwi.common.sdk.web.security.SecurityUtils;
-import me.fengorz.kiwi.word.api.common.CrawlerConstants;
+import me.fengorz.kiwi.word.api.common.WordCrawlerConstants;
 import me.fengorz.kiwi.word.api.dto.fetch.FetchParaphraseDTO;
 import me.fengorz.kiwi.word.api.dto.fetch.FetchWordCodeDTO;
 import me.fengorz.kiwi.word.api.dto.fetch.FetchWordPronunciationDTO;
@@ -132,10 +132,10 @@ public class WordOperateServiceImpl implements IWordOperateService {
                 List<FetchWordPronunciationDTO> fetchWordPronunciationDTOList = fetchWordCodeDTO.getFetchWordPronunciationDTOList();
                 if (CollUtil.isNotEmpty(fetchWordPronunciationDTOList)) {
                     for (FetchWordPronunciationDTO fetchWordPronunciationDTO : fetchWordPronunciationDTOList) {
-                        String voiceFileUrl = CrawlerConstants.CAMBRIDGE_BASE_URL + fetchWordPronunciationDTO.getVoiceFileUrl();
-                        long voiceSize = HttpUtil.downloadFile(URLUtil.decode(voiceFileUrl), FileUtil.file(CrawlerConstants.CRAWLER_VOICE_BASE_PATH));
-                        String tempVoice = CrawlerConstants.CRAWLER_VOICE_BASE_PATH + CrawlerUtils.getVoiceFileName(voiceFileUrl);
-                        String uploadResult = dfsService.uploadFile(FileUtil.getInputStream(tempVoice), voiceSize, CrawlerConstants.EXT_OGG);
+                        String voiceFileUrl = WordCrawlerConstants.CAMBRIDGE_BASE_URL + fetchWordPronunciationDTO.getVoiceFileUrl();
+                        long voiceSize = HttpUtil.downloadFile(URLUtil.decode(voiceFileUrl), FileUtil.file(WordCrawlerConstants.CRAWLER_VOICE_BASE_PATH));
+                        String tempVoice = WordCrawlerConstants.CRAWLER_VOICE_BASE_PATH + CrawlerUtils.getVoiceFileName(voiceFileUrl);
+                        String uploadResult = dfsService.uploadFile(FileUtil.getInputStream(tempVoice), voiceSize, WordCrawlerConstants.EXT_OGG);
                         WordPronunciationDO wordPronunciation = CrawlerEntityFactory.initWordPronunciation(wordId, characterId, uploadResult,
                                 fetchWordPronunciationDTO.getSoundmark(), fetchWordPronunciationDTO.getSoundmarkType());
                         wordPronunciationService.save(wordPronunciation);
@@ -190,7 +190,7 @@ public class WordOperateServiceImpl implements IWordOperateService {
     @Transactional(rollbackFor = Exception.class)
     public void dfsDeleteExceptionBackCall(String wordName) {
         WordFetchQueueDO wordFetchQueue = new WordFetchQueueDO();
-        wordFetchQueue.setFetchStatus(CrawlerConstants.STATUS_ERROR_DFS_OPERATE_DELETE_FAILED).setFetchResult("delete pronunciation voice file error");
+        wordFetchQueue.setFetchStatus(WordCrawlerConstants.STATUS_ERROR_DFS_OPERATE_DELETE_FAILED).setFetchResult("delete pronunciation voice file error");
         wordFetchQueueService.update(wordFetchQueue, new QueryWrapper<>(new WordFetchQueueDO().setWordName(wordName)));
 
         // If you fail to delete the pronunciation file, leave the pronunciation file path blank to prevent the same exception from being thrown again

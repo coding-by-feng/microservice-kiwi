@@ -20,29 +20,27 @@
 package me.fengorz.kiwi.bdf.security.exception;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import lombok.Getter;
 import me.fengorz.kiwi.bdf.security.component.KiwiAuth2ExceptionSerializer;
-import org.springframework.http.HttpStatus;
+import org.springframework.security.oauth2.common.exceptions.OAuth2Exception;
 
 /**
+ * 自定义OAuth2Exception
+ *
  * @author zhanshifeng
  */
 @JsonSerialize(using = KiwiAuth2ExceptionSerializer.class)
-public class ServerErrorException extends KiwiAuth2Exception {
+public class KiwiAuth2Exception extends OAuth2Exception {
+    private static final long serialVersionUID = -6965054177137505144L;
+    @Getter
+    private String errorCode;
 
-    private static final long serialVersionUID = -6599138719080385430L;
-
-    public ServerErrorException(String msg, Throwable t) {
+    public KiwiAuth2Exception(String msg) {
         super(msg);
     }
 
-    @Override
-    public String getOAuth2ErrorCode() {
-        return "server_error";
+    public KiwiAuth2Exception(String msg, String errorCode) {
+        super(msg);
+        this.errorCode = errorCode;
     }
-
-    @Override
-    public int getHttpErrorCode() {
-        return HttpStatus.INTERNAL_SERVER_ERROR.value();
-    }
-
 }

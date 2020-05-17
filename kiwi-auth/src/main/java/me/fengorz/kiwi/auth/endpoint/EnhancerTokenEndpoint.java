@@ -61,7 +61,7 @@ public class EnhancerTokenEndpoint {
     private final RedisTemplate redisTemplate;
 
     @PostMapping("/test")
-    public R test(){
+    public R test() {
         log.info("test------------------");
         return R.ok();
     }

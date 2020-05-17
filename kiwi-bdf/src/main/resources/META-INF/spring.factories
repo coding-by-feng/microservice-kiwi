@@ -1,1 +1,5 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=me.fengorz.kiwi.bdf.security.service.EnhancerUserDetailServiceImpl
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  me.fengorz.kiwi.bdf.exception.handler.GlobalExceptionHandler, \
+  me.fengorz.kiwi.bdf.security.service.KiwiUserDetailServiceImpl, \
+  me.fengorz.kiwi.bdf.cache.redis.config.CacheConfig, \
+  me.fengorz.kiwi.bdf.cache.redis.CacheKeyGenerator

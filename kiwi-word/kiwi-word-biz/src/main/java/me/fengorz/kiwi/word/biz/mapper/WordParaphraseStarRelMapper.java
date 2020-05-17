@@ -22,8 +22,6 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import me.fengorz.kiwi.word.api.entity.WordParaphraseStarRelDO;
 
 /**
- * 
- *
  * @author codingByFeng
  * @date 2020-01-03 14:44:37
  */

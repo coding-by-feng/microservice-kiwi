@@ -19,27 +19,31 @@
 
 package me.fengorz.kiwi.bdf.security.exception;
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import lombok.Getter;
-import me.fengorz.kiwi.bdf.security.component.EnhancerAuth2ExceptionSerializer;
-import org.springframework.security.oauth2.common.exceptions.OAuth2Exception;
+import lombok.NoArgsConstructor;
 
 /**
- * @author lengleng
- * @date 2019/2/1
- * 自定义OAuth2Exception
+ * 403 授权拒绝
+ *
+ * @author zhanshifeng
  */
-@JsonSerialize(using = EnhancerAuth2ExceptionSerializer.class)
-public class EnhancerAuth2Exception extends OAuth2Exception {
-	@Getter
-	private String errorCode;
+@NoArgsConstructor
+public class KiwiDeniedException extends RuntimeException {
+    private static final long serialVersionUID = 1L;
 
-	public EnhancerAuth2Exception(String msg) {
-		super(msg);
-	}
+    public KiwiDeniedException(String message) {
+        super(message);
+    }
 
-	public EnhancerAuth2Exception(String msg, String errorCode) {
-		super(msg);
-		this.errorCode = errorCode;
-	}
+    public KiwiDeniedException(Throwable cause) {
+        super(cause);
+    }
+
+    public KiwiDeniedException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    public KiwiDeniedException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+        super(message, cause, enableSuppression, writableStackTrace);
+    }
+
 }

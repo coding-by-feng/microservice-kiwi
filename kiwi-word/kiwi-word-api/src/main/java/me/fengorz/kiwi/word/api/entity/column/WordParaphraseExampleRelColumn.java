@@ -24,7 +24,7 @@ package me.fengorz.kiwi.word.api.entity.column;
  */
 public class WordParaphraseExampleRelColumn {
 
-      public static final String LIST_ID = "list_id";
-      public static final String EXAMPLE_ID = "example_id";
-  
+    public static final String LIST_ID = "list_id";
+    public static final String EXAMPLE_ID = "example_id";
+
 }

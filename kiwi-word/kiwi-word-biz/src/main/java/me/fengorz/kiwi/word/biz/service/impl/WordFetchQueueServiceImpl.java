@@ -22,7 +22,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.AllArgsConstructor;
 import me.fengorz.kiwi.common.api.constant.CommonConstants;
-import me.fengorz.kiwi.word.api.common.CrawlerConstants;
+import me.fengorz.kiwi.word.api.common.WordCrawlerConstants;
 import me.fengorz.kiwi.word.api.entity.WordFetchQueueDO;
 import me.fengorz.kiwi.word.biz.mapper.WordFetchQueueMapper;
 import me.fengorz.kiwi.word.biz.service.IWordFetchQueueService;
@@ -57,7 +57,7 @@ public class WordFetchQueueServiceImpl extends ServiceImpl<WordFetchQueueMapper,
         );
         this.insertNewQueue(
                 new WordFetchQueueDO()
-                        .setFetchStatus(CrawlerConstants.STATUS_TO_FETCH)
+                        .setFetchStatus(WordCrawlerConstants.STATUS_TO_FETCH)
                         .setIsValid(CommonConstants.TRUE)
                         .setFetchPriority(100)
         );

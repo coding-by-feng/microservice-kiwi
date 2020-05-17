@@ -25,11 +25,11 @@
         <module>kiwi-generator</module>
     </modules>
 
-<!--
-    <modules>
-        <module>kiwi-cloud-service</module>
-    </modules>
--->
+    <!--
+        <modules>
+            <module>kiwi-cloud-service</module>
+        </modules>
+    -->
 
 
     <properties>
@@ -54,6 +54,7 @@
         <zipkin-storage-mysql.version>2.8.4</zipkin-storage-mysql.version>
         <lombok.version>1.18.8</lombok.version>
         <mysql.version>8.0.17</mysql.version>
+        <jsoup.version>1.12.1</jsoup.version>
 
         <kiwi-eureka.version>1.0-SNAPSHOT</kiwi-eureka.version>
         <kiwi-config.version>1.0-SNAPSHOT</kiwi-config.version>

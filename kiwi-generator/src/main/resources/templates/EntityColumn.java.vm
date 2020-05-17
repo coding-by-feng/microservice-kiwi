@@ -21,9 +21,9 @@ import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
-#if(${hasBigDecimal})
-import java.math.BigDecimal;
-#end
+    #if(${hasBigDecimal})
+    import java.math.BigDecimal;
+    #end
 import java.time.LocalDateTime;
 
 /**
@@ -32,8 +32,8 @@ import java.time.LocalDateTime;
  */
 public class ${caseTableName}Column {
 
-  #foreach ($column in $columns)
-    public static final String ${column.columnNameUpper} = "${column.columnName}";
-  #end
+    #foreach ($column in $columns)
+        public static final String ${column.columnNameUpper} ="${column.columnName}";
+    #end
 
 }

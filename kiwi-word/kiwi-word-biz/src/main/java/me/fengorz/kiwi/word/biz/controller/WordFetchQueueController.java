@@ -29,7 +29,7 @@ import me.fengorz.kiwi.common.fastdfs.exception.DfsOperateDeleteException;
 import me.fengorz.kiwi.common.fastdfs.exception.DfsOperateException;
 import me.fengorz.kiwi.common.sdk.controller.BaseController;
 import me.fengorz.kiwi.common.sdk.util.log.KiwiLogUtils;
-import me.fengorz.kiwi.word.api.common.CrawlerConstants;
+import me.fengorz.kiwi.word.api.common.WordCrawlerConstants;
 import me.fengorz.kiwi.word.api.dto.fetch.FetchWordResultDTO;
 import me.fengorz.kiwi.word.api.dto.remote.WordFetchQueuePageDTO;
 import me.fengorz.kiwi.word.api.entity.WordFetchQueueDO;
@@ -133,13 +133,13 @@ public class WordFetchQueueController extends BaseController {
         try {
             wordOperateService.storeFetchWordResult(fetchWordResultDTO);
         } catch (WordResultStoreException e) {
-            return R.failed(CrawlerConstants.STATUS_ERROR_WORD_ID_NOT_NULL, e.getMessage());
+            return R.failed(WordCrawlerConstants.STATUS_ERROR_WORD_ID_NOT_NULL, e.getMessage());
         } catch (DfsOperateException e) {
-            return R.failed(CrawlerConstants.STATUS_ERROR_DFS_OPERATE_FAILED, e.getMessage());
+            return R.failed(WordCrawlerConstants.STATUS_ERROR_DFS_OPERATE_FAILED, e.getMessage());
         } catch (DfsOperateDeleteException e) {
             log.error(KiwiLogUtils.getClassName() + CommonConstants.DOT + KiwiLogUtils.getMethodName(), e.getMessage());
             wordOperateService.dfsDeleteExceptionBackCall(fetchWordResultDTO.getWordName());
-            return R.failed(CrawlerConstants.STATUS_ERROR_DFS_OPERATE_DELETE_FAILED, e.getMessage());
+            return R.failed(WordCrawlerConstants.STATUS_ERROR_DFS_OPERATE_DELETE_FAILED, e.getMessage());
         }
         return R.ok();
     }

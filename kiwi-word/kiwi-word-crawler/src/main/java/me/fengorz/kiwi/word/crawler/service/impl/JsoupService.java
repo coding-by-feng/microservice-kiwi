@@ -21,7 +21,7 @@ package me.fengorz.kiwi.word.crawler.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
 import lombok.extern.slf4j.Slf4j;
-import me.fengorz.kiwi.word.api.common.CrawlerConstants;
+import me.fengorz.kiwi.word.api.common.WordCrawlerConstants;
 import me.fengorz.kiwi.word.api.dto.fetch.*;
 import me.fengorz.kiwi.word.api.exception.JsoupFetchConnectException;
 import me.fengorz.kiwi.word.api.exception.JsoupFetchResultException;
@@ -81,7 +81,7 @@ public class JsoupService implements IJsoupService {
 
         Document doc;
         try {
-            doc = Jsoup.connect(CrawlerConstants.CRAWLER_BASE_URL + word).get();
+            doc = Jsoup.connect(WordCrawlerConstants.CRAWLER_BASE_URL + word).get();
         } catch (IOException e) {
             log.error(JSOUP_CONNECT_EXCEPTION, word);
             throw new JsoupFetchConnectException();
@@ -119,9 +119,9 @@ public class JsoupService implements IJsoupService {
             });
 
             // fetch UK pronunciation
-            fetchWordPronunciationDTOList.add(subFetchPronunciation(word, block, KEY_UK_PRONUNCIATIOIN, CrawlerConstants.PRONUNCIATION_TYPE_UK));
+            fetchWordPronunciationDTOList.add(subFetchPronunciation(word, block, KEY_UK_PRONUNCIATIOIN, WordCrawlerConstants.PRONUNCIATION_TYPE_UK));
             // fetch US pronunciation
-            fetchWordPronunciationDTOList.add(subFetchPronunciation(word, block, KEY_US_PRONUNCIATIOIN, CrawlerConstants.PRONUNCIATION_TYPE_US));
+            fetchWordPronunciationDTOList.add(subFetchPronunciation(word, block, KEY_US_PRONUNCIATIOIN, WordCrawlerConstants.PRONUNCIATION_TYPE_US));
             fetchWordCodeDTO.setFetchWordPronunciationDTOList(fetchWordPronunciationDTOList);
 
             // Each label can have many paraphrases
@@ -162,7 +162,7 @@ public class JsoupService implements IJsoupService {
                             );
 
                             // TODO codingByFeng The default is English, but consider how flexible it will be in the future if there are other languages
-                            fetchParaphraseExampleDTO.setTranslateLanguage(CrawlerConstants.DEFAULT_TRANSLATE_LANGUAGE);
+                            fetchParaphraseExampleDTO.setTranslateLanguage(WordCrawlerConstants.DEFAULT_TRANSLATE_LANGUAGE);
                             fetchParaphraseExampleDTOList.add(fetchParaphraseExampleDTO);
                             fetchParaphraseDTO.setFetchParaphraseExampleDTOList(fetchParaphraseExampleDTOList);
                         }

@@ -23,7 +23,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
-import me.fengorz.kiwi.common.api.constant.WordConstant;
+import me.fengorz.kiwi.common.api.constant.CommonConstants;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.WordUtils;
 import org.springframework.beans.BeanUtils;
@@ -135,11 +135,11 @@ public class KiwiBeanUtils extends BeanUtils {
      * 列名转换成Java属性名
      */
     public static String columnToBeanProperty(String columnName, String delimiter) {
-        return WordUtils.capitalizeFully(columnName, delimiter.toCharArray()).replace(delimiter, WordConstant.EMPTY);
+        return WordUtils.capitalizeFully(columnName, delimiter.toCharArray()).replace(delimiter, CommonConstants.EMPTY);
     }
 
     public static String defaultColumnToBeanProperty(String columnName) {
-        return columnToBeanProperty(columnName, WordConstant.DELIMITER_STR_);
+        return columnToBeanProperty(columnName, CommonConstants.DELIMITER_STR);
     }
 
     public static <T, E> T convertFrom(E source, Class<T> requiredType, String... ignoreProperties) {

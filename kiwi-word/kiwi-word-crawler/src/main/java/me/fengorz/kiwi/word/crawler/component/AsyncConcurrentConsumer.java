@@ -23,7 +23,7 @@ import cn.hutool.core.util.StrUtil;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.api.R;
-import me.fengorz.kiwi.word.api.common.CrawlerConstants;
+import me.fengorz.kiwi.word.api.common.WordCrawlerConstants;
 import me.fengorz.kiwi.word.api.dto.fetch.FetchWordResultDTO;
 import me.fengorz.kiwi.word.api.dto.fetch.WordMessageDTO;
 import me.fengorz.kiwi.word.api.entity.WordFetchQueueDO;
@@ -48,8 +48,8 @@ public class AsyncConcurrentConsumer {
     private final IRemoteWordFetchService remoteWordFetchService;
 
     @Async
-    public void asyncFetchWord(WordMessageDTO wordMessageDTO){
-        WordFetchQueueDO wordFetchQueue = new WordFetchQueueDO().setWordName(wordMessageDTO.getWord()).setFetchStatus(CrawlerConstants.STATUS_FETCHED);
+    public void asyncFetchWord(WordMessageDTO wordMessageDTO) {
+        WordFetchQueueDO wordFetchQueue = new WordFetchQueueDO().setWordName(wordMessageDTO.getWord()).setFetchStatus(WordCrawlerConstants.STATUS_FETCHED);
         try {
             long oldTime = System.currentTimeMillis();
             FetchWordResultDTO fetchWordResultDTO = jsoupService.fetchWordInfo(wordMessageDTO);
@@ -62,9 +62,9 @@ public class AsyncConcurrentConsumer {
                 log.info("word({}) fetch store success! spent {}s", wordFetchQueue.getWordName(), (newTime - oldTime));
             }
         } catch (JsoupFetchConnectException e) {
-            subDealException(wordFetchQueue, CrawlerConstants.STATUS_ERROR_JSOUP_FETCH_CONNECT_FAILED, e.getMessage());
+            subDealException(wordFetchQueue, WordCrawlerConstants.STATUS_ERROR_JSOUP_FETCH_CONNECT_FAILED, e.getMessage());
         } catch (JsoupFetchResultException e) {
-            subDealException(wordFetchQueue, CrawlerConstants.STATUS_ERROR_JSOUP_RESULT_FETCH_FAILED, e.getMessage());
+            subDealException(wordFetchQueue, WordCrawlerConstants.STATUS_ERROR_JSOUP_RESULT_FETCH_FAILED, e.getMessage());
         } finally {
             remoteWordFetchService.updateByWordName(wordFetchQueue);
         }

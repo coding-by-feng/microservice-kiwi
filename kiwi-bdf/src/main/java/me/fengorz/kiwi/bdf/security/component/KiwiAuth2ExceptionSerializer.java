@@ -23,27 +23,29 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import lombok.SneakyThrows;
+import me.fengorz.kiwi.bdf.security.exception.KiwiAuth2Exception;
 import me.fengorz.kiwi.common.api.constant.CommonConstants;
-import me.fengorz.kiwi.bdf.security.exception.EnhancerAuth2Exception;
 
 /**
- * @author lengleng
- * @date 2019/2/1
  * <p>
  * OAuth2 异常格式化
+ *
+ * @author zhanshifeng
  */
-public class EnhancerAuth2ExceptionSerializer extends StdSerializer<EnhancerAuth2Exception> {
-	public EnhancerAuth2ExceptionSerializer() {
-		super(EnhancerAuth2Exception.class);
-	}
+public class KiwiAuth2ExceptionSerializer extends StdSerializer<KiwiAuth2Exception> {
+    private static final long serialVersionUID = 6776883623606657402L;
 
-	@Override
-	@SneakyThrows
-	public void serialize(EnhancerAuth2Exception value, JsonGenerator gen, SerializerProvider provider) {
-		gen.writeStartObject();
-		gen.writeObjectField("code", CommonConstants.FAIL);
-		gen.writeStringField("msg", value.getMessage());
-		gen.writeStringField("data", value.getErrorCode());
-		gen.writeEndObject();
-	}
+    public KiwiAuth2ExceptionSerializer() {
+        super(KiwiAuth2Exception.class);
+    }
+
+    @Override
+    @SneakyThrows
+    public void serialize(KiwiAuth2Exception value, JsonGenerator gen, SerializerProvider provider) {
+        gen.writeStartObject();
+        gen.writeObjectField("code", CommonConstants.FAIL);
+        gen.writeStringField("msg", value.getMessage());
+        gen.writeStringField("data", value.getErrorCode());
+        gen.writeEndObject();
+    }
 }

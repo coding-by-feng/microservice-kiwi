@@ -34,7 +34,7 @@ import me.fengorz.kiwi.common.fastdfs.component.DfsService;
 import me.fengorz.kiwi.common.fastdfs.exception.DfsOperateDeleteException;
 import me.fengorz.kiwi.common.fastdfs.exception.DfsOperateException;
 import me.fengorz.kiwi.common.sdk.CommonUtils;
-import me.fengorz.kiwi.common.sdk.util.validate.EnhancedAssertUtils;
+import me.fengorz.kiwi.common.sdk.util.validate.KiwiAssertUtils;
 import me.fengorz.kiwi.common.sdk.web.security.SecurityUtils;
 import me.fengorz.kiwi.word.api.common.CrawlerConstants;
 import me.fengorz.kiwi.word.api.dto.fetch.FetchParaphraseDTO;
@@ -214,7 +214,7 @@ public class WordOperateServiceImpl implements IWordOperateService {
             // 先抓取到时态变化的其他读个不同wordName，然后每个都fetchNewWord一下
         }
 
-        EnhancedAssertUtils.serviceNotNull(word, "No results for [{}]!", wordName);
+        KiwiAssertUtils.serviceNotNull(word, "No results for [{}]!", wordName);
 
         wordQueryVO.setWordId(word.getWordId());
         wordQueryVO.setWordName(word.getWordName());
@@ -243,7 +243,7 @@ public class WordOperateServiceImpl implements IWordOperateService {
 
     private List<WordCharacterVO> assembleWordCharacterVOS(String wordName, Integer wordId, boolean isQueryCollect, Integer currentUserId) throws ServiceException {
         List<WordCharacterDO> wordCharacterList = this.wordCharacterService.list(new QueryWrapper<>(new WordCharacterDO().setWordId(wordId)));
-        EnhancedAssertUtils.serviceNotEmpty(wordCharacterList, "No character for [{}]!", wordName);
+        KiwiAssertUtils.serviceNotEmpty(wordCharacterList, "No character for [{}]!", wordName);
 
         List<WordCharacterVO> wordCharacterVOList = new ArrayList<>();
         for (WordCharacterDO wordCharacter : wordCharacterList) {
@@ -342,7 +342,7 @@ public class WordOperateServiceImpl implements IWordOperateService {
         LambdaQueryWrapper<WordStarRelDO> queryWrapper = new LambdaQueryWrapper<WordStarRelDO>().eq(WordStarRelDO::getListId, listId)
                 .eq(WordStarRelDO::getWordId, wordId);
         int count = wordStarRelService.count(queryWrapper);
-        EnhancedAssertUtils.serviceEmpty(count, "wordStar is exists!");
+        KiwiAssertUtils.serviceEmpty(count, "wordStar is exists!");
         return this.wordStarRelService.save(
                 new WordStarRelDO()
                         .setListId(listId)
@@ -355,18 +355,18 @@ public class WordOperateServiceImpl implements IWordOperateService {
         LambdaQueryWrapper<WordStarRelDO> queryWrapper = new LambdaQueryWrapper<WordStarRelDO>().eq(WordStarRelDO::getListId, listId)
                 .eq(WordStarRelDO::getWordId, wordId);
         int count = wordStarRelService.count(queryWrapper);
-        EnhancedAssertUtils.serviceNotEmpty(count, "wordStar is not exists!");
+        KiwiAssertUtils.serviceNotEmpty(count, "wordStar is not exists!");
         return this.wordStarRelService.remove(queryWrapper);
     }
 
     @Override
     public boolean putParaphraseIntoStarList(Integer paraphraseId, Integer listId) throws ServiceException {
-        EnhancedAssertUtils.serviceNotEmpty(
+        KiwiAssertUtils.serviceNotEmpty(
                 this.wordParaphraseService.countById(paraphraseId), "paraphrase is not exists!");
-        EnhancedAssertUtils.serviceNotEmpty(
+        KiwiAssertUtils.serviceNotEmpty(
                 this.wordParaphraseStarListService.countById(listId), "paraphraseStarList is not exists!");
         LambdaQueryWrapper<WordParaphraseStarRelDO> wrapper = new LambdaQueryWrapper<WordParaphraseStarRelDO>().eq(WordParaphraseStarRelDO::getListId, listId).eq(WordParaphraseStarRelDO::getParaphraseId, paraphraseId);
-        EnhancedAssertUtils.serviceEmpty(this.wordParaphraseStarRelService.count(wrapper), "paraphrase already exists!");
+        KiwiAssertUtils.serviceEmpty(this.wordParaphraseStarRelService.count(wrapper), "paraphrase already exists!");
         return this.wordParaphraseStarRelService.save(
                 new WordParaphraseStarRelDO()
                         .setListId(listId)
@@ -377,7 +377,7 @@ public class WordOperateServiceImpl implements IWordOperateService {
     @Override
     public boolean putExampleIntoStarList(Integer exampleId, Integer listId) throws ServiceException {
         LambdaQueryWrapper<WordExampleStarRelDO> queryWrapper = new LambdaQueryWrapper<WordExampleStarRelDO>().eq(WordExampleStarRelDO::getListId, listId).eq(WordExampleStarRelDO::getExampleId, exampleId);
-        EnhancedAssertUtils.serviceEmpty(this.wordExampleStarRelService.count(queryWrapper), "example rel is already exists!");
+        KiwiAssertUtils.serviceEmpty(this.wordExampleStarRelService.count(queryWrapper), "example rel is already exists!");
         return this.wordExampleStarRelService.save(
                 new WordExampleStarRelDO()
                         .setListId(listId)
@@ -393,7 +393,7 @@ public class WordOperateServiceImpl implements IWordOperateService {
                                 .setParaphraseId(paraphraseId)
                 )
         );
-        EnhancedAssertUtils.serviceNotNull(paraphrase, "paraphrase[{}] is not exists!", paraphraseId);
+        KiwiAssertUtils.serviceNotNull(paraphrase, "paraphrase[{}] is not exists!", paraphraseId);
 
         final Integer characterId = paraphrase.getCharacterId();
         WordCharacterDO character = this.wordCharacterService.getOne(
@@ -402,7 +402,7 @@ public class WordOperateServiceImpl implements IWordOperateService {
                                 .setCharacterId(characterId)
                 )
         );
-        EnhancedAssertUtils.serviceNotNull(character, "character[{}] is not exists!", characterId);
+        KiwiAssertUtils.serviceNotNull(character, "character[{}] is not exists!", characterId);
 
         List<WordParaphraseVO> paraphraseVOList = new ArrayList<>();
         WordParaphraseVO wordParaphraseVO = new WordParaphraseVO();
@@ -436,7 +436,7 @@ public class WordOperateServiceImpl implements IWordOperateService {
     public boolean removeExampleStar(Integer exampleId, Integer listId) {
         LambdaQueryWrapper<WordExampleStarRelDO> queryWrapper = new LambdaQueryWrapper<WordExampleStarRelDO>().eq(WordExampleStarRelDO::getListId, listId).eq(WordExampleStarRelDO::getExampleId, exampleId);
         int count = this.wordExampleStarRelService.count(queryWrapper);
-        EnhancedAssertUtils.serviceNotEmpty(count, "example is not exists!");
+        KiwiAssertUtils.serviceNotEmpty(count, "example is not exists!");
         return this.wordExampleStarRelService.remove(queryWrapper);
     }
 

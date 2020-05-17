@@ -17,23 +17,14 @@
  *
  */
 
-package me.fengorz.kiwi.admin;
+package me.fengorz.kiwi.common.sdk.util.time;
 
-import me.fengorz.kiwi.bdf.feign.annotation.EnableEnhancerFeignClients;
-import me.fengorz.kiwi.bdf.security.annotation.EnableEnhancerResourceServer;
-import org.springframework.boot.SpringApplication;
-import org.springframework.cloud.client.SpringCloudApplication;
-
+import org.apache.commons.lang3.time.DateFormatUtils;
 
 /**
- * @Author codingByFeng
- * @Date 2019-09-19 17:09
+ * @Description TODO
+ * @Author zhanshifeng
+ * @Date 2020/4/21 8:09 PM
  */
-@EnableEnhancerResourceServer
-@EnableEnhancerFeignClients
-@SpringCloudApplication
-public class UpmsApplication {
-    public static void main(String[] args) {
-        SpringApplication.run(UpmsApplication.class, args);
-    }
+public class KiwiDateFormatUtils extends DateFormatUtils {
 }

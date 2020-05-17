@@ -20,7 +20,7 @@
         </dependency>
         <dependency>
             <groupId>me.fengorz</groupId>
-            <artifactId>kiwi-security</artifactId>
+            <artifactId>kiwi-bdf</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
 

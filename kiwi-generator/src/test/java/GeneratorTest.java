@@ -1,4 +1,4 @@
-import me.fengorz.kiwi.common.sdk.bean.EnhancedBeanUtils;
+import me.fengorz.kiwi.common.sdk.bean.KiwiBeanUtils;
 
 /**
  * @Description TODO
@@ -16,6 +16,6 @@ public class GeneratorTest {
         //     System.out.println(k + "+" + v);
         // });
 
-        System.out.println(EnhancedBeanUtils.columnToBeanProperty("t_tactic_scheme", "_"));
+        System.out.println(KiwiBeanUtils.columnToBeanProperty("t_tactic_scheme", "_"));
     }
 }

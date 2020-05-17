@@ -24,6 +24,7 @@ import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import lombok.AllArgsConstructor;
 import me.fengorz.kiwi.common.api.R;
 import me.fengorz.kiwi.common.api.constant.CommonConstants;
 import me.fengorz.kiwi.word.api.entity.WordParaphraseStarListDO;
@@ -33,7 +34,6 @@ import me.fengorz.kiwi.word.api.vo.star.ParaphraseStarItemVO;
 import me.fengorz.kiwi.word.biz.mapper.WordParaphraseStarListMapper;
 import me.fengorz.kiwi.word.biz.mapper.WordParaphraseStarRelMapper;
 import me.fengorz.kiwi.word.biz.service.IWordParaphraseStarListService;
-import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 /**

@@ -19,7 +19,6 @@
 
 package me.fengorz.kiwi.word.api.vo;
 
-import me.fengorz.kiwi.common.api.constant.CommonConstants;
 import lombok.Data;
 import lombok.ToString;
 import lombok.experimental.Accessors;

@@ -20,11 +20,11 @@
 package me.fengorz.kiwi.common.security.component;
 
 import cn.hutool.core.collection.CollUtil;
+import lombok.AllArgsConstructor;
 import me.fengorz.kiwi.common.api.constant.CommonConstants;
 import me.fengorz.kiwi.common.api.constant.SecurityConstants;
-import me.fengorz.kiwi.common.sdk.config.FilterIgnorePropertiesConfig;
 import me.fengorz.kiwi.common.api.entity.EnhancerUser;
-import lombok.AllArgsConstructor;
+import me.fengorz.kiwi.common.sdk.config.FilterIgnorePropertiesConfig;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;

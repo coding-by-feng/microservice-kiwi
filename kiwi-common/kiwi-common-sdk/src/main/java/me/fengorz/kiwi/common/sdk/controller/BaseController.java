@@ -19,8 +19,8 @@
 
 package me.fengorz.kiwi.common.sdk.controller;
 
-import me.fengorz.kiwi.common.sdk.security.SecurityUtils;
 import me.fengorz.kiwi.common.api.entity.EnhancerUser;
+import me.fengorz.kiwi.common.sdk.security.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;

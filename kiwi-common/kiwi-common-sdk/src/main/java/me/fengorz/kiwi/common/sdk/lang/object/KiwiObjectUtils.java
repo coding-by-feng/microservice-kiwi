@@ -16,24 +16,19 @@
  *
  *
  */
-package me.fengorz.kiwi.word.biz.service;
 
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.extension.service.IService;
-import me.fengorz.kiwi.word.api.entity.WordMainDO;
+package me.fengorz.kiwi.common.sdk.lang.object;
 
-import java.util.List;
-import java.util.Map;
+import org.springframework.util.ObjectUtils;
 
 /**
- * 单词主表
- *
- * @author codingByFeng
- * @date 2019-10-31 20:32:07
+ * @Description TODO
+ * @Author zhanshifeng
+ * @Date 2020/5/17 12:24 PM
  */
-public interface IWordMainService extends IService<WordMainDO> {
+public class KiwiObjectUtils extends ObjectUtils {
 
-    WordMainDO getOneByWordName(String wordName);
-
-    List<Map> fuzzyQueryList(Page page, String wordName);
+    public static boolean isNotEmpty(Object obj) {
+        return !isEmpty(obj);
+    }
 }

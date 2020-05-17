@@ -20,15 +20,15 @@ package me.fengorz.kiwi.word.biz.controller;
 
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.api.R;
-import me.fengorz.kiwi.common.sdk.controller.BaseController;
 import me.fengorz.kiwi.common.fastdfs.component.DfsService;
 import me.fengorz.kiwi.common.fastdfs.exception.DfsOperateDeleteException;
 import me.fengorz.kiwi.common.log.annotation.SysLog;
+import me.fengorz.kiwi.common.sdk.controller.BaseController;
 import me.fengorz.kiwi.word.api.entity.WordPronunciationDO;
 import me.fengorz.kiwi.word.biz.service.IWordPronunciationService;
-import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 

@@ -19,10 +19,10 @@
 package me.fengorz.kiwi.word.biz.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import lombok.AllArgsConstructor;
 import me.fengorz.kiwi.word.api.entity.WordPronunciationDO;
 import me.fengorz.kiwi.word.biz.mapper.WordPronunciationMapper;
 import me.fengorz.kiwi.word.biz.service.IWordPronunciationService;
-import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 /**

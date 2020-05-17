@@ -19,10 +19,9 @@
 
 package me.fengorz.kiwi.word.crawler.component;
 
-import me.fengorz.kiwi.word.api.dto.fetch.WordMessageDTO;
 import lombok.AllArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import me.fengorz.kiwi.word.api.dto.fetch.WordMessageDTO;
 import org.springframework.amqp.core.ExchangeTypes;
 import org.springframework.amqp.rabbit.annotation.*;
 import org.springframework.stereotype.Component;

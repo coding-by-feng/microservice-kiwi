@@ -18,7 +18,6 @@
  */
 
 import io.netty.handler.codec.http.HttpMethod;
-import org.junit.Test;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 import reactor.core.publisher.ConnectableFlux;

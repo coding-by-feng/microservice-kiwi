@@ -29,8 +29,13 @@ public interface CommonConstants {
 
     String EMPTY = "";
     String DOT = ".";
+    String COMMA = ",";
+
     String SQUARE_BRACKET_LEFT = "[";
     String SQUARE_BRACKET_RIGHT = "]";
+
+    String FORWARD_SLASH = "/";
+    String BACK_SLASH = "\\";
 
     String TRUE = "Y";
     String FALSE = "N";

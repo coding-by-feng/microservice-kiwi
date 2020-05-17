@@ -20,12 +20,12 @@ package me.fengorz.kiwi.word.biz.controller;
 
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import lombok.AllArgsConstructor;
 import me.fengorz.kiwi.common.api.R;
-import me.fengorz.kiwi.common.sdk.controller.BaseController;
 import me.fengorz.kiwi.common.log.annotation.SysLog;
+import me.fengorz.kiwi.common.sdk.controller.BaseController;
 import me.fengorz.kiwi.word.api.entity.WordParaphraseExampleDO;
 import me.fengorz.kiwi.word.biz.service.IWordParaphraseExampleService;
-import lombok.AllArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 

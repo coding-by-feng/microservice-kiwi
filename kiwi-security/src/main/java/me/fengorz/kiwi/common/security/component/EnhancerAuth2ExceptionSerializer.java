@@ -22,9 +22,9 @@ package me.fengorz.kiwi.common.security.component;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
+import lombok.SneakyThrows;
 import me.fengorz.kiwi.common.api.constant.CommonConstants;
 import me.fengorz.kiwi.common.security.exception.EnhancerAuth2Exception;
-import lombok.SneakyThrows;
 
 /**
  * @author lengleng

@@ -20,12 +20,12 @@ package me.fengorz.kiwi.word.biz.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import lombok.AllArgsConstructor;
 import me.fengorz.kiwi.word.api.dto.mapper.in.SelectEntityIsCollectDTO;
 import me.fengorz.kiwi.word.api.entity.WordParaphraseExampleDO;
 import me.fengorz.kiwi.word.api.vo.WordParaphraseExampleVO;
 import me.fengorz.kiwi.word.biz.mapper.WordParaphraseExampleMapper;
 import me.fengorz.kiwi.word.biz.service.IWordParaphraseExampleService;
-import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

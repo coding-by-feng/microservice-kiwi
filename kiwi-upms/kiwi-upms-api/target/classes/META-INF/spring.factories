@@ -1,0 +1,3 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  me.fengorz.kiwi.admin.api.feign.factory.RemoteUserServiceFallBackFactory,\
+  me.fengorz.kiwi.admin.api.feign.fallback.RemoteUserServiceFallBackImpl

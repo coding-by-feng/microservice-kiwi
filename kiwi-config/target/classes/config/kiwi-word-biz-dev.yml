@@ -1,0 +1,21 @@
+security:
+  oauth2:
+    client:
+      client-id: ENC(wORgugqWfXlIuzbal/3pjXTNXij/RSpo)
+      client-secret: ENC(rMd1buB3iI+si+W99eB+QFa3QburIEmY)
+      scope: server
+
+# 数据源
+spring:
+  main:
+    allow-bean-definition-overriding: true
+
+# 直接放行URL
+ignore:
+  urls:
+    - /word/**
+    - /test/**
+  userNames:
+    - admin
+
+

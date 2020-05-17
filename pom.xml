@@ -55,7 +55,17 @@
         <lombok.version>1.18.8</lombok.version>
         <mysql.version>8.0.17</mysql.version>
 
+        <kiwi-eureka.version>1.0-SNAPSHOT</kiwi-eureka.version>
+        <kiwi-config.version>1.0-SNAPSHOT</kiwi-config.version>
+        <kiwi-cloud-service.version>1.0-SNAPSHOT</kiwi-cloud-service.version>
         <kiwi-common.version>1.0-SNAPSHOT</kiwi-common.version>
+        <kiwi-upms.version>1.0-SNAPSHOT</kiwi-upms.version>
+        <kiwi-bdf.version>1.0-SNAPSHOT</kiwi-bdf.version>
+        <kiwi-gateway.version>1.0-SNAPSHOT</kiwi-gateway.version>
+        <kiwi-auth.version>1.0-SNAPSHOT</kiwi-auth.version>
+        <kiwi-word.version>1.0-SNAPSHOT</kiwi-word.version>
+        <kiwi-flow.version>1.0-SNAPSHOT</kiwi-flow.version>
+        <kiwi-generator.version>1.0-SNAPSHOT</kiwi-generator.version>
     </properties>
 
     <dependencies>

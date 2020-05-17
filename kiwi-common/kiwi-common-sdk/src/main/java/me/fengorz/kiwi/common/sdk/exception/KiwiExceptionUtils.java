@@ -17,23 +17,15 @@
  *
  */
 
-package me.fengorz.kiwi.admin;
+package me.fengorz.kiwi.common.sdk.exception;
 
-import me.fengorz.kiwi.bdf.feign.annotation.EnableEnhancerFeignClients;
-import me.fengorz.kiwi.bdf.security.annotation.EnableEnhancerResourceServer;
-import org.springframework.boot.SpringApplication;
-import org.springframework.cloud.client.SpringCloudApplication;
-
+import cn.hutool.core.exceptions.ExceptionUtil;
 
 /**
- * @Author codingByFeng
- * @Date 2019-09-19 17:09
+ * @Description TODO
+ * @Author zhanshifeng
+ * @Date 2019/11/26 4:32 PM
  */
-@EnableEnhancerResourceServer
-@EnableEnhancerFeignClients
-@SpringCloudApplication
-public class UpmsApplication {
-    public static void main(String[] args) {
-        SpringApplication.run(UpmsApplication.class, args);
-    }
+public class KiwiExceptionUtils extends ExceptionUtil {
+
 }

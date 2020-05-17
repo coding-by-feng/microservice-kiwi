@@ -1,4 +1,4 @@
-import me.fengorz.kiwi.common.sdk.util.log.EnhancedLogUtils;
+import me.fengorz.kiwi.common.sdk.util.log.KiwiLogUtils;
 import me.fengorz.kiwi.word.api.dto.fetch.FetchWordResultDTO;
 import me.fengorz.kiwi.word.api.entity.WordFetchQueueDO;
 import me.fengorz.kiwi.word.api.util.CrawlerUtils;
@@ -51,10 +51,10 @@ public class TempTest {
     public void test5() {
         // System.out.println(ClassUtil.getClassPath());
         // System.out.println(ThreadUtil.getStackTrace());
-        System.out.println(EnhancedLogUtils.getClassName());
-        System.out.println(EnhancedLogUtils.getMethodName());
-        System.out.println(EnhancedLogUtils.getFileName());
-        System.out.println(EnhancedLogUtils.getLineNumber());
+        System.out.println(KiwiLogUtils.getClassName());
+        System.out.println(KiwiLogUtils.getMethodName());
+        System.out.println(KiwiLogUtils.getFileName());
+        System.out.println(KiwiLogUtils.getLineNumber());
     }
 
     // @Test

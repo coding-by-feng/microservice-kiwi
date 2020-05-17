@@ -17,23 +17,32 @@
  *
  */
 
-package me.fengorz.kiwi.admin;
+package me.fengorz.kiwi.bdf.security.exception;
 
-import me.fengorz.kiwi.bdf.feign.annotation.EnableEnhancerFeignClients;
-import me.fengorz.kiwi.bdf.security.annotation.EnableEnhancerResourceServer;
-import org.springframework.boot.SpringApplication;
-import org.springframework.cloud.client.SpringCloudApplication;
-
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import me.fengorz.kiwi.bdf.security.component.EnhancerAuth2ExceptionSerializer;
+import org.springframework.http.HttpStatus;
 
 /**
- * @Author codingByFeng
- * @Date 2019-09-19 17:09
+ * @author lengleng
+ * @date 2019/2/1
  */
-@EnableEnhancerResourceServer
-@EnableEnhancerFeignClients
-@SpringCloudApplication
-public class UpmsApplication {
-    public static void main(String[] args) {
-        SpringApplication.run(UpmsApplication.class, args);
-    }
+@JsonSerialize(using = EnhancerAuth2ExceptionSerializer.class)
+public class ForbiddenException extends EnhancerAuth2Exception {
+
+	public ForbiddenException(String msg, Throwable t) {
+		super(msg);
+	}
+
+	@Override
+	public String getOAuth2ErrorCode() {
+		return "access_denied";
+	}
+
+	@Override
+	public int getHttpErrorCode() {
+		return HttpStatus.FORBIDDEN.value();
+	}
+
 }
+

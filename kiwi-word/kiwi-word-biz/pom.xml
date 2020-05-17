@@ -16,19 +16,19 @@
         <dependency>
             <groupId>me.fengorz</groupId>
             <artifactId>kiwi-word-api</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>${kiwi-word.version}</version>
         </dependency>
         <dependency>
             <groupId>me.fengorz</groupId>
-            <artifactId>kiwi-security</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <artifactId>kiwi-bdf</artifactId>
+            <version>${kiwi-bdf.version}</version>
         </dependency>
-        <!-- myself end -->
         <dependency>
             <groupId>me.fengorz</groupId>
             <artifactId>kiwi-common-dfs</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>${kiwi-common.version}</version>
         </dependency>
+        <!-- myself end -->
     </dependencies>
 
     <build>

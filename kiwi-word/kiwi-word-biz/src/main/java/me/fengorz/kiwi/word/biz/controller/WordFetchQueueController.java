@@ -28,7 +28,7 @@ import me.fengorz.kiwi.common.api.constant.CommonConstants;
 import me.fengorz.kiwi.common.fastdfs.exception.DfsOperateDeleteException;
 import me.fengorz.kiwi.common.fastdfs.exception.DfsOperateException;
 import me.fengorz.kiwi.common.sdk.controller.BaseController;
-import me.fengorz.kiwi.common.sdk.util.log.EnhancedLogUtils;
+import me.fengorz.kiwi.common.sdk.util.log.KiwiLogUtils;
 import me.fengorz.kiwi.word.api.common.CrawlerConstants;
 import me.fengorz.kiwi.word.api.dto.fetch.FetchWordResultDTO;
 import me.fengorz.kiwi.word.api.dto.remote.WordFetchQueuePageDTO;
@@ -137,7 +137,7 @@ public class WordFetchQueueController extends BaseController {
         } catch (DfsOperateException e) {
             return R.failed(CrawlerConstants.STATUS_ERROR_DFS_OPERATE_FAILED, e.getMessage());
         } catch (DfsOperateDeleteException e) {
-            log.error(EnhancedLogUtils.getClassName() + CommonConstants.DOT + EnhancedLogUtils.getMethodName(), e.getMessage());
+            log.error(KiwiLogUtils.getClassName() + CommonConstants.DOT + KiwiLogUtils.getMethodName(), e.getMessage());
             wordOperateService.dfsDeleteExceptionBackCall(fetchWordResultDTO.getWordName());
             return R.failed(CrawlerConstants.STATUS_ERROR_DFS_OPERATE_DELETE_FAILED, e.getMessage());
         }

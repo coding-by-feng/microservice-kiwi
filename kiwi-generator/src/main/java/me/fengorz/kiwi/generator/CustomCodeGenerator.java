@@ -21,8 +21,8 @@ package me.fengorz.kiwi.generator;
 
 import com.baomidou.mybatisplus.core.toolkit.Constants;
 import lombok.SneakyThrows;
-import me.fengorz.kiwi.common.sdk.util.time.EnhancedDateFormatUtils;
-import me.fengorz.kiwi.common.sdk.util.time.EnhancedDateUtils;
+import me.fengorz.kiwi.common.sdk.util.time.KiwiDateFormatUtils;
+import me.fengorz.kiwi.common.sdk.util.time.KiwiDateUtils;
 import me.fengorz.kiwi.generator.common.ToolConstants;
 import me.fengorz.kiwi.generator.entity.ColumnEntity;
 import me.fengorz.kiwi.generator.entity.GenerateAbility;
@@ -129,7 +129,7 @@ public class CustomCodeGenerator {
         map.put("tableNameUpper", tableEntity.getTableName().toUpperCase());
         map.put("columns", tableEntity.getColumns());
         map.put("hasBigDecimal", hasBigDecimal);
-        map.put("datetime", EnhancedDateFormatUtils.format(new Date(), EnhancedDateUtils.DEFAULT_TIME_PATTERN));
+        map.put("datetime", KiwiDateFormatUtils.format(new Date(), KiwiDateUtils.DEFAULT_TIME_PATTERN));
         map.put("comments", tableEntity.getComments());
         map.put("author", "ccssoft");
         map.put("moduleName", generateConfig.getModuleName());

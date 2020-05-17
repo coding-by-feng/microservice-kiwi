@@ -1,0 +1,58 @@
+spring:
+  main:
+    allow-bean-definition-overriding: true
+  cloud:
+    gateway:
+      routes:
+        # 认证中心
+        - id: kiwi-auth
+          uri: lb://kiwi-auth
+          predicates:
+            - Path=/auth/**
+          filters:
+            # 验证码处理
+            - ValidateCodeGatewayFilter
+            # 前端密码解密
+            - PasswordDecoderGatewayFilter
+
+        - id: kiwi-upms
+          uri: lb://kiwi-upms
+          predicates:
+            - Path=/admin/**
+          filters:
+            - name: RequestRateLimiter
+              args:
+                key-resolver: '#{@remoteAddrKeyResolver}'
+                redis-rate-limiter.replenishRate: 10
+                redis-rate-limiter.burstCapacity: 20
+            # 降级配置
+            - name: Hystrix
+              args:
+                name: default
+                fallbackUri: 'forward:/fallback'
+
+        - id: kiwi-word-biz
+          uri: lb://kiwi-word-biz
+          predicates:
+            - Path=/wordBiz/**
+          filters:
+            # 降级配置
+            - name: Hystrix
+              args:
+                name: default
+                fallbackUri: 'forward:/fallback'
+
+      discovery:
+        locator:
+          enabled: true
+
+security:
+  encode:
+    # 前端密码密钥，必须16位
+    key: 'thanks,pig4cloud'
+  skip-url-slash-count: 1
+
+# 不校验验证码终端
+ignore:
+  clients:
+    - test

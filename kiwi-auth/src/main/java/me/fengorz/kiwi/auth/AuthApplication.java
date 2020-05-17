@@ -19,7 +19,7 @@
 
 package me.fengorz.kiwi.auth;
 
-import me.fengorz.kiwi.common.security.annotation.EnableEnhancerFeignClients;
+import me.fengorz.kiwi.common.security.annotation.feign.EnableEnhancerFeignClients;
 import org.springframework.boot.SpringApplication;
 import org.springframework.cloud.client.SpringCloudApplication;
 

@@ -20,12 +20,12 @@ package me.fengorz.kiwi.word.biz.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import lombok.AllArgsConstructor;
 import me.fengorz.kiwi.common.api.constant.CommonConstants;
 import me.fengorz.kiwi.word.api.common.CrawlerConstants;
 import me.fengorz.kiwi.word.api.entity.WordFetchQueueDO;
 import me.fengorz.kiwi.word.biz.mapper.WordFetchQueueMapper;
 import me.fengorz.kiwi.word.biz.service.IWordFetchQueueService;
-import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 /**

@@ -19,9 +19,9 @@
 
 package me.fengorz.kiwi.flow.controller;
 
-import me.fengorz.kiwi.flow.service.MyService;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import me.fengorz.kiwi.flow.service.MyService;
 import org.flowable.task.api.Task;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;

@@ -19,15 +19,13 @@
 
 package me.fengorz.kiwi.gateway.config;
 
-import me.fengorz.kiwi.gateway.handler.AutoCodeHandler;
-import me.fengorz.kiwi.gateway.handler.HystrixFallbackHandler;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import me.fengorz.kiwi.gateway.handler.AutoCodeHandler;
+import me.fengorz.kiwi.gateway.handler.HystrixFallbackHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
-import org.springframework.security.config.web.server.ServerHttpSecurity;
-import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.web.reactive.function.server.RequestPredicates;
 import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.RouterFunctions;

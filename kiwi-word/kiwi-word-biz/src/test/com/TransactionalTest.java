@@ -17,13 +17,12 @@
  *
  */
 
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.api.constant.CommonConstants;
 import me.fengorz.kiwi.common.core.util.EnhancedLogUtils;
 import me.fengorz.kiwi.word.biz.config.TransactionalTestConfig;
 import me.fengorz.kiwi.word.biz.test.TestService;
-import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
-import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

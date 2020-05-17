@@ -23,6 +23,7 @@ import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import lombok.AllArgsConstructor;
 import me.fengorz.kiwi.common.api.R;
 import me.fengorz.kiwi.common.api.constant.CommonConstants;
 import me.fengorz.kiwi.word.api.entity.WordExampleStarListDO;
@@ -30,7 +31,6 @@ import me.fengorz.kiwi.word.api.entity.column.WordParaphraseExampleListColumn;
 import me.fengorz.kiwi.word.api.vo.star.ExampleStarItemVO;
 import me.fengorz.kiwi.word.biz.mapper.WordExampleStarListMapper;
 import me.fengorz.kiwi.word.biz.service.IWordExampleStarListService;
-import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 /**

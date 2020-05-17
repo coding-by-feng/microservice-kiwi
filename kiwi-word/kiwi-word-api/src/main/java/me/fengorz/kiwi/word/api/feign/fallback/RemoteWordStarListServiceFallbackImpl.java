@@ -20,11 +20,11 @@
 package me.fengorz.kiwi.word.api.feign.fallback;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.api.R;
 import me.fengorz.kiwi.word.api.entity.WordStarListDO;
 import me.fengorz.kiwi.word.api.feign.IRemoteWordStarListService;
-import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 

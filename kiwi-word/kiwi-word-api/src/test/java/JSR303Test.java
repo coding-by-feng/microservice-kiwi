@@ -19,7 +19,6 @@
 
 import lombok.Data;
 import lombok.experimental.Accessors;
-import org.junit.Test;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;

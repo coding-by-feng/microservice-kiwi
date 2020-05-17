@@ -21,9 +21,6 @@ import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import lombok.SneakyThrows;
-import me.fengorz.kiwi.word.crawler.component.WordFetchConsumer;
-
-import java.util.Date;
 
 /**
  * @Description TODO

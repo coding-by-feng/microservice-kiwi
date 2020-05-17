@@ -1,5 +1,4 @@
 import lombok.SneakyThrows;
-import org.junit.Test;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;

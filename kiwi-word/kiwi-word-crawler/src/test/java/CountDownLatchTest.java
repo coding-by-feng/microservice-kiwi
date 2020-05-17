@@ -1,14 +1,7 @@
 import lombok.SneakyThrows;
 import me.fengorz.kiwi.word.api.dto.fetch.WordMessageDTO;
 import me.fengorz.kiwi.word.crawler.component.WordFetchProducer;
-import me.fengorz.kiwi.word.crawler.config.QueueConfig;
-import me.fengorz.kiwi.word.crawler.config.RabbitMQConfig;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
 
-import javax.annotation.PostConstruct;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;

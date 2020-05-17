@@ -19,8 +19,8 @@
 
 package me.fengorz.kiwi.admin.api.dto;
 
-import me.fengorz.kiwi.admin.api.entity.SysUser;
 import lombok.Data;
+import me.fengorz.kiwi.admin.api.entity.SysUser;
 
 /**
  * @Description 用户的全部信息数据

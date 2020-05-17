@@ -20,6 +20,7 @@
 package me.fengorz.kiwi.generator;
 
 import com.baomidou.mybatisplus.core.toolkit.Constants;
+import lombok.SneakyThrows;
 import me.fengorz.kiwi.common.sdk.time.EnhancedDateFormatUtils;
 import me.fengorz.kiwi.common.sdk.time.EnhancedDateUtils;
 import me.fengorz.kiwi.generator.common.ToolConstants;
@@ -29,7 +30,6 @@ import me.fengorz.kiwi.generator.entity.GenerateConfig;
 import me.fengorz.kiwi.generator.entity.TableEntity;
 import me.fengorz.kiwi.generator.util.ToolBeanUtils;
 import me.fengorz.kiwi.generator.util.ToolIOUtils;
-import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;

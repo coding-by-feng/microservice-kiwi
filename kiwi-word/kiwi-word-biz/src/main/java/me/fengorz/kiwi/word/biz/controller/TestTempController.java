@@ -19,6 +19,8 @@
 package me.fengorz.kiwi.word.biz.controller;
 
 import cn.hutool.core.util.StrUtil;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.api.R;
 import me.fengorz.kiwi.common.sdk.controller.BaseController;
 import me.fengorz.kiwi.word.api.common.CrawlerConstants;
@@ -26,8 +28,6 @@ import me.fengorz.kiwi.word.api.entity.WordFetchQueueDO;
 import me.fengorz.kiwi.word.api.entity.WordMainDO;
 import me.fengorz.kiwi.word.biz.service.IWordFetchQueueService;
 import me.fengorz.kiwi.word.biz.test.TestService;
-import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.*;

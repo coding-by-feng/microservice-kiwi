@@ -1,9 +1,9 @@
 import cn.hutool.core.lang.Assert;
+import lombok.SneakyThrows;
 import me.fengorz.kiwi.word.api.dto.fetch.FetchParaphraseDTO;
 import me.fengorz.kiwi.word.api.dto.fetch.FetchParaphraseExampleDTO;
 import me.fengorz.kiwi.word.api.dto.fetch.FetchWordCodeDTO;
 import me.fengorz.kiwi.word.api.dto.fetch.FetchWordResultDTO;
-import lombok.SneakyThrows;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;

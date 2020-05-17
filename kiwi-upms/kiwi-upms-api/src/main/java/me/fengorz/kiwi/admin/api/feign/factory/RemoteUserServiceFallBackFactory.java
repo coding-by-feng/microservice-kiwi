@@ -19,9 +19,9 @@
 
 package me.fengorz.kiwi.admin.api.feign.factory;
 
+import feign.hystrix.FallbackFactory;
 import me.fengorz.kiwi.admin.api.feign.RemoteUserService;
 import me.fengorz.kiwi.admin.api.feign.fallback.RemoteUserServiceFallBackImpl;
-import feign.hystrix.FallbackFactory;
 import org.springframework.stereotype.Component;
 
 /**

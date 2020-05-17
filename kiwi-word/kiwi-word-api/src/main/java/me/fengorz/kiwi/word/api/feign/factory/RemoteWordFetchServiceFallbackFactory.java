@@ -19,9 +19,9 @@
 
 package me.fengorz.kiwi.word.api.feign.factory;
 
+import feign.hystrix.FallbackFactory;
 import me.fengorz.kiwi.word.api.feign.IRemoteWordFetchService;
 import me.fengorz.kiwi.word.api.feign.fallback.RemoteWordFetchServiceFallbackImpl;
-import feign.hystrix.FallbackFactory;
 import org.springframework.stereotype.Component;
 
 /**

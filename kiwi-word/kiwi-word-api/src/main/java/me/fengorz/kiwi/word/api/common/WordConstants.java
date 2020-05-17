@@ -17,20 +17,17 @@
  *
  */
 
-package me.fengorz.kiwi.common.api.annotation.log;
-
-import java.lang.annotation.*;
+package me.fengorz.kiwi.word.api.common;
 
 /**
- * 操作日志注解
- *
- * @author zhanshifeng
+ * @Description word服务静态变量
+ * @Author zhanshifeng
+ * @Date 2020/5/17 11:19 PM
  */
-@Target(ElementType.METHOD)
-@Retention(RetentionPolicy.RUNTIME)
-@Documented
-public @interface SysLog {
+public interface WordConstants {
 
-    String value();
+    String CACHE_NAMES = "word";
+
+    String CACHE_KEY_PREFIX_WORD_MAIN = "main";
 
 }

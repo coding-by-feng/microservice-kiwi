@@ -32,6 +32,7 @@ public interface SysUserService extends IService<SysUser> {
 
     /**
      * 查询用户全部的信息，包含权限和角色信息
+     *
      * @param sysUser
      * @return
      */

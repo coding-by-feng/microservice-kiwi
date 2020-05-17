@@ -31,4 +31,5 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @Configuration
 @ComponentScan(basePackages = "me.fengorz.kiwi.word.crawler")
 @EnableScheduling
-public class QueueConfig { }
+public class QueueConfig {
+}

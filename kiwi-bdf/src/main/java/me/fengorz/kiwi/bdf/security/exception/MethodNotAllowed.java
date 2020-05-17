@@ -20,28 +20,29 @@
 package me.fengorz.kiwi.bdf.security.exception;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import me.fengorz.kiwi.bdf.security.component.EnhancerAuth2ExceptionSerializer;
+import me.fengorz.kiwi.bdf.security.component.KiwiAuth2ExceptionSerializer;
 import org.springframework.http.HttpStatus;
 
 /**
- * @author lengleng
- * @date 2019/2/1
+ * @author zhanshifeng
  */
-@JsonSerialize(using = EnhancerAuth2ExceptionSerializer.class)
-public class MethodNotAllowed extends EnhancerAuth2Exception {
+@JsonSerialize(using = KiwiAuth2ExceptionSerializer.class)
+public class MethodNotAllowed extends KiwiAuth2Exception {
 
-	public MethodNotAllowed(String msg, Throwable t) {
-		super(msg);
-	}
+    private static final long serialVersionUID = -3492800861197453836L;
 
-	@Override
-	public String getOAuth2ErrorCode() {
-		return "method_not_allowed";
-	}
+    public MethodNotAllowed(String msg, Throwable t) {
+        super(msg);
+    }
 
-	@Override
-	public int getHttpErrorCode() {
-		return HttpStatus.METHOD_NOT_ALLOWED.value();
-	}
+    @Override
+    public String getOAuth2ErrorCode() {
+        return "method_not_allowed";
+    }
+
+    @Override
+    public int getHttpErrorCode() {
+        return HttpStatus.METHOD_NOT_ALLOWED.value();
+    }
 
 }

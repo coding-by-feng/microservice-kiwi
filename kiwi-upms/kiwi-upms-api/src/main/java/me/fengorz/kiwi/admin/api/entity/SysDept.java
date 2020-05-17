@@ -37,36 +37,36 @@ import java.time.LocalDateTime;
 @TableName("sys_dept")
 public class SysDept extends Model<SysDept> {
 
-  private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
     /**
-   * 
-   */
+     *
+     */
     @TableId
     private Integer deptId;
     /**
-   * 部门名称
-   */
+     * 部门名称
+     */
     private String deptName;
     /**
-   * 排序
-   */
+     * 排序
+     */
     private Integer sort;
     /**
-   * 创建时间
-   */
+     * 创建时间
+     */
     private LocalDateTime createTime;
     /**
-   * 修改时间
-   */
+     * 修改时间
+     */
     private LocalDateTime updateTime;
     /**
-   * 是否有效  N：无效(已删除)  Y：正常
-   */
+     * 是否有效  N：无效(已删除)  Y：正常
+     */
     private String isValid;
     /**
-   * 
-   */
+     *
+     */
     private Integer parentId;
-  
+
 }

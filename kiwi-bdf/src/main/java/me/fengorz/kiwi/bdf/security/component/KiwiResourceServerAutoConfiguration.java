@@ -30,25 +30,24 @@ import org.springframework.web.client.DefaultResponseErrorHandler;
 import org.springframework.web.client.RestTemplate;
 
 /**
- * @author lengleng
- * @date 2019/03/08
+ * @author zhanshifeng
  */
 @ComponentScan("me.fengorz.kiwi.bdf.security")
-public class EnhancerResourceServerAutoConfiguration {
-	@Bean
-	@Primary
-	@LoadBalanced
-	public RestTemplate lbRestTemplate() {
-		RestTemplate restTemplate = new RestTemplate();
-		restTemplate.setErrorHandler(new DefaultResponseErrorHandler() {
-			@Override
-			@SneakyThrows
-			public void handleError(ClientHttpResponse response) {
-				if (response.getRawStatusCode() != HttpStatus.BAD_REQUEST.value()) {
-					super.handleError(response);
-				}
-			}
-		});
-		return restTemplate;
-	}
+public class KiwiResourceServerAutoConfiguration {
+    @Bean
+    @Primary
+    @LoadBalanced
+    public RestTemplate lbRestTemplate() {
+        RestTemplate restTemplate = new RestTemplate();
+        restTemplate.setErrorHandler(new DefaultResponseErrorHandler() {
+            @Override
+            @SneakyThrows
+            public void handleError(ClientHttpResponse response) {
+                if (response.getRawStatusCode() != HttpStatus.BAD_REQUEST.value()) {
+                    super.handleError(response);
+                }
+            }
+        });
+        return restTemplate;
+    }
 }

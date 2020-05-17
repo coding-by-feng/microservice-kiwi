@@ -30,17 +30,17 @@ import javax.validation.constraints.NotNull;
  */
 public class JSR303Test {
 
-    public void test(){
+    public void test() {
         this.subTest(new JSR303Bean());
     }
 
-    private void subTest(JSR303Bean jsr303Bean){
+    private void subTest(JSR303Bean jsr303Bean) {
         System.out.println("kao");
     }
 
     @Data
     @Accessors(chain = true)
-    class JSR303Bean{
+    class JSR303Bean {
         @Min(0)
         @NotNull
         private Integer i;

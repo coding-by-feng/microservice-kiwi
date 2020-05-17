@@ -23,7 +23,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.api.R;
 import me.fengorz.kiwi.common.sdk.controller.BaseController;
-import me.fengorz.kiwi.word.api.common.CrawlerConstants;
+import me.fengorz.kiwi.word.api.common.WordCrawlerConstants;
 import me.fengorz.kiwi.word.api.entity.WordFetchQueueDO;
 import me.fengorz.kiwi.word.api.entity.WordMainDO;
 import me.fengorz.kiwi.word.biz.service.IWordFetchQueueService;
@@ -61,7 +61,7 @@ public class TestTempController extends BaseController {
         List<String> words = this.readWords();
         for (String word : words) {
             WordFetchQueueDO wordFetchQueue = new WordFetchQueueDO();
-            wordFetchQueue.setFetchStatus(CrawlerConstants.STATUS_TO_FETCH);
+            wordFetchQueue.setFetchStatus(WordCrawlerConstants.STATUS_TO_FETCH);
             wordFetchQueue.setWordName(word.trim());
             wordFetchQueue.setFetchPriority(100);
             this.wordFetchQueueService.save(wordFetchQueue);

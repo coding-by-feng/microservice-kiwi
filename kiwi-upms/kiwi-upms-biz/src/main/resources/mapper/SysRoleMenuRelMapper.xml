@@ -23,8 +23,8 @@
 
 <mapper namespace="me.fengorz.kiwi.admin.mapper.SysRoleMenuRelMapper">
 
-  <resultMap id="sysRoleMenuRelMap" type="me.fengorz.kiwi.admin.api.entity.SysRoleMenuRel">
-                  <id property="roleId" column="role_id"/>
-                        <result property="menuId" column="menu_id"/>
-            </resultMap>
+    <resultMap id="sysRoleMenuRelMap" type="me.fengorz.kiwi.admin.api.entity.SysRoleMenuRel">
+        <id property="roleId" column="role_id"/>
+        <result property="menuId" column="menu_id"/>
+    </resultMap>
 </mapper>

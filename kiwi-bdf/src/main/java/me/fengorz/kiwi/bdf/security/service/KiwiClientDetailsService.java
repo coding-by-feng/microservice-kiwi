@@ -28,12 +28,11 @@ import org.springframework.security.oauth2.provider.client.JdbcClientDetailsServ
 import javax.sql.DataSource;
 
 /**
- * @Author codingByFeng
- * @Date 2019-09-23 21:17
+ * @author zhanshifeng
  */
-public class EnhancerClientDetailsService extends JdbcClientDetailsService {
+public class KiwiClientDetailsService extends JdbcClientDetailsService {
 
-    public EnhancerClientDetailsService(DataSource dataSource) {
+    public KiwiClientDetailsService(DataSource dataSource) {
         super(dataSource);
     }
 

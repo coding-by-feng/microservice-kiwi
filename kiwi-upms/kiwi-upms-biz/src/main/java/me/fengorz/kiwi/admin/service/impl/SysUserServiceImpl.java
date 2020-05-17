@@ -21,6 +21,7 @@ package me.fengorz.kiwi.admin.service.impl;
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import lombok.AllArgsConstructor;
 import me.fengorz.kiwi.admin.api.dto.UserFullInfoDTO;
 import me.fengorz.kiwi.admin.api.entity.SysMenu;
 import me.fengorz.kiwi.admin.api.entity.SysRole;
@@ -30,7 +31,6 @@ import me.fengorz.kiwi.admin.service.SysMenuService;
 import me.fengorz.kiwi.admin.service.SysRoleService;
 import me.fengorz.kiwi.admin.service.SysUserRoleRelService;
 import me.fengorz.kiwi.admin.service.SysUserService;
-import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;

@@ -20,12 +20,14 @@ package me.fengorz.kiwi.word.biz.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.api.R;
 import me.fengorz.kiwi.common.api.constant.CommonConstants;
-import me.fengorz.kiwi.common.sdk.controller.BaseController;
 import me.fengorz.kiwi.common.fastdfs.exception.DfsOperateDeleteException;
 import me.fengorz.kiwi.common.fastdfs.exception.DfsOperateException;
 import me.fengorz.kiwi.common.log.annotation.SysLog;
+import me.fengorz.kiwi.common.sdk.controller.BaseController;
 import me.fengorz.kiwi.common.sdk.log.EnhancedLogUtils;
 import me.fengorz.kiwi.word.api.common.CrawlerConstants;
 import me.fengorz.kiwi.word.api.dto.fetch.FetchWordResultDTO;
@@ -34,8 +36,6 @@ import me.fengorz.kiwi.word.api.entity.WordFetchQueueDO;
 import me.fengorz.kiwi.word.api.exception.WordResultStoreException;
 import me.fengorz.kiwi.word.biz.service.IWordFetchQueueService;
 import me.fengorz.kiwi.word.biz.service.operate.IWordOperateService;
-import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.springframework.web.bind.annotation.*;
 

@@ -2,7 +2,6 @@ import cn.hutool.core.util.ArrayUtil;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
-import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;

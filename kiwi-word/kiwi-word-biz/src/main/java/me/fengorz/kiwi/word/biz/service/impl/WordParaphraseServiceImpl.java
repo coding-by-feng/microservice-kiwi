@@ -23,6 +23,7 @@ import cn.hutool.core.collection.CollUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import lombok.AllArgsConstructor;
 import me.fengorz.kiwi.common.api.constant.CommonConstants;
 import me.fengorz.kiwi.word.api.dto.mapper.in.SelectEntityIsCollectDTO;
 import me.fengorz.kiwi.word.api.entity.WordParaphraseDO;
@@ -32,7 +33,6 @@ import me.fengorz.kiwi.word.api.vo.WordParaphraseVO;
 import me.fengorz.kiwi.word.biz.mapper.WordParaphraseExampleMapper;
 import me.fengorz.kiwi.word.biz.mapper.WordParaphraseMapper;
 import me.fengorz.kiwi.word.biz.service.IWordParaphraseService;
-import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;

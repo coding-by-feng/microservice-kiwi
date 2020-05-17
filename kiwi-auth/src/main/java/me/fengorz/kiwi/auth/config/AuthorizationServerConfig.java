@@ -19,11 +19,11 @@
 
 package me.fengorz.kiwi.auth.config;
 
+import lombok.AllArgsConstructor;
 import me.fengorz.kiwi.common.api.constant.SecurityConstants;
 import me.fengorz.kiwi.common.api.entity.EnhancerUser;
 import me.fengorz.kiwi.common.security.component.EnhancerWebResponseExceptionTranslator;
 import me.fengorz.kiwi.common.security.service.EnhancerClientDetailsService;
-import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;

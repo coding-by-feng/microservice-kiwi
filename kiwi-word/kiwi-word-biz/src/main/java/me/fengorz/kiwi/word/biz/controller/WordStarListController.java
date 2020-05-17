@@ -34,7 +34,6 @@ import me.fengorz.kiwi.word.api.entity.column.WordStarListColumn;
 import me.fengorz.kiwi.word.biz.service.IWordStarListService;
 import me.fengorz.kiwi.word.biz.service.operate.IWordOperateService;
 import org.hibernate.validator.constraints.Range;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 

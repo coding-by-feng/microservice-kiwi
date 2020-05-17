@@ -18,16 +18,15 @@
  */
 package me.fengorz.kiwi.word.biz.service.impl;
 
-import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import lombok.AllArgsConstructor;
 import me.fengorz.kiwi.common.api.constant.CommonConstants;
 import me.fengorz.kiwi.word.api.dto.mapper.in.CountEntityIsCollectDTO;
-import me.fengorz.kiwi.word.api.dto.mapper.in.SelectStarListItemDTO;
 import me.fengorz.kiwi.word.api.dto.mapper.out.SelectWordStarListResultDTO;
 import me.fengorz.kiwi.word.api.entity.WordStarListDO;
 import me.fengorz.kiwi.word.api.entity.column.WordStarListColumn;
@@ -35,8 +34,6 @@ import me.fengorz.kiwi.word.api.vo.star.WordStarItemParaphraseVO;
 import me.fengorz.kiwi.word.api.vo.star.WordStarItemVO;
 import me.fengorz.kiwi.word.biz.mapper.WordStarListMapper;
 import me.fengorz.kiwi.word.biz.service.IWordStarListService;
-import me.fengorz.kiwi.word.biz.util.WordBizUtils;
-import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;

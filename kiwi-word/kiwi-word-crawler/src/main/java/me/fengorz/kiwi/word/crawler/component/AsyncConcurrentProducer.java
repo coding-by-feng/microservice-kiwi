@@ -21,17 +21,17 @@ package me.fengorz.kiwi.word.crawler.component;
 
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.api.R;
 import me.fengorz.kiwi.common.api.constant.CommonConstants;
 import me.fengorz.kiwi.common.api.constant.WordConstant;
-import me.fengorz.kiwi.common.sdk.bean.EnhancedBeanUtils;
+import me.fengorz.kiwi.common.sdk.bean.KiwiBeanUtils;
 import me.fengorz.kiwi.word.api.common.CrawlerConstants;
 import me.fengorz.kiwi.word.api.dto.fetch.WordMessageDTO;
 import me.fengorz.kiwi.word.api.dto.remote.WordFetchQueuePageDTO;
 import me.fengorz.kiwi.word.api.entity.WordFetchQueueDO;
 import me.fengorz.kiwi.word.api.feign.IRemoteWordFetchService;
-import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
@@ -63,7 +63,7 @@ public class AsyncConcurrentProducer {
                 Map map = (Map) o;
                 List<LinkedHashMap> list = (List<LinkedHashMap>) map.get(WordConstant.KEY_RECORDS);
                 list.forEach(hashMap -> {
-                    WordFetchQueueDO word = (WordFetchQueueDO) EnhancedBeanUtils.mapConvertPOJO(hashMap, WordFetchQueueDO.class);
+                    WordFetchQueueDO word = (WordFetchQueueDO) KiwiBeanUtils.mapConvertPOJO(hashMap, WordFetchQueueDO.class);
                     this.fetchWord(word);
                 });
             });

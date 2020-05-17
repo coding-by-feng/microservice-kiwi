@@ -20,8 +20,8 @@
 package me.fengorz.kiwi.common.security.exception;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import me.fengorz.kiwi.common.security.component.EnhancerAuth2ExceptionSerializer;
 import lombok.Getter;
+import me.fengorz.kiwi.common.security.component.EnhancerAuth2ExceptionSerializer;
 import org.springframework.security.oauth2.common.exceptions.OAuth2Exception;
 
 /**

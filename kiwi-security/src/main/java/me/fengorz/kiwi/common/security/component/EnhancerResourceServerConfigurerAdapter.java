@@ -19,9 +19,9 @@
 
 package me.fengorz.kiwi.common.security.component;
 
-import me.fengorz.kiwi.common.sdk.config.FilterIgnorePropertiesConfig;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import me.fengorz.kiwi.common.sdk.config.FilterIgnorePropertiesConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.ExpressionUrlAuthorizationConfigurer;

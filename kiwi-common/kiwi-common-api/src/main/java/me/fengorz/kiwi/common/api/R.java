@@ -19,9 +19,9 @@
 
 package me.fengorz.kiwi.common.api;
 
-import me.fengorz.kiwi.common.api.constant.CommonConstants;
 import lombok.*;
 import lombok.experimental.Accessors;
+import me.fengorz.kiwi.common.api.constant.CommonConstants;
 
 import java.io.Serializable;
 

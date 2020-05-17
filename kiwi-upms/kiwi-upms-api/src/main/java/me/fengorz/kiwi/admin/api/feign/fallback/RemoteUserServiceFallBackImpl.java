@@ -19,11 +19,11 @@
 
 package me.fengorz.kiwi.admin.api.feign.fallback;
 
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.admin.api.dto.UserFullInfoDTO;
 import me.fengorz.kiwi.admin.api.feign.RemoteUserService;
 import me.fengorz.kiwi.common.api.R;
-import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 /**

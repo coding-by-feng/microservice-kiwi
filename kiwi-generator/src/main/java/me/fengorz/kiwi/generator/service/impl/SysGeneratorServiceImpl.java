@@ -19,9 +19,9 @@
 
 package me.fengorz.kiwi.generator.service.impl;
 
+import lombok.AllArgsConstructor;
 import me.fengorz.kiwi.generator.mapper.SysGeneratorMapper;
 import me.fengorz.kiwi.generator.service.SysGeneratorService;
-import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

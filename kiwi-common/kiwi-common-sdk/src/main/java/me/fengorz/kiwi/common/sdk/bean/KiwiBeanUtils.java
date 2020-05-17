@@ -39,7 +39,7 @@ import java.util.function.Consumer;
  * @Date 2019/11/2 4:46 PM
  */
 @Slf4j
-public class EnhancedBeanUtils extends BeanUtils {
+public class KiwiBeanUtils extends BeanUtils {
 
     public static Object mapConvertPOJO(Map map, Class pojoClass) {
         ObjectMapper mapper = new ObjectMapper();

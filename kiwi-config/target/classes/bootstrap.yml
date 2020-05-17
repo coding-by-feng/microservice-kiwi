@@ -1,0 +1,38 @@
+server:
+  port: 7771
+
+spring:
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: fengorz
+    password: fengORZ123
+    url: jdbc:mysql://rm-2ze1069p422u9507gso.mysql.rds.aliyuncs.com:3306/kiwi_db
+    hikari:
+      max-lifetime: 30000
+  application:
+    name: kiwi-config
+  profiles:
+    active: native
+  cloud:
+    config:
+      server:
+        native:
+          search-locations: classpath:/config
+
+
+# 注册中心配置
+eureka:
+  instance:
+    prefer-ip-address: true
+    hostname: kiwi-eureka
+  client:
+    service-url:
+      defaultZone: http://codingByFeng:123456@${eureka.instance.hostname}:8762/eureka
+
+# 暴露监控点
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'

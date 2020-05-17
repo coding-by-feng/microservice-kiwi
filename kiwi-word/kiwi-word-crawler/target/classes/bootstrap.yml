@@ -1,0 +1,23 @@
+server:
+  port: 6001
+
+spring:
+  application:
+    name: kiwi-word-crawler
+  profiles:
+    active: dev
+  cloud:
+    config:
+      fail-fast: true
+      name: ${spring.application.name}
+      profile: ${spring.profiles.active}
+      discovery:
+        enabled: true
+        service-id: kiwi-config
+
+eureka:
+  instance:
+    prefer-ip-address: true
+  client:
+    service-url:
+      defaultZone: http://codingByFeng:123456@kiwi-eureka:8762/eureka

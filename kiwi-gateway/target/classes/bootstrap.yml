@@ -1,0 +1,29 @@
+server:
+  port: 9991
+
+spring:
+  application:
+    name: kiwi-gateway
+  # 配置中心
+  cloud:
+    gateway:
+      enabled:
+    config:
+      fail-fast: true
+      name: ${spring.application.name}
+      profile: ${spring.profiles.active}
+      discovery:
+        enabled: true
+        service-id: kiwi-config
+  profiles:
+    active: dev
+
+# 注册中心
+eureka:
+  instance:
+    prefer-ip-address: true
+  client:
+    service-url:
+      defaultZone: http://codingByFeng:123456@kiwi-eureka:8762/eureka/
+
+

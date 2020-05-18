@@ -28,6 +28,9 @@ import cn.hutool.http.HttpUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.AllArgsConstructor;
+import me.fengorz.kiwi.common.api.annotation.cache.KiwiCacheKey;
+import me.fengorz.kiwi.common.api.annotation.cache.KiwiCacheKeyPrefix;
+import me.fengorz.kiwi.common.api.constant.CacheConstants;
 import me.fengorz.kiwi.common.api.constant.CommonConstants;
 import me.fengorz.kiwi.common.api.exception.ServiceException;
 import me.fengorz.kiwi.common.fastdfs.component.DfsService;
@@ -36,6 +39,7 @@ import me.fengorz.kiwi.common.fastdfs.exception.DfsOperateException;
 import me.fengorz.kiwi.common.sdk.CommonUtils;
 import me.fengorz.kiwi.common.sdk.util.validate.KiwiAssertUtils;
 import me.fengorz.kiwi.common.sdk.web.security.SecurityUtils;
+import me.fengorz.kiwi.word.api.common.WordConstants;
 import me.fengorz.kiwi.word.api.common.WordCrawlerConstants;
 import me.fengorz.kiwi.word.api.dto.fetch.FetchParaphraseDTO;
 import me.fengorz.kiwi.word.api.dto.fetch.FetchWordCodeDTO;
@@ -48,6 +52,7 @@ import me.fengorz.kiwi.word.api.util.CrawlerUtils;
 import me.fengorz.kiwi.word.api.vo.*;
 import me.fengorz.kiwi.word.biz.service.*;
 import me.fengorz.kiwi.word.biz.service.operate.IWordOperateService;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -63,6 +68,7 @@ import java.util.Optional;
  */
 @Service
 @AllArgsConstructor
+@KiwiCacheKeyPrefix(WordConstants.CACHE_KEY_PREFIX_WORD)
 public class WordOperateServiceImpl implements IWordOperateService {
 
     private final IWordMainService wordMainService;
@@ -204,14 +210,18 @@ public class WordOperateServiceImpl implements IWordOperateService {
      * @return
      */
     @Override
-    public WordQueryVO queryWord(String wordName) throws ServiceException {
+    @Transactional(rollbackFor = Exception.class)
+    @Cacheable(cacheNames = WordConstants.CACHE_NAMES, keyGenerator = CacheConstants.CACHE_KEY_GENERATOR_BEAN, unless = "#result == null")
+    public WordQueryVO queryWord(@KiwiCacheKey String wordName) throws ServiceException {
         WordQueryVO wordQueryVO = new WordQueryVO();
-        WordMainDO word = this.wordMainService.getOne(new QueryWrapper<>(new WordMainDO().setWordName(wordName)));
+        WordMainDO word = this.wordMainService.getOneByWordName(wordName);
         // TODO: 2020/1/7 Here we have to decide if it's a tense-changing word
 
         // if you can't find the result after the tense is determined, insert a record into the queue to be fetched
         if (word == null) {
-            // 先抓取到时态变化的其他读个不同wordName，然后每个都fetchNewWord一下
+            // TODO: 2020/5/18  先抓取到时态变化的其他读个不同wordName
+            // 爬虫抓取，插入对列表
+            this.wordFetchQueueService.fetchNewWord(wordName);
         }
 
         KiwiAssertUtils.serviceNotNull(word, "No results for [{}]!", wordName);

@@ -39,15 +39,6 @@ import org.springframework.stereotype.Service;
 public class WordFetchQueueServiceImpl extends ServiceImpl<WordFetchQueueMapper, WordFetchQueueDO> implements IWordFetchQueueService {
 
     @Override
-    public boolean insertNewQueue(WordFetchQueueDO wordFetchQueue) {
-        WordFetchQueueDO one = this.getOne(new QueryWrapper<>(new WordFetchQueueDO().setWordName(wordFetchQueue.getWordName())));
-        if (one != null) {
-            return false;
-        }
-        return this.save(wordFetchQueue);
-    }
-
-    @Override
     public boolean fetchNewWord(String wordName) {
         this.getOne(
                 new QueryWrapper<>(
@@ -55,12 +46,20 @@ public class WordFetchQueueServiceImpl extends ServiceImpl<WordFetchQueueMapper,
                                 .setWordName(wordName)
                 )
         );
-        this.insertNewQueue(
+        return this.insertNewQueue(
                 new WordFetchQueueDO()
                         .setFetchStatus(WordCrawlerConstants.STATUS_TO_FETCH)
                         .setIsValid(CommonConstants.TRUE)
                         .setFetchPriority(100)
         );
-        return false;
     }
+
+    private boolean insertNewQueue(WordFetchQueueDO wordFetchQueue) {
+        WordFetchQueueDO one = this.getOne(new QueryWrapper<>(new WordFetchQueueDO().setWordName(wordFetchQueue.getWordName())));
+        if (one != null) {
+            return false;
+        }
+        return this.save(wordFetchQueue);
+    }
+
 }

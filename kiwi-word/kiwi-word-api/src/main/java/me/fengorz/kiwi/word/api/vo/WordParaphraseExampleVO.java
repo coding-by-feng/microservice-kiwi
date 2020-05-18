@@ -24,6 +24,8 @@ import lombok.ToString;
 import lombok.experimental.Accessors;
 import me.fengorz.kiwi.common.api.constant.CommonConstants;
 
+import java.io.Serializable;
+
 /**
  * @Description TODO
  * @Author zhanshifeng
@@ -32,7 +34,9 @@ import me.fengorz.kiwi.common.api.constant.CommonConstants;
 @Data
 @Accessors(chain = true)
 @ToString
-public class WordParaphraseExampleVO {
+public class WordParaphraseExampleVO implements Serializable {
+
+    private static final long serialVersionUID = -2091961493449323929L;
 
     private Integer exampleId;
     /**

@@ -26,8 +26,14 @@ package me.fengorz.kiwi.word.api.common;
  */
 public interface WordConstants {
 
-    String CACHE_NAMES = "word";
+    String CACHE_NAMES = "kiwi";
 
-    String CACHE_KEY_PREFIX_WORD_MAIN = "main";
+    String CACHE_KEY_PREFIX_WORD_MAIN = "word_main";
+
+    String CACHE_KEY_PREFIX_WORD = "word";
+
+    String CACHE_KEY_PREFIX_WORD_ID = "id";
+
+    String CACHE_KEY_PREFIX_WORD_NAME = "name";
 
 }

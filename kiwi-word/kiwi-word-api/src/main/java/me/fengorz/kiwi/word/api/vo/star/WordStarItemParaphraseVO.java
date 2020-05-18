@@ -23,6 +23,8 @@ import lombok.Data;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 
+import java.io.Serializable;
+
 /**
  * @Description TODO
  * @Author zhanshifeng
@@ -31,7 +33,9 @@ import lombok.experimental.Accessors;
 @Data
 @Accessors(chain = true)
 @ToString
-public class WordStarItemParaphraseVO {
+public class WordStarItemParaphraseVO implements Serializable {
+
+    private static final long serialVersionUID = -7470552519759474739L;
 
     private String paraphraseEnglish;
     private String meaningChinese;

@@ -29,8 +29,6 @@ import me.fengorz.kiwi.word.api.entity.WordFetchQueueDO;
  */
 public interface IWordFetchQueueService extends IService<WordFetchQueueDO> {
 
-    boolean insertNewQueue(WordFetchQueueDO wordFetchQueue);
-
     boolean fetchNewWord(String wordName);
 
 }

@@ -23,6 +23,8 @@ import lombok.Data;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 
+import java.io.Serializable;
+
 /**
  * @Description TODO
  * @Author zhanshifeng
@@ -31,7 +33,9 @@ import lombok.experimental.Accessors;
 @Data
 @Accessors(chain = true)
 @ToString
-public class ExampleStarItemVO {
+public class ExampleStarItemVO implements Serializable {
+
+    private static final long serialVersionUID = 6521434364886717517L;
 
     private Integer wordId;
     private String wordName;

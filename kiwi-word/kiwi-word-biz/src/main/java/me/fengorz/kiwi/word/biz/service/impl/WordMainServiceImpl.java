@@ -60,14 +60,16 @@ public class WordMainServiceImpl extends ServiceImpl<WordMainMapper, WordMainDO>
     }
 
     @Override
+    @KiwiCacheKeyPrefix(WordConstants.CACHE_KEY_PREFIX_WORD_ID)
     @Cacheable(cacheNames = WordConstants.CACHE_NAMES, keyGenerator = CacheConstants.CACHE_KEY_GENERATOR_BEAN, unless = "#result == null")
     public WordMainDO getById(@KiwiCacheKey Serializable id) {
         return super.getById(id);
     }
 
     @Override
-    @Cacheable
-    public WordMainDO getOneByWordName(String wordName) {
+    @KiwiCacheKeyPrefix(WordConstants.CACHE_KEY_PREFIX_WORD_NAME)
+    @Cacheable(cacheNames = WordConstants.CACHE_NAMES, keyGenerator = CacheConstants.CACHE_KEY_GENERATOR_BEAN, unless = "#result == null")
+    public WordMainDO getOneByWordName(@KiwiCacheKey String wordName) {
         return this.getOne(
                 new LambdaQueryWrapper<WordMainDO>().eq(WordMainDO::getWordName, wordName)
                         .eq(WordMainDO::getIsDel, CommonConstants.FALSE)

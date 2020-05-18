@@ -23,6 +23,8 @@ import lombok.Data;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 
+import java.io.Serializable;
+
 /**
  * @Description TODO
  * @Author zhanshifeng
@@ -31,7 +33,9 @@ import lombok.experimental.Accessors;
 @Data
 @Accessors(chain = true)
 @ToString
-public class WordPronunciationVO {
+public class WordPronunciationVO implements Serializable {
+
+    private static final long serialVersionUID = -400966918555175133L;
 
     private Integer pronunciationId;
     /**

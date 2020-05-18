@@ -23,6 +23,7 @@ import lombok.Data;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -33,7 +34,9 @@ import java.util.List;
 @Data
 @Accessors(chain = true)
 @ToString
-public class WordStarItemVO {
+public class WordStarItemVO implements Serializable {
+
+    private static final long serialVersionUID = 8723336520116932756L;
 
     private String wordName;
 

@@ -1,7 +1,7 @@
 spring:
   rabbitmq:
     host: kiwi-rabbitmq
-    port: 5672
+    port: 15555
     username: guest
     password: guest
   main:

@@ -19,8 +19,6 @@
 
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import me.fengorz.kiwi.common.api.constant.CommonConstants;
-import me.fengorz.kiwi.common.core.util.EnhancedLogUtils;
 import me.fengorz.kiwi.word.biz.config.TransactionalTestConfig;
 import me.fengorz.kiwi.word.biz.test.TestService;
 import org.junit.runner.RunWith;
@@ -45,8 +43,8 @@ public class TransactionalTest {
     @SneakyThrows
     public void test() {
 
-        log.debug(EnhancedLogUtils.getClassName() + CommonConstants.DOT + EnhancedLogUtils.getMethodName());
-        testService.testTransactional();
+        // log.debug(EnhancedLogUtils.getClassName() + CommonConstants.DOT + EnhancedLogUtils.getMethodName());
+        // testService.testTransactional();
 
     }
 

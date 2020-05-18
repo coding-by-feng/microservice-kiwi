@@ -1,4 +1,5 @@
-import me.fengorz.kiwi.common.core.util.EnhancedJsonUtils;
+package com;
+
 import me.fengorz.kiwi.word.api.entity.WordFetchQueueDO;
 
 /**
@@ -12,6 +13,5 @@ public class JsonTest {
         wordFetchQueue.setFetchPriority(100);
         wordFetchQueue.setFetchStatus(0);
         wordFetchQueue.setWordName("test");
-        System.out.println(EnhancedJsonUtils.toJsonStr(wordFetchQueue));
     }
 }

@@ -70,7 +70,7 @@ public class DfsService {
             return storePath.getFullPath();
         } catch (Exception e) {
             // e.printStackTrace();
-            log.error(UPLOAD_FILE_EXCEPTION, e.getMessage());
+            log.error(UPLOAD_FILE_EXCEPTION, e);
             throw new DfsOperateException(UPLOAD_FILE_EXCEPTION);
         }
     }

@@ -1,10 +1,5 @@
 package com;
 
-import cn.hutool.core.io.FileUtil;
-import cn.hutool.core.util.URLUtil;
-import cn.hutool.http.HttpUtil;
-import me.fengorz.kiwi.word.api.util.CrawlerUtils;
-
 /**
  * @Description TODO
  * @Author codingByFeng

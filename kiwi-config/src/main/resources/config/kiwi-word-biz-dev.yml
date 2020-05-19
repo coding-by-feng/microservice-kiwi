@@ -18,4 +18,12 @@ ignore:
   userNames:
     - admin
 
+me:
+  fengorz:
+    file:
+      crawler:
+        voice:
+          tmpPath: "/Users/zhanshifeng/Documents/myDocument/temp/microSerivceVocabularyEnhancer"
+
+
 

@@ -66,6 +66,11 @@ public class RemoteWordFetchServiceFallbackImpl implements IRemoteWordFetchServi
     }
 
     @Override
+    public R fetchNewWord(String wordName) {
+        return R.feignCallFailed();
+    }
+
+    @Override
     public R updateByWordName(WordFetchQueueDO wordFetchQueue) {
         log.error("updateByWordName error, wordFetchQueue=" + wordFetchQueue, throwable);
         return R.feignCallFailed();

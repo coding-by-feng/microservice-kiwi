@@ -22,7 +22,6 @@ package me.fengorz.kiwi.word.crawler.component;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.word.api.dto.fetch.WordMessageDTO;
-import org.springframework.amqp.core.ExchangeTypes;
 import org.springframework.amqp.rabbit.annotation.*;
 import org.springframework.stereotype.Component;
 
@@ -34,14 +33,12 @@ import org.springframework.stereotype.Component;
 @Component
 @RabbitListener(bindings = @QueueBinding(value = @Queue(value = "${mq.config.wordFetch.queue.name}",
         autoDelete = "true"),
-        exchange = @Exchange(value = "${mq.config.wordFetch.exchange}", type = ExchangeTypes.DIRECT),
+        exchange = @Exchange(value = "${mq.config.wordFetch.exchange}"),
         key = "${mq.config.wordFetch.routing.key}"))
 @Slf4j
 @AllArgsConstructor
 public class WordFetchConsumer {
 
-    // private final IJsoupService jsoupService;
-    // private final IRemoteWordFetchService remoteWordFetchService;
     private final AsyncConcurrentConsumer asyncConcurrentConsumer;
 
     @RabbitHandler

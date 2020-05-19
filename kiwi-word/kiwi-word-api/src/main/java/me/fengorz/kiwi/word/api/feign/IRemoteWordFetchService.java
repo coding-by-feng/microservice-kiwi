@@ -26,9 +26,7 @@ import me.fengorz.kiwi.word.api.dto.remote.WordFetchQueuePageDTO;
 import me.fengorz.kiwi.word.api.entity.WordFetchQueueDO;
 import me.fengorz.kiwi.word.api.feign.factory.RemoteWordFetchServiceFallbackFactory;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 
 @FeignClient(contextId = "remoteWordFetchService", value = WordCrawlerConstants.VOCABULARY_ENHANCER_CRAWLER_BIZ, fallbackFactory = RemoteWordFetchServiceFallbackFactory.class)
 public interface IRemoteWordFetchService {
@@ -46,6 +44,9 @@ public interface IRemoteWordFetchService {
 
     @PostMapping(WORD_FETCH_QUEUE + "/save")
     R save(@RequestBody WordFetchQueueDO wordFetchQueue);
+
+    @GetMapping(WORD_FETCH_QUEUE + "/fetchNewWord/{wordName}")
+    R fetchNewWord(@PathVariable String wordName);
 
     @PostMapping(WORD_FETCH_QUEUE + "/updateByWordName")
     R updateByWordName(@RequestBody WordFetchQueueDO wordFetchQueue);

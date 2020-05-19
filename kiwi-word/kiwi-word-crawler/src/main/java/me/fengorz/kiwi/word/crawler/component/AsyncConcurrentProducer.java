@@ -50,9 +50,9 @@ public class AsyncConcurrentProducer {
     private final IRemoteWordFetchService remoteWordFetchService;
 
     public void fetch() {
-        WordFetchQueueDO wordFetchQueue = new WordFetchQueueDO();
-        wordFetchQueue.setFetchStatus(WordCrawlerConstants.STATUS_TO_FETCH);
-        wordFetchQueue.setIsValid(CommonConstants.TRUE);
+        WordFetchQueueDO wordFetchQueue = new WordFetchQueueDO()
+                .setFetchStatus(WordCrawlerConstants.STATUS_TO_FETCH)
+                .setIsValid(CommonConstants.TRUE);
         WordFetchQueuePageDTO wordFetchQueuePage = new WordFetchQueuePageDTO().
                 setWordFetchQueue(wordFetchQueue).setPage(new Page(1, 20));
         R result = remoteWordFetchService.getWordFetchQueuePage(wordFetchQueuePage);
@@ -72,7 +72,7 @@ public class AsyncConcurrentProducer {
     }
 
     /**
-     * 异步调用爬虫待抓取队列的消息发送，提高性能
+     * 异步调用爬虫待抓取队列的消息发送
      *
      * @param wordFetchQueue
      */

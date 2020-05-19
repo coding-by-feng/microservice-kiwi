@@ -69,7 +69,8 @@ public class DfsService {
             log.info("upload file success，group：{}，path：{}", storePath.getGroup(), storePath.getPath());
             return storePath.getFullPath();
         } catch (Exception e) {
-            log.error(UPLOAD_FILE_EXCEPTION, e);
+            // e.printStackTrace();
+            log.error(UPLOAD_FILE_EXCEPTION, e.getMessage());
             throw new DfsOperateException(UPLOAD_FILE_EXCEPTION);
         }
     }

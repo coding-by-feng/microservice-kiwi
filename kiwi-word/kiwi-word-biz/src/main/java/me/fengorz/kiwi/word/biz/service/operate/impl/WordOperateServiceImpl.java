@@ -27,7 +27,7 @@ import cn.hutool.core.util.URLUtil;
 import cn.hutool.http.HttpUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import me.fengorz.kiwi.common.api.annotation.cache.KiwiCacheKey;
 import me.fengorz.kiwi.common.api.annotation.cache.KiwiCacheKeyPrefix;
 import me.fengorz.kiwi.common.api.constant.CacheConstants;
@@ -52,8 +52,10 @@ import me.fengorz.kiwi.word.api.util.CrawlerUtils;
 import me.fengorz.kiwi.word.api.vo.*;
 import me.fengorz.kiwi.word.biz.service.*;
 import me.fengorz.kiwi.word.biz.service.operate.IWordOperateService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
@@ -67,7 +69,7 @@ import java.util.Optional;
  * @Date 2019/11/25 3:13 PM
  */
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 @KiwiCacheKeyPrefix(WordConstants.CACHE_KEY_PREFIX_WORD)
 public class WordOperateServiceImpl implements IWordOperateService {
 
@@ -84,6 +86,9 @@ public class WordOperateServiceImpl implements IWordOperateService {
     private final IWordParaphraseStarRelService wordParaphraseStarRelService;
     private final IWordExampleStarRelService wordExampleStarRelService;
     private final DfsService dfsService;
+
+    @Value("${me.fengorz.file.crawler.voice.tmpPath}")
+    private String crawlerVoiceBasePath;
 
     @Override
     @Transactional(rollbackFor = Exception.class, noRollbackFor = DfsOperateDeleteException.class)
@@ -139,8 +144,8 @@ public class WordOperateServiceImpl implements IWordOperateService {
                 if (CollUtil.isNotEmpty(fetchWordPronunciationDTOList)) {
                     for (FetchWordPronunciationDTO fetchWordPronunciationDTO : fetchWordPronunciationDTOList) {
                         String voiceFileUrl = WordCrawlerConstants.CAMBRIDGE_BASE_URL + fetchWordPronunciationDTO.getVoiceFileUrl();
-                        long voiceSize = HttpUtil.downloadFile(URLUtil.decode(voiceFileUrl), FileUtil.file(WordCrawlerConstants.CRAWLER_VOICE_BASE_PATH));
-                        String tempVoice = WordCrawlerConstants.CRAWLER_VOICE_BASE_PATH + CrawlerUtils.getVoiceFileName(voiceFileUrl);
+                        long voiceSize = HttpUtil.downloadFile(URLUtil.decode(voiceFileUrl), FileUtil.file(crawlerVoiceBasePath));
+                        String tempVoice = crawlerVoiceBasePath + CrawlerUtils.getVoiceFileName(voiceFileUrl);
                         String uploadResult = dfsService.uploadFile(FileUtil.getInputStream(tempVoice), voiceSize, WordCrawlerConstants.EXT_OGG);
                         WordPronunciationDO wordPronunciation = CrawlerEntityFactory.initWordPronunciation(wordId, characterId, uploadResult,
                                 fetchWordPronunciationDTO.getSoundmark(), fetchWordPronunciationDTO.getSoundmarkType());
@@ -210,9 +215,9 @@ public class WordOperateServiceImpl implements IWordOperateService {
      * @return
      */
     @Override
-    @Transactional(rollbackFor = Exception.class)
     @Cacheable(cacheNames = WordConstants.CACHE_NAMES, keyGenerator = CacheConstants.CACHE_KEY_GENERATOR_BEAN, unless = "#result == null")
-    public WordQueryVO queryWord(@KiwiCacheKey String wordName) throws ServiceException {
+    @Transactional(propagation = Propagation.NOT_SUPPORTED)
+    public WordQueryVO queryWord(@KiwiCacheKey String wordName) {
         WordQueryVO wordQueryVO = new WordQueryVO();
         WordMainDO word = this.wordMainService.getOneByWordName(wordName);
         // TODO: 2020/1/7 Here we have to decide if it's a tense-changing word
@@ -221,6 +226,7 @@ public class WordOperateServiceImpl implements IWordOperateService {
         if (word == null) {
             // TODO: 2020/5/18  先抓取到时态变化的其他读个不同wordName
             // 爬虫抓取，插入对列表
+            // TODO: 2020/5/19 看下怎么异步调用出去，用优雅的方式，看看Spring有没有API可以用
             this.wordFetchQueueService.fetchNewWord(wordName);
         }
 

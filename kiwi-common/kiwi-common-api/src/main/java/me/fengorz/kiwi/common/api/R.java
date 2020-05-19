@@ -59,6 +59,10 @@ public class R<T> implements Serializable {
         return !isOK();
     }
 
+    public static <T> R<T> auto(boolean flag) {
+        return auto(false, CommonConstants.EMPTY);
+    }
+
     public static <T> R<T> auto(boolean flag, String msg) {
         if (flag) {
             return R.ok();

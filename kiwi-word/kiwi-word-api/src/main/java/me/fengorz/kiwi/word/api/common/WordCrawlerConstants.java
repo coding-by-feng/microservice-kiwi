@@ -44,7 +44,6 @@ public interface WordCrawlerConstants {
 
     String CRAWLER_BASE_URL = "https://dictionary.cambridge.org/zhs/词典/英语-汉语-简体/";
     String CAMBRIDGE_BASE_URL = "https://dictionary.cambridge.org/";
-    String CRAWLER_VOICE_BASE_PATH = "/Users/zhanshifeng/Documents/myDocument/temp/microSerivceVocabularyEnhancer";
     String EXT_OGG = "ogg";
 
     String DEFAULT_TRANSLATE_LANGUAGE = "Chinese";

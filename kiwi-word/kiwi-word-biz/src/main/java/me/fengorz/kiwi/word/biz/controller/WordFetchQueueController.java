@@ -37,6 +37,7 @@ import me.fengorz.kiwi.word.api.exception.WordResultStoreException;
 import me.fengorz.kiwi.word.biz.service.IWordFetchQueueService;
 import me.fengorz.kiwi.word.biz.service.operate.IWordOperateService;
 import org.apache.ibatis.session.SqlSessionFactory;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -48,10 +49,11 @@ import javax.validation.Valid;
  * @author codingByFeng
  * @date 2019-10-30 14:45:45
  */
+@Slf4j
+@Validated
 @RestController
 @AllArgsConstructor
 @RequestMapping("/word/fetch/queue")
-@Slf4j
 public class WordFetchQueueController extends BaseController {
 
     private final IWordFetchQueueService wordFetchQueueService;
@@ -91,6 +93,11 @@ public class WordFetchQueueController extends BaseController {
     // @PreAuthorize("@pms.hasPermission('queue_wordfetchqueue_add')")
     public R save(@RequestBody @Valid WordFetchQueueDO wordFetchQueue) {
         return R.auto(wordFetchQueueService.insertNewQueue(wordFetchQueue), wordFetchQueue.getWordName() + " already exists!");
+    }
+
+    @GetMapping("/fetchNewWord/{wordName}")
+    public R<Void> fetchNewWord(@PathVariable String wordName) {
+        return R.auto(wordFetchQueueService.fetchNewWord(wordName));
     }
 
     /**

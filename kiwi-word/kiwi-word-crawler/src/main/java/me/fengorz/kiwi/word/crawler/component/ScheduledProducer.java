@@ -36,7 +36,7 @@ public class ScheduledProducer {
 
     private final AsyncConcurrentProducer asyncConcurrentProducer;
 
-    @Scheduled(fixedDelay = 500L)
+    @Scheduled(fixedDelay = 1000L)
     public void fetchWord() {
         asyncConcurrentProducer.fetch();
     }

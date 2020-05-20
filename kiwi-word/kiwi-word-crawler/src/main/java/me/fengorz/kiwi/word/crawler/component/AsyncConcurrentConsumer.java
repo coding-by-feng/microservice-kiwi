@@ -19,18 +19,10 @@
 
 package me.fengorz.kiwi.word.crawler.component;
 
-import cn.hutool.core.util.StrUtil;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import me.fengorz.kiwi.common.api.R;
-import me.fengorz.kiwi.word.api.common.WordCrawlerConstants;
-import me.fengorz.kiwi.word.api.dto.fetch.FetchWordResultDTO;
 import me.fengorz.kiwi.word.api.dto.fetch.WordMessageDTO;
-import me.fengorz.kiwi.word.api.entity.WordFetchQueueDO;
-import me.fengorz.kiwi.word.api.exception.JsoupFetchConnectException;
-import me.fengorz.kiwi.word.api.exception.JsoupFetchResultException;
-import me.fengorz.kiwi.word.api.feign.IRemoteWordFetchService;
-import me.fengorz.kiwi.word.crawler.service.IJsoupService;
+import me.fengorz.kiwi.word.crawler.service.IWordFetchService;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
@@ -44,38 +36,12 @@ import org.springframework.stereotype.Component;
 @AllArgsConstructor
 public class AsyncConcurrentConsumer {
 
-    private final IJsoupService jsoupService;
-    private final IRemoteWordFetchService remoteWordFetchService;
+    private final IWordFetchService wordFetchService;
 
     @Async
-    public void asyncFetchWord(WordMessageDTO wordMessageDTO) {
-        WordFetchQueueDO wordFetchQueue = new WordFetchQueueDO().setWordName(wordMessageDTO.getWord()).setFetchStatus(WordCrawlerConstants.STATUS_FETCHED);
-        try {
-            long oldTime = System.currentTimeMillis();
-            FetchWordResultDTO fetchWordResultDTO = jsoupService.fetchWordInfo(wordMessageDTO);
-            // All exceptions are called back to the data in the word_fetch_queue
-            R storeResult = remoteWordFetchService.storeFetchWordResult(fetchWordResultDTO);
-            if (storeResult.isFail()) {
-                subDealException(wordFetchQueue, storeResult.getCode(), storeResult.getMsg());
-            } else {
-                long newTime = System.currentTimeMillis();
-                log.info("word({}) fetch store success! spent {}s", wordFetchQueue.getWordName(), (newTime - oldTime));
-                remoteWordFetchService.removeById(wordMessageDTO.getWord());
-                log.info("word({}) fetch queue del success!", wordFetchQueue.getWordName());
-            }
-        } catch (JsoupFetchConnectException e) {
-            subDealException(wordFetchQueue, WordCrawlerConstants.STATUS_ERROR_JSOUP_FETCH_CONNECT_FAILED, e.getMessage());
-        } catch (JsoupFetchResultException e) {
-            subDealException(wordFetchQueue, WordCrawlerConstants.STATUS_ERROR_JSOUP_RESULT_FETCH_FAILED, e.getMessage());
-        }
+    @Deprecated
+    public void asyncFetchWord(WordMessageDTO wordMessageDTO){
+        wordFetchService.work(wordMessageDTO);
     }
 
-    private void subDealException(WordFetchQueueDO wordFetchQueue, int status, String message) {
-        wordFetchQueue.setFetchStatus(status);
-        wordFetchQueue.setFetchResult(message);
-        if (StrUtil.isNotBlank(message)) {
-            log.error(message);
-        }
-        remoteWordFetchService.updateByWordName(wordFetchQueue);
-    }
 }

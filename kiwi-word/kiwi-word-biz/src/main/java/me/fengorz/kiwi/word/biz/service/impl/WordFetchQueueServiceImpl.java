@@ -44,7 +44,7 @@ public class WordFetchQueueServiceImpl extends ServiceImpl<WordFetchQueueMapper,
     @Transactional(rollbackFor = Exception.class, noRollbackFor = ServiceException.class)
     public boolean fetchNewWord(String wordName) {
         if (this.isExist(wordName)) {
-            return false;
+            this.del(wordName);
         }
         return this.insertNewQueue(
                 new WordFetchQueueDO()
@@ -55,8 +55,17 @@ public class WordFetchQueueServiceImpl extends ServiceImpl<WordFetchQueueMapper,
         );
     }
 
+    private boolean del(String wordName) {
+        if (!this.isExist(wordName)) {
+            return false;
+        }
+        return this.remove(new LambdaQueryWrapper<WordFetchQueueDO>()
+                .eq(WordFetchQueueDO::getWordName, wordName)
+        );
+    }
+
     @Override
-    public boolean del(String wordName) {
+    public boolean invalid(String wordName) {
         if (!this.isExist(wordName)) {
             return false;
         }

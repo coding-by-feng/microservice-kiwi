@@ -19,7 +19,6 @@
 
 package me.fengorz.kiwi.word.crawler.component;
 
-import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -78,19 +77,8 @@ public class AsyncConcurrentProducer {
      */
     @Async
     public void fetchWord(WordFetchQueueDO wordFetchQueue) {
-        if (null == wordFetchQueue) {
-            throw new IllegalArgumentException("AsyncConcurrentProducer.fetchWord wordFetchQueue can not null!!");
-        }
-        if (StrUtil.isBlank(wordFetchQueue.getWordName())) {
-            wordFetchQueue.setFetchStatus(WordCrawlerConstants.STATUS_ERROR);
-            wordFetchQueue.setFetchResult("word_name cann't be null");
-            wordFetchQueue.setIsValid(CommonConstants.FALSE);
-        } else {
-            wordFetchQueue.setFetchStatus(WordCrawlerConstants.STATUS_FETCHING);
-        }
-
+        wordFetchQueue.setFetchStatus(WordCrawlerConstants.STATUS_FETCHING);
         R updateResult = this.remoteWordFetchService.updateQueueById(wordFetchQueue);
-
         if (Objects.nonNull(updateResult) && updateResult.isOK()) {
             this.wordFetchProducer.send(new WordMessageDTO(wordFetchQueue.getWordName()));
         }

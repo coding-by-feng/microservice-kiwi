@@ -60,7 +60,8 @@ public class WordFetchQueueServiceImpl extends ServiceImpl<WordFetchQueueMapper,
         if (!this.isExist(wordName)) {
             return false;
         }
-        return this.remove(new LambdaQueryWrapper<WordFetchQueueDO>().eq(WordFetchQueueDO::getWordName, wordName));
+        return this.update(new WordFetchQueueDO().setIsValid(CommonConstants.FALSE),
+                new LambdaQueryWrapper<WordFetchQueueDO>().eq(WordFetchQueueDO::getWordName, wordName));
     }
 
     @Override

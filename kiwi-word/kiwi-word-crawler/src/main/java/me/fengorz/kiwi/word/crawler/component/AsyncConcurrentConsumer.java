@@ -59,8 +59,9 @@ public class AsyncConcurrentConsumer {
                 subDealException(wordFetchQueue, storeResult.getCode(), storeResult.getMsg());
             } else {
                 long newTime = System.currentTimeMillis();
-                remoteWordFetchService.removeById(wordMessageDTO.getWord());
                 log.info("word({}) fetch store success! spent {}s", wordFetchQueue.getWordName(), (newTime - oldTime));
+                remoteWordFetchService.removeById(wordMessageDTO.getWord());
+                log.info("word({}) fetch queue del success!", wordFetchQueue.getWordName());
             }
         } catch (JsoupFetchConnectException e) {
             subDealException(wordFetchQueue, WordCrawlerConstants.STATUS_ERROR_JSOUP_FETCH_CONNECT_FAILED, e.getMessage());

@@ -1,0 +1,37 @@
+version: '3.3'
+services:
+#  kiwi-upms:
+#    image: kiwi-upms:1.0
+#    ports:
+#      - '4001:4001'
+#    volumes:
+#      - /root/docker/kiwi/upms/logs:/logs
+#    network_mode: "host"
+  kiwi-gate:
+    image: kiwi-gate:1.0
+    ports:
+      - '9991:9991'
+    volumes:
+      - /root/docker/kiwi/gate/logs:/logs
+    network_mode: "host"
+#  kiwi-auth:
+#    image: kiwi-auth:1.0
+#    ports:
+#      - '3001:3001'
+#    volumes:
+#      - /root/docker/kiwi/auth/logs:/logs
+#    network_mode: "host"
+  kiwi-word:
+    image: kiwi-word:1.0
+    ports:
+      - '5001:5001'
+    volumes:
+      - /root/docker/kiwi/word/logs:/logs
+    network_mode: "host"
+  kiwi-crawler:
+    image: kiwi-crawler:1.0
+    ports:
+      - '6001:6001'
+    volumes:
+      - /root/docker/kiwi/crawler/logs:/logs
+    network_mode: "host"

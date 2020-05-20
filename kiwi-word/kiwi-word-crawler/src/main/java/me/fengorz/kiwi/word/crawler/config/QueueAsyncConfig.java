@@ -35,7 +35,7 @@ import java.util.concurrent.Executor;
  * @Date 2019/10/31 2:30 PM
  */
 @Configuration
-@ComponentScan("me.fengorz.kiwi.word.crawler.component")
+@ComponentScan("me.fengorz.kiwi.word.crawler")
 @EnableAsync
 public class QueueAsyncConfig implements AsyncConfigurer {
 

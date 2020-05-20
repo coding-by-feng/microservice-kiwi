@@ -22,6 +22,7 @@ package me.fengorz.kiwi.word.crawler.component;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.word.api.dto.fetch.WordMessageDTO;
+import me.fengorz.kiwi.word.crawler.service.IWordFetchService;
 import org.springframework.amqp.rabbit.annotation.*;
 import org.springframework.stereotype.Component;
 
@@ -30,22 +31,24 @@ import org.springframework.stereotype.Component;
  * @Author codingByFeng
  * @Date 2019/10/28 4:25 PM
  */
+@Slf4j
 @Component
+@AllArgsConstructor
 @RabbitListener(bindings = @QueueBinding(value = @Queue(value = "${mq.config.wordFetch.queue.name}",
         autoDelete = "true"),
         exchange = @Exchange(value = "${mq.config.wordFetch.exchange}"),
         key = "${mq.config.wordFetch.routing.key}"))
-@Slf4j
-@AllArgsConstructor
 public class WordFetchConsumer {
 
-    private final AsyncConcurrentConsumer asyncConcurrentConsumer;
+    // private final AsyncConcurrentConsumer asyncConcurrentConsumer;
+    private final IWordFetchService wordFetchService;
 
     @RabbitHandler
     public void fetch(WordMessageDTO wordMessage) throws InterruptedException {
         log.info("rabbitMQ fetch one word is " + wordMessage);
-        this.asyncConcurrentConsumer.asyncFetchWord(wordMessage);
-        Thread.sleep(1500);
+        // TODO ZSF 这里采用异步线程池，可以提交爬虫性能
+        wordFetchService.work(wordMessage);
+        Thread.sleep(5000);
     }
 
 }

@@ -1,0 +1,16 @@
+version: '3.3'
+services:
+  kiwi-eureka:
+    image: kiwi-eureka:1.0
+    ports:
+      - '8762:8762'
+    volumes:
+      - /root/docker/kiwi/eureka/logs:/logs
+    network_mode: "host"
+  kiwi-config:
+    image: kiwi-config:1.0
+    ports:
+      - '7771:7771'
+    volumes:
+      - /root/docker/kiwi/config/logs:/logs
+    network_mode: "host"

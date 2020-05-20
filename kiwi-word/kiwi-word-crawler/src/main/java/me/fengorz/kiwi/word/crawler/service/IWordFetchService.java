@@ -16,23 +16,16 @@
  *
  *
  */
-package me.fengorz.kiwi.word.biz.service;
 
-import com.baomidou.mybatisplus.extension.service.IService;
-import me.fengorz.kiwi.word.api.entity.WordFetchQueueDO;
+package me.fengorz.kiwi.word.crawler.service;
+
+import me.fengorz.kiwi.word.api.dto.fetch.WordMessageDTO;
 
 /**
- * 单词待抓取列表
- *
- * @author codingByFeng
- * @date 2019-10-30 14:45:45
+ * @author zhanshifeng
  */
-public interface IWordFetchQueueService extends IService<WordFetchQueueDO> {
+public interface IWordFetchService {
 
-    boolean insertNewQueue(WordFetchQueueDO wordFetchQueue);
-
-    boolean fetchNewWord(String wordName);
-
-    boolean invalid(String wordName);
+    void work(WordMessageDTO wordMessageDTO);
 
 }

@@ -25,6 +25,7 @@ import me.fengorz.kiwi.common.api.constant.CommonConstants;
 import me.fengorz.kiwi.common.api.exception.ServiceException;
 import me.fengorz.kiwi.word.api.common.WordCrawlerConstants;
 import me.fengorz.kiwi.word.api.entity.WordFetchQueueDO;
+import me.fengorz.kiwi.word.api.entity.WordMainDO;
 import me.fengorz.kiwi.word.biz.mapper.WordFetchQueueMapper;
 import me.fengorz.kiwi.word.biz.service.IWordFetchQueueService;
 import org.springframework.stereotype.Service;
@@ -53,6 +54,14 @@ public class WordFetchQueueServiceImpl extends ServiceImpl<WordFetchQueueMapper,
                         .setIsValid(CommonConstants.TRUE)
                         .setFetchPriority(100)
         );
+    }
+
+    @Override
+    public boolean del(String wordName) {
+        if (!this.isExist(wordName)) {
+            return false;
+        }
+        return this.remove(new LambdaQueryWrapper<WordFetchQueueDO>().eq(WordFetchQueueDO::getWordName, wordName));
     }
 
     @Override

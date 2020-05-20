@@ -75,4 +75,9 @@ public class RemoteWordFetchServiceFallbackImpl implements IRemoteWordFetchServi
         log.error("updateByWordName error, wordFetchQueue=" + wordFetchQueue, throwable);
         return R.feignCallFailed();
     }
+
+    @Override
+    public R removeById(String wordName) {
+        return null;
+    }
 }

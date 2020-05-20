@@ -91,7 +91,7 @@ public class TestTempController extends BaseController {
                 if (StrUtil.isBlank(line)) {
                     continue;
                 }
-                wordList.add(line.substring(0, line.indexOf(" ")));
+                wordList.add(line);
             }
         } catch (FileNotFoundException e) {
             System.out.println("找不到指定文件");

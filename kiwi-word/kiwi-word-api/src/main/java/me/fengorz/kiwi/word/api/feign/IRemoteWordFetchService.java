@@ -51,4 +51,7 @@ public interface IRemoteWordFetchService {
     @PostMapping(WORD_FETCH_QUEUE + "/updateByWordName")
     R updateByWordName(@RequestBody WordFetchQueueDO wordFetchQueue);
 
+    @PostMapping(WORD_FETCH_QUEUE + "/removeById")
+    R removeById(String wordName);
+
 }

@@ -41,6 +41,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 
 
 /**
@@ -121,17 +122,11 @@ public class WordFetchQueueController extends BaseController {
                 .setWordName(wordFetchQueue.getWordName()))));
     }
 
-    /**
-     * 通过id删除单词待抓取列表
-     *
-     * @param queueId id
-     * @return R
-     */
     @SysLog("通过id删除单词待抓取列表")
-    @DeleteMapping("/{queueId}")
+    @PostMapping("/removeById")
     // @PreAuthorize("@pms.hasPermission('queue_wordfetchqueue_del')")
-    public R removeById(@PathVariable Integer queueId) {
-        return R.ok(wordFetchQueueService.removeById(queueId));
+    public R removeById(@NotBlank String wordName) {
+        return R.ok(wordFetchQueueService);
     }
 
 

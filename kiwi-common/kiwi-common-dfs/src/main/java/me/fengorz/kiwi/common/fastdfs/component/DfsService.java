@@ -26,8 +26,8 @@ import com.github.tobato.fastdfs.service.AppendFileStorageClient;
 import com.github.tobato.fastdfs.service.FastFileStorageClient;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import me.fengorz.kiwi.common.fastdfs.exception.DfsOperateDeleteException;
-import me.fengorz.kiwi.common.fastdfs.exception.DfsOperateException;
+import me.fengorz.kiwi.common.api.exception.dfs.DfsOperateDeleteException;
+import me.fengorz.kiwi.common.api.exception.dfs.DfsOperateException;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayInputStream;

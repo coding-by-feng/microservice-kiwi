@@ -26,5 +26,15 @@ me:
 #          tmpPath: "/Users/zhanshifeng/Documents/myDocument/temp/microSerivceVocabularyEnhancer"
           tmpPath: "/root/crawlerTmp"
 
+async:
+  config:
+    core:
+      pool:
+        size: 15
+    max:
+      pool:
+        size: 30
+    queue:
+      capacity: 5
 
 

@@ -58,12 +58,13 @@ public class WordFetchConsumer {
     public synchronized void fetch(WordMessageDTO wordMessageDTO) {
         log.info("rabbitMQ fetch one word is " + wordMessageDTO);
         // 线程池如果满了的话，先睡眠一段时间，等待有空闲的现场出来
-        while (threadPoolTaskExecutor.getActiveCount() == maxPoolSize) {
+        while (threadPoolTaskExecutor.getActiveCount() >= maxPoolSize) {
             try {
                 log.info("threadPoolTaskExecutor is full, sleep 1s!");
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
                 log.error("WordFetchConsumer.fetch sleep error!", e);
+                // TODO ZSF 增加一个抓取队列状态恢复到待抓取的接口，防止数据抓取丢失
                 return;
             }
         }

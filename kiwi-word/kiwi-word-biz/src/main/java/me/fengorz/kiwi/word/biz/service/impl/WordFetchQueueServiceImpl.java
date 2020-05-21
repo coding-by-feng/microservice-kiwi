@@ -58,8 +58,8 @@ public class WordFetchQueueServiceImpl extends ServiceImpl<WordFetchQueueMapper,
 
     @Async
     @Override
-    public boolean asyncFetchNewWord(String wordName) {
-        return this.fetchNewWord(wordName);
+    public void asyncFetchNewWord(String wordName) {
+        this.fetchNewWord(wordName);
     }
 
     private boolean del(String wordName) {

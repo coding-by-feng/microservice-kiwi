@@ -33,7 +33,7 @@ public interface IWordFetchQueueService extends IService<WordFetchQueueDO> {
 
     boolean fetchNewWord(String wordName);
 
-    boolean asyncFetchNewWord(String wordName);
+    void asyncFetchNewWord(String wordName);
 
     boolean invalid(String wordName);
 

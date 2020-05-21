@@ -72,6 +72,7 @@ public class WordFetchQueueServiceImpl extends ServiceImpl<WordFetchQueueMapper,
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public boolean invalid(String wordName) {
         if (!this.isExist(wordName)) {
             return false;

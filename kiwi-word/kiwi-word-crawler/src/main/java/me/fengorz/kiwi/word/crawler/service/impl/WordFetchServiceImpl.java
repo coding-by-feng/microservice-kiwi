@@ -60,7 +60,7 @@ public class WordFetchServiceImpl implements IWordFetchService {
             } else {
                 long newTime = System.currentTimeMillis();
                 log.info("word({}) fetch store success! spent {}s", wordFetchQueue.getWordName(), (newTime - oldTime));
-                remoteWordFetchService.invalid(wordMessageDTO.getWord());
+                remoteWordFetchService.invalid(wordFetchQueue.getWordName());
                 log.info("word({}) fetch queue del success!", wordFetchQueue.getWordName());
             }
         } catch (JsoupFetchConnectException e) {

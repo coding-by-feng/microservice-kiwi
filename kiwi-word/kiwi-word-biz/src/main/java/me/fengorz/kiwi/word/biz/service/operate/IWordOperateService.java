@@ -20,8 +20,8 @@
 package me.fengorz.kiwi.word.biz.service.operate;
 
 import me.fengorz.kiwi.common.api.exception.ServiceException;
-import me.fengorz.kiwi.common.fastdfs.exception.DfsOperateDeleteException;
-import me.fengorz.kiwi.common.fastdfs.exception.DfsOperateException;
+import me.fengorz.kiwi.common.api.exception.dfs.DfsOperateDeleteException;
+import me.fengorz.kiwi.common.api.exception.dfs.DfsOperateException;
 import me.fengorz.kiwi.word.api.dto.fetch.FetchWordResultDTO;
 import me.fengorz.kiwi.word.api.entity.WordMainDO;
 import me.fengorz.kiwi.word.api.exception.WordResultStoreException;

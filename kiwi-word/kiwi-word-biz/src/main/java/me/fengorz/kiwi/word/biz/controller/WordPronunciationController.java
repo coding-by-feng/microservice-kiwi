@@ -25,7 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.api.R;
 import me.fengorz.kiwi.common.api.annotation.log.SysLog;
 import me.fengorz.kiwi.common.fastdfs.component.DfsService;
-import me.fengorz.kiwi.common.fastdfs.exception.DfsOperateDeleteException;
+import me.fengorz.kiwi.common.api.exception.dfs.DfsOperateDeleteException;
 import me.fengorz.kiwi.common.sdk.controller.BaseController;
 import me.fengorz.kiwi.word.api.entity.WordPronunciationDO;
 import me.fengorz.kiwi.word.biz.service.IWordPronunciationService;

@@ -23,7 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.api.R;
 import me.fengorz.kiwi.common.api.constant.CommonConstants;
 import me.fengorz.kiwi.common.api.exception.BaseException;
-import me.fengorz.kiwi.common.fastdfs.exception.DfsOperateException;
+import me.fengorz.kiwi.common.api.exception.dfs.DfsOperateException;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;

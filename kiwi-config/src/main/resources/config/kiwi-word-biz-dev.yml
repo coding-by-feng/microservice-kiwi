@@ -24,6 +24,7 @@ me:
       crawler:
         voice:
 #          tmpPath: "/Users/zhanshifeng/Documents/myDocument/temp/microSerivceVocabularyEnhancer"
+#          tmpPath: "~/crawlerTmp"
           tmpPath: "/root/crawlerTmp"
 
 async:

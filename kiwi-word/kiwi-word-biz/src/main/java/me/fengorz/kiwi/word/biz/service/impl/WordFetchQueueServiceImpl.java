@@ -27,6 +27,7 @@ import me.fengorz.kiwi.word.api.common.WordCrawlerConstants;
 import me.fengorz.kiwi.word.api.entity.WordFetchQueueDO;
 import me.fengorz.kiwi.word.biz.mapper.WordFetchQueueMapper;
 import me.fengorz.kiwi.word.biz.service.IWordFetchQueueService;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -55,6 +56,12 @@ public class WordFetchQueueServiceImpl extends ServiceImpl<WordFetchQueueMapper,
         );
     }
 
+    @Async
+    @Override
+    public boolean asyncFetchNewWord(String wordName) {
+        return this.fetchNewWord(wordName);
+    }
+
     private boolean del(String wordName) {
         if (!this.isExist(wordName)) {
             return false;
@@ -69,6 +76,7 @@ public class WordFetchQueueServiceImpl extends ServiceImpl<WordFetchQueueMapper,
         if (!this.isExist(wordName)) {
             return false;
         }
+        // TODO ZSF 这里要搬到废弃的历史表
         return this.update(new WordFetchQueueDO().setIsValid(CommonConstants.FALSE),
                 new LambdaQueryWrapper<WordFetchQueueDO>().eq(WordFetchQueueDO::getWordName, wordName));
     }

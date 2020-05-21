@@ -32,7 +32,6 @@ import me.fengorz.kiwi.word.api.exception.JsoupFetchResultException;
 import me.fengorz.kiwi.word.api.feign.IRemoteWordFetchService;
 import me.fengorz.kiwi.word.crawler.service.IJsoupService;
 import me.fengorz.kiwi.word.crawler.service.IWordFetchService;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 /**
@@ -43,12 +42,11 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @Service
 @AllArgsConstructor
-public class WordFetchSingleThreadServiceImpl implements IWordFetchService {
+public class WordFetchServiceImpl implements IWordFetchService {
 
     private final IJsoupService jsoupService;
     private final IRemoteWordFetchService remoteWordFetchService;
 
-    @Async
     @Override
     public void work(WordMessageDTO wordMessageDTO) {
         WordFetchQueueDO wordFetchQueue = new WordFetchQueueDO().setWordName(wordMessageDTO.getWord()).setFetchStatus(WordCrawlerConstants.STATUS_FETCHED);
@@ -62,7 +60,7 @@ public class WordFetchSingleThreadServiceImpl implements IWordFetchService {
             } else {
                 long newTime = System.currentTimeMillis();
                 log.info("word({}) fetch store success! spent {}s", wordFetchQueue.getWordName(), (newTime - oldTime));
-                remoteWordFetchService.removeById(wordMessageDTO.getWord());
+                remoteWordFetchService.invalid(wordMessageDTO.getWord());
                 log.info("word({}) fetch queue del success!", wordFetchQueue.getWordName());
             }
         } catch (JsoupFetchConnectException e) {

@@ -17,36 +17,37 @@
  *
  */
 
-package me.fengorz.kiwi.word.crawler.config;
+package me.fengorz.kiwi.word.biz.config;
 
+import org.springframework.aop.interceptor.AsyncUncaughtExceptionHandler;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.AsyncConfigurer;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
+import java.util.concurrent.Executor;
+
 /**
- * @Description TODO
- * @Author codingByFeng
- * @Date 2019/10/29 4:57 PM
+ *
  */
 @Configuration
-@ComponentScan(basePackages = "me.fengorz.kiwi.word.crawler")
-@EnableScheduling
-public class QueueConfig {
+@ComponentScan("me.fengorz.kiwi.word.biz")
+@EnableAsync
+public class AsyncConfig implements AsyncConfigurer {
 
-    @Value("${crawler.config.core.pool.size}")
+    @Value("${async.config.core.pool.size}")
     private int corePoolSize;
 
-    @Value("${crawler.config.max.pool.size}")
+    @Value("${async.config.max.pool.size}")
     private int maxPoolSize;
 
-    @Value("${crawler.config.queue.capacity}")
+    @Value("${async.config.queue.capacity}")
     private int queueCapacity;
 
-    @Bean(name = "concurrentFetchWordThreadExecutor")
-    public ThreadPoolTaskExecutor threadPoolTaskExecutor(){
+    @Override
+    public Executor getAsyncExecutor() {
         ThreadPoolTaskExecutor taskExecutor = new ThreadPoolTaskExecutor();
         taskExecutor.setCorePoolSize(this.corePoolSize);
         taskExecutor.setMaxPoolSize(this.maxPoolSize);
@@ -55,4 +56,9 @@ public class QueueConfig {
         return taskExecutor;
     }
 
+    @Override
+    public AsyncUncaughtExceptionHandler getAsyncUncaughtExceptionHandler() {
+        // TODO ZSF 要添加异常处理器
+        return null;
+    }
 }

@@ -77,7 +77,7 @@ public class RemoteWordFetchServiceFallbackImpl implements IRemoteWordFetchServi
     }
 
     @Override
-    public R removeById(String wordName) {
+    public R invalid(String wordName) {
         return null;
     }
 }

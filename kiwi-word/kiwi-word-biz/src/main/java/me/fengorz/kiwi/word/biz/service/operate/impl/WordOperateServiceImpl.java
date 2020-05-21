@@ -54,6 +54,7 @@ import me.fengorz.kiwi.word.biz.service.*;
 import me.fengorz.kiwi.word.biz.service.operate.IWordOperateService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -225,9 +226,8 @@ public class WordOperateServiceImpl implements IWordOperateService {
         // if you can't find the result after the tense is determined, insert a record into the queue to be fetched
         if (word == null) {
             // TODO: 2020/5/18  先抓取到时态变化的其他读个不同wordName
-            // 爬虫抓取，插入对列表
-            // TODO: 2020/5/19 看下怎么异步调用出去，用优雅的方式，看看Spring有没有API可以用
-            this.wordFetchQueueService.fetchNewWord(wordName);
+            // 异步爬虫抓取，插入队列表
+            this.wordFetchQueueService.asyncFetchNewWord(wordName);
         }
 
         KiwiAssertUtils.serviceNotNull(word, "No results for [{}]!", wordName);

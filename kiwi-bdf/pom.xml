@@ -35,6 +35,11 @@
     <dependencies>
         <dependency>
             <groupId>me.fengorz</groupId>
+            <artifactId>kiwi-common-dfs</artifactId>
+            <version>${kiwi-common.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>me.fengorz</groupId>
             <artifactId>kiwi-common-sdk</artifactId>
             <version>${kiwi-common.version}</version>
         </dependency>

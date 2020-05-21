@@ -19,12 +19,14 @@
 
 package me.fengorz.kiwi.common.fastdfs.exception;
 
+import me.fengorz.kiwi.common.api.exception.BaseException;
+
 /**
  * @Description TODO
  * @Author zhanshifeng
  * @Date 2019/11/7 11:38 PM
  */
-public class DfsOperateException extends Exception {
+public class DfsOperateException extends BaseException {
 
     public DfsOperateException() {
     }

@@ -26,7 +26,7 @@ import me.fengorz.kiwi.common.api.exception.BaseException;
  * @Author zhanshifeng
  * @Date 2019/11/7 11:38 PM
  */
-public class DfsOperateDeleteException extends BaseException {
+public class DfsOperateDeleteException extends DfsOperateException {
 
     public DfsOperateDeleteException() {
     }

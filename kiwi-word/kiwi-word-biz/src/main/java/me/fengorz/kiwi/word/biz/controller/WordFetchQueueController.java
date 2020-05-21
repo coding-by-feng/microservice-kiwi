@@ -136,12 +136,12 @@ public class WordFetchQueueController extends BaseController {
             wordOperateService.storeFetchWordResult(fetchWordResultDTO);
         } catch (WordResultStoreException e) {
             return R.failed(WordCrawlerConstants.STATUS_ERROR_WORD_ID_NOT_NULL, e.getMessage());
-        } catch (DfsOperateException e) {
-            return R.failed(WordCrawlerConstants.STATUS_ERROR_DFS_OPERATE_FAILED, e.getMessage());
         } catch (DfsOperateDeleteException e) {
             log.error(KiwiLogUtils.getClassName() + CommonConstants.DOT + KiwiLogUtils.getMethodName(), e.getMessage());
             wordOperateService.dfsDeleteExceptionBackCall(fetchWordResultDTO.getWordName());
             return R.failed(WordCrawlerConstants.STATUS_ERROR_DFS_OPERATE_DELETE_FAILED, e.getMessage());
+        } catch (DfsOperateException e) {
+            return R.failed(WordCrawlerConstants.STATUS_ERROR_DFS_OPERATE_FAILED, e.getMessage());
         }
         return R.ok();
     }

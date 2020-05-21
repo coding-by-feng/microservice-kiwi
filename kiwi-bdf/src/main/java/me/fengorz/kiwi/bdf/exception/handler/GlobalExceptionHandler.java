@@ -22,6 +22,8 @@ package me.fengorz.kiwi.bdf.exception.handler;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.api.R;
 import me.fengorz.kiwi.common.api.constant.CommonConstants;
+import me.fengorz.kiwi.common.api.exception.BaseException;
+import me.fengorz.kiwi.common.fastdfs.exception.DfsOperateException;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
@@ -41,11 +43,18 @@ import java.util.Objects;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(Exception.class)
+    @ExceptionHandler({Exception.class})
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public R exception(Exception e) {
+    public R exception(BaseException e) {
         log.error("global exception:{}", e.getMessage(), e);
         return R.failed(e.getMessage());
+    }
+
+    @ExceptionHandler({DfsOperateException.class})
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public R dfsException(BaseException e) {
+        log.error("dfsException:{}", e.getMessage(), e);
+        return R.ok(e.getMessage());
     }
 
     @ExceptionHandler({MethodArgumentNotValidException.class})

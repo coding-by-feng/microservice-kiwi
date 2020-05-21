@@ -28,6 +28,8 @@ services:
     volumes:
       - /root/docker/kiwi/word/logs:/logs
     network_mode: "host"
+    depends_on:
+      - kiwi-gate
   kiwi-crawler:
     image: kiwi-crawler:1.0
     ports:
@@ -35,3 +37,5 @@ services:
     volumes:
       - /root/docker/kiwi/crawler/logs:/logs
     network_mode: "host"
+    depends_on:
+      - kiwi-word

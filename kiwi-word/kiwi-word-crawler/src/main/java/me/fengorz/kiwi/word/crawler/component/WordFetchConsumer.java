@@ -20,11 +20,17 @@
 package me.fengorz.kiwi.word.crawler.component;
 
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.word.api.dto.fetch.WordMessageDTO;
 import me.fengorz.kiwi.word.crawler.service.IWordFetchService;
 import org.springframework.amqp.rabbit.annotation.*;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.retry.backoff.Sleeper;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
+
+import javax.annotation.Resource;
 
 /**
  * @Description TODO
@@ -33,22 +39,38 @@ import org.springframework.stereotype.Component;
  */
 @Slf4j
 @Component
-@AllArgsConstructor
+@RequiredArgsConstructor
 @RabbitListener(bindings = @QueueBinding(value = @Queue(value = "${mq.config.wordFetch.queue.name}",
         autoDelete = "true"),
         exchange = @Exchange(value = "${mq.config.wordFetch.exchange}"),
         key = "${mq.config.wordFetch.routing.key}"))
 public class WordFetchConsumer {
 
-    // private final AsyncConcurrentConsumer asyncConcurrentConsumer;
     private final IWordFetchService wordFetchService;
 
+    @Resource(name = "concurrentFetchWordThreadExecutor")
+    private ThreadPoolTaskExecutor threadPoolTaskExecutor;
+
+    @Value("${crawler.config.max.pool.size}")
+    private int maxPoolSize;
+
     @RabbitHandler
-    public void fetch(WordMessageDTO wordMessage) throws InterruptedException {
-        log.info("rabbitMQ fetch one word is " + wordMessage);
-        // TODO ZSF 这里采用异步线程池，可以提交爬虫性能
-        wordFetchService.work(wordMessage);
-        Thread.sleep(5000);
+    public synchronized void fetch(WordMessageDTO wordMessageDTO) {
+        log.info("rabbitMQ fetch one word is " + wordMessageDTO);
+        // 线程池如果满了的话，先睡眠一段时间，等待有空闲的现场出来
+        while (threadPoolTaskExecutor.getActiveCount() == maxPoolSize) {
+            try {
+                log.info("threadPoolTaskExecutor is full, sleep 1s!");
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                log.error("WordFetchConsumer.fetch sleep error!", e);
+                return;
+            }
+        }
+
+        threadPoolTaskExecutor.execute(() -> {
+            wordFetchService.work(wordMessageDTO);
+        });
     }
 
 }

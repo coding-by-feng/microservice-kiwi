@@ -123,10 +123,10 @@ public class WordFetchQueueController extends BaseController {
     }
 
     @SysLog("通过id删除单词待抓取列表")
-    @PostMapping("/removeById")
+    @PostMapping("/invalid")
     // @PreAuthorize("@pms.hasPermission('queue_wordfetchqueue_del')")
-    public R removeById(@NotBlank String wordName) {
-        return R.ok(wordFetchQueueService);
+    public R invalid(@NotBlank String wordName) {
+        return R.ok(wordFetchQueueService.invalid(wordName));
     }
 
 

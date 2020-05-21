@@ -36,11 +36,11 @@ public interface WordCrawlerConstants {
     int STATUS_ERROR_WORD_ID_NOT_NULL = 401;
     /*fastDfs操作异常*/
     int STATUS_ERROR_DFS_OPERATE_FAILED = 402;
-    int STATUS_ERROR_DFS_OPERATE_DELETE_FAILED = 402;
+    int STATUS_ERROR_DFS_OPERATE_DELETE_FAILED = 404;
     /*Jsoup连接失败*/
-    int STATUS_ERROR_JSOUP_FETCH_CONNECT_FAILED = 403;
+    int STATUS_ERROR_JSOUP_FETCH_CONNECT_FAILED = 405;
     /*Jsoup抓取结果失败*/
-    int STATUS_ERROR_JSOUP_RESULT_FETCH_FAILED = 404;
+    int STATUS_ERROR_JSOUP_RESULT_FETCH_FAILED = 406;
 
     String CRAWLER_BASE_URL = "https://dictionary.cambridge.org/zhs/词典/英语-汉语-简体/";
     String CAMBRIDGE_BASE_URL = "https://dictionary.cambridge.org/";

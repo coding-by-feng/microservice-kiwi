@@ -17,7 +17,7 @@
  *
  */
 
-package me.fengorz.kiwi.common.fastdfs.exception;
+package me.fengorz.kiwi.common.api.exception.dfs;
 
 import me.fengorz.kiwi.common.api.exception.BaseException;
 

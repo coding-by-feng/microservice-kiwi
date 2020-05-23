@@ -27,15 +27,14 @@ import me.fengorz.kiwi.word.api.common.WordCrawlerConstants;
 import me.fengorz.kiwi.word.api.dto.fetch.FetchWordResultDTO;
 import me.fengorz.kiwi.word.api.dto.fetch.WordMessageDTO;
 import me.fengorz.kiwi.word.api.entity.WordFetchQueueDO;
-import me.fengorz.kiwi.word.api.exception.JsoupFetchConnectException;
-import me.fengorz.kiwi.word.api.exception.JsoupFetchResultException;
+import me.fengorz.kiwi.word.api.exception.JsoupFetchConnectRuntimeException;
+import me.fengorz.kiwi.word.api.exception.JsoupFetchResultRuntimeException;
 import me.fengorz.kiwi.word.api.feign.IRemoteWordFetchService;
 import me.fengorz.kiwi.word.crawler.service.IJsoupService;
 import me.fengorz.kiwi.word.crawler.service.IWordFetchService;
 import org.springframework.stereotype.Service;
 
 /**
- * @Description TODO
  * @Author zhanshifeng
  * @Date 2020/5/20 11:54 PM
  */
@@ -49,24 +48,34 @@ public class WordFetchServiceImpl implements IWordFetchService {
 
     @Override
     public void work(WordMessageDTO wordMessageDTO) {
-        WordFetchQueueDO wordFetchQueue = new WordFetchQueueDO().setWordName(wordMessageDTO.getWord()).setFetchStatus(WordCrawlerConstants.STATUS_FETCHED);
+        final String word = wordMessageDTO.getWord();
+        WordFetchQueueDO wordFetchQueue = new WordFetchQueueDO()
+                .setWordName(word).setFetchStatus(WordCrawlerConstants.STATUS_SUCCESS);
         try {
             long oldTime = System.currentTimeMillis();
             FetchWordResultDTO fetchWordResultDTO = jsoupService.fetchWordInfo(wordMessageDTO);
+
+            // TODO ZSF 增加一个时态、单复数的变化关系对应逻辑
+
+
             // All exceptions are called back to the data in the word_fetch_queue
             R storeResult = remoteWordFetchService.storeFetchWordResult(fetchWordResultDTO);
             if (storeResult.isFail()) {
-                subDealException(wordFetchQueue, storeResult.getCode(), storeResult.getMsg());
+                subDealException(wordFetchQueue, storeResult.getCode().value(), storeResult.getMsg());
             } else {
                 long newTime = System.currentTimeMillis();
                 log.info("word({}) fetch store success! spent {}s", wordFetchQueue.getWordName(), (newTime - oldTime));
                 remoteWordFetchService.invalid(wordFetchQueue.getWordName());
                 log.info("word({}) fetch queue del success!", wordFetchQueue.getWordName());
+                wordFetchQueue.setFetchStatus(WordCrawlerConstants.STATUS_SUCCESS);
+                wordFetchQueue.setFetchResult(KiwiStringUtils.format("word({}) fetch store success! spent {}s", word));
             }
-        } catch (JsoupFetchConnectException e) {
+        } catch (JsoupFetchConnectRuntimeException e) {
             subDealException(wordFetchQueue, WordCrawlerConstants.STATUS_ERROR_JSOUP_FETCH_CONNECT_FAILED, e.getMessage());
-        } catch (JsoupFetchResultException e) {
+        } catch (JsoupFetchResultRuntimeException e) {
             subDealException(wordFetchQueue, WordCrawlerConstants.STATUS_ERROR_JSOUP_RESULT_FETCH_FAILED, e.getMessage());
+        } finally {
+            remoteWordFetchService.updateByWordName(wordFetchQueue);
         }
     }
 
@@ -76,6 +85,5 @@ public class WordFetchServiceImpl implements IWordFetchService {
         if (KiwiStringUtils.isNotBlank(message)) {
             log.error(message);
         }
-        remoteWordFetchService.updateByWordName(wordFetchQueue);
     }
 }

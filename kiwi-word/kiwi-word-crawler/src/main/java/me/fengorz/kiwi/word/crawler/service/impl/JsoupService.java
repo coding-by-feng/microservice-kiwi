@@ -21,10 +21,11 @@ package me.fengorz.kiwi.word.crawler.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
 import lombok.extern.slf4j.Slf4j;
+import me.fengorz.kiwi.common.sdk.util.validate.KiwiAssertUtils;
 import me.fengorz.kiwi.word.api.common.WordCrawlerConstants;
 import me.fengorz.kiwi.word.api.dto.fetch.*;
-import me.fengorz.kiwi.word.api.exception.JsoupFetchConnectException;
-import me.fengorz.kiwi.word.api.exception.JsoupFetchResultException;
+import me.fengorz.kiwi.word.api.exception.JsoupFetchConnectRuntimeException;
+import me.fengorz.kiwi.word.api.exception.JsoupFetchResultRuntimeException;
 import me.fengorz.kiwi.word.api.util.CrawlerAssertUtils;
 import me.fengorz.kiwi.word.crawler.service.IJsoupService;
 import org.jsoup.Jsoup;
@@ -48,6 +49,9 @@ import java.util.Optional;
 public class JsoupService implements IJsoupService {
 
     public static final String JSOUP_CONNECT_EXCEPTION = "jsoup connect exception, the url is {}";
+    public static final String KEY_WORD_HEADER = "ti fs fs12 lmb-0 hw";
+    public static final String KEY_WORD_NAME = "tb ttn";
+    public static final String FETCH_MAIN_WORD_NAME_EXCEPTION = "The word name of {} is not found!";
     public static final String KEY_ROOT = "pr entry-body__el";
     public static final String FETCH_ROOT_EXCEPTION = "The {} is not found!";
     public static final String KEY_MAIN_PARAPHRASES = "sense-body dsense_b";
@@ -76,15 +80,16 @@ public class JsoupService implements IJsoupService {
     public static final String KEY_DAUD = "daud";
 
     @Override
-    public FetchWordResultDTO fetchWordInfo(WordMessageDTO wordMessage) throws JsoupFetchConnectException, JsoupFetchResultException {
+    public FetchWordResultDTO fetchWordInfo(WordMessageDTO wordMessage) throws JsoupFetchConnectRuntimeException, JsoupFetchResultRuntimeException {
         final String word = wordMessage.getWord();
+        String jsoupWord = null;
 
         Document doc;
         try {
             doc = Jsoup.connect(WordCrawlerConstants.CRAWLER_BASE_URL + word).get();
         } catch (IOException e) {
             log.error(JSOUP_CONNECT_EXCEPTION, word);
-            throw new JsoupFetchConnectException();
+            throw new JsoupFetchConnectRuntimeException();
         }
 
         /**
@@ -92,11 +97,19 @@ public class JsoupService implements IJsoupService {
          * empty to throw an exception,
          * let the upper logic to do callback processing
          */
+        FetchWordResultDTO fetchWordResultDTO = new FetchWordResultDTO();
+
+        //fetchWordResultDTO 放入 爬虫回来的wordName，不是传进来的wordName
+        Elements wordNameHeader = doc.getElementsByClass(KEY_WORD_HEADER);
+        CrawlerAssertUtils.notEmpty(wordNameHeader, FETCH_MAIN_WORD_NAME_EXCEPTION, word);
+        Elements wordName = wordNameHeader.get(0).getElementsByClass(KEY_WORD_NAME);
+        CrawlerAssertUtils.notEmpty(wordName, FETCH_MAIN_WORD_NAME_EXCEPTION, word);
+        jsoupWord = wordName.get(0).text();
+        KiwiAssertUtils.serviceEmpty(jsoupWord, FETCH_MAIN_WORD_NAME_EXCEPTION, word);
+        fetchWordResultDTO.setWordName(jsoupWord);
+
         Elements root = doc.getElementsByClass(KEY_ROOT);
         CrawlerAssertUtils.notEmpty(root, FETCH_ROOT_EXCEPTION, word);
-
-        FetchWordResultDTO fetchWordResultDTO = new FetchWordResultDTO();
-        fetchWordResultDTO.setWordName(word);
         List<FetchWordCodeDTO> fetchWordCodeDTOList = new ArrayList<>();
 
         for (Element block : root) {
@@ -110,6 +123,7 @@ public class JsoupService implements IJsoupService {
             //  The number of parts of code and label per main paraphrase block can normally only be 1
             CrawlerAssertUtils.mustBeTrue(codeHeader != null && codeHeader.size() == 1,
                     FETCH_CODE_HEADER_EXCEPTION, word);
+            // TODO ZSF fetchWordResultDTO 放入 爬虫回来的wordName，不是传进来的wordName
             final Element header = codeHeader.get(0);
             Optional.ofNullable(header.getElementsByClass(KEY_HEADER_CODE)).flatMap(element -> Optional.ofNullable(element.text())).ifPresent(code -> {
                 fetchWordCodeDTO.setCode(code);
@@ -180,7 +194,7 @@ public class JsoupService implements IJsoupService {
         return fetchWordResultDTO;
     }
 
-    private FetchWordPronunciationDTO subFetchPronunciation(String word, Element block, String pronunciationKey, String pronunciationType) throws JsoupFetchResultException {
+    private FetchWordPronunciationDTO subFetchPronunciation(String word, Element block, String pronunciationKey, String pronunciationType) throws JsoupFetchResultRuntimeException {
         Elements ukPronunciations = block.getElementsByClass(pronunciationKey);
         CrawlerAssertUtils.mustBeTrue(ukPronunciations != null && ukPronunciations.size() == 1, FETCH_PRONUNCIATION_EXCEPTION, word);
         Element ukPronunciation = ukPronunciations.get(0);
@@ -189,7 +203,7 @@ public class JsoupService implements IJsoupService {
         // index[0] is type="audio/mpeg", index[1] is type="audio/ogg"
         return ukPronunciationDTO.setSoundmarkType(pronunciationType)
                 .setSoundmark(Optional.ofNullable(ukPronunciation.getElementsByClass(KEY_SOUNDMARK))
-                        .orElseThrow(JsoupFetchResultException::new).get(0).text())
-                .setVoiceFileUrl(Optional.ofNullable(ukPronunciation.getElementsByTag(KEY_SOURCE)).orElseThrow(JsoupFetchResultException::new).get(1).attr(KEY_SRC));
+                        .orElseThrow(JsoupFetchResultRuntimeException::new).get(0).text())
+                .setVoiceFileUrl(Optional.ofNullable(ukPronunciation.getElementsByTag(KEY_SOURCE)).orElseThrow(JsoupFetchResultRuntimeException::new).get(1).attr(KEY_SRC));
     }
 }

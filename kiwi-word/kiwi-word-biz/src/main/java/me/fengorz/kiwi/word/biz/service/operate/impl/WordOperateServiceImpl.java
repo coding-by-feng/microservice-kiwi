@@ -33,12 +33,10 @@ import me.fengorz.kiwi.common.api.annotation.cache.KiwiCacheKeyPrefix;
 import me.fengorz.kiwi.common.api.constant.CacheConstants;
 import me.fengorz.kiwi.common.api.constant.CommonConstants;
 import me.fengorz.kiwi.common.api.exception.ServiceException;
-import me.fengorz.kiwi.common.fastdfs.component.DfsService;
 import me.fengorz.kiwi.common.api.exception.dfs.DfsOperateDeleteException;
 import me.fengorz.kiwi.common.api.exception.dfs.DfsOperateException;
-import me.fengorz.kiwi.common.sdk.CommonUtils;
+import me.fengorz.kiwi.common.fastdfs.component.DfsService;
 import me.fengorz.kiwi.common.sdk.util.validate.KiwiAssertUtils;
-import me.fengorz.kiwi.common.sdk.web.security.SecurityUtils;
 import me.fengorz.kiwi.word.api.common.WordConstants;
 import me.fengorz.kiwi.word.api.common.WordCrawlerConstants;
 import me.fengorz.kiwi.word.api.dto.fetch.FetchParaphraseDTO;
@@ -46,7 +44,7 @@ import me.fengorz.kiwi.word.api.dto.fetch.FetchWordCodeDTO;
 import me.fengorz.kiwi.word.api.dto.fetch.FetchWordPronunciationDTO;
 import me.fengorz.kiwi.word.api.dto.fetch.FetchWordResultDTO;
 import me.fengorz.kiwi.word.api.entity.*;
-import me.fengorz.kiwi.word.api.exception.WordResultStoreException;
+import me.fengorz.kiwi.word.api.exception.WordResultStoreRuntimeException;
 import me.fengorz.kiwi.word.api.factory.CrawlerEntityFactory;
 import me.fengorz.kiwi.word.api.util.CrawlerUtils;
 import me.fengorz.kiwi.word.api.vo.*;
@@ -92,7 +90,18 @@ public class WordOperateServiceImpl implements IWordOperateService {
 
     @Override
     @Transactional(rollbackFor = Exception.class, noRollbackFor = DfsOperateDeleteException.class)
-    public boolean storeFetchWordResult(FetchWordResultDTO fetchWordResultDTO) throws WordResultStoreException, DfsOperateException, DfsOperateDeleteException {
+    public void removeWord(String wordName) throws DfsOperateException {
+        WordMainDO wordMainDO = wordMainService.getOneByWordName(wordName);
+        if (wordMainDO == null) {
+            return;
+        }
+        this.removeWordRelatedData(wordMainDO);
+        this.wordMainService.removeById(wordMainDO.getWordId());
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class, noRollbackFor = DfsOperateDeleteException.class)
+    public boolean storeFetchWordResult(FetchWordResultDTO fetchWordResultDTO) throws WordResultStoreRuntimeException, DfsOperateException {
         final String wordName = fetchWordResultDTO.getWordName();
 
         WordMainDO wordMainDO = new WordMainDO();
@@ -103,20 +112,20 @@ public class WordOperateServiceImpl implements IWordOperateService {
         if (existsWordMainDO != null) {
 
             wordMainDO.setLastUpdateTime(LocalDateTime.now());
-            wordMainDO.setIsDel(CommonConstants.FALSE);
+            wordMainDO.setIsDel(CommonConstants.FLAG_N);
             wordMainService.update(wordMainDO, new QueryWrapper<>(new WordMainDO().setWordName(wordMainDO.getWordName())));
             wordMainDO = wordMainService.getOne(new QueryWrapper<>(new WordMainDO().setWordName(wordMainDO.getWordName())));
 
             removeWordRelatedData(wordMainDO);
         } else {
-            wordMainDO.setIsDel(CommonConstants.FALSE);
+            wordMainDO.setIsDel(CommonConstants.FLAG_N);
             wordMainService.save(wordMainDO);
         }
 
         Integer wordId = wordMainDO.getWordId();
 
         if (wordId == null) {
-            throw new WordResultStoreException("wordId is not null!");
+            throw new WordResultStoreRuntimeException("wordId is not null!");
         }
 
         List<FetchWordCodeDTO> fetchWordCodeDTOList = fetchWordResultDTO.getFetchWordCodeDTOList();
@@ -159,45 +168,6 @@ public class WordOperateServiceImpl implements IWordOperateService {
     }
 
     @Override
-    @Transactional(noRollbackFor = DfsOperateDeleteException.class)
-    public void removeWordRelatedData(WordMainDO wordMainDO) throws DfsOperateDeleteException {
-        Integer wordId = wordMainDO.getWordId();
-        QueryWrapper<WordCharacterDO> wordCharacterQueryWrapper = new QueryWrapper<>(new WordCharacterDO().setWordId(wordId));
-        List<WordCharacterDO> characterList = wordCharacterService.list(wordCharacterQueryWrapper);
-        if (CollUtil.isNotEmpty(characterList)) {
-            for (WordCharacterDO wordCharacter : characterList) {
-                Integer characterId = wordCharacter.getCharacterId();
-                QueryWrapper<WordParaphraseDO> wordParaphraseQueryWrapper = new QueryWrapper<>(new WordParaphraseDO().setCharacterId(characterId));
-                List<WordParaphraseDO> paraphraseList = wordParaphraseService.list(wordParaphraseQueryWrapper);
-                if (CollUtil.isNotEmpty(paraphraseList)) {
-                    for (WordParaphraseDO wordParaphraseDO : paraphraseList) {
-                        Integer paraphraseId = wordParaphraseDO.getParaphraseId();
-                        wordParaphraseExampleService.remove(new QueryWrapper<>(new WordParaphraseExampleDO().setParaphraseId(paraphraseId)));
-                    }
-                }
-                if (CollUtil.isNotEmpty(paraphraseList)) {
-                    wordParaphraseService.remove(wordParaphraseQueryWrapper);
-                }
-            }
-            wordCharacterService.remove(wordCharacterQueryWrapper);
-        }
-
-        // 删除分布式文件系统里面的文件
-        QueryWrapper<WordPronunciationDO> wordPronunciationQueryWrapper = new QueryWrapper<>(new WordPronunciationDO().setWordId(wordId));
-        List<WordPronunciationDO> wordPronunciationList = wordPronunciationService.list(wordPronunciationQueryWrapper);
-        wordPronunciationService.remove(wordPronunciationQueryWrapper);
-
-        if (CollUtil.isNotEmpty(wordPronunciationList)) {
-            for (WordPronunciationDO wordPronunciation : wordPronunciationList) {
-                if (StrUtil.isBlank(wordPronunciation.getVoiceFilePath())) {
-                    continue;
-                }
-                dfsService.deleteFile(wordPronunciation.getGroupName(), wordPronunciation.getVoiceFilePath());
-            }
-        }
-    }
-
-    @Override
     @Transactional(rollbackFor = Exception.class)
     public void dfsDeleteExceptionBackCall(String wordName) {
         WordFetchQueueDO wordFetchQueue = new WordFetchQueueDO();
@@ -233,30 +203,14 @@ public class WordOperateServiceImpl implements IWordOperateService {
 
         wordQueryVO.setWordId(word.getWordId());
         wordQueryVO.setWordName(word.getWordName());
-        wordQueryVO.setIsCollect(CommonConstants.FALSE);
+        wordQueryVO.setIsCollect(CommonConstants.FLAG_N);
 
         Integer wordId = word.getWordId();
-        // Visitor users do not need to query isCollect
-        boolean isQueryCollect = false;
-        final Integer currentUserId = SecurityUtils.getCurrentUserId();
-        if (currentUserId != null) {
-            isQueryCollect = true;
-        }
-        wordQueryVO.setIsLogin(CommonUtils.translateBooleanToStr(isQueryCollect));
-
-        // Check to see if words have been collected
-        if (isQueryCollect) {
-            boolean countWordIsCollect = this.wordStarListService.countWordIsCollect(wordId, currentUserId);
-            if (countWordIsCollect) {
-                wordQueryVO.setIsCollect(CommonConstants.TRUE);
-            }
-        }
-
-        wordQueryVO.setWordCharacterVOList(assembleWordCharacterVOS(wordName, wordId, isQueryCollect, currentUserId));
+        wordQueryVO.setWordCharacterVOList(assembleWordCharacterVOS(wordName, wordId));
         return wordQueryVO;
     }
 
-    private List<WordCharacterVO> assembleWordCharacterVOS(String wordName, Integer wordId, boolean isQueryCollect, Integer currentUserId) throws ServiceException {
+    private List<WordCharacterVO> assembleWordCharacterVOS(String wordName, Integer wordId) throws ServiceException {
         List<WordCharacterDO> wordCharacterList = this.wordCharacterService.list(new QueryWrapper<>(new WordCharacterDO().setWordId(wordId)));
         KiwiAssertUtils.serviceNotEmpty(wordCharacterList, "No character for [{}]!", wordName);
 
@@ -266,7 +220,7 @@ public class WordOperateServiceImpl implements IWordOperateService {
             BeanUtil.copyProperties(wordCharacter, wordCharacterVO);
             wordCharacterVOList.add(wordCharacterVO);
 
-            List<WordParaphraseVO> wordParaphraseVOList = assembleWordParaphraseVOS(wordCharacter.getCharacterId(), isQueryCollect, currentUserId);
+            List<WordParaphraseVO> wordParaphraseVOList = assembleWordParaphraseVOS(wordCharacter.getCharacterId());
             if (wordParaphraseVOList == null) {
                 continue;
             }
@@ -298,62 +252,43 @@ public class WordOperateServiceImpl implements IWordOperateService {
         return wordPronunciationVOList;
     }
 
-    private List<WordParaphraseVO> assembleWordParaphraseVOS(Integer characterId, boolean isQueryCollect, Integer currentUserId) {
+    private List<WordParaphraseVO> assembleWordParaphraseVOS(Integer characterId) {
         List<WordParaphraseVO> wordParaphraseVOList = new ArrayList<>();
-        if (isQueryCollect) {
-            wordParaphraseVOList = this.wordParaphraseService.selectParaphraseAndIsCollect(characterId, currentUserId);
-            if (CollUtil.isEmpty(wordParaphraseVOList)) {
-                return wordParaphraseVOList;
-            }
+        List<WordParaphraseDO> wordParaphraseDOList = this.wordParaphraseService.list(new QueryWrapper<>(new WordParaphraseDO().setCharacterId(characterId)));
+        if (CollUtil.isEmpty(wordParaphraseDOList)) {
+            return wordParaphraseVOList;
+        }
 
-            for (WordParaphraseVO wordParaphraseVO : wordParaphraseVOList) {
-                List<WordParaphraseExampleVO> wordParaphraseExampleVOList = assembleWordParaphraseExampleVOS(wordParaphraseVO.getParaphraseId(), isQueryCollect, currentUserId);
-                if (wordParaphraseExampleVOList == null) {
-                    continue;
-                }
-                wordParaphraseVO.setWordParaphraseExampleVOList(wordParaphraseExampleVOList);
-            }
-        } else {
-            List<WordParaphraseDO> wordParaphraseDOList = this.wordParaphraseService.list(new QueryWrapper<>(new WordParaphraseDO().setCharacterId(characterId)));
-            if (CollUtil.isEmpty(wordParaphraseDOList)) {
-                return wordParaphraseVOList;
-            }
+        for (WordParaphraseDO wordParaphraseDO : wordParaphraseDOList) {
+            WordParaphraseVO wordParaphraseVO = new WordParaphraseVO();
+            BeanUtil.copyProperties(wordParaphraseDO, wordParaphraseVO);
+            wordParaphraseVOList.add(wordParaphraseVO);
 
-            for (WordParaphraseDO wordParaphraseDO : wordParaphraseDOList) {
-                WordParaphraseVO wordParaphraseVO = new WordParaphraseVO();
-                BeanUtil.copyProperties(wordParaphraseDO, wordParaphraseVO);
-                wordParaphraseVOList.add(wordParaphraseVO);
-
-                List<WordParaphraseExampleVO> wordParaphraseExampleVOList = assembleWordParaphraseExampleVOS(wordParaphraseVO.getParaphraseId(), isQueryCollect, currentUserId);
-                if (wordParaphraseExampleVOList == null) {
-                    continue;
-                }
-                wordParaphraseVO.setWordParaphraseExampleVOList(wordParaphraseExampleVOList);
+            List<WordParaphraseExampleVO> wordParaphraseExampleVOList = assembleWordParaphraseExampleVOS(wordParaphraseVO.getParaphraseId());
+            if (wordParaphraseExampleVOList == null) {
+                continue;
             }
+            wordParaphraseVO.setWordParaphraseExampleVOList(wordParaphraseExampleVOList);
         }
         return wordParaphraseVOList;
     }
 
-    private List<WordParaphraseExampleVO> assembleWordParaphraseExampleVOS(Integer paraphraseId, boolean isQueryCollect, Integer currentUserId) {
+    private List<WordParaphraseExampleVO> assembleWordParaphraseExampleVOS(Integer paraphraseId) {
         List<WordParaphraseExampleVO> wordParaphraseExampleVOList = new ArrayList<>();
-        if (isQueryCollect) {
-            wordParaphraseExampleVOList = this.wordParaphraseExampleService.selectExampleAndIsCollect(currentUserId, paraphraseId);
-        } else {
-            List<WordParaphraseExampleDO> wordParaphraseExampleDOList = this.wordParaphraseExampleService.list(new QueryWrapper<>(new WordParaphraseExampleDO().setParaphraseId(paraphraseId)));
-            if (CollUtil.isEmpty(wordParaphraseExampleDOList)) {
-                return null;
-            }
-            for (WordParaphraseExampleDO wordParaphraseExampleDO : wordParaphraseExampleDOList) {
-                WordParaphraseExampleVO wordParaphraseExampleVO = new WordParaphraseExampleVO();
-                BeanUtil.copyProperties(wordParaphraseExampleDO, wordParaphraseExampleVO);
-                wordParaphraseExampleVOList.add(wordParaphraseExampleVO);
-            }
+        List<WordParaphraseExampleDO> wordParaphraseExampleDOList = this.wordParaphraseExampleService.list(new QueryWrapper<>(new WordParaphraseExampleDO().setParaphraseId(paraphraseId)));
+        if (CollUtil.isEmpty(wordParaphraseExampleDOList)) {
+            return null;
+        }
+        for (WordParaphraseExampleDO wordParaphraseExampleDO : wordParaphraseExampleDOList) {
+            WordParaphraseExampleVO wordParaphraseExampleVO = new WordParaphraseExampleVO();
+            BeanUtil.copyProperties(wordParaphraseExampleDO, wordParaphraseExampleVO);
+            wordParaphraseExampleVOList.add(wordParaphraseExampleVO);
         }
         return wordParaphraseExampleVOList;
     }
 
     @Override
-    public boolean putWordIntoStarList(Integer wordId, Integer listId) throws ServiceException {
+    public boolean putWordIntoStarList(Integer wordId, Integer listId) {
         LambdaQueryWrapper<WordStarRelDO> queryWrapper = new LambdaQueryWrapper<WordStarRelDO>().eq(WordStarRelDO::getListId, listId)
                 .eq(WordStarRelDO::getWordId, wordId);
         int count = wordStarRelService.count(queryWrapper);
@@ -366,7 +301,7 @@ public class WordOperateServiceImpl implements IWordOperateService {
     }
 
     @Override
-    public boolean removeWordStarList(Integer wordId, Integer listId) throws ServiceException {
+    public boolean removeWordStarList(Integer wordId, Integer listId) {
         LambdaQueryWrapper<WordStarRelDO> queryWrapper = new LambdaQueryWrapper<WordStarRelDO>().eq(WordStarRelDO::getListId, listId)
                 .eq(WordStarRelDO::getWordId, wordId);
         int count = wordStarRelService.count(queryWrapper);
@@ -375,7 +310,7 @@ public class WordOperateServiceImpl implements IWordOperateService {
     }
 
     @Override
-    public boolean putParaphraseIntoStarList(Integer paraphraseId, Integer listId) throws ServiceException {
+    public boolean putParaphraseIntoStarList(Integer paraphraseId, Integer listId) {
         KiwiAssertUtils.serviceNotEmpty(
                 this.wordParaphraseService.countById(paraphraseId), "paraphrase is not exists!");
         KiwiAssertUtils.serviceNotEmpty(
@@ -390,7 +325,7 @@ public class WordOperateServiceImpl implements IWordOperateService {
     }
 
     @Override
-    public boolean putExampleIntoStarList(Integer exampleId, Integer listId) throws ServiceException {
+    public boolean putExampleIntoStarList(Integer exampleId, Integer listId) {
         LambdaQueryWrapper<WordExampleStarRelDO> queryWrapper = new LambdaQueryWrapper<WordExampleStarRelDO>().eq(WordExampleStarRelDO::getListId, listId).eq(WordExampleStarRelDO::getExampleId, exampleId);
         KiwiAssertUtils.serviceEmpty(this.wordExampleStarRelService.count(queryWrapper), "example rel is already exists!");
         return this.wordExampleStarRelService.save(
@@ -401,7 +336,7 @@ public class WordOperateServiceImpl implements IWordOperateService {
     }
 
     @Override
-    public WordCharacterVO getByParaphraseId(Integer paraphraseId) throws ServiceException {
+    public WordCharacterVO getByParaphraseId(Integer paraphraseId) {
         WordParaphraseDO paraphrase = this.wordParaphraseService.getOne(
                 new QueryWrapper<>(
                         new WordParaphraseDO()
@@ -453,6 +388,43 @@ public class WordOperateServiceImpl implements IWordOperateService {
         int count = this.wordExampleStarRelService.count(queryWrapper);
         KiwiAssertUtils.serviceNotEmpty(count, "example is not exists!");
         return this.wordExampleStarRelService.remove(queryWrapper);
+    }
+
+    private void removeWordRelatedData(WordMainDO wordMainDO) throws DfsOperateDeleteException {
+        Integer wordId = wordMainDO.getWordId();
+        QueryWrapper<WordCharacterDO> wordCharacterQueryWrapper = new QueryWrapper<>(new WordCharacterDO().setWordId(wordId));
+        List<WordCharacterDO> characterList = wordCharacterService.list(wordCharacterQueryWrapper);
+        if (CollUtil.isNotEmpty(characterList)) {
+            for (WordCharacterDO wordCharacter : characterList) {
+                Integer characterId = wordCharacter.getCharacterId();
+                QueryWrapper<WordParaphraseDO> wordParaphraseQueryWrapper = new QueryWrapper<>(new WordParaphraseDO().setCharacterId(characterId));
+                List<WordParaphraseDO> paraphraseList = wordParaphraseService.list(wordParaphraseQueryWrapper);
+                if (CollUtil.isNotEmpty(paraphraseList)) {
+                    for (WordParaphraseDO wordParaphraseDO : paraphraseList) {
+                        Integer paraphraseId = wordParaphraseDO.getParaphraseId();
+                        wordParaphraseExampleService.remove(new QueryWrapper<>(new WordParaphraseExampleDO().setParaphraseId(paraphraseId)));
+                    }
+                }
+                if (CollUtil.isNotEmpty(paraphraseList)) {
+                    wordParaphraseService.remove(wordParaphraseQueryWrapper);
+                }
+            }
+            wordCharacterService.remove(wordCharacterQueryWrapper);
+        }
+
+        // 删除分布式文件系统里面的文件
+        QueryWrapper<WordPronunciationDO> wordPronunciationQueryWrapper = new QueryWrapper<>(new WordPronunciationDO().setWordId(wordId));
+        List<WordPronunciationDO> wordPronunciationList = wordPronunciationService.list(wordPronunciationQueryWrapper);
+        wordPronunciationService.remove(wordPronunciationQueryWrapper);
+
+        if (CollUtil.isNotEmpty(wordPronunciationList)) {
+            for (WordPronunciationDO wordPronunciation : wordPronunciationList) {
+                if (StrUtil.isBlank(wordPronunciation.getVoiceFilePath())) {
+                    continue;
+                }
+                dfsService.deleteFile(wordPronunciation.getGroupName(), wordPronunciation.getVoiceFilePath());
+            }
+        }
     }
 
 }

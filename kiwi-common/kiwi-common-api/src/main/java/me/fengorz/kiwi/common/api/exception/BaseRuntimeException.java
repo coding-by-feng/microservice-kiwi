@@ -31,41 +31,43 @@ import org.apache.commons.lang3.StringUtils;
  */
 @Data
 @Accessors(chain = true)
-public class BaseException extends Exception {
-    private static final long serialVersionUID = -8424415276392691547L;
+public class BaseRuntimeException extends RuntimeException {
+
+    private static final long serialVersionUID = 6424688358439346362L;
+
     protected Object[] args;
     protected ResultCode resultCode;
 
-    public BaseException() {
+    public BaseRuntimeException() {
         super();
         this.resultCode = ResultCode.FAIL;
     }
 
-    public BaseException(Throwable cause) {
+    public BaseRuntimeException(Throwable cause) {
         super(cause);
         this.resultCode = ResultCode.FAIL;
     }
 
 
-    public BaseException(String msg, Object... args) {
+    public BaseRuntimeException(String msg, Object... args) {
         super(msg);
         this.args = args;
         this.resultCode = ResultCode.FAIL;
     }
 
-    public BaseException(String msg, Throwable throwable, Object... args) {
+    public BaseRuntimeException(String msg, Throwable throwable, Object... args) {
         super(msg, throwable);
         this.args = args;
         this.resultCode = ResultCode.FAIL;
     }
 
-    public BaseException(ResultCode resultCode, Object... args) {
+    public BaseRuntimeException(ResultCode resultCode, Object... args) {
         super();
         this.args = args;
         this.resultCode = resultCode;
     }
 
-    public BaseException(String msg, ResultCode resultCode, Object... args) {
+    public BaseRuntimeException(String msg, ResultCode resultCode, Object... args) {
         super(msg);
         this.args = args;
         this.resultCode = resultCode;
@@ -75,7 +77,7 @@ public class BaseException extends Exception {
         return args;
     }
 
-    public BaseException(String msg, ResultCode resultCode, Throwable throwable, Object... args) {
+    public BaseRuntimeException(String msg, ResultCode resultCode, Throwable throwable, Object... args) {
         super(msg, throwable);
         this.args = args;
         this.resultCode = resultCode;

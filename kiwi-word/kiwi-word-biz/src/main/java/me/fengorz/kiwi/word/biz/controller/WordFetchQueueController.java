@@ -23,6 +23,7 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.api.R;
+import me.fengorz.kiwi.common.api.ResultCode;
 import me.fengorz.kiwi.common.api.annotation.log.SysLog;
 import me.fengorz.kiwi.common.api.constant.CommonConstants;
 import me.fengorz.kiwi.common.api.exception.dfs.DfsOperateDeleteException;
@@ -33,7 +34,7 @@ import me.fengorz.kiwi.word.api.common.WordCrawlerConstants;
 import me.fengorz.kiwi.word.api.dto.fetch.FetchWordResultDTO;
 import me.fengorz.kiwi.word.api.dto.remote.WordFetchQueuePageDTO;
 import me.fengorz.kiwi.word.api.entity.WordFetchQueueDO;
-import me.fengorz.kiwi.word.api.exception.WordResultStoreException;
+import me.fengorz.kiwi.word.api.exception.WordResultStoreRuntimeException;
 import me.fengorz.kiwi.word.biz.service.IWordFetchQueueService;
 import me.fengorz.kiwi.word.biz.service.operate.IWordOperateService;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -134,14 +135,17 @@ public class WordFetchQueueController extends BaseController {
     public R storeFetchWordResult(@RequestBody @Valid FetchWordResultDTO fetchWordResultDTO) {
         try {
             wordOperateService.storeFetchWordResult(fetchWordResultDTO);
-        } catch (WordResultStoreException e) {
-            return R.failed(WordCrawlerConstants.STATUS_ERROR_WORD_ID_NOT_NULL, e.getMessage());
+        } catch (WordResultStoreRuntimeException e) {
+            return R.failed(ResultCode.build(
+                    () -> WordCrawlerConstants.STATUS_ERROR_WORD_ID_NOT_NULL, () -> CommonConstants.EMPTY), e.getMessage());
         } catch (DfsOperateDeleteException e) {
-            log.error(KiwiLogUtils.getClassName() + CommonConstants.DOT + KiwiLogUtils.getMethodName(), e.getMessage());
+            log.error(KiwiLogUtils.getClassName() + CommonConstants.SYMBOL_DOT + KiwiLogUtils.getMethodName(), e.getMessage());
             wordOperateService.dfsDeleteExceptionBackCall(fetchWordResultDTO.getWordName());
-            return R.failed(WordCrawlerConstants.STATUS_ERROR_DFS_OPERATE_DELETE_FAILED, e.getMessage());
+            return R.failed(ResultCode.build(
+                    () -> WordCrawlerConstants.STATUS_ERROR_DFS_OPERATE_DELETE_FAILED, () -> CommonConstants.EMPTY), e.getMessage());
         } catch (DfsOperateException e) {
-            return R.failed(WordCrawlerConstants.STATUS_ERROR_DFS_OPERATE_FAILED, e.getMessage());
+            return R.failed(ResultCode.build(
+                    () -> WordCrawlerConstants.STATUS_ERROR_DFS_OPERATE_FAILED, () -> CommonConstants.EMPTY), e.getMessage());
         }
         return R.ok();
     }

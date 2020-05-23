@@ -40,7 +40,7 @@ public class TestService {
 
     @Transactional(noRollbackFor = NullPointerException.class, rollbackFor = Exception.class)
     public void testTransactional() throws Exception {
-        this.wordMainMapper.insert(new WordMainDO().setWordName("TestService").setIsDel(CommonConstants.FALSE));
+        this.wordMainMapper.insert(new WordMainDO().setWordName("TestService").setIsDel(CommonConstants.FLAG_N));
         // subTestService.testTransactional();
         throw new NullPointerException();
     }

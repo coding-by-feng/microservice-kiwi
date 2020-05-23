@@ -43,7 +43,7 @@ public class KiwiAuth2ExceptionSerializer extends StdSerializer<KiwiAuth2Excepti
     @SneakyThrows
     public void serialize(KiwiAuth2Exception value, JsonGenerator gen, SerializerProvider provider) {
         gen.writeStartObject();
-        gen.writeObjectField("code", CommonConstants.FAIL);
+        gen.writeObjectField("code", CommonConstants.RESULT_CODE_SERVICE_ERROR);
         gen.writeStringField("msg", value.getMessage());
         gen.writeStringField("data", value.getErrorCode());
         gen.writeEndObject();

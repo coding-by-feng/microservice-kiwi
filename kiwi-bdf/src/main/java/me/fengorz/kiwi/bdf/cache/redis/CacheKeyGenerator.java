@@ -51,7 +51,7 @@ public class CacheKeyGenerator extends SimpleKeyGenerator {
         KiwiCacheKeyPrefix kiwiCacheKeyPrefix = Optional.ofNullable(
                 method.getAnnotation(KiwiCacheKeyPrefix.class)
         ).orElse(target.getClass().getAnnotation(KiwiCacheKeyPrefix.class));
-        prefix = kiwiCacheKeyPrefix == null ? CommonConstants.EMPTY : kiwiCacheKeyPrefix.value() + CommonConstants.DELIMITER_STR;
+        prefix = kiwiCacheKeyPrefix == null ? CommonConstants.EMPTY : kiwiCacheKeyPrefix.value() + CommonConstants.SYMBOL_DELIMITER_STR;
 
         Parameter[] parameters = method.getParameters();
         if (KiwiArrayUtils.isNotEmpty(parameters)) {
@@ -69,7 +69,7 @@ public class CacheKeyGenerator extends SimpleKeyGenerator {
             });
 
             if (!sortedMap.isEmpty()) {
-                return prefix.concat(KiwiStringUtils.join(CommonConstants.DELIMITER_STR, sortedMap.values()));
+                return prefix.concat(KiwiStringUtils.join(CommonConstants.SYMBOL_DELIMITER_STR, sortedMap.values()));
             }
         }
 

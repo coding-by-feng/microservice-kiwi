@@ -139,7 +139,7 @@ public class KiwiBeanUtils extends BeanUtils {
     }
 
     public static String defaultColumnToBeanProperty(String columnName) {
-        return columnToBeanProperty(columnName, CommonConstants.DELIMITER_STR);
+        return columnToBeanProperty(columnName, CommonConstants.SYMBOL_DELIMITER_STR);
     }
 
     public static <T, E> T convertFrom(E source, Class<T> requiredType, String... ignoreProperties) {

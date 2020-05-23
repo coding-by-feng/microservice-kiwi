@@ -21,11 +21,11 @@ package me.fengorz.kiwi.word.crawler.service;
 
 import me.fengorz.kiwi.word.api.dto.fetch.FetchWordResultDTO;
 import me.fengorz.kiwi.word.api.dto.fetch.WordMessageDTO;
-import me.fengorz.kiwi.word.api.exception.JsoupFetchConnectException;
-import me.fengorz.kiwi.word.api.exception.JsoupFetchResultException;
+import me.fengorz.kiwi.word.api.exception.JsoupFetchConnectRuntimeException;
+import me.fengorz.kiwi.word.api.exception.JsoupFetchResultRuntimeException;
 
 public interface IJsoupService {
 
-    FetchWordResultDTO fetchWordInfo(WordMessageDTO wordMessage) throws JsoupFetchConnectException, JsoupFetchResultException;
+    FetchWordResultDTO fetchWordInfo(WordMessageDTO wordMessage) throws JsoupFetchConnectRuntimeException, JsoupFetchResultRuntimeException;
 
 }

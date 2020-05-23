@@ -19,7 +19,8 @@
 
 package me.fengorz.kiwi.common.api;
 
-import lombok.*;
+import lombok.Data;
+import lombok.ToString;
 import lombok.experimental.Accessors;
 import me.fengorz.kiwi.common.api.constant.CommonConstants;
 
@@ -30,29 +31,23 @@ import java.io.Serializable;
  * 响应体
  *
  * @param <T>
+ * @author zhanshifeng
  */
 @ToString
-@NoArgsConstructor
-@AllArgsConstructor
+@Data
 @Accessors(chain = true)
 public class R<T> implements Serializable {
-    private static final long serialVersionUID = 1L;
-    public static final String FEIGN_CALL_FAILED = "feign call failed!";
+    private static final long serialVersionUID = -1845782287674831578L;
+    private static final String FEIGN_CALL_FAILED = "feign call failed!";
 
-    @Getter
-    @Setter
-    private int code;
+    private ResultCode code;
 
-    @Getter
-    @Setter
     private String msg;
 
-    @Getter
-    @Setter
     private T data;
 
     public boolean isOK() {
-        return CommonConstants.SUCCESS == this.code;
+        return ResultCode.SUCCESS == this.code;
     }
 
     public boolean isFail() {
@@ -60,7 +55,7 @@ public class R<T> implements Serializable {
     }
 
     public static <T> R<T> auto(boolean flag) {
-        return auto(false, CommonConstants.EMPTY);
+        return auto(flag, CommonConstants.EMPTY);
     }
 
     public static <T> R<T> auto(boolean flag, String msg) {
@@ -72,45 +67,45 @@ public class R<T> implements Serializable {
     }
 
     public static <T> R<T> ok() {
-        return restResult(null, CommonConstants.SUCCESS, null);
+        return restResult(null, ResultCode.SUCCESS, null);
     }
 
     public static <T> R<T> ok(T data) {
-        return restResult(data, CommonConstants.SUCCESS, null);
+        return restResult(data, ResultCode.SUCCESS, null);
     }
 
     public static <T> R<T> ok(T data, String msg) {
-        return restResult(data, CommonConstants.SUCCESS, msg);
+        return restResult(data, ResultCode.SUCCESS, msg);
     }
 
     public static <T> R<T> failed() {
-        return restResult(null, CommonConstants.FAIL, null);
+        return restResult(null, ResultCode.FAIL, null);
     }
 
     public static <T> R<T> feignCallFailed() {
-        return restResult(null, CommonConstants.FAIL, FEIGN_CALL_FAILED);
+        return restResult(null, ResultCode.MICROSERVICE_INVOCATION_ERROR, FEIGN_CALL_FAILED);
     }
 
 
     public static <T> R<T> failed(String msg) {
-        return restResult(null, CommonConstants.FAIL, msg);
+        return restResult(null, ResultCode.FAIL, msg);
     }
 
-    public static <T> R<T> failed(int code, String msg) {
-        return restResult(null, code, msg);
+    public static <T> R<T> failed(ResultCode resultCode, String msg) {
+        return restResult(null, resultCode, msg);
     }
 
     public static <T> R<T> failed(T data) {
-        return restResult(data, CommonConstants.FAIL, null);
+        return restResult(data, ResultCode.FAIL, null);
     }
 
     public static <T> R<T> failed(T data, String msg) {
-        return restResult(data, CommonConstants.FAIL, msg);
+        return restResult(data, ResultCode.FAIL, msg);
     }
 
-    private static <T> R<T> restResult(T data, int code, String msg) {
+    private static <T> R<T> restResult(T data, ResultCode resultCode, String msg) {
         R<T> apiResult = new R<>();
-        apiResult.setCode(code);
+        apiResult.setCode(resultCode);
         apiResult.setData(data);
         apiResult.setMsg(msg);
         return apiResult;

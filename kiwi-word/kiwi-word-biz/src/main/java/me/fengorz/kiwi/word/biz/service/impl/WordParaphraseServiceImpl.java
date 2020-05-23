@@ -57,7 +57,7 @@ public class WordParaphraseServiceImpl extends ServiceImpl<WordParaphraseMapper,
                 new QueryWrapper<>(
                         new WordParaphraseDO()
                                 .setParaphraseId(id)
-                                .setIsDel(CommonConstants.FALSE)
+                                .setIsDel(CommonConstants.FLAG_N)
                 )
         );
     }

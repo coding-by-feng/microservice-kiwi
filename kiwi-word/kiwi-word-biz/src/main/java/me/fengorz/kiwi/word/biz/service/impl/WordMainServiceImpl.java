@@ -72,7 +72,7 @@ public class WordMainServiceImpl extends ServiceImpl<WordMainMapper, WordMainDO>
     public WordMainDO getOneByWordName(@KiwiCacheKey String wordName) {
         return this.getOne(
                 new LambdaQueryWrapper<WordMainDO>().eq(WordMainDO::getWordName, wordName)
-                        .eq(WordMainDO::getIsDel, CommonConstants.FALSE)
+                        .eq(WordMainDO::getIsDel, CommonConstants.FLAG_N)
         );
     }
 
@@ -80,7 +80,7 @@ public class WordMainServiceImpl extends ServiceImpl<WordMainMapper, WordMainDO>
     public List<Map> fuzzyQueryList(Page page, String wordName) {
         LambdaQueryWrapper queryWrapper = new LambdaQueryWrapper<WordMainDO>()
                 .likeRight(WordMainDO::getWordName, wordName)
-                .eq(WordMainDO::getIsDel, CommonConstants.FALSE)
+                .eq(WordMainDO::getIsDel, CommonConstants.FLAG_N)
                 .orderByAsc(WordMainDO::getWordName)
                 .select(WordMainDO::getWordName);
 
@@ -93,5 +93,10 @@ public class WordMainServiceImpl extends ServiceImpl<WordMainMapper, WordMainDO>
                 .map(wordMainDO ->
                         EnhancedCollectionUtils.putAndReturn(new HashMap<>(), VALUE, wordMainDO.getWordName())
                 ).collect(Collectors.toList());
+    }
+
+    @Override
+    public boolean isExist(String wordName) {
+        return this.getOneByWordName(wordName) != null;
     }
 }

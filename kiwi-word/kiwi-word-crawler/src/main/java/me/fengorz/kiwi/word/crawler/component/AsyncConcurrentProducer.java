@@ -51,7 +51,7 @@ public class AsyncConcurrentProducer {
     public void fetch() {
         WordFetchQueueDO wordFetchQueue = new WordFetchQueueDO()
                 .setFetchStatus(WordCrawlerConstants.STATUS_TO_FETCH)
-                .setIsValid(CommonConstants.TRUE);
+                .setIsValid(CommonConstants.FLAG_Y);
         WordFetchQueuePageDTO wordFetchQueuePage = new WordFetchQueuePageDTO().
                 setWordFetchQueue(wordFetchQueue).setPage(new Page(1, 20));
         R result = remoteWordFetchService.getWordFetchQueuePage(wordFetchQueuePage);

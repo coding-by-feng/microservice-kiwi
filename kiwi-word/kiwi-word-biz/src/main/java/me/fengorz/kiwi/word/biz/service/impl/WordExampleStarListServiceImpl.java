@@ -57,7 +57,7 @@ public class WordExampleStarListServiceImpl extends ServiceImpl<WordExampleStarL
     public R getCurrentUserList(Page page, Integer userId) {
         QueryWrapper<WordExampleStarListDO> queryWrapper = new QueryWrapper<>(new WordExampleStarListDO()
                 .setOwner(userId)
-                .setIsDel(CommonConstants.FALSE))
+                .setIsDel(CommonConstants.FLAG_N))
                 .select(WordExampleStarListDO.class,
                         tableFieldInfo -> WordParaphraseExampleListColumn.ID.equals(tableFieldInfo.getColumn())
                                 || WordParaphraseExampleListColumn.LIST_NAME.equals(tableFieldInfo.getColumn())

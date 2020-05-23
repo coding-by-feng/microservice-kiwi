@@ -76,6 +76,6 @@ public interface IRemoteWordMainService {
     /*
      * 通过id删除
      */
-    @DeleteMapping(WORD_MAIN + "/{wordId}")
+    @GetMapping(WORD_MAIN + "/{wordId}")
     R removeById(@PathVariable Integer wordId);
 }

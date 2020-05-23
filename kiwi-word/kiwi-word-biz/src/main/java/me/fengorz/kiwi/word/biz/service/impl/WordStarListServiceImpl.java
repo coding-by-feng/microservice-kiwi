@@ -57,7 +57,7 @@ public class WordStarListServiceImpl extends ServiceImpl<WordStarListMapper, Wor
                 new QueryWrapper<>(
                         new WordStarListDO()
                                 .setId(id)
-                                .setIsDel(CommonConstants.FALSE)
+                                .setIsDel(CommonConstants.FLAG_N)
                 )
         );
     }
@@ -66,7 +66,7 @@ public class WordStarListServiceImpl extends ServiceImpl<WordStarListMapper, Wor
     public List<WordStarListDO> getCurrentUserList(Integer userId) {
         QueryWrapper<WordStarListDO> queryWrapper = new QueryWrapper<>(new WordStarListDO()
                 .setOwner(userId)
-                .setIsDel(CommonConstants.FALSE))
+                .setIsDel(CommonConstants.FLAG_N))
                 .select(WordStarListDO.class,
                         tableFieldInfo -> WordStarListColumn.ID.equals(tableFieldInfo.getColumn())
                                 || WordStarListColumn.LIST_NAME.equals(tableFieldInfo.getColumn()));

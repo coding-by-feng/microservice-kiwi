@@ -26,7 +26,7 @@ import lombok.NoArgsConstructor;
  * @Date 2019-09-07 23:53
  */
 @NoArgsConstructor
-public class AuthException extends BaseException {
+public class AuthException extends BaseRuntimeException {
 
     public AuthException(String message) {
         super(message);

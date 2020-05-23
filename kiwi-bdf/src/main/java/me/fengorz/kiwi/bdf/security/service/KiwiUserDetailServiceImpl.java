@@ -20,7 +20,6 @@
 package me.fengorz.kiwi.bdf.security.service;
 
 import cn.hutool.core.util.ArrayUtil;
-import cn.hutool.core.util.StrUtil;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.admin.api.dto.UserFullInfoDTO;
@@ -87,7 +86,7 @@ public class KiwiUserDetailServiceImpl implements UserDetailsService {
         SysUser user = info.getSysUser();
 
         return new EnhancerUser(user.getUserId(), user.getDeptId(), user.getUsername(), SecurityConstants.BCRYPT + user.getPassword(),
-                StrUtil.equals(user.getDelFlag(), CommonConstants.STATUS_NORMAL), true, true, true, authorities);
+                CommonConstants.FLAG_DEL_NO == user.getDelFlag(), true, true, true, authorities);
     }
 
 

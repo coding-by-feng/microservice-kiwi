@@ -19,14 +19,12 @@
 
 package me.fengorz.kiwi.word.crawler.component;
 
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.word.api.dto.fetch.WordMessageDTO;
 import me.fengorz.kiwi.word.crawler.service.IWordFetchService;
 import org.springframework.amqp.rabbit.annotation.*;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.retry.backoff.Sleeper;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
 
@@ -56,6 +54,7 @@ public class WordFetchConsumer {
 
     @RabbitHandler
     public synchronized void fetch(WordMessageDTO wordMessageDTO) {
+        // TODO ZSF 这里多线程的现场安全实现不好，后面再研究怎么优化
         log.info("rabbitMQ fetch one word is " + wordMessageDTO);
         // 线程池如果满了的话，先睡眠一段时间，等待有空闲的现场出来
         while (threadPoolTaskExecutor.getActiveCount() >= maxPoolSize) {

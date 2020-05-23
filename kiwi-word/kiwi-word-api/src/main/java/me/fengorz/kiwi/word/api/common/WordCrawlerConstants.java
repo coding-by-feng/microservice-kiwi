@@ -28,8 +28,8 @@ public interface WordCrawlerConstants {
     int STATUS_TO_FETCH = 0;
     /*抓取中*/
     int STATUS_FETCHING = 1;
-    /*已抓取*/
-    int STATUS_FETCHED = 2;
+    /*抓取成功*/
+    int STATUS_SUCCESS = 2;
     /*抓取异常*/
     int STATUS_ERROR = 400;
     /*wordId空异常*/

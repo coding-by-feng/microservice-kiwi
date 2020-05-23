@@ -47,6 +47,6 @@ public class WordParaphraseExampleVO implements Serializable {
      * 例句翻译
      */
     private String exampleTranslate;
-    private String isCollect = CommonConstants.FALSE;
+    private String isCollect = CommonConstants.FLAG_N;
 
 }

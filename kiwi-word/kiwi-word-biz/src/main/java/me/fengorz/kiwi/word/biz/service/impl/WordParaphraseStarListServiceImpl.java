@@ -63,7 +63,7 @@ public class WordParaphraseStarListServiceImpl extends ServiceImpl<WordParaphras
     public R getCurrentUserList(Integer userId) {
         QueryWrapper<WordParaphraseStarListDO> queryWrapper = new QueryWrapper<>(new WordParaphraseStarListDO()
                 .setOwner(userId)
-                .setIsDel(CommonConstants.FALSE))
+                .setIsDel(CommonConstants.FLAG_N))
                 .select(WordParaphraseStarListDO.class,
                         tableFieldInfo -> WordParaphraseStarListColumn.ID.equals(tableFieldInfo.getColumn())
                                 || WordParaphraseStarListColumn.LIST_NAME.equals(tableFieldInfo.getColumn())

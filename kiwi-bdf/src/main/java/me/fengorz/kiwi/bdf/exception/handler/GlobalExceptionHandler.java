@@ -22,7 +22,9 @@ package me.fengorz.kiwi.bdf.exception.handler;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.api.R;
 import me.fengorz.kiwi.common.api.constant.CommonConstants;
-import me.fengorz.kiwi.common.api.exception.BaseException;
+import me.fengorz.kiwi.common.api.exception.BaseRuntimeException;
+import me.fengorz.kiwi.common.api.exception.ServiceException;
+import me.fengorz.kiwi.common.api.exception.dfs.DfsOperateDeleteException;
 import me.fengorz.kiwi.common.api.exception.dfs.DfsOperateException;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindException;
@@ -45,15 +47,36 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler({Exception.class})
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public R exception(BaseException e) {
+    public R handleException(BaseRuntimeException e) {
         log.error("global exception:{}", e.getMessage(), e);
         return R.failed(e.getMessage());
     }
 
+    @ExceptionHandler({BaseRuntimeException.class})
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public R handleBaseRuntimeException(BaseRuntimeException e) {
+        log.error("global BaseRuntimeException:{}", e.getMessage(), e);
+        return R.failed(e.getMessage());
+    }
+
+    @ExceptionHandler({ServiceException.class})
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public R handleServiceRuntimeException(ServiceException e) {
+        log.error("global ServiceException:{}", e.getMessage(), e);
+        return R.failed(e.getMessage());
+    }
+
     @ExceptionHandler({DfsOperateException.class})
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public R handleDfsOperateException(DfsOperateException e) {
+        log.error("global DfsOperateException:{}", e.getMessage(), e);
+        return R.failed(e.getMessage());
+    }
+
+    @ExceptionHandler({DfsOperateDeleteException.class})
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public R dfsException(BaseException e) {
-        log.error("dfsException:{}", e.getMessage(), e);
+    public R handleDfsOperateDeleteException(DfsOperateDeleteException e) {
+        log.error("global DfsOperateDeleteException:{}", e.getMessage(), e);
         return R.ok(e.getMessage());
     }
 
@@ -63,7 +86,7 @@ public class GlobalExceptionHandler {
         final String errorMessage = getLogMessage(e);
         log.error(errorMessage);
         //将错误信息返回给前台
-        return R.failed(CommonConstants.FAIL, errorMessage);
+        return R.failed(errorMessage);
     }
 
     @ExceptionHandler({BindException.class})
@@ -72,20 +95,20 @@ public class GlobalExceptionHandler {
         final String errorMessage = getLogMessage(e);
         log.error(errorMessage);
         //将错误信息返回给前台
-        return R.failed(CommonConstants.FAIL, errorMessage);
+        return R.failed(errorMessage);
     }
 
     private static String getLogMessage(MethodArgumentNotValidException e) {
         FieldError fieldError = Objects.requireNonNull(e.getBindingResult().getFieldError());
-        return new StringBuilder().append(fieldError.getObjectName()).append(CommonConstants.DOT).append(fieldError.getField())
-                .append(CommonConstants.SQUARE_BRACKET_LEFT).append(fieldError.getDefaultMessage()).append(CommonConstants.SQUARE_BRACKET_RIGHT)
+        return new StringBuilder().append(fieldError.getObjectName()).append(CommonConstants.SYMBOL_DOT).append(fieldError.getField())
+                .append(CommonConstants.SYMBOL_SQUARE_BRACKET_LEFT).append(fieldError.getDefaultMessage()).append(CommonConstants.SYMBOL_SQUARE_BRACKET_RIGHT)
                 .toString();
     }
 
     private static String getLogMessage(BindException e) {
         FieldError fieldError = Objects.requireNonNull(e.getBindingResult().getFieldError());
-        return new StringBuilder().append(fieldError.getObjectName()).append(CommonConstants.DOT).append(fieldError.getField())
-                .append(CommonConstants.SQUARE_BRACKET_LEFT).append(fieldError.getDefaultMessage()).append(CommonConstants.SQUARE_BRACKET_RIGHT)
+        return new StringBuilder().append(fieldError.getObjectName()).append(CommonConstants.SYMBOL_DOT).append(fieldError.getField())
+                .append(CommonConstants.SYMBOL_SQUARE_BRACKET_LEFT).append(fieldError.getDefaultMessage()).append(CommonConstants.SYMBOL_SQUARE_BRACKET_RIGHT)
                 .toString();
     }
 

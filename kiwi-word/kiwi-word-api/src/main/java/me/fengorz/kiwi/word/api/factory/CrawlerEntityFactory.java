@@ -33,7 +33,7 @@ public class CrawlerEntityFactory {
     public static WordMainDO initWordMain(String wordName) {
         WordMainDO wordMainDO = new WordMainDO();
         wordMainDO.setWordName(wordName);
-        wordMainDO.setIsDel(CommonConstants.FALSE);
+        wordMainDO.setIsDel(CommonConstants.FLAG_N);
         return wordMainDO;
     }
 
@@ -42,7 +42,7 @@ public class CrawlerEntityFactory {
         wordCharacter.setWordId(wordId);
         wordCharacter.setWordCharacter(wordCode);
         wordCharacter.setWordLabel(wordLabel);
-        wordCharacter.setIsDel(CommonConstants.FALSE);
+        wordCharacter.setIsDel(CommonConstants.FLAG_N);
         return wordCharacter;
     }
 
@@ -51,7 +51,7 @@ public class CrawlerEntityFactory {
         wordParaphraseDO.setWordId(wordId);
         wordParaphraseDO.setCharacterId(characterId);
         wordParaphraseDO.setMeaningChinese(meaningChinese);
-        wordParaphraseDO.setIsDel(CommonConstants.FALSE);
+        wordParaphraseDO.setIsDel(CommonConstants.FLAG_N);
         wordParaphraseDO.setParaphraseEnglish(paraphraseEnglish);
         wordParaphraseDO.setTranslateLanguage(translateLanguage);
         return wordParaphraseDO;
@@ -72,7 +72,7 @@ public class CrawlerEntityFactory {
         wordPronunciation.setWordId(wordId);
         wordPronunciation.setCharacterId(characterId);
         wordPronunciation.setGroupName(CrawlerUtils.getGroupName(uploadResult));
-        wordPronunciation.setIsDel(CommonConstants.FALSE);
+        wordPronunciation.setIsDel(CommonConstants.FLAG_N);
         wordPronunciation.setSoundmark(soundmark);
         wordPronunciation.setSoundmarkType(soundmarkType);
         wordPronunciation.setVoiceFilePath(CrawlerUtils.getUploadVoiceFilePath(uploadResult));

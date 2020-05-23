@@ -19,31 +19,32 @@
 
 package me.fengorz.kiwi.word.api.exception;
 
-import me.fengorz.kiwi.common.api.exception.BaseException;
+import me.fengorz.kiwi.common.api.exception.BaseRuntimeException;
 
 /**
  * @Description TODO
  * @Author codingByFeng
- * @Date 2019/11/1 2:54 PM
+ * @Date 2019/10/31 3:34 PM
  */
-public class WordResultStoreException extends BaseException {
+public class JsoupFetchConnectRuntimeException extends BaseRuntimeException {
 
-    public WordResultStoreException() {
+    public JsoupFetchConnectRuntimeException() {
+        super();
     }
 
-    public WordResultStoreException(String message) {
+    public JsoupFetchConnectRuntimeException(String message) {
         super(message);
     }
 
-    public WordResultStoreException(String message, Throwable cause) {
+    public JsoupFetchConnectRuntimeException(String message, Throwable cause) {
         super(message, cause);
     }
 
-    public WordResultStoreException(Throwable cause) {
+    public JsoupFetchConnectRuntimeException(Throwable cause) {
         super(cause);
     }
 
-    public WordResultStoreException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+    public JsoupFetchConnectRuntimeException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
     }
 }

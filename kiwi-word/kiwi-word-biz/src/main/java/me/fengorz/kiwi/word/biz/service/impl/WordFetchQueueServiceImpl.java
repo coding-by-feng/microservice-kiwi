@@ -44,14 +44,12 @@ public class WordFetchQueueServiceImpl extends ServiceImpl<WordFetchQueueMapper,
     @Override
     @Transactional(rollbackFor = Exception.class, noRollbackFor = ServiceException.class)
     public boolean fetchNewWord(String wordName) {
-        if (this.isExist(wordName)) {
-            this.del(wordName);
-        }
+        this.del(wordName);
         return this.insertNewQueue(
                 new WordFetchQueueDO()
                         .setWordName(wordName)
                         .setFetchStatus(WordCrawlerConstants.STATUS_TO_FETCH)
-                        .setIsValid(CommonConstants.TRUE)
+                        .setIsValid(CommonConstants.FLAG_Y)
                         .setFetchPriority(100)
         );
     }
@@ -78,7 +76,7 @@ public class WordFetchQueueServiceImpl extends ServiceImpl<WordFetchQueueMapper,
             return false;
         }
         // TODO ZSF 这里要搬到废弃的历史表
-        return this.update(new WordFetchQueueDO().setIsValid(CommonConstants.FALSE),
+        return this.update(new WordFetchQueueDO().setIsValid(CommonConstants.FLAG_Y),
                 new LambdaQueryWrapper<WordFetchQueueDO>().eq(WordFetchQueueDO::getWordName, wordName));
     }
 

@@ -79,11 +79,11 @@ public class SysUser extends Model<SysUser> {
     /**
      * 0-正常，9-锁定
      */
-    private String lockFlag;
+    private Integer lockFlag;
     /**
      * 0-正常，1-删除
      */
-    private String delFlag;
+    private Integer delFlag;
     /**
      * 微信openid
      */

@@ -23,16 +23,18 @@ import me.fengorz.kiwi.common.api.exception.ServiceException;
 import me.fengorz.kiwi.common.api.exception.dfs.DfsOperateDeleteException;
 import me.fengorz.kiwi.common.api.exception.dfs.DfsOperateException;
 import me.fengorz.kiwi.word.api.dto.fetch.FetchWordResultDTO;
-import me.fengorz.kiwi.word.api.entity.WordMainDO;
-import me.fengorz.kiwi.word.api.exception.WordResultStoreException;
+import me.fengorz.kiwi.word.api.exception.WordResultStoreRuntimeException;
 import me.fengorz.kiwi.word.api.vo.WordCharacterVO;
 import me.fengorz.kiwi.word.api.vo.WordQueryVO;
 
+/**
+ * @author zhanshifeng
+ */
 public interface IWordOperateService {
 
-    void removeWordRelatedData(WordMainDO wordMainDO) throws DfsOperateException, DfsOperateDeleteException;
+    void removeWord(String wordName) throws DfsOperateException, DfsOperateDeleteException;
 
-    boolean storeFetchWordResult(FetchWordResultDTO fetchWordResultDTO) throws WordResultStoreException, DfsOperateException, DfsOperateDeleteException;
+    boolean storeFetchWordResult(FetchWordResultDTO fetchWordResultDTO) throws WordResultStoreRuntimeException, DfsOperateException, DfsOperateDeleteException;
 
     void dfsDeleteExceptionBackCall(String wordName);
 

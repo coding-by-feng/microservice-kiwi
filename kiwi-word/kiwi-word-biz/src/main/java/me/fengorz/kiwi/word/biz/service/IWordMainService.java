@@ -36,4 +36,6 @@ public interface IWordMainService extends IService<WordMainDO> {
     WordMainDO getOneByWordName(String wordName);
 
     List<Map> fuzzyQueryList(Page page, String wordName);
+
+    boolean isExist(String wordName);
 }

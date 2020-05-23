@@ -46,7 +46,7 @@ public class QueueConfig {
     private int queueCapacity;
 
     @Bean(name = "concurrentFetchWordThreadExecutor")
-    public ThreadPoolTaskExecutor threadPoolTaskExecutor(){
+    public ThreadPoolTaskExecutor threadPoolTaskExecutor() {
         ThreadPoolTaskExecutor taskExecutor = new ThreadPoolTaskExecutor();
         taskExecutor.setCorePoolSize(this.corePoolSize);
         taskExecutor.setMaxPoolSize(this.maxPoolSize);

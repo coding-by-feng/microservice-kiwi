@@ -25,6 +25,7 @@ import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.api.R;
+import me.fengorz.kiwi.common.api.ResultCode;
 import me.fengorz.kiwi.common.api.constant.CommonConstants;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
@@ -53,7 +54,7 @@ public class ResourceAuthExceptionEntryPoint implements AuthenticationEntryPoint
         response.setCharacterEncoding(CommonConstants.UTF8);
         response.setContentType(CommonConstants.CONTENT_TYPE);
         R<String> result = new R<>();
-        result.setCode(HttpStatus.HTTP_UNAUTHORIZED);
+        result.setCode(ResultCode.build(() -> HttpStatus.HTTP_UNAUTHORIZED, () -> ResultCode.I18N_CODE_FAIL));
         if (authException != null) {
             result.setMsg("error");
             result.setData(authException.getMessage());

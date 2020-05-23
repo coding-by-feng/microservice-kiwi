@@ -43,7 +43,7 @@ public class FundCrawler {
         public String toString() {
             return "Fund{" +
                     "code='" + code + '\'' +
-                    '}';
+                    '}' ;
         }
 
         @Override

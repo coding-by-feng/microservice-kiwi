@@ -26,7 +26,7 @@ import lombok.NoArgsConstructor;
  * @Date 2019/11/26 9:47 PM
  */
 @NoArgsConstructor
-public class ServiceException extends BaseException {
+public class ServiceException extends BaseRuntimeException {
 
     public ServiceException(String message) {
         super(message);

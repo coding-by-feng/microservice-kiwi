@@ -30,9 +30,9 @@ public class CommonUtils {
 
     public static final String translateBooleanToStr(boolean flag) {
         if (flag) {
-            return CommonConstants.TRUE;
+            return CommonConstants.FLAG_Y;
         } else {
-            return CommonConstants.FALSE;
+            return CommonConstants.FLAG_N;
         }
     }
 

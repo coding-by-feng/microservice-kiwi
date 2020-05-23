@@ -20,7 +20,7 @@
 package me.fengorz.kiwi.word.api.util;
 
 import cn.hutool.core.util.StrUtil;
-import me.fengorz.kiwi.word.api.exception.JsoupFetchResultException;
+import me.fengorz.kiwi.word.api.exception.JsoupFetchResultRuntimeException;
 
 import java.util.Collection;
 
@@ -31,25 +31,25 @@ import java.util.Collection;
  */
 public class CrawlerAssertUtils {
 
-    public static String fetchValueNotEmpty(String fetchValue, String errorMsgTemplate, Object... params) throws JsoupFetchResultException {
+    public static String fetchValueNotEmpty(String fetchValue, String errorMsgTemplate, Object... params) throws JsoupFetchResultRuntimeException {
         if (StrUtil.isBlank(fetchValue)) {
-            throw new JsoupFetchResultException(StrUtil.format(errorMsgTemplate, params));
+            throw new JsoupFetchResultRuntimeException(StrUtil.format(errorMsgTemplate, params));
         }
         return fetchValue;
     }
 
 
-    public static Collection notEmpty(Collection collection, String errorMsgTemplate, Object... params) throws JsoupFetchResultException {
+    public static Collection notEmpty(Collection collection, String errorMsgTemplate, Object... params) throws JsoupFetchResultRuntimeException {
         if (collection == null || collection.isEmpty()) {
-            throw new JsoupFetchResultException(StrUtil.format(errorMsgTemplate, params));
+            throw new JsoupFetchResultRuntimeException(StrUtil.format(errorMsgTemplate, params));
         }
         return collection;
     }
 
 
-    public static void mustBeTrue(boolean flag, String errorMsgTemplate, Object... params) throws JsoupFetchResultException {
+    public static void mustBeTrue(boolean flag, String errorMsgTemplate, Object... params) throws JsoupFetchResultRuntimeException {
         if (!flag) {
-            throw new JsoupFetchResultException(StrUtil.format(errorMsgTemplate, params));
+            throw new JsoupFetchResultRuntimeException(StrUtil.format(errorMsgTemplate, params));
         }
     }
 

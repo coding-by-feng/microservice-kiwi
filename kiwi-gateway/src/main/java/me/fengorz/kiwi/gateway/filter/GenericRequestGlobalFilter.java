@@ -56,8 +56,8 @@ public class GenericRequestGlobalFilter implements GlobalFilter, Ordered {
         // 2. 重写StripPrefix
         addOriginalRequestUrl(exchange, request.getURI());
         String rawPath = request.getURI().getRawPath();
-        String newPath = CommonConstants.FORWARD_SLASH + Arrays.stream(StringUtils.tokenizeToStringArray(rawPath, CommonConstants.FORWARD_SLASH))
-                .skip(skipUrlSlashCount).collect(Collectors.joining(CommonConstants.FORWARD_SLASH));
+        String newPath = CommonConstants.SYMBOL_FORWARD_SLASH + Arrays.stream(StringUtils.tokenizeToStringArray(rawPath, CommonConstants.SYMBOL_FORWARD_SLASH))
+                .skip(skipUrlSlashCount).collect(Collectors.joining(CommonConstants.SYMBOL_FORWARD_SLASH));
         ServerHttpRequest newRequest = request.mutate()
                 .path(newPath)
                 .build();

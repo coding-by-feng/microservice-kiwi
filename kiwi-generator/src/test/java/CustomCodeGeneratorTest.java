@@ -30,7 +30,7 @@ public class CustomCodeGeneratorTest {
 
     @Test
     public void test() {
-        String tableName = "word_main_variant";
+        String tableName = "word_main_variant" ;
         GenerateConfig config = new GenerateConfig();
         // "请输入表明前缀，比如t_table_name的话输入\"t_\""
         config.setTablePreName("");
@@ -68,7 +68,7 @@ public class CustomCodeGeneratorTest {
         try {
             return new PropertiesConfiguration("generator.properties");
         } catch (ConfigurationException e) {
-            throw new CheckedException("获取代码生成的配置文件失败", e);
+            throw new CheckedException("获取代码生成的配置文件失败" , e);
         }
     }
 

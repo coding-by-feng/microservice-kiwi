@@ -54,9 +54,9 @@ import java.util.Map;
 @AllArgsConstructor
 @RequestMapping("/EnhancerTokenEndpoint")
 public class EnhancerTokenEndpoint {
-    private static final String PROJECT_OAUTH_ACCESS = SecurityConstants.PROJECT_PREFIX + SecurityConstants.OAUTH_PREFIX + "access:";
-    private static final String CURRENT = "current";
-    private static final String SIZE = "size";
+    private static final String PROJECT_OAUTH_ACCESS = SecurityConstants.PROJECT_PREFIX + SecurityConstants.OAUTH_PREFIX + "access:" ;
+    private static final String CURRENT = "current" ;
+    private static final String SIZE = "size" ;
     private final TokenStore tokenStore;
     private final RedisTemplate redisTemplate;
 
@@ -122,7 +122,7 @@ public class EnhancerTokenEndpoint {
             params.put(SIZE, 20);
         }
         //根据分页参数获取对应数据
-        List<String> pages = findKeysForPage(PROJECT_OAUTH_ACCESS + "*", MapUtil.getInt(params, CURRENT), MapUtil.getInt(params, SIZE));
+        List<String> pages = findKeysForPage(PROJECT_OAUTH_ACCESS + "*" , MapUtil.getInt(params, CURRENT), MapUtil.getInt(params, SIZE));
 
         for (String page : pages) {
             String accessToken = StrUtil.subAfter(page, PROJECT_OAUTH_ACCESS, true);
@@ -146,16 +146,16 @@ public class EnhancerTokenEndpoint {
 
                 if (authenticationToken.getPrincipal() instanceof EnhancerUser) {
                     EnhancerUser user = (EnhancerUser) authenticationToken.getPrincipal();
-                    map.put("user_id", user.getId() + "");
-                    map.put("username", user.getUsername() + "");
+                    map.put("user_id" , user.getId() + "");
+                    map.put("username" , user.getUsername() + "");
                 }
             } else if (authentication instanceof PreAuthenticatedAuthenticationToken) {
                 //刷新token方式
                 PreAuthenticatedAuthenticationToken authenticationToken = (PreAuthenticatedAuthenticationToken) authentication;
                 if (authenticationToken.getPrincipal() instanceof EnhancerUser) {
                     EnhancerUser user = (EnhancerUser) authenticationToken.getPrincipal();
-                    map.put("user_id", user.getId() + "");
-                    map.put("username", user.getUsername() + "");
+                    map.put("user_id" , user.getId() + "");
+                    map.put("username" , user.getUsername() + "");
                 }
             }
             list.add(map);

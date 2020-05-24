@@ -37,7 +37,7 @@ public class UnauthorizedException extends KiwiAuth2Exception {
 
     @Override
     public String getOAuth2ErrorCode() {
-        return "unauthorized";
+        return "unauthorized" ;
     }
 
     @Override

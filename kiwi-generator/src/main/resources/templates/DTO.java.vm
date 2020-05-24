@@ -27,8 +27,8 @@ import java.math.BigDecimal;
  * @author ${author}
  * @date ${datetime}
  */
-public class ${className}DTO extends ${className}DO{
+public class ${className}DTO extends ${className}DO {
 
-    private static final long serialVersionUID=${dtoSerialVersionUID}L;
+    private static final long serialVersionUID = ${dtoSerialVersionUID}L;
 
 }

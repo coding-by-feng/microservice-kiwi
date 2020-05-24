@@ -31,10 +31,10 @@ import org.springframework.web.bind.annotation.*;
 /**
  * @Author ZhanShiFeng
  */
-@FeignClient(contextId = "remoteWordFetchService", value = WordConstants.KIWI_WORD_BIZ, fallbackFactory = RemoteWordFetchServiceFallbackFactory.class)
+@FeignClient(contextId = "remoteWordFetchService" , value = WordConstants.KIWI_WORD_BIZ, fallbackFactory = RemoteWordFetchServiceFallbackFactory.class)
 public interface IWordFetchAPIService {
 
-    String WORD_FETCH_QUEUE = "/word/fetch/queue";
+    String WORD_FETCH_QUEUE = "/word/fetch/queue" ;
 
     @PostMapping(WORD_FETCH_QUEUE + "/getWordFetchQueuePage")
     R getWordFetchQueuePage(@RequestBody WordFetchQueuePageDTO wordFetchQueuePage);

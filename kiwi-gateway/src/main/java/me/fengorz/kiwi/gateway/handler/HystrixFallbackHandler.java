@@ -45,7 +45,7 @@ public class HystrixFallbackHandler implements HandlerFunction<ServerResponse> {
     public Mono<ServerResponse> handle(ServerRequest serverRequest) {
         Optional<Object> originalUris = serverRequest.attribute(GATEWAY_ORIGINAL_REQUEST_URL_ATTR);
 
-        originalUris.ifPresent(originalUri -> log.error("网关执行请求:{}失败,hystrix服务降级处理", originalUri));
+        originalUris.ifPresent(originalUri -> log.error("网关执行请求:{}失败,hystrix服务降级处理" , originalUri));
 
         return ServerResponse.status(HttpStatus.INTERNAL_SERVER_ERROR.value())
                 .contentType(MediaType.TEXT_PLAIN).body(BodyInserters.fromObject("服务异常"));

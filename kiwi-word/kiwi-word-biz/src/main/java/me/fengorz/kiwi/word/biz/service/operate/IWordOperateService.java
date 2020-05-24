@@ -32,7 +32,7 @@ import me.fengorz.kiwi.word.api.vo.WordQueryVO;
  */
 public interface IWordOperateService {
 
-    void removeWord(String wordName) throws DfsOperateDeleteException;
+    boolean removeWord(String wordName) throws DfsOperateDeleteException;
 
     boolean storeFetchWordResult(FetchWordResultDTO fetchWordResultDTO) throws WordResultStoreRuntimeException, DfsOperateException, DfsOperateDeleteException;
 

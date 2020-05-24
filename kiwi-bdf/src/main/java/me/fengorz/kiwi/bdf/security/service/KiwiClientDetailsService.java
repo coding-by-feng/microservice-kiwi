@@ -37,7 +37,7 @@ public class KiwiClientDetailsService extends JdbcClientDetailsService {
     }
 
     @Override
-    @Cacheable(value = SecurityConstants.CLIENT_DETAILS_KEY, key = "#clientId", unless = "#result == null")
+    @Cacheable(value = SecurityConstants.CLIENT_DETAILS_KEY, key = "#clientId" , unless = "#result == null")
     public ClientDetails loadClientByClientId(String clientId) throws InvalidClientException {
         return super.loadClientByClientId(clientId);
     }

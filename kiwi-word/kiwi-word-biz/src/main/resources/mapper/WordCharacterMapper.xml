@@ -23,11 +23,4 @@
 
 <mapper namespace="me.fengorz.kiwi.word.biz.mapper.WordCharacterMapper">
 
-    <resultMap id="wordCharacterMap" type="me.fengorz.kiwi.word.api.entity.WordCharacterDO">
-        <id property="characterId" column="character_id"/>
-        <result property="wordId" column="word_id"/>
-        <result property="wordCharacter" column="word_character"/>
-        <result property="wordLabel" column="word_label"/>
-        <result property="isDel" column="is_del"/>
-    </resultMap>
 </mapper>

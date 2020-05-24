@@ -60,7 +60,7 @@ public class SysUserController extends BaseController {
         if (Objects.isNull(user[0])) {
             return R.failed("获取当前用户信息失败");
         }
-        return R.ok(sysUserService.getUserFullInfo(user[0]));
+        return R.success(sysUserService.getUserFullInfo(user[0]));
 
     }
 
@@ -70,7 +70,7 @@ public class SysUserController extends BaseController {
         if (Objects.isNull(user)) {
             return R.failed("用户信息查询不到 %s", username);
         }
-        return R.ok(sysUserService.getUserFullInfo(user));
+        return R.success(sysUserService.getUserFullInfo(user));
     }
 
     /**
@@ -82,7 +82,7 @@ public class SysUserController extends BaseController {
      */
     @GetMapping("/page")
     public R getSysUserPage(Page page, SysUser sysUser) {
-        return R.ok(sysUserService.page(page, Wrappers.query(sysUser)));
+        return R.success(sysUserService.page(page, Wrappers.query(sysUser)));
     }
 
 
@@ -94,7 +94,7 @@ public class SysUserController extends BaseController {
      */
     @GetMapping("/{userId}")
     public R getById(@PathVariable("userId") Integer userId) {
-        return R.ok(sysUserService.getById(userId));
+        return R.success(sysUserService.getById(userId));
     }
 
     /**
@@ -107,7 +107,7 @@ public class SysUserController extends BaseController {
     @PostMapping
     @PreAuthorize("@pms.hasPermission('admin_sysuser_add')")
     public R save(@RequestBody SysUser sysUser) {
-        return R.ok(sysUserService.save(sysUser));
+        return R.success(sysUserService.save(sysUser));
     }
 
     /**
@@ -120,7 +120,7 @@ public class SysUserController extends BaseController {
     @PutMapping
     @PreAuthorize("@pms.hasPermission('admin_sysuser_edit')")
     public R updateById(@RequestBody SysUser sysUser) {
-        return R.ok(sysUserService.updateById(sysUser));
+        return R.success(sysUserService.updateById(sysUser));
     }
 
     /**
@@ -133,6 +133,6 @@ public class SysUserController extends BaseController {
     @DeleteMapping("/{userId}")
     @PreAuthorize("@pms.hasPermission('admin_sysuser_del')")
     public R removeById(@PathVariable Integer userId) {
-        return R.ok(sysUserService.removeById(userId));
+        return R.success(sysUserService.removeById(userId));
     }
 }

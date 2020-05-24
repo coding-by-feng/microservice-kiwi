@@ -24,7 +24,7 @@ import java.lang.annotation.*;
 /**
  * 操作日志注解
  *
- * @author zhanshifeng
+ * @Author ZhanShiFeng
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)

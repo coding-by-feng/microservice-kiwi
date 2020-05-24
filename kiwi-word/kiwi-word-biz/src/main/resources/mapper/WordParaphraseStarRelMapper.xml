@@ -23,9 +23,4 @@
 
 <mapper namespace="me.fengorz.kiwi.word.biz.mapper.WordParaphraseStarRelMapper">
 
-    <resultMap id="wordParaphraseStarRelDOMap" type="me.fengorz.kiwi.word.api.entity.WordParaphraseStarRelDO">
-        <id property="listId" column="list_id"/>
-        <result property="paraphraseId" column="paraphrase_id"/>
-        <result property="createTime" column="create_time"/>
-    </resultMap>
 </mapper>

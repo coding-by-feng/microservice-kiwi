@@ -52,7 +52,7 @@ public class SysRoleMenuRelController extends BaseController {
      */
     @GetMapping("/page")
     public R getSysRoleMenuRelPage(Page page, SysRoleMenuRel sysRoleMenuRel) {
-        return R.ok(sysRoleMenuRelService.page(page, Wrappers.query(sysRoleMenuRel)));
+        return R.success(sysRoleMenuRelService.page(page, Wrappers.query(sysRoleMenuRel)));
     }
 
 
@@ -64,7 +64,7 @@ public class SysRoleMenuRelController extends BaseController {
      */
     @GetMapping("/{roleId}")
     public R getById(@PathVariable("roleId") Integer roleId) {
-        return R.ok(sysRoleMenuRelService.getById(roleId));
+        return R.success(sysRoleMenuRelService.getById(roleId));
     }
 
     /**
@@ -77,7 +77,7 @@ public class SysRoleMenuRelController extends BaseController {
     @PostMapping
     @PreAuthorize("@pms.hasPermission('admin_sysrolemenurel_add')")
     public R save(@RequestBody SysRoleMenuRel sysRoleMenuRel) {
-        return R.ok(sysRoleMenuRelService.save(sysRoleMenuRel));
+        return R.success(sysRoleMenuRelService.save(sysRoleMenuRel));
     }
 
     /**
@@ -90,7 +90,7 @@ public class SysRoleMenuRelController extends BaseController {
     @PutMapping
     @PreAuthorize("@pms.hasPermission('admin_sysrolemenurel_edit')")
     public R updateById(@RequestBody SysRoleMenuRel sysRoleMenuRel) {
-        return R.ok(sysRoleMenuRelService.updateById(sysRoleMenuRel));
+        return R.success(sysRoleMenuRelService.updateById(sysRoleMenuRel));
     }
 
     /**
@@ -103,6 +103,6 @@ public class SysRoleMenuRelController extends BaseController {
     @DeleteMapping("/{roleId}")
     @PreAuthorize("@pms.hasPermission('admin_sysrolemenurel_del')")
     public R removeById(@PathVariable Integer roleId) {
-        return R.ok(sysRoleMenuRelService.removeById(roleId));
+        return R.success(sysRoleMenuRelService.removeById(roleId));
     }
 }

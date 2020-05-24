@@ -23,25 +23,7 @@
 
 <mapper namespace="me.fengorz.kiwi.word.biz.mapper.WordExampleStarListMapper">
 
-    <resultMap id="wordExampleStarListDOMap" type="me.fengorz.kiwi.word.api.entity.WordExampleStarListDO">
-        <id property="id" column="id"/>
-        <result property="listName" column="list_name"/>
-        <result property="remark" column="remark"/>
-        <result property="createTime" column="create_time"/>
-        <result property="owner" column="owner"/>
-        <result property="isDel" column="is_del"/>
-        <result property="sort" column="sort"/>
-    </resultMap>
-
-    <resultMap id="exampleStarItemVO" type="me.fengorz.kiwi.word.api.vo.star.ExampleStarItemVO">
-        <result property="wordId" column="word_id"/>
-        <result property="wordName" column="word_name"/>
-        <result property="exampleId" column="example_id"/>
-        <result property="exampleSentence" column="example_sentence"/>
-        <result property="exampleTranslate" column="example_translate"/>
-    </resultMap>
-
-    <select id="selectListItems" resultMap="exampleStarItemVO">
+    <select id="selectListItems" resultType="me.fengorz.kiwi.word.api.vo.star.ExampleStarItemVO">
         select wm.word_name, tmp.*
         from (select wpe.example_id, wpe.example_sentence, wpe.example_translate, wesr.create_time, wpe.word_id
               from word_example_star_rel wesr

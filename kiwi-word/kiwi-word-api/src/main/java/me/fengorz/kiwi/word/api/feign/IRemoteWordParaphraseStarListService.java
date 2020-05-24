@@ -20,7 +20,7 @@ package me.fengorz.kiwi.word.api.feign;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import me.fengorz.kiwi.common.api.R;
-import me.fengorz.kiwi.word.api.common.WordCrawlerConstants;
+import me.fengorz.kiwi.word.api.common.WordConstants;
 import me.fengorz.kiwi.word.api.entity.WordParaphraseStarListDO;
 import me.fengorz.kiwi.word.api.feign.factory.RemoteWordParaphraseStarListServiceFallbackFactory;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -33,7 +33,7 @@ import org.springframework.web.bind.annotation.*;
  * @author codingByFeng
  * @date 2019-12-08 23:27:41
  */
-@FeignClient(contextId = "remoteWordParaphraseStarListDOService", value = WordCrawlerConstants.VOCABULARY_ENHANCER_CRAWLER_BIZ, fallbackFactory = RemoteWordParaphraseStarListServiceFallbackFactory.class)
+@FeignClient(contextId = "remoteWordParaphraseStarListDOService", value = WordConstants.KIWI_WORD_BIZ, fallbackFactory = RemoteWordParaphraseStarListServiceFallbackFactory.class)
 public interface IRemoteWordParaphraseStarListService {
 
     String WORD_PARAPHRASE_STAR = "/word/paraphrase/star";

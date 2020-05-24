@@ -21,7 +21,7 @@ package me.fengorz.kiwi.common.api.constant;
 
 /**
  * @Description TODO
- * @Author zhanshifeng
+ * @Author ZhanShiFeng
  * @Date 2020/1/8 4:51 PM
  */
 public class MapperConstant {

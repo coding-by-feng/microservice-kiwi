@@ -52,7 +52,7 @@ public class SysMenuController extends BaseController {
      */
     @GetMapping("/page")
     public R getSysMenuPage(Page page, SysMenu sysMenu) {
-        return R.ok(sysMenuService.page(page, Wrappers.query(sysMenu)));
+        return R.success(sysMenuService.page(page, Wrappers.query(sysMenu)));
     }
 
 
@@ -64,7 +64,7 @@ public class SysMenuController extends BaseController {
      */
     @GetMapping("/{menuId}")
     public R getById(@PathVariable("menuId") Integer menuId) {
-        return R.ok(sysMenuService.getById(menuId));
+        return R.success(sysMenuService.getById(menuId));
     }
 
     /**
@@ -77,7 +77,7 @@ public class SysMenuController extends BaseController {
     @PostMapping
     @PreAuthorize("@pms.hasPermission('admin_sysmenu_add')")
     public R save(@RequestBody SysMenu sysMenu) {
-        return R.ok(sysMenuService.save(sysMenu));
+        return R.success(sysMenuService.save(sysMenu));
     }
 
     /**
@@ -90,7 +90,7 @@ public class SysMenuController extends BaseController {
     @PutMapping
     @PreAuthorize("@pms.hasPermission('admin_sysmenu_edit')")
     public R updateById(@RequestBody SysMenu sysMenu) {
-        return R.ok(sysMenuService.updateById(sysMenu));
+        return R.success(sysMenuService.updateById(sysMenu));
     }
 
     /**
@@ -103,6 +103,6 @@ public class SysMenuController extends BaseController {
     @DeleteMapping("/{menuId}")
     @PreAuthorize("@pms.hasPermission('admin_sysmenu_del')")
     public R removeById(@PathVariable Integer menuId) {
-        return R.ok(sysMenuService.removeById(menuId));
+        return R.success(sysMenuService.removeById(menuId));
     }
 }

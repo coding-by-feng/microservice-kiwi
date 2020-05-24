@@ -52,7 +52,7 @@ public class WordParaphraseController extends BaseController {
      */
     @GetMapping("/page")
     public R getWordParaphrasePage(Page page, WordParaphraseDO wordParaphraseDO) {
-        return R.ok(wordParaphraseService.page(page, Wrappers.query(wordParaphraseDO)));
+        return R.success(wordParaphraseService.page(page, Wrappers.query(wordParaphraseDO)));
     }
 
 
@@ -64,7 +64,7 @@ public class WordParaphraseController extends BaseController {
      */
     @GetMapping("/{paraphraseId}")
     public R getById(@PathVariable("paraphraseId") Integer paraphraseId) {
-        return R.ok(wordParaphraseService.getById(paraphraseId));
+        return R.success(wordParaphraseService.getById(paraphraseId));
     }
 
     /**
@@ -77,7 +77,7 @@ public class WordParaphraseController extends BaseController {
     @PostMapping
     @PreAuthorize("@pms.hasPermission('biz_wordparaphrase_add')")
     public R save(@RequestBody WordParaphraseDO wordParaphraseDO) {
-        return R.ok(wordParaphraseService.save(wordParaphraseDO));
+        return R.success(wordParaphraseService.save(wordParaphraseDO));
     }
 
     /**
@@ -90,7 +90,7 @@ public class WordParaphraseController extends BaseController {
     @PutMapping
     @PreAuthorize("@pms.hasPermission('biz_wordparaphrase_edit')")
     public R updateById(@RequestBody WordParaphraseDO wordParaphraseDO) {
-        return R.ok(wordParaphraseService.updateById(wordParaphraseDO));
+        return R.success(wordParaphraseService.updateById(wordParaphraseDO));
     }
 
     /**
@@ -103,7 +103,7 @@ public class WordParaphraseController extends BaseController {
     @DeleteMapping("/{paraphraseId}")
     @PreAuthorize("@pms.hasPermission('biz_wordparaphrase_del')")
     public R removeById(@PathVariable Integer paraphraseId) {
-        return R.ok(wordParaphraseService.removeById(paraphraseId));
+        return R.success(wordParaphraseService.removeById(paraphraseId));
     }
 
 }

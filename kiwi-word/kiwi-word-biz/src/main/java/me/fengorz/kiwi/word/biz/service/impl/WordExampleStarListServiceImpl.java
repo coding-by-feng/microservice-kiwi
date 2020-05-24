@@ -63,7 +63,7 @@ public class WordExampleStarListServiceImpl extends ServiceImpl<WordExampleStarL
                                 || WordParaphraseExampleListColumn.LIST_NAME.equals(tableFieldInfo.getColumn())
                                 || WordParaphraseExampleListColumn.REMARK.equals(tableFieldInfo.getColumn()));
 
-        return R.ok(this.page(page, queryWrapper).getRecords());
+        return R.success(this.page(page, queryWrapper).getRecords());
     }
 
     @Override
@@ -72,7 +72,7 @@ public class WordExampleStarListServiceImpl extends ServiceImpl<WordExampleStarL
                 new WordExampleStarListDO()
                         .setOwner(userId)
                         .setId(id));
-        return R.ok(this.update(entity, updateWrapper));
+        return R.success(this.update(entity, updateWrapper));
     }
 
     @Override

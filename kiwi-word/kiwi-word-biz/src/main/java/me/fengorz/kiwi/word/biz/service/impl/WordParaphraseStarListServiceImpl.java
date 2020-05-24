@@ -69,7 +69,7 @@ public class WordParaphraseStarListServiceImpl extends ServiceImpl<WordParaphras
                                 || WordParaphraseStarListColumn.LIST_NAME.equals(tableFieldInfo.getColumn())
                                 || WordParaphraseStarListColumn.REMARK.equals(tableFieldInfo.getColumn()));
 
-        return R.ok(wordParaphraseStarListMapper.selectList(queryWrapper));
+        return R.success(wordParaphraseStarListMapper.selectList(queryWrapper));
     }
 
     @Override
@@ -78,7 +78,7 @@ public class WordParaphraseStarListServiceImpl extends ServiceImpl<WordParaphras
                 new WordParaphraseStarListDO()
                         .setOwner(userId)
                         .setId(id));
-        return R.ok(this.update(entity, updateWrapper));
+        return R.success(this.update(entity, updateWrapper));
     }
 
     @Override

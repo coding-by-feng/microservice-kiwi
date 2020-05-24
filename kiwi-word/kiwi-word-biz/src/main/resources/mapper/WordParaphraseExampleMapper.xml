@@ -23,25 +23,7 @@
 
 <mapper namespace="me.fengorz.kiwi.word.biz.mapper.WordParaphraseExampleMapper">
 
-    <resultMap id="wordParaphraseExampleMap" type="me.fengorz.kiwi.word.api.entity.WordParaphraseExampleDO">
-        <id property="exampleId" column="example_id"/>
-        <result property="wordId" column="word_id"/>
-        <result property="paraphraseId" column="paraphrase_id"/>
-        <result property="exampleSentence" column="example_sentence"/>
-        <result property="exampleTranslate" column="example_translate"/>
-        <result property="translateLanguage" column="translate_language"/>
-        <result property="isDel" column="is_del"/>
-    </resultMap>
-
-
-    <resultMap id="wordParaphraseExampleVO" type="me.fengorz.kiwi.word.api.vo.WordParaphraseExampleVO">
-        <id property="exampleId" column="example_id"/>
-        <result property="exampleSentence" column="example_sentence"/>
-        <result property="exampleTranslate" column="example_translate"/>
-        <result property="isCollect" column="is_collect"/>
-    </resultMap>
-
-    <select id="selectExampleAndIsCollect" resultMap="wordParaphraseExampleVO">
+    <select id="selectExampleAndIsCollect" resultType="me.fengorz.kiwi.word.api.vo.WordParaphraseExampleVO">
         select wpe.example_id,
                wpe.example_sentence,
                wpe.example_translate,

@@ -26,7 +26,7 @@ import org.apache.commons.lang3.StringUtils;
 
 /**
  * @Description 异常基类
- * @Author zhanshifeng
+ * @Author ZhanShiFeng
  * @Date 2020/4/8 4:32 PM
  */
 @Data

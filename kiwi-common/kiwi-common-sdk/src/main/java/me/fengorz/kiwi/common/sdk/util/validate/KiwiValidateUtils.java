@@ -28,7 +28,7 @@ import java.util.Set;
 
 /**
  * @Description Util of Java Bean Validation
- * @Author zhanshifeng
+ * @Author ZhanShiFeng
  * @Date 2019/11/26 9:03 PM
  */
 public class KiwiValidateUtils {

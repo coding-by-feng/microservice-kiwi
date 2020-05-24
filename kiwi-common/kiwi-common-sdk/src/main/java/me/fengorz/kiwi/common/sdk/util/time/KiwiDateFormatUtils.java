@@ -23,7 +23,7 @@ import org.apache.commons.lang3.time.DateFormatUtils;
 
 /**
  * @Description TODO
- * @Author zhanshifeng
+ * @Author ZhanShiFeng
  * @Date 2020/4/21 8:09 PM
  */
 public class KiwiDateFormatUtils extends DateFormatUtils {

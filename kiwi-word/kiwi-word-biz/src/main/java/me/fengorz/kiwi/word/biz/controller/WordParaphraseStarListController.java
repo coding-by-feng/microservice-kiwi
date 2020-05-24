@@ -65,7 +65,7 @@ public class WordParaphraseStarListController extends BaseController {
      */
     @GetMapping("/page")
     public R getWordParaphraseStarListPage(Page page, WordParaphraseStarListDO wordParaphraseStarListDO) {
-        return R.ok(wordParaphraseStarListService.page(page, Wrappers.query(wordParaphraseStarListDO)));
+        return R.success(wordParaphraseStarListService.page(page, Wrappers.query(wordParaphraseStarListDO)));
     }
 
     /**
@@ -76,7 +76,7 @@ public class WordParaphraseStarListController extends BaseController {
      */
     @PostMapping("/getOne")
     public R getOne(@RequestBody WordParaphraseStarListDO condition) {
-        return R.ok(wordParaphraseStarListService.getOne(new QueryWrapper<>(condition)));
+        return R.success(wordParaphraseStarListService.getOne(new QueryWrapper<>(condition)));
     }
 
 
@@ -88,7 +88,7 @@ public class WordParaphraseStarListController extends BaseController {
      */
     @GetMapping("/getById/{id}")
     public R getById(@PathVariable("id") Integer id) {
-        return R.ok(wordParaphraseStarListService.getById(id));
+        return R.success(wordParaphraseStarListService.getById(id));
     }
 
     /**
@@ -102,7 +102,7 @@ public class WordParaphraseStarListController extends BaseController {
     // @PreAuthorize("@pms.hasPermission('api_wordparaphrasestarlist_add')")
     public R save(WordParaphraseStarListDO wordParaphraseStarListDO) {
         wordParaphraseStarListDO.setOwner(1);
-        return R.ok(wordParaphraseStarListService.save(wordParaphraseStarListDO));
+        return R.success(wordParaphraseStarListService.save(wordParaphraseStarListDO));
     }
 
     /**
@@ -115,7 +115,7 @@ public class WordParaphraseStarListController extends BaseController {
     @PostMapping("/updateById")
     // @PreAuthorize("@pms.hasPermission('api_wordparaphrasestarlist_edit')")
     public R updateById(WordParaphraseStarListDO wordParaphraseStarListDO) {
-        return R.ok(wordParaphraseStarListService.updateById(wordParaphraseStarListDO));
+        return R.success(wordParaphraseStarListService.updateById(wordParaphraseStarListDO));
     }
 
     /**
@@ -128,7 +128,7 @@ public class WordParaphraseStarListController extends BaseController {
     @PostMapping("/delById/{id}")
     // @PreAuthorize("@pms.hasPermission('api_wordparaphrasestarlist_del')")
     public R delById(@PathVariable Integer id) {
-        return R.ok(wordParaphraseStarListService.removeById(id));
+        return R.success(wordParaphraseStarListService.removeById(id));
     }
 
     @GetMapping("/getCurrentUserList")
@@ -139,7 +139,7 @@ public class WordParaphraseStarListController extends BaseController {
     @PostMapping("/putIntoStarList")
     public R putIntoStarList(@NotNull Integer paraphraseId, @NotNull Integer listId) {
         try {
-            return R.ok(this.wordOperateService.putParaphraseIntoStarList(paraphraseId, listId));
+            return R.success(this.wordOperateService.putParaphraseIntoStarList(paraphraseId, listId));
         } catch (ServiceException e) {
             log.error(e.getMessage());
             return R.failed(e.getMessage());
@@ -150,17 +150,17 @@ public class WordParaphraseStarListController extends BaseController {
     public R getListItems(@NotNull Integer listId,
                           @PathVariable @Min(1) Integer current,
                           @PathVariable @Range(min = 1, max = 100) Integer size) {
-        return R.ok(wordParaphraseStarListService.getListItems(new Page(current, size), listId));
+        return R.success(wordParaphraseStarListService.getListItems(new Page(current, size), listId));
     }
 
     @GetMapping("/getItemDetail/{paraphraseId}")
     public R getItemDetail(@PathVariable Integer paraphraseId) {
-        return R.ok(wordParaphraseService.findWordParaphraseVO(paraphraseId));
+        return R.success(wordParaphraseService.findWordParaphraseVO(paraphraseId));
     }
 
     @PostMapping("/removeParaphraseStar")
     public R removeParaphraseStar(@NotNull Integer paraphraseId, @NotNull Integer listId) throws ServiceException {
-        return R.ok(this.wordParaphraseStarListService.removeParaphraseStar(paraphraseId, listId));
+        return R.success(this.wordParaphraseStarListService.removeParaphraseStar(paraphraseId, listId));
     }
 
 }

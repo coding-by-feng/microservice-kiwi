@@ -19,7 +19,7 @@
 package me.fengorz.kiwi.word.api.feign;
 
 import me.fengorz.kiwi.common.api.R;
-import me.fengorz.kiwi.word.api.common.WordCrawlerConstants;
+import me.fengorz.kiwi.word.api.common.WordConstants;
 import me.fengorz.kiwi.word.api.dto.fetch.FetchWordResultDTO;
 import me.fengorz.kiwi.word.api.dto.remote.WordMainPageDTO;
 import me.fengorz.kiwi.word.api.entity.WordMainDO;
@@ -34,7 +34,7 @@ import org.springframework.web.bind.annotation.*;
  * @author codingByFeng
  * @date 2019-11-01 14:29:33
  */
-@FeignClient(contextId = "remoteWordMainService", value = WordCrawlerConstants.VOCABULARY_ENHANCER_CRAWLER_BIZ, fallbackFactory = RemoteWordMainServiceFallBackFactory.class)
+@FeignClient(contextId = "remoteWordMainService", value = WordConstants.KIWI_WORD_BIZ, fallbackFactory = RemoteWordMainServiceFallBackFactory.class)
 public interface IRemoteWordMainService {
 
     String WORD_MAIN = "/word/main";

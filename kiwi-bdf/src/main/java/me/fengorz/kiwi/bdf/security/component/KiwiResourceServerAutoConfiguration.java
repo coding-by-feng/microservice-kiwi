@@ -30,7 +30,7 @@ import org.springframework.web.client.DefaultResponseErrorHandler;
 import org.springframework.web.client.RestTemplate;
 
 /**
- * @author zhanshifeng
+ * @Author ZhanShiFeng
  */
 @ComponentScan("me.fengorz.kiwi.bdf.security")
 public class KiwiResourceServerAutoConfiguration {

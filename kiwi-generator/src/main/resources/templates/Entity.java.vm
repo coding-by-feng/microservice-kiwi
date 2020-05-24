@@ -48,7 +48,7 @@ import java.math.BigDecimal;
 @Accessors(chain = true)
 public class ${className}DO extends Model<${classNameDO}> {
 
-    private static final long serialVersionUID=${serialVersionUID}L;
+    private static final long serialVersionUID = ${serialVersionUID}L;
 
     #foreach ($column in $columns)
         /**

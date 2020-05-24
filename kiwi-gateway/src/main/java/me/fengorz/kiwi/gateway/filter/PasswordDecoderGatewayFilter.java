@@ -63,9 +63,9 @@ public class PasswordDecoderGatewayFilter extends AbstractGatewayFilterFactory {
             if (StrUtil.isNotBlank(password)) {
                 try {
                     // password = DecodeUtils.decryptAES(password, encodeKey);
-                    password = "123456";
+                    password = "123456" ;
                 } catch (Exception e) {
-                    log.error("密码解密失败:{}", password);
+                    log.error("密码解密失败:{}" , password);
                     return Mono.error(e);
                 }
                 decodeParamMap.put(SecurityConstants.KEY_PASSWORD, password.trim());

@@ -57,7 +57,7 @@ public class KiwiAccessDeniedHandler extends OAuth2AccessDeniedHandler {
     @Override
     @SneakyThrows
     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException authException) {
-        log.info("授权失败，禁止访问 {}", request.getRequestURI());
+        log.info("授权失败，禁止访问 {}" , request.getRequestURI());
         response.setCharacterEncoding(CommonConstants.UTF8);
         response.setContentType(CommonConstants.CONTENT_TYPE);
         R<KiwiDeniedException> result = R.failed(new KiwiDeniedException("授权失败，禁止访问"));

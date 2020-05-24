@@ -23,11 +23,11 @@ public class JsoupTest {
 
     @SneakyThrows
     public static void main(String[] args) {
-        final String word = "reveal";
-        final String url = "https://dictionary.cambridge.org/zhs/词典/英语-汉语-简体/";
+        final String word = "reveal" ;
+        final String url = "https://dictionary.cambridge.org/zhs/词典/英语-汉语-简体/" ;
         Document doc = Jsoup.connect(url + word).get();
         Elements root = doc.getElementsByClass("pr entry-body__el");
-        Assert.notNull(root, "The {} is not found!", word);
+        Assert.notNull(root, "The {} is not found!" , word);
 
         FetchWordResultDTO fetchWordResultDTO = new FetchWordResultDTO();
         fetchWordResultDTO.setWordName(word);
@@ -35,7 +35,7 @@ public class JsoupTest {
 
         root.forEach(block -> {
             Elements mainParaphrases = block.getElementsByClass("sense-body dsense_b");
-            Assert.notNull(mainParaphrases, "The mainParaphrases of {} is not found!", word);
+            Assert.notNull(mainParaphrases, "The mainParaphrases of {} is not found!" , word);
             FetchWordCodeDTO fetchWordCodeDTO = new FetchWordCodeDTO();
             List<FetchParaphraseDTO> fetchParaphraseDTOList = new ArrayList<>();
 
@@ -52,18 +52,18 @@ public class JsoupTest {
 
             mainParaphrases.forEach(paraphrases -> {
                 Elements singleParaphrase = paraphrases.getElementsByClass("def-block ddef_block ");
-                Assert.notNull(singleParaphrase, "The singleParaphrase of {} is not found!", word);
+                Assert.notNull(singleParaphrase, "The singleParaphrase of {} is not found!" , word);
 
                 singleParaphrase.forEach(paraphrase -> {
                     FetchParaphraseDTO fetchParaphraseDTO = new FetchParaphraseDTO();
 
                     Elements paraphraseEnglish = paraphrase.getElementsByClass("def ddef_d");
-                    Assert.notNull(paraphraseEnglish, "The paraphraseEnglish of {} is not found!", word);
+                    Assert.notNull(paraphraseEnglish, "The paraphraseEnglish of {} is not found!" , word);
                     fetchParaphraseDTO.setParaphraseEnglish(paraphraseEnglish.text());
 
                     // fetch chinese meaning
                     Elements meaningChinese = paraphrase.getElementsByClass("trans dtrans dtrans-se ");
-                    Assert.notNull(meaningChinese, "The meaningChinese of {} is not found!", word);
+                    Assert.notNull(meaningChinese, "The meaningChinese of {} is not found!" , word);
                     fetchParaphraseDTO.setMeaningChinese(meaningChinese.text());
 
                     // fetch example sentence

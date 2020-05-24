@@ -84,7 +84,7 @@ public class ValidateCodeGatewayFilter extends AbstractGatewayFilterFactory {
                     return httpResponse.writeWith(Mono.just(httpResponse.bufferFactory()
                             .wrap(objectMapper.writeValueAsBytes(R.failed(e.getMessage())))));
                 } catch (JsonProcessingException ex) {
-                    log.error("httpResponse 流输出异常", e);
+                    log.error("httpResponse 流输出异常" , e);
                 }
             }
 

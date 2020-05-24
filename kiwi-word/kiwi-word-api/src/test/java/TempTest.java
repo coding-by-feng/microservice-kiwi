@@ -44,7 +44,7 @@ public class TempTest {
 
     // @Test
     public void test4() {
-        System.out.println(StringUtils.repeat("a", 10));
+        System.out.println(StringUtils.repeat("a" , 10));
     }
 
     // @Test

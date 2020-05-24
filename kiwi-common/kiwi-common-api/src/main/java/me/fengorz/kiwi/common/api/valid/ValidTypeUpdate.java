@@ -6,4 +6,5 @@ package me.fengorz.kiwi.common.api.valid;
  * @Author ZhanShiFeng
  * @since 2020/03/19
  */
-public interface ValidTypeUpdate {}
+public interface ValidTypeUpdate {
+}

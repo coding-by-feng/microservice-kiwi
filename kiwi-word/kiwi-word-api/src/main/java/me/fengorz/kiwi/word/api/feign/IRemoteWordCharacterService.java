@@ -33,10 +33,10 @@ import org.springframework.web.bind.annotation.*;
  * @author codingByFeng
  * @date 2019-11-01 14:37:07
  */
-@FeignClient(contextId = "remoteWordCharacterService", value = WordConstants.KIWI_WORD_BIZ, fallbackFactory = RemoteWordCharacterServiceFallbackFactory.class)
+@FeignClient(contextId = "remoteWordCharacterService" , value = WordConstants.KIWI_WORD_BIZ, fallbackFactory = RemoteWordCharacterServiceFallbackFactory.class)
 public interface IRemoteWordCharacterService {
 
-    String WORD_CHARACTER = "/word/character";
+    String WORD_CHARACTER = "/word/character" ;
 
     /*
      * 分页查询

@@ -16,6 +16,6 @@ public class GeneratorTest {
         //     System.out.println(k + "+" + v);
         // });
 
-        System.out.println(KiwiBeanUtils.columnToBeanProperty("t_tactic_scheme", "_"));
+        System.out.println(KiwiBeanUtils.columnToBeanProperty("t_tactic_scheme" , "_"));
     }
 }

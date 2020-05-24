@@ -40,7 +40,7 @@ public class RemoteUserServiceFallBackImpl implements RemoteUserService {
 
     @Override
     public R<UserFullInfoDTO> info(String username, String from) {
-        log.error("feign 查询用户信息失败:{}", username, throwable);
+        log.error("feign 查询用户信息失败:{}" , username, throwable);
         return null;
     }
 }

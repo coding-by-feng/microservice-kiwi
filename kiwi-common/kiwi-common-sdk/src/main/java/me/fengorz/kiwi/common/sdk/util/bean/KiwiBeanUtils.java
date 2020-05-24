@@ -54,7 +54,7 @@ public class KiwiBeanUtils extends BeanUtils {
             if (strs.length == 1) {
                 return firstLetterUpper(str);
             } else {
-                String convertedStr = "";
+                String convertedStr = "" ;
                 for (int i = 0; i < strs.length; i++) {
                     convertedStr += firstLetterUpper(strs[i]);
                 }
@@ -66,13 +66,13 @@ public class KiwiBeanUtils extends BeanUtils {
 
     public static String firstLowerCamelCase(String str) {
         if (StringUtils.isNotBlank(str)) {
-            str = str.replace("T_", "");
+            str = str.replace("T_" , "");
             str = str.toLowerCase();
             String[] strs = str.split("_");
             if (strs.length == 1) {
                 return allLower(str);
             } else {
-                String convertedStr = "";
+                String convertedStr = "" ;
                 for (int i = 1; i < strs.length; i++) {
                     convertedStr += firstLetterUpper(strs[i]);
                 }
@@ -85,7 +85,7 @@ public class KiwiBeanUtils extends BeanUtils {
 
     public static String firstLetterUpper(String str) {
         if (StringUtils.isNotBlank(str)) {
-            str = str.replace("T_", "");
+            str = str.replace("T_" , "");
             str = str.toLowerCase();
             return str.substring(0, 1).toUpperCase()
                     + str.substring(1, str.length());
@@ -96,13 +96,13 @@ public class KiwiBeanUtils extends BeanUtils {
 
     public static String allUpper(String str) {
         if (StringUtils.isNotBlank(str)) {
-            str = str.replace("T_", "");
+            str = str.replace("T_" , "");
             str = str.toLowerCase();
             String[] strs = str.split("_");
             if (strs.length == 1) {
                 return str.toUpperCase();
             } else {
-                String convertedStr = "";
+                String convertedStr = "" ;
                 for (int i = 0; i < strs.length; i++) {
                     convertedStr += strs[i].toUpperCase();
                 }
@@ -115,13 +115,13 @@ public class KiwiBeanUtils extends BeanUtils {
 
     public static String allLower(String str) {
         if (StringUtils.isNotBlank(str)) {
-            str = str.replace("T_", "");
+            str = str.replace("T_" , "");
             str = str.toLowerCase();
             String[] strs = str.split("_");
             if (strs.length == 1) {
                 return str.toLowerCase();
             } else {
-                String convertedStr = "";
+                String convertedStr = "" ;
                 for (int i = 0; i < strs.length; i++) {
                     convertedStr += strs[i].toLowerCase();
                 }

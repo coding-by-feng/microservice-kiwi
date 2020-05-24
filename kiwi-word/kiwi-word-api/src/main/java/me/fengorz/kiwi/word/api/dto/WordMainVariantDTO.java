@@ -24,8 +24,8 @@ import me.fengorz.kiwi.word.api.entity.WordMainVariantDO;
  * @Author ZhanShiFeng
  * @date 2020-05-24 01:32:16
  */
-public class WordMainVariantDTO extends WordMainVariantDO{
+public class WordMainVariantDTO extends WordMainVariantDO {
 
-    private static final long serialVersionUID=1590255137013L;
+    private static final long serialVersionUID = 1590255137013L;
 
 }

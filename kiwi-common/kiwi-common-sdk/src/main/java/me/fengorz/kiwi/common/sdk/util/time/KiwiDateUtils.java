@@ -28,8 +28,8 @@ import cn.hutool.core.date.DateUtil;
  */
 public class KiwiDateUtils extends DateUtil {
 
-    public static final String DEFAULT_TIME_PATTERN = "yyyy-MM-dd HH:mm:ss";
-    public static final String DEFAULT_DATE_PATTERN = "yyyy-MM-dd";
-    private static String[] parsePatterns = new String[]{"yyyy-MM-dd HH:mm:ss", "yyyy-MM-dd", "yyyy-MM-dd HH:mm", "yyyy-MM", "yyyy/MM/dd", "yyyy/MM/dd HH:mm:ss", "yyyy/MM/dd HH:mm", "yyyy/MM", "yyyy.MM.dd", "yyyy.MM.dd HH:mm:ss", "yyyy.MM.dd HH:mm", "yyyy.MM"};
+    public static final String DEFAULT_TIME_PATTERN = "yyyy-MM-dd HH:mm:ss" ;
+    public static final String DEFAULT_DATE_PATTERN = "yyyy-MM-dd" ;
+    private static String[] parsePatterns = new String[]{"yyyy-MM-dd HH:mm:ss" , "yyyy-MM-dd" , "yyyy-MM-dd HH:mm" , "yyyy-MM" , "yyyy/MM/dd" , "yyyy/MM/dd HH:mm:ss" , "yyyy/MM/dd HH:mm" , "yyyy/MM" , "yyyy.MM.dd" , "yyyy.MM.dd HH:mm:ss" , "yyyy.MM.dd HH:mm" , "yyyy.MM"};
 
 }

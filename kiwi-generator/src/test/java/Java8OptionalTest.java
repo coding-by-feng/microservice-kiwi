@@ -29,9 +29,9 @@ public class Java8OptionalTest {
     // @Test
     @SneakyThrows
     public void givenNonNull_whenCreatesOptional_thenCorrect() {
-        String test = "test";
+        String test = "test" ;
         Optional<String> opt = Optional.of(test);
-        Assert.assertEquals("Optional[test]", opt);
+        Assert.assertEquals("Optional[test]" , opt);
         System.out.println(opt);
         System.out.println(opt.get());
     }
@@ -52,7 +52,7 @@ public class Java8OptionalTest {
     public void givenNonNull_whenCreatesNullable_thenCorrect() {
         String name = null;
         Optional<String> opt = Optional.ofNullable(name);
-        Assert.assertEquals("Optional.empty", opt.toString());
+        Assert.assertEquals("Optional.empty" , opt.toString());
         System.out.println(opt);
     }
 
@@ -76,7 +76,7 @@ public class Java8OptionalTest {
      */
     // @Test
     public void whenOrElseWorks_thenCorrect() {
-        String notEmpty = "ne";
+        String notEmpty = "ne" ;
         System.out.println(Optional.ofNullable(notEmpty).orElse(getNewValue()));
         System.out.println("------");
         System.out.println(Optional.ofNullable(notEmpty).orElseGet(this::getNewValue));
@@ -124,8 +124,8 @@ public class Java8OptionalTest {
      */
     // @Test
     public void mapAndFilterDealLogin() {
-        String username = "admin";
-        String inputPassword = "123456";
+        String username = "admin" ;
+        String inputPassword = "123456" ;
 
         User user = new User();// 代表从数据库查出User对象
         Optional.ofNullable(user).filter(u -> username.equals(u.getUsername()))
@@ -147,7 +147,7 @@ public class Java8OptionalTest {
         Optional<Optional<String>> stringOptional = person.map(Person::getName);
         Optional<String> optional = stringOptional.orElseThrow(Exception::new);
         String s = optional.orElse(null);
-        Assert.assertEquals("codingByFeng", s);
+        Assert.assertEquals("codingByFeng" , s);
 
         String s1 = person.flatMap(Person::getName).orElseThrow(Exception::new);
         Assert.assertEquals(s1, "codingByFeng");
@@ -170,8 +170,8 @@ public class Java8OptionalTest {
         private String password;
 
         public User() {
-            this.username = "admin";
-            this.password = "123456";
+            this.username = "admin" ;
+            this.password = "123456" ;
         }
     }
 
@@ -195,7 +195,7 @@ public class Java8OptionalTest {
 
     private String getNewValue() {
         System.out.println("getNewValue");
-        return "new";
+        return "new" ;
     }
 
 

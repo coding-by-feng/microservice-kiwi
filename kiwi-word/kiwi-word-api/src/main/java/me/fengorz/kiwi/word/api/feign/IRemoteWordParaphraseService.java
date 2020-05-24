@@ -33,10 +33,10 @@ import org.springframework.web.bind.annotation.*;
  * @author codingByFeng
  * @date 2019-11-01 14:41:24
  */
-@FeignClient(contextId = "remoteWordParaphraseService", value = WordConstants.KIWI_WORD_BIZ, fallbackFactory = RemoteWordParaphraseServiceFallbackFactory.class)
+@FeignClient(contextId = "remoteWordParaphraseService" , value = WordConstants.KIWI_WORD_BIZ, fallbackFactory = RemoteWordParaphraseServiceFallbackFactory.class)
 public interface IRemoteWordParaphraseService {
 
-    String WORD_PARAPHRASE = "/word/paraphrase";
+    String WORD_PARAPHRASE = "/word/paraphrase" ;
 
     /*
      * 分页查询

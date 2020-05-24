@@ -33,10 +33,10 @@ import org.springframework.web.bind.annotation.*;
  * @author codingByFeng
  * @date 2019-11-01 14:44:45
  */
-@FeignClient(contextId = "remoteWordPronunciationService", value = WordConstants.KIWI_WORD_BIZ, fallbackFactory = RemoteWordPronunciationServiceFallbackFactory.class)
+@FeignClient(contextId = "remoteWordPronunciationService" , value = WordConstants.KIWI_WORD_BIZ, fallbackFactory = RemoteWordPronunciationServiceFallbackFactory.class)
 public interface IRemoteWordPronunciationService {
 
-    String WORD_PRONUNCIATION = "/word/pronunciation";
+    String WORD_PRONUNCIATION = "/word/pronunciation" ;
 
     /*
      * 分页查询

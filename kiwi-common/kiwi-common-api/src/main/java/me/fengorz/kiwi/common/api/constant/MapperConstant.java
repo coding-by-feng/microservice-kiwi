@@ -26,6 +26,6 @@ package me.fengorz.kiwi.common.api.constant;
  */
 public class MapperConstant {
 
-    public static final String QUERY_PARAMS = "queryParams";
+    public static final String QUERY_PARAMS = "queryParams" ;
 
 }

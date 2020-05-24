@@ -49,18 +49,18 @@ public class GeneratorUtils {
 
     private final Configuration CONFIG = getConfig();
 
-    private final String[] TEMPLATE_ARR = {"controllerJavaTemplate", "entityJavaTemplate", "mapperJavaTemplate",
-            "serviceJavaTemplate", "serviceImplJavaTemplate"};
+    private final String[] TEMPLATE_ARR = {"controllerJavaTemplate" , "entityJavaTemplate" , "mapperJavaTemplate" ,
+            "serviceJavaTemplate" , "serviceImplJavaTemplate"};
 
-    private final String OUTPUT_DIR = "outputDir";
-    private final String AUTHOR = "author";
-    private final String DB_URL = "dbUrl";
-    private final String DRIVER_CLASS = "driverClass";
-    private final String DB_USERNAME = "dbUsername";
-    private final String DB_PASSWORD = "dbPassword";
-    private final String PARENT_PACKAGE = "parentPackage";
-    private final String MODULE_NAME = "moduleName";
-    private final String MODULE_PACKAGE = "modulePackage";
+    private final String OUTPUT_DIR = "outputDir" ;
+    private final String AUTHOR = "author" ;
+    private final String DB_URL = "dbUrl" ;
+    private final String DRIVER_CLASS = "driverClass" ;
+    private final String DB_USERNAME = "dbUsername" ;
+    private final String DB_PASSWORD = "dbPassword" ;
+    private final String PARENT_PACKAGE = "parentPackage" ;
+    private final String MODULE_NAME = "moduleName" ;
+    private final String MODULE_PACKAGE = "modulePackage" ;
 
     public void generatorCode() {
         // 代码生成器
@@ -160,7 +160,7 @@ public class GeneratorUtils {
         try {
             return new PropertiesConfiguration("generator.properties");
         } catch (ConfigurationException e) {
-            throw new CheckedException("获取代码生成的配置文件失败", e);
+            throw new CheckedException("获取代码生成的配置文件失败" , e);
         }
     }
 

@@ -69,9 +69,9 @@ public class Java8StreamTest {
         actionList.add(new Action("Right Hook"));
         actionList.add(new Action("Up Hook"));
 
-        Stream<Person> personStream1 = Stream.of(new Person("jack", Arrays.stream(ArrayUtil.toArray(actionList, Action.class))), new Person("mark", Arrays.stream(ArrayUtil.toArray(actionList, Action.class))));
+        Stream<Person> personStream1 = Stream.of(new Person("jack" , Arrays.stream(ArrayUtil.toArray(actionList, Action.class))), new Person("mark" , Arrays.stream(ArrayUtil.toArray(actionList, Action.class))));
 
-        Stream<Person> personStream2 = Stream.of(new Person("jack", Arrays.stream(ArrayUtil.toArray(actionList, Action.class))), new Person("mark", Arrays.stream(ArrayUtil.toArray(actionList, Action.class))));
+        Stream<Person> personStream2 = Stream.of(new Person("jack" , Arrays.stream(ArrayUtil.toArray(actionList, Action.class))), new Person("mark" , Arrays.stream(ArrayUtil.toArray(actionList, Action.class))));
 
         Stream<Stream<Action>> streamStream = personStream1.map(Person::getActionStream).filter(actionStream -> actionStream != null);
         Stream<Action> actionStream = personStream2.flatMap(Person::getActionStream).filter(action -> StringUtils.isNotBlank(action.getActionName()));

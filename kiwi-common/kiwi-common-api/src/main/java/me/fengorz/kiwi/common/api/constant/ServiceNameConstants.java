@@ -29,8 +29,8 @@ import lombok.experimental.UtilityClass;
 @UtilityClass
 public class ServiceNameConstants {
 
-    public final String VOCABULARY_ENHANCER_AUTH = "kiwi-auth";
+    public final String VOCABULARY_ENHANCER_AUTH = "kiwi-auth" ;
 
-    public final String VOCABULARY_ENHANCER_UPMS = "kiwi-upms";
+    public final String VOCABULARY_ENHANCER_UPMS = "kiwi-upms" ;
 
 }

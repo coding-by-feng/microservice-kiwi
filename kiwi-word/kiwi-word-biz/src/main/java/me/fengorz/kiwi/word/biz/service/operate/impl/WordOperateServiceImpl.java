@@ -53,6 +53,7 @@ import me.fengorz.kiwi.word.api.vo.*;
 import me.fengorz.kiwi.word.biz.service.*;
 import me.fengorz.kiwi.word.biz.service.operate.IWordOperateService;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -93,13 +94,14 @@ public class WordOperateServiceImpl implements IWordOperateService {
 
     @Override
     @Transactional(rollbackFor = Exception.class, noRollbackFor = DfsOperateDeleteException.class)
-    public void removeWord(String wordName) throws DfsOperateDeleteException {
+    public boolean removeWord(String wordName) throws DfsOperateDeleteException {
         WordMainDO wordMainDO = wordMainService.getOne(wordName);
         if (wordMainDO == null) {
-            return;
+            return false;
         }
         this.removeWordRelatedData(wordMainDO);
         wordMainService.removeById(wordMainDO.getWordId());
+        return true;
     }
 
     @Override
@@ -112,19 +114,30 @@ public class WordOperateServiceImpl implements IWordOperateService {
 
         // If the word already exists, update the original word information
         WordMainDO existsWordMainDO = wordMainService.getOne(new QueryWrapper<>(wordMainDO));
-        if (existsWordMainDO != null) {
+        try {
+            if (existsWordMainDO != null) {
 
-            wordMainDO.setLastUpdateTime(LocalDateTime.now());
-            wordMainDO.setIsDel(CommonConstants.FLAG_N);
-            wordMainService.update(wordMainDO, new QueryWrapper<>(new WordMainDO().setWordName(wordMainDO.getWordName())));
-            wordMainDO = wordMainService.getOne(new QueryWrapper<>(new WordMainDO().setWordName(wordMainDO.getWordName())));
+                wordMainDO.setLastUpdateTime(LocalDateTime.now());
+                wordMainDO.setIsDel(CommonConstants.FLAG_N);
+                wordMainService.update(wordMainDO, new QueryWrapper<>(new WordMainDO().setWordName(wordMainDO.getWordName())));
+                wordMainDO = wordMainService.getOne(new QueryWrapper<>(new WordMainDO().setWordName(wordMainDO.getWordName())));
 
-            removeWordRelatedData(wordMainDO);
-        } else {
-            wordMainDO.setIsDel(CommonConstants.FLAG_N);
-            wordMainService.save(wordMainDO);
+                removeWordRelatedData(wordMainDO);
+            } else {
+                wordMainDO.setIsDel(CommonConstants.FLAG_N);
+                wordMainService.save(wordMainDO);
+            }
+        } catch (DfsOperateDeleteException e) {
+            throw e;
+        } finally {
+            subStoreFetchWordResult(fetchWordResultDTO, wordMainDO);
+            this.evict(wordName);
         }
 
+        return true;
+    }
+
+    private void subStoreFetchWordResult(FetchWordResultDTO fetchWordResultDTO, WordMainDO wordMainDO) throws DfsOperateException {
         Integer wordId = wordMainDO.getWordId();
 
         if (wordId == null) {
@@ -166,8 +179,6 @@ public class WordOperateServiceImpl implements IWordOperateService {
                 }
             }
         }
-
-        return true;
     }
 
     @Override
@@ -188,6 +199,7 @@ public class WordOperateServiceImpl implements IWordOperateService {
      * @return
      */
     @Override
+    @KiwiCacheKeyPrefix(WordConstants.CACHE_KEY_PREFIX_METHOD_NAME)
     @Cacheable(cacheNames = WordConstants.CACHE_NAMES, keyGenerator = CacheConstants.CACHE_KEY_GENERATOR_BEAN, unless = "#result == null")
     @Transactional(propagation = Propagation.NOT_SUPPORTED)
     public WordQueryVO queryWord(@KiwiCacheKey String wordName) {
@@ -217,6 +229,11 @@ public class WordOperateServiceImpl implements IWordOperateService {
         Integer wordId = word.getWordId();
         wordQueryVO.setWordCharacterVOList(assembleWordCharacterVOS(wordName, wordId));
         return wordQueryVO;
+    }
+
+    @KiwiCacheKeyPrefix(WordConstants.CACHE_KEY_PREFIX_METHOD_NAME)
+    @CacheEvict(cacheNames = WordConstants.CACHE_NAMES, keyGenerator = CacheConstants.CACHE_KEY_GENERATOR_BEAN)
+    private void evict(@KiwiCacheKey String wordName){
     }
 
     private List<WordCharacterVO> assembleWordCharacterVOS(String wordName, Integer wordId) throws ServiceException {

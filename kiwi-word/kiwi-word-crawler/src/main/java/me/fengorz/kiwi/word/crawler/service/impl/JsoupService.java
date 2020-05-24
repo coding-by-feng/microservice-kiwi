@@ -48,36 +48,36 @@ import java.util.Optional;
 @Slf4j
 public class JsoupService implements IJsoupService {
 
-    public static final String JSOUP_CONNECT_EXCEPTION = "jsoup connect exception, the url is {}";
-    public static final String KEY_WORD_HEADER = "ti fs fs12 lmb-0 hw";
-    public static final String KEY_WORD_NAME = "tb ttn";
-    public static final String FETCH_MAIN_WORD_NAME_EXCEPTION = "The word name of {} is not found!";
-    public static final String KEY_ROOT = "pr entry-body__el";
-    public static final String FETCH_ROOT_EXCEPTION = "The {} is not found!";
-    public static final String KEY_MAIN_PARAPHRASES = "sense-body dsense_b";
-    public static final String FETCH_MAIN_PARAPHRASES_EXCEPTION = "The mainParaphrases of {} is not found!";
-    public static final String KEY_CODE_HEADER = "pos-header dpos-h";
-    public static final String FETCH_CODE_HEADER_EXCEPTION = "The codeHeader of {} is not found or size great than 1!";
-    public static final String KEY_HEADER_CODE = "pos dpos";
-    public static final String KEY_HEADER_LABEL = "gram dgram";
-    public static final String KEY_SINGLE_PARAPHRASE = "def-block ddef_block ";
-    public static final String FETCH_SINGLE_PARAPHRASE_EXCEPTION = "The singleParaphrase of {} is not found!";
-    public static final String KEY_PARAPHRASE_ENGLISH = "def ddef_d db";
-    public static final String FETCH_PARAPHRASE_ENGLISH_EXCEPTION = "The paraphraseEnglish of {} is not found!";
-    public static final String KEY_MEANING_CHINESE = "trans dtrans dtrans-se ";
-    public static final String FETCH_MEANING_CHINESE_EXCEPTION = "The meaningChinese of {} is not found!";
-    public static final String KEY_EXAMPLE_SENTENCES = "examp dexamp";
-    public static final String FETCH_EXAMPLE_SENTENCES_EXCEPTION = "The exampleSentences of {} is not found!";
-    public static final String KEY_SENTENCE = "eg deg";
-    public static final String KEY_SENTENCE_TRANSLATE = "trans dtrans dtrans-se hdb";
-    public static final String KEY_UK_PRONUNCIATIOIN = "uk dpron-i ";
-    public static final String KEY_US_PRONUNCIATIOIN = "us dpron-i ";
-    public static final String KEY_SOUNDMARK = "pron dpron";
-    public static final String KEY_VOICE_FILE_URL = "i-amphtml-fill-content";
-    public static final String KEY_SRC = "src";
-    public static final String FETCH_PRONUNCIATION_EXCEPTION = "fetch UK's pronunciation exception, the word is {}";
-    public static final String KEY_SOURCE = "source";
-    public static final String KEY_DAUD = "daud";
+    public static final String JSOUP_CONNECT_EXCEPTION = "jsoup connect exception, the url is {}" ;
+    public static final String KEY_WORD_HEADER = "ti fs fs12 lmb-0 hw" ;
+    public static final String KEY_WORD_NAME = "tb ttn" ;
+    public static final String FETCH_MAIN_WORD_NAME_EXCEPTION = "The word name of {} is not found!" ;
+    public static final String KEY_ROOT = "pr entry-body__el" ;
+    public static final String FETCH_ROOT_EXCEPTION = "The {} is not found!" ;
+    public static final String KEY_MAIN_PARAPHRASES = "sense-body dsense_b" ;
+    public static final String FETCH_MAIN_PARAPHRASES_EXCEPTION = "The mainParaphrases of {} is not found!" ;
+    public static final String KEY_CODE_HEADER = "pos-header dpos-h" ;
+    public static final String FETCH_CODE_HEADER_EXCEPTION = "The codeHeader of {} is not found or size great than 1!" ;
+    public static final String KEY_HEADER_CODE = "pos dpos" ;
+    public static final String KEY_HEADER_LABEL = "gram dgram" ;
+    public static final String KEY_SINGLE_PARAPHRASE = "def-block ddef_block " ;
+    public static final String FETCH_SINGLE_PARAPHRASE_EXCEPTION = "The singleParaphrase of {} is not found!" ;
+    public static final String KEY_PARAPHRASE_ENGLISH = "def ddef_d db" ;
+    public static final String FETCH_PARAPHRASE_ENGLISH_EXCEPTION = "The paraphraseEnglish of {} is not found!" ;
+    public static final String KEY_MEANING_CHINESE = "trans dtrans dtrans-se " ;
+    public static final String FETCH_MEANING_CHINESE_EXCEPTION = "The meaningChinese of {} is not found!" ;
+    public static final String KEY_EXAMPLE_SENTENCES = "examp dexamp" ;
+    public static final String FETCH_EXAMPLE_SENTENCES_EXCEPTION = "The exampleSentences of {} is not found!" ;
+    public static final String KEY_SENTENCE = "eg deg" ;
+    public static final String KEY_SENTENCE_TRANSLATE = "trans dtrans dtrans-se hdb" ;
+    public static final String KEY_UK_PRONUNCIATIOIN = "uk dpron-i " ;
+    public static final String KEY_US_PRONUNCIATIOIN = "us dpron-i " ;
+    public static final String KEY_SOUNDMARK = "pron dpron" ;
+    public static final String KEY_VOICE_FILE_URL = "i-amphtml-fill-content" ;
+    public static final String KEY_SRC = "src" ;
+    public static final String FETCH_PRONUNCIATION_EXCEPTION = "fetch UK's pronunciation exception, the word is {}" ;
+    public static final String KEY_SOURCE = "source" ;
+    public static final String KEY_DAUD = "daud" ;
 
     @Override
     public FetchWordResultDTO fetchWordInfo(WordMessageDTO wordMessage) throws JsoupFetchConnectRuntimeException, JsoupFetchResultRuntimeException {
@@ -204,6 +204,6 @@ public class JsoupService implements IJsoupService {
         return ukPronunciationDTO.setSoundmarkType(pronunciationType)
                 .setSoundmark(Optional.ofNullable(ukPronunciation.getElementsByClass(KEY_SOUNDMARK))
                         .orElseThrow(JsoupFetchResultRuntimeException::new).get(0).text())
-                .setVoiceFileUrl(Optional.ofNullable(ukPronunciation.getElementsByTag(KEY_SOURCE)).orElseThrow(JsoupFetchResultRuntimeException::new).get(1).attr(KEY_SRC));
+                .setVoiceFileUrl(Optional.ofNullable(ukPronunciation.getElementsByTag(KEY_SOURCE)).orElseThrow(JsoupFetchResultRuntimeException::new).get(0).attr(KEY_SRC));
     }
 }

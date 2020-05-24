@@ -44,12 +44,12 @@ public class MyRestController {
     @Autowired
     private MyService myService;
 
-    @RequestMapping(value = "/process", method = RequestMethod.POST)
+    @RequestMapping(value = "/process" , method = RequestMethod.POST)
     public void startProcessInstance() {
         myService.startProcess();
     }
 
-    @RequestMapping(value = "/tasks", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/tasks" , method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public List<TaskRepresentation> getTasks(@RequestParam String assignee) {
         List<Task> tasks = myService.getTasks(assignee);
         List<TaskRepresentation> dtos = new ArrayList<TaskRepresentation>();

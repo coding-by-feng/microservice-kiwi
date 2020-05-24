@@ -34,10 +34,10 @@ import org.springframework.web.bind.annotation.*;
  * @author codingByFeng
  * @date 2019-11-01 14:29:33
  */
-@FeignClient(contextId = "remoteWordMainService", value = WordConstants.KIWI_WORD_BIZ, fallbackFactory = RemoteWordMainServiceFallBackFactory.class)
+@FeignClient(contextId = "remoteWordMainService" , value = WordConstants.KIWI_WORD_BIZ, fallbackFactory = RemoteWordMainServiceFallBackFactory.class)
 public interface IRemoteWordMainService {
 
-    String WORD_MAIN = "/word/main";
+    String WORD_MAIN = "/word/main" ;
 
     @PostMapping(WORD_MAIN + "/test")
     R test(FetchWordResultDTO fetchWordResultDTO);

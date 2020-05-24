@@ -24,23 +24,33 @@ package me.fengorz.kiwi.word.api.common;
  * @Author ZhanShiFeng
  * @Date 2020/5/17 11:19 PM
  */
-public interface WordConstants {
+public class WordConstants {
 
-    String KIWI_WORD_BIZ = "kiwi-word-biz" ;
+    public static final String KIWI_WORD_BIZ = "kiwi-word-biz" ;
 
-    String CACHE_NAMES = "kiwi" ;
+    public static final String CACHE_NAMES = "kiwi" ;
 
-    String CACHE_KEY_PREFIX_CLASS_OPERATE_WORD = "word" ;
+    public interface CACHE_KEY_PREFIX_OPERATE {
 
-    String CACHE_KEY_PREFIX_CLASS_WORD_MAIN = "word_main" ;
-    String CACHE_KEY_PREFIX_METHOD_ID = "id" ;
-    String CACHE_KEY_PREFIX_METHOD_NAME = "name" ;
+        String CLASS = "operate" ;
+        String METHOD_WORD_NAME = "word_name" ;
 
-    String CACHE_KEY_PREFIX_CLASS_WORD_VARIANT = "variant" ;
-    String CACHE_KEY_PREFIX_METHOD_VARIANT_NAME = "name" ;
-    String CACHE_KEY_PREFIX_METHOD_ID_NAME = "id_name" ;
-    String CACHE_KEY_PREFIX_METHOD_ID_NAME_TYPE = "id_name_type" ;
+    }
 
-    int VARIANT_TYPE_UNKNOWN = 0;
+    public interface CACHE_KEY_PREFIX_WORD_MAIN {
+
+        String CLASS = "word_main" ;
+        String METHOD_ID = "id" ;
+        String METHOD_NAME = "name" ;
+
+    }
+
+    public interface CACHE_KEY_PREFIX_WORD_VARIANT {
+        String CLASS = "word_variant" ;
+        String METHOD_VARIANT_NAME = "name" ;
+        String METHOD_ID_NAME = "id_name" ;
+    }
+
+    public static final int VARIANT_TYPE_UNKNOWN = 0;
 
 }

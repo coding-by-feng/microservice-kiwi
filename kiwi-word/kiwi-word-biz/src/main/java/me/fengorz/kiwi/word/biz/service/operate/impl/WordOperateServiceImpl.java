@@ -71,7 +71,7 @@ import java.util.Optional;
  */
 @Service
 @RequiredArgsConstructor
-@KiwiCacheKeyPrefix(WordConstants.CACHE_KEY_PREFIX_CLASS_OPERATE_WORD)
+@KiwiCacheKeyPrefix(WordConstants.CACHE_KEY_PREFIX_OPERATE.CLASS)
 public class WordOperateServiceImpl implements IWordOperateService {
 
     private final IWordMainService wordMainService;
@@ -199,7 +199,7 @@ public class WordOperateServiceImpl implements IWordOperateService {
      * @return
      */
     @Override
-    @KiwiCacheKeyPrefix(WordConstants.CACHE_KEY_PREFIX_METHOD_NAME)
+    @KiwiCacheKeyPrefix(WordConstants.CACHE_KEY_PREFIX_OPERATE.METHOD_WORD_NAME)
     @Cacheable(cacheNames = WordConstants.CACHE_NAMES, keyGenerator = CacheConstants.CACHE_KEY_GENERATOR_BEAN, unless = "#result == null")
     @Transactional(propagation = Propagation.NOT_SUPPORTED)
     public WordQueryVO queryWord(@KiwiCacheKey String wordName) {
@@ -231,9 +231,9 @@ public class WordOperateServiceImpl implements IWordOperateService {
         return wordQueryVO;
     }
 
-    @KiwiCacheKeyPrefix(WordConstants.CACHE_KEY_PREFIX_METHOD_NAME)
+    @KiwiCacheKeyPrefix(WordConstants.CACHE_KEY_PREFIX_OPERATE.METHOD_WORD_NAME)
     @CacheEvict(cacheNames = WordConstants.CACHE_NAMES, keyGenerator = CacheConstants.CACHE_KEY_GENERATOR_BEAN)
-    private void evict(@KiwiCacheKey String wordName){
+    private void evict(@KiwiCacheKey String wordName) {
     }
 
     private List<WordCharacterVO> assembleWordCharacterVOS(String wordName, Integer wordId) throws ServiceException {
@@ -439,8 +439,12 @@ public class WordOperateServiceImpl implements IWordOperateService {
 
     /* private methods beginning */
 
+    @Transactional(rollbackFor = Exception.class, noRollbackFor = DfsOperateDeleteException.class)
     private void removeWordRelatedData(WordMainDO wordMainDO) throws DfsOperateDeleteException {
         Integer wordId = wordMainDO.getWordId();
+
+        wordMainVariantService.delByWordId(wordId);
+
         QueryWrapper<WordCharacterDO> wordCharacterQueryWrapper = new QueryWrapper<>(new WordCharacterDO().setWordId(wordId));
         List<WordCharacterDO> characterList = wordCharacterService.list(wordCharacterQueryWrapper);
         if (CollUtil.isNotEmpty(characterList)) {

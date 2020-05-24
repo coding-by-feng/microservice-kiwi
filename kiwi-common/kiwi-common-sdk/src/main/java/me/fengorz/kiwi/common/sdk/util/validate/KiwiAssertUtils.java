@@ -22,6 +22,7 @@ package me.fengorz.kiwi.common.sdk.util.validate;
 import cn.hutool.core.lang.Assert;
 import cn.hutool.core.util.StrUtil;
 import me.fengorz.kiwi.common.api.exception.ServiceException;
+import me.fengorz.kiwi.common.sdk.util.lang.string.KiwiStringUtils;
 
 import java.util.Collection;
 
@@ -41,6 +42,10 @@ public class KiwiAssertUtils extends Assert {
 
     public static <T> T serviceEmpty(T object, String errorMsgTemplate, Object... params) throws ServiceException {
         serviceNotNull(object, errorMsgTemplate, params);
+        if (object instanceof String && KiwiStringUtils.isBlank(object.toString())) {
+            throw new ServiceException(StrUtil.format(errorMsgTemplate, params));
+        }
+
         if (object instanceof Collection && !((Collection) object).isEmpty()) {
             throw new ServiceException(StrUtil.format(errorMsgTemplate, params));
         }

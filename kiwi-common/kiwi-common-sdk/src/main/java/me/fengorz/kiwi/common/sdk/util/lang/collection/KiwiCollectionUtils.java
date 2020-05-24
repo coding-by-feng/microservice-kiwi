@@ -28,7 +28,7 @@ import java.util.Map;
  * @Author ZhanShiFeng
  * @Date 2020/5/17 9:31 AM
  */
-public class EnhancedCollectionUtils extends CollectionUtil {
+public class KiwiCollectionUtils extends CollectionUtil {
 
     public static <K, V> Map<K, V> putAndReturn(Map<K, V> map, K k, V v) {
         map.put(k, v);

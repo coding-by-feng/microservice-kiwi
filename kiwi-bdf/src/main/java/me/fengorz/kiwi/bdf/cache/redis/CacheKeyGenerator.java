@@ -26,14 +26,12 @@ import me.fengorz.kiwi.common.api.constant.CommonConstants;
 import me.fengorz.kiwi.common.sdk.util.lang.array.KiwiArrayUtils;
 import me.fengorz.kiwi.common.sdk.util.lang.object.KiwiObjectUtils;
 import me.fengorz.kiwi.common.sdk.util.lang.string.KiwiStringUtils;
+import me.fengorz.kiwi.common.sdk.util.validate.KiwiAssertUtils;
 import org.springframework.cache.interceptor.SimpleKeyGenerator;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
-import java.util.Arrays;
-import java.util.Optional;
-import java.util.SortedMap;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -46,12 +44,20 @@ public class CacheKeyGenerator extends SimpleKeyGenerator {
 
     @Override
     public Object generate(Object target, Method method, Object... params) {
-        String prefix;
+        String prefix = null;
 
-        KiwiCacheKeyPrefix kiwiCacheKeyPrefix = Optional.ofNullable(
-                method.getAnnotation(KiwiCacheKeyPrefix.class)
-        ).orElse(target.getClass().getAnnotation(KiwiCacheKeyPrefix.class));
-        prefix = kiwiCacheKeyPrefix == null ? CommonConstants.EMPTY : kiwiCacheKeyPrefix.value() + CommonConstants.SYMBOL_DELIMITER_STR;
+        KiwiCacheKeyPrefix classKeyPrefix = target.getClass().getAnnotation(KiwiCacheKeyPrefix.class);
+        if (Objects.nonNull(classKeyPrefix)) {
+            prefix = classKeyPrefix.value() + CommonConstants.SYMBOL_DELIMITER_STR;
+        }
+
+        KiwiCacheKeyPrefix methodKeyPrefix = method.getAnnotation(KiwiCacheKeyPrefix.class);
+        if (Objects.nonNull(methodKeyPrefix)) {
+            prefix += methodKeyPrefix.value() + CommonConstants.SYMBOL_DELIMITER_STR;
+        }
+
+        KiwiAssertUtils.serviceEmpty(prefix, "Class[{}], Method[{}]: CacheKeyPrefix cannot be null!" , classKeyPrefix, methodKeyPrefix);
+
 
         Parameter[] parameters = method.getParameters();
         if (KiwiArrayUtils.isNotEmpty(parameters)) {

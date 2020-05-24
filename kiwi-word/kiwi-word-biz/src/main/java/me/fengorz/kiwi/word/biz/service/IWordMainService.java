@@ -21,6 +21,7 @@ package me.fengorz.kiwi.word.biz.service;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import me.fengorz.kiwi.word.api.entity.WordMainDO;
+import me.fengorz.kiwi.word.api.vo.WordMainVO;
 
 import java.util.List;
 import java.util.Map;
@@ -33,7 +34,9 @@ import java.util.Map;
  */
 public interface IWordMainService extends IService<WordMainDO> {
 
-    WordMainDO getOneByWordName(String wordName);
+    WordMainVO getOne(String wordName);
+
+    String getWordName(Integer id);
 
     List<Map> fuzzyQueryList(Page page, String wordName);
 

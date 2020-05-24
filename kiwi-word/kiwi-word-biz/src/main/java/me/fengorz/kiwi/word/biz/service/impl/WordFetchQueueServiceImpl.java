@@ -76,7 +76,7 @@ public class WordFetchQueueServiceImpl extends ServiceImpl<WordFetchQueueMapper,
             return false;
         }
         // TODO ZSF 这里要搬到废弃的历史表
-        return this.update(new WordFetchQueueDO().setIsValid(CommonConstants.FLAG_Y),
+        return this.update(new WordFetchQueueDO().setIsValid(CommonConstants.FLAG_N),
                 new LambdaQueryWrapper<WordFetchQueueDO>().eq(WordFetchQueueDO::getWordName, wordName));
     }
 

@@ -17,17 +17,19 @@
  *
  */
 
-package me.fengorz.kiwi.common.fastdfs.component;
+package me.fengorz.kiwi.common.fastdfs.service.impl;
 
 import com.github.tobato.fastdfs.domain.fdfs.MetaData;
 import com.github.tobato.fastdfs.domain.fdfs.StorePath;
 import com.github.tobato.fastdfs.domain.proto.storage.DownloadByteArray;
 import com.github.tobato.fastdfs.service.AppendFileStorageClient;
 import com.github.tobato.fastdfs.service.FastFileStorageClient;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.api.exception.dfs.DfsOperateDeleteException;
 import me.fengorz.kiwi.common.api.exception.dfs.DfsOperateException;
+import me.fengorz.kiwi.common.fastdfs.constant.DfsConstants;
+import me.fengorz.kiwi.common.fastdfs.service.IDfsService;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayInputStream;
@@ -35,19 +37,15 @@ import java.io.InputStream;
 import java.util.Set;
 
 /**
- * @Description TODO
+ * @Description Dfs分布式文件服务类
  * @Author codingByFeng
  * @Date 2019/11/4 10:58 AM
  */
 @Service
 @Slf4j
-@AllArgsConstructor
-public class DfsService {
+@RequiredArgsConstructor
+public class DfsService implements IDfsService {
 
-    public static final String DELETE_FILE_EXCEPTION = "dfsService delete file exception!";
-    public static final String UPLOAD_FILE_EXCEPTION = "dfsService upload file exception";
-    public static final String DOWNLOAD_STREAM_FILE_EXCEPTION = "dfsService download stream of file exception";
-    public static final String DOWNLOAD_FILE_EXCEPTION = "dfsService download of file exception";
     /**
      * 面向普通应用的文件操作接口
      */
@@ -58,56 +56,61 @@ public class DfsService {
      */
     private final AppendFileStorageClient appendFileStorageClient;
 
+    @Override
     public String uploadFile(InputStream inputStream, long size, String extName) throws DfsOperateException {
         return uploadFile(inputStream, size, extName, null);
     }
 
+    @Override
     public String uploadFile(InputStream inputStream, long size, String extName, Set<MetaData> metaDataSet) throws DfsOperateException {
         try {
-            log.info("uploading file size = {}，name suffix = {}", size, extName);
+            log.info("uploading file size = {}，name suffix = {}" , size, extName);
             StorePath storePath = fastFileStorageClient.uploadFile(inputStream, size, extName, metaDataSet);
-            log.info("upload file success，group：{}，path：{}", storePath.getGroup(), storePath.getPath());
+            log.info("upload file success，group：{}，path：{}" , storePath.getGroup(), storePath.getPath());
             return storePath.getFullPath();
         } catch (Exception e) {
             // e.printStackTrace();
-            log.error(UPLOAD_FILE_EXCEPTION, e);
-            throw new DfsOperateException(UPLOAD_FILE_EXCEPTION);
+            log.error(DfsConstants.UPLOAD_FILE_EXCEPTION, e);
+            throw new DfsOperateException(DfsConstants.UPLOAD_FILE_EXCEPTION);
         }
     }
 
+    @Override
     public void deleteFile(String groupName, String path) throws DfsOperateDeleteException {
         if (path.startsWith(groupName + "/")) {
             path = path.split(groupName + "/")[1];
         }
         try {
             fastFileStorageClient.deleteFile(groupName, path);
-            log.info("delete file success，group：{}，path：{}", groupName, path);
+            log.info("delete file success，group：{}，path：{}" , groupName, path);
         } catch (Exception e) {
-            log.error(DELETE_FILE_EXCEPTION, e);
-            throw new DfsOperateDeleteException(DELETE_FILE_EXCEPTION);
+            log.error(DfsConstants.DELETE_FILE_EXCEPTION, e);
+            throw new DfsOperateDeleteException(DfsConstants.DELETE_FILE_EXCEPTION);
         }
     }
 
-    public InputStream downloadStream(String groupName, String path) throws DfsOperateDeleteException {
+    @Override
+    public InputStream downloadStream(String groupName, String path) throws DfsOperateException {
         try {
             byte[] content = downloadFile(groupName, path);
             return new ByteArrayInputStream(content);
         } catch (Exception e) {
-            log.error(DOWNLOAD_STREAM_FILE_EXCEPTION, e);
-            throw new DfsOperateDeleteException(DOWNLOAD_STREAM_FILE_EXCEPTION);
+            log.error(DfsConstants.DOWNLOAD_STREAM_FILE_EXCEPTION, e);
+            throw new DfsOperateException(DfsConstants.DOWNLOAD_STREAM_FILE_EXCEPTION);
         }
     }
 
-    public byte[] downloadFile(String groupName, String path) throws DfsOperateDeleteException {
+    @Override
+    public byte[] downloadFile(String groupName, String path) throws DfsOperateException {
         if (path.startsWith(groupName + "/")) {
             path = path.split(groupName + "/")[1];
         }
         try {
-            log.info("download file success，group：{}，path：{}", groupName, path);
+            log.info("download file success，group：{}，path：{}" , groupName, path);
             return fastFileStorageClient.downloadFile(groupName, path, new DownloadByteArray());
         } catch (Exception e) {
-            log.error(DOWNLOAD_FILE_EXCEPTION, e);
-            throw new DfsOperateDeleteException(DOWNLOAD_FILE_EXCEPTION, e);
+            log.error(DfsConstants.DOWNLOAD_FILE_EXCEPTION, e);
+            throw new DfsOperateException(DfsConstants.DOWNLOAD_FILE_EXCEPTION, e);
         }
     }
 

@@ -19,6 +19,7 @@
 
 package me.fengorz.kiwi.common.api;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.ToString;
 import lombok.experimental.Accessors;
@@ -31,27 +32,28 @@ import java.io.Serializable;
  * 响应体
  *
  * @param <T>
- * @author zhanshifeng
+ * @Author ZhanShiFeng
  */
 @ToString
 @Data
 @Accessors(chain = true)
 public class R<T> implements Serializable {
     private static final long serialVersionUID = -1845782287674831578L;
-    private static final String FEIGN_CALL_FAILED = "feign call failed!";
+    private static final String FEIGN_CALL_FAILED = "feign call failed!" ;
 
-    private ResultCode code;
+    private Integer code;
 
     private String msg;
 
     private T data;
 
-    public boolean isOK() {
-        return ResultCode.SUCCESS == this.code;
+    public boolean isSuccess() {
+        return ResultCode.SUCCESS.getCode().equals(this.code);
     }
 
+    @JsonIgnore
     public boolean isFail() {
-        return !isOK();
+        return !isSuccess();
     }
 
     public static <T> R<T> auto(boolean flag) {
@@ -60,21 +62,21 @@ public class R<T> implements Serializable {
 
     public static <T> R<T> auto(boolean flag, String msg) {
         if (flag) {
-            return R.ok();
+            return R.success();
         } else {
             return R.failed(msg);
         }
     }
 
-    public static <T> R<T> ok() {
+    public static <T> R<T> success() {
         return restResult(null, ResultCode.SUCCESS, null);
     }
 
-    public static <T> R<T> ok(T data) {
+    public static <T> R<T> success(T data) {
         return restResult(data, ResultCode.SUCCESS, null);
     }
 
-    public static <T> R<T> ok(T data, String msg) {
+    public static <T> R<T> success(T data, String msg) {
         return restResult(data, ResultCode.SUCCESS, msg);
     }
 
@@ -103,9 +105,21 @@ public class R<T> implements Serializable {
         return restResult(data, ResultCode.FAIL, msg);
     }
 
+    public static <T> R<T> error() {
+        return restResult(null, ResultCode.ERROR, null);
+    }
+
+    public static <T> R<T> error(T data) {
+        return restResult(data, ResultCode.ERROR, null);
+    }
+
+    public static <T> R<T> error(T data, String msg) {
+        return restResult(data, ResultCode.ERROR, msg);
+    }
+
     private static <T> R<T> restResult(T data, ResultCode resultCode, String msg) {
         R<T> apiResult = new R<>();
-        apiResult.setCode(resultCode);
+        apiResult.setCode(resultCode.getCode());
         apiResult.setData(data);
         apiResult.setMsg(msg);
         return apiResult;

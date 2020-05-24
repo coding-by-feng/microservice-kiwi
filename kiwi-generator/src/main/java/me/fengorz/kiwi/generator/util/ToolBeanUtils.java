@@ -24,7 +24,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.WordUtils;
 
 /**
- * @Author zhanshifeng
+ * @Author ZhanShiFeng
  */
 public class ToolBeanUtils {
 

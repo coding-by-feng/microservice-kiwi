@@ -21,6 +21,7 @@ package me.fengorz.kiwi.common.sdk.web;
 
 import cn.hutool.core.codec.Base64;
 import cn.hutool.core.util.StrUtil;
+import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.api.constant.SecurityConstants;
 import me.fengorz.kiwi.common.api.exception.AuthException;
 import org.apache.commons.lang3.CharEncoding;
@@ -28,14 +29,18 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.web.util.WebUtils;
 
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
+import java.io.DataInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
 /**
- * s
- *
  * @Author codingByFeng
  * @Date 2019-09-07 21:11
  */
+@Slf4j
 public class WebTools extends WebUtils {
 
     /**
@@ -61,6 +66,41 @@ public class WebTools extends WebUtils {
         }
 
         return new String(decoded, StandardCharsets.UTF_8);
+    }
+
+    public static void downloadResponse(HttpServletResponse response, InputStream inputStream) {
+        if (inputStream == null) {
+            return;
+        }
+
+        ServletOutputStream temps = null;
+        DataInputStream in = null;
+        try {
+            temps = response.getOutputStream();
+            in = new DataInputStream(inputStream);
+            byte[] b = new byte[2048];
+            while ((in.read(b)) != -1) {
+                temps.write(b);
+                temps.flush();
+            }
+        } catch (IOException e) {
+            log.error(e.getMessage(), e);
+        } finally {
+            if (temps != null) {
+                try {
+                    temps.close();
+                } catch (IOException e) {
+                    log.error("temps close exception" , e);
+                }
+            }
+            if (in != null) {
+                try {
+                    in.close();
+                } catch (IOException e) {
+                    log.error("in close exception" , e);
+                }
+            }
+        }
     }
 
 }

@@ -23,7 +23,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * @Author zhanshifeng
+ * @Author ZhanShiFeng
  * @Date 2020/2/24 11:42 AM
  */
 public class ToolConstants {

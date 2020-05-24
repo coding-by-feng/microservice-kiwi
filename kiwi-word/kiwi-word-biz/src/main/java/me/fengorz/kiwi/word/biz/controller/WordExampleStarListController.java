@@ -61,7 +61,7 @@ public class WordExampleStarListController extends BaseController {
      */
     @GetMapping("/page")
     public R getWordParaphraseExampleListPage(Page page, WordExampleStarListDO wordExampleStarListDO) {
-        return R.ok(wordExampleStarListService.page(page, Wrappers.query(wordExampleStarListDO)));
+        return R.success(wordExampleStarListService.page(page, Wrappers.query(wordExampleStarListDO)));
     }
 
     /**
@@ -72,7 +72,7 @@ public class WordExampleStarListController extends BaseController {
      */
     @PostMapping("/getOne")
     public R getOne(@RequestBody WordExampleStarListDO condition) {
-        return R.ok(wordExampleStarListService.getOne(new QueryWrapper<>(condition)));
+        return R.success(wordExampleStarListService.getOne(new QueryWrapper<>(condition)));
     }
 
 
@@ -84,7 +84,7 @@ public class WordExampleStarListController extends BaseController {
      */
     @GetMapping("/getById/{id}")
     public R getById(@PathVariable("id") Integer id) {
-        return R.ok(wordExampleStarListService.getById(id));
+        return R.success(wordExampleStarListService.getById(id));
     }
 
     /**
@@ -98,7 +98,7 @@ public class WordExampleStarListController extends BaseController {
     // @PreAuthorize("@pms.hasPermission('api_wordparaphraseexamplelist_add')")
     public R save(WordExampleStarListDO wordExampleStarListDO) {
         wordExampleStarListDO.setOwner(1);
-        return R.ok(wordExampleStarListService.save(wordExampleStarListDO));
+        return R.success(wordExampleStarListService.save(wordExampleStarListDO));
     }
 
     /**
@@ -111,7 +111,7 @@ public class WordExampleStarListController extends BaseController {
     @PostMapping("/updateById")
     // @PreAuthorize("@pms.hasPermission('api_wordparaphraseexamplelist_edit')")
     public R updateById(WordExampleStarListDO wordExampleStarListDO) {
-        return R.ok(wordExampleStarListService.updateById(wordExampleStarListDO));
+        return R.success(wordExampleStarListService.updateById(wordExampleStarListDO));
     }
 
     /**
@@ -124,7 +124,7 @@ public class WordExampleStarListController extends BaseController {
     @PostMapping("/delById/{id}")
     // @PreAuthorize("@pms.hasPermission('api_wordparaphraseexamplelist_del')")
     public R delById(@PathVariable Integer id) {
-        return R.ok(wordExampleStarListService.removeById(id));
+        return R.success(wordExampleStarListService.removeById(id));
     }
 
     @GetMapping("/getCurrentUserList")
@@ -135,7 +135,7 @@ public class WordExampleStarListController extends BaseController {
     @PostMapping("/putIntoStarList")
     public R putIntoStarList(@NotNull Integer exampleId, @NotNull Integer listId) {
         try {
-            return R.ok(this.wordOperateService.putExampleIntoStarList(exampleId, listId));
+            return R.success(this.wordOperateService.putExampleIntoStarList(exampleId, listId));
         } catch (ServiceException e) {
             log.error(e.getMessage());
             return R.failed(e.getMessage());
@@ -144,14 +144,14 @@ public class WordExampleStarListController extends BaseController {
 
     @PostMapping("/removeExampleStar")
     public R removeExampleStar(@NotNull Integer exampleId, @NotNull Integer listId) {
-        return R.ok(this.wordOperateService.removeExampleStar(exampleId, listId));
+        return R.success(this.wordOperateService.removeExampleStar(exampleId, listId));
     }
 
     @PostMapping("/getListItems/{size}/{current}")
     public R getListItems(@NotNull Integer listId,
                           @PathVariable @Min(1) Integer current,
                           @PathVariable @Range(min = 1, max = 100) Integer size) {
-        return R.ok(wordExampleStarListService.getListItems(new Page(current, size), listId));
+        return R.success(wordExampleStarListService.getListItems(new Page(current, size), listId));
     }
 
 }

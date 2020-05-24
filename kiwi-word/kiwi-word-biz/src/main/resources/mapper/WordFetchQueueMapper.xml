@@ -23,14 +23,4 @@
 
 <mapper namespace="me.fengorz.kiwi.word.biz.mapper.WordFetchQueueMapper">
 
-    <resultMap id="wordFetchQueueMap" type="me.fengorz.kiwi.word.api.entity.WordFetchQueueDO">
-        <id property="queueId" column="queue_id"/>
-        <result property="wordName" column="word_name"/>
-        <result property="inTime" column="in_time"/>
-        <result property="fetchPriority" column="fetch_priority"/>
-        <result property="fetchStatus" column="fetch_status"/>
-        <result property="voiceFilePath" column="voice_file_path"/>
-        <result property="isValid" column="is_valid"/>
-        <result property="fetchResult" column="fetch_result"/>
-    </resultMap>
 </mapper>

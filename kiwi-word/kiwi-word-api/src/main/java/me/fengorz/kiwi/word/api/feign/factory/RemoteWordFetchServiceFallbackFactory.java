@@ -20,8 +20,8 @@
 package me.fengorz.kiwi.word.api.feign.factory;
 
 import feign.hystrix.FallbackFactory;
-import me.fengorz.kiwi.word.api.feign.IRemoteWordFetchService;
-import me.fengorz.kiwi.word.api.feign.fallback.RemoteWordFetchServiceFallbackImpl;
+import me.fengorz.kiwi.word.api.feign.IWordFetchAPIService;
+import me.fengorz.kiwi.word.api.feign.fallback.WordFetchAPIServiceFallbackImpl;
 import org.springframework.stereotype.Component;
 
 /**
@@ -30,10 +30,10 @@ import org.springframework.stereotype.Component;
  * @Date 2019/10/30 3:19 PM
  */
 @Component
-public class RemoteWordFetchServiceFallbackFactory implements FallbackFactory<IRemoteWordFetchService> {
+public class RemoteWordFetchServiceFallbackFactory implements FallbackFactory<IWordFetchAPIService> {
     @Override
-    public IRemoteWordFetchService create(Throwable throwable) {
-        RemoteWordFetchServiceFallbackImpl remoteWordFetchServiceFallBack = new RemoteWordFetchServiceFallbackImpl();
+    public IWordFetchAPIService create(Throwable throwable) {
+        WordFetchAPIServiceFallbackImpl remoteWordFetchServiceFallBack = new WordFetchAPIServiceFallbackImpl();
         remoteWordFetchServiceFallBack.setThrowable(throwable);
         return remoteWordFetchServiceFallBack;
     }

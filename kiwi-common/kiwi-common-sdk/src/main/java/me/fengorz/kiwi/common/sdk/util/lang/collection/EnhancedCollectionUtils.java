@@ -25,7 +25,7 @@ import java.util.Map;
 
 /**
  * @Description 集合工具类
- * @Author zhanshifeng
+ * @Author ZhanShiFeng
  * @Date 2020/5/17 9:31 AM
  */
 public class EnhancedCollectionUtils extends CollectionUtil {

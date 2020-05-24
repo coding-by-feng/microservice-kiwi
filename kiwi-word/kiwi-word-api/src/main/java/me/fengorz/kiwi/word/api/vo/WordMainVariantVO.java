@@ -13,19 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-export const tableOption = {
-    border: true,
-    index: true,
-    indexLabel: '序号',
-    stripe: true,
-    menuAlign: 'center',
-    align: 'center',
-    column: [
-        #foreach ($column in $columns)
-            {
-                label: '$column.comments',
-                prop: '$column.lowerAttrName'
-            },
-        #end
-    ]
+package me.fengorz.kiwi.word.api.vo;
+
+
+import me.fengorz.kiwi.word.api.entity.WordMainVariantDO;
+
+/**
+ * 自动生成实体类VO
+ *
+ * @Author ZhanShiFeng
+ * @date 2020-05-24 00:36:15
+ */
+public class WordMainVariantVO extends WordMainVariantDO {
+
+    private static final long serialVersionUID = -7291998403484666777L;
 }

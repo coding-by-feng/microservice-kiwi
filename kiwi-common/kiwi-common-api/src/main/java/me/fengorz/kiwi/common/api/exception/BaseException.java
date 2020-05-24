@@ -26,13 +26,15 @@ import org.apache.commons.lang3.StringUtils;
 
 /**
  * @Description 异常基类
- * @Author zhanshifeng
+ * @Author ZhanShiFeng
  * @Date 2020/4/8 4:32 PM
  */
 @Data
 @Accessors(chain = true)
 public class BaseException extends Exception {
+
     private static final long serialVersionUID = -8424415276392691547L;
+
     protected Object[] args;
     protected ResultCode resultCode;
 

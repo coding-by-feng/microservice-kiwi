@@ -39,7 +39,7 @@ import java.io.PrintWriter;
  * 客户端异常处理
  * 1. 可以根据 AuthenticationException 不同细化异常处理
  *
- * @author zhanshifeng
+ * @Author ZhanShiFeng
  */
 @Slf4j
 @Component
@@ -53,8 +53,8 @@ public class ResourceAuthExceptionEntryPoint implements AuthenticationEntryPoint
                          AuthenticationException authException) {
         response.setCharacterEncoding(CommonConstants.UTF8);
         response.setContentType(CommonConstants.CONTENT_TYPE);
-        R<String> result = new R<>();
-        result.setCode(ResultCode.build(() -> HttpStatus.HTTP_UNAUTHORIZED, () -> ResultCode.I18N_CODE_FAIL));
+        R<String> result = R.failed();
+        result.setCode(ResultCode.build(() -> HttpStatus.HTTP_UNAUTHORIZED, null).getCode());
         if (authException != null) {
             result.setMsg("error");
             result.setData(authException.getMessage());

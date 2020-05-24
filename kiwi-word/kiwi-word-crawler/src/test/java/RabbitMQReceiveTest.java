@@ -24,7 +24,7 @@ import lombok.SneakyThrows;
 
 /**
  * @Description TODO
- * @Author zhanshifeng
+ * @Author ZhanShiFeng
  * @Date 2020/4/25 7:14 PM
  */
 public class RabbitMQReceiveTest {

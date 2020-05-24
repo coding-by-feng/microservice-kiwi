@@ -38,7 +38,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @Description 自定义redis key的生成器
- * @Author zhanshifeng
+ * @Author ZhanShiFeng
  * @Date 2020/5/17 11:20 AM
  */
 @NoArgsConstructor

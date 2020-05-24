@@ -19,19 +19,21 @@
 
 package me.fengorz.kiwi.common.api;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import me.fengorz.kiwi.common.api.constant.CommonConstants;
 
 import java.util.function.Supplier;
 
 /**
  * @Description TODO
- * @Author zhanshifeng
+ * @Author ZhanShiFeng
  * @Date 2020/5/23 1:28 PM
  */
 public interface ResultCode {
 
-    String I18N_CODE_SUCCESS = "common.operate.success";
-    String I18N_CODE_FAIL = "common.operate.fail";
+    String I18N_CODE_SUCCESS = "common.operate.success" ;
+    String I18N_CODE_FAIL = "common.operate.fail" ;
+    String I18N_CODE_ERROR = "common.operate.error" ;
 
     /**
      * 成功
@@ -41,7 +43,9 @@ public interface ResultCode {
     /**
      * 失败
      */
-    ResultCode FAIL = () -> I18N_CODE_FAIL;
+    ResultCode FAIL = build(() -> CommonConstants.RESULT_CODE_FAIL, () -> I18N_CODE_FAIL);
+
+    ResultCode ERROR = () -> I18N_CODE_ERROR;
 
     ResultCode MICROSERVICE_INVOCATION_ERROR = build(
             () -> CommonConstants.RESULT_CODE_INVOCATION_ERROR,
@@ -52,7 +56,7 @@ public interface ResultCode {
      *
      * @return
      */
-    default Integer value() {
+    default Integer getCode() {
         return CommonConstants.RESULT_CODE_SERVICE_ERROR;
     }
 
@@ -61,6 +65,7 @@ public interface ResultCode {
      *
      * @return
      */
+    @JsonIgnore
     String getI18nCode();
 
     static ResultCode build(Supplier<Integer> code, Supplier<String> i18nCode) {
@@ -71,7 +76,7 @@ public interface ResultCode {
             }
 
             @Override
-            public Integer value() {
+            public Integer getCode() {
                 return code.get();
             }
         };

@@ -15,6 +15,7 @@
     <version>1.0-SNAPSHOT</version>
     <name>microservice-kiwi</name>
 
+<!--
     <modules>
         <module>kiwi-cloud-service</module>
         <module>kiwi-eureka</module>
@@ -24,6 +25,7 @@
         <module>kiwi-gateway</module>
         <module>kiwi-generator</module>
     </modules>
+-->
 
     <!--
         <modules>
@@ -55,6 +57,7 @@
         <lombok.version>1.18.8</lombok.version>
         <mysql.version>8.0.17</mysql.version>
         <jsoup.version>1.12.1</jsoup.version>
+        <swagger.version>2.9.2</swagger.version>
 
         <kiwi-eureka.version>1.0-SNAPSHOT</kiwi-eureka.version>
         <kiwi-config.version>1.0-SNAPSHOT</kiwi-config.version>
@@ -128,6 +131,10 @@
             <groupId>com.baomidou</groupId>
             <artifactId>mybatis-plus-boot-starter</artifactId>
             <version>${mybatis-plus.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
         </dependency>
     </dependencies>
 

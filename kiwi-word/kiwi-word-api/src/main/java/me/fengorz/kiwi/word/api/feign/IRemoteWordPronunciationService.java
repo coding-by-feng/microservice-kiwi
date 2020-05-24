@@ -20,7 +20,7 @@ package me.fengorz.kiwi.word.api.feign;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import me.fengorz.kiwi.common.api.R;
-import me.fengorz.kiwi.word.api.common.WordCrawlerConstants;
+import me.fengorz.kiwi.word.api.common.WordConstants;
 import me.fengorz.kiwi.word.api.entity.WordPronunciationDO;
 import me.fengorz.kiwi.word.api.feign.factory.RemoteWordPronunciationServiceFallbackFactory;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -33,7 +33,7 @@ import org.springframework.web.bind.annotation.*;
  * @author codingByFeng
  * @date 2019-11-01 14:44:45
  */
-@FeignClient(contextId = "remoteWordPronunciationService", value = WordCrawlerConstants.VOCABULARY_ENHANCER_CRAWLER_BIZ, fallbackFactory = RemoteWordPronunciationServiceFallbackFactory.class)
+@FeignClient(contextId = "remoteWordPronunciationService", value = WordConstants.KIWI_WORD_BIZ, fallbackFactory = RemoteWordPronunciationServiceFallbackFactory.class)
 public interface IRemoteWordPronunciationService {
 
     String WORD_PRONUNCIATION = "/word/pronunciation";

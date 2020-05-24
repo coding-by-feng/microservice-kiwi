@@ -63,7 +63,7 @@ public class EnhancerTokenEndpoint {
     @PostMapping("/test")
     public R test() {
         log.info("test------------------");
-        return R.ok();
+        return R.success();
     }
 
     /**
@@ -80,13 +80,13 @@ public class EnhancerTokenEndpoint {
         String tokenValue = authHeader.replace(OAuth2AccessToken.BEARER_TYPE, StrUtil.EMPTY).trim();
         OAuth2AccessToken accessToken = tokenStore.readAccessToken(tokenValue);
         if (accessToken == null || StrUtil.isBlank(accessToken.getValue())) {
-            return R.ok();
+            return R.success();
         }
         tokenStore.removeAccessToken(accessToken);
 
         OAuth2RefreshToken refreshToken = accessToken.getRefreshToken();
         tokenStore.removeRefreshToken(refreshToken);
-        return R.ok();
+        return R.success();
     }
 
     /**
@@ -100,7 +100,7 @@ public class EnhancerTokenEndpoint {
         if (StrUtil.isBlank(from)) {
             return null;
         }
-        return R.ok(redisTemplate.delete(PROJECT_OAUTH_ACCESS + token));
+        return R.success(redisTemplate.delete(PROJECT_OAUTH_ACCESS + token));
     }
 
 
@@ -164,7 +164,7 @@ public class EnhancerTokenEndpoint {
         Page result = new Page(MapUtil.getInt(params, CURRENT), MapUtil.getInt(params, SIZE));
         result.setRecords(list);
         result.setTotal(Long.valueOf(redisTemplate.keys(PROJECT_OAUTH_ACCESS + "*").size()));
-        return R.ok(result);
+        return R.success(result);
 
     }
 

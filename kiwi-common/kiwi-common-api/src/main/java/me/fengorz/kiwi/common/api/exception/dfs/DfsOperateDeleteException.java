@@ -20,13 +20,14 @@
 package me.fengorz.kiwi.common.api.exception.dfs;
 
 /**
- * @Description TODO
- * @Author zhanshifeng
+ * @Description Dfs文件删除异常
+ * @Author ZhanShiFeng
  * @Date 2019/11/7 11:38 PM
  */
 public class DfsOperateDeleteException extends DfsOperateException {
 
     public DfsOperateDeleteException() {
+        super();
     }
 
     public DfsOperateDeleteException(String message) {

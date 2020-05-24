@@ -27,7 +27,7 @@ import org.springframework.context.annotation.Configuration;
 import java.util.Properties;
 
 /**
- * @author zhanshifeng
+ * @Author ZhanShiFeng
  * @date 2019/2/1
  */
 @Configuration

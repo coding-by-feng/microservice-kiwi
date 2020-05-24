@@ -52,7 +52,7 @@ public class SysRoleController extends BaseController {
      */
     @GetMapping("/page")
     public R getSysRolePage(Page page, SysRole sysRole) {
-        return R.ok(sysRoleService.page(page, Wrappers.query(sysRole)));
+        return R.success(sysRoleService.page(page, Wrappers.query(sysRole)));
     }
 
 
@@ -64,7 +64,7 @@ public class SysRoleController extends BaseController {
      */
     @GetMapping("/{roleId}")
     public R getById(@PathVariable("roleId") Integer roleId) {
-        return R.ok(sysRoleService.getById(roleId));
+        return R.success(sysRoleService.getById(roleId));
     }
 
     /**
@@ -77,7 +77,7 @@ public class SysRoleController extends BaseController {
     @PostMapping
     @PreAuthorize("@pms.hasPermission('admin_sysrole_add')")
     public R save(@RequestBody SysRole sysRole) {
-        return R.ok(sysRoleService.save(sysRole));
+        return R.success(sysRoleService.save(sysRole));
     }
 
     /**
@@ -90,7 +90,7 @@ public class SysRoleController extends BaseController {
     @PutMapping
     @PreAuthorize("@pms.hasPermission('admin_sysrole_edit')")
     public R updateById(@RequestBody SysRole sysRole) {
-        return R.ok(sysRoleService.updateById(sysRole));
+        return R.success(sysRoleService.updateById(sysRole));
     }
 
     /**
@@ -103,6 +103,6 @@ public class SysRoleController extends BaseController {
     @DeleteMapping("/{roleId}")
     @PreAuthorize("@pms.hasPermission('admin_sysrole_del')")
     public R removeById(@PathVariable Integer roleId) {
-        return R.ok(sysRoleService.removeById(roleId));
+        return R.success(sysRoleService.removeById(roleId));
     }
 }

@@ -52,7 +52,7 @@ public class SysUserRoleRelController extends BaseController {
      */
     @GetMapping("/page")
     public R getSysUserRoleRelPage(Page page, SysUserRoleRel sysUserRoleRel) {
-        return R.ok(sysUserRoleRelService.page(page, Wrappers.query(sysUserRoleRel)));
+        return R.success(sysUserRoleRelService.page(page, Wrappers.query(sysUserRoleRel)));
     }
 
 
@@ -64,7 +64,7 @@ public class SysUserRoleRelController extends BaseController {
      */
     @GetMapping("/{userId}")
     public R getById(@PathVariable("userId") Integer userId) {
-        return R.ok(sysUserRoleRelService.getById(userId));
+        return R.success(sysUserRoleRelService.getById(userId));
     }
 
     /**
@@ -77,7 +77,7 @@ public class SysUserRoleRelController extends BaseController {
     @PostMapping
     @PreAuthorize("@pms.hasPermission('admin_sysuserrolerel_add')")
     public R save(@RequestBody SysUserRoleRel sysUserRoleRel) {
-        return R.ok(sysUserRoleRelService.save(sysUserRoleRel));
+        return R.success(sysUserRoleRelService.save(sysUserRoleRel));
     }
 
     /**
@@ -90,7 +90,7 @@ public class SysUserRoleRelController extends BaseController {
     @PutMapping
     @PreAuthorize("@pms.hasPermission('admin_sysuserrolerel_edit')")
     public R updateById(@RequestBody SysUserRoleRel sysUserRoleRel) {
-        return R.ok(sysUserRoleRelService.updateById(sysUserRoleRel));
+        return R.success(sysUserRoleRelService.updateById(sysUserRoleRel));
     }
 
     /**
@@ -103,6 +103,6 @@ public class SysUserRoleRelController extends BaseController {
     @DeleteMapping("/{userId}")
     @PreAuthorize("@pms.hasPermission('admin_sysuserrolerel_del')")
     public R removeById(@PathVariable Integer userId) {
-        return R.ok(sysUserRoleRelService.removeById(userId));
+        return R.success(sysUserRoleRelService.removeById(userId));
     }
 }

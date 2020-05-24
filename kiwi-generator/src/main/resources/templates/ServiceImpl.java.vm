@@ -15,9 +15,10 @@
  */
 package ${package}.${moduleName}.service.impl;
 
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import ${package}.${moduleName}.entity.${className};
+import ${package}.api.entity.${className}DO;
 import ${package}.${moduleName}.service.I${caseTableName}Service;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import ${package}.${moduleName}.mapper.${caseTableName}Mapper;
 import org.springframework.stereotype.Service;
 
 /**
@@ -27,6 +28,6 @@ import org.springframework.stereotype.Service;
  * @date ${datetime}
  */
 @Service("${caseTableName}Service")
-public class ${caseTableName}ServiceImpl extends ServiceImpl<${caseTableName}Mapper, ${className}> implements I${caseTableName}Service {
+public class ${caseTableName}ServiceImpl extends ServiceImpl<${caseTableName}Mapper, ${className}DO> implements I${caseTableName}Service {
 
 }

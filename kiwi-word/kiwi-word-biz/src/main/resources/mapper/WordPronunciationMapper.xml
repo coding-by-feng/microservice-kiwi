@@ -20,16 +20,6 @@
 
 <mapper namespace="me.fengorz.kiwi.word.biz.mapper.WordPronunciationMapper">
 
-    <resultMap id="wordPronunciationMap" type="me.fengorz.kiwi.word.api.entity.WordPronunciationDO">
-        <id property="pronunciationId" column="pronunciation_id"/>
-        <result property="wordId" column="word_id"/>
-        <result property="soundmark" column="soundmark"/>
-        <result property="soundmarkType" column="soundmark_type"/>
-        <result property="voiceFilePath" column="voice_file_path"/>
-        <result property="isDel" column="is_del"/>
-        <result property="characterId" column="character_id"/>
-    </resultMap>
-
     <update id="blankPronunciationVoice" parameterType="java.lang.String">
         update word_pronunciation wp set wp.voice_file_path=null
         where wp.word_id=

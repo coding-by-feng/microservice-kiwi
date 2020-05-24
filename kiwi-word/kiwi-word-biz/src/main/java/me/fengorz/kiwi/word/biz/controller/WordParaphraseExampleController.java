@@ -52,7 +52,7 @@ public class WordParaphraseExampleController extends BaseController {
      */
     @GetMapping("/page")
     public R getWordParaphraseExamplePage(Page page, WordParaphraseExampleDO wordParaphraseExampleDO) {
-        return R.ok(wordParaphraseExampleService.page(page, Wrappers.query(wordParaphraseExampleDO)));
+        return R.success(wordParaphraseExampleService.page(page, Wrappers.query(wordParaphraseExampleDO)));
     }
 
     /**
@@ -63,7 +63,7 @@ public class WordParaphraseExampleController extends BaseController {
      */
     @GetMapping("/{exampleId}")
     public R getById(@PathVariable("exampleId") Integer exampleId) {
-        return R.ok(wordParaphraseExampleService.getById(exampleId));
+        return R.success(wordParaphraseExampleService.getById(exampleId));
     }
 
     /**
@@ -76,7 +76,7 @@ public class WordParaphraseExampleController extends BaseController {
     @PostMapping
     @PreAuthorize("@pms.hasPermission('biz_wordparaphraseexample_add')")
     public R save(@RequestBody WordParaphraseExampleDO wordParaphraseExampleDO) {
-        return R.ok(wordParaphraseExampleService.save(wordParaphraseExampleDO));
+        return R.success(wordParaphraseExampleService.save(wordParaphraseExampleDO));
     }
 
     /**
@@ -89,7 +89,7 @@ public class WordParaphraseExampleController extends BaseController {
     @PutMapping
     @PreAuthorize("@pms.hasPermission('biz_wordparaphraseexample_edit')")
     public R updateById(@RequestBody WordParaphraseExampleDO wordParaphraseExampleDO) {
-        return R.ok(wordParaphraseExampleService.updateById(wordParaphraseExampleDO));
+        return R.success(wordParaphraseExampleService.updateById(wordParaphraseExampleDO));
     }
 
     /**
@@ -102,7 +102,7 @@ public class WordParaphraseExampleController extends BaseController {
     @DeleteMapping("/{exampleId}")
     @PreAuthorize("@pms.hasPermission('biz_wordparaphraseexample_del')")
     public R removeById(@PathVariable Integer exampleId) {
-        return R.ok(wordParaphraseExampleService.removeById(exampleId));
+        return R.success(wordParaphraseExampleService.removeById(exampleId));
     }
 
 }

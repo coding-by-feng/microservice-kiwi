@@ -22,9 +22,12 @@ package me.fengorz.kiwi.common.sdk.util.lang.string;
 import cn.hutool.core.util.StrUtil;
 
 /**
- * @Description TODO
- * @Author zhanshifeng
+ * @Author ZhanShiFeng
  * @Date 2020/5/17 12:39 PM
  */
 public class KiwiStringUtils extends StrUtil {
+
+    public static boolean isNotEquals(final CharSequence cs1, final CharSequence cs2) {
+        return !equals(cs1, cs2);
+    }
 }

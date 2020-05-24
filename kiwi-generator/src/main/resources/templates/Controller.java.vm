@@ -15,16 +15,16 @@
  */
 package ${package}.${moduleName}.controller;
 
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.vocabulary.enhancer.common.core.util.R;
-import SysLog;
-import ${package}.${moduleName}.entity.${className};
-import ${package}.${moduleName}.service.I${caseTableName}Service;
-import org.springframework.security.access.prepost.PreAuthorize;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import lombok.AllArgsConstructor;
-import org.springframework.web.bind.annotation.*;
-
+import me.fengorz.kiwi.common.api.R;
+import ${package}.api.entity.${className}DO;
+import ${package}.api.dto.${className}DTO;
+import ${package}.${moduleName}.service.I${caseTableName}Service;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * ${comments}
@@ -37,73 +37,18 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/${controllerRootPath}")
 public class ${caseTableName}Controller {
 
-    private final I${caseTableName}Service ${className}Service;
+    private final I${caseTableName}Service ${classname}Service;
 
     /**
      * 分页查询
-     * @param page 分页对象
-     * @param ${classname} ${comments}
-     * @return
      */
-    @GetMapping("/page")
-    public R get${caseTableName}Page(Page page, ${className} ${classname}) {
-        return R.ok(${caseTableName}Service.page(page, Wrappers.query(${classname})));
+    @PostMapping("/page/{current}/{size}")
+    public R<IPage<${className}VO>> page(
+            @PathVariable Integer current,
+            @PathVariable Integer size,
+            ${className}DTO dto) {
+        return R.success(${classname}Service.page(current, size, dto));
     }
 
-    /**
-     * 根据条件查询单个实体
-     * @param condition
-     * @return
-     */
-    @PostMapping("/getOne")
-    public R getOne(@RequestBody ${className} condition) {
-        return R.ok(${caseTableName}Service.getOne(new QueryWrapper<>(condition)));
-    }
-
-
-    /**
-     * 通过id查询${comments}
-     * @param ${pk.lowerAttrName} id
-     * @return R
-     */
-    @GetMapping("/getById/{${pk.lowerAttrName}}")
-    public R getById(@PathVariable("${pk.lowerAttrName}") ${pk.attrType} ${pk.lowerAttrName}) {
-        return R.ok(${caseTableName}Service.getById(${pk.lowerAttrName}));
-    }
-
-    /**
-     * 新增${comments}
-     * @param ${classname} ${comments}
-     * @return R
-     */
-    @SysLog("新增${comments}")
-    @PostMapping("/save")
-    @PreAuthorize("@pms.hasPermission('${moduleName}_${pathName}_add')")
-    public R save(@RequestBody ${className} ${classname}) {
-        return R.ok(${caseTableName}Service.save(${classname}));
-    }
-
-    /**
-     * 修改${comments}
-     * @param ${classname} ${comments}
-     * @return R
-     */
-    @SysLog("修改${comments}")
-    @PutMapping("/updateById")
-    @PreAuthorize("@pms.hasPermission('${moduleName}_${pathName}_edit')")
-    public R updateById(@RequestBody ${className} ${classname}) {
-        return R.ok(${caseTableName}Service.updateById(${classname}));
-    }
-
-    /**
-     * 通过id删除${comments}
-     * @param ${pk.lowerAttrName} id
-     * @return R
-     */
-    @SysLog("通过id删除${comments}")
-    @DeleteMapping("/{${pk.lowerAttrName}}")
-    @PreAuthorize("@pms.hasPermission('${moduleName}_${pathName}_del')")
-    public R removeById(@PathVariable ${pk.attrType} ${pk.lowerAttrName}) {
-        return R.ok(${caseTableName}Service.removeById(${pk.lowerAttrName}));
-    }
 }
+

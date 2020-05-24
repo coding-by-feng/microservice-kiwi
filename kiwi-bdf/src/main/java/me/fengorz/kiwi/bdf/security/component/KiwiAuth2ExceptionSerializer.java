@@ -30,7 +30,7 @@ import me.fengorz.kiwi.common.api.constant.CommonConstants;
  * <p>
  * OAuth2 异常格式化
  *
- * @author zhanshifeng
+ * @Author ZhanShiFeng
  */
 public class KiwiAuth2ExceptionSerializer extends StdSerializer<KiwiAuth2Exception> {
     private static final long serialVersionUID = 6776883623606657402L;

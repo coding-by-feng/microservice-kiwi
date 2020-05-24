@@ -53,7 +53,7 @@ public class TestTempController extends BaseController {
     @GetMapping("/test")
     public R getOne() throws Exception {
         testService.testTransactional();
-        return R.ok();
+        return R.success();
     }
 
     @GetMapping("/readTxt")
@@ -67,12 +67,12 @@ public class TestTempController extends BaseController {
             this.wordFetchQueueService.save(wordFetchQueue);
             log.info(word + "insert success!");
         }
-        return R.ok();
+        return R.success();
     }
 
     @PostMapping("/testEdit")
     public R testEdit(@RequestBody WordMainDO wordMainDO) {
-        return R.ok();
+        return R.success();
     }
 
     public List<String> readWords() {

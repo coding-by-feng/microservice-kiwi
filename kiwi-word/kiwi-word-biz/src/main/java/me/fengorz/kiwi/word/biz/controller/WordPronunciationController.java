@@ -24,18 +24,16 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.api.R;
 import me.fengorz.kiwi.common.api.annotation.log.SysLog;
-import me.fengorz.kiwi.common.api.exception.dfs.DfsOperateDeleteException;
-import me.fengorz.kiwi.common.fastdfs.component.DfsService;
+import me.fengorz.kiwi.common.api.exception.dfs.DfsOperateException;
+import me.fengorz.kiwi.common.fastdfs.service.IDfsService;
 import me.fengorz.kiwi.common.sdk.controller.BaseController;
+import me.fengorz.kiwi.common.sdk.web.WebTools;
 import me.fengorz.kiwi.word.api.entity.WordPronunciationDO;
 import me.fengorz.kiwi.word.biz.service.IWordPronunciationService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
-import java.io.DataInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 
 
@@ -52,7 +50,7 @@ import java.io.InputStream;
 public class WordPronunciationController extends BaseController {
 
     private final IWordPronunciationService wordPronunciationService;
-    private final DfsService dfsService;
+    private final IDfsService dfsService;
 
     /**
      * 分页查询
@@ -63,7 +61,7 @@ public class WordPronunciationController extends BaseController {
      */
     @GetMapping("/page")
     public R getWordPronunciationPage(Page page, WordPronunciationDO wordPronunciation) {
-        return R.ok(wordPronunciationService.page(page, Wrappers.query(wordPronunciation)));
+        return R.success(wordPronunciationService.page(page, Wrappers.query(wordPronunciation)));
     }
 
 
@@ -75,7 +73,7 @@ public class WordPronunciationController extends BaseController {
      */
     @GetMapping("/{pronunciationId}")
     public R getById(@PathVariable("pronunciationId") Integer pronunciationId) {
-        return R.ok(wordPronunciationService.getById(pronunciationId));
+        return R.success(wordPronunciationService.getById(pronunciationId));
     }
 
     /**
@@ -88,7 +86,7 @@ public class WordPronunciationController extends BaseController {
     @PostMapping
     @PreAuthorize("@pms.hasPermission('biz_wordpronunciation_add')")
     public R save(@RequestBody WordPronunciationDO wordPronunciation) {
-        return R.ok(wordPronunciationService.save(wordPronunciation));
+        return R.success(wordPronunciationService.save(wordPronunciation));
     }
 
     /**
@@ -101,7 +99,7 @@ public class WordPronunciationController extends BaseController {
     @PutMapping
     @PreAuthorize("@pms.hasPermission('biz_wordpronunciation_edit')")
     public R updateById(@RequestBody WordPronunciationDO wordPronunciation) {
-        return R.ok(wordPronunciationService.updateById(wordPronunciation));
+        return R.success(wordPronunciationService.updateById(wordPronunciation));
     }
 
     /**
@@ -114,44 +112,23 @@ public class WordPronunciationController extends BaseController {
     @DeleteMapping("/{pronunciationId}")
     @PreAuthorize("@pms.hasPermission('biz_wordpronunciation_del')")
     public R removeById(@PathVariable Integer pronunciationId) {
-        return R.ok(wordPronunciationService.removeById(pronunciationId));
+        return R.success(wordPronunciationService.removeById(pronunciationId));
     }
 
     @SysLog("下载播放单词发音音频")
     @GetMapping("/downloadVoice/{pronunciationId}")
-    public void downloadVoice(HttpServletResponse response, @PathVariable("pronunciationId") Integer pronunciationId) throws DfsOperateDeleteException {
+    public void downloadVoice(HttpServletResponse response, @PathVariable("pronunciationId") Integer pronunciationId) {
         WordPronunciationDO wordPronunciation = this.wordPronunciationService.getById(pronunciationId);
         if (wordPronunciation == null) {
             return;
         }
-        InputStream inputStream = this.dfsService.downloadStream(wordPronunciation.getGroupName(), wordPronunciation.getVoiceFilePath());
-        ServletOutputStream temps = null;
-        DataInputStream in = null;
+        InputStream inputStream = null;
         try {
-            temps = response.getOutputStream();
-            in = new DataInputStream(inputStream);
-            byte[] b = new byte[2048];
-            while ((in.read(b)) != -1) {
-                temps.write(b);
-                temps.flush();
-            }
-        } catch (IOException e) {
-            log.error(e.getMessage(), e);
-        } finally {
-            if (temps != null) {
-                try {
-                    temps.close();
-                } catch (IOException e) {
-                    log.error("temps close exception", e);
-                }
-            }
-            if (in != null) {
-                try {
-                    in.close();
-                } catch (IOException e) {
-                    log.error("in close exceptio", e);
-                }
-            }
+            inputStream = this.dfsService.downloadStream(wordPronunciation.getGroupName(), wordPronunciation.getVoiceFilePath());
+        } catch (DfsOperateException e) {
+            log.error("downloadVoice exception, pronunciationId={}!" , pronunciationId, e);
         }
+        WebTools.downloadResponse(response, inputStream);
     }
+
 }

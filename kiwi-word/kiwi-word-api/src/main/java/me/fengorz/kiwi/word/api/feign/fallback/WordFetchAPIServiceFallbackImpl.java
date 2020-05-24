@@ -19,13 +19,14 @@
 
 package me.fengorz.kiwi.word.api.feign.fallback;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.api.R;
 import me.fengorz.kiwi.word.api.dto.fetch.FetchWordResultDTO;
 import me.fengorz.kiwi.word.api.dto.remote.WordFetchQueuePageDTO;
 import me.fengorz.kiwi.word.api.entity.WordFetchQueueDO;
-import me.fengorz.kiwi.word.api.feign.IRemoteWordFetchService;
+import me.fengorz.kiwi.word.api.feign.IWordFetchAPIService;
 import org.springframework.stereotype.Component;
 
 /**
@@ -35,13 +36,13 @@ import org.springframework.stereotype.Component;
  */
 @Slf4j
 @Component
-public class RemoteWordFetchServiceFallbackImpl implements IRemoteWordFetchService {
+public class WordFetchAPIServiceFallbackImpl implements IWordFetchAPIService {
 
     @Setter
     private Throwable throwable;
 
     @Override
-    public R getWordFetchQueuePage(WordFetchQueuePageDTO wordFetchQueuePage) {
+    public R<IPage<WordFetchQueueDO>> getWordFetchQueuePage(WordFetchQueuePageDTO wordFetchQueuePage) {
         log.error("getWordFetchQueuePage error, wordFetchQueuePage=" + wordFetchQueuePage, throwable);
         return R.feignCallFailed();
     }

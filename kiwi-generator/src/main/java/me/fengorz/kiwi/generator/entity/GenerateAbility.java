@@ -23,7 +23,7 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 
 /**
- * @Author zhanshifeng
+ * @Author ZhanShiFeng
  * @Date 2020/2/24 12:26 PM
  */
 @Data
@@ -41,6 +41,7 @@ public class GenerateAbility {
     private boolean remoteServiceFallBackFactory;
     private boolean mapperXml;
     private boolean vo;
+    private boolean dto;
 
 }
 

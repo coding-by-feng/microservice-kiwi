@@ -15,6 +15,7 @@
  */
 package me.fengorz.kiwi.word.biz.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -25,6 +26,7 @@ import me.fengorz.kiwi.common.api.annotation.cache.KiwiCacheKeyPrefix;
 import me.fengorz.kiwi.common.api.constant.CacheConstants;
 import me.fengorz.kiwi.common.api.constant.CommonConstants;
 import me.fengorz.kiwi.common.sdk.util.bean.KiwiBeanUtils;
+import me.fengorz.kiwi.common.sdk.util.lang.collection.KiwiCollectionUtils;
 import me.fengorz.kiwi.word.api.common.WordConstants;
 import me.fengorz.kiwi.word.api.dto.WordMainVariantDTO;
 import me.fengorz.kiwi.word.api.entity.WordMainVariantDO;
@@ -36,6 +38,8 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 /**
  * 单词时态、单复数等的变化
  *
@@ -44,7 +48,7 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @RequiredArgsConstructor
 @Service("WordMainVariantService")
-@KiwiCacheKeyPrefix(WordConstants.CACHE_KEY_PREFIX_CLASS_WORD_VARIANT)
+@KiwiCacheKeyPrefix(WordConstants.CACHE_KEY_PREFIX_WORD_VARIANT.CLASS)
 public class WordMainVariantServiceImpl extends ServiceImpl<WordMainVariantMapper, WordMainVariantDO> implements IWordMainVariantService {
 
     private final WordMainVariantMapper wordMainVariantMapper;
@@ -62,7 +66,7 @@ public class WordMainVariantServiceImpl extends ServiceImpl<WordMainVariantMappe
     }
 
     @Override
-    @KiwiCacheKeyPrefix(WordConstants.CACHE_KEY_PREFIX_METHOD_VARIANT_NAME)
+    @KiwiCacheKeyPrefix(WordConstants.CACHE_KEY_PREFIX_WORD_VARIANT.METHOD_VARIANT_NAME)
     @Cacheable(cacheNames = WordConstants.CACHE_NAMES, keyGenerator = CacheConstants.CACHE_KEY_GENERATOR_BEAN, unless = "#result==null")
     public Integer getWordId(@KiwiCacheKey String variantName) {
         WordMainVariantDO one = wordMainVariantMapper.selectOne(Wrappers.<WordMainVariantDO>lambdaQuery()
@@ -88,12 +92,30 @@ public class WordMainVariantServiceImpl extends ServiceImpl<WordMainVariantMappe
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
+    public boolean delByWordId(Integer wordId) {
+        List<WordMainVariantDO> list = wordMainVariantMapper.selectList(new LambdaQueryWrapper<WordMainVariantDO>()
+                .eq(WordMainVariantDO::getWordId, wordId)
+                .eq(WordMainVariantDO::getIsValid, CommonConstants.FLAG_DEL_YES));
+        if (KiwiCollectionUtils.isEmpty(list)) {
+            return false;
+        }
+
+        for (WordMainVariantDO variantDO : list) {
+            this.evictOne(variantDO.getVariantName());
+            this.evictOne(wordId, variantDO.getVariantName());
+            wordMainVariantMapper.deleteById(variantDO.getId());
+        }
+        return true;
+    }
+
+    @Override
     public boolean isExist(Integer id) {
         return this.getById(id) != null;
     }
 
     @Override
-    @KiwiCacheKeyPrefix(WordConstants.CACHE_KEY_PREFIX_METHOD_ID_NAME)
+    @KiwiCacheKeyPrefix(WordConstants.CACHE_KEY_PREFIX_WORD_VARIANT.METHOD_ID_NAME)
     @Cacheable(cacheNames = WordConstants.CACHE_NAMES, keyGenerator = CacheConstants.CACHE_KEY_GENERATOR_BEAN, unless = "!#result")
     public boolean isExist(@KiwiCacheKey(1) Integer wordId, @KiwiCacheKey(2) String variantName) {
         Integer count = wordMainVariantMapper.selectCount(Wrappers.<WordMainVariantDO>lambdaQuery()
@@ -111,12 +133,12 @@ public class WordMainVariantServiceImpl extends ServiceImpl<WordMainVariantMappe
         return this.insertOne(wordId, variantName, WordConstants.VARIANT_TYPE_UNKNOWN);
     }
 
-    @KiwiCacheKeyPrefix(WordConstants.CACHE_KEY_PREFIX_METHOD_ID_NAME)
+    @KiwiCacheKeyPrefix(WordConstants.CACHE_KEY_PREFIX_WORD_VARIANT.METHOD_ID_NAME)
     @CacheEvict(cacheNames = WordConstants.CACHE_NAMES, keyGenerator = CacheConstants.CACHE_KEY_GENERATOR_BEAN)
     private void evictOne(@KiwiCacheKey(1) Integer wordId, @KiwiCacheKey(2) String variantName) {
     }
 
-    @KiwiCacheKeyPrefix(WordConstants.CACHE_KEY_PREFIX_METHOD_VARIANT_NAME)
+    @KiwiCacheKeyPrefix(WordConstants.CACHE_KEY_PREFIX_WORD_VARIANT.METHOD_VARIANT_NAME)
     @CacheEvict(cacheNames = WordConstants.CACHE_NAMES, keyGenerator = CacheConstants.CACHE_KEY_GENERATOR_BEAN)
     private void evictOne(@KiwiCacheKey String variantName) {
     }

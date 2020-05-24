@@ -37,6 +37,8 @@ public interface IWordMainVariantService extends IService<WordMainVariantDO> {
 
     boolean saveOne(WordMainVariantDTO dto);
 
+    boolean delByWordId(Integer wordId);
+
     boolean isExist(Integer id);
 
     boolean isExist(Integer wordId, String variantName);

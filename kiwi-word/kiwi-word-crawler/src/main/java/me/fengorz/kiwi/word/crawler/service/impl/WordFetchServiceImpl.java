@@ -28,7 +28,6 @@ import me.fengorz.kiwi.word.api.dto.fetch.FetchWordResultDTO;
 import me.fengorz.kiwi.word.api.dto.fetch.WordMessageDTO;
 import me.fengorz.kiwi.word.api.entity.WordFetchQueueDO;
 import me.fengorz.kiwi.word.api.exception.JsoupFetchConnectRuntimeException;
-import me.fengorz.kiwi.word.api.exception.JsoupFetchResultRuntimeException;
 import me.fengorz.kiwi.word.api.feign.IWordFetchAPIService;
 import me.fengorz.kiwi.word.api.feign.IWordMainVariantAPIService;
 import me.fengorz.kiwi.word.crawler.service.IJsoupService;
@@ -87,7 +86,7 @@ public class WordFetchServiceImpl implements IWordFetchService {
             }
         } catch (JsoupFetchConnectRuntimeException e) {
             subDealException(wordFetchQueue, WordCrawlerConstants.STATUS_ERROR_JSOUP_FETCH_CONNECT_FAILED, e.getMessage());
-        } catch (JsoupFetchResultRuntimeException e) {
+        } catch (Exception e) {
             subDealException(wordFetchQueue, WordCrawlerConstants.STATUS_ERROR_JSOUP_RESULT_FETCH_FAILED, e.getMessage());
         } finally {
             remoteWordFetchService.updateByWordName(wordFetchQueue);

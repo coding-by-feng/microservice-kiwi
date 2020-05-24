@@ -27,7 +27,7 @@ import me.fengorz.kiwi.common.api.annotation.cache.KiwiCacheKeyPrefix;
 import me.fengorz.kiwi.common.api.constant.CacheConstants;
 import me.fengorz.kiwi.common.api.constant.CommonConstants;
 import me.fengorz.kiwi.common.sdk.util.bean.KiwiBeanUtils;
-import me.fengorz.kiwi.common.sdk.util.lang.collection.EnhancedCollectionUtils;
+import me.fengorz.kiwi.common.sdk.util.lang.collection.KiwiCollectionUtils;
 import me.fengorz.kiwi.word.api.common.WordConstants;
 import me.fengorz.kiwi.word.api.entity.WordMainDO;
 import me.fengorz.kiwi.word.api.vo.WordMainVO;
@@ -51,7 +51,7 @@ import java.util.stream.Collectors;
  */
 @AllArgsConstructor
 @Service("wordMainService")
-@KiwiCacheKeyPrefix(WordConstants.CACHE_KEY_PREFIX_CLASS_WORD_MAIN)
+@KiwiCacheKeyPrefix(WordConstants.CACHE_KEY_PREFIX_WORD_MAIN.CLASS)
 public class WordMainServiceImpl extends ServiceImpl<WordMainMapper, WordMainDO> implements IWordMainService {
 
     public static final String VALUE = "value" ;
@@ -62,14 +62,14 @@ public class WordMainServiceImpl extends ServiceImpl<WordMainMapper, WordMainDO>
     }
 
     @Override
-    @KiwiCacheKeyPrefix(WordConstants.CACHE_KEY_PREFIX_METHOD_ID)
+    @KiwiCacheKeyPrefix(WordConstants.CACHE_KEY_PREFIX_WORD_MAIN.METHOD_ID)
     @Cacheable(cacheNames = WordConstants.CACHE_NAMES, keyGenerator = CacheConstants.CACHE_KEY_GENERATOR_BEAN, unless = "#result == null")
     public WordMainDO getById(@KiwiCacheKey Serializable id) {
         return super.getById(id);
     }
 
     @Override
-    @KiwiCacheKeyPrefix(WordConstants.CACHE_KEY_PREFIX_METHOD_NAME)
+    @KiwiCacheKeyPrefix(WordConstants.CACHE_KEY_PREFIX_WORD_MAIN.METHOD_NAME)
     @Cacheable(cacheNames = WordConstants.CACHE_NAMES, keyGenerator = CacheConstants.CACHE_KEY_GENERATOR_BEAN, unless = "#result == null")
     public WordMainVO getOne(@KiwiCacheKey String wordName) {
         // TODO ZSF isDel要改成tinyint类型
@@ -97,13 +97,13 @@ public class WordMainServiceImpl extends ServiceImpl<WordMainMapper, WordMainDO>
                 .select(WordMainDO::getWordName);
 
         List<WordMainDO> records = this.page(page, queryWrapper).getRecords();
-        if (EnhancedCollectionUtils.isEmpty(records)) {
+        if (KiwiCollectionUtils.isEmpty(records)) {
             return Collections.emptyList();
         }
 
         return records.parallelStream()
                 .map(wordMainDO ->
-                        EnhancedCollectionUtils.putAndReturn(new HashMap<>(), VALUE, wordMainDO.getWordName())
+                        KiwiCollectionUtils.putAndReturn(new HashMap<>(), VALUE, wordMainDO.getWordName())
                 ).collect(Collectors.toList());
     }
 

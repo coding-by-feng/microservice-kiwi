@@ -97,7 +97,7 @@ public class KiwiWebResponseExceptionTranslator implements WebResponseExceptionT
         headers.set(HttpHeaders.CACHE_CONTROL, "no-store");
         headers.set(HttpHeaders.PRAGMA, "no-cache");
         if (status == HttpStatus.UNAUTHORIZED.value() || (e instanceof InsufficientScopeException)) {
-            headers.set(HttpHeaders.WWW_AUTHENTICATE, String.format("%s %s", OAuth2AccessToken.BEARER_TYPE, e.getSummary()));
+            headers.set(HttpHeaders.WWW_AUTHENTICATE, String.format("%s %s" , OAuth2AccessToken.BEARER_TYPE, e.getSummary()));
         }
 
         // 客户端异常直接返回客户端,不然无法解析

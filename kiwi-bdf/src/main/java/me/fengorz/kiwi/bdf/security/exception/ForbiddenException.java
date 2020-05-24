@@ -36,7 +36,7 @@ public class ForbiddenException extends KiwiAuth2Exception {
 
     @Override
     public String getOAuth2ErrorCode() {
-        return "access_denied";
+        return "access_denied" ;
     }
 
     @Override

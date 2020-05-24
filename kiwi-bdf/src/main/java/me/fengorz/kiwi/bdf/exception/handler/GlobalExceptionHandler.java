@@ -49,42 +49,42 @@ public class GlobalExceptionHandler {
     @ExceptionHandler({Exception.class})
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public R handleException(BaseRuntimeException e) {
-        log.error("global exception:{}", e.getMessage(), e);
+        log.error("global exception:{}" , e.getMessage(), e);
         return R.error(e.getMessage());
     }
 
     @ExceptionHandler({BaseRuntimeException.class})
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public R handleBaseRuntimeException(BaseRuntimeException e) {
-        log.error("global BaseRuntimeException:{}", e.getMessage(), e);
+        log.error("global BaseRuntimeException:{}" , e.getMessage(), e);
         return R.error(e.getMessage());
     }
 
     @ExceptionHandler({ServiceException.class})
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public R handleServiceRuntimeException(ServiceException e) {
-        log.error("global ServiceException:{}", e.getMessage(), e);
+        log.error("global ServiceException:{}" , e.getMessage(), e);
         return R.error(e.getMessage());
     }
 
     @ExceptionHandler({DfsOperateException.class})
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public R handleDfsOperateException(DfsOperateException e) {
-        log.error("global DfsOperateException:{}", e.getMessage(), e);
+        log.error("global DfsOperateException:{}" , e.getMessage(), e);
         return R.error(e.getMessage());
     }
 
     @ExceptionHandler({DfsOperateDeleteException.class})
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public R handleDfsOperateDeleteException(DfsOperateDeleteException e) {
-        log.error("global DfsOperateDeleteException:{}", e.getMessage(), e);
+        log.error("global DfsOperateDeleteException:{}" , e.getMessage(), e);
         return R.failed(e.getMessage());
     }
 
     @ExceptionHandler({ResourceNotFoundException.class})
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public R handleResourceNotFoundException(ResourceNotFoundException e) {
-        log.error("global ResourceNotFoundException:{}", e.getMessage(), e);
+        log.error("global ResourceNotFoundException:{}" , e.getMessage(), e);
         return R.failed(e.getMessage());
     }
 

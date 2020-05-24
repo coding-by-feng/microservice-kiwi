@@ -33,7 +33,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
  * @Author codingByFeng
  * @Date 2019-09-26 09:25
  */
-@FeignClient(contextId = "remoteUserService", value = "kiwi-upms", fallbackFactory = RemoteUserServiceFallBackFactory.class)
+@FeignClient(contextId = "remoteUserService" , value = "kiwi-upms" , fallbackFactory = RemoteUserServiceFallBackFactory.class)
 public interface RemoteUserService {
 
     @GetMapping("/sys/user/info/{username}")

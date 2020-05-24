@@ -24,7 +24,7 @@ package me.fengorz.kiwi.word.api.entity.column;
  */
 public class WordStarRelColumn {
 
-    public static final String LIST_ID = "list_id";
-    public static final String WORD_ID = "word_id";
+    public static final String LIST_ID = "list_id" ;
+    public static final String WORD_ID = "word_id" ;
 
 }

@@ -148,7 +148,7 @@ public class WordStarListController extends BaseController {
                     list.forEach(wordStarListDO -> {
                         HashMap<String, Object> map = CollUtil.newHashMap();
                         map.put(WordStarListColumn.ID, wordStarListDO.getId());
-                        map.put("listName", wordStarListDO.getListName());
+                        map.put("listName" , wordStarListDO.getListName());
                         convertedList.add(map);
                     });
                     return Stream.of(convertedList.toArray());

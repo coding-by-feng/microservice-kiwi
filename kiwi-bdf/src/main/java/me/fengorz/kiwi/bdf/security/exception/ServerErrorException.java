@@ -37,7 +37,7 @@ public class ServerErrorException extends KiwiAuth2Exception {
 
     @Override
     public String getOAuth2ErrorCode() {
-        return "server_error";
+        return "server_error" ;
     }
 
     @Override

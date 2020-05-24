@@ -42,7 +42,7 @@ import java.util.Map;
  */
 @AllArgsConstructor
 public class KiwiUserAuthenticationConverter implements UserAuthenticationConverter {
-    private static final String N_A = "N/A";
+    private static final String N_A = "N/A" ;
 
     private final FilterIgnorePropertiesConfig filterIgnorePropertiesConfig;
 

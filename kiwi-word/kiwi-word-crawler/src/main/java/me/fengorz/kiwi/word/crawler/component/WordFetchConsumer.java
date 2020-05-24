@@ -38,7 +38,7 @@ import javax.annotation.Resource;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-@RabbitListener(bindings = @QueueBinding(value = @Queue(value = "${mq.config.wordFetch.queue.name}",
+@RabbitListener(bindings = @QueueBinding(value = @Queue(value = "${mq.config.wordFetch.queue.name}" ,
         autoDelete = "true"),
         exchange = @Exchange(value = "${mq.config.wordFetch.exchange}"),
         key = "${mq.config.wordFetch.routing.key}"))
@@ -62,7 +62,7 @@ public class WordFetchConsumer {
                 log.info("threadPoolTaskExecutor is full, sleep 1s!");
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
-                log.error("WordFetchConsumer.fetch sleep error!", e);
+                log.error("WordFetchConsumer.fetch sleep error!" , e);
                 // TODO ZSF 增加一个抓取队列状态恢复到待抓取的接口，防止数据抓取丢失
                 return;
             }

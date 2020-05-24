@@ -25,10 +25,8 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.api.R;
 import me.fengorz.kiwi.common.api.annotation.log.SysLog;
-import me.fengorz.kiwi.common.api.exception.ServiceException;
-import me.fengorz.kiwi.common.api.exception.dfs.DfsOperateException;
+import me.fengorz.kiwi.common.api.exception.dfs.DfsOperateDeleteException;
 import me.fengorz.kiwi.common.sdk.controller.BaseController;
-import me.fengorz.kiwi.common.sdk.util.lang.string.KiwiStringUtils;
 import me.fengorz.kiwi.word.api.entity.WordMainDO;
 import me.fengorz.kiwi.word.biz.service.IWordMainService;
 import me.fengorz.kiwi.word.biz.service.operate.IWordOperateService;
@@ -120,23 +118,13 @@ public class WordMainController extends BaseController {
     @SysLog("通过id删除单词主表")
     @GetMapping("/removeByWordName/{wordName}")
     // @PreAuthorize("@pms.hasPermission('biz_wordmain_del')")
-    public R removeByWordName(@PathVariable String wordName) {
-        try {
-            wordOperateService.removeWord(wordName);
-        } catch (DfsOperateException e) {
-            log.error("remove word of '{}' by name exception!", wordName, e);
-            R.failed(KiwiStringUtils.format("remove word of '{}' by name exception!", wordName));
-        }
-        return R.success();
+    public R removeByWordName(@PathVariable String wordName) throws DfsOperateDeleteException {
+        return R.auto(wordOperateService.removeWord(wordName));
     }
 
     @GetMapping("/query/{wordName}")
     public R queryWord(@PathVariable("wordName") String wordName) {
-        try {
-            return R.success(wordOperateService.queryWord(wordName));
-        } catch (ServiceException e) {
-            return R.failed(e.getMessage());
-        }
+        return R.success(wordOperateService.queryWord(wordName));
     }
 
     @SysLog("模糊查询单词列表")

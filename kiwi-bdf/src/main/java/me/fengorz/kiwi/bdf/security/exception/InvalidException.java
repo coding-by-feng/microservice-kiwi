@@ -35,7 +35,7 @@ public class InvalidException extends KiwiAuth2Exception {
 
     @Override
     public String getOAuth2ErrorCode() {
-        return "invalid_exception";
+        return "invalid_exception" ;
     }
 
     @Override

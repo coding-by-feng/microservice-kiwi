@@ -31,10 +31,10 @@ import org.springframework.web.bind.annotation.*;
  * @author codingByFeng
  * @date 2019-12-08 23:27:12
  */
-@FeignClient(contextId = "remoteWordParaphraseExampleListDOService", value = WordConstants.KIWI_WORD_BIZ, fallbackFactory = RemoteWordParaphraseExampleListServiceFallbackFactory.class)
+@FeignClient(contextId = "remoteWordParaphraseExampleListDOService" , value = WordConstants.KIWI_WORD_BIZ, fallbackFactory = RemoteWordParaphraseExampleListServiceFallbackFactory.class)
 public interface IRemoteWordParaphraseExampleListService {
 
-    String WORD_PARAPHRASE_EXAMPLE_LIST = "/word/paraphrase/example/list";
+    String WORD_PARAPHRASE_EXAMPLE_LIST = "/word/paraphrase/example/list" ;
 
     /*
      * 分页查询

@@ -32,7 +32,7 @@ public class RTest {
 
     @Test
     @SneakyThrows
-    public void test(){
+    public void test() {
         ObjectMapper mapper = new ObjectMapper();
         System.out.println(mapper.writeValueAsString(R.success()));
     }

@@ -23,16 +23,6 @@
 
 <mapper namespace="me.fengorz.kiwi.word.biz.mapper.WordStarListMapper">
 
-    <resultMap id="wordStarListDOMap" type="me.fengorz.kiwi.word.api.entity.WordStarListDO">
-        <id property="id" column="id"/>
-        <result property="listName" column="list_name"/>
-        <result property="remark" column="remark"/>
-        <result property="createTime" column="create_time"/>
-        <result property="owner" column="owner"/>
-        <result property="isDel" column="is_del"/>
-        <result property="sort" column="sort"/>
-    </resultMap>
-
     <select id="selectListItems" resultType="me.fengorz.kiwi.word.api.dto.mapper.out.SelectWordStarListResultDTO">
         select group_concat(CONCAT(wp.paraphrase_english, '||', wp.meaning_chinese) SEPARATOR '##') paraphrases,
                temp1.word_id wordId,

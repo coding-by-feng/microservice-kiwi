@@ -28,11 +28,11 @@ import me.fengorz.kiwi.word.api.vo.WordCharacterVO;
 import me.fengorz.kiwi.word.api.vo.WordQueryVO;
 
 /**
- * @author zhanshifeng
+ * @Author ZhanShiFeng
  */
 public interface IWordOperateService {
 
-    void removeWord(String wordName) throws DfsOperateException, DfsOperateDeleteException;
+    void removeWord(String wordName) throws DfsOperateDeleteException;
 
     boolean storeFetchWordResult(FetchWordResultDTO fetchWordResultDTO) throws WordResultStoreRuntimeException, DfsOperateException, DfsOperateDeleteException;
 
@@ -51,4 +51,16 @@ public interface IWordOperateService {
     WordCharacterVO getByParaphraseId(Integer paraphraseId) throws ServiceException;
 
     boolean removeExampleStar(Integer exampleId, Integer listId) throws ServiceException;
+
+    /* wordVariant methods begin */
+
+    /**
+     * @param inputWordName 界面输入要查询的单词
+     * @param fetchWordName 实际爬虫抓取到的单词原形
+     * @return
+     */
+    boolean insertVariant(String inputWordName, String fetchWordName);
+
+    /* wordVariant methods end */
+
 }

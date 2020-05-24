@@ -21,10 +21,19 @@ import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
-    #if(${hasBigDecimal})
-    import java.math.BigDecimal;
-    #end
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+
+import me.fengorz.kiwi.common.api.valid.ValidTypeInsert;
+import me.fengorz.kiwi.common.api.valid.ValidTypeUpdate;
+
 import java.time.LocalDateTime;
+#if(${hasBigDecimal})
+import java.math.BigDecimal;
+#end
 
 /**
  * ${comments}
@@ -33,21 +42,37 @@ import java.time.LocalDateTime;
  * @date ${datetime}
  */
 @Data
+@ApiModel
 @EqualsAndHashCode(callSuper = true)
 @TableName("${tableName}")
 @Accessors(chain = true)
-public class ${className} extends Model<${className}> {
+public class ${className}DO extends Model<${classNameDO}> {
 
-private static final long serialVersionUID=1L;
+    private static final long serialVersionUID=${serialVersionUID}L;
 
-#foreach ($column in $columns)
-/**
- * $column.comments
- */
-    #if($column.columnName == $pk.columnName)
-    @TableId
+    #foreach ($column in $columns)
+        /**
+         * $column.comments
+         */
+        #if($column.columnName == $pk.columnName)
+        @TableId
+        @ApiModelProperty("主键id，编辑时必须传")
+        #else
+        @ApiModelProperty("$column.comments")
+        #end
+        #if($column.columnName == $pk.columnName)
+        @NotNull(groups = {ValidTypeUpdate.class})
+        #else
+            #if($column.isNullable == "NO" && !$column.columnDefault)
+                #if($column.attrType == "String")
+                @NotBlank(groups = {ValidTypeInsert.class})
+                #else
+                @NotNull(groups = {ValidTypeInsert.class})
+                #end
+            #end
+        #end
+    private $column.attrType $column.lowerAttrName;
+
     #end
-private $column.attrType $column.lowerAttrName;
-#end
 
 }

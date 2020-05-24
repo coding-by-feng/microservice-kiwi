@@ -55,7 +55,7 @@ public class WordCharacterController extends BaseController {
      */
     @GetMapping("/page")
     public R getWordCharacterPage(Page page, WordCharacterDO wordCharacter) {
-        return R.ok(wordCharacterService.page(page, Wrappers.query(wordCharacter)));
+        return R.success(wordCharacterService.page(page, Wrappers.query(wordCharacter)));
     }
 
 
@@ -67,7 +67,7 @@ public class WordCharacterController extends BaseController {
      */
     @GetMapping("/{characterId}")
     public R getById(@PathVariable("characterId") Integer characterId) {
-        return R.ok(wordCharacterService.getById(characterId));
+        return R.success(wordCharacterService.getById(characterId));
     }
 
     /**
@@ -80,7 +80,7 @@ public class WordCharacterController extends BaseController {
     @PostMapping
     @PreAuthorize("@pms.hasPermission('biz_wordcharacter_add')")
     public R save(@RequestBody WordCharacterDO wordCharacter) {
-        return R.ok(wordCharacterService.save(wordCharacter));
+        return R.success(wordCharacterService.save(wordCharacter));
     }
 
     /**
@@ -93,7 +93,7 @@ public class WordCharacterController extends BaseController {
     @PutMapping
     @PreAuthorize("@pms.hasPermission('biz_wordcharacter_edit')")
     public R updateById(@RequestBody WordCharacterDO wordCharacter) {
-        return R.ok(wordCharacterService.updateById(wordCharacter));
+        return R.success(wordCharacterService.updateById(wordCharacter));
     }
 
     /**
@@ -106,11 +106,11 @@ public class WordCharacterController extends BaseController {
     @DeleteMapping("/{characterId}")
     @PreAuthorize("@pms.hasPermission('biz_wordcharacter_del')")
     public R removeById(@PathVariable Integer characterId) {
-        return R.ok(wordCharacterService.removeById(characterId));
+        return R.success(wordCharacterService.removeById(characterId));
     }
 
     @GetMapping("/getByParaphraseId/{paraphraseId}")
     public R getByParaphraseId(@PathVariable Integer paraphraseId) throws ServiceException {
-        return R.ok(wordOperateService.getByParaphraseId(paraphraseId));
+        return R.success(wordOperateService.getByParaphraseId(paraphraseId));
     }
 }

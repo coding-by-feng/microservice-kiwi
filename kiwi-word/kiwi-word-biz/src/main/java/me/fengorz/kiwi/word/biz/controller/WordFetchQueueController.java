@@ -19,6 +19,7 @@
 package me.fengorz.kiwi.word.biz.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -67,9 +68,9 @@ public class WordFetchQueueController extends BaseController {
      *
      * @return
      */
-    @RequestMapping(value = "/getWordFetchQueuePage", method = {RequestMethod.POST, RequestMethod.GET})
-    public R getWordFetchQueuePage(@RequestBody @Valid WordFetchQueuePageDTO wordFetchQueuePage) {
-        return R.ok(wordFetchQueueService.page(wordFetchQueuePage.getPage(), Wrappers.query(wordFetchQueuePage.getWordFetchQueue())));
+    @RequestMapping(value = "/getWordFetchQueuePage" , method = {RequestMethod.POST, RequestMethod.GET})
+    public R<IPage<WordFetchQueueDO>> getWordFetchQueuePage(@RequestBody @Valid WordFetchQueuePageDTO wordFetchQueuePage) {
+        return R.success(wordFetchQueueService.page(wordFetchQueuePage.getPage(), Wrappers.query(wordFetchQueuePage.getWordFetchQueue())));
     }
 
 
@@ -81,7 +82,7 @@ public class WordFetchQueueController extends BaseController {
      */
     @GetMapping("/{queueId}")
     public R getById(@PathVariable("queueId") Integer queueId) {
-        return R.ok(wordFetchQueueService.getById(queueId));
+        return R.success(wordFetchQueueService.getById(queueId));
     }
 
     /**
@@ -112,27 +113,27 @@ public class WordFetchQueueController extends BaseController {
     @PutMapping("/updateById")
     // @PreAuthorize("@pms.hasPermission('queue_wordfetchqueue_edit')")
     public R updateById(@RequestBody WordFetchQueueDO wordFetchQueue) {
-        return R.ok(wordFetchQueueService.updateById(wordFetchQueue));
+        return R.success(wordFetchQueueService.updateById(wordFetchQueue));
     }
 
     @SysLog("修改单词待抓取列表")
     @PostMapping("/updateByWordName")
     // @PreAuthorize("@pms.hasPermission('queue_wordfetchqueue_edit')")
     public R updateByWordName(@RequestBody WordFetchQueueDO wordFetchQueue) {
-        return R.ok(wordFetchQueueService.update(wordFetchQueue, new QueryWrapper<>(new WordFetchQueueDO()
+        return R.success(wordFetchQueueService.update(wordFetchQueue, new QueryWrapper<>(new WordFetchQueueDO()
                 .setWordName(wordFetchQueue.getWordName()))));
     }
 
     @SysLog("通过id删除单词待抓取列表")
     @PostMapping("/invalid")
     // @PreAuthorize("@pms.hasPermission('queue_wordfetchqueue_del')")
-    public R invalid(@NotBlank String wordName) {
-        return R.ok(wordFetchQueueService.invalid(wordName));
+    public R invalid(@RequestParam @NotBlank String wordName) {
+        return R.auto(wordFetchQueueService.invalid(wordName));
     }
 
 
     @PostMapping("/storeFetchWordResult")
-    public R storeFetchWordResult(@RequestBody @Valid FetchWordResultDTO fetchWordResultDTO) {
+    public R<Void> storeFetchWordResult(@RequestBody @Valid FetchWordResultDTO fetchWordResultDTO) {
         try {
             wordOperateService.storeFetchWordResult(fetchWordResultDTO);
         } catch (WordResultStoreRuntimeException e) {
@@ -147,6 +148,6 @@ public class WordFetchQueueController extends BaseController {
             return R.failed(ResultCode.build(
                     () -> WordCrawlerConstants.STATUS_ERROR_DFS_OPERATE_FAILED, () -> CommonConstants.EMPTY), e.getMessage());
         }
-        return R.ok();
+        return R.success();
     }
 }

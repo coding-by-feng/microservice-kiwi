@@ -66,7 +66,7 @@ public class WordMainController extends BaseController {
      */
     @GetMapping("/page")
     public R getWordMainPage(Page page, WordMainDO wordMainDO) {
-        return R.ok(wordMainService.page(page, Wrappers.query(wordMainDO)));
+        return R.success(wordMainService.page(page, Wrappers.query(wordMainDO)));
     }
 
     /**
@@ -77,7 +77,7 @@ public class WordMainController extends BaseController {
      */
     @PostMapping("/getOne")
     public R getOne(WordMainDO condition) {
-        return R.ok(wordMainService.getOne(new QueryWrapper<>(condition)));
+        return R.success(wordMainService.getOne(new QueryWrapper<>(condition)));
     }
 
     /**
@@ -88,7 +88,7 @@ public class WordMainController extends BaseController {
      */
     @GetMapping("/getById/{wordId}")
     public R getById(@PathVariable("wordId") Integer wordId) {
-        return R.ok(wordMainService.getById(wordId));
+        return R.success(wordMainService.getById(wordId));
     }
 
     /**
@@ -101,7 +101,7 @@ public class WordMainController extends BaseController {
     @PostMapping
     @PreAuthorize("@pms.hasPermission('biz_wordmain_add')")
     public R save(@RequestBody WordMainDO wordMainDO) {
-        return R.ok(wordMainService.save(wordMainDO));
+        return R.success(wordMainService.save(wordMainDO));
     }
 
     /**
@@ -114,7 +114,7 @@ public class WordMainController extends BaseController {
     @PutMapping
     @PreAuthorize("@pms.hasPermission('biz_wordmain_edit')")
     public R updateById(@RequestBody WordMainDO wordMainDO) {
-        return R.ok(wordMainService.updateById(wordMainDO));
+        return R.success(wordMainService.updateById(wordMainDO));
     }
 
     @SysLog("通过id删除单词主表")
@@ -127,13 +127,13 @@ public class WordMainController extends BaseController {
             log.error("remove word of '{}' by name exception!", wordName, e);
             R.failed(KiwiStringUtils.format("remove word of '{}' by name exception!", wordName));
         }
-        return R.ok();
+        return R.success();
     }
 
     @GetMapping("/query/{wordName}")
     public R queryWord(@PathVariable("wordName") String wordName) {
         try {
-            return R.ok(this.wordOperateService.queryWord(wordName));
+            return R.success(wordOperateService.queryWord(wordName));
         } catch (ServiceException e) {
             return R.failed(e.getMessage());
         }
@@ -142,7 +142,7 @@ public class WordMainController extends BaseController {
     @SysLog("模糊查询单词列表")
     @PostMapping("/fuzzyQueryList")
     public R<List<Map>> fuzzyQueryList(@NotBlank String wordName, Page<WordMainDO> page) {
-        return R.ok(this.wordMainService.fuzzyQueryList(page, wordName));
+        return R.success(wordMainService.fuzzyQueryList(page, wordName));
     }
 
 }

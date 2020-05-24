@@ -26,9 +26,11 @@ import me.fengorz.kiwi.common.api.annotation.cache.KiwiCacheKey;
 import me.fengorz.kiwi.common.api.annotation.cache.KiwiCacheKeyPrefix;
 import me.fengorz.kiwi.common.api.constant.CacheConstants;
 import me.fengorz.kiwi.common.api.constant.CommonConstants;
+import me.fengorz.kiwi.common.sdk.util.bean.KiwiBeanUtils;
 import me.fengorz.kiwi.common.sdk.util.lang.collection.EnhancedCollectionUtils;
 import me.fengorz.kiwi.word.api.common.WordConstants;
 import me.fengorz.kiwi.word.api.entity.WordMainDO;
+import me.fengorz.kiwi.word.api.vo.WordMainVO;
 import me.fengorz.kiwi.word.biz.mapper.WordMainMapper;
 import me.fengorz.kiwi.word.biz.service.IWordMainService;
 import org.springframework.cache.annotation.Cacheable;
@@ -49,10 +51,10 @@ import java.util.stream.Collectors;
  */
 @AllArgsConstructor
 @Service("wordMainService")
-@KiwiCacheKeyPrefix(WordConstants.CACHE_KEY_PREFIX_WORD_MAIN)
+@KiwiCacheKeyPrefix(WordConstants.CACHE_KEY_PREFIX_CLASS_WORD_MAIN)
 public class WordMainServiceImpl extends ServiceImpl<WordMainMapper, WordMainDO> implements IWordMainService {
 
-    public static final String VALUE = "value";
+    public static final String VALUE = "value" ;
 
     @Override
     public boolean save(WordMainDO entity) {
@@ -60,20 +62,30 @@ public class WordMainServiceImpl extends ServiceImpl<WordMainMapper, WordMainDO>
     }
 
     @Override
-    @KiwiCacheKeyPrefix(WordConstants.CACHE_KEY_PREFIX_WORD_ID)
+    @KiwiCacheKeyPrefix(WordConstants.CACHE_KEY_PREFIX_METHOD_ID)
     @Cacheable(cacheNames = WordConstants.CACHE_NAMES, keyGenerator = CacheConstants.CACHE_KEY_GENERATOR_BEAN, unless = "#result == null")
     public WordMainDO getById(@KiwiCacheKey Serializable id) {
         return super.getById(id);
     }
 
     @Override
-    @KiwiCacheKeyPrefix(WordConstants.CACHE_KEY_PREFIX_WORD_NAME)
+    @KiwiCacheKeyPrefix(WordConstants.CACHE_KEY_PREFIX_METHOD_NAME)
     @Cacheable(cacheNames = WordConstants.CACHE_NAMES, keyGenerator = CacheConstants.CACHE_KEY_GENERATOR_BEAN, unless = "#result == null")
-    public WordMainDO getOneByWordName(@KiwiCacheKey String wordName) {
-        return this.getOne(
+    public WordMainVO getOne(@KiwiCacheKey String wordName) {
+        // TODO ZSF isDel要改成tinyint类型
+        return KiwiBeanUtils.convertFrom(this.getOne(
                 new LambdaQueryWrapper<WordMainDO>().eq(WordMainDO::getWordName, wordName)
                         .eq(WordMainDO::getIsDel, CommonConstants.FLAG_N)
-        );
+        ), WordMainVO.class);
+    }
+
+    @Override
+    public String getWordName(Integer id) {
+        WordMainDO word = this.getById(id);
+        if (word == null) {
+            return null;
+        }
+        return word.getWordName();
     }
 
     @Override
@@ -97,6 +109,6 @@ public class WordMainServiceImpl extends ServiceImpl<WordMainMapper, WordMainDO>
 
     @Override
     public boolean isExist(String wordName) {
-        return this.getOneByWordName(wordName) != null;
+        return this.getOne(wordName) != null;
     }
 }

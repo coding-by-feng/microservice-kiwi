@@ -39,7 +39,7 @@ import java.io.PrintWriter;
  * 授权拒绝处理器，覆盖默认的OAuth2AccessDeniedHandler
  * 包装失败信息到PigDeniedException
  *
- * @author zhanshifeng
+ * @Author ZhanShiFeng
  */
 @Slf4j
 @Component

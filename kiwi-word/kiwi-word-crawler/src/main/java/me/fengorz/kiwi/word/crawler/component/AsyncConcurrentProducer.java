@@ -29,7 +29,7 @@ import me.fengorz.kiwi.word.api.common.WordCrawlerConstants;
 import me.fengorz.kiwi.word.api.dto.fetch.WordMessageDTO;
 import me.fengorz.kiwi.word.api.dto.remote.WordFetchQueuePageDTO;
 import me.fengorz.kiwi.word.api.entity.WordFetchQueueDO;
-import me.fengorz.kiwi.word.api.feign.IRemoteWordFetchService;
+import me.fengorz.kiwi.word.api.feign.IWordFetchAPIService;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
@@ -46,7 +46,7 @@ import java.util.*;
 public class AsyncConcurrentProducer {
 
     private final WordFetchProducer wordFetchProducer;
-    private final IRemoteWordFetchService remoteWordFetchService;
+    private final IWordFetchAPIService remoteWordFetchService;
 
     public void fetch() {
         WordFetchQueueDO wordFetchQueue = new WordFetchQueueDO()
@@ -56,7 +56,7 @@ public class AsyncConcurrentProducer {
                 setWordFetchQueue(wordFetchQueue).setPage(new Page(1, 20));
         R result = remoteWordFetchService.getWordFetchQueuePage(wordFetchQueuePage);
 
-        if (result != null && result.isOK()) {
+        if (result != null && result.isSuccess()) {
             Optional.ofNullable(result.getData()).ifPresent(o -> {
                 Map map = (Map) o;
                 List<LinkedHashMap> list = (List<LinkedHashMap>) map.get(WordCrawlerConstants.RECORDS);
@@ -79,7 +79,7 @@ public class AsyncConcurrentProducer {
     public void fetchWord(WordFetchQueueDO wordFetchQueue) {
         wordFetchQueue.setFetchStatus(WordCrawlerConstants.STATUS_FETCHING);
         R updateResult = this.remoteWordFetchService.updateQueueById(wordFetchQueue);
-        if (Objects.nonNull(updateResult) && updateResult.isOK()) {
+        if (Objects.nonNull(updateResult) && updateResult.isSuccess()) {
             this.wordFetchProducer.send(new WordMessageDTO(wordFetchQueue.getWordName()));
         }
     }

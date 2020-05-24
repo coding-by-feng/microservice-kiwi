@@ -23,27 +23,7 @@
 
 <mapper namespace="me.fengorz.kiwi.word.biz.mapper.WordParaphraseMapper">
 
-    <resultMap id="wordParaphraseMap" type="me.fengorz.kiwi.word.api.entity.WordParaphraseDO">
-        <id property="paraphraseId" column="paraphrase_id"/>
-        <result property="wordId" column="word_id"/>
-        <result property="characterId" column="character_id"/>
-        <result property="paraphraseEnglish" column="paraphrase_english"/>
-        <result property="paraphraseEnglishTranslate" column="paraphrase_english_translate"/>
-        <result property="meaningchinese" column="meaningChinese"/>
-        <result property="translateLanguage" column="translate_language"/>
-        <result property="isDel" column="is_del"/>
-    </resultMap>
-
-    <resultMap id="wordParaphraseVO" type="me.fengorz.kiwi.word.api.vo.WordParaphraseVO">
-        <id property="paraphraseId" column="paraphrase_id"/>
-        <result property="paraphraseEnglish" column="paraphrase_english"/>
-        <result property="paraphraseEnglishTranslate" column="paraphrase_english_translate"/>
-        <result property="meaningchinese" column="meaningChinese"/>
-        <result property="translateLanguage" column="translate_language"/>
-        <result property="isCollect" column="is_collect"/>
-    </resultMap>
-
-    <select id="selectParaphraseAndIsCollect" resultMap="wordParaphraseVO">
+    <select id="selectParaphraseAndIsCollect" resultType="me.fengorz.kiwi.word.api.vo.WordParaphraseVO">
         select wp.paraphrase_id,
                wp.paraphrase_english,
                wp.paraphrase_english_translate,

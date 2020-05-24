@@ -20,7 +20,7 @@
 package me.fengorz.kiwi.word.api.feign;
 
 import me.fengorz.kiwi.common.api.R;
-import me.fengorz.kiwi.word.api.common.WordCrawlerConstants;
+import me.fengorz.kiwi.word.api.common.WordConstants;
 import me.fengorz.kiwi.word.api.dto.fetch.FetchWordResultDTO;
 import me.fengorz.kiwi.word.api.dto.remote.WordFetchQueuePageDTO;
 import me.fengorz.kiwi.word.api.entity.WordFetchQueueDO;
@@ -28,8 +28,11 @@ import me.fengorz.kiwi.word.api.feign.factory.RemoteWordFetchServiceFallbackFact
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 
-@FeignClient(contextId = "remoteWordFetchService", value = WordCrawlerConstants.VOCABULARY_ENHANCER_CRAWLER_BIZ, fallbackFactory = RemoteWordFetchServiceFallbackFactory.class)
-public interface IRemoteWordFetchService {
+/**
+ * @Author ZhanShiFeng
+ */
+@FeignClient(contextId = "remoteWordFetchService", value = WordConstants.KIWI_WORD_BIZ, fallbackFactory = RemoteWordFetchServiceFallbackFactory.class)
+public interface IWordFetchAPIService {
 
     String WORD_FETCH_QUEUE = "/word/fetch/queue";
 
@@ -40,7 +43,7 @@ public interface IRemoteWordFetchService {
     R updateQueueById(@RequestBody WordFetchQueueDO wordFetchQueue);
 
     @PostMapping(WORD_FETCH_QUEUE + "/storeFetchWordResult")
-    R storeFetchWordResult(@RequestBody FetchWordResultDTO fetchWordResultDTO);
+    R<Void> storeFetchWordResult(@RequestBody FetchWordResultDTO fetchWordResultDTO);
 
     @PostMapping(WORD_FETCH_QUEUE + "/save")
     R save(@RequestBody WordFetchQueueDO wordFetchQueue);
@@ -52,6 +55,6 @@ public interface IRemoteWordFetchService {
     R updateByWordName(@RequestBody WordFetchQueueDO wordFetchQueue);
 
     @PostMapping(WORD_FETCH_QUEUE + "/invalid")
-    R invalid(String wordName);
+    R invalid(@RequestParam String wordName);
 
 }

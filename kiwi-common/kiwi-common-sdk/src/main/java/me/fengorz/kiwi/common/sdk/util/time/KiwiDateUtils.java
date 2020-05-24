@@ -23,7 +23,7 @@ import cn.hutool.core.date.DateUtil;
 
 /**
  * @Description 公共时间日期工具类
- * @Author zhanshifeng
+ * @Author ZhanShiFeng
  * @Date 2020/4/21 8:07 PM
  */
 public class KiwiDateUtils extends DateUtil {

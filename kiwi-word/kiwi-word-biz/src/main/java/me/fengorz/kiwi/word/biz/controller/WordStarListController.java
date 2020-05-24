@@ -71,7 +71,7 @@ public class WordStarListController extends BaseController {
      */
     @PostMapping("/page")
     public R getWordStarListPage(Page page, WordStarListDO wordStarListDO) {
-        return R.ok(wordStarListService.page(page, Wrappers.query(wordStarListDO)));
+        return R.success(wordStarListService.page(page, Wrappers.query(wordStarListDO)));
     }
 
     /**
@@ -82,7 +82,7 @@ public class WordStarListController extends BaseController {
      */
     @PostMapping("/getOne")
     public R getOne(@RequestBody WordStarListDO condition) {
-        return R.ok(wordStarListService.getOne(new QueryWrapper<>(condition)));
+        return R.success(wordStarListService.getOne(new QueryWrapper<>(condition)));
     }
 
 
@@ -94,7 +94,7 @@ public class WordStarListController extends BaseController {
      */
     @GetMapping("/getById/{id}")
     public R getById(@PathVariable("id") Integer id) {
-        return R.ok(wordStarListService.getById(id));
+        return R.success(wordStarListService.getById(id));
     }
 
     /**
@@ -108,7 +108,7 @@ public class WordStarListController extends BaseController {
     // @PreAuthorize("@pms.hasPermission('api_wordstarlist_add')")
     public R save(WordStarListDO wordStarListDO) {
         wordStarListDO.setOwner(1);
-        return R.ok(wordStarListService.save(wordStarListDO));
+        return R.success(wordStarListService.save(wordStarListDO));
     }
 
     /**
@@ -121,7 +121,7 @@ public class WordStarListController extends BaseController {
     @PostMapping("/updateById")
     // @PreAuthorize("@pms.hasPermission('api_wordstarlist_edit')")
     public R updateById(WordStarListDO wordStarListDO) {
-        return R.ok(wordStarListService.updateById(wordStarListDO));
+        return R.success(wordStarListService.updateById(wordStarListDO));
     }
 
     /**
@@ -134,13 +134,13 @@ public class WordStarListController extends BaseController {
     @PostMapping("/del/{id}")
     // @PreAuthorize("@pms.hasPermission('api_wordstarlist_del')")
     public R del(@PathVariable Integer id) {
-        return R.ok(wordStarListService.removeById(id));
+        return R.success(wordStarListService.removeById(id));
     }
 
     @GetMapping("/getCurrentUserList")
     public R getCurrentUserList() {
         EnhancerUser currentUser = this.getCurrentUser();
-        return R.ok(
+        return R.success(
                 Stream.of(
                         wordStarListService.getCurrentUserList(1)
                 ).flatMap(list -> {
@@ -160,16 +160,16 @@ public class WordStarListController extends BaseController {
     public R getListItems(@NotNull Integer listId,
                           @PathVariable @Min(1) Integer current,
                           @PathVariable @Range(min = 1, max = 100) Integer size) {
-        return R.ok(wordStarListService.getListItems(new Page(current, size), listId));
+        return R.success(wordStarListService.getListItems(new Page(current, size), listId));
     }
 
     @PostMapping("/putWordStarList")
     public R putWordStarList(@NotNull Integer wordId, @NotNull Integer listId) throws ServiceException {
-        return R.ok(this.wordOperateService.putWordIntoStarList(wordId, listId));
+        return R.success(this.wordOperateService.putWordIntoStarList(wordId, listId));
     }
 
     @PostMapping("/removeWordStarList")
     public R removeWordStarList(@NotNull Integer wordId, @NotNull Integer listId) throws ServiceException {
-        return R.ok(this.wordOperateService.removeWordStarList(wordId, listId));
+        return R.success(this.wordOperateService.removeWordStarList(wordId, listId));
     }
 }

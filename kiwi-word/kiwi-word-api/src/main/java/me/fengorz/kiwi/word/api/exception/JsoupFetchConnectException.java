@@ -19,32 +19,31 @@
 
 package me.fengorz.kiwi.word.api.exception;
 
-import me.fengorz.kiwi.common.api.exception.BaseRuntimeException;
+import me.fengorz.kiwi.common.api.exception.BaseException;
 
 /**
- * @Description TODO
  * @Author codingByFeng
  * @Date 2019/10/31 3:34 PM
  */
-public class JsoupFetchConnectRuntimeException extends BaseRuntimeException {
+public class JsoupFetchConnectException extends BaseException {
 
-    public JsoupFetchConnectRuntimeException() {
+    public JsoupFetchConnectException() {
         super();
     }
 
-    public JsoupFetchConnectRuntimeException(String message) {
+    public JsoupFetchConnectException(String message) {
         super(message);
     }
 
-    public JsoupFetchConnectRuntimeException(String message, Throwable cause) {
+    public JsoupFetchConnectException(String message, Throwable cause) {
         super(message, cause);
     }
 
-    public JsoupFetchConnectRuntimeException(Throwable cause) {
+    public JsoupFetchConnectException(Throwable cause) {
         super(cause);
     }
 
-    public JsoupFetchConnectRuntimeException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+    public JsoupFetchConnectException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
     }
 }

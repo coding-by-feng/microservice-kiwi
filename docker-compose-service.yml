@@ -37,5 +37,4 @@ services:
     volumes:
       - /root/docker/kiwi/crawler/logs:/logs
     network_mode: "host"
-    depends_on:
-      - kiwi-word
+    command: sh -c './wait-for.sh kiwi-microservice-local:5001/actuator/info -- echo kiwi-word-biz already started'

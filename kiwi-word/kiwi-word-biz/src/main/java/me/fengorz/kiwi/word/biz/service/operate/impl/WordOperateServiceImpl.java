@@ -220,7 +220,7 @@ public class WordOperateServiceImpl implements IWordOperateService {
             }
         }
 
-        KiwiAssertUtils.serviceNotNull(word, "No results for [{}]!" , wordName);
+        KiwiAssertUtils.resourceNotNull(word, "No results for [{}]!", wordName);
 
         wordQueryVO.setWordId(word.getWordId());
         wordQueryVO.setWordName(word.getWordName());
@@ -238,7 +238,7 @@ public class WordOperateServiceImpl implements IWordOperateService {
 
     private List<WordCharacterVO> assembleWordCharacterVOS(String wordName, Integer wordId) throws ServiceException {
         List<WordCharacterDO> wordCharacterList = wordCharacterService.list(new QueryWrapper<>(new WordCharacterDO().setWordId(wordId)));
-        KiwiAssertUtils.serviceNotEmpty(wordCharacterList, "No character for [{}]!" , wordName);
+        KiwiAssertUtils.serviceNotEmpty(wordCharacterList, "No character for [{}]!", wordName);
 
         List<WordCharacterVO> wordCharacterVOList = new ArrayList<>();
         for (WordCharacterDO wordCharacter : wordCharacterList) {
@@ -369,7 +369,7 @@ public class WordOperateServiceImpl implements IWordOperateService {
                                 .setParaphraseId(paraphraseId)
                 )
         );
-        KiwiAssertUtils.serviceNotNull(paraphrase, "paraphrase[{}] is not exists!" , paraphraseId);
+        KiwiAssertUtils.serviceNotNull(paraphrase, "paraphrase[{}] is not exists!", paraphraseId);
 
         final Integer characterId = paraphrase.getCharacterId();
         WordCharacterDO character = wordCharacterService.getOne(
@@ -378,7 +378,7 @@ public class WordOperateServiceImpl implements IWordOperateService {
                                 .setCharacterId(characterId)
                 )
         );
-        KiwiAssertUtils.serviceNotNull(character, "character[{}] is not exists!" , characterId);
+        KiwiAssertUtils.serviceNotNull(character, "character[{}] is not exists!", characterId);
 
         List<WordParaphraseVO> paraphraseVOList = new ArrayList<>();
         WordParaphraseVO wordParaphraseVO = new WordParaphraseVO();
@@ -425,7 +425,7 @@ public class WordOperateServiceImpl implements IWordOperateService {
         //先判断变种是否存在，如果不存在再插入
         WordMainVO mainVO = wordMainService.getOne(fetchWordName);
         if (mainVO == null) {
-            throw new ResourceNotFoundException("word {} 不存在！" , fetchWordName);
+            throw new ResourceNotFoundException("word {} 不存在！", fetchWordName);
         }
 
         final Integer wordId = mainVO.getWordId();

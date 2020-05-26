@@ -3,7 +3,7 @@ import me.fengorz.kiwi.common.sdk.util.json.KiwiJsonUtils;
 import me.fengorz.kiwi.word.api.dto.fetch.FetchWordResultDTO;
 import me.fengorz.kiwi.word.api.dto.fetch.WordMessageDTO;
 import me.fengorz.kiwi.word.crawler.service.IJsoupService;
-import me.fengorz.kiwi.word.crawler.service.impl.JsoupService;
+import me.fengorz.kiwi.word.crawler.service.impl.JsoupServiceImpl;
 
 /**
  * @Description TODO
@@ -15,7 +15,7 @@ public class FetchTest {
     // @Test
     @SneakyThrows
     public void test() {
-        IJsoupService jsoupService = new JsoupService();
+        IJsoupService jsoupService = new JsoupServiceImpl();
         FetchWordResultDTO test = jsoupService.fetchWordInfo(new WordMessageDTO().setWord("mandatory"));
         System.out.println(KiwiJsonUtils.toJsonStr(test));
     }

@@ -21,7 +21,7 @@ package me.fengorz.kiwi.word.api.common;
 
 public interface WordCrawlerConstants {
 
-    String RECORDS = "records" ;
+    String RECORDS = "records";
 
     /*待抓取*/
     int STATUS_TO_FETCH = 0;
@@ -41,12 +41,13 @@ public interface WordCrawlerConstants {
     /*Jsoup抓取结果失败*/
     int STATUS_ERROR_JSOUP_RESULT_FETCH_FAILED = 406;
 
-    String CRAWLER_BASE_URL = "https://dictionary.cambridge.org/zhs/词典/英语-汉语-简体/" ;
-    String CAMBRIDGE_BASE_URL = "https://dictionary.cambridge.org/" ;
-    String EXT_OGG = "ogg" ;
+    String CAMBRIDGE_FETCH_CHINESE_URL = "https://dictionary.cambridge.org/zhs/词典/英语-汉语-简体/";
+    String CAMBRIDGE_FETCH_ENGLISH_URL = "https://dictionary.cambridge.org/dictionary/english/";
+    String CAMBRIDGE_BASE_URL = "https://dictionary.cambridge.org/";
+    String EXT_OGG = "ogg";
 
-    String DEFAULT_TRANSLATE_LANGUAGE = "Chinese" ;
+    String DEFAULT_TRANSLATE_LANGUAGE = "Chinese";
 
-    String PRONUNCIATION_TYPE_UK = "UK" ;
-    String PRONUNCIATION_TYPE_US = "US" ;
+    String PRONUNCIATION_TYPE_UK = "UK";
+    String PRONUNCIATION_TYPE_US = "US";
 }

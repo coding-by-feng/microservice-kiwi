@@ -47,7 +47,7 @@ import java.util.Optional;
  */
 @Service
 @Slf4j
-public class JsoupService implements IJsoupService {
+public class JsoupServiceImpl implements IJsoupService {
 
     public static final String JSOUP_CONNECT_EXCEPTION = "jsoup connect exception, the url is {}";
     public static final String KEY_WORD_HEADER = "ti fs fs12 lmb-0 hw";
@@ -85,9 +85,20 @@ public class JsoupService implements IJsoupService {
         final String word = wordMessage.getWord();
         String jsoupWord = null;
 
+        FetchWordResultDTO fetchWordResultDTO = null;
+        try {
+            fetchWordResultDTO = subFetch(WordCrawlerConstants.CAMBRIDGE_FETCH_CHINESE_URL, word);
+        } catch (JsoupFetchConnectException | JsoupFetchResultException | JsoupFetchPronunciationException e) {
+            fetchWordResultDTO = subFetch(WordCrawlerConstants.CAMBRIDGE_FETCH_ENGLISH_URL, word);
+        }
+        return fetchWordResultDTO;
+    }
+
+    private FetchWordResultDTO subFetch(String url, String word) throws JsoupFetchConnectException, JsoupFetchResultException, JsoupFetchPronunciationException {
+        String jsoupWord;
         Document doc;
         try {
-            doc = Jsoup.connect(WordCrawlerConstants.CRAWLER_BASE_URL + word).get();
+            doc = Jsoup.connect(url + word).get();
         } catch (IOException e) {
             log.error(JSOUP_CONNECT_EXCEPTION, word);
             throw new JsoupFetchConnectException();
@@ -127,12 +138,8 @@ public class JsoupService implements IJsoupService {
                     FETCH_CODE_HEADER_EXCEPTION, word);
             // TODO ZSF fetchWordResultDTO 放入 爬虫回来的wordName，不是传进来的wordName
             final Element header = codeHeader.get(0);
-            Optional.ofNullable(header.getElementsByClass(KEY_HEADER_CODE)).flatMap(element -> Optional.ofNullable(element.text())).ifPresent(code -> {
-                fetchWordCodeDTO.setCode(code);
-            });
-            Optional.ofNullable(header.getElementsByClass(KEY_HEADER_LABEL)).flatMap(element -> Optional.ofNullable(element.text())).ifPresent(label -> {
-                fetchWordCodeDTO.setLabel(label);
-            });
+            Optional.ofNullable(header.getElementsByClass(KEY_HEADER_CODE)).flatMap(element -> Optional.ofNullable(element.text())).ifPresent(fetchWordCodeDTO::setCode);
+            Optional.ofNullable(header.getElementsByClass(KEY_HEADER_LABEL)).flatMap(element -> Optional.ofNullable(element.text())).ifPresent(fetchWordCodeDTO::setLabel);
 
             // fetch UK pronunciation
             try {
@@ -163,8 +170,8 @@ public class JsoupService implements IJsoupService {
 
                     // fetch Chinese meaning
                     Elements meaningChinese = paraphrase.getElementsByClass(KEY_MEANING_CHINESE);
-                    CrawlerAssertUtils.notEmpty(meaningChinese, FETCH_MEANING_CHINESE_EXCEPTION, word);
-                    CrawlerAssertUtils.fetchValueNotEmpty(meaningChinese.text(), FETCH_MEANING_CHINESE_EXCEPTION, word);
+                    // CrawlerAssertUtils.notEmpty(meaningChinese, FETCH_MEANING_CHINESE_EXCEPTION, word);
+                    // CrawlerAssertUtils.fetchValueNotEmpty(meaningChinese.text(), FETCH_MEANING_CHINESE_EXCEPTION, word);
                     fetchParaphraseDTO.setMeaningChinese(meaningChinese.text());
 
                     // fetch example sentences, it can be empty.
@@ -174,14 +181,10 @@ public class JsoupService implements IJsoupService {
                         for (Element sentence : exampleSentences) {
                             FetchParaphraseExampleDTO fetchParaphraseExampleDTO = new FetchParaphraseExampleDTO();
                             Optional.ofNullable(sentence.getElementsByClass(KEY_SENTENCE)).ifPresent(
-                                    elements -> {
-                                        fetchParaphraseExampleDTO.setExampleSentence(elements.text());
-                                    }
+                                    (Elements elements) -> fetchParaphraseExampleDTO.setExampleSentence(elements.text())
                             );
                             Optional.ofNullable(sentence.getElementsByClass(KEY_SENTENCE_TRANSLATE)).ifPresent(
-                                    elements -> {
-                                        fetchParaphraseExampleDTO.setExampleTranslate(elements.text());
-                                    }
+                                    elements -> fetchParaphraseExampleDTO.setExampleTranslate(elements.text())
                             );
 
                             // TODO codingByFeng The default is English, but consider how flexible it will be in the future if there are other languages

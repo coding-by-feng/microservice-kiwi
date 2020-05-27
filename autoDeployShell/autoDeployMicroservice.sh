@@ -1,5 +1,7 @@
 #!/bin/bash
 
+killall autoCheckService.sh
+
 cd /root/microservice-kiwi/
 
 git reset --hard master
@@ -24,3 +26,5 @@ mv -f kiwi-word/kiwi-word-biz/target/kiwi-word-biz-1.0-SNAPSHOT.jar /root/docker
 mv -f kiwi-word/kiwi-word-crawler/target/kiwi-word-crawler-1.0-SNAPSHOT.jar /root/docker/kiwi/crawler/
 
 /root/docker/kiwi/autoDeploy.sh
+
+./autoCheckService.sh

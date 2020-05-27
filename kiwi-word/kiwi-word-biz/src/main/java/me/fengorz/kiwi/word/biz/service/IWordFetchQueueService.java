@@ -37,4 +37,5 @@ public interface IWordFetchQueueService extends IService<WordFetchQueueDO> {
 
     boolean invalid(String wordName);
 
+    boolean lock(String wordName);
 }

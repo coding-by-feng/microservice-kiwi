@@ -44,6 +44,14 @@ public class WordFetchQueueServiceImpl extends ServiceImpl<WordFetchQueueMapper,
     @Override
     @Transactional(rollbackFor = Exception.class, noRollbackFor = ServiceException.class)
     public boolean fetchNewWord(String wordName) {
+        WordFetchQueueDO one = this.getOne(wordName);
+        if (one == null) {
+            return false;
+        }
+        if (CommonConstants.FLAG_YES == one.getIsLock()) {
+            return false;
+        }
+
         this.del(wordName);
         return this.insertNewQueue(
                 new WordFetchQueueDO()
@@ -76,8 +84,19 @@ public class WordFetchQueueServiceImpl extends ServiceImpl<WordFetchQueueMapper,
             return false;
         }
         // TODO ZSF 这里要搬到废弃的历史表
-        return this.update(new WordFetchQueueDO().setIsValid(CommonConstants.FLAG_N),
+        return this.update(new WordFetchQueueDO().setIsValid(CommonConstants.FLAG_N).setIsLock(CommonConstants.FLAG_NO),
                 new LambdaQueryWrapper<WordFetchQueueDO>().eq(WordFetchQueueDO::getWordName, wordName));
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public boolean lock(String wordName) {
+        if (!this.isExist(wordName)) {
+            return false;
+        }
+        // TODO ZSF 这里要搬到废弃的历史表
+        return this.update(new WordFetchQueueDO().setIsLock(CommonConstants.FLAG_YES),
+                new LambdaQueryWrapper<WordFetchQueueDO>().eq(WordFetchQueueDO::getWordName, wordName).eq(WordFetchQueueDO::getIsLock, CommonConstants.FLAG_NO));
     }
 
     @Override

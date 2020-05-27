@@ -29,10 +29,10 @@ async:
   config:
     core:
       pool:
-        size: 10
+        size: 5
     max:
       pool:
-        size: 20
+        size: 15
     queue:
       capacity: 5
 
@@ -43,7 +43,7 @@ crawler:
         size: 5
     max:
       pool:
-        size: 10
+        size: 15
     queue:
       capacity: 5
 

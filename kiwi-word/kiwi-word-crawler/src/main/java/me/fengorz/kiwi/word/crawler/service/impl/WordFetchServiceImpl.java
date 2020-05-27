@@ -58,26 +58,26 @@ public class WordFetchServiceImpl implements IWordFetchService {
             final String fetchWord = fetchWordResultDTO.getWordName();
             StringBuilder allFetchResult = new StringBuilder();
 
-            // TODO ZSF 增加一个时态、单复数的变化关系对应逻辑
-            if (KiwiStringUtils.isNotEquals(inputWord, fetchWordResultDTO.getWordName())) {
-                wordMainVariantAPIService.insertVariant(inputWord, fetchWord);
-                String insertVariantResult = KiwiStringUtils.format("word({}) has a variant({}), variant insert success!" , fetchWord, inputWord);
-                log.info(insertVariantResult);
-                allFetchResult.append(insertVariantResult);
-            }
-
             // All exceptions are called back to the data in the word_fetch_queue
             R storeResult = remoteWordFetchService.storeFetchWordResult(fetchWordResultDTO);
             if (storeResult.isFail()) {
                 subDealException(wordFetchQueue, storeResult.getCode(), storeResult.getMsg());
             } else {
+                // TODO ZSF 增加一个时态、单复数的变化关系对应逻辑
+                if (KiwiStringUtils.isNotEquals(inputWord, fetchWordResultDTO.getWordName())) {
+                    wordMainVariantAPIService.insertVariant(inputWord, fetchWord);
+                    String insertVariantResult = KiwiStringUtils.format("word({}) has a variant({}), variant insert success!", fetchWord, inputWord);
+                    log.info(insertVariantResult);
+                    allFetchResult.append(insertVariantResult);
+                }
+
                 long newTime = System.currentTimeMillis();
-                String fetchResult = KiwiStringUtils.format("word({}) fetch store success! spent {}s" , wordFetchQueue.getWordName(), (newTime - oldTime));
+                String fetchResult = KiwiStringUtils.format("word({}) fetch store success! spent {}s", wordFetchQueue.getWordName(), (newTime - oldTime));
                 log.info(fetchResult);
                 allFetchResult.append(fetchWord);
 
                 remoteWordFetchService.invalid(wordFetchQueue.getWordName());
-                String queueDelResult = KiwiStringUtils.format("word({}) fetch queue del success!" , wordFetchQueue.getWordName());
+                String queueDelResult = KiwiStringUtils.format("word({}) fetch queue del success!", wordFetchQueue.getWordName());
                 log.info(queueDelResult);
                 allFetchResult.append(queueDelResult);
 

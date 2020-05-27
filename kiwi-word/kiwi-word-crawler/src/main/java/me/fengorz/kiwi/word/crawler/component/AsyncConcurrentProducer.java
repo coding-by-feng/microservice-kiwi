@@ -51,7 +51,8 @@ public class AsyncConcurrentProducer {
     public void fetch() {
         WordFetchQueueDO wordFetchQueue = new WordFetchQueueDO()
                 .setFetchStatus(WordCrawlerConstants.STATUS_TO_FETCH)
-                .setIsValid(CommonConstants.FLAG_Y);
+                .setIsValid(CommonConstants.FLAG_Y)
+                .setIsLock(CommonConstants.FLAG_NO);
         WordFetchQueuePageDTO wordFetchQueuePage = new WordFetchQueuePageDTO().
                 setWordFetchQueue(wordFetchQueue).setPage(new Page(1, 20));
         R result = remoteWordFetchService.getWordFetchQueuePage(wordFetchQueuePage);
@@ -78,6 +79,7 @@ public class AsyncConcurrentProducer {
     @Async
     public void fetchWord(WordFetchQueueDO wordFetchQueue) {
         wordFetchQueue.setFetchStatus(WordCrawlerConstants.STATUS_FETCHING);
+        wordFetchQueue.setIsLock(CommonConstants.FLAG_YES);
         R updateResult = this.remoteWordFetchService.updateQueueById(wordFetchQueue);
         if (Objects.nonNull(updateResult) && updateResult.isSuccess()) {
             this.wordFetchProducer.send(new WordMessageDTO(wordFetchQueue.getWordName()));

@@ -57,4 +57,7 @@ public interface IWordFetchAPIService {
     @PostMapping(WORD_FETCH_QUEUE + "/invalid")
     R invalid(@RequestParam String wordName);
 
+    @PostMapping(WORD_FETCH_QUEUE + "/lock")
+    R lock(@RequestParam String wordName);
+
 }

@@ -40,8 +40,8 @@ public interface CommonConstants {
     int FLAG_DEL_YES = 1;
     int FLAG_DEL_NO = 0;
 
-    int FLAG_VALID_YES = 1;
-    int FLAG_VALID_NO = 0;
+    int FLAG_YES = 1;
+    int FLAG_NO = 0;
 
     /**
      * 成功标记

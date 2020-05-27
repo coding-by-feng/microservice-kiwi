@@ -79,6 +79,11 @@ public class WordFetchAPIServiceFallbackImpl implements IWordFetchAPIService {
 
     @Override
     public R invalid(String wordName) {
-        return null;
+        return R.feignCallFailed();
+    }
+
+    @Override
+    public R lock(String wordName) {
+        return R.feignCallFailed();
     }
 }

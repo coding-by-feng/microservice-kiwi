@@ -71,7 +71,7 @@ public class WordMainVariantServiceImpl extends ServiceImpl<WordMainVariantMappe
     public Integer getWordId(@KiwiCacheKey String variantName) {
         WordMainVariantDO one = wordMainVariantMapper.selectOne(Wrappers.<WordMainVariantDO>lambdaQuery()
                 .eq(WordMainVariantDO::getVariantName, variantName)
-                .eq(WordMainVariantDO::getIsValid, CommonConstants.FLAG_VALID_YES));
+                .eq(WordMainVariantDO::getIsValid, CommonConstants.FLAG_YES));
         if (one == null) {
             return null;
         }
@@ -116,7 +116,7 @@ public class WordMainVariantServiceImpl extends ServiceImpl<WordMainVariantMappe
 
     @Override
     @KiwiCacheKeyPrefix(WordConstants.CACHE_KEY_PREFIX_WORD_VARIANT.METHOD_ID_NAME)
-    @Cacheable(cacheNames = WordConstants.CACHE_NAMES, keyGenerator = CacheConstants.CACHE_KEY_GENERATOR_BEAN, unless = "!#result")
+    @Cacheable(cacheNames = WordConstants.CACHE_NAMES, keyGenerator = CacheConstants.CACHE_KEY_GENERATOR_BEAN, unless = "#result == false")
     public boolean isExist(@KiwiCacheKey(1) Integer wordId, @KiwiCacheKey(2) String variantName) {
         Integer count = wordMainVariantMapper.selectCount(Wrappers.<WordMainVariantDO>lambdaQuery()
                 .eq(WordMainVariantDO::getWordId, wordId)

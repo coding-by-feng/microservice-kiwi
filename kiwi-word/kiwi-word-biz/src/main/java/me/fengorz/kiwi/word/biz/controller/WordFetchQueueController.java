@@ -131,6 +131,12 @@ public class WordFetchQueueController extends BaseController {
         return R.auto(wordFetchQueueService.invalid(wordName));
     }
 
+    @PostMapping("/lock")
+    // @PreAuthorize("@pms.hasPermission('queue_wordfetchqueue_del')")
+    public R lock(@RequestParam @NotBlank String wordName) {
+        return R.auto(wordFetchQueueService.lock(wordName));
+    }
+
 
     @PostMapping("/storeFetchWordResult")
     public R<Void> storeFetchWordResult(@RequestBody @Valid FetchWordResultDTO fetchWordResultDTO) {

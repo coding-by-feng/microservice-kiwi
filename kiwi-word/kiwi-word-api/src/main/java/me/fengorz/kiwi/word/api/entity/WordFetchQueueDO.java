@@ -82,5 +82,6 @@ public class WordFetchQueueDO extends Model<WordFetchQueueDO> {
      *
      */
     private String fetchResult;
+    private Integer isLock;
 
 }

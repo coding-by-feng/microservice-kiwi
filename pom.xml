@@ -23,6 +23,7 @@
         <module>kiwi-visual</module>
         <module>kiwi-gateway</module>
         <module>kiwi-generator</module>
+        <module>kiwi-common-es</module>
     </modules>
 
     <!--

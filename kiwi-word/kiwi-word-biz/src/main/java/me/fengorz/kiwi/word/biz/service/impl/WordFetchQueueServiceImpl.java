@@ -45,14 +45,14 @@ public class WordFetchQueueServiceImpl extends ServiceImpl<WordFetchQueueMapper,
     @Transactional(rollbackFor = Exception.class, noRollbackFor = ServiceException.class)
     public boolean fetchNewWord(String wordName) {
         WordFetchQueueDO one = this.getOne(wordName);
-        if (one == null) {
-            return false;
-        }
-        if (CommonConstants.FLAG_YES == one.getIsLock()) {
-            return false;
+
+        if (one != null) {
+            if (CommonConstants.FLAG_YES == one.getIsLock()) {
+                return false;
+            }
+            this.del(wordName);
         }
 
-        this.del(wordName);
         return this.insertNewQueue(
                 new WordFetchQueueDO()
                         .setWordName(wordName)
@@ -69,9 +69,6 @@ public class WordFetchQueueServiceImpl extends ServiceImpl<WordFetchQueueMapper,
     }
 
     private boolean del(String wordName) {
-        if (!this.isExist(wordName)) {
-            return false;
-        }
         return this.remove(new LambdaQueryWrapper<WordFetchQueueDO>()
                 .eq(WordFetchQueueDO::getWordName, wordName)
         );

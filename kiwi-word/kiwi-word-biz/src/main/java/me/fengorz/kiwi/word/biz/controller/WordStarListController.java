@@ -32,6 +32,7 @@ import me.fengorz.kiwi.common.sdk.controller.BaseController;
 import me.fengorz.kiwi.word.api.entity.WordStarListDO;
 import me.fengorz.kiwi.word.api.entity.column.WordStarListColumn;
 import me.fengorz.kiwi.word.biz.service.IWordStarListService;
+import me.fengorz.kiwi.word.biz.service.IWordStarRelService;
 import me.fengorz.kiwi.word.biz.service.operate.IWordOperateService;
 import org.hibernate.validator.constraints.Range;
 import org.springframework.validation.annotation.Validated;
@@ -61,6 +62,7 @@ public class WordStarListController extends BaseController {
 
     private final IWordStarListService wordStarListService;
     private final IWordOperateService wordOperateService;
+    private final IWordStarRelService wordStarRelService;
 
     /**
      * 分页查询
@@ -165,11 +167,16 @@ public class WordStarListController extends BaseController {
 
     @PostMapping("/putWordStarList")
     public R putWordStarList(@NotNull Integer wordId, @NotNull Integer listId) throws ServiceException {
-        return R.success(this.wordOperateService.putWordIntoStarList(wordId, listId));
+        return R.success(wordOperateService.putWordIntoStarList(wordId, listId));
     }
 
     @PostMapping("/removeWordStarList")
     public R removeWordStarList(@NotNull Integer wordId, @NotNull Integer listId) throws ServiceException {
-        return R.success(this.wordOperateService.removeWordStarList(wordId, listId));
+        return R.success(wordOperateService.removeWordStarList(wordId, listId));
+    }
+
+    @GetMapping("/findAllWordId/{listId}")
+    public R<List<Integer>> findAllWordName(@PathVariable Integer listId){
+        return R.success(wordStarRelService.findAllWordId(listId));
     }
 }

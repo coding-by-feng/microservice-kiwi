@@ -82,7 +82,7 @@ public class WordStarListServiceImpl extends ServiceImpl<WordStarListMapper, Wor
 
     @Override
     public IPage<WordStarItemVO> getListItems(Page page, Integer listId) {
-        IPage iPage = this.wordStarListMapper.selectListItems(page, listId);
+        IPage iPage = wordStarListMapper.selectListItems(page, listId);
         if (iPage.getSize() > 0) {
             List<WordStarItemVO> voList = new ArrayList<>();
             for (Object record : iPage.getRecords()) {
@@ -116,11 +116,12 @@ public class WordStarListServiceImpl extends ServiceImpl<WordStarListMapper, Wor
 
     @Override
     public boolean countWordIsCollect(Integer wordId, Integer owner) {
-        Integer count = this.wordStarListMapper.countWordIsCollect(
+        Integer count = wordStarListMapper.countWordIsCollect(
                 new CountEntityIsCollectDTO()
                         .setEntityId(wordId)
                         .setOwner(owner)
         );
         return count > 0;
     }
+
 }

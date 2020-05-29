@@ -18,11 +18,18 @@
  */
 package me.fengorz.kiwi.word.biz.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import lombok.RequiredArgsConstructor;
+import me.fengorz.kiwi.common.sdk.util.bean.KiwiBeanUtils;
+import me.fengorz.kiwi.common.sdk.util.lang.collection.KiwiCollectionUtils;
 import me.fengorz.kiwi.word.api.entity.WordStarRelDO;
 import me.fengorz.kiwi.word.biz.mapper.WordStarRelMapper;
 import me.fengorz.kiwi.word.biz.service.IWordStarRelService;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 单词本与单词的关联表
@@ -31,6 +38,22 @@ import org.springframework.stereotype.Service;
  * @date 2020-01-03 14:39:28
  */
 @Service("WordStarRelService")
+@RequiredArgsConstructor
 public class WordStarRelServiceImpl extends ServiceImpl<WordStarRelMapper, WordStarRelDO> implements IWordStarRelService {
+
+    private final WordStarRelMapper wordStarRelMapper;
+
+    @Override
+    public List<Integer> findAllWordId(Integer listId) {
+        List<WordStarRelDO> list = wordStarRelMapper.selectList(new LambdaQueryWrapper<WordStarRelDO>().eq(WordStarRelDO::getListId, listId));
+        if (KiwiCollectionUtils.isNotEmpty(list)) {
+            List<Integer> result = new ArrayList<>();
+            for (WordStarRelDO relDO : list) {
+                result.add(relDO.getWordId());
+            }
+            return result;
+        }
+        return null;
+    }
 
 }

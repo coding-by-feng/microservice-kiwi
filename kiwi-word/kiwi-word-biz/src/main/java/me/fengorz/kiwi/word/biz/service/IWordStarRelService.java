@@ -21,6 +21,8 @@ package me.fengorz.kiwi.word.biz.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import me.fengorz.kiwi.word.api.entity.WordStarRelDO;
 
+import java.util.List;
+
 /**
  * 单词本与单词的关联表
  *
@@ -28,5 +30,7 @@ import me.fengorz.kiwi.word.api.entity.WordStarRelDO;
  * @date 2020-01-03 14:39:28
  */
 public interface IWordStarRelService extends IService<WordStarRelDO> {
+
+    List<Integer> findAllWordId(Integer listId);
 
 }

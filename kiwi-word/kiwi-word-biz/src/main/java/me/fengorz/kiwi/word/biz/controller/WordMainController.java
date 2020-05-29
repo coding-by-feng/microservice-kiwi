@@ -21,6 +21,7 @@ package me.fengorz.kiwi.word.biz.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import io.swagger.models.auth.In;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.api.R;
@@ -125,6 +126,16 @@ public class WordMainController extends BaseController {
     @GetMapping("/query/{wordName}")
     public R queryWord(@PathVariable("wordName") String wordName) {
         return R.success(wordOperateService.queryWord(wordName));
+    }
+
+    @GetMapping("/queryById/{wordId}")
+    public R queryWord(@PathVariable Integer wordId) {
+        // TODO ZSF 改成去缓存
+        WordMainDO word = wordMainService.getById(wordId);
+        if (word == null) {
+            return R.success();
+        }
+        return R.success(wordOperateService.queryWord(word.getWordName()));
     }
 
     @SysLog("模糊查询单词列表")

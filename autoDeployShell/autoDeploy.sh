@@ -51,4 +51,6 @@ echo "docker-compose service beginning"
 
 docker-compose -f /root/microservice-kiwi/docker-compose-service.yml up -d
 
+docker stop `docker ps -a| grep kiwi-crawler | awk '{print $1}' `
+
 echo "all job finish, that is great!"

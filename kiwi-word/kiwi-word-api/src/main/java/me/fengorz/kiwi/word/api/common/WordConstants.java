@@ -34,6 +34,7 @@ public class WordConstants {
 
         String CLASS = "operate";
         String METHOD_WORD_NAME = "word_name";
+        String METHOD_PARAPHRASE_ID = "paraphrase_id";
 
     }
 

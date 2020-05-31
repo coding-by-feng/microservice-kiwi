@@ -63,7 +63,7 @@ public class WordFetchAPIFallback implements IWordFetchAPI {
     @Override
     public R updateByWordName(WordFetchQueueDO wordFetchQueue) {
         log.error("updateByWordName error, wordFetchQueue=" + wordFetchQueue, throwable);
-        return R.feignCallFailed();
+        return R.feignCallFailed(throwable.getMessage());
     }
 
     @Override

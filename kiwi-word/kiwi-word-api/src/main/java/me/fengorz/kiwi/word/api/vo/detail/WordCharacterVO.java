@@ -17,7 +17,7 @@
  *
  */
 
-package me.fengorz.kiwi.word.api.vo;
+package me.fengorz.kiwi.word.api.vo.detail;
 
 import lombok.Data;
 import lombok.ToString;

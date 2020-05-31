@@ -1,6 +1,6 @@
 /*
  *
- *   Copyright [2019~2025] [codingByFeng]
+ *   Copyright [2019~2025] [zhanshifeng]
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -19,22 +19,22 @@
 package me.fengorz.kiwi.word.api.feign.factory;
 
 import feign.hystrix.FallbackFactory;
-import me.fengorz.kiwi.word.api.feign.IRemoteWordCharacterService;
-import me.fengorz.kiwi.word.api.feign.fallback.RemoteWordCharacterServiceFallbackImpl;
+import me.fengorz.kiwi.word.api.feign.IWordCharacterAPI;
+import me.fengorz.kiwi.word.api.feign.fallback.WordCharacterAPIFallback;
 import org.springframework.stereotype.Component;
 
 
 /**
  * 单词词性表
  *
- * @author codingByFeng
+ * @author zhanshifeng
  * @date 2019-11-01 14:37:07
  */
 @Component
-public class RemoteWordCharacterServiceFallbackFactory implements FallbackFactory<IRemoteWordCharacterService> {
+public class RemoteWordCharacterServiceFallbackFactory implements FallbackFactory<IWordCharacterAPI> {
     @Override
-    public IRemoteWordCharacterService create(Throwable throwable) {
-        RemoteWordCharacterServiceFallbackImpl remoteWordCharacterServiceFallback = new RemoteWordCharacterServiceFallbackImpl();
+    public IWordCharacterAPI create(Throwable throwable) {
+        WordCharacterAPIFallback remoteWordCharacterServiceFallback = new WordCharacterAPIFallback();
         remoteWordCharacterServiceFallback.setThrowable(throwable);
         return remoteWordCharacterServiceFallback;
     }

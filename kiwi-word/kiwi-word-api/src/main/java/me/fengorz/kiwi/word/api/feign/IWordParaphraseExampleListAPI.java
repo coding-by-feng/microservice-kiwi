@@ -1,6 +1,6 @@
 /*
  *
- *   Copyright [2019~2025] [codingByFeng]
+ *   Copyright [2019~2025] [zhanshifeng]
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -28,11 +28,11 @@ import org.springframework.web.bind.annotation.*;
 
 
 /**
- * @author codingByFeng
+ * @author zhanshifeng
  * @date 2019-12-08 23:27:12
  */
 @FeignClient(contextId = "remoteWordParaphraseExampleListDOService" , value = WordConstants.KIWI_WORD_BIZ, fallbackFactory = RemoteWordParaphraseExampleListServiceFallbackFactory.class)
-public interface IRemoteWordParaphraseExampleListService {
+public interface IWordParaphraseExampleListAPI {
 
     String WORD_PARAPHRASE_EXAMPLE_LIST = "/word/paraphrase/example/list" ;
 

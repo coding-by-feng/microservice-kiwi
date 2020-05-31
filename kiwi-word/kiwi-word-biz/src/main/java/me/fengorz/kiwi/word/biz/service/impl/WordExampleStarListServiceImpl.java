@@ -1,6 +1,6 @@
 /*
  *
- *   Copyright [2019~2025] [codingByFeng]
+ *   Copyright [2019~2025] [zhanshifeng]
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -19,26 +19,28 @@
 package me.fengorz.kiwi.word.biz.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import lombok.AllArgsConstructor;
-import me.fengorz.kiwi.common.api.R;
+import lombok.RequiredArgsConstructor;
 import me.fengorz.kiwi.common.api.constant.CommonConstants;
+import me.fengorz.kiwi.common.sdk.util.bean.KiwiBeanUtils;
 import me.fengorz.kiwi.word.api.entity.WordExampleStarListDO;
 import me.fengorz.kiwi.word.api.entity.column.WordParaphraseExampleListColumn;
+import me.fengorz.kiwi.word.api.vo.WordExampleStarListVO;
 import me.fengorz.kiwi.word.api.vo.star.ExampleStarItemVO;
 import me.fengorz.kiwi.word.biz.mapper.WordExampleStarListMapper;
 import me.fengorz.kiwi.word.biz.service.IWordExampleStarListService;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
- * @author codingByFeng
+ * @author zhanshifeng
  * @date 2019-12-08 23:27:12
  */
-@Service("WordExampleStarListService")
-@AllArgsConstructor
+@Service()
+@RequiredArgsConstructor
 public class WordExampleStarListServiceImpl extends ServiceImpl<WordExampleStarListMapper, WordExampleStarListDO> implements IWordExampleStarListService {
 
     private final WordExampleStarListMapper wordExampleStarListMapper;
@@ -54,7 +56,7 @@ public class WordExampleStarListServiceImpl extends ServiceImpl<WordExampleStarL
     }
 
     @Override
-    public R getCurrentUserList(Page page, Integer userId) {
+    public List<WordExampleStarListVO> getCurrentUserList(Integer userId) {
         QueryWrapper<WordExampleStarListDO> queryWrapper = new QueryWrapper<>(new WordExampleStarListDO()
                 .setOwner(userId)
                 .setIsDel(CommonConstants.FLAG_N))
@@ -63,16 +65,7 @@ public class WordExampleStarListServiceImpl extends ServiceImpl<WordExampleStarL
                                 || WordParaphraseExampleListColumn.LIST_NAME.equals(tableFieldInfo.getColumn())
                                 || WordParaphraseExampleListColumn.REMARK.equals(tableFieldInfo.getColumn()));
 
-        return R.success(this.page(page, queryWrapper).getRecords());
-    }
-
-    @Override
-    public R updateListByUser(WordExampleStarListDO entity, Integer id, Integer userId) {
-        UpdateWrapper<WordExampleStarListDO> updateWrapper = new UpdateWrapper<>(
-                new WordExampleStarListDO()
-                        .setOwner(userId)
-                        .setId(id));
-        return R.success(this.update(entity, updateWrapper));
+        return KiwiBeanUtils.convertFrom(wordExampleStarListMapper.selectList(queryWrapper), WordExampleStarListVO.class);
     }
 
     @Override

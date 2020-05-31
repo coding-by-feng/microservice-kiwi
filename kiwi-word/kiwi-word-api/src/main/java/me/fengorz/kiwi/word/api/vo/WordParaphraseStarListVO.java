@@ -19,29 +19,14 @@
 
 package me.fengorz.kiwi.word.api.vo;
 
-import lombok.Data;
 import lombok.ToString;
-import lombok.experimental.Accessors;
-
-import java.io.Serializable;
-import java.util.List;
+import me.fengorz.kiwi.word.api.entity.WordParaphraseStarListDO;
 
 /**
- * @Description A view of the word query results
  * @Author zhanshifeng
- * @Date 2019/11/25 10:57 PM
+ * @Date 2020/5/31 1:13 PM
  */
-@Data
-@Accessors(chain = true)
 @ToString
-public class WordQueryVO implements Serializable {
-
-    private static final long serialVersionUID = 6147946943335219267L;
-
-    private Integer wordId;
-    private String wordName;
-    private String isCollect;
-    private String isLogin;
-    private List<WordCharacterVO> wordCharacterVOList;
-
+public class WordParaphraseStarListVO extends WordParaphraseStarListDO {
+    private static final long serialVersionUID = -2917409082834724658L;
 }

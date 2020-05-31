@@ -1,6 +1,6 @@
 /*
  *
- *   Copyright [2019~2025] [codingByFeng]
+ *   Copyright [2019~2025] [zhanshifeng]
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@
 
 package me.fengorz.kiwi.word.biz.test;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import me.fengorz.kiwi.common.api.constant.CommonConstants;
 import me.fengorz.kiwi.word.api.entity.WordMainDO;
 import me.fengorz.kiwi.word.biz.mapper.WordMainMapper;
@@ -32,7 +32,7 @@ import org.springframework.transaction.annotation.Transactional;
  * @Date 2019/11/25 10:26 AM
  */
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class TestService {
 
     private final WordMainMapper wordMainMapper;

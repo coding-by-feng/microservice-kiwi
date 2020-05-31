@@ -1,6 +1,6 @@
 /*
  *
- *   Copyright [2019~2025] [codingByFeng]
+ *   Copyright [2019~2025] [zhanshifeng]
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ import java.util.List;
 /**
  * 菜单权限表
  *
- * @author codingByFeng
+ * @author zhanshifeng
  * @date 2019-09-26 15:59:10
  */
 public interface SysMenuService extends IService<SysMenu> {

@@ -1,6 +1,6 @@
 /*
  *
- *   Copyright [2019~2025] [codingByFeng]
+ *   Copyright [2019~2025] [zhanshifeng]
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -17,34 +17,26 @@
  *
  */
 
-package me.fengorz.kiwi.word.api.vo;
+package me.fengorz.kiwi.word.api.feign.fallback;
 
-import lombok.Data;
-import lombok.ToString;
-import lombok.experimental.Accessors;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
+import me.fengorz.kiwi.word.api.feign.IWordStarListAPI;
+import org.springframework.stereotype.Component;
 
-import java.io.Serializable;
 
 /**
- * @Description TODO
- * @Author zhanshifeng
- * @Date 2019/11/26 10:01 AM
+ * 单词本
+ *
+ * @author zhanshifeng
+ * @date 2019-12-08 23:26:57
  */
-@Data
-@Accessors(chain = true)
-@ToString
-public class WordPronunciationVO implements Serializable {
+@Slf4j
+@Component
+public class WordStarListAPIFallback implements IWordStarListAPI {
 
-    private static final long serialVersionUID = -400966918555175133L;
-
-    private Integer pronunciationId;
-    /**
-     * 音标
-     */
-    private String soundmark;
-    /**
-     * 音标类别
-     */
-    private String soundmarkType;
+    @Setter
+    private Throwable throwable;
 
 }
+

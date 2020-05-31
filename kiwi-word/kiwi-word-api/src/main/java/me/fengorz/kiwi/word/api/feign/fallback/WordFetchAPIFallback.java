@@ -1,6 +1,6 @@
 /*
  *
- *   Copyright [2019~2025] [codingByFeng]
+ *   Copyright [2019~2025] [zhanshifeng]
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -26,17 +26,17 @@ import me.fengorz.kiwi.common.api.R;
 import me.fengorz.kiwi.word.api.dto.fetch.FetchWordResultDTO;
 import me.fengorz.kiwi.word.api.dto.remote.WordFetchQueuePageDTO;
 import me.fengorz.kiwi.word.api.entity.WordFetchQueueDO;
-import me.fengorz.kiwi.word.api.feign.IWordFetchAPIService;
+import me.fengorz.kiwi.word.api.feign.IWordFetchAPI;
 import org.springframework.stereotype.Component;
 
 /**
  * @Description TODO
- * @Author codingByFeng
+ * @Author zhanshifeng
  * @Date 2019/10/30 3:20 PM
  */
 @Slf4j
 @Component
-public class WordFetchAPIServiceFallbackImpl implements IWordFetchAPIService {
+public class WordFetchAPIFallback implements IWordFetchAPI {
 
     @Setter
     private Throwable throwable;
@@ -57,17 +57,6 @@ public class WordFetchAPIServiceFallbackImpl implements IWordFetchAPIService {
     public R storeFetchWordResult(FetchWordResultDTO fetchWordResultDTO) {
         log.error("update storeFetchWordResult error, fetchWordResultDTO=" + fetchWordResultDTO, throwable);
         // TODO ZSF This method of R applies to the template file
-        return R.feignCallFailed();
-    }
-
-    @Override
-    public R save(WordFetchQueueDO wordFetchQueue) {
-        log.error("save error, wordFetchQueue=" + wordFetchQueue, throwable);
-        return R.feignCallFailed();
-    }
-
-    @Override
-    public R fetchNewWord(String wordName) {
         return R.feignCallFailed();
     }
 

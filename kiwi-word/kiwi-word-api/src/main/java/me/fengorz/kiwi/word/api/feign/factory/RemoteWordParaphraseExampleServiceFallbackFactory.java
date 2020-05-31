@@ -1,6 +1,6 @@
 /*
  *
- *   Copyright [2019~2025] [codingByFeng]
+ *   Copyright [2019~2025] [zhanshifeng]
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -19,22 +19,22 @@
 package me.fengorz.kiwi.word.api.feign.factory;
 
 import feign.hystrix.FallbackFactory;
-import me.fengorz.kiwi.word.api.feign.IRemoteWordParaphraseExampleService;
-import me.fengorz.kiwi.word.api.feign.fallback.RemoteWordParaphraseExampleServiceFallbackImpl;
+import me.fengorz.kiwi.word.api.feign.IWordParaphraseExampleAPI;
+import me.fengorz.kiwi.word.api.feign.fallback.WordParaphraseExampleAPIFallback;
 import org.springframework.stereotype.Component;
 
 
 /**
  * 单词例句表
  *
- * @author codingByFeng
+ * @author zhanshifeng
  * @date 2019-11-01 14:43:28
  */
 @Component
-public class RemoteWordParaphraseExampleServiceFallbackFactory implements FallbackFactory<IRemoteWordParaphraseExampleService> {
+public class RemoteWordParaphraseExampleServiceFallbackFactory implements FallbackFactory<IWordParaphraseExampleAPI> {
     @Override
-    public IRemoteWordParaphraseExampleService create(Throwable throwable) {
-        RemoteWordParaphraseExampleServiceFallbackImpl remoteWordParaphraseExampleServiceFallback = new RemoteWordParaphraseExampleServiceFallbackImpl();
+    public IWordParaphraseExampleAPI create(Throwable throwable) {
+        WordParaphraseExampleAPIFallback remoteWordParaphraseExampleServiceFallback = new WordParaphraseExampleAPIFallback();
         remoteWordParaphraseExampleServiceFallback.setThrowable(throwable);
         return remoteWordParaphraseExampleServiceFallback;
     }

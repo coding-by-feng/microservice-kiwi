@@ -1,6 +1,6 @@
 /*
  *
- *   Copyright [2019~2025] [codingByFeng]
+ *   Copyright [2019~2025] [zhanshifeng]
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ package me.fengorz.kiwi.admin.controller;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.api.R;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import me.fengorz.kiwi.admin.api.entity.SysDept;
 import me.fengorz.kiwi.admin.service.SysDeptService;
 import me.fengorz.kiwi.common.api.annotation.log.SysLog;
@@ -33,11 +33,11 @@ import org.springframework.web.bind.annotation.*;
 /**
  * 部门管理
  *
- * @author codingByFeng
+ * @author zhanshifeng
  * @date 2019-09-18 09:40:25
  */
 @RestController
-@AllArgsConstructor
+@RequiredArgsConstructor
 @RequestMapping("/sys/dept")
 public class SysDeptController extends BaseController {
 

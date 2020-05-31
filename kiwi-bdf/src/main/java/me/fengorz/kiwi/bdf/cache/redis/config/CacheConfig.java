@@ -1,6 +1,6 @@
 /*
  *
- *   Copyright [2019~2025] [codingByFeng]
+ *   Copyright [2019~2025] [zhanshifeng]
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@
 
 package me.fengorz.kiwi.bdf.cache.redis.config;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import me.fengorz.kiwi.bdf.cache.redis.CacheKeyGenerator;
 import me.fengorz.kiwi.common.api.constant.CacheConstants;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
@@ -34,12 +34,12 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 /**
  * @Description 缓存配置类
- * @Author codingByFeng
+ * @Author zhanshifeng
  * @Date 2019-09-29 10:39
  */
 @EnableCaching
 @Configuration
-@AllArgsConstructor
+@RequiredArgsConstructor
 @AutoConfigureBefore(RedisAutoConfiguration.class)
 public class CacheConfig {
 

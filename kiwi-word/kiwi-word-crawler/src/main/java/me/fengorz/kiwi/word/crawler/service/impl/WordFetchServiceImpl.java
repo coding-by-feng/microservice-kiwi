@@ -1,6 +1,6 @@
 /*
  *
- *   Copyright [2019~2025] [codingByFeng]
+ *   Copyright [2019~2025] [zhanshifeng]
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -28,8 +28,8 @@ import me.fengorz.kiwi.word.api.dto.fetch.FetchWordResultDTO;
 import me.fengorz.kiwi.word.api.dto.fetch.WordMessageDTO;
 import me.fengorz.kiwi.word.api.entity.WordFetchQueueDO;
 import me.fengorz.kiwi.word.api.exception.JsoupFetchConnectException;
-import me.fengorz.kiwi.word.api.feign.IWordFetchAPIService;
-import me.fengorz.kiwi.word.api.feign.IWordMainVariantAPIService;
+import me.fengorz.kiwi.word.api.feign.IWordFetchAPI;
+import me.fengorz.kiwi.word.api.feign.IWordMainVariantAPI;
 import me.fengorz.kiwi.word.crawler.service.IJsoupService;
 import me.fengorz.kiwi.word.crawler.service.IWordFetchService;
 import org.springframework.stereotype.Service;
@@ -44,8 +44,8 @@ import org.springframework.stereotype.Service;
 public class WordFetchServiceImpl implements IWordFetchService {
 
     private final IJsoupService jsoupService;
-    private final IWordFetchAPIService remoteWordFetchService;
-    private final IWordMainVariantAPIService wordMainVariantAPIService;
+    private final IWordFetchAPI remoteWordFetchService;
+    private final IWordMainVariantAPI wordMainVariantAPIService;
 
     @Override
     public void work(WordMessageDTO wordMessageDTO) {

@@ -1,6 +1,6 @@
 /*
  *
- *   Copyright [2019~2025] [codingByFeng]
+ *   Copyright [2019~2025] [zhanshifeng]
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@
 
 package me.fengorz.kiwi.auth.config;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import me.fengorz.kiwi.bdf.security.component.KiwiWebResponseExceptionTranslator;
 import me.fengorz.kiwi.bdf.security.service.KiwiClientDetailsService;
 import me.fengorz.kiwi.common.api.constant.SecurityConstants;
@@ -45,11 +45,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * @Author codingByFeng
+ * @Author zhanshifeng
  * @Date 2019-09-23 21:07
  */
 @Configuration
-@AllArgsConstructor
+@RequiredArgsConstructor
 @EnableAuthorizationServer
 public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdapter {
 
@@ -80,7 +80,7 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
                 .userDetailsService(userDetailsService)
                 .authenticationManager(authenticationManager)
                 .reuseRefreshTokens(false)
-                // TODO codingByFeng 这个API作用什么？
+                // TODO zhanshifeng 这个API作用什么？
                 .exceptionTranslator(new KiwiWebResponseExceptionTranslator());
     }
 

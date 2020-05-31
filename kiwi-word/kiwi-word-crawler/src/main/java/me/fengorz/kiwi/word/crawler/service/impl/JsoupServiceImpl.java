@@ -1,6 +1,6 @@
 /*
  *
- *   Copyright [2019~2025] [codingByFeng]
+ *   Copyright [2019~2025] [zhanshifeng]
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -42,7 +42,7 @@ import java.util.Optional;
 
 /**
  * @Description 爬虫抓取单词数据服务类
- * @Author codingByFeng
+ * @Author zhanshifeng
  * @Date 2019/10/31 3:24 PM
  */
 @Service
@@ -187,7 +187,7 @@ public class JsoupServiceImpl implements IJsoupService {
                                     elements -> fetchParaphraseExampleDTO.setExampleTranslate(elements.text())
                             );
 
-                            // TODO codingByFeng The default is English, but consider how flexible it will be in the future if there are other languages
+                            // TODO zhanshifeng The default is English, but consider how flexible it will be in the future if there are other languages
                             fetchParaphraseExampleDTO.setTranslateLanguage(WordCrawlerConstants.DEFAULT_TRANSLATE_LANGUAGE);
                             fetchParaphraseExampleDTOList.add(fetchParaphraseExampleDTO);
                             fetchParaphraseDTO.setFetchParaphraseExampleDTOList(fetchParaphraseExampleDTOList);

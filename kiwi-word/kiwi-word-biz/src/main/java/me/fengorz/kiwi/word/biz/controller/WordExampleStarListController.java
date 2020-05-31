@@ -1,6 +1,6 @@
 /*
  *
- *   Copyright [2019~2025] [codingByFeng]
+ *   Copyright [2019~2025] [zhanshifeng]
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -18,16 +18,17 @@
  */
 package me.fengorz.kiwi.word.biz.controller;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.api.R;
 import me.fengorz.kiwi.common.api.annotation.log.SysLog;
 import me.fengorz.kiwi.common.api.exception.ServiceException;
 import me.fengorz.kiwi.common.sdk.controller.BaseController;
 import me.fengorz.kiwi.word.api.entity.WordExampleStarListDO;
+import me.fengorz.kiwi.word.api.vo.WordExampleStarListVO;
+import me.fengorz.kiwi.word.api.vo.star.ExampleStarItemVO;
 import me.fengorz.kiwi.word.biz.service.IWordExampleStarListService;
 import me.fengorz.kiwi.word.biz.service.operate.IWordOperateService;
 import org.hibernate.validator.constraints.Range;
@@ -36,14 +37,15 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 
 /**
- * @author codingByFeng
+ * @author zhanshifeng
  * @date 2019-12-08 23:27:12
  */
 @RestController
-@AllArgsConstructor
+@RequiredArgsConstructor
 @RequestMapping("/word/example/star/list")
 @Validated
 @Slf4j
@@ -51,41 +53,6 @@ public class WordExampleStarListController extends BaseController {
 
     private final IWordExampleStarListService wordExampleStarListService;
     private final IWordOperateService wordOperateService;
-
-    /**
-     * 分页查询
-     *
-     * @param page                  分页对象
-     * @param wordExampleStarListDO
-     * @return
-     */
-    @GetMapping("/page")
-    public R getWordParaphraseExampleListPage(Page page, WordExampleStarListDO wordExampleStarListDO) {
-        return R.success(wordExampleStarListService.page(page, Wrappers.query(wordExampleStarListDO)));
-    }
-
-    /**
-     * 根据条件查询单个实体
-     *
-     * @param condition
-     * @return
-     */
-    @PostMapping("/getOne")
-    public R getOne(@RequestBody WordExampleStarListDO condition) {
-        return R.success(wordExampleStarListService.getOne(new QueryWrapper<>(condition)));
-    }
-
-
-    /**
-     * 通过id查询
-     *
-     * @param id id
-     * @return R
-     */
-    @GetMapping("/getById/{id}")
-    public R getById(@PathVariable("id") Integer id) {
-        return R.success(wordExampleStarListService.getById(id));
-    }
 
     /**
      * 新增
@@ -96,7 +63,7 @@ public class WordExampleStarListController extends BaseController {
     @SysLog("新增")
     @PostMapping("/save")
     // @PreAuthorize("@pms.hasPermission('api_wordparaphraseexamplelist_add')")
-    public R save(WordExampleStarListDO wordExampleStarListDO) {
+    public R<Boolean> save(WordExampleStarListDO wordExampleStarListDO) {
         wordExampleStarListDO.setOwner(1);
         return R.success(wordExampleStarListService.save(wordExampleStarListDO));
     }
@@ -110,7 +77,7 @@ public class WordExampleStarListController extends BaseController {
     @SysLog("修改")
     @PostMapping("/updateById")
     // @PreAuthorize("@pms.hasPermission('api_wordparaphraseexamplelist_edit')")
-    public R updateById(WordExampleStarListDO wordExampleStarListDO) {
+    public R<Boolean> updateById(WordExampleStarListDO wordExampleStarListDO) {
         return R.success(wordExampleStarListService.updateById(wordExampleStarListDO));
     }
 
@@ -123,17 +90,17 @@ public class WordExampleStarListController extends BaseController {
     @SysLog("通过id删除")
     @PostMapping("/delById/{id}")
     // @PreAuthorize("@pms.hasPermission('api_wordparaphraseexamplelist_del')")
-    public R delById(@PathVariable Integer id) {
+    public R<Boolean> delById(@PathVariable Integer id) {
         return R.success(wordExampleStarListService.removeById(id));
     }
 
     @GetMapping("/getCurrentUserList")
-    public R getCurrentUserList(Page page) {
-        return wordExampleStarListService.getCurrentUserList(page, 1);
+    public R<List<WordExampleStarListVO>> getCurrentUserList() {
+        return R.success(wordExampleStarListService.getCurrentUserList(1));
     }
 
     @PostMapping("/putIntoStarList")
-    public R putIntoStarList(@NotNull Integer exampleId, @NotNull Integer listId) {
+    public R<Boolean> putIntoStarList(@NotNull Integer exampleId, @NotNull Integer listId) {
         try {
             return R.success(this.wordOperateService.putExampleIntoStarList(exampleId, listId));
         } catch (ServiceException e) {
@@ -143,14 +110,14 @@ public class WordExampleStarListController extends BaseController {
     }
 
     @PostMapping("/removeExampleStar")
-    public R removeExampleStar(@NotNull Integer exampleId, @NotNull Integer listId) {
+    public R<Boolean> removeExampleStar(@NotNull Integer exampleId, @NotNull Integer listId) {
         return R.success(this.wordOperateService.removeExampleStar(exampleId, listId));
     }
 
     @PostMapping("/getListItems/{size}/{current}")
-    public R getListItems(@NotNull Integer listId,
-                          @PathVariable @Min(1) Integer current,
-                          @PathVariable @Range(min = 1, max = 100) Integer size) {
+    public R<IPage<ExampleStarItemVO>> getListItems(@NotNull Integer listId,
+                                                    @PathVariable @Min(1) Integer current,
+                                                    @PathVariable @Range(min = 1, max = 100) Integer size) {
         return R.success(wordExampleStarListService.getListItems(new Page(current, size), listId));
     }
 

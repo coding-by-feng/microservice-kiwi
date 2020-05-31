@@ -1,6 +1,6 @@
 /*
  *
- *   Copyright [2019~2025] [zhanshifeng]
+ *   Copyright [2019~2025] [codingByFeng]
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -20,29 +20,16 @@
 package me.fengorz.kiwi.word.api.dto.fetch;
 
 import lombok.Data;
-import lombok.ToString;
-
-import java.util.List;
+import lombok.experimental.Accessors;
 
 /**
- * @Description TODO
  * @Author zhanshifeng
- * @Date 2019/10/25 9:05 AM
+ * @Date 2020/5/31 11:26 PM
  */
 @Data
-@ToString
-public class FetchParaphraseDTO {
+@Accessors(chain = true)
+public class FetchPhraseDTO {
 
-    private String paraphraseEnglish;
-
-    private String paraphraseEnglishTranslate;
-
-    private String meaningChinese;
-
-    private String translateLanguage;
-
-    private List<FetchParaphraseExampleDTO> fetchParaphraseExampleDTOList;
-
-    private List<FetchPhraseDTO> fetchPhraseDTOList;
+    private String phrase;
 
 }

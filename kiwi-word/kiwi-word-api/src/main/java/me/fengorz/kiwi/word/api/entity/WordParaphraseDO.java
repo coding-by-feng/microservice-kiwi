@@ -69,6 +69,10 @@ public class WordParaphraseDO extends Model<WordParaphraseDO> {
      */
     private String translateLanguage;
     /**
+     * 是否拥有关联词组定义
+     */
+    private Integer isHavePhrase;
+    /**
      * 逻辑删除标记(Y--正常 N--删除)
      */
     private String isDel;

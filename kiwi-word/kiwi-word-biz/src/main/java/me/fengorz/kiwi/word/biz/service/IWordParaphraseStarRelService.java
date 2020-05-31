@@ -1,6 +1,6 @@
 /*
  *
- *   Copyright [2019~2025] [codingByFeng]
+ *   Copyright [2019~2025] [zhanshifeng]
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import me.fengorz.kiwi.word.api.entity.WordParaphraseStarRelDO;
 
 /**
- * @author codingByFeng
+ * @author zhanshifeng
  * @date 2020-01-03 14:44:37
  */
 public interface IWordParaphraseStarRelService extends IService<WordParaphraseStarRelDO> {

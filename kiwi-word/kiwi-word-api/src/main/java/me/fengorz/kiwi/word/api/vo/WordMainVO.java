@@ -1,6 +1,6 @@
 /*
  *
- *   Copyright [2019~2025] [codingByFeng]
+ *   Copyright [2019~2025] [zhanshifeng]
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -26,4 +26,5 @@ import me.fengorz.kiwi.word.api.entity.WordMainDO;
  * @Date 2020/5/24 12:33 PM
  */
 public class WordMainVO extends WordMainDO {
+    private static final long serialVersionUID = -3506446384111168913L;
 }

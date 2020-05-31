@@ -1,6 +1,6 @@
 /*
  *
- *   Copyright [2019~2025] [codingByFeng]
+ *   Copyright [2019~2025] [zhanshifeng]
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ package me.fengorz.kiwi.word.biz.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.api.R;
 import me.fengorz.kiwi.common.api.ResultCode;
@@ -49,13 +49,13 @@ import javax.validation.constraints.NotBlank;
 /**
  * 单词待抓取列表
  *
- * @author codingByFeng
+ * @author zhanshifeng
  * @date 2019-10-30 14:45:45
  */
 @Slf4j
 @Validated
 @RestController
-@AllArgsConstructor
+@RequiredArgsConstructor
 @RequestMapping("/word/fetch/queue")
 public class WordFetchQueueController extends BaseController {
 
@@ -68,34 +68,9 @@ public class WordFetchQueueController extends BaseController {
      *
      * @return
      */
-    @RequestMapping(value = "/getWordFetchQueuePage" , method = {RequestMethod.POST, RequestMethod.GET})
+    @RequestMapping(value = "/getWordFetchQueuePage", method = {RequestMethod.POST, RequestMethod.GET})
     public R<IPage<WordFetchQueueDO>> getWordFetchQueuePage(@RequestBody @Valid WordFetchQueuePageDTO wordFetchQueuePage) {
         return R.success(wordFetchQueueService.page(wordFetchQueuePage.getPage(), Wrappers.query(wordFetchQueuePage.getWordFetchQueue())));
-    }
-
-
-    /**
-     * 通过id查询单词待抓取列表
-     *
-     * @param queueId id
-     * @return R
-     */
-    @GetMapping("/{queueId}")
-    public R getById(@PathVariable("queueId") Integer queueId) {
-        return R.success(wordFetchQueueService.getById(queueId));
-    }
-
-    /**
-     * 新增单词待抓取列表
-     *
-     * @param wordFetchQueue 单词待抓取列表
-     * @return R
-     */
-    @SysLog("新增单词待抓取列表")
-    @PostMapping("/save")
-    // @PreAuthorize("@pms.hasPermission('queue_wordfetchqueue_add')")
-    public R save(@RequestBody @Valid WordFetchQueueDO wordFetchQueue) {
-        return R.auto(wordFetchQueueService.insertNewQueue(wordFetchQueue), wordFetchQueue.getWordName() + " already exists!");
     }
 
     @GetMapping("/fetchNewWord/{wordName}")
@@ -112,14 +87,14 @@ public class WordFetchQueueController extends BaseController {
     @SysLog("修改单词待抓取列表")
     @PutMapping("/updateById")
     // @PreAuthorize("@pms.hasPermission('queue_wordfetchqueue_edit')")
-    public R updateById(@RequestBody WordFetchQueueDO wordFetchQueue) {
+    public R<Boolean> updateById(@RequestBody WordFetchQueueDO wordFetchQueue) {
         return R.success(wordFetchQueueService.updateById(wordFetchQueue));
     }
 
     @SysLog("修改单词待抓取列表")
     @PostMapping("/updateByWordName")
     // @PreAuthorize("@pms.hasPermission('queue_wordfetchqueue_edit')")
-    public R updateByWordName(@RequestBody WordFetchQueueDO wordFetchQueue) {
+    public R<Boolean> updateByWordName(@RequestBody WordFetchQueueDO wordFetchQueue) {
         return R.success(wordFetchQueueService.update(wordFetchQueue, new QueryWrapper<>(new WordFetchQueueDO()
                 .setWordName(wordFetchQueue.getWordName()))));
     }
@@ -127,13 +102,13 @@ public class WordFetchQueueController extends BaseController {
     @SysLog("通过id删除单词待抓取列表")
     @PostMapping("/invalid")
     // @PreAuthorize("@pms.hasPermission('queue_wordfetchqueue_del')")
-    public R invalid(@RequestParam @NotBlank String wordName) {
+    public R<Boolean> invalid(@RequestParam @NotBlank String wordName) {
         return R.auto(wordFetchQueueService.invalid(wordName));
     }
 
     @PostMapping("/lock")
     // @PreAuthorize("@pms.hasPermission('queue_wordfetchqueue_del')")
-    public R lock(@RequestParam @NotBlank String wordName) {
+    public R<Boolean> lock(@RequestParam @NotBlank String wordName) {
         return R.auto(wordFetchQueueService.lock(wordName));
     }
 

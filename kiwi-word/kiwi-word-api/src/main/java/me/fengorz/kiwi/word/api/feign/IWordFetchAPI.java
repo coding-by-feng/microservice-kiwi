@@ -1,6 +1,6 @@
 /*
  *
- *   Copyright [2019~2025] [codingByFeng]
+ *   Copyright [2019~2025] [zhanshifeng]
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@
 
 package me.fengorz.kiwi.word.api.feign;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import me.fengorz.kiwi.common.api.R;
 import me.fengorz.kiwi.word.api.common.WordConstants;
 import me.fengorz.kiwi.word.api.dto.fetch.FetchWordResultDTO;
@@ -26,38 +27,35 @@ import me.fengorz.kiwi.word.api.dto.remote.WordFetchQueuePageDTO;
 import me.fengorz.kiwi.word.api.entity.WordFetchQueueDO;
 import me.fengorz.kiwi.word.api.feign.factory.RemoteWordFetchServiceFallbackFactory;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  * @Author zhanshifeng
  */
 @FeignClient(contextId = "remoteWordFetchService", value = WordConstants.KIWI_WORD_BIZ, fallbackFactory = RemoteWordFetchServiceFallbackFactory.class)
-public interface IWordFetchAPIService {
+public interface IWordFetchAPI {
 
     String WORD_FETCH_QUEUE = "/word/fetch/queue";
 
     @PostMapping(WORD_FETCH_QUEUE + "/getWordFetchQueuePage")
-    R getWordFetchQueuePage(@RequestBody WordFetchQueuePageDTO wordFetchQueuePage);
+    R<IPage<WordFetchQueueDO>> getWordFetchQueuePage(@RequestBody WordFetchQueuePageDTO wordFetchQueuePage);
 
     @PutMapping(WORD_FETCH_QUEUE + "/updateById")
-    R updateQueueById(@RequestBody WordFetchQueueDO wordFetchQueue);
+    R<Boolean> updateQueueById(@RequestBody WordFetchQueueDO wordFetchQueue);
 
     @PostMapping(WORD_FETCH_QUEUE + "/storeFetchWordResult")
     R<Void> storeFetchWordResult(@RequestBody FetchWordResultDTO fetchWordResultDTO);
 
-    @PostMapping(WORD_FETCH_QUEUE + "/save")
-    R save(@RequestBody WordFetchQueueDO wordFetchQueue);
-
-    @GetMapping(WORD_FETCH_QUEUE + "/fetchNewWord/{wordName}")
-    R fetchNewWord(@PathVariable String wordName);
-
     @PostMapping(WORD_FETCH_QUEUE + "/updateByWordName")
-    R updateByWordName(@RequestBody WordFetchQueueDO wordFetchQueue);
+    R<Boolean> updateByWordName(@RequestBody WordFetchQueueDO wordFetchQueue);
 
     @PostMapping(WORD_FETCH_QUEUE + "/invalid")
-    R invalid(@RequestParam String wordName);
+    R<Boolean> invalid(@RequestParam String wordName);
 
     @PostMapping(WORD_FETCH_QUEUE + "/lock")
-    R lock(@RequestParam String wordName);
+    R<Boolean> lock(@RequestParam String wordName);
 
 }

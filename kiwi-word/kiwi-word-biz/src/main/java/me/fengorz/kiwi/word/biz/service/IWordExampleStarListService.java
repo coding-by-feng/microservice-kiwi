@@ -1,6 +1,6 @@
 /*
  *
- *   Copyright [2019~2025] [codingByFeng]
+ *   Copyright [2019~2025] [zhanshifeng]
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -21,21 +21,21 @@ package me.fengorz.kiwi.word.biz.service;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
-import me.fengorz.kiwi.common.api.R;
 import me.fengorz.kiwi.word.api.entity.WordExampleStarListDO;
+import me.fengorz.kiwi.word.api.vo.WordExampleStarListVO;
 import me.fengorz.kiwi.word.api.vo.star.ExampleStarItemVO;
 
+import java.util.List;
+
 /**
- * @author codingByFeng
+ * @author zhanshifeng
  * @date 2019-12-08 23:27:12
  */
 public interface IWordExampleStarListService extends IService<WordExampleStarListDO> {
 
     Integer countById(Integer id);
 
-    R getCurrentUserList(Page page, Integer userId);
-
-    R updateListByUser(WordExampleStarListDO entity, Integer id, Integer userId);
+    List<WordExampleStarListVO> getCurrentUserList(Integer userId);
 
     IPage<ExampleStarItemVO> getListItems(Page page, Integer listId);
 }

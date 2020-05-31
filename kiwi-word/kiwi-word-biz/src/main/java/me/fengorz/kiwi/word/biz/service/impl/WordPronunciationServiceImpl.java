@@ -1,6 +1,6 @@
 /*
  *
- *   Copyright [2019~2025] [codingByFeng]
+ *   Copyright [2019~2025] [zhanshifeng]
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@
 package me.fengorz.kiwi.word.biz.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import me.fengorz.kiwi.word.api.entity.WordPronunciationDO;
 import me.fengorz.kiwi.word.biz.mapper.WordPronunciationMapper;
 import me.fengorz.kiwi.word.biz.service.IWordPronunciationService;
@@ -28,11 +28,11 @@ import org.springframework.stereotype.Service;
 /**
  * 单词例句表
  *
- * @author codingByFeng
+ * @author zhanshifeng
  * @date 2019-10-31 20:54:06
  */
-@Service("wordPronunciationService")
-@AllArgsConstructor
+@Service()
+@RequiredArgsConstructor
 public class WordPronunciationServiceImpl extends ServiceImpl<WordPronunciationMapper, WordPronunciationDO> implements IWordPronunciationService {
 
     private final WordPronunciationMapper wordPronunciationMapper;

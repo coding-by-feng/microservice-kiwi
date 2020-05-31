@@ -1,6 +1,6 @@
 /*
  *
- *   Copyright [2019~2025] [codingByFeng]
+ *   Copyright [2019~2025] [zhanshifeng]
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ package me.fengorz.kiwi.word.biz.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import me.fengorz.kiwi.common.api.constant.CommonConstants;
 import me.fengorz.kiwi.common.api.exception.ServiceException;
 import me.fengorz.kiwi.word.api.common.WordCrawlerConstants;
@@ -34,11 +34,11 @@ import org.springframework.transaction.annotation.Transactional;
 /**
  * 单词待抓取列表
  *
- * @author codingByFeng
+ * @author zhanshifeng
  * @date 2019-10-30 14:45:45
  */
-@Service("wordFetchQueueService")
-@AllArgsConstructor
+@Service()
+@RequiredArgsConstructor
 public class WordFetchQueueServiceImpl extends ServiceImpl<WordFetchQueueMapper, WordFetchQueueDO> implements IWordFetchQueueService {
 
     @Override

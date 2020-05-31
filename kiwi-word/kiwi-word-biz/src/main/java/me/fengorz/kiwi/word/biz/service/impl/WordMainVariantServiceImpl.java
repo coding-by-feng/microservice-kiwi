@@ -1,5 +1,5 @@
 /*
- * Copyright [2019~2025] [codingByFeng]
+ * Copyright [2019~2025] [zhanshifeng]
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -46,8 +46,8 @@ import java.util.List;
  * @Author zhanshifeng
  * @date 2020-05-24 01:20:49
  */
+@Service()
 @RequiredArgsConstructor
-@Service("WordMainVariantService")
 @KiwiCacheKeyPrefix(WordConstants.CACHE_KEY_PREFIX_WORD_VARIANT.CLASS)
 public class WordMainVariantServiceImpl extends ServiceImpl<WordMainVariantMapper, WordMainVariantDO> implements IWordMainVariantService {
 

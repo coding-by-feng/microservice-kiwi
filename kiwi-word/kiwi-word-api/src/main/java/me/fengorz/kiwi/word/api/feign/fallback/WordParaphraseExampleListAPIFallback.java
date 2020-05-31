@@ -1,6 +1,6 @@
 /*
  *
- *   Copyright [2019~2025] [codingByFeng]
+ *   Copyright [2019~2025] [zhanshifeng]
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -24,17 +24,17 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.api.R;
 import me.fengorz.kiwi.word.api.entity.WordExampleStarListDO;
-import me.fengorz.kiwi.word.api.feign.IRemoteWordParaphraseExampleListService;
+import me.fengorz.kiwi.word.api.feign.IWordParaphraseExampleListAPI;
 import org.springframework.stereotype.Component;
 
 
 /**
- * @author codingByFeng
+ * @author zhanshifeng
  * @date 2019-12-08 23:27:12
  */
 @Slf4j
 @Component
-public class RemoteWordParaphraseExampleListServiceFallbackImpl implements IRemoteWordParaphraseExampleListService {
+public class WordParaphraseExampleListAPIFallback implements IWordParaphraseExampleListAPI {
 
     @Setter
     private Throwable throwable;

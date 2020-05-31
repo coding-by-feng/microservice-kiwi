@@ -1,6 +1,6 @@
 /*
  *
- *   Copyright [2019~2025] [codingByFeng]
+ *   Copyright [2019~2025] [zhanshifeng]
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ package me.fengorz.kiwi.gateway.filter;
 import cn.hutool.core.util.StrUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.api.R;
 import me.fengorz.kiwi.common.api.constant.SecurityConstants;
@@ -39,12 +39,12 @@ import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
 /**
- * @Author codingByFeng
+ * @Author zhanshifeng
  * @Date 2019-09-06 16:52
  */
 @Slf4j
 @Component
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class ValidateCodeGatewayFilter extends AbstractGatewayFilterFactory {
 
     private final ObjectMapper objectMapper;

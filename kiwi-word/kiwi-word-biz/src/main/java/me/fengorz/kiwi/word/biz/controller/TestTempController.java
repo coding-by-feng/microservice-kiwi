@@ -1,6 +1,6 @@
 /*
  *
- *   Copyright [2019~2025] [codingByFeng]
+ *   Copyright [2019~2025] [zhanshifeng]
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@
 package me.fengorz.kiwi.word.biz.controller;
 
 import cn.hutool.core.util.StrUtil;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.api.R;
 import me.fengorz.kiwi.common.sdk.controller.BaseController;
@@ -38,11 +38,11 @@ import java.util.List;
 /**
  * 单词主表
  *
- * @author codingByFeng
+ * @author zhanshifeng
  * @date 2019-10-31 20:32:07
  */
 @RestController
-@AllArgsConstructor
+@RequiredArgsConstructor
 @RequestMapping("/test/")
 @Slf4j
 public class TestTempController extends BaseController {

@@ -1,6 +1,6 @@
 /*
  *
- *   Copyright [2019~2025] [codingByFeng]
+ *   Copyright [2019~2025] [zhanshifeng]
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -19,19 +19,19 @@
 
 package me.fengorz.kiwi.word.crawler.component;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 /**
  * @Description TODO
- * @Author codingByFeng
+ * @Author zhanshifeng
  * @Date 2019/10/29 4:12 PM
  */
 @Service("scheduledProducer")
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class ScheduledProducer {
 
     private final AsyncConcurrentProducer asyncConcurrentProducer;

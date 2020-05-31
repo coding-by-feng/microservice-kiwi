@@ -1,6 +1,6 @@
 /*
  *
- *   Copyright [2019~2025] [codingByFeng]
+ *   Copyright [2019~2025] [zhanshifeng]
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -28,7 +28,7 @@ import lombok.experimental.Accessors;
 /**
  * 单词例句表
  *
- * @author codingByFeng
+ * @author zhanshifeng
  * @date 2019-11-27 10:40:46
  */
 @Data

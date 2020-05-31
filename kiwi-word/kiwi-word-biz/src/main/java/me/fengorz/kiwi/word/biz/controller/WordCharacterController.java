@@ -1,6 +1,6 @@
 /*
  *
- *   Copyright [2019~2025] [codingByFeng]
+ *   Copyright [2019~2025] [zhanshifeng]
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -18,99 +18,27 @@
  */
 package me.fengorz.kiwi.word.biz.controller;
 
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import lombok.AllArgsConstructor;
-import me.fengorz.kiwi.common.api.R;
-import me.fengorz.kiwi.common.api.annotation.log.SysLog;
-import me.fengorz.kiwi.common.api.exception.ServiceException;
+import lombok.RequiredArgsConstructor;
 import me.fengorz.kiwi.common.sdk.controller.BaseController;
-import me.fengorz.kiwi.word.api.entity.WordCharacterDO;
 import me.fengorz.kiwi.word.biz.service.IWordCharacterService;
 import me.fengorz.kiwi.word.biz.service.operate.IWordOperateService;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 
 /**
  * 单词词性表
  *
- * @author codingByFeng
+ * @author zhanshifeng
  * @date 2019-10-31 20:38:37
  */
 @RestController
-@AllArgsConstructor
+@RequiredArgsConstructor
 @RequestMapping("/word/character")
 public class WordCharacterController extends BaseController {
 
     private final IWordCharacterService wordCharacterService;
     private final IWordOperateService wordOperateService;
 
-    /**
-     * 分页查询
-     *
-     * @param page          分页对象
-     * @param wordCharacter 单词词性表
-     * @return
-     */
-    @GetMapping("/page")
-    public R getWordCharacterPage(Page page, WordCharacterDO wordCharacter) {
-        return R.success(wordCharacterService.page(page, Wrappers.query(wordCharacter)));
-    }
-
-
-    /**
-     * 通过id查询单词词性表
-     *
-     * @param characterId id
-     * @return R
-     */
-    @GetMapping("/{characterId}")
-    public R getById(@PathVariable("characterId") Integer characterId) {
-        return R.success(wordCharacterService.getById(characterId));
-    }
-
-    /**
-     * 新增单词词性表
-     *
-     * @param wordCharacter 单词词性表
-     * @return R
-     */
-    @SysLog("新增单词词性表")
-    @PostMapping
-    @PreAuthorize("@pms.hasPermission('biz_wordcharacter_add')")
-    public R save(@RequestBody WordCharacterDO wordCharacter) {
-        return R.success(wordCharacterService.save(wordCharacter));
-    }
-
-    /**
-     * 修改单词词性表
-     *
-     * @param wordCharacter 单词词性表
-     * @return R
-     */
-    @SysLog("修改单词词性表")
-    @PutMapping
-    @PreAuthorize("@pms.hasPermission('biz_wordcharacter_edit')")
-    public R updateById(@RequestBody WordCharacterDO wordCharacter) {
-        return R.success(wordCharacterService.updateById(wordCharacter));
-    }
-
-    /**
-     * 通过id删除单词词性表
-     *
-     * @param characterId id
-     * @return R
-     */
-    @SysLog("通过id删除单词词性表")
-    @DeleteMapping("/{characterId}")
-    @PreAuthorize("@pms.hasPermission('biz_wordcharacter_del')")
-    public R removeById(@PathVariable Integer characterId) {
-        return R.success(wordCharacterService.removeById(characterId));
-    }
-
-    @GetMapping("/getByParaphraseId/{paraphraseId}")
-    public R getByParaphraseId(@PathVariable Integer paraphraseId) throws ServiceException {
-        return R.success(wordOperateService.getByParaphraseId(paraphraseId));
-    }
 }
+

@@ -17,11 +17,12 @@
  *
  */
 
-package me.fengorz.kiwi.word.api.vo;
+package me.fengorz.kiwi.word.api.vo.detail;
 
 import lombok.Data;
 import lombok.ToString;
 import lombok.experimental.Accessors;
+import me.fengorz.kiwi.word.api.vo.WordParaphraseExampleVO;
 
 import java.io.Serializable;
 import java.util.List;

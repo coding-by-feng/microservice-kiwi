@@ -1,6 +1,6 @@
 /*
  *
- *   Copyright [2019~2025] [codingByFeng]
+ *   Copyright [2019~2025] [zhanshifeng]
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import me.fengorz.kiwi.word.api.entity.WordStarListDO;
+import me.fengorz.kiwi.word.api.vo.WordStarListVO;
 import me.fengorz.kiwi.word.api.vo.star.WordStarItemVO;
 
 import java.util.List;
@@ -29,14 +30,14 @@ import java.util.List;
 /**
  * 单词本
  *
- * @author codingByFeng
+ * @author zhanshifeng
  * @date 2019-12-08 23:26:57
  */
 public interface IWordStarListService extends IService<WordStarListDO> {
 
     Integer countById(Integer id);
 
-    List<WordStarListDO> getCurrentUserList(Integer userId);
+    List<WordStarListVO> getCurrentUserList(Integer userId);
 
     boolean updateListByUser(WordStarListDO entity, Integer id, Integer userId);
 

@@ -1,6 +1,6 @@
 /*
  *
- *   Copyright [2019~2025] [codingByFeng]
+ *   Copyright [2019~2025] [zhanshifeng]
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -19,22 +19,22 @@
 package me.fengorz.kiwi.word.api.feign.factory;
 
 import feign.hystrix.FallbackFactory;
-import me.fengorz.kiwi.word.api.feign.IRemoteWordParaphraseStarListService;
-import me.fengorz.kiwi.word.api.feign.fallback.RemoteWordParaphraseStarListServiceFallbackImpl;
+import me.fengorz.kiwi.word.api.feign.IWordParaphraseStarListAPI;
+import me.fengorz.kiwi.word.api.feign.fallback.WordParaphraseStarListAPIFallback;
 import org.springframework.stereotype.Component;
 
 
 /**
  * 单词本
  *
- * @author codingByFeng
+ * @author zhanshifeng
  * @date 2019-12-08 23:27:41
  */
 @Component
-public class RemoteWordParaphraseStarListServiceFallbackFactory implements FallbackFactory<IRemoteWordParaphraseStarListService> {
+public class RemoteWordParaphraseStarListServiceFallbackFactory implements FallbackFactory<IWordParaphraseStarListAPI> {
     @Override
-    public IRemoteWordParaphraseStarListService create(Throwable throwable) {
-        RemoteWordParaphraseStarListServiceFallbackImpl remoteWordParaphraseStarListServiceFallback = new RemoteWordParaphraseStarListServiceFallbackImpl();
+    public IWordParaphraseStarListAPI create(Throwable throwable) {
+        WordParaphraseStarListAPIFallback remoteWordParaphraseStarListServiceFallback = new WordParaphraseStarListAPIFallback();
         remoteWordParaphraseStarListServiceFallback.setThrowable(throwable);
         return remoteWordParaphraseStarListServiceFallback;
     }

@@ -1,6 +1,6 @@
 /*
  *
- *   Copyright [2019~2025] [codingByFeng]
+ *   Copyright [2019~2025] [zhanshifeng]
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -21,7 +21,6 @@ package me.fengorz.kiwi.word.biz.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.RequiredArgsConstructor;
-import me.fengorz.kiwi.common.sdk.util.bean.KiwiBeanUtils;
 import me.fengorz.kiwi.common.sdk.util.lang.collection.KiwiCollectionUtils;
 import me.fengorz.kiwi.word.api.entity.WordStarRelDO;
 import me.fengorz.kiwi.word.biz.mapper.WordStarRelMapper;
@@ -34,10 +33,10 @@ import java.util.List;
 /**
  * 单词本与单词的关联表
  *
- * @author codingByFeng
+ * @author zhanshifeng
  * @date 2020-01-03 14:39:28
  */
-@Service("WordStarRelService")
+@Service()
 @RequiredArgsConstructor
 public class WordStarRelServiceImpl extends ServiceImpl<WordStarRelMapper, WordStarRelDO> implements IWordStarRelService {
 

@@ -1,6 +1,6 @@
 /*
  *
- *   Copyright [2019~2025] [codingByFeng]
+ *   Copyright [2019~2025] [zhanshifeng]
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@
 package me.fengorz.kiwi.bdf.security.component;
 
 import cn.hutool.core.collection.CollUtil;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import me.fengorz.kiwi.common.api.constant.CommonConstants;
 import me.fengorz.kiwi.common.api.constant.SecurityConstants;
 import me.fengorz.kiwi.common.api.entity.EnhancerUser;
@@ -40,7 +40,7 @@ import java.util.Map;
 /**
  * 根据checktoken 的结果转化用户信息
  */
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class KiwiUserAuthenticationConverter implements UserAuthenticationConverter {
     private static final String N_A = "N/A" ;
 

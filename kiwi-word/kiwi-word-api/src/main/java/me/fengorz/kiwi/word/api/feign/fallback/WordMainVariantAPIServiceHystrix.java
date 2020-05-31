@@ -26,7 +26,7 @@ import org.springframework.stereotype.Component;
 /**
  * Hystrix熔断回调实现
  *
- * @Author ZhanShiFeng
+ * @Author zhanshifeng
  * @date 2020-05-24 01:40:36
  */
 @Slf4j

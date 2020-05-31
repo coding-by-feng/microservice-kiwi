@@ -24,7 +24,7 @@ import org.flowable.task.service.delegate.DelegateTask;
 
 /**
  * @Description TODO
- * @Author ZhanShiFeng
+ * @Author zhanshifeng
  * @Date 2019/12/2 11:05 AM
  */
 public class ManagerTaskHandler implements TaskListener {

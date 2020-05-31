@@ -21,34 +21,34 @@ package me.fengorz.kiwi.word.api.common;
 
 /**
  * @Description word服务静态变量
- * @Author ZhanShiFeng
+ * @Author zhanshifeng
  * @Date 2020/5/17 11:19 PM
  */
 public class WordConstants {
 
-    public static final String KIWI_WORD_BIZ = "kiwi-word-biz" ;
+    public static final String KIWI_WORD_BIZ = "kiwi-word-biz";
 
-    public static final String CACHE_NAMES = "kiwi" ;
+    public static final String CACHE_NAMES = "kiwi";
 
     public interface CACHE_KEY_PREFIX_OPERATE {
 
-        String CLASS = "operate" ;
-        String METHOD_WORD_NAME = "word_name" ;
+        String CLASS = "operate";
+        String METHOD_WORD_NAME = "word_name";
 
     }
 
     public interface CACHE_KEY_PREFIX_WORD_MAIN {
 
-        String CLASS = "word_main" ;
-        String METHOD_ID = "id" ;
-        String METHOD_NAME = "name" ;
+        String CLASS = "word_main";
+        String METHOD_ID = "id";
+        String METHOD_NAME = "name";
 
     }
 
     public interface CACHE_KEY_PREFIX_WORD_VARIANT {
-        String CLASS = "word_variant" ;
-        String METHOD_VARIANT_NAME = "name" ;
-        String METHOD_ID_NAME = "id_name" ;
+        String CLASS = "word_variant";
+        String METHOD_VARIANT_NAME = "name";
+        String METHOD_ID_NAME = "id_name";
     }
 
     public static final int VARIANT_TYPE_UNKNOWN = 0;

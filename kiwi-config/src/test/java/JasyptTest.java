@@ -22,7 +22,7 @@ import org.jasypt.encryption.pbe.config.EnvironmentPBEConfig;
 
 /**
  * @Description TODO
- * @Author ZhanShiFeng
+ * @Author zhanshifeng
  * @Date 2019/12/31 3:17 PM
  */
 public class JasyptTest {
@@ -35,7 +35,7 @@ public class JasyptTest {
         config.setAlgorithm("PBEWithMD5AndDES");          // 加密的算法，这个算法是默认的
         config.setPassword("coding-by-feng");                        // 加密的密钥
         standardPBEStringEncryptor.setConfig(config);
-        String plainText = "enhancer" ;
+        String plainText = "enhancer";
         String encryptedText = standardPBEStringEncryptor.encrypt(plainText);
         System.out.println(encryptedText);
     }
@@ -48,7 +48,7 @@ public class JasyptTest {
         config.setAlgorithm("PBEWithMD5AndDES");
         config.setPassword("pig");
         standardPBEStringEncryptor.setConfig(config);
-        String encryptedText = "i3cDFhs26sa2Ucrfz2hnQw==" ;
+        String encryptedText = "i3cDFhs26sa2Ucrfz2hnQw==";
         String plainText = standardPBEStringEncryptor.decrypt(encryptedText);
         System.out.println(plainText);
     }

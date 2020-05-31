@@ -43,7 +43,6 @@
             <artifactId>kiwi-upms-api</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
-
         <!--安全模块-->
         <dependency>
             <groupId>org.springframework.cloud</groupId>

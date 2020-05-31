@@ -30,7 +30,7 @@ import me.fengorz.kiwi.common.api.constant.CommonConstants;
  * <p>
  * OAuth2 异常格式化
  *
- * @Author ZhanShiFeng
+ * @Author zhanshifeng
  */
 public class KiwiAuth2ExceptionSerializer extends StdSerializer<KiwiAuth2Exception> {
     private static final long serialVersionUID = 6776883623606657402L;
@@ -43,9 +43,9 @@ public class KiwiAuth2ExceptionSerializer extends StdSerializer<KiwiAuth2Excepti
     @SneakyThrows
     public void serialize(KiwiAuth2Exception value, JsonGenerator gen, SerializerProvider provider) {
         gen.writeStartObject();
-        gen.writeObjectField("code" , CommonConstants.RESULT_CODE_SERVICE_ERROR);
-        gen.writeStringField("msg" , value.getMessage());
-        gen.writeStringField("data" , value.getErrorCode());
+        gen.writeObjectField("code", CommonConstants.RESULT_CODE_SERVICE_ERROR);
+        gen.writeStringField("msg", value.getMessage());
+        gen.writeStringField("data", value.getErrorCode());
         gen.writeEndObject();
     }
 }

@@ -26,13 +26,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 
 /**
- * @Author ZhanShiFeng
+ * @Author zhanshifeng
  * @date 2020-05-24 01:40:36
  */
-@FeignClient(contextId = "remoteWordMainVariantService" , value = WordConstants.KIWI_WORD_BIZ)
+@FeignClient(contextId = "remoteWordMainVariantService", value = WordConstants.KIWI_WORD_BIZ)
 public interface IWordMainVariantAPIService {
 
-    String WORD_MAIN_VARIANT = "/word/main/variant" ;
+    String WORD_MAIN_VARIANT = "/word/main/variant";
 
     @GetMapping(WORD_MAIN_VARIANT + "/get/{id}")
     R<WordMainVariantVO> get(@PathVariable Integer id);

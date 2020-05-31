@@ -27,10 +27,8 @@ import me.fengorz.kiwi.word.api.exception.WordResultStoreRuntimeException;
 import me.fengorz.kiwi.word.api.vo.WordCharacterVO;
 import me.fengorz.kiwi.word.api.vo.WordQueryVO;
 
-import java.util.List;
-
 /**
- * @Author ZhanShiFeng
+ * @Author zhanshifeng
  */
 public interface IWordOperateService {
 

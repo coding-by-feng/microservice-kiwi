@@ -30,7 +30,7 @@ import java.util.Locale;
 
 /**
  * @Description 国际化消息源配置
- * @Author ZhanShiFeng
+ * @Author zhanshifeng
  * @Date 2020/4/8 4:14 PM
  */
 public class I18nMessageResource extends AbstractMessageSource implements ResourceLoaderAware {

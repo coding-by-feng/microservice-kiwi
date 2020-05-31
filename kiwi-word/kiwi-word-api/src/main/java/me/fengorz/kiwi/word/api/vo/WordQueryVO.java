@@ -28,7 +28,7 @@ import java.util.List;
 
 /**
  * @Description A view of the word query results
- * @Author ZhanShiFeng
+ * @Author zhanshifeng
  * @Date 2019/11/25 10:57 PM
  */
 @Data

@@ -24,7 +24,7 @@ import lombok.NoArgsConstructor;
 /**
  * 403 授权拒绝
  *
- * @Author ZhanShiFeng
+ * @Author zhanshifeng
  */
 @NoArgsConstructor
 public class KiwiDeniedException extends RuntimeException {

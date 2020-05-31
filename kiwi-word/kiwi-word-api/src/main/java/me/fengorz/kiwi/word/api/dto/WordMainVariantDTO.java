@@ -21,7 +21,7 @@ import me.fengorz.kiwi.word.api.entity.WordMainVariantDO;
 /**
  * 自动生成实体类DTO
  *
- * @Author ZhanShiFeng
+ * @Author zhanshifeng
  * @date 2020-05-24 01:32:16
  */
 public class WordMainVariantDTO extends WordMainVariantDO {

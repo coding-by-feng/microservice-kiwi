@@ -33,6 +33,7 @@ import me.fengorz.kiwi.word.api.entity.WordMainDO;
 import me.fengorz.kiwi.word.api.vo.WordMainVO;
 import me.fengorz.kiwi.word.biz.mapper.WordMainMapper;
 import me.fengorz.kiwi.word.biz.service.IWordMainService;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
@@ -110,5 +111,17 @@ public class WordMainServiceImpl extends ServiceImpl<WordMainMapper, WordMainDO>
     @Override
     public boolean isExist(String wordName) {
         return this.getOne(wordName) != null;
+    }
+
+    @Override
+    @KiwiCacheKeyPrefix(WordConstants.CACHE_KEY_PREFIX_WORD_MAIN.METHOD_NAME)
+    @CacheEvict(cacheNames = WordConstants.CACHE_NAMES, keyGenerator = CacheConstants.CACHE_KEY_GENERATOR_BEAN)
+    public void evictByName(@KiwiCacheKey String wordName){
+    }
+
+    @Override
+    @KiwiCacheKeyPrefix(WordConstants.CACHE_KEY_PREFIX_WORD_MAIN.METHOD_ID)
+    @CacheEvict(cacheNames = WordConstants.CACHE_NAMES, keyGenerator = CacheConstants.CACHE_KEY_GENERATOR_BEAN)
+    public void evictById(@KiwiCacheKey Integer id){
     }
 }

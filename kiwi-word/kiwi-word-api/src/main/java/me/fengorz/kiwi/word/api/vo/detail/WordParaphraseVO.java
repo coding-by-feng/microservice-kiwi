@@ -41,6 +41,8 @@ public class WordParaphraseVO implements Serializable {
 
     private String wordName;
 
+    private List<String> phraseList;
+
     private Integer paraphraseId;
     /**
      * 英文释义

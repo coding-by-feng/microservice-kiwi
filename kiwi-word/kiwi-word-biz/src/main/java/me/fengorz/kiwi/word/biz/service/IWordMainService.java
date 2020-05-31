@@ -41,4 +41,7 @@ public interface IWordMainService extends IService<WordMainDO> {
     List<Map> fuzzyQueryList(Page page, String wordName);
 
     boolean isExist(String wordName);
+
+    void evictByName(String wordName);
+    void evictById(Integer id);
 }

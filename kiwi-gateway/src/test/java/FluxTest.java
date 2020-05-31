@@ -30,7 +30,7 @@ import reactor.netty.resources.ConnectionProvider;
 
 /**
  * @Description TODO
- * @Author ZhanShiFeng
+ * @Author zhanshifeng
  * @Date 2019/12/16 4:27 PM
  */
 public class FluxTest {
@@ -93,7 +93,7 @@ public class FluxTest {
 
     // @Test
     public void test5() {
-        Flux.just("a" , "b" , "c").log().subscribe(new Subscriber<String>() {
+        Flux.just("a", "b", "c").log().subscribe(new Subscriber<String>() {
 
             @Override
             public void onSubscribe(Subscription s) {

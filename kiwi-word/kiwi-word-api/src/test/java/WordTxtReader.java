@@ -21,7 +21,7 @@ import java.io.*;
 
 /**
  * @Description TODO
- * @Author ZhanShiFeng
+ * @Author zhanshifeng
  * @Date 2019/11/27 4:32 PM
  */
 public class WordTxtReader {

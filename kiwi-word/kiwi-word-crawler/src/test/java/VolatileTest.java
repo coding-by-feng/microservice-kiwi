@@ -22,7 +22,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @Description TODO
- * @Author ZhanShiFeng
+ * @Author zhanshifeng
  * @Date 2020/1/3 9:47 AM
  */
 public class VolatileTest {

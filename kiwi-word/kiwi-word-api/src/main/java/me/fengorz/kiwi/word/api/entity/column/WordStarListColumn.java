@@ -20,17 +20,17 @@
 package me.fengorz.kiwi.word.api.entity.column;
 
 /**
- * @Author ZhanShiFeng
+ * @Author zhanshifeng
  * @Date 2020/1/2 3:42 PM
  */
 public class WordStarListColumn {
 
-    public static final String ID = "id" ;
-    public static final String LIST_NAME = "list_name" ;
-    public static final String REMARK = "remark" ;
-    public static final String CREATE_TIME = "create_time" ;
-    public static final String OWNER = "owner" ;
-    public static final String IS_DEL = "is_del" ;
-    public static final String SORT = "sort" ;
+    public static final String ID = "id";
+    public static final String LIST_NAME = "list_name";
+    public static final String REMARK = "remark";
+    public static final String CREATE_TIME = "create_time";
+    public static final String OWNER = "owner";
+    public static final String IS_DEL = "is_del";
+    public static final String SORT = "sort";
 
 }

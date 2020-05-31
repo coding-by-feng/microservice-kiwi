@@ -24,7 +24,7 @@ import me.fengorz.kiwi.bdf.security.component.KiwiAuth2ExceptionSerializer;
 import org.springframework.http.HttpStatus;
 
 /**
- * @Author ZhanShiFeng
+ * @Author zhanshifeng
  */
 @JsonSerialize(using = KiwiAuth2ExceptionSerializer.class)
 public class UnauthorizedException extends KiwiAuth2Exception {
@@ -37,7 +37,7 @@ public class UnauthorizedException extends KiwiAuth2Exception {
 
     @Override
     public String getOAuth2ErrorCode() {
-        return "unauthorized" ;
+        return "unauthorized";
     }
 
     @Override

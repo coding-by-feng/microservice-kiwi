@@ -39,7 +39,7 @@ import java.io.PrintWriter;
  * 授权拒绝处理器，覆盖默认的OAuth2AccessDeniedHandler
  * 包装失败信息到PigDeniedException
  *
- * @Author ZhanShiFeng
+ * @Author zhanshifeng
  */
 @Slf4j
 @Component
@@ -57,7 +57,7 @@ public class KiwiAccessDeniedHandler extends OAuth2AccessDeniedHandler {
     @Override
     @SneakyThrows
     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException authException) {
-        log.info("授权失败，禁止访问 {}" , request.getRequestURI());
+        log.info("授权失败，禁止访问 {}", request.getRequestURI());
         response.setCharacterEncoding(CommonConstants.UTF8);
         response.setContentType(CommonConstants.CONTENT_TYPE);
         R<KiwiDeniedException> result = R.failed(new KiwiDeniedException("授权失败，禁止访问"));

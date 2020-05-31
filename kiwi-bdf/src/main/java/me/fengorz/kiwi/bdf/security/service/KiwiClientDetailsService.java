@@ -28,7 +28,7 @@ import org.springframework.security.oauth2.provider.client.JdbcClientDetailsServ
 import javax.sql.DataSource;
 
 /**
- * @Author ZhanShiFeng
+ * @Author zhanshifeng
  */
 public class KiwiClientDetailsService extends JdbcClientDetailsService {
 
@@ -37,7 +37,7 @@ public class KiwiClientDetailsService extends JdbcClientDetailsService {
     }
 
     @Override
-    @Cacheable(value = SecurityConstants.CLIENT_DETAILS_KEY, key = "#clientId" , unless = "#result == null")
+    @Cacheable(value = SecurityConstants.CLIENT_DETAILS_KEY, key = "#clientId", unless = "#result == null")
     public ClientDetails loadClientByClientId(String clientId) throws InvalidClientException {
         return super.loadClientByClientId(clientId);
     }

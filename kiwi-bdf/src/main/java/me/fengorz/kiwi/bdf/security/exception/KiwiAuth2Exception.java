@@ -27,7 +27,7 @@ import org.springframework.security.oauth2.common.exceptions.OAuth2Exception;
 /**
  * 自定义OAuth2Exception
  *
- * @Author ZhanShiFeng
+ * @Author zhanshifeng
  */
 @JsonSerialize(using = KiwiAuth2ExceptionSerializer.class)
 public class KiwiAuth2Exception extends OAuth2Exception {

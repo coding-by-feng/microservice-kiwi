@@ -24,7 +24,7 @@ import me.fengorz.kiwi.word.api.dto.mapper.in.SelectStarListItemDTO;
 
 /**
  * @Description TODO
- * @Author ZhanShiFeng
+ * @Author zhanshifeng
  * @Date 2020/1/6 2:28 PM
  */
 public class WordBizUtils {

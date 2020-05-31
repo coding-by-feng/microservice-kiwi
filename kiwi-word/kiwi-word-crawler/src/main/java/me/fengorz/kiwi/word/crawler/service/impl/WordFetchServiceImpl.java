@@ -35,7 +35,7 @@ import me.fengorz.kiwi.word.crawler.service.IWordFetchService;
 import org.springframework.stereotype.Service;
 
 /**
- * @Author ZhanShiFeng
+ * @Author zhanshifeng
  * @Date 2020/5/20 11:54 PM
  */
 @Slf4j

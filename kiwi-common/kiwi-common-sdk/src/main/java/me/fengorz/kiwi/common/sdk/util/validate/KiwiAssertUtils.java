@@ -29,7 +29,7 @@ import java.util.Collection;
 
 /**
  * @Description 断言工具类
- * @Author ZhanShiFeng
+ * @Author zhanshifeng
  * @Date 2019/11/26 9:38 PM
  */
 public class KiwiAssertUtils extends Assert {
@@ -41,7 +41,7 @@ public class KiwiAssertUtils extends Assert {
         return object;
     }
 
-    public static <T> T resourceNotNull(T object, String errorMsgTemplate, Object... params){
+    public static <T> T resourceNotNull(T object, String errorMsgTemplate, Object... params) {
         if (object == null) {
             throw new ResourceNotFoundException(StrUtil.format(errorMsgTemplate, params));
         }

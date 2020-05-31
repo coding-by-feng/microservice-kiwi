@@ -32,14 +32,14 @@ import java.io.Serializable;
  * 响应体
  *
  * @param <T>
- * @Author ZhanShiFeng
+ * @Author zhanshifeng
  */
 @ToString
 @Data
 @Accessors(chain = true)
 public class R<T> implements Serializable {
     private static final long serialVersionUID = -1845782287674831578L;
-    private static final String FEIGN_CALL_FAILED = "feign call failed!" ;
+    private static final String FEIGN_CALL_FAILED = "feign call failed!";
 
     private Integer code;
 

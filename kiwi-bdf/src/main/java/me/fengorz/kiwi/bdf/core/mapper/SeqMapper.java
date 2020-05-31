@@ -1,0 +1,32 @@
+/*
+ * Copyright (c) 2019, CCSSOFT All Rights Reserved.
+ */
+package me.fengorz.kiwi.bdf.core.mapper;
+
+import me.fengorz.kiwi.bdf.core.entity.Sequence;
+
+/**
+ * <p>
+ * 描述: 序列及排序相关Mapper类，包括产生序列，产生树表的treeCode,表的排序等
+ * </p>
+ **/
+public interface SeqMapper {
+
+    /**
+     * 生成一个整型序列
+     *
+     * @param seq 序列对象
+     * @return 新生成的ID
+     */
+    Integer genSequence(Sequence seq);
+
+    /**
+     * 删除序列
+     *
+     * @param seq 序列对象
+     * @return 新生成的ID
+     */
+    Integer deleteSequence(Sequence seq);
+
+}
+

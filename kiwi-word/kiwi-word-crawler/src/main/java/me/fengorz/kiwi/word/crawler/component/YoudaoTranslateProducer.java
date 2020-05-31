@@ -21,7 +21,7 @@ package me.fengorz.kiwi.word.crawler.component;
 
 /**
  * @Description TODO
- * @Author ZhanShiFeng
+ * @Author zhanshifeng
  * @Date 2019/11/29 3:17 PM
  */
 public class YoudaoTranslateProducer {

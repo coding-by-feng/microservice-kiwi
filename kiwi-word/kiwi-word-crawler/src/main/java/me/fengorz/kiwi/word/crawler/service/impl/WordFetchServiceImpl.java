@@ -44,7 +44,7 @@ import org.springframework.stereotype.Service;
 public class WordFetchServiceImpl implements IWordFetchService {
 
     private final IJsoupService jsoupService;
-    private final IWordFetchAPI remoteWordFetchService;
+    private final IWordFetchAPI wordFetchAPI;
     private final IWordMainVariantAPI wordMainVariantAPIService;
 
     @Override
@@ -59,7 +59,7 @@ public class WordFetchServiceImpl implements IWordFetchService {
             StringBuilder allFetchResult = new StringBuilder();
 
             // All exceptions are called back to the data in the word_fetch_queue
-            R storeResult = remoteWordFetchService.storeFetchWordResult(fetchWordResultDTO);
+            R storeResult = wordFetchAPI.storeFetchWordResult(fetchWordResultDTO);
             if (storeResult.isFail()) {
                 subDealException(wordFetchQueue, storeResult.getCode(), storeResult.getMsg());
             } else {
@@ -76,7 +76,7 @@ public class WordFetchServiceImpl implements IWordFetchService {
                 log.info(fetchResult);
                 allFetchResult.append(fetchWord);
 
-                remoteWordFetchService.invalid(wordFetchQueue.getWordName());
+                wordFetchAPI.invalid(wordFetchQueue.getWordName());
                 String queueDelResult = KiwiStringUtils.format("word({}) fetch queue del success!", wordFetchQueue.getWordName());
                 log.info(queueDelResult);
                 allFetchResult.append(queueDelResult);
@@ -89,7 +89,7 @@ public class WordFetchServiceImpl implements IWordFetchService {
         } catch (Exception e) {
             subDealException(wordFetchQueue, WordCrawlerConstants.STATUS_ERROR_JSOUP_RESULT_FETCH_FAILED, e.getMessage());
         } finally {
-            remoteWordFetchService.updateByWordName(wordFetchQueue);
+            wordFetchAPI.updateByWordName(wordFetchQueue);
         }
     }
 

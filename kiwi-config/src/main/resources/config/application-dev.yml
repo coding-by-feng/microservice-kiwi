@@ -77,15 +77,15 @@ ribbon:
 
 # mybaits-plus配置
 mybatis-plus:
-  mapper-locations: classpath:/mapper/*Mapper.xml
+  mapper-locations: classpath*:mapper/**/*Mapper.xml
   global-config:
     banner: false
     db-config:
-      id-type: 0
-      field-strategy: 1
+      id-type: id_worker
       table-underline: true
       logic-delete-value: 1
       logic-not-delete-value: 0
+      select-strategy: NOT_EMPTY
   configuration:
     map-underscore-to-camel-case: true
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl

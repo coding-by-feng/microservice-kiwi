@@ -88,6 +88,10 @@ public class R<T> implements Serializable {
         return restResult(null, ResultCode.MICROSERVICE_INVOCATION_ERROR, FEIGN_CALL_FAILED);
     }
 
+    public static <T> R<T> feignCallFailed(String msg) {
+        return restResult(null, ResultCode.MICROSERVICE_INVOCATION_ERROR, msg);
+    }
+
 
     public static <T> R<T> failed(String msg) {
         return restResult(null, ResultCode.FAIL, msg);

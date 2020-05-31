@@ -1,6 +1,6 @@
 /*
  *
- *   Copyright [2019~2025] [codingByFeng]
+ *   Copyright [2019~2025] [zhanshifeng]
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -23,19 +23,22 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import me.fengorz.kiwi.common.api.R;
 import me.fengorz.kiwi.word.api.entity.WordParaphraseStarListDO;
+import me.fengorz.kiwi.word.api.vo.WordParaphraseStarListVO;
 import me.fengorz.kiwi.word.api.vo.star.ParaphraseStarItemVO;
+
+import java.util.List;
 
 /**
  * 单词本
  *
- * @author codingByFeng
+ * @author zhanshifeng
  * @date 2019-12-08 23:27:41
  */
 public interface IWordParaphraseStarListService extends IService<WordParaphraseStarListDO> {
 
     Integer countById(Integer id);
 
-    R getCurrentUserList(Integer userId);
+    List<WordParaphraseStarListVO> getCurrentUserList(Integer userId);
 
     R updateListByUser(WordParaphraseStarListDO entity, Integer id, Integer userId);
 

@@ -1,6 +1,6 @@
 /*
  *
- *   Copyright [2019~2025] [codingByFeng]
+ *   Copyright [2019~2025] [zhanshifeng]
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ package me.fengorz.kiwi.word.biz.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import me.fengorz.kiwi.common.api.annotation.cache.KiwiCacheKey;
 import me.fengorz.kiwi.common.api.annotation.cache.KiwiCacheKeyPrefix;
 import me.fengorz.kiwi.common.api.constant.CacheConstants;
@@ -46,11 +46,11 @@ import java.util.stream.Collectors;
 /**
  * 单词主表
  *
- * @author codingByFeng
+ * @author zhanshifeng
  * @date 2019-10-31 20:32:07
  */
-@AllArgsConstructor
-@Service("wordMainService")
+@Service()
+@RequiredArgsConstructor
 @KiwiCacheKeyPrefix(WordConstants.CACHE_KEY_PREFIX_WORD_MAIN.CLASS)
 public class WordMainServiceImpl extends ServiceImpl<WordMainMapper, WordMainDO> implements IWordMainService {
 

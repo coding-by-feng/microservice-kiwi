@@ -1,6 +1,6 @@
 /*
  *
- *   Copyright [2019~2025] [codingByFeng]
+ *   Copyright [2019~2025] [zhanshifeng]
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -24,12 +24,14 @@ import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import me.fengorz.kiwi.common.api.constant.CommonConstants;
+import me.fengorz.kiwi.common.sdk.util.bean.KiwiBeanUtils;
 import me.fengorz.kiwi.word.api.dto.mapper.in.CountEntityIsCollectDTO;
 import me.fengorz.kiwi.word.api.dto.mapper.out.SelectWordStarListResultDTO;
 import me.fengorz.kiwi.word.api.entity.WordStarListDO;
 import me.fengorz.kiwi.word.api.entity.column.WordStarListColumn;
+import me.fengorz.kiwi.word.api.vo.WordStarListVO;
 import me.fengorz.kiwi.word.api.vo.star.WordStarItemParaphraseVO;
 import me.fengorz.kiwi.word.api.vo.star.WordStarItemVO;
 import me.fengorz.kiwi.word.biz.mapper.WordStarListMapper;
@@ -42,11 +44,11 @@ import java.util.List;
 /**
  * 单词本
  *
- * @author codingByFeng
+ * @author zhanshifeng
  * @date 2019-12-08 23:26:57
  */
-@Service("WordStarListService")
-@AllArgsConstructor
+@Service()
+@RequiredArgsConstructor
 public class WordStarListServiceImpl extends ServiceImpl<WordStarListMapper, WordStarListDO> implements IWordStarListService {
 
     private final WordStarListMapper wordStarListMapper;
@@ -63,7 +65,7 @@ public class WordStarListServiceImpl extends ServiceImpl<WordStarListMapper, Wor
     }
 
     @Override
-    public List<WordStarListDO> getCurrentUserList(Integer userId) {
+    public List<WordStarListVO> getCurrentUserList(Integer userId) {
         QueryWrapper<WordStarListDO> queryWrapper = new QueryWrapper<>(new WordStarListDO()
                 .setOwner(userId)
                 .setIsDel(CommonConstants.FLAG_N))
@@ -71,7 +73,18 @@ public class WordStarListServiceImpl extends ServiceImpl<WordStarListMapper, Wor
                         tableFieldInfo -> WordStarListColumn.ID.equals(tableFieldInfo.getColumn())
                                 || WordStarListColumn.LIST_NAME.equals(tableFieldInfo.getColumn()));
 
-        return wordStarListMapper.selectList(queryWrapper);
+        return KiwiBeanUtils.convertFrom(wordStarListMapper.selectList(queryWrapper), WordStarListVO.class);
+        // TODO ZSF 待优化
+        // return Stream.of(starList).flatMap(list -> {
+        //     List<Map<String, Object>> convertedList = new ArrayList<>();
+        //     list.forEach(wordStarListDO -> {
+        //         Map<String, Object> map = CollUtil.newHashMap();
+        //         map.put(WordStarListColumn.ID, wordStarListDO.getId());
+        //         map.put("listName", wordStarListDO.getListName());
+        //         convertedList.add(map);
+        //     });
+        //     return Stream.of();
+        // });
     }
 
     @Override

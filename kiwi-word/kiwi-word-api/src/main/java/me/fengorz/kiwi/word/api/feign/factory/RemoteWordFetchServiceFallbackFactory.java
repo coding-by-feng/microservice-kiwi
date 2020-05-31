@@ -1,6 +1,6 @@
 /*
  *
- *   Copyright [2019~2025] [codingByFeng]
+ *   Copyright [2019~2025] [zhanshifeng]
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -20,20 +20,20 @@
 package me.fengorz.kiwi.word.api.feign.factory;
 
 import feign.hystrix.FallbackFactory;
-import me.fengorz.kiwi.word.api.feign.IWordFetchAPIService;
-import me.fengorz.kiwi.word.api.feign.fallback.WordFetchAPIServiceFallbackImpl;
+import me.fengorz.kiwi.word.api.feign.IWordFetchAPI;
+import me.fengorz.kiwi.word.api.feign.fallback.WordFetchAPIFallback;
 import org.springframework.stereotype.Component;
 
 /**
  * @Description TODO
- * @Author codingByFeng
+ * @Author zhanshifeng
  * @Date 2019/10/30 3:19 PM
  */
 @Component
-public class RemoteWordFetchServiceFallbackFactory implements FallbackFactory<IWordFetchAPIService> {
+public class RemoteWordFetchServiceFallbackFactory implements FallbackFactory<IWordFetchAPI> {
     @Override
-    public IWordFetchAPIService create(Throwable throwable) {
-        WordFetchAPIServiceFallbackImpl remoteWordFetchServiceFallBack = new WordFetchAPIServiceFallbackImpl();
+    public IWordFetchAPI create(Throwable throwable) {
+        WordFetchAPIFallback remoteWordFetchServiceFallBack = new WordFetchAPIFallback();
         remoteWordFetchServiceFallBack.setThrowable(throwable);
         return remoteWordFetchServiceFallBack;
     }

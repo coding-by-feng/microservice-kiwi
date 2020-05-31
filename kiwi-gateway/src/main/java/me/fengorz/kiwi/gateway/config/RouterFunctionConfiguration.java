@@ -1,6 +1,6 @@
 /*
  *
- *   Copyright [2019~2025] [codingByFeng]
+ *   Copyright [2019~2025] [zhanshifeng]
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@
 
 package me.fengorz.kiwi.gateway.config;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.gateway.handler.AutoCodeHandler;
 import me.fengorz.kiwi.gateway.handler.HystrixFallbackHandler;
@@ -37,7 +37,7 @@ import org.springframework.web.reactive.function.server.RouterFunctions;
  */
 @Slf4j
 @Configuration
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class RouterFunctionConfiguration {
     private final HystrixFallbackHandler hystrixFallbackHandler;
     private final AutoCodeHandler autoCodeHandler;

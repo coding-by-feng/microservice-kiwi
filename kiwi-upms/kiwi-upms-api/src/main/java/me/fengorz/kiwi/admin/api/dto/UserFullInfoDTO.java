@@ -1,6 +1,6 @@
 /*
  *
- *   Copyright [2019~2025] [codingByFeng]
+ *   Copyright [2019~2025] [zhanshifeng]
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ import me.fengorz.kiwi.admin.api.entity.SysUser;
 
 /**
  * @Description 用户的全部信息数据
- * @Author codingByFeng
+ * @Author zhanshifeng
  * @Date 2019-09-26 10:52
  */
 @Data

@@ -1,5 +1,5 @@
 /*
- * Copyright [2019~2025] [codingByFeng]
+ * Copyright [2019~2025] [zhanshifeng]
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ package me.fengorz.kiwi.word.api.feign.fallback;
 
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.api.R;
-import me.fengorz.kiwi.word.api.feign.IWordMainVariantAPIService;
+import me.fengorz.kiwi.word.api.feign.IWordMainVariantAPI;
 import me.fengorz.kiwi.word.api.vo.WordMainVariantVO;
 import org.springframework.stereotype.Component;
 
@@ -31,12 +31,7 @@ import org.springframework.stereotype.Component;
  */
 @Slf4j
 @Component
-public class WordMainVariantAPIServiceHystrix implements IWordMainVariantAPIService {
-
-    @Override
-    public R<WordMainVariantVO> get(Integer id) {
-        return R.feignCallFailed();
-    }
+public class WordMainVariantAPIFallback implements IWordMainVariantAPI {
 
     @Override
     public R<Void> insertVariant(String inputWordName, String fetchWordName) {

@@ -1,6 +1,6 @@
 /*
  *
- *   Copyright [2019~2025] [codingByFeng]
+ *   Copyright [2019~2025] [zhanshifeng]
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@
 package me.fengorz.kiwi.bdf.security.service;
 
 import cn.hutool.core.util.ArrayUtil;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.admin.api.dto.UserFullInfoDTO;
 import me.fengorz.kiwi.admin.api.entity.SysUser;
@@ -48,7 +48,7 @@ import java.util.Set;
  */
 @Slf4j
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class KiwiUserDetailServiceImpl implements UserDetailsService {
     private final CacheManager cacheManager;
     private final RemoteUserService remoteUserService;

@@ -1,6 +1,6 @@
 /*
  *
- *   Copyright [2019~2025] [codingByFeng]
+ *   Copyright [2019~2025] [zhanshifeng]
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@
 package me.fengorz.kiwi.word.crawler.component;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.api.R;
 import me.fengorz.kiwi.common.api.constant.CommonConstants;
@@ -29,7 +29,7 @@ import me.fengorz.kiwi.word.api.common.WordCrawlerConstants;
 import me.fengorz.kiwi.word.api.dto.fetch.WordMessageDTO;
 import me.fengorz.kiwi.word.api.dto.remote.WordFetchQueuePageDTO;
 import me.fengorz.kiwi.word.api.entity.WordFetchQueueDO;
-import me.fengorz.kiwi.word.api.feign.IWordFetchAPIService;
+import me.fengorz.kiwi.word.api.feign.IWordFetchAPI;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
@@ -37,16 +37,16 @@ import java.util.*;
 
 /**
  * @Description TODO
- * @Author codingByFeng
+ * @Author zhanshifeng
  * @Date 2019/10/30 10:33 AM
  */
 @Component
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class AsyncConcurrentProducer {
 
     private final WordFetchProducer wordFetchProducer;
-    private final IWordFetchAPIService remoteWordFetchService;
+    private final IWordFetchAPI remoteWordFetchService;
 
     public void fetch() {
         WordFetchQueueDO wordFetchQueue = new WordFetchQueueDO()

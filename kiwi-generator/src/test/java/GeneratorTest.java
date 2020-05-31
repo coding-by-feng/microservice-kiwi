@@ -2,7 +2,7 @@ import me.fengorz.kiwi.common.sdk.util.bean.KiwiBeanUtils;
 
 /**
  * @Description TODO
- * @Author codingByFeng
+ * @Author zhanshifeng
  * @Date 2019-09-10 14:19
  */
 public class GeneratorTest {

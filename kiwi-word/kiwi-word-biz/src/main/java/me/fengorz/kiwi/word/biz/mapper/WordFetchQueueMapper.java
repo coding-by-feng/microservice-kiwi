@@ -1,6 +1,6 @@
 /*
  *
- *   Copyright [2019~2025] [codingByFeng]
+ *   Copyright [2019~2025] [zhanshifeng]
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ import me.fengorz.kiwi.word.api.entity.WordFetchQueueDO;
 /**
  * 单词待抓取列表
  *
- * @author codingByFeng
+ * @author zhanshifeng
  * @date 2019-10-30 14:45:45
  */
 public interface WordFetchQueueMapper extends BaseMapper<WordFetchQueueDO> {

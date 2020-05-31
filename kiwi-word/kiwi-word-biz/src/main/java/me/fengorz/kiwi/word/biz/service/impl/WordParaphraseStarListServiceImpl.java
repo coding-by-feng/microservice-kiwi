@@ -1,6 +1,6 @@
 /*
  *
- *   Copyright [2019~2025] [codingByFeng]
+ *   Copyright [2019~2025] [zhanshifeng]
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -24,26 +24,30 @@ import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import me.fengorz.kiwi.common.api.R;
 import me.fengorz.kiwi.common.api.constant.CommonConstants;
+import me.fengorz.kiwi.common.sdk.util.bean.KiwiBeanUtils;
 import me.fengorz.kiwi.word.api.entity.WordParaphraseStarListDO;
 import me.fengorz.kiwi.word.api.entity.WordParaphraseStarRelDO;
 import me.fengorz.kiwi.word.api.entity.column.WordParaphraseStarListColumn;
+import me.fengorz.kiwi.word.api.vo.WordParaphraseStarListVO;
 import me.fengorz.kiwi.word.api.vo.star.ParaphraseStarItemVO;
 import me.fengorz.kiwi.word.biz.mapper.WordParaphraseStarListMapper;
 import me.fengorz.kiwi.word.biz.mapper.WordParaphraseStarRelMapper;
 import me.fengorz.kiwi.word.biz.service.IWordParaphraseStarListService;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * 单词本
  *
- * @author codingByFeng
+ * @author zhanshifeng
  * @date 2019-12-08 23:27:41
  */
-@Service("WordParaphraseStarListService")
-@AllArgsConstructor
+@Service()
+@RequiredArgsConstructor
 public class WordParaphraseStarListServiceImpl extends ServiceImpl<WordParaphraseStarListMapper, WordParaphraseStarListDO> implements IWordParaphraseStarListService {
 
     private final WordParaphraseStarListMapper wordParaphraseStarListMapper;
@@ -60,7 +64,7 @@ public class WordParaphraseStarListServiceImpl extends ServiceImpl<WordParaphras
     }
 
     @Override
-    public R getCurrentUserList(Integer userId) {
+    public List<WordParaphraseStarListVO> getCurrentUserList(Integer userId) {
         QueryWrapper<WordParaphraseStarListDO> queryWrapper = new QueryWrapper<>(new WordParaphraseStarListDO()
                 .setOwner(userId)
                 .setIsDel(CommonConstants.FLAG_N))
@@ -69,7 +73,7 @@ public class WordParaphraseStarListServiceImpl extends ServiceImpl<WordParaphras
                                 || WordParaphraseStarListColumn.LIST_NAME.equals(tableFieldInfo.getColumn())
                                 || WordParaphraseStarListColumn.REMARK.equals(tableFieldInfo.getColumn()));
 
-        return R.success(wordParaphraseStarListMapper.selectList(queryWrapper));
+        return KiwiBeanUtils.convertFrom(wordParaphraseStarListMapper.selectList(queryWrapper), WordParaphraseStarListVO.class);
     }
 
     @Override

@@ -1,6 +1,6 @@
 /*
  *
- *   Copyright [2019~2025] [codingByFeng]
+ *   Copyright [2019~2025] [zhanshifeng]
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -29,7 +29,7 @@ import java.time.LocalDateTime;
 /**
  * 部门管理
  *
- * @author codingByFeng
+ * @author zhanshifeng
  * @date 2019-09-18 09:40:25
  */
 @Data

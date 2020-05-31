@@ -1,6 +1,6 @@
 /*
  *
- *   Copyright [2019~2025] [codingByFeng]
+ *   Copyright [2019~2025] [zhanshifeng]
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -24,8 +24,8 @@ import me.fengorz.kiwi.common.api.exception.dfs.DfsOperateDeleteException;
 import me.fengorz.kiwi.common.api.exception.dfs.DfsOperateException;
 import me.fengorz.kiwi.word.api.dto.fetch.FetchWordResultDTO;
 import me.fengorz.kiwi.word.api.exception.WordResultStoreRuntimeException;
-import me.fengorz.kiwi.word.api.vo.WordCharacterVO;
-import me.fengorz.kiwi.word.api.vo.WordQueryVO;
+import me.fengorz.kiwi.word.api.vo.detail.WordCharacterVO;
+import me.fengorz.kiwi.word.api.vo.detail.WordQueryVO;
 
 /**
  * @Author zhanshifeng

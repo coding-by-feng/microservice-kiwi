@@ -1,6 +1,6 @@
 /*
  *
- *   Copyright [2019~2025] [codingByFeng]
+ *   Copyright [2019~2025] [zhanshifeng]
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@
 
 package me.fengorz.kiwi.generator.service.impl;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import me.fengorz.kiwi.generator.mapper.SysGeneratorMapper;
 import me.fengorz.kiwi.generator.service.SysGeneratorService;
 import org.springframework.stereotype.Service;
@@ -28,11 +28,11 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @Author codingByFeng
+ * @Author zhanshifeng
  * @Date 2019-09-16 16:51
  */
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class SysGeneratorServiceImpl implements SysGeneratorService {
     private final SysGeneratorMapper sysGeneratorMapper;
 

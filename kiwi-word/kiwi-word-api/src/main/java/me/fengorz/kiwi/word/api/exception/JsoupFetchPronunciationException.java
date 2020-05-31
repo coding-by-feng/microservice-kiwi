@@ -1,6 +1,6 @@
 /*
  *
- *   Copyright [2019~2025] [codingByFeng]
+ *   Copyright [2019~2025] [zhanshifeng]
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ package me.fengorz.kiwi.word.api.exception;
 import me.fengorz.kiwi.common.api.exception.BaseException;
 
 /**
- * @Author codingByFeng
+ * @Author zhanshifeng
  * @Date 2019/10/31 4:01 PM
  */
 public class JsoupFetchPronunciationException extends BaseException {

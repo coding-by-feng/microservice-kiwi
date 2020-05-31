@@ -36,7 +36,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @Description 自定义redis key的生成器
- * @Author ZhanShiFeng
+ * @Author zhanshifeng
  * @Date 2020/5/17 11:20 AM
  */
 @NoArgsConstructor
@@ -56,7 +56,7 @@ public class CacheKeyGenerator extends SimpleKeyGenerator {
             prefix += methodKeyPrefix.value() + CommonConstants.SYMBOL_DELIMITER_STR;
         }
 
-        KiwiAssertUtils.serviceEmpty(prefix, "Class[{}], Method[{}]: CacheKeyPrefix cannot be null!" , classKeyPrefix, methodKeyPrefix);
+        KiwiAssertUtils.serviceEmpty(prefix, "Class[{}], Method[{}]: CacheKeyPrefix cannot be null!", classKeyPrefix, methodKeyPrefix);
 
 
         Parameter[] parameters = method.getParameters();

@@ -31,7 +31,7 @@ import java.lang.annotation.*;
  * <p>
  * 资源服务注解
  *
- * @Author ZhanShiFeng
+ * @Author zhanshifeng
  */
 @Documented
 @Inherited

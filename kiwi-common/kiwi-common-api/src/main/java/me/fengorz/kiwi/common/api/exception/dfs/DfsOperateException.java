@@ -24,7 +24,7 @@ import me.fengorz.kiwi.common.api.exception.BaseException;
 
 /**
  * @Description Dfs文件操作异常
- * @Author ZhanShiFeng
+ * @Author zhanshifeng
  * @Date 2019/11/7 11:38 PM
  */
 public class DfsOperateException extends BaseException {

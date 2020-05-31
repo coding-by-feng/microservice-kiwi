@@ -24,11 +24,6 @@
             <artifactId>kiwi-bdf</artifactId>
             <version>${kiwi-bdf.version}</version>
         </dependency>
-        <dependency>
-            <groupId>me.fengorz</groupId>
-            <artifactId>kiwi-common-dfs</artifactId>
-            <version>${kiwi-common.version}</version>
-        </dependency>
         <!-- myself end -->
     </dependencies>
 

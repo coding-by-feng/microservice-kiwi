@@ -32,7 +32,7 @@ import javax.validation.constraints.NotNull;
 /**
  * 单词时态、单复数等的变化
  *
- * @Author ZhanShiFeng
+ * @Author zhanshifeng
  * @date 2020-05-24 01:20:49
  */
 @Validated

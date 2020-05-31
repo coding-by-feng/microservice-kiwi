@@ -23,37 +23,37 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * @Author ZhanShiFeng
+ * @Author zhanshifeng
  * @Date 2020/2/24 11:42 AM
  */
 public class ToolConstants {
 
-    public static final String UTF_8 = "UTF-8" ;
-    public static final String DEFAULT_BACK_END_PROJECT = "auto-generate" ;
+    public static final String UTF_8 = "UTF-8";
+    public static final String DEFAULT_BACK_END_PROJECT = "auto-generate";
     public static Map<String, String> DATA_TYPE_MAP = initDataTypeMap();
 
     private static Map<String, String> initDataTypeMap() {
         if (DATA_TYPE_MAP == null) {
             Map<String, String> map = new HashMap<>();
-            map.put("tinyint" , "Integer");
-            map.put("smallint" , "Integer");
-            map.put("mediumint" , "Integer");
-            map.put("int" , "Integer");
-            map.put("integer" , "Integer");
-            map.put("bigint" , "Long");
-            map.put("float" , "Float");
-            map.put("double" , "Double");
-            map.put("decimal" , "BigDecimal");
-            map.put("bit" , "Boolean");
-            map.put("char" , "String");
-            map.put("varchar" , "String");
-            map.put("tinytext" , "String");
-            map.put("text" , "String");
-            map.put("mediumtext" , "String");
-            map.put("longtext" , "String");
-            map.put("date" , "LocalDateTime");
-            map.put("datetime" , "LocalDateTime");
-            map.put("timestamp" , "LocalDateTime");
+            map.put("tinyint", "Integer");
+            map.put("smallint", "Integer");
+            map.put("mediumint", "Integer");
+            map.put("int", "Integer");
+            map.put("integer", "Integer");
+            map.put("bigint", "Long");
+            map.put("float", "Float");
+            map.put("double", "Double");
+            map.put("decimal", "BigDecimal");
+            map.put("bit", "Boolean");
+            map.put("char", "String");
+            map.put("varchar", "String");
+            map.put("tinytext", "String");
+            map.put("text", "String");
+            map.put("mediumtext", "String");
+            map.put("longtext", "String");
+            map.put("date", "LocalDateTime");
+            map.put("datetime", "LocalDateTime");
+            map.put("timestamp", "LocalDateTime");
             return map;
         }
         return DATA_TYPE_MAP;

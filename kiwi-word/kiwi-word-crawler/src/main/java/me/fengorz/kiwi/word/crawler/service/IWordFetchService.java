@@ -22,7 +22,7 @@ package me.fengorz.kiwi.word.crawler.service;
 import me.fengorz.kiwi.word.api.dto.fetch.WordMessageDTO;
 
 /**
- * @Author ZhanShiFeng
+ * @Author zhanshifeng
  */
 public interface IWordFetchService {
 

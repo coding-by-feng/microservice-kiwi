@@ -13,7 +13,7 @@ import java.util.Set;
 
 /**
  * @Description TODO
- * @Author ZhanShiFeng
+ * @Author zhanshifeng
  * @Date 2019/11/6 9:01 PM
  */
 public class TempTest {
@@ -44,7 +44,7 @@ public class TempTest {
 
     // @Test
     public void test4() {
-        System.out.println(StringUtils.repeat("a" , 10));
+        System.out.println(StringUtils.repeat("a", 10));
     }
 
     // @Test

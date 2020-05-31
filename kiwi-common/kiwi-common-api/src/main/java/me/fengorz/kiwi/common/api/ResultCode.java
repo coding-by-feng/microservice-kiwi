@@ -26,14 +26,14 @@ import java.util.function.Supplier;
 
 /**
  * @Description TODO
- * @Author ZhanShiFeng
+ * @Author zhanshifeng
  * @Date 2020/5/23 1:28 PM
  */
 public interface ResultCode {
 
-    String I18N_CODE_SUCCESS = "common.operate.success" ;
-    String I18N_CODE_FAIL = "common.operate.fail" ;
-    String I18N_CODE_ERROR = "common.operate.error" ;
+    String I18N_CODE_SUCCESS = "common.operate.success";
+    String I18N_CODE_FAIL = "common.operate.fail";
+    String I18N_CODE_ERROR = "common.operate.error";
 
     /**
      * 成功

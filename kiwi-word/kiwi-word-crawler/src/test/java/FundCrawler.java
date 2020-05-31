@@ -29,7 +29,7 @@ import java.util.*;
 
 /**
  * @Description TODO
- * @Author ZhanShiFeng
+ * @Author zhanshifeng
  * @Date 2020/4/22 6:16 PM
  */
 public class FundCrawler {
@@ -43,7 +43,7 @@ public class FundCrawler {
         public String toString() {
             return "Fund{" +
                     "code='" + code + '\'' +
-                    '}' ;
+                    '}';
         }
 
         @Override
@@ -79,14 +79,14 @@ public class FundCrawler {
 
     private void run() {
         List<String> pathList = new ArrayList<>();
-        String week1 = "/Users/zhanshifeng/Documents/myDocument/Document/long-term-bonds/1_week.html" ;
-        String month1 = "/Users/zhanshifeng/Documents/myDocument/Document/long-term-bonds/1_month.html" ;
-        String month3 = "/Users/zhanshifeng/Documents/myDocument/Document/long-term-bonds/3_month.html" ;
-        String month6 = "/Users/zhanshifeng/Documents/myDocument/Document/long-term-bonds/6_month.html" ;
-        String year1 = "/Users/zhanshifeng/Documents/myDocument/Document/long-term-bonds/1_year.html" ;
-        String year2 = "/Users/zhanshifeng/Documents/myDocument/Document/long-term-bonds/2_year.html" ;
-        String year3 = "/Users/zhanshifeng/Documents/myDocument/Document/long-term-bonds/3_year.html" ;
-        String year5 = "/Users/zhanshifeng/Documents/myDocument/Document/long-term-bonds/5_year.html" ;
+        String week1 = "/Users/zhanshifeng/Documents/myDocument/Document/long-term-bonds/1_week.html";
+        String month1 = "/Users/zhanshifeng/Documents/myDocument/Document/long-term-bonds/1_month.html";
+        String month3 = "/Users/zhanshifeng/Documents/myDocument/Document/long-term-bonds/3_month.html";
+        String month6 = "/Users/zhanshifeng/Documents/myDocument/Document/long-term-bonds/6_month.html";
+        String year1 = "/Users/zhanshifeng/Documents/myDocument/Document/long-term-bonds/1_year.html";
+        String year2 = "/Users/zhanshifeng/Documents/myDocument/Document/long-term-bonds/2_year.html";
+        String year3 = "/Users/zhanshifeng/Documents/myDocument/Document/long-term-bonds/3_year.html";
+        String year5 = "/Users/zhanshifeng/Documents/myDocument/Document/long-term-bonds/5_year.html";
 
         subRun(week1, this.week1FundCodeSet);
         subRun(month1, this.month1FundCodeSet);
@@ -126,7 +126,7 @@ public class FundCrawler {
 
         File in = new File(path);
 
-        Document doc = Jsoup.parse(in, "UTF-8" , "");
+        Document doc = Jsoup.parse(in, "UTF-8", "");
         Element dbtable = doc.getElementById("dbtable");
         Elements tbody = dbtable.getElementsByTag("tbody");
         Elements hang = tbody.get(0).getElementsByTag("tr");

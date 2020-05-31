@@ -28,7 +28,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 /**
  * @Description 测试一下事务注解的一些特性
- * @Author ZhanShiFeng
+ * @Author zhanshifeng
  * @Date 2019/11/24 9:24 PM
  */
 @RunWith(SpringRunner.class)

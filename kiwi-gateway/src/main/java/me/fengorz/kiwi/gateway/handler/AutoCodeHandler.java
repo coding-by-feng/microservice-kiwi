@@ -43,7 +43,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * @Description TODO
- * @Author ZhanShiFeng
+ * @Author zhanshifeng
  * @Date 2019/12/13 9:24 AM
  */
 @Slf4j
@@ -66,9 +66,9 @@ public class AutoCodeHandler implements HandlerFunction<ServerResponse> {
         // 转换流信息写出
         FastByteArrayOutputStream os = new FastByteArrayOutputStream();
         try {
-            ImageIO.write(image, "jpeg" , os);
+            ImageIO.write(image, "jpeg", os);
         } catch (IOException e) {
-            log.error("ImageIO write err" , e);
+            log.error("ImageIO write err", e);
             return Mono.error(e);
         }
 

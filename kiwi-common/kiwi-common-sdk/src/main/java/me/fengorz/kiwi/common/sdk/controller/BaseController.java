@@ -27,7 +27,7 @@ import org.springframework.context.i18n.LocaleContextHolder;
 
 /**
  * @Description 抽象控制层基类
- * @Author ZhanShiFeng
+ * @Author zhanshifeng
  * @Date 2020/4/21 7:28 PM
  */
 public abstract class BaseController {

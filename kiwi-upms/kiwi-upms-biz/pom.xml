@@ -18,12 +18,6 @@
         </dependency>
         <dependency>
             <groupId>me.fengorz</groupId>
-            <artifactId>kiwi-common-dfs</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
-            <groupId>me.fengorz</groupId>
             <artifactId>kiwi-upms-api</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>

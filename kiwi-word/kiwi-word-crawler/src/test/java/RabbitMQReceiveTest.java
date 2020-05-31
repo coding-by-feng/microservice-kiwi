@@ -24,14 +24,14 @@ import lombok.SneakyThrows;
 
 /**
  * @Description TODO
- * @Author ZhanShiFeng
+ * @Author zhanshifeng
  * @Date 2020/4/25 7:14 PM
  */
 public class RabbitMQReceiveTest {
-    private final static String userName = "guest" ;
-    private final static String password = "guest" ;
+    private final static String userName = "guest";
+    private final static String password = "guest";
     private final static int portNumber = 5672;
-    private final static String host = "47.92.107.191" ;
+    private final static String host = "47.92.107.191";
 
     @SneakyThrows
     public static void main(String[] argv) {

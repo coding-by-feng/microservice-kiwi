@@ -28,14 +28,14 @@ import java.util.Set;
 
 /**
  * @Description Util of Java Bean Validation
- * @Author ZhanShiFeng
+ * @Author zhanshifeng
  * @Date 2019/11/26 9:03 PM
  */
 public class KiwiValidateUtils {
 
     public static String check(Object obj) {
         if (null == obj) {
-            return "入参不能为空" ;
+            return "入参不能为空";
         }
         Set<ConstraintViolation<Object>> validResult = Validation.buildDefaultValidatorFactory().getValidator().validate(obj);
         if (null != validResult && validResult.size() > 0) {

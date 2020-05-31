@@ -23,7 +23,7 @@ import me.fengorz.kiwi.common.api.constant.CommonConstants;
 
 /**
  * @Description TODO
- * @Author ZhanShiFeng
+ * @Author zhanshifeng
  * @Date 2020/1/14 4:48 PM
  */
 public class CommonUtils {

@@ -24,7 +24,7 @@ import me.fengorz.kiwi.word.api.vo.WordMainVariantVO;
 /**
  * 服务类
  *
- * @Author ZhanShiFeng
+ * @Author zhanshifeng
  * @date 2020-05-24 01:40:36
  */
 public interface IWordMainVariantService extends IService<WordMainVariantDO> {

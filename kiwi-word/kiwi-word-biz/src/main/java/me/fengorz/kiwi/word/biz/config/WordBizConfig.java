@@ -19,17 +19,13 @@
 
 package me.fengorz.kiwi.word.biz.config;
 
-import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
-import com.baomidou.mybatisplus.extension.plugins.pagination.optimize.JsqlParserCountOptimize;
 import me.fengorz.kiwi.common.fastdfs.config.DfsConfig;
 import org.mybatis.spring.annotation.MapperScan;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
 /**
- * @Description TODO
  * @Author codingByFeng
  * @Date 2019/10/30 3:45 PM
  */
@@ -38,12 +34,5 @@ import org.springframework.context.annotation.Import;
 @ComponentScan("me.fengorz.kiwi.word.biz")
 @Import(DfsConfig.class)
 public class WordBizConfig {
-
-    @Bean
-    public PaginationInterceptor paginationInterceptor() {
-        PaginationInterceptor paginationInterceptor = new PaginationInterceptor();
-        paginationInterceptor.setCountSqlParser(new JsqlParserCountOptimize(true));
-        return paginationInterceptor;
-    }
 
 }

@@ -21,7 +21,7 @@ package me.fengorz.kiwi.common.api.exception.dfs;
 
 /**
  * @Description Dfs文件删除异常
- * @Author ZhanShiFeng
+ * @Author zhanshifeng
  * @Date 2019/11/7 11:38 PM
  */
 public class DfsOperateDeleteException extends DfsOperateException {

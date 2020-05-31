@@ -35,7 +35,7 @@ import me.fengorz.kiwi.word.api.common.WordCrawlerConstants;
 import me.fengorz.kiwi.word.api.dto.fetch.FetchWordResultDTO;
 import me.fengorz.kiwi.word.api.dto.remote.WordFetchQueuePageDTO;
 import me.fengorz.kiwi.word.api.entity.WordFetchQueueDO;
-import me.fengorz.kiwi.word.api.exception.WordResultStoreRuntimeException;
+import me.fengorz.kiwi.word.api.exception.WordResultStoreException;
 import me.fengorz.kiwi.word.biz.service.IWordFetchQueueService;
 import me.fengorz.kiwi.word.biz.service.operate.IWordOperateService;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -117,7 +117,7 @@ public class WordFetchQueueController extends BaseController {
     public R<Void> storeFetchWordResult(@RequestBody @Valid FetchWordResultDTO fetchWordResultDTO) {
         try {
             wordOperateService.storeFetchWordResult(fetchWordResultDTO);
-        } catch (WordResultStoreRuntimeException e) {
+        } catch (WordResultStoreException e) {
             return R.failed(ResultCode.build(
                     () -> WordCrawlerConstants.STATUS_ERROR_WORD_ID_NOT_NULL, () -> CommonConstants.EMPTY), e.getMessage());
         } catch (DfsOperateDeleteException e) {

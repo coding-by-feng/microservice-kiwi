@@ -21,7 +21,9 @@ package me.fengorz.kiwi.word.biz.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.RequiredArgsConstructor;
+import me.fengorz.kiwi.bdf.core.service.ISeqService;
 import me.fengorz.kiwi.common.api.constant.CommonConstants;
+import me.fengorz.kiwi.common.api.constant.MapperConstant;
 import me.fengorz.kiwi.common.api.exception.ServiceException;
 import me.fengorz.kiwi.word.api.common.WordCrawlerConstants;
 import me.fengorz.kiwi.word.api.entity.WordFetchQueueDO;
@@ -29,6 +31,7 @@ import me.fengorz.kiwi.word.biz.mapper.WordFetchQueueMapper;
 import me.fengorz.kiwi.word.biz.service.IWordFetchQueueService;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -41,8 +44,10 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class WordFetchQueueServiceImpl extends ServiceImpl<WordFetchQueueMapper, WordFetchQueueDO> implements IWordFetchQueueService {
 
+    private final ISeqService seqService;
+
     @Override
-    @Transactional(rollbackFor = Exception.class, noRollbackFor = ServiceException.class)
+    @Transactional(rollbackFor = Exception.class, noRollbackFor = ServiceException.class, propagation = Propagation.REQUIRES_NEW)
     public boolean fetchNewWord(String wordName) {
         WordFetchQueueDO one = this.getOne(wordName);
 
@@ -55,6 +60,7 @@ public class WordFetchQueueServiceImpl extends ServiceImpl<WordFetchQueueMapper,
 
         return this.insertNewQueue(
                 new WordFetchQueueDO()
+                        .setQueueId(seqService.genIntSequence(MapperConstant.T_INS_SEQUENCE))
                         .setWordName(wordName)
                         .setFetchStatus(WordCrawlerConstants.STATUS_TO_FETCH)
                         .setIsValid(CommonConstants.FLAG_Y)

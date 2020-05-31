@@ -39,6 +39,8 @@ public class WordParaphraseVO implements Serializable {
 
     private static final long serialVersionUID = 1358094160893456358L;
 
+    private String wordName;
+
     private Integer paraphraseId;
     /**
      * 英文释义

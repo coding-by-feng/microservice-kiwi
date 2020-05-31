@@ -23,8 +23,9 @@ import me.fengorz.kiwi.common.api.exception.ServiceException;
 import me.fengorz.kiwi.common.api.exception.dfs.DfsOperateDeleteException;
 import me.fengorz.kiwi.common.api.exception.dfs.DfsOperateException;
 import me.fengorz.kiwi.word.api.dto.fetch.FetchWordResultDTO;
-import me.fengorz.kiwi.word.api.exception.WordResultStoreRuntimeException;
+import me.fengorz.kiwi.word.api.exception.WordResultStoreException;
 import me.fengorz.kiwi.word.api.vo.detail.WordCharacterVO;
+import me.fengorz.kiwi.word.api.vo.detail.WordParaphraseVO;
 import me.fengorz.kiwi.word.api.vo.detail.WordQueryVO;
 
 /**
@@ -34,7 +35,7 @@ public interface IWordOperateService {
 
     boolean removeWord(String wordName) throws DfsOperateDeleteException;
 
-    boolean storeFetchWordResult(FetchWordResultDTO fetchWordResultDTO) throws WordResultStoreRuntimeException, DfsOperateException, DfsOperateDeleteException;
+    boolean storeFetchWordResult(FetchWordResultDTO fetchWordResultDTO) throws WordResultStoreException, DfsOperateException, DfsOperateDeleteException;
 
     void dfsDeleteExceptionBackCall(String wordName);
 
@@ -44,7 +45,13 @@ public interface IWordOperateService {
 
     boolean removeWordStarList(Integer wordId, Integer listId) throws ServiceException;
 
+    /* paraphrase methods begin */
+
     boolean putParaphraseIntoStarList(Integer paraphraseId, Integer listId) throws ServiceException;
+
+    WordParaphraseVO findWordParaphraseVO(Integer paraphraseId);
+
+    /* paraphrase methods end */
 
     boolean putExampleIntoStarList(Integer exampleId, Integer listId) throws ServiceException;
 
@@ -62,4 +69,10 @@ public interface IWordOperateService {
     boolean insertVariant(String inputWordName, String fetchWordName);
 
     /* wordVariant methods end */
+
+    /* cache methods begin*/
+
+    void evict(String wordName);
+
+    /* cache methods end*/
 }

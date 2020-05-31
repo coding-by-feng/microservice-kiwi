@@ -22,8 +22,10 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import me.fengorz.kiwi.bdf.core.service.ISeqService;
 import me.fengorz.kiwi.common.api.R;
 import me.fengorz.kiwi.common.api.annotation.log.SysLog;
+import me.fengorz.kiwi.common.api.constant.MapperConstant;
 import me.fengorz.kiwi.common.api.exception.ServiceException;
 import me.fengorz.kiwi.common.sdk.controller.BaseController;
 import me.fengorz.kiwi.word.api.entity.WordExampleStarListDO;
@@ -53,19 +55,22 @@ public class WordExampleStarListController extends BaseController {
 
     private final IWordExampleStarListService wordExampleStarListService;
     private final IWordOperateService wordOperateService;
+    private final ISeqService seqService;
+
 
     /**
      * 新增
      *
-     * @param wordExampleStarListDO
+     * @param vo
      * @return R
      */
     @SysLog("新增")
     @PostMapping("/save")
     // @PreAuthorize("@pms.hasPermission('api_wordparaphraseexamplelist_add')")
-    public R<Boolean> save(WordExampleStarListDO wordExampleStarListDO) {
-        wordExampleStarListDO.setOwner(1);
-        return R.success(wordExampleStarListService.save(wordExampleStarListDO));
+    public R<Boolean> save(WordExampleStarListVO vo) {
+        vo.setOwner(1);
+        vo.setId(seqService.genIntSequence(MapperConstant.T_INS_SEQUENCE));
+        return R.success(wordExampleStarListService.save(vo));
     }
 
     /**

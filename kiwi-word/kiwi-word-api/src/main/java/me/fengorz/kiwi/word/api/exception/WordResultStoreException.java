@@ -19,31 +19,32 @@
 
 package me.fengorz.kiwi.word.api.exception;
 
-import me.fengorz.kiwi.common.api.exception.BaseRuntimeException;
+import me.fengorz.kiwi.common.api.exception.BaseException;
 
 /**
- * @Description TODO
  * @Author zhanshifeng
  * @Date 2019/11/1 2:54 PM
  */
-public class WordResultStoreRuntimeException extends BaseRuntimeException {
+public class WordResultStoreException extends BaseException {
 
-    public WordResultStoreRuntimeException() {
+    private static final long serialVersionUID = 4431850064509376871L;
+
+    public WordResultStoreException() {
     }
 
-    public WordResultStoreRuntimeException(String message) {
+    public WordResultStoreException(String message) {
         super(message);
     }
 
-    public WordResultStoreRuntimeException(String message, Throwable cause) {
+    public WordResultStoreException(String message, Throwable cause) {
         super(message, cause);
     }
 
-    public WordResultStoreRuntimeException(Throwable cause) {
+    public WordResultStoreException(Throwable cause) {
         super(cause);
     }
 
-    public WordResultStoreRuntimeException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+    public WordResultStoreException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
     }
 }

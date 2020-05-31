@@ -21,10 +21,12 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.RequiredArgsConstructor;
+import me.fengorz.kiwi.bdf.core.service.ISeqService;
 import me.fengorz.kiwi.common.api.annotation.cache.KiwiCacheKey;
 import me.fengorz.kiwi.common.api.annotation.cache.KiwiCacheKeyPrefix;
 import me.fengorz.kiwi.common.api.constant.CacheConstants;
 import me.fengorz.kiwi.common.api.constant.CommonConstants;
+import me.fengorz.kiwi.common.api.constant.MapperConstant;
 import me.fengorz.kiwi.common.sdk.util.bean.KiwiBeanUtils;
 import me.fengorz.kiwi.common.sdk.util.lang.collection.KiwiCollectionUtils;
 import me.fengorz.kiwi.word.api.common.WordConstants;
@@ -52,6 +54,7 @@ import java.util.List;
 public class WordMainVariantServiceImpl extends ServiceImpl<WordMainVariantMapper, WordMainVariantDO> implements IWordMainVariantService {
 
     private final WordMainVariantMapper wordMainVariantMapper;
+    private final ISeqService seqService;
 
     @Override
     public IPage<WordMainVariantVO> page(int current, int size, WordMainVariantDTO dto) {
@@ -145,6 +148,7 @@ public class WordMainVariantServiceImpl extends ServiceImpl<WordMainVariantMappe
 
     private boolean insertOne(Integer wordId, String variantName, Integer type) {
         WordMainVariantDO entity = new WordMainVariantDO()
+                .setId(seqService.genIntSequence(MapperConstant.T_INS_SEQUENCE))
                 .setWordId(wordId)
                 .setVariantName(variantName)
                 .setType(WordConstants.VARIANT_TYPE_UNKNOWN)

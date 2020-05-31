@@ -22,8 +22,10 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import me.fengorz.kiwi.bdf.core.service.ISeqService;
 import me.fengorz.kiwi.common.api.R;
 import me.fengorz.kiwi.common.api.annotation.log.SysLog;
+import me.fengorz.kiwi.common.api.constant.MapperConstant;
 import me.fengorz.kiwi.common.api.exception.ServiceException;
 import me.fengorz.kiwi.common.sdk.controller.BaseController;
 import me.fengorz.kiwi.word.api.entity.WordStarListDO;
@@ -57,6 +59,7 @@ public class WordStarListController extends BaseController {
     private final IWordStarListService wordStarListService;
     private final IWordOperateService wordOperateService;
     private final IWordStarRelService wordStarRelService;
+    private final ISeqService seqService;
 
     /**
      * 新增单词本
@@ -70,6 +73,7 @@ public class WordStarListController extends BaseController {
     public R<Boolean> save(WordStarListVO vo) {
         // TODO ZSF 暂时写死
         vo.setOwner(1);
+        vo.setId(seqService.genIntSequence(MapperConstant.T_INS_SEQUENCE));
         return R.success(wordStarListService.save(vo));
     }
 

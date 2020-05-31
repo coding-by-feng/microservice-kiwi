@@ -19,9 +19,8 @@
 
 package me.fengorz.kiwi.word.biz.config;
 
+import me.fengorz.kiwi.bdf.core.config.ScanConfig;
 import me.fengorz.kiwi.common.fastdfs.config.DfsConfig;
-import org.mybatis.spring.annotation.MapperScan;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
@@ -30,9 +29,9 @@ import org.springframework.context.annotation.Import;
  * @Date 2019/10/30 3:45 PM
  */
 @Configuration
-@MapperScan("me.fengorz.kiwi.word.biz.mapper")
-@ComponentScan("me.fengorz.kiwi.word.biz")
-@Import(DfsConfig.class)
+// @MapperScan("me.fengorz.kiwi.word.biz.mapper")
+// @ComponentScan("me.fengorz.kiwi.word.biz")
+@Import({ScanConfig.class, DfsConfig.class})
 public class WordBizConfig {
 
 }

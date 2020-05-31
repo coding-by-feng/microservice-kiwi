@@ -27,6 +27,8 @@ import me.fengorz.kiwi.common.api.exception.BaseException;
  */
 public class JsoupFetchConnectException extends BaseException {
 
+    private static final long serialVersionUID = -6553717322358468542L;
+
     public JsoupFetchConnectException() {
         super();
     }

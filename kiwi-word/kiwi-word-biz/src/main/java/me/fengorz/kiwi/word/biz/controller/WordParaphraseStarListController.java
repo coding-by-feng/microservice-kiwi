@@ -22,8 +22,10 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import me.fengorz.kiwi.bdf.core.service.ISeqService;
 import me.fengorz.kiwi.common.api.R;
 import me.fengorz.kiwi.common.api.annotation.log.SysLog;
+import me.fengorz.kiwi.common.api.constant.MapperConstant;
 import me.fengorz.kiwi.common.api.exception.ServiceException;
 import me.fengorz.kiwi.common.sdk.controller.BaseController;
 import me.fengorz.kiwi.word.api.entity.WordParaphraseStarListDO;
@@ -58,19 +60,21 @@ public class WordParaphraseStarListController extends BaseController {
     private final IWordParaphraseStarListService wordParaphraseStarListService;
     private final IWordOperateService wordOperateService;
     private final IWordParaphraseService wordParaphraseService;
+    private final ISeqService seqService;
 
     /**
      * 新增单词本
      *
-     * @param wordParaphraseStarListDO 单词本
+     * @param vo 单词本
      * @return R
      */
     @SysLog("新增单词本")
     @PostMapping("/save")
     // @PreAuthorize("@pms.hasPermission('api_wordparaphrasestarlist_add')")
-    public R<Boolean> save(WordParaphraseStarListDO wordParaphraseStarListDO) {
-        wordParaphraseStarListDO.setOwner(1);
-        return R.success(wordParaphraseStarListService.save(wordParaphraseStarListDO));
+    public R<Boolean> save(WordParaphraseStarListVO vo) {
+        vo.setOwner(1);
+        vo.setId(seqService.genIntSequence(MapperConstant.T_INS_SEQUENCE));
+        return R.success(wordParaphraseStarListService.save(vo));
     }
 
     /**
@@ -123,7 +127,7 @@ public class WordParaphraseStarListController extends BaseController {
 
     @GetMapping("/getItemDetail/{paraphraseId}")
     public R<WordParaphraseVO> getItemDetail(@PathVariable Integer paraphraseId) {
-        return R.success(wordParaphraseService.findWordParaphraseVO(paraphraseId));
+        return R.success(wordOperateService.findWordParaphraseVO(paraphraseId));
     }
 
     @PostMapping("/removeParaphraseStar")

@@ -36,7 +36,4 @@ public interface IWordParaphraseService extends IService<WordParaphraseDO> {
 
     List<WordParaphraseVO> selectParaphraseAndIsCollect(Integer characterId, Integer currentUserId);
 
-    WordParaphraseVO findWordParaphraseVO(Integer paraphraseId);
-
-
 }

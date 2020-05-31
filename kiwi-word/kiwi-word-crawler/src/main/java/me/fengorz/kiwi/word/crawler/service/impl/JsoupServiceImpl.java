@@ -21,6 +21,7 @@ package me.fengorz.kiwi.word.crawler.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
 import lombok.extern.slf4j.Slf4j;
+import me.fengorz.kiwi.common.sdk.util.lang.string.KiwiStringUtils;
 import me.fengorz.kiwi.common.sdk.util.validate.KiwiAssertUtils;
 import me.fengorz.kiwi.word.api.common.WordCrawlerConstants;
 import me.fengorz.kiwi.word.api.dto.fetch.*;
@@ -62,6 +63,8 @@ public class JsoupServiceImpl implements IJsoupService {
     public static final String KEY_HEADER_CODE = "pos dpos";
     public static final String KEY_HEADER_LABEL = "gram dgram";
     public static final String KEY_SINGLE_PARAPHRASE = "def-block ddef_block ";
+    public static final String KEY_SINGLE_PHRASE = "pr phrase-block dphrase-block ";
+    public static final String KEY_SINGLE_PHRASE_DETAIL = "phrase-title dphrase-title";
     public static final String FETCH_SINGLE_PARAPHRASE_EXCEPTION = "The singleParaphrase of {} is not found!";
     public static final String KEY_PARAPHRASE_ENGLISH = "def ddef_d db";
     public static final String FETCH_PARAPHRASE_ENGLISH_EXCEPTION = "The paraphraseEnglish of {} is not found!";
@@ -157,45 +160,12 @@ public class JsoupServiceImpl implements IJsoupService {
             // Each label can have many paraphrases
             for (Element paraphrases : mainParaphrases) {
                 Elements singleParaphrase = paraphrases.getElementsByClass(KEY_SINGLE_PARAPHRASE);
-                CrawlerAssertUtils.notEmpty(singleParaphrase, FETCH_SINGLE_PARAPHRASE_EXCEPTION, word);
+                Elements phrases = paraphrases.getElementsByClass(KEY_SINGLE_PHRASE);
+                boolean singleParaphraseIsEmpty = singleParaphrase != null && !singleParaphrase.isEmpty();
+                boolean phrasesIsEmpty = phrases != null && !phrases.isEmpty();
+                CrawlerAssertUtils.mustBeTrue(singleParaphraseIsEmpty || phrasesIsEmpty, FETCH_SINGLE_PARAPHRASE_EXCEPTION, word);
 
-                for (Element paraphrase : singleParaphrase) {
-                    FetchParaphraseDTO fetchParaphraseDTO = new FetchParaphraseDTO();
-
-                    // fetch English paraphrase
-                    Elements paraphraseEnglish = paraphrase.getElementsByClass(KEY_PARAPHRASE_ENGLISH);
-                    CrawlerAssertUtils.notEmpty(paraphraseEnglish, FETCH_PARAPHRASE_ENGLISH_EXCEPTION, word);
-                    CrawlerAssertUtils.fetchValueNotEmpty(paraphraseEnglish.text(), FETCH_PARAPHRASE_ENGLISH_EXCEPTION, word);
-                    fetchParaphraseDTO.setParaphraseEnglish(paraphraseEnglish.text());
-
-                    // fetch Chinese meaning
-                    Elements meaningChinese = paraphrase.getElementsByClass(KEY_MEANING_CHINESE);
-                    // CrawlerAssertUtils.notEmpty(meaningChinese, FETCH_MEANING_CHINESE_EXCEPTION, word);
-                    // CrawlerAssertUtils.fetchValueNotEmpty(meaningChinese.text(), FETCH_MEANING_CHINESE_EXCEPTION, word);
-                    fetchParaphraseDTO.setMeaningChinese(meaningChinese.text());
-
-                    // fetch example sentences, it can be empty.
-                    Elements exampleSentences = paraphrase.getElementsByClass(KEY_EXAMPLE_SENTENCES);
-                    if (CollUtil.isNotEmpty(exampleSentences)) {
-                        List<FetchParaphraseExampleDTO> fetchParaphraseExampleDTOList = new ArrayList<>();
-                        for (Element sentence : exampleSentences) {
-                            FetchParaphraseExampleDTO fetchParaphraseExampleDTO = new FetchParaphraseExampleDTO();
-                            Optional.ofNullable(sentence.getElementsByClass(KEY_SENTENCE)).ifPresent(
-                                    (Elements elements) -> fetchParaphraseExampleDTO.setExampleSentence(elements.text())
-                            );
-                            Optional.ofNullable(sentence.getElementsByClass(KEY_SENTENCE_TRANSLATE)).ifPresent(
-                                    elements -> fetchParaphraseExampleDTO.setExampleTranslate(elements.text())
-                            );
-
-                            // TODO zhanshifeng The default is English, but consider how flexible it will be in the future if there are other languages
-                            fetchParaphraseExampleDTO.setTranslateLanguage(WordCrawlerConstants.DEFAULT_TRANSLATE_LANGUAGE);
-                            fetchParaphraseExampleDTOList.add(fetchParaphraseExampleDTO);
-                            fetchParaphraseDTO.setFetchParaphraseExampleDTOList(fetchParaphraseExampleDTOList);
-                        }
-                    }
-
-                    fetchParaphraseDTOList.add(fetchParaphraseDTO);
-                }
+                subFetchParaphrase(word, fetchParaphraseDTOList, singleParaphrase, phrases, phrasesIsEmpty);
             }
 
             fetchWordCodeDTO.setFetchParaphraseDTOList(fetchParaphraseDTOList);
@@ -204,6 +174,66 @@ public class JsoupServiceImpl implements IJsoupService {
 
         fetchWordResultDTO.setFetchWordCodeDTOList(fetchWordCodeDTOList);
         return fetchWordResultDTO;
+    }
+
+    private void subFetchParaphrase(String word, List<FetchParaphraseDTO> fetchParaphraseDTOList, Elements singleParaphrase, Elements phrases, boolean phrasesIsEmpty) throws JsoupFetchResultException {
+        for (Element paraphrase : singleParaphrase) {
+            FetchParaphraseDTO fetchParaphraseDTO = new FetchParaphraseDTO();
+
+            // fetch English paraphrase
+            Elements paraphraseEnglish = paraphrase.getElementsByClass(KEY_PARAPHRASE_ENGLISH);
+            CrawlerAssertUtils.notEmpty(paraphraseEnglish, FETCH_PARAPHRASE_ENGLISH_EXCEPTION, word);
+            String paraphraseEnglishText = paraphraseEnglish.text();
+            CrawlerAssertUtils.fetchValueNotEmpty(paraphraseEnglishText, FETCH_PARAPHRASE_ENGLISH_EXCEPTION, word);
+            fetchParaphraseDTO.setParaphraseEnglish(paraphraseEnglishText);
+
+            if (phrasesIsEmpty) {
+                List<FetchPhraseDTO> fetchPhraseDTOList = new ArrayList<>();
+                for (Element phraseBlock : phrases) {
+                    Elements subPhrases = phraseBlock.getElementsByClass(KEY_SINGLE_PHRASE_DETAIL);
+                    Elements subPhrasesParaphrases = phraseBlock.getElementsByClass(KEY_SINGLE_PARAPHRASE);
+                    if (subPhrases == null || subPhrases.isEmpty()) {
+                        continue;
+                    }
+                    for (int i = 0; i < subPhrases.size(); i++) {
+                        String phraseDetail = subPhrases.get(i).text();
+                        String subPhrasesParaphrase = subPhrasesParaphrases.get(i).getElementsByClass(KEY_PARAPHRASE_ENGLISH).text();
+                        if (KiwiStringUtils.equals(subPhrasesParaphrase, paraphraseEnglishText)) {
+                            fetchPhraseDTOList.add(new FetchPhraseDTO().setPhrase(phraseDetail));
+                        }
+                    }
+                }
+                fetchParaphraseDTO.setFetchPhraseDTOList(fetchPhraseDTOList);
+            }
+
+            // fetch Chinese meaning
+            Elements meaningChinese = paraphrase.getElementsByClass(KEY_MEANING_CHINESE);
+            // CrawlerAssertUtils.notEmpty(meaningChinese, FETCH_MEANING_CHINESE_EXCEPTION, word);
+            // CrawlerAssertUtils.fetchValueNotEmpty(meaningChinese.text(), FETCH_MEANING_CHINESE_EXCEPTION, word);
+            fetchParaphraseDTO.setMeaningChinese(meaningChinese.text());
+
+            // fetch example sentences, it can be empty.
+            Elements exampleSentences = paraphrase.getElementsByClass(KEY_EXAMPLE_SENTENCES);
+            if (CollUtil.isNotEmpty(exampleSentences)) {
+                List<FetchParaphraseExampleDTO> fetchParaphraseExampleDTOList = new ArrayList<>();
+                for (Element sentence : exampleSentences) {
+                    FetchParaphraseExampleDTO fetchParaphraseExampleDTO = new FetchParaphraseExampleDTO();
+                    Optional.ofNullable(sentence.getElementsByClass(KEY_SENTENCE)).ifPresent(
+                            (Elements elements) -> fetchParaphraseExampleDTO.setExampleSentence(elements.text())
+                    );
+                    Optional.ofNullable(sentence.getElementsByClass(KEY_SENTENCE_TRANSLATE)).ifPresent(
+                            elements -> fetchParaphraseExampleDTO.setExampleTranslate(elements.text())
+                    );
+
+                    // TODO zhanshifeng The default is English, but consider how flexible it will be in the future if there are other languages
+                    fetchParaphraseExampleDTO.setTranslateLanguage(WordCrawlerConstants.DEFAULT_TRANSLATE_LANGUAGE);
+                    fetchParaphraseExampleDTOList.add(fetchParaphraseExampleDTO);
+                    fetchParaphraseDTO.setFetchParaphraseExampleDTOList(fetchParaphraseExampleDTOList);
+                }
+            }
+
+            fetchParaphraseDTOList.add(fetchParaphraseDTO);
+        }
     }
 
     private FetchWordPronunciationDTO subFetchPronunciation(String word, Element block, String pronunciationKey, String pronunciationType, boolean isAlreadyFetchPronunciation) throws JsoupFetchPronunciationException {

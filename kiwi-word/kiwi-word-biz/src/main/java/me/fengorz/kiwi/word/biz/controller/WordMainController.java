@@ -25,6 +25,7 @@ import me.fengorz.kiwi.common.api.R;
 import me.fengorz.kiwi.common.api.annotation.log.SysLog;
 import me.fengorz.kiwi.common.api.exception.dfs.DfsOperateDeleteException;
 import me.fengorz.kiwi.common.sdk.controller.BaseController;
+import me.fengorz.kiwi.common.sdk.util.lang.string.KiwiStringUtils;
 import me.fengorz.kiwi.word.api.entity.WordMainDO;
 import me.fengorz.kiwi.word.api.vo.detail.WordQueryVO;
 import me.fengorz.kiwi.word.biz.service.IWordMainService;
@@ -66,12 +67,11 @@ public class WordMainController extends BaseController {
 
     @GetMapping("/queryById/{wordId}")
     public R<WordQueryVO> queryWord(@PathVariable Integer wordId) {
-        // TODO ZSF 改成去缓存
-        WordMainDO word = wordMainService.getById(wordId);
-        if (word == null) {
-            return R.success();
+        String wordName = wordMainService.getWordName(wordId);
+        if (KiwiStringUtils.isBlank(wordName)) {
+            return R.failed();
         }
-        return R.success(wordOperateService.queryWord(word.getWordName()));
+        return R.success(wordOperateService.queryWord(wordName));
     }
 
     @SysLog("模糊查询单词列表")

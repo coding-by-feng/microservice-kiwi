@@ -27,16 +27,20 @@ import cn.hutool.core.util.URLUtil;
 import cn.hutool.http.HttpUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import lombok.RequiredArgsConstructor;
+import me.fengorz.kiwi.bdf.core.service.ISeqService;
 import me.fengorz.kiwi.common.api.annotation.cache.KiwiCacheKey;
 import me.fengorz.kiwi.common.api.annotation.cache.KiwiCacheKeyPrefix;
 import me.fengorz.kiwi.common.api.constant.CacheConstants;
 import me.fengorz.kiwi.common.api.constant.CommonConstants;
+import me.fengorz.kiwi.common.api.constant.MapperConstant;
 import me.fengorz.kiwi.common.api.exception.ResourceNotFoundException;
 import me.fengorz.kiwi.common.api.exception.ServiceException;
 import me.fengorz.kiwi.common.api.exception.dfs.DfsOperateDeleteException;
 import me.fengorz.kiwi.common.api.exception.dfs.DfsOperateException;
 import me.fengorz.kiwi.common.fastdfs.service.IDfsService;
+import me.fengorz.kiwi.common.sdk.util.lang.collection.KiwiCollectionUtils;
 import me.fengorz.kiwi.common.sdk.util.lang.string.KiwiStringUtils;
 import me.fengorz.kiwi.common.sdk.util.validate.KiwiAssertUtils;
 import me.fengorz.kiwi.word.api.common.WordConstants;
@@ -46,7 +50,6 @@ import me.fengorz.kiwi.word.api.dto.fetch.FetchWordCodeDTO;
 import me.fengorz.kiwi.word.api.dto.fetch.FetchWordPronunciationDTO;
 import me.fengorz.kiwi.word.api.dto.fetch.FetchWordResultDTO;
 import me.fengorz.kiwi.word.api.entity.*;
-import me.fengorz.kiwi.word.api.exception.WordResultStoreRuntimeException;
 import me.fengorz.kiwi.word.api.factory.CrawlerEntityFactory;
 import me.fengorz.kiwi.word.api.util.CrawlerUtils;
 import me.fengorz.kiwi.word.api.vo.WordMainVO;
@@ -93,6 +96,7 @@ public class WordOperateServiceImpl implements IWordOperateService {
     private final IWordExampleStarRelService wordExampleStarRelService;
     private final IWordMainVariantService wordMainVariantService;
     private final IDfsService dfsService;
+    private final ISeqService seqService;
 
     @Value("${me.fengorz.file.crawler.voice.tmpPath}")
     private String crawlerVoiceBasePath;
@@ -111,7 +115,7 @@ public class WordOperateServiceImpl implements IWordOperateService {
 
     @Override
     @Transactional(rollbackFor = Exception.class, noRollbackFor = DfsOperateDeleteException.class)
-    public boolean storeFetchWordResult(FetchWordResultDTO fetchWordResultDTO) throws WordResultStoreRuntimeException, DfsOperateException {
+    public boolean storeFetchWordResult(FetchWordResultDTO fetchWordResultDTO) throws DfsOperateException {
         final String wordName = fetchWordResultDTO.getWordName();
 
         WordMainDO wordMainDO = new WordMainDO();
@@ -130,6 +134,7 @@ public class WordOperateServiceImpl implements IWordOperateService {
                 removeWordRelatedData(wordMainDO);
             } else {
                 wordMainDO.setIsDel(CommonConstants.FLAG_N);
+                wordMainDO.setWordId(seqService.genIntSequence(MapperConstant.T_INS_SEQUENCE));
                 wordMainService.save(wordMainDO);
             }
         } catch (DfsOperateDeleteException e) {
@@ -143,16 +148,12 @@ public class WordOperateServiceImpl implements IWordOperateService {
     }
 
     private void subStoreFetchWordResult(FetchWordResultDTO fetchWordResultDTO, WordMainDO wordMainDO) throws DfsOperateException {
-        Integer wordId = wordMainDO.getWordId();
-
-        if (wordId == null) {
-            throw new WordResultStoreRuntimeException("wordId is not null!");
-        }
-
+        final Integer wordId = wordMainDO.getWordId();
         List<FetchWordCodeDTO> fetchWordCodeDTOList = fetchWordResultDTO.getFetchWordCodeDTOList();
         if (CollUtil.isNotEmpty(fetchWordCodeDTOList)) {
             for (FetchWordCodeDTO fetchWordCodeDTO : fetchWordCodeDTOList) {
                 WordCharacterDO wordCharacter = CrawlerEntityFactory.initWordCharacter(fetchWordCodeDTO.getCode(), fetchWordCodeDTO.getLabel(), wordId);
+                wordCharacter.setCharacterId(seqService.genIntSequence(MapperConstant.T_INS_SEQUENCE));
                 wordCharacterService.save(wordCharacter);
                 Integer characterId = wordCharacter.getCharacterId();
 
@@ -160,11 +161,13 @@ public class WordOperateServiceImpl implements IWordOperateService {
                 fetchParaphraseDTOList.forEach(fetchParaphraseDTO -> {
 
                     WordParaphraseDO wordParaphraseDO = CrawlerEntityFactory.initWordParaphrase(characterId, wordId, fetchParaphraseDTO.getMeaningChinese(), fetchParaphraseDTO.getParaphraseEnglish(), fetchParaphraseDTO.getTranslateLanguage());
+                    wordParaphraseDO.setParaphraseId(seqService.genIntSequence(MapperConstant.T_INS_SEQUENCE));
                     wordParaphraseService.save(wordParaphraseDO);
                     Integer paraphraseId = wordParaphraseDO.getParaphraseId();
 
                     Optional.ofNullable(fetchParaphraseDTO.getFetchParaphraseExampleDTOList()).ifPresent(fetchParaphraseExampleDTOS -> fetchParaphraseExampleDTOS.forEach(fetchParaphraseExampleDTO -> {
                         WordParaphraseExampleDO wordParaphraseExampleDO = CrawlerEntityFactory.initWordParaphraseExample(paraphraseId, wordId, fetchParaphraseExampleDTO.getExampleSentence(), fetchParaphraseExampleDTO.getExampleTranslate(), fetchParaphraseExampleDTO.getTranslateLanguage());
+                        wordParaphraseExampleDO.setExampleId(seqService.genIntSequence(MapperConstant.T_INS_SEQUENCE));
                         wordParaphraseExampleService.save(wordParaphraseExampleDO);
                     }));
                 });
@@ -179,6 +182,7 @@ public class WordOperateServiceImpl implements IWordOperateService {
                         String uploadResult = dfsService.uploadFile(FileUtil.getInputStream(tempVoice), voiceSize, WordCrawlerConstants.EXT_OGG);
                         WordPronunciationDO wordPronunciation = CrawlerEntityFactory.initWordPronunciation(wordId, characterId, uploadResult,
                                 fetchWordPronunciationDTO.getSoundmark(), fetchWordPronunciationDTO.getSoundmarkType());
+                        wordPronunciation.setPronunciationId(seqService.genIntSequence(MapperConstant.T_INS_SEQUENCE));
                         wordPronunciationService.save(wordPronunciation);
                     }
                 }
@@ -206,13 +210,11 @@ public class WordOperateServiceImpl implements IWordOperateService {
     @Override
     @KiwiCacheKeyPrefix(WordConstants.CACHE_KEY_PREFIX_OPERATE.METHOD_WORD_NAME)
     @Cacheable(cacheNames = WordConstants.CACHE_NAMES, keyGenerator = CacheConstants.CACHE_KEY_GENERATOR_BEAN, unless = "#result == null")
-    @Transactional(propagation = Propagation.NOT_SUPPORTED)
     public WordQueryVO queryWord(@KiwiCacheKey String wordName) {
         WordQueryVO wordQueryVO = new WordQueryVO();
         WordMainDO word = wordMainService.getOne(wordName);
         // if you can't find the result after the tense is determined, insert a record into the queue to be fetched
         if (word == null) {
-            // TODO ZSF 查询单词变种表
             Integer sourceWordId = wordMainVariantService.getWordId(wordName);
             if (sourceWordId == null) {
                 // 异步爬虫抓取，插入队列表
@@ -236,9 +238,28 @@ public class WordOperateServiceImpl implements IWordOperateService {
         return wordQueryVO;
     }
 
+    @Override
     @KiwiCacheKeyPrefix(WordConstants.CACHE_KEY_PREFIX_OPERATE.METHOD_WORD_NAME)
     @CacheEvict(cacheNames = WordConstants.CACHE_NAMES, keyGenerator = CacheConstants.CACHE_KEY_GENERATOR_BEAN)
-    private void evict(@KiwiCacheKey String wordName) {
+    public void evict(@KiwiCacheKey String wordName) {
+        WordMainVO one = wordMainService.getOne(wordName);
+        if (one == null) {
+            return;
+        }
+        List<WordParaphraseDO> list = wordParaphraseService.list(Wrappers.<WordParaphraseDO>lambdaQuery()
+                .eq(WordParaphraseDO::getWordId, one.getWordId())
+                .eq(WordParaphraseDO::getIsDel, CommonConstants.FLAG_DEL_NO));
+        if (KiwiCollectionUtils.isNotEmpty(list)) {
+            for (WordParaphraseDO paraphraseDO : list) {
+                this.evictParaphrase(paraphraseDO.getParaphraseId());
+            }
+        }
+    }
+
+    @KiwiCacheKeyPrefix(WordConstants.CACHE_KEY_PREFIX_OPERATE.METHOD_PARAPHRASE_ID)
+    @CacheEvict(cacheNames = WordConstants.CACHE_NAMES, keyGenerator = CacheConstants.CACHE_KEY_GENERATOR_BEAN)
+    private void evictParaphrase(@KiwiCacheKey Integer paraphraseId) {
+
     }
 
     private List<WordCharacterVO> assembleWordCharacterVOS(String wordName, Integer wordId) throws ServiceException {
@@ -356,6 +377,26 @@ public class WordOperateServiceImpl implements IWordOperateService {
     }
 
     @Override
+    @KiwiCacheKeyPrefix(WordConstants.CACHE_KEY_PREFIX_OPERATE.METHOD_PARAPHRASE_ID)
+    @Cacheable(cacheNames = WordConstants.CACHE_NAMES, keyGenerator = CacheConstants.CACHE_KEY_GENERATOR_BEAN, unless = "#result == null")
+    public WordParaphraseVO findWordParaphraseVO(@KiwiCacheKey Integer paraphraseId) {
+        WordParaphraseVO wordParaphraseVO = new WordParaphraseVO();
+        List<WordParaphraseExampleVO> wordParaphraseExampleVOList = new ArrayList<>();
+        WordParaphraseDO wordParaphraseDO = wordParaphraseService.getById(paraphraseId);
+        BeanUtil.copyProperties(wordParaphraseDO, wordParaphraseVO);
+        List<WordParaphraseExampleDO> exampleDOS = wordParaphraseExampleService.list(new LambdaQueryWrapper<WordParaphraseExampleDO>().eq(WordParaphraseExampleDO::getParaphraseId, paraphraseId));
+        if (CollUtil.isNotEmpty(exampleDOS)) {
+            exampleDOS.forEach(wordParaphraseExampleDO -> {
+                WordParaphraseExampleVO exampleVO = new WordParaphraseExampleVO();
+                BeanUtil.copyProperties(wordParaphraseExampleDO, exampleVO);
+                wordParaphraseExampleVOList.add(exampleVO);
+            });
+        }
+        wordParaphraseVO.setWordParaphraseExampleVOList(wordParaphraseExampleVOList);
+        return wordParaphraseVO;
+    }
+
+    @Override
     public boolean putExampleIntoStarList(Integer exampleId, Integer listId) {
         LambdaQueryWrapper<WordExampleStarRelDO> queryWrapper = new LambdaQueryWrapper<WordExampleStarRelDO>().eq(WordExampleStarRelDO::getListId, listId).eq(WordExampleStarRelDO::getExampleId, exampleId);
         KiwiAssertUtils.serviceEmpty(wordExampleStarRelService.count(queryWrapper), "example rel is already exists!");
@@ -444,7 +485,7 @@ public class WordOperateServiceImpl implements IWordOperateService {
 
     /* private methods beginning */
 
-    @Transactional(rollbackFor = Exception.class, noRollbackFor = DfsOperateDeleteException.class)
+    @Transactional(rollbackFor = Exception.class, noRollbackFor = DfsOperateDeleteException.class, propagation = Propagation.REQUIRES_NEW)
     private void removeWordRelatedData(WordMainDO wordMainDO) throws DfsOperateDeleteException {
         Integer wordId = wordMainDO.getWordId();
 

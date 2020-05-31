@@ -18,24 +18,17 @@
  */
 package me.fengorz.kiwi.word.biz.service.impl;
 
-import cn.hutool.core.bean.BeanUtil;
-import cn.hutool.core.collection.CollUtil;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.RequiredArgsConstructor;
 import me.fengorz.kiwi.common.api.constant.CommonConstants;
 import me.fengorz.kiwi.word.api.dto.mapper.in.SelectEntityIsCollectDTO;
 import me.fengorz.kiwi.word.api.entity.WordParaphraseDO;
-import me.fengorz.kiwi.word.api.entity.WordParaphraseExampleDO;
-import me.fengorz.kiwi.word.api.vo.WordParaphraseExampleVO;
 import me.fengorz.kiwi.word.api.vo.detail.WordParaphraseVO;
-import me.fengorz.kiwi.word.biz.mapper.WordParaphraseExampleMapper;
 import me.fengorz.kiwi.word.biz.mapper.WordParaphraseMapper;
 import me.fengorz.kiwi.word.biz.service.IWordParaphraseService;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -49,7 +42,6 @@ import java.util.List;
 public class WordParaphraseServiceImpl extends ServiceImpl<WordParaphraseMapper, WordParaphraseDO> implements IWordParaphraseService {
 
     private final WordParaphraseMapper wordParaphraseMapper;
-    private final WordParaphraseExampleMapper wordParaphraseExampleMapper;
 
     @Override
     public Integer countById(Integer id) {
@@ -71,21 +63,4 @@ public class WordParaphraseServiceImpl extends ServiceImpl<WordParaphraseMapper,
         );
     }
 
-    @Override
-    public WordParaphraseVO findWordParaphraseVO(Integer paraphraseId) {
-        WordParaphraseVO wordParaphraseVO = new WordParaphraseVO();
-        List<WordParaphraseExampleVO> wordParaphraseExampleVOList = new ArrayList<>();
-        WordParaphraseDO wordParaphraseDO = this.wordParaphraseMapper.selectById(paraphraseId);
-        BeanUtil.copyProperties(wordParaphraseDO, wordParaphraseVO);
-        List<WordParaphraseExampleDO> exampleDOS = wordParaphraseExampleMapper.selectList(new LambdaQueryWrapper<WordParaphraseExampleDO>().eq(WordParaphraseExampleDO::getParaphraseId, paraphraseId));
-        if (CollUtil.isNotEmpty(exampleDOS)) {
-            exampleDOS.forEach(wordParaphraseExampleDO -> {
-                WordParaphraseExampleVO exampleVO = new WordParaphraseExampleVO();
-                BeanUtil.copyProperties(wordParaphraseExampleDO, exampleVO);
-                wordParaphraseExampleVOList.add(exampleVO);
-            });
-        }
-        wordParaphraseVO.setWordParaphraseExampleVOList(wordParaphraseExampleVOList);
-        return wordParaphraseVO;
-    }
 }

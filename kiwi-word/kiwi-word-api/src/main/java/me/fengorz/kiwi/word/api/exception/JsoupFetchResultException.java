@@ -27,6 +27,8 @@ import me.fengorz.kiwi.common.api.exception.BaseException;
  * @Date 2019/10/31 4:01 PM
  */
 public class JsoupFetchResultException extends BaseException {
+    private static final long serialVersionUID = -2672507193122171624L;
+
     public JsoupFetchResultException() {
     }
 

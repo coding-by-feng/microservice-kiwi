@@ -19,7 +19,6 @@
 
 package me.fengorz.kiwi.word.api.feign;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import me.fengorz.kiwi.common.api.R;
 import me.fengorz.kiwi.word.api.common.WordConstants;
 import me.fengorz.kiwi.word.api.dto.fetch.FetchWordResultDTO;
@@ -41,7 +40,7 @@ public interface IWordFetchAPI {
     String WORD_FETCH_QUEUE = "/word/fetch/queue";
 
     @PostMapping(WORD_FETCH_QUEUE + "/getWordFetchQueuePage")
-    R<IPage<WordFetchQueueDO>> getWordFetchQueuePage(@RequestBody WordFetchQueuePageDTO wordFetchQueuePage);
+    R getWordFetchQueuePage(@RequestBody WordFetchQueuePageDTO wordFetchQueuePage);
 
     @PutMapping(WORD_FETCH_QUEUE + "/updateById")
     R<Boolean> updateQueueById(@RequestBody WordFetchQueueDO wordFetchQueue);

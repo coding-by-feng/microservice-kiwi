@@ -30,7 +30,7 @@ public class CustomCodeGeneratorTest {
 
     @Test
     public void test() {
-        String tableName = "word_main_variant" ;
+        String tableName = "word_paraphrase_phrase" ;
         GenerateConfig config = new GenerateConfig();
         // "请输入表明前缀，比如t_table_name的话输入\"t_\""
         config.setTablePreName("");
@@ -41,7 +41,7 @@ public class CustomCodeGeneratorTest {
         // 请输入@FeignClient的value属性值,不需要的话置空
         config.setServiceId(null);
         // 请生成代码的zip压缩包要存储的本地Path(比如：/Users/zhanshifeng/Documents/myDocument/temp/20200224/generator.zip)：
-        config.setZipPath("/Users/zhanshifeng/Documents/myDocument/temp/20200523/generator.zip");
+        config.setZipPath("/Users/zhanshifeng/Documents/myDocument/temp/20200531/generator.zip");
 
         GenerateAbility ability = new GenerateAbility();
         // 开启Controller自动生成

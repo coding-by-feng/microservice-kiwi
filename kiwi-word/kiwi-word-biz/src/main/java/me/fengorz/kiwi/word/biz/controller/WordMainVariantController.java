@@ -1,5 +1,5 @@
 /*
- * Copyright [2019~2025] [codingByFeng]
+ * Copyright [2019~2025] [zhanshifeng]
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,18 +15,15 @@
  */
 package me.fengorz.kiwi.word.biz.controller;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import me.fengorz.kiwi.common.api.R;
-import me.fengorz.kiwi.word.api.dto.WordMainVariantDTO;
-import me.fengorz.kiwi.word.api.vo.WordMainVariantVO;
-import me.fengorz.kiwi.word.biz.service.IWordMainVariantService;
 import me.fengorz.kiwi.word.biz.service.operate.IWordOperateService;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 
 
 /**
@@ -37,47 +34,11 @@ import javax.validation.constraints.NotNull;
  */
 @Validated
 @RestController
-@AllArgsConstructor
+@RequiredArgsConstructor
 @RequestMapping("/word/main/variant")
 public class WordMainVariantController {
 
-    private final IWordMainVariantService wordMainVariantService;
     private final IWordOperateService wordOperateService;
-
-    /**
-     * 分页查询
-     */
-    @PostMapping("/page/{current}/{size}")
-    public R<IPage<WordMainVariantVO>> page(
-            @PathVariable Integer current,
-            @PathVariable Integer size,
-            WordMainVariantDTO dto) {
-        return R.success(wordMainVariantService.page(current, size, dto));
-    }
-
-    /**
-     * 通过id查询
-     */
-    @GetMapping("/get/{id}")
-    public R<WordMainVariantVO> get(@PathVariable Integer id) {
-        return R.success(wordMainVariantService.getVO(id));
-    }
-
-    /**
-     * 新增 or 修改
-     */
-    @PostMapping("/saveOne")
-    public R<Void> saveOne(WordMainVariantDTO dto) {
-        return R.auto(wordMainVariantService.saveOne(dto));
-    }
-
-    /**
-     * 删除
-     */
-    @PostMapping("/del")
-    public R<Void> del(@NotNull Integer id) {
-        return R.auto(wordMainVariantService.removeById(id));
-    }
 
     @PostMapping("/insertVariant")
     public R<Void> insertVariant(@NotBlank String inputWordName, @NotBlank String fetchWordName) {

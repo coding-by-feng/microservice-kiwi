@@ -1,6 +1,6 @@
 /*
  *
- *   Copyright [2019~2025] [codingByFeng]
+ *   Copyright [2019~2025] [zhanshifeng]
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -49,7 +49,12 @@ import me.fengorz.kiwi.word.api.entity.*;
 import me.fengorz.kiwi.word.api.exception.WordResultStoreRuntimeException;
 import me.fengorz.kiwi.word.api.factory.CrawlerEntityFactory;
 import me.fengorz.kiwi.word.api.util.CrawlerUtils;
-import me.fengorz.kiwi.word.api.vo.*;
+import me.fengorz.kiwi.word.api.vo.WordMainVO;
+import me.fengorz.kiwi.word.api.vo.WordParaphraseExampleVO;
+import me.fengorz.kiwi.word.api.vo.detail.WordCharacterVO;
+import me.fengorz.kiwi.word.api.vo.detail.WordParaphraseVO;
+import me.fengorz.kiwi.word.api.vo.detail.WordPronunciationVO;
+import me.fengorz.kiwi.word.api.vo.detail.WordQueryVO;
 import me.fengorz.kiwi.word.biz.service.*;
 import me.fengorz.kiwi.word.biz.service.operate.IWordOperateService;
 import org.springframework.beans.factory.annotation.Value;

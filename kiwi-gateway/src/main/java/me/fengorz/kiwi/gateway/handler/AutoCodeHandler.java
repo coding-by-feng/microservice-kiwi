@@ -1,6 +1,6 @@
 /*
  *
- *   Copyright [2019~2025] [codingByFeng]
+ *   Copyright [2019~2025] [zhanshifeng]
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@
 package me.fengorz.kiwi.gateway.handler;
 
 import com.google.code.kaptcha.Producer;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.api.constant.CommonConstants;
 import me.fengorz.kiwi.common.api.constant.SecurityConstants;
@@ -48,7 +48,7 @@ import java.util.concurrent.TimeUnit;
  */
 @Slf4j
 @Component
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class AutoCodeHandler implements HandlerFunction<ServerResponse> {
     private final Producer producer;
     private final RedisTemplate redisTemplate;

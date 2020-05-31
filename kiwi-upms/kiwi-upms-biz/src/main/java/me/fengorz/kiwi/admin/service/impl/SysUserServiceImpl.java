@@ -1,6 +1,6 @@
 /*
  *
- *   Copyright [2019~2025] [codingByFeng]
+ *   Copyright [2019~2025] [zhanshifeng]
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ package me.fengorz.kiwi.admin.service.impl;
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import me.fengorz.kiwi.admin.api.dto.UserFullInfoDTO;
 import me.fengorz.kiwi.admin.api.entity.SysMenu;
 import me.fengorz.kiwi.admin.api.entity.SysRole;
@@ -41,11 +41,11 @@ import java.util.stream.Collectors;
 /**
  * 用户表
  *
- * @author codingByFeng
+ * @author zhanshifeng
  * @date 2019-09-26 09:37:54
  */
 @Service("sysUserService")
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> implements SysUserService {
 
     private final SysRoleService sysRoleService;

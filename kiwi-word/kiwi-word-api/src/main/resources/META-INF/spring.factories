@@ -1,7 +1,7 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  me.fengorz.kiwi.word.api.feign.fallback.WordFetchAPIServiceFallbackImpl,\
+  me.fengorz.kiwi.word.api.feign.fallback.WordFetchAPIFallback,\
   me.fengorz.kiwi.word.api.feign.factory.RemoteWordFetchServiceFallbackFactory,\
-  me.fengorz.kiwi.word.api.feign.fallback.RemoteWordCharacterServiceFallbackImpl,\
+  me.fengorz.kiwi.word.api.feign.fallback.WordCharacterAPIFallback,\
   me.fengorz.kiwi.word.api.feign.factory.RemoteWordCharacterServiceFallbackFactory,\
-  me.fengorz.kiwi.word.api.feign.fallback.RemoteWordMainServiceFallbackImpl,\
+  me.fengorz.kiwi.word.api.feign.fallback.WordMainAPIFallback,\
   me.fengorz.kiwi.word.api.feign.factory.RemoteWordMainServiceFallBackFactory

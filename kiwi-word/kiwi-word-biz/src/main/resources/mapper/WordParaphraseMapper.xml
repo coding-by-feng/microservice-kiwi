@@ -23,7 +23,7 @@
 
 <mapper namespace="me.fengorz.kiwi.word.biz.mapper.WordParaphraseMapper">
 
-    <select id="selectParaphraseAndIsCollect" resultType="me.fengorz.kiwi.word.api.vo.WordParaphraseVO">
+    <select id="selectParaphraseAndIsCollect" resultType="me.fengorz.kiwi.word.api.vo.detail.WordParaphraseVO">
         select wp.paraphrase_id,
                wp.paraphrase_english,
                wp.paraphrase_english_translate,

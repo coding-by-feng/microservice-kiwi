@@ -10,7 +10,7 @@ import java.lang.annotation.Target;
 import java.util.Optional;
 
 /**
- * @Author codingByFeng
+ * @Author zhanshifeng
  * @Date 2019-09-11 10:32
  */
 public class Java8OptionalTest {
@@ -142,15 +142,15 @@ public class Java8OptionalTest {
     @SneakyThrows
     public void mapAndflatmap() {
 
-        Person codingByFeng = new Person("codingByFeng");
-        Optional<Person> person = Optional.of(codingByFeng);
+        Person zhanshifeng = new Person("zhanshifeng");
+        Optional<Person> person = Optional.of(zhanshifeng);
         Optional<Optional<String>> stringOptional = person.map(Person::getName);
         Optional<String> optional = stringOptional.orElseThrow(Exception::new);
         String s = optional.orElse(null);
-        Assert.assertEquals("codingByFeng" , s);
+        Assert.assertEquals("zhanshifeng" , s);
 
         String s1 = person.flatMap(Person::getName).orElseThrow(Exception::new);
-        Assert.assertEquals(s1, "codingByFeng");
+        Assert.assertEquals(s1, "zhanshifeng");
 
     }
 

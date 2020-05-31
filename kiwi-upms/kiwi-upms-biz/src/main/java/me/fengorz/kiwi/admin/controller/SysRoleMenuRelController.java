@@ -1,6 +1,6 @@
 /*
  *
- *   Copyright [2019~2025] [codingByFeng]
+ *   Copyright [2019~2025] [zhanshifeng]
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ package me.fengorz.kiwi.admin.controller;
 
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import me.fengorz.kiwi.admin.api.entity.SysRoleMenuRel;
 import me.fengorz.kiwi.admin.service.SysRoleMenuRelService;
 import me.fengorz.kiwi.common.api.R;
@@ -33,11 +33,11 @@ import org.springframework.web.bind.annotation.*;
 /**
  * 角色菜单表
  *
- * @author codingByFeng
+ * @author zhanshifeng
  * @date 2019-09-26 16:03:15
  */
 @RestController
-@AllArgsConstructor
+@RequiredArgsConstructor
 @RequestMapping("/sysrolemenurel")
 public class SysRoleMenuRelController extends BaseController {
 

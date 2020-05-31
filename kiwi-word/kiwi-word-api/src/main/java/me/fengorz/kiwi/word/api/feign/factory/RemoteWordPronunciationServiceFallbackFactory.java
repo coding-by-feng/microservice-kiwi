@@ -1,6 +1,6 @@
 /*
  *
- *   Copyright [2019~2025] [codingByFeng]
+ *   Copyright [2019~2025] [zhanshifeng]
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -19,22 +19,22 @@
 package me.fengorz.kiwi.word.api.feign.factory;
 
 import feign.hystrix.FallbackFactory;
-import me.fengorz.kiwi.word.api.feign.IRemoteWordPronunciationService;
-import me.fengorz.kiwi.word.api.feign.fallback.RemoteWordPronunciationServiceFallbackImpl;
+import me.fengorz.kiwi.word.api.feign.IWordPronunciationAPI;
+import me.fengorz.kiwi.word.api.feign.fallback.WordPronunciationAPIFallback;
 import org.springframework.stereotype.Component;
 
 
 /**
  * 单词例句表
  *
- * @author codingByFeng
+ * @author zhanshifeng
  * @date 2019-11-01 14:44:45
  */
 @Component
-public class RemoteWordPronunciationServiceFallbackFactory implements FallbackFactory<IRemoteWordPronunciationService> {
+public class RemoteWordPronunciationServiceFallbackFactory implements FallbackFactory<IWordPronunciationAPI> {
     @Override
-    public IRemoteWordPronunciationService create(Throwable throwable) {
-        RemoteWordPronunciationServiceFallbackImpl remoteWordPronunciationServiceFallback = new RemoteWordPronunciationServiceFallbackImpl();
+    public IWordPronunciationAPI create(Throwable throwable) {
+        WordPronunciationAPIFallback remoteWordPronunciationServiceFallback = new WordPronunciationAPIFallback();
         remoteWordPronunciationServiceFallback.setThrowable(throwable);
         return remoteWordPronunciationServiceFallback;
     }

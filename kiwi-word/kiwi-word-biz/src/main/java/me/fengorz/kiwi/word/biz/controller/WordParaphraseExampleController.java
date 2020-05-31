@@ -1,6 +1,6 @@
 /*
  *
- *   Copyright [2019~2025] [codingByFeng]
+ *   Copyright [2019~2025] [zhanshifeng]
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -18,91 +18,24 @@
  */
 package me.fengorz.kiwi.word.biz.controller;
 
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import lombok.AllArgsConstructor;
-import me.fengorz.kiwi.common.api.R;
-import me.fengorz.kiwi.common.api.annotation.log.SysLog;
+import lombok.RequiredArgsConstructor;
 import me.fengorz.kiwi.common.sdk.controller.BaseController;
-import me.fengorz.kiwi.word.api.entity.WordParaphraseExampleDO;
 import me.fengorz.kiwi.word.biz.service.IWordParaphraseExampleService;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 
 /**
  * 单词例句表
  *
- * @author codingByFeng
+ * @author zhanshifeng
  * @date 2019-10-31 20:40:38
  */
 @RestController
-@AllArgsConstructor
+@RequiredArgsConstructor
 @RequestMapping("/word/paraphrase/example")
 public class WordParaphraseExampleController extends BaseController {
 
     private final IWordParaphraseExampleService wordParaphraseExampleService;
-
-    /**
-     * 分页查询
-     *
-     * @param page                    分页对象
-     * @param wordParaphraseExampleDO 单词例句表
-     * @return
-     */
-    @GetMapping("/page")
-    public R getWordParaphraseExamplePage(Page page, WordParaphraseExampleDO wordParaphraseExampleDO) {
-        return R.success(wordParaphraseExampleService.page(page, Wrappers.query(wordParaphraseExampleDO)));
-    }
-
-    /**
-     * 通过id查询单词例句表
-     *
-     * @param exampleId id
-     * @return R
-     */
-    @GetMapping("/{exampleId}")
-    public R getById(@PathVariable("exampleId") Integer exampleId) {
-        return R.success(wordParaphraseExampleService.getById(exampleId));
-    }
-
-    /**
-     * 新增单词例句表
-     *
-     * @param wordParaphraseExampleDO 单词例句表
-     * @return R
-     */
-    @SysLog("新增单词例句表")
-    @PostMapping
-    @PreAuthorize("@pms.hasPermission('biz_wordparaphraseexample_add')")
-    public R save(@RequestBody WordParaphraseExampleDO wordParaphraseExampleDO) {
-        return R.success(wordParaphraseExampleService.save(wordParaphraseExampleDO));
-    }
-
-    /**
-     * 修改单词例句表
-     *
-     * @param wordParaphraseExampleDO 单词例句表
-     * @return R
-     */
-    @SysLog("修改单词例句表")
-    @PutMapping
-    @PreAuthorize("@pms.hasPermission('biz_wordparaphraseexample_edit')")
-    public R updateById(@RequestBody WordParaphraseExampleDO wordParaphraseExampleDO) {
-        return R.success(wordParaphraseExampleService.updateById(wordParaphraseExampleDO));
-    }
-
-    /**
-     * 通过id删除单词例句表
-     *
-     * @param exampleId id
-     * @return R
-     */
-    @SysLog("通过id删除单词例句表")
-    @DeleteMapping("/{exampleId}")
-    @PreAuthorize("@pms.hasPermission('biz_wordparaphraseexample_del')")
-    public R removeById(@PathVariable Integer exampleId) {
-        return R.success(wordParaphraseExampleService.removeById(exampleId));
-    }
 
 }

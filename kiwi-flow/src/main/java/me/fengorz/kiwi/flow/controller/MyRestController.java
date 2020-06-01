@@ -19,6 +19,7 @@
 
 package me.fengorz.kiwi.flow.controller;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import me.fengorz.kiwi.flow.service.MyService;
@@ -60,7 +61,7 @@ public class MyRestController {
     }
 
     @Data
-    @RequiredArgsConstructor
+    @AllArgsConstructor
     static class TaskRepresentation {
 
         private String id;

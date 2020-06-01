@@ -29,7 +29,6 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
-import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
@@ -55,7 +54,6 @@ public class WordFetchConsumer {
     private int maxPoolSize;
 
     private ReentrantLock lock = new ReentrantLock();
-    Condition threadFullCondition = lock.newCondition();
 
     @RabbitHandler
     public void fetch(WordMessageDTO wordMessageDTO) {
@@ -65,20 +63,17 @@ public class WordFetchConsumer {
             // 线程池如果满了的话，先睡眠一段时间，等待有空闲的现场出来
             while (threadPoolTaskExecutor.getActiveCount() == maxPoolSize) {
                 try {
-                    log.info("threadPoolTaskExecutor is full, waiting!");
-                    threadFullCondition.await();
+                    log.info("threadPoolTaskExecutor is full, sleep 1s!");
+                    Thread.sleep(1000);
                 } catch (InterruptedException e) {
-                    log.error("WordFetchConsumer.fetch await error!", e);
+                    log.error("WordFetchConsumer.fetch sleep error!", e);
                     // TODO ZSF 增加一个抓取队列状态恢复到待抓取的接口，防止数据抓取丢失
                     return;
-                }finally {
-                    this.lock.unlock();
                 }
             }
 
             threadPoolTaskExecutor.execute(() -> {
                 wordFetchService.work(wordMessageDTO);
-                threadFullCondition.signalAll();
             });
         } finally {
             this.lock.unlock();

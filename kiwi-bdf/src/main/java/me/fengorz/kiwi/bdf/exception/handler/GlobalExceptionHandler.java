@@ -75,7 +75,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler({DfsOperateDeleteException.class})
-    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ResponseStatus(HttpStatus.CREATED)
     public R handleDfsOperateDeleteException(DfsOperateDeleteException e) {
         log.error("global DfsOperateDeleteException:{}", e.getMessage(), e);
         return R.failed(e.getMessage());

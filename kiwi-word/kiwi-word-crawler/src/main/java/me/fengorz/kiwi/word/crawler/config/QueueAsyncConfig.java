@@ -28,6 +28,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import java.util.concurrent.Executor;
+import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * @Description TODO
@@ -55,6 +56,7 @@ public class QueueAsyncConfig implements AsyncConfigurer {
         taskExecutor.setMaxPoolSize(this.maxPoolSize);
         taskExecutor.setQueueCapacity(this.queueCapacity);
         taskExecutor.initialize();
+        taskExecutor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
         return taskExecutor;
     }
 

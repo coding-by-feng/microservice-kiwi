@@ -84,7 +84,7 @@ public class DfsService implements IDfsService {
             fastFileStorageClient.deleteFile(groupName, path);
             log.info("delete file success，group：{}，path：{}" , groupName, path);
         } catch (Exception e) {
-            log.error(DfsConstants.DELETE_FILE_EXCEPTION, e);
+            log.error(DfsConstants.DELETE_FILE_EXCEPTION);
             throw new DfsOperateDeleteException(DfsConstants.DELETE_FILE_EXCEPTION);
         }
     }

@@ -19,6 +19,7 @@
 
 package me.fengorz.kiwi.bdf.exception.handler;
 
+import com.github.tobato.fastdfs.exception.FdfsServerException;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.api.R;
 import me.fengorz.kiwi.common.api.constant.CommonConstants;
@@ -63,28 +64,35 @@ public class GlobalExceptionHandler {
     @ExceptionHandler({ServiceException.class})
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public R handleServiceRuntimeException(ServiceException e) {
-        log.error("global ServiceException:{}", e.getMessage(), e);
+        log.error("global ServiceException:{}", e.getMessage());
         return R.error(e.getMessage());
     }
 
     @ExceptionHandler({DfsOperateException.class})
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public R handleDfsOperateException(DfsOperateException e) {
-        log.error("global DfsOperateException:{}", e.getMessage(), e);
+        log.error("global DfsOperateException:{}", e.getMessage());
         return R.error(e.getMessage());
     }
 
     @ExceptionHandler({DfsOperateDeleteException.class})
     @ResponseStatus(HttpStatus.CREATED)
     public R handleDfsOperateDeleteException(DfsOperateDeleteException e) {
-        log.error("global DfsOperateDeleteException:{}", e.getMessage(), e);
+        log.error("global DfsOperateDeleteException:{}", e.getMessage());
         return R.failed(e.getMessage());
     }
 
     @ExceptionHandler({ResourceNotFoundException.class})
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public R handleResourceNotFoundException(ResourceNotFoundException e) {
-        log.error("global ResourceNotFoundException:{}", e.getMessage(), e);
+        log.error("global ResourceNotFoundException:{}", e.getMessage());
+        return R.failed(e.getMessage());
+    }
+
+    @ExceptionHandler({FdfsServerException.class})
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public R handleFdfsServerException(FdfsServerException e) {
+        log.error("global FdfsServerException:{}", e.getMessage());
         return R.failed(e.getMessage());
     }
 

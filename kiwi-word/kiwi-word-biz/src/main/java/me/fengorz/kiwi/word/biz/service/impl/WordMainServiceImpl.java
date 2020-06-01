@@ -19,6 +19,7 @@
 package me.fengorz.kiwi.word.biz.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +34,7 @@ import me.fengorz.kiwi.word.api.entity.WordMainDO;
 import me.fengorz.kiwi.word.api.vo.WordMainVO;
 import me.fengorz.kiwi.word.biz.mapper.WordMainMapper;
 import me.fengorz.kiwi.word.biz.service.IWordMainService;
+import org.apache.ibatis.exceptions.TooManyResultsException;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -55,7 +57,7 @@ import java.util.stream.Collectors;
 @KiwiCacheKeyPrefix(WordConstants.CACHE_KEY_PREFIX_WORD_MAIN.CLASS)
 public class WordMainServiceImpl extends ServiceImpl<WordMainMapper, WordMainDO> implements IWordMainService {
 
-    public static final String VALUE = "value" ;
+    public static final String VALUE = "value";
 
     @Override
     public boolean save(WordMainDO entity) {
@@ -74,10 +76,16 @@ public class WordMainServiceImpl extends ServiceImpl<WordMainMapper, WordMainDO>
     @Cacheable(cacheNames = WordConstants.CACHE_NAMES, keyGenerator = CacheConstants.CACHE_KEY_GENERATOR_BEAN, unless = "#result == null")
     public WordMainVO getOne(@KiwiCacheKey String wordName) {
         // TODO ZSF isDel要改成tinyint类型
-        return KiwiBeanUtils.convertFrom(this.getOne(
-                new LambdaQueryWrapper<WordMainDO>().eq(WordMainDO::getWordName, wordName)
-                        .eq(WordMainDO::getIsDel, CommonConstants.FLAG_N)
-        ), WordMainVO.class);
+        try {
+            return KiwiBeanUtils.convertFrom(this.getOne(
+                    new LambdaQueryWrapper<WordMainDO>().eq(WordMainDO::getWordName, wordName)
+                            .eq(WordMainDO::getIsDel, CommonConstants.FLAG_N)
+            ), WordMainVO.class);
+        } catch (TooManyResultsException e) {
+            log.error(e.getMessage());
+            this.remove(Wrappers.<WordMainDO>lambdaQuery().eq(WordMainDO::getWordName,wordName));
+        }
+        return null;
     }
 
     @Override
@@ -116,12 +124,12 @@ public class WordMainServiceImpl extends ServiceImpl<WordMainMapper, WordMainDO>
     @Override
     @KiwiCacheKeyPrefix(WordConstants.CACHE_KEY_PREFIX_WORD_MAIN.METHOD_NAME)
     @CacheEvict(cacheNames = WordConstants.CACHE_NAMES, keyGenerator = CacheConstants.CACHE_KEY_GENERATOR_BEAN)
-    public void evictByName(@KiwiCacheKey String wordName){
+    public void evictByName(@KiwiCacheKey String wordName) {
     }
 
     @Override
     @KiwiCacheKeyPrefix(WordConstants.CACHE_KEY_PREFIX_WORD_MAIN.METHOD_ID)
     @CacheEvict(cacheNames = WordConstants.CACHE_NAMES, keyGenerator = CacheConstants.CACHE_KEY_GENERATOR_BEAN)
-    public void evictById(@KiwiCacheKey Integer id){
+    public void evictById(@KiwiCacheKey Integer id) {
     }
 }

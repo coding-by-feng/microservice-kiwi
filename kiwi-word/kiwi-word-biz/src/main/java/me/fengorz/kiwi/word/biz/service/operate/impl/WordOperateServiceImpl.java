@@ -117,14 +117,15 @@ public class WordOperateServiceImpl implements IWordOperateService {
         return true;
     }
 
+    @Transactional(rollbackFor = Exception.class, noRollbackFor = DfsOperateDeleteException.class, propagation = Propagation.REQUIRES_NEW)
     private void subRemoveWord(WordMainDO wordMainDO) throws DfsOperateDeleteException {
         final Integer wordId = wordMainDO.getWordId();
         final String wordName = wordMainDO.getWordName();
-        this.removeWordRelatedData(wordMainDO);
-        wordMainService.removeById(wordMainDO.getWordId());
+        wordMainService.remove(Wrappers.<WordMainDO>lambdaQuery().eq(WordMainDO::getWordName,wordName));
         wordOperateEvictService.evict(wordName);
         wordMainService.evictByName(wordName);
         wordMainService.evictById(wordId);
+        this.removeWordRelatedData(wordMainDO);
     }
 
     @Override
@@ -139,21 +140,14 @@ public class WordOperateServiceImpl implements IWordOperateService {
         WordMainDO existsWordMainDO = wordMainService.getOne(new QueryWrapper<>(wordMainDO));
         try {
             if (existsWordMainDO != null) {
-
-                wordMainDO.setLastUpdateTime(LocalDateTime.now());
-                wordMainDO.setIsDel(CommonConstants.FLAG_N);
-                wordMainService.update(wordMainDO, new QueryWrapper<>(new WordMainDO().setWordName(wordMainDO.getWordName())));
-                wordMainDO = wordMainService.getOne(new QueryWrapper<>(new WordMainDO().setWordName(wordMainDO.getWordName())));
-
-                subRemoveWord(wordMainDO);
-            } else {
-                wordMainDO.setIsDel(CommonConstants.FLAG_N);
-                wordMainDO.setWordId(seqService.genIntSequence(MapperConstant.T_INS_SEQUENCE));
-                wordMainService.save(wordMainDO);
+                subRemoveWord(existsWordMainDO);
             }
         } catch (DfsOperateDeleteException e) {
             throw e;
         } finally {
+            wordMainDO.setWordId(seqService.genIntSequence(MapperConstant.T_INS_SEQUENCE));
+            wordMainDO.setIsDel(CommonConstants.FLAG_N);
+            wordMainService.save(wordMainDO);
             subStoreFetchWordResult(fetchWordResultDTO, wordMainDO);
             wordOperateEvictService.evict(wordName);
         }

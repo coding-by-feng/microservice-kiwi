@@ -29,6 +29,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * @Description TODO
@@ -52,9 +53,12 @@ public class WordFetchConsumer {
     @Value("${crawler.config.max.pool.size}")
     private int maxPoolSize;
 
+    private ReentrantLock lock = new ReentrantLock();
+
     @RabbitHandler
     public void fetch(WordMessageDTO wordMessageDTO) {
-        synchronized (this) {
+        this.lock.lock();
+        try {
             log.info("rabbitMQ fetch one word is " + wordMessageDTO);
             // 线程池如果满了的话，先睡眠一段时间，等待有空闲的现场出来
             while (threadPoolTaskExecutor.getActiveCount() >= maxPoolSize) {
@@ -71,6 +75,8 @@ public class WordFetchConsumer {
             threadPoolTaskExecutor.execute(() -> {
                 wordFetchService.work(wordMessageDTO);
             });
+        } finally {
+            lock.unlock();
         }
     }
 

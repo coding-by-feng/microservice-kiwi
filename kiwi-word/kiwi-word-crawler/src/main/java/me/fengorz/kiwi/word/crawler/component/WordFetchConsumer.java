@@ -76,7 +76,7 @@ public class WordFetchConsumer {
                 wordFetchService.work(wordMessageDTO);
             });
         } finally {
-            lock.unlock();
+            this.lock.unlock();
         }
     }
 

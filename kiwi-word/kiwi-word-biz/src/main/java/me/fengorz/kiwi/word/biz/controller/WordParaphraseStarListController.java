@@ -28,6 +28,7 @@ import me.fengorz.kiwi.common.api.annotation.log.SysLog;
 import me.fengorz.kiwi.common.api.constant.MapperConstant;
 import me.fengorz.kiwi.common.api.exception.ServiceException;
 import me.fengorz.kiwi.common.sdk.controller.BaseController;
+import me.fengorz.kiwi.common.sdk.web.security.SecurityUtils;
 import me.fengorz.kiwi.word.api.entity.WordParaphraseStarListDO;
 import me.fengorz.kiwi.word.api.vo.WordParaphraseStarListVO;
 import me.fengorz.kiwi.word.api.vo.detail.WordParaphraseVO;
@@ -72,7 +73,7 @@ public class WordParaphraseStarListController extends BaseController {
     @PostMapping("/save")
     // @PreAuthorize("@pms.hasPermission('api_wordparaphrasestarlist_add')")
     public R<Boolean> save(WordParaphraseStarListVO vo) {
-        vo.setOwner(1);
+        vo.setOwner(SecurityUtils.getCurrentUserId());
         vo.setId(seqService.genIntSequence(MapperConstant.T_INS_SEQUENCE));
         return R.success(wordParaphraseStarListService.save(vo));
     }
@@ -105,7 +106,7 @@ public class WordParaphraseStarListController extends BaseController {
 
     @GetMapping("/getCurrentUserList")
     public R<List<WordParaphraseStarListVO>> getCurrentUserList() {
-        return R.success(wordParaphraseStarListService.getCurrentUserList(1));
+        return R.success(wordParaphraseStarListService.getCurrentUserList(SecurityUtils.getCurrentUserId()));
     }
 
     @PostMapping("/putIntoStarList")

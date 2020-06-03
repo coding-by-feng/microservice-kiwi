@@ -19,6 +19,9 @@
 
 package me.fengorz.kiwi.bdf.security.service;
 
+import me.fengorz.kiwi.common.api.annotation.cache.KiwiCacheKey;
+import me.fengorz.kiwi.common.api.annotation.cache.KiwiCacheKeyPrefix;
+import me.fengorz.kiwi.common.api.constant.CacheConstants;
 import me.fengorz.kiwi.common.api.constant.SecurityConstants;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.oauth2.common.exceptions.InvalidClientException;
@@ -37,8 +40,9 @@ public class KiwiClientDetailsService extends JdbcClientDetailsService {
     }
 
     @Override
-    @Cacheable(value = SecurityConstants.CLIENT_DETAILS_KEY, key = "#clientId", unless = "#result == null")
-    public ClientDetails loadClientByClientId(String clientId) throws InvalidClientException {
+    @KiwiCacheKeyPrefix(CacheConstants.CLIENT_DETAILS)
+    @Cacheable(value = SecurityConstants.CLIENT_DETAILS_KEY, keyGenerator = CacheConstants.CACHE_KEY_GENERATOR_BEAN, unless = "#result == null")
+    public ClientDetails loadClientByClientId(@KiwiCacheKey String clientId) throws InvalidClientException {
         return super.loadClientByClientId(clientId);
     }
 }

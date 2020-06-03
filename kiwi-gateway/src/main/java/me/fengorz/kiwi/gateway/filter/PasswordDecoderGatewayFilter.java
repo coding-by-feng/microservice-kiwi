@@ -24,6 +24,7 @@ import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpUtil;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.api.constant.SecurityConstants;
+import me.fengorz.kiwi.common.sdk.util.cipher.KiwiDecodeUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
@@ -62,10 +63,10 @@ public class PasswordDecoderGatewayFilter extends AbstractGatewayFilterFactory {
             String password = decodeParamMap.get(SecurityConstants.KEY_PASSWORD);
             if (StrUtil.isNotBlank(password)) {
                 try {
-                    // password = DecodeUtils.decryptAES(password, encodeKey);
-                    password = "123456" ;
+                    password = KiwiDecodeUtils.decryptAES(password, encodeKey);
+                    System.out.println(password);
                 } catch (Exception e) {
-                    log.error("密码解密失败:{}" , password);
+                    log.error("密码解密失败:{}", password);
                     return Mono.error(e);
                 }
                 decodeParamMap.put(SecurityConstants.KEY_PASSWORD, password.trim());

@@ -23,4 +23,6 @@ public interface CacheConstants {
 
     String CACHE_KEY_GENERATOR_BEAN = "cacheKeyGenerator" ;
 
+    String CLIENT_DETAILS = "client_detail";
+
 }

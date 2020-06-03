@@ -75,7 +75,7 @@ public class ValidateCodeGatewayFilter extends AbstractGatewayFilterFactory {
                     return chain.filter(exchange);
                 }
 
-                // checkCode(httpRequest);
+                checkCode(httpRequest);
             } catch (Exception e) {
                 ServerHttpResponse httpResponse = exchange.getResponse();
                 httpResponse.setStatusCode(HttpStatus.UNAUTHORIZED);

@@ -19,7 +19,6 @@
 
 package me.fengorz.kiwi.bdf.security.component;
 
-import cn.hutool.core.collection.CollUtil;
 import lombok.RequiredArgsConstructor;
 import me.fengorz.kiwi.common.api.constant.CommonConstants;
 import me.fengorz.kiwi.common.api.constant.SecurityConstants;
@@ -34,7 +33,6 @@ import org.springframework.util.StringUtils;
 
 import java.util.Collection;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -42,7 +40,7 @@ import java.util.Map;
  */
 @RequiredArgsConstructor
 public class KiwiUserAuthenticationConverter implements UserAuthenticationConverter {
-    private static final String N_A = "N/A" ;
+    private static final String N_A = "N/A";
 
     private final FilterIgnorePropertiesConfig filterIgnorePropertiesConfig;
 
@@ -86,10 +84,10 @@ public class KiwiUserAuthenticationConverter implements UserAuthenticationConver
     private Collection<? extends GrantedAuthority> getAuthorities(Map<String, ?> map) {
         Object authorities = map.get(AUTHORITIES);
 
-        List<String> userNames = this.filterIgnorePropertiesConfig.getUserNames();
-        if (CollUtil.contains(userNames, map.get(SecurityConstants.DETAILS_USERNAME))) {
-            authorities = CommonConstants.EMPTY;
-        }
+        // List<String> userNames = this.filterIgnorePropertiesConfig.getUserNames();
+        // if (CollUtil.contains(userNames, map.get(SecurityConstants.DETAILS_USERNAME))) {
+        //     authorities = CommonConstants.EMPTY;
+        // }
 
         if (authorities instanceof String) {
             return AuthorityUtils.commaSeparatedStringToAuthorityList((String) authorities);
@@ -98,6 +96,7 @@ public class KiwiUserAuthenticationConverter implements UserAuthenticationConver
             return AuthorityUtils.commaSeparatedStringToAuthorityList(StringUtils
                     .collectionToCommaDelimitedString((Collection<?>) authorities));
         }
-        throw new IllegalArgumentException("Authorities must be either a String or a Collection");
+        // throw new IllegalArgumentException("Authorities must be either a String or a Collection");
+        return AuthorityUtils.commaSeparatedStringToAuthorityList(CommonConstants.EMPTY);
     }
 }

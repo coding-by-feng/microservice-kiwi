@@ -52,19 +52,13 @@ import java.util.Map;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/EnhancerTokenEndpoint")
-public class EnhancerTokenEndpoint {
+@RequestMapping("/kiwiTokenEndpoint")
+public class KiwiTokenEndpoint {
     private static final String PROJECT_OAUTH_ACCESS = SecurityConstants.PROJECT_PREFIX + SecurityConstants.OAUTH_PREFIX + "access:" ;
     private static final String CURRENT = "current" ;
     private static final String SIZE = "size" ;
     private final TokenStore tokenStore;
     private final RedisTemplate redisTemplate;
-
-    @PostMapping("/test")
-    public R test() {
-        log.info("test------------------");
-        return R.success();
-    }
 
     /**
      * 退出并删除token

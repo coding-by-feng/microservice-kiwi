@@ -74,17 +74,6 @@ public class WordStarListServiceImpl extends ServiceImpl<WordStarListMapper, Wor
                                 || WordStarListColumn.LIST_NAME.equals(tableFieldInfo.getColumn()));
 
         return KiwiBeanUtils.convertFrom(wordStarListMapper.selectList(queryWrapper), WordStarListVO.class);
-        // TODO ZSF 待优化
-        // return Stream.of(starList).flatMap(list -> {
-        //     List<Map<String, Object>> convertedList = new ArrayList<>();
-        //     list.forEach(wordStarListDO -> {
-        //         Map<String, Object> map = CollUtil.newHashMap();
-        //         map.put(WordStarListColumn.ID, wordStarListDO.getId());
-        //         map.put("listName", wordStarListDO.getListName());
-        //         convertedList.add(map);
-        //     });
-        //     return Stream.of();
-        // });
     }
 
     @Override

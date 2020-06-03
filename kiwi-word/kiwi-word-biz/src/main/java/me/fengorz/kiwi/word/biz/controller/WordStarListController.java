@@ -28,6 +28,7 @@ import me.fengorz.kiwi.common.api.annotation.log.SysLog;
 import me.fengorz.kiwi.common.api.constant.MapperConstant;
 import me.fengorz.kiwi.common.api.exception.ServiceException;
 import me.fengorz.kiwi.common.sdk.controller.BaseController;
+import me.fengorz.kiwi.common.sdk.web.security.SecurityUtils;
 import me.fengorz.kiwi.word.api.entity.WordStarListDO;
 import me.fengorz.kiwi.word.api.vo.WordStarListVO;
 import me.fengorz.kiwi.word.api.vo.star.WordStarItemVO;
@@ -105,8 +106,7 @@ public class WordStarListController extends BaseController {
 
     @GetMapping("/getCurrentUserList")
     public R<List<WordStarListVO>> getCurrentUserList() {
-        // EnhancerUser currentUser = this.getCurrentUser();
-        return R.success(wordStarListService.getCurrentUserList(1));
+        return R.success(wordStarListService.getCurrentUserList(SecurityUtils.getCurrentUserId()));
     }
 
     @PostMapping("/getListItems/{size}/{current}")

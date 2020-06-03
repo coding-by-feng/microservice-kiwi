@@ -23,6 +23,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.experimental.Accessors;
 
 import java.time.LocalDateTime;
 
@@ -35,6 +36,7 @@ import java.time.LocalDateTime;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @TableName("sys_user")
+@Accessors(chain = true)
 public class SysUser extends Model<SysUser> {
 
     private static final long serialVersionUID = 1L;

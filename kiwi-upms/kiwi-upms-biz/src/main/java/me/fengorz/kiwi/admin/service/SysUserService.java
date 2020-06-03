@@ -38,4 +38,6 @@ public interface SysUserService extends IService<SysUser> {
      */
     UserFullInfoDTO getUserFullInfo(SysUser sysUser);
 
+    SysUser oneClickRegister();
+
 }

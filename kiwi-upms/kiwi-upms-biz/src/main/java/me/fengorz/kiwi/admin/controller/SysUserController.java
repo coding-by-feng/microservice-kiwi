@@ -50,6 +50,11 @@ public class SysUserController extends BaseController {
         return sysUserService;
     }
 
+    @GetMapping("/oneClickRegister")
+    public R<SysUser> oneClickRegister() {
+        return R.success(sysUserService.oneClickRegister());
+    }
+
     @GetMapping("/current/info")
     public R currentInfo() {
         final SysUser[] user = {null};
@@ -68,7 +73,7 @@ public class SysUserController extends BaseController {
     public R info(@PathVariable String username) {
         SysUser user = sysUserService.getOne(Wrappers.<SysUser>query().lambda().eq(SysUser::getUsername, username));
         if (Objects.isNull(user)) {
-            return R.failed("用户信息查询不到 %s" , username);
+            return R.failed("用户信息查询不到 %s", username);
         }
         return R.success(sysUserService.getUserFullInfo(user));
     }

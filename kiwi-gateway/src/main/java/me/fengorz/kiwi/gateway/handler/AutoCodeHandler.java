@@ -72,6 +72,8 @@ public class AutoCodeHandler implements HandlerFunction<ServerResponse> {
             return Mono.error(e);
         }
 
-        return ServerResponse.status(HttpStatus.OK).contentType(MediaType.IMAGE_JPEG).body(BodyInserters.fromResource(new ByteArrayResource(os.toByteArray())));
+        return ServerResponse.status(HttpStatus.OK)
+                .contentType(MediaType.IMAGE_JPEG)
+                .body(BodyInserters.fromResource(new ByteArrayResource(os.toByteArray())));
     }
 }

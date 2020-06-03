@@ -49,7 +49,7 @@ spring:
 security:
   encode:
     # 前端密码密钥，必须16位
-    key: 'thanks,pig4cloud'
+    key: 'MyKiwiVocabulary'
   skip-url-slash-count: 1
 
 # 不校验验证码终端

@@ -28,6 +28,7 @@ import me.fengorz.kiwi.common.api.annotation.log.SysLog;
 import me.fengorz.kiwi.common.api.constant.MapperConstant;
 import me.fengorz.kiwi.common.api.exception.ServiceException;
 import me.fengorz.kiwi.common.sdk.controller.BaseController;
+import me.fengorz.kiwi.common.sdk.web.security.SecurityUtils;
 import me.fengorz.kiwi.word.api.entity.WordExampleStarListDO;
 import me.fengorz.kiwi.word.api.vo.WordExampleStarListVO;
 import me.fengorz.kiwi.word.api.vo.star.ExampleStarItemVO;
@@ -68,7 +69,7 @@ public class WordExampleStarListController extends BaseController {
     @PostMapping("/save")
     // @PreAuthorize("@pms.hasPermission('api_wordparaphraseexamplelist_add')")
     public R<Boolean> save(WordExampleStarListVO vo) {
-        vo.setOwner(1);
+        vo.setOwner(SecurityUtils.getCurrentUserId());
         vo.setId(seqService.genIntSequence(MapperConstant.T_INS_SEQUENCE));
         return R.success(wordExampleStarListService.save(vo));
     }
@@ -101,13 +102,13 @@ public class WordExampleStarListController extends BaseController {
 
     @GetMapping("/getCurrentUserList")
     public R<List<WordExampleStarListVO>> getCurrentUserList() {
-        return R.success(wordExampleStarListService.getCurrentUserList(1));
+        return R.success(wordExampleStarListService.getCurrentUserList(SecurityUtils.getCurrentUserId()));
     }
 
     @PostMapping("/putIntoStarList")
     public R<Boolean> putIntoStarList(@NotNull Integer exampleId, @NotNull Integer listId) {
         try {
-            return R.success(this.wordOperateService.putExampleIntoStarList(exampleId, listId));
+            return R.success(wordOperateService.putExampleIntoStarList(exampleId, listId));
         } catch (ServiceException e) {
             log.error(e.getMessage());
             return R.failed(e.getMessage());
@@ -116,7 +117,7 @@ public class WordExampleStarListController extends BaseController {
 
     @PostMapping("/removeExampleStar")
     public R<Boolean> removeExampleStar(@NotNull Integer exampleId, @NotNull Integer listId) {
-        return R.success(this.wordOperateService.removeExampleStar(exampleId, listId));
+        return R.success(wordOperateService.removeExampleStar(exampleId, listId));
     }
 
     @PostMapping("/getListItems/{size}/{current}")

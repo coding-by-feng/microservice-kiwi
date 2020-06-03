@@ -61,7 +61,7 @@ public class AutoCodeHandler implements HandlerFunction<ServerResponse> {
 
         //保存验证码信息
         String randomStr = serverRequest.queryParam(SecurityConstants.KEY_RANDOM_STR).get();
-        redisTemplate.opsForValue().set(CommonConstants.DEFAULT_CODE_KEY + randomStr, text, 60, TimeUnit.SECONDS);
+        redisTemplate.opsForValue().set(CommonConstants.DEFAULT_CODE_KEY + randomStr, text, 120, TimeUnit.SECONDS);
 
         // 转换流信息写出
         FastByteArrayOutputStream os = new FastByteArrayOutputStream();

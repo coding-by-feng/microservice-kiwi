@@ -44,7 +44,7 @@ public class WebSecurityConfigurer extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
                 .antMatchers("/oauth/token/**").permitAll()
-                .antMatchers("/EnhancerTokenEndpoint/**").permitAll()
+                .antMatchers("/kiwiTokenEndpoint/**").permitAll()
                 .anyRequest().authenticated()
                 // .anyRequest().permitAll()
                 .and().csrf().disable();

@@ -13,7 +13,6 @@ spring:
 # 直接放行URL
 ignore:
   urls:
-    - /word/**
     - /test/**
   userNames:
     - admin

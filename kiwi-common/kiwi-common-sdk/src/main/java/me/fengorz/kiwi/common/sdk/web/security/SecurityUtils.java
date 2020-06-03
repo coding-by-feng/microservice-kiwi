@@ -21,6 +21,7 @@ package me.fengorz.kiwi.common.sdk.web.security;
 
 import lombok.experimental.UtilityClass;
 import me.fengorz.kiwi.common.api.entity.EnhancerUser;
+import me.fengorz.kiwi.common.api.exception.AuthException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
@@ -66,9 +67,9 @@ public class SecurityUtils {
     public Integer getCurrentUserId() {
         EnhancerUser currentUser = getCurrentUser();
         if (currentUser != null) {
-            currentUser.getId();
+            return currentUser.getId();
         }
-        return null;
+        throw new AuthException("登录超时");
     }
 
 }

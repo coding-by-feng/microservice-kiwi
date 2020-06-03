@@ -19,8 +19,9 @@
 
 package me.fengorz.kiwi.admin.config;
 
-import org.mybatis.spring.annotation.MapperScan;
+import me.fengorz.kiwi.bdf.core.config.ScanConfig;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 
 /**
  * @Description TODO
@@ -28,7 +29,8 @@ import org.springframework.context.annotation.Configuration;
  * @Date 2019-09-20 09:28
  */
 @Configuration
-@MapperScan("me.fengorz.kiwi.admin.mapper")
+// @MapperScan("me.fengorz.kiwi.admin.mapper")
+@Import({ScanConfig.class})
 public class UpmsBizConfig {
 
 }

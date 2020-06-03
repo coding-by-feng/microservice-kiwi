@@ -26,7 +26,6 @@ import org.springframework.security.core.userdetails.User;
 import java.util.Collection;
 
 /**
- * @Description TODO
  * @Author zhanshifeng
  * @Date 2019-09-25 10:41
  */

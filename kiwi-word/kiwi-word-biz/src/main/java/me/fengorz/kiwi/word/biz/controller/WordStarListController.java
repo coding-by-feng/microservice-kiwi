@@ -72,8 +72,7 @@ public class WordStarListController extends BaseController {
     @PostMapping("/save")
     // @PreAuthorize("@pms.hasPermission('api_wordstarlist_add')")
     public R<Boolean> save(WordStarListVO vo) {
-        // TODO ZSF 暂时写死
-        vo.setOwner(1);
+        vo.setOwner(SecurityUtils.getCurrentUserId());
         vo.setId(seqService.genIntSequence(MapperConstant.T_INS_SEQUENCE));
         return R.success(wordStarListService.save(vo));
     }

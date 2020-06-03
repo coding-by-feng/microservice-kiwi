@@ -19,7 +19,9 @@
 package me.fengorz.kiwi.admin.service.impl;
 
 import cn.hutool.core.util.ArrayUtil;
+import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.StrUtil;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.RequiredArgsConstructor;
 import me.fengorz.kiwi.admin.api.dto.UserFullInfoDTO;
@@ -31,8 +33,13 @@ import me.fengorz.kiwi.admin.service.SysMenuService;
 import me.fengorz.kiwi.admin.service.SysRoleService;
 import me.fengorz.kiwi.admin.service.SysUserRoleRelService;
 import me.fengorz.kiwi.admin.service.SysUserService;
+import me.fengorz.kiwi.bdf.core.service.ISeqService;
+import me.fengorz.kiwi.common.api.constant.MapperConstant;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -44,13 +51,14 @@ import java.util.stream.Collectors;
  * @author zhanshifeng
  * @date 2019-09-26 09:37:54
  */
-@Service("sysUserService")
+@Service()
 @RequiredArgsConstructor
 public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> implements SysUserService {
 
     private final SysRoleService sysRoleService;
     private final SysUserRoleRelService sysUserRoleRelService;
     private final SysMenuService sysMenuService;
+    private final ISeqService seqService;
 
     @Override
     public UserFullInfoDTO getUserFullInfo(SysUser sysUser) {
@@ -75,5 +83,28 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         userFullInfoDTO.setPermissions(ArrayUtil.toArray(permissionSet, String.class));
 
         return userFullInfoDTO;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public SysUser oneClickRegister() {
+        SysUser sysUser = new SysUser();
+        sysUser.setUserId(seqService.genIntSequence(MapperConstant.T_INS_SEQUENCE));
+        sysUser.setUsername(this.randomUserName());
+        sysUser.setCreateTime(LocalDateTime.now());
+        sysUser.setPassword(new BCryptPasswordEncoder().encode("123456"));
+        this.save(sysUser);
+
+        return new SysUser().setUsername(sysUser.getUsername())
+                .setPassword("123456");
+    }
+
+    private String randomUserName() {
+        String userName = null;
+        do {
+            userName = RandomUtil.randomString(5);
+        } while (this.getOne(Wrappers.<SysUser>lambdaQuery()
+                .eq(SysUser::getUsername, userName)) != null);
+        return userName;
     }
 }

@@ -56,6 +56,7 @@
         <mysql.version>8.0.17</mysql.version>
         <jsoup.version>1.12.1</jsoup.version>
         <swagger.version>2.9.2</swagger.version>
+        <aspectj-maven-plugin.version>1.11</aspectj-maven-plugin.version>
 
         <kiwi-eureka.version>1.0-SNAPSHOT</kiwi-eureka.version>
         <kiwi-config.version>1.0-SNAPSHOT</kiwi-config.version>

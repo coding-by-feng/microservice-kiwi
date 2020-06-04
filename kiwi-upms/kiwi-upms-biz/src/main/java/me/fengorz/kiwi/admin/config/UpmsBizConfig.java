@@ -19,7 +19,7 @@
 
 package me.fengorz.kiwi.admin.config;
 
-import me.fengorz.kiwi.bdf.core.config.ScanConfig;
+import me.fengorz.kiwi.bdf.core.config.CoreConfig;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
@@ -30,7 +30,7 @@ import org.springframework.context.annotation.Import;
  */
 @Configuration
 // @MapperScan("me.fengorz.kiwi.admin.mapper")
-@Import({ScanConfig.class})
+@Import({CoreConfig.class})
 public class UpmsBizConfig {
 
 }

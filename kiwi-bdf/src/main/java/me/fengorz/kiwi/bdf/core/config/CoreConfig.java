@@ -22,16 +22,19 @@ package me.fengorz.kiwi.bdf.core.config;
 import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.pagination.optimize.JsqlParserCountOptimize;
 import org.mybatis.spring.annotation.MapperScan;
+import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.context.annotation.AdviceMode;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-@EnableTransactionManagement
 @Configuration
 @MapperScan("me.fengorz.kiwi.**.mapper")
 @ComponentScan("me.fengorz.kiwi.**.service")
-public class ScanConfig {
+@EnableTransactionManagement(mode = AdviceMode.ASPECTJ)
+@EnableCaching(mode = AdviceMode.ASPECTJ)
+public class CoreConfig {
 
     @Bean
     public PaginationInterceptor paginationInterceptor() {

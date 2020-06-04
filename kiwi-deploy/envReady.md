@@ -1,5 +1,6 @@
 # CenterOS 7 以上
 [腾讯云618秒杀价](https://cloud.tencent.com/act/618party?fromSource=gwzcw.3621912.3621912.3621912&utm_medium=cpc&utm_id=gwzcw.3621912.3621912.3621912&from=console&cps_key=28653b30444ff81cf593422221fb1ba3 "")
+注意云服务的安全网络组要放开端口禁用
 
 # docker
 ```
@@ -28,6 +29,22 @@ git init
 git pull https://github.com/coding-by-feng/microservice-kiwi.git/
 ```
 
+# host
+```
+vi /etc/hosts
+```
+将一下映射增加到hosts文件末尾
+```
+127.0.0.1                                       fastdfs.fengorz.me
+127.0.0.1                                       kiwi-microservice-local
+127.0.0.1                                       kiwi-microservice
+127.0.0.1                                       kiwi-eureka
+127.0.0.1                                       kiwi-redis
+127.0.0.1                                       kiwi-rabbitmq
+your_dfs_ip                                     kiwi-fastdfs
+```
+注意将上面your_ecs_ip替换成fastdfs所在云服务器的外网ip
+
 # redis
 ```
 docker pull redis:latest
@@ -44,14 +61,37 @@ exit
 docker run -d --hostname kiwi-rabbit --name some-rabbit -p 15555:15672 rabbitmq:management
 ```
 
-# nginx
+# nginx运行前端项目
 ## 现将前端项目编译好上传到准备部署的目录
 ```
-sshpass -p PASSWORD scp -r LOCAL_UI_PROJECT_BUILD_PATH root@x.x.x.x:/root/docker/ui/
+sshpass -p PASSWORD scp -r LOCAL_UI_PROJECT_BUILD_PATH root@x.x.x.x:~/docker/ui/
 ```
 ## 准备nginx环境
 ```
-docker build -f ~/microservice-kiwi/kiwi-deploy/Dockerfile -t kiwi-ui:1.0 ~/docker/ui/
-docker run -v /root/docker/ui/dist/:/usr/share/nginx/html -v /root/docker/ui/nginx/:/etc/nginx --net=host --name=kiwi-ui -it kiwi-ui:1.0
+docker build -f ~/microservice-kiwi/kiwi-deploy/kiwi-ui/Dockerfile -t kiwi-ui:1.0 ~/docker/ui/
+docker run -d -v ~/docker/ui/dist/:/usr/share/nginx/html --net=host --name=kiwi-ui -it kiwi-ui:1.0
 ```
 
+# fastdfs（season/fastdfs）
+```
+docker run -ti -d --name tracker -v ~/tracker_data:/fastdfs/tracker/data --net=host season/fastdfs tracker
+
+docker run -ti -d --name storage -v ~/storage_data:/fastdfs/storage/data -v ~/store_path:/fastdfs/store_path --net=host -e TRACKER_SERVER:192.168.1.2:22122 season/fastdfs storage
+
+sudo docker exec -it storage bash
+
+mv /etc/apt/sources.list /etc/apt/sources.list.bak && \
+    echo "deb http://mirrors.163.com/debian/ jessie main non-free contrib" >/etc/apt/sources.list && \
+    echo "deb http://mirrors.163.com/debian/ jessie-proposed-updates main non-free contrib" >>/etc/apt/sources.list && \
+    echo "deb-src http://mirrors.163.com/debian/ jessie main non-free contrib" >>/etc/apt/sources.list && \
+    echo "deb-src http://mirrors.163.com/debian/ jessie-proposed-updates main non-free contrib" >>/etc/apt/sources.list
+
+apt-get update
+apt-get install vim
+
+vi /fdfs_conf/storage.conf
+# 按?进入命令搜索模式，输入tracker_server，按回车，将后面的ip地址改成kiwi-fastdfs
+exit
+
+docker container restart `docker ps -a| grep storage | awk '{print $1}' `
+```

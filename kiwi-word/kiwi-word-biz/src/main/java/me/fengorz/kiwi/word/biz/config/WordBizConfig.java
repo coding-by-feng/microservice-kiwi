@@ -19,7 +19,7 @@
 
 package me.fengorz.kiwi.word.biz.config;
 
-import me.fengorz.kiwi.bdf.core.config.ScanConfig;
+import me.fengorz.kiwi.bdf.core.config.CoreConfig;
 import me.fengorz.kiwi.common.fastdfs.config.DfsConfig;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -31,7 +31,7 @@ import org.springframework.context.annotation.Import;
 @Configuration
 // @MapperScan("me.fengorz.kiwi.word.biz.mapper")
 // @ComponentScan("me.fengorz.kiwi.word.biz")
-@Import({ScanConfig.class, DfsConfig.class})
+@Import({CoreConfig.class, DfsConfig.class})
 public class WordBizConfig {
 
 }

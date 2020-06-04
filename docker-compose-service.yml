@@ -7,9 +7,10 @@ services:
     volumes:
       - /root/docker/kiwi/gate/logs:/logs
     network_mode: "host"
-    resources:
-      limits:
-        memory: 150M  # 设置该容器最多只能使用 150M 的内存空间
+    deploy:
+      resources:
+        limits:
+          memory: 150M  # 设置该容器最多只能使用 150M 的内存空间
   kiwi-upms:
     image: kiwi-upms:1.0
     ports:
@@ -17,9 +18,10 @@ services:
     volumes:
       - /root/docker/kiwi/upms/logs:/logs
     network_mode: "host"
-    resources:
-      limits:
-        memory: 150M  # 设置该容器最多只能使用 150M 的内存空间
+    deploy:
+      resources:
+        limits:
+          memory: 150M  # 设置该容器最多只能使用 150M 的内存空间
   kiwi-auth:
     image: kiwi-auth:1.0
     ports:
@@ -27,9 +29,10 @@ services:
     volumes:
       - /root/docker/kiwi/auth/logs:/logs
     network_mode: "host"
-    resources:
-      limits:
-        memory: 150M  # 设置该容器最多只能使用 150M 的内存空间
+    deploy:
+      resources:
+        limits:
+          memory: 150M  # 设置该容器最多只能使用 150M 的内存空间
   kiwi-word:
     image: kiwi-word:1.0
     ports:
@@ -39,9 +42,10 @@ services:
     network_mode: "host"
     depends_on:
       - kiwi-gate
-    resources:
-      limits:
-        memory: 150M  # 设置该容器最多只能使用 150M 的内存空间
+    deploy:
+      resources:
+        limits:
+          memory: 150M  # 设置该容器最多只能使用 150M 的内存空间
   kiwi-crawler:
     image: kiwi-crawler:1.0
     ports:
@@ -49,9 +53,10 @@ services:
     volumes:
       - /root/docker/kiwi/crawler/logs:/logs
     network_mode: "host"
-    resources:
-      limits:
-        memory: 150M  # 设置该容器最多只能使用 150M 的内存空间
+    deploy:
+      resources:
+        limits:
+          memory: 150M  # 设置该容器最多只能使用 150M 的内存空间
 #    command: sh -c './wait-for.sh kiwi-microservice-local:5001/actuator/info -- echo kiwi-word-biz already started'
 
 

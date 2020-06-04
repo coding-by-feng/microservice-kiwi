@@ -45,9 +45,9 @@ mv -f ~/.m2/repository/me/fengorz/kiwi-gateway/1.0-SNAPSHOT/kiwi-gateway-1.0-SNA
 mv -f ~/.m2/repository/me/fengorz/kiwi-word-biz/1.0-SNAPSHOT/kiwi-word-biz-1.0-SNAPSHOT.jar ~/docker/kiwi/word/
 mv -f ~/.m2/repository/me/fengorz/kiwi-word-crawler/1.0-SNAPSHOT/kiwi-word-crawler-1.0-SNAPSHOT.jar ~/docker/kiwi/crawler/
 
-~/microservice-kiwi/kiwi-deploy/autoDeploy.sh
+~/autoDeploy.sh
 
 echo sleep 300
 sleep 300s
 
-nohup ~/microservice-kiwi/kiwi-deploy/autoCheckService.sh  >~/autoCheck.log 2>&1 &
+nohup ~/autoCheckService.sh  >~/autoCheck.log 2>&1 &

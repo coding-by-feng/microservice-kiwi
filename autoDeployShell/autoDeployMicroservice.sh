@@ -47,4 +47,7 @@ mv -f ~/.m2/repository/me/fengorz/kiwi-word-crawler/1.0-SNAPSHOT/kiwi-word-crawl
 
 /root/docker/kiwi/autoDeploy.sh
 
+echo sleep 300
+sleep 300s
+
 nohup /root/autoCheckService.sh  >~/autoCheck.log 2>&1 &

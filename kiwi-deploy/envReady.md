@@ -71,6 +71,42 @@ sshpass -p PASSWORD scp -r LOCAL_UI_PROJECT_BUILD_PATH root@x.x.x.x:~/docker/ui/
 docker build -f ~/microservice-kiwi/kiwi-deploy/kiwi-ui/Dockerfile -t kiwi-ui:1.0 ~/docker/ui/
 docker run -d -v ~/docker/ui/dist/:/usr/share/nginx/html --net=host --name=kiwi-ui -it kiwi-ui:1.0
 ```
+## 更改kiwi-ui的nginx配置文件
+```
+sudo docker exec -it kiwi-ui bash
+cp /etc/nginx/conf.d/default.conf /usr/share/nginx/html/
+exit
+vi docker/ui/dist/default.conf
+```
+在
+```
+location / {
+        root   /usr/share/nginx/html;
+        index  index.html index.htm;
+    }
+```
+下面增加配置：
+```
+    location /auth {
+        proxy_pass http://kiwi-microservice:9991;
+    }
+
+    location /wordBiz {
+        proxy_pass http://kiwi-microservice:9991;
+    }
+
+    location /code {
+        proxy_pass http://kiwi-microservice:9991;
+    }
+
+    location /admin {
+        proxy_pass http://kiwi-microservice:9991;
+    }
+```
+保存之后重启kiwi-ui容器
+```
+docker container restart `docker ps -a| grep kiwi-ui | awk '{print $1}'`
+```
 
 # fastdfs（season/fastdfs）
 ```

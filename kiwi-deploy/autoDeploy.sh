@@ -31,17 +31,17 @@ docker rmi kiwi-crawler:1.0
 
 echo "docker build beginning"
 
-docker build -f /root/docker/kiwi/eureka/Dockerfile -t kiwi-eureka:1.0 /root/docker/kiwi/eureka/
-docker build -f /root/docker/kiwi/config/Dockerfile -t kiwi-config:1.0 /root/docker/kiwi/config/
-docker build -f /root/docker/kiwi/upms/Dockerfile -t kiwi-upms:1.0 /root/docker/kiwi/upms/
-docker build -f /root/docker/kiwi/auth/Dockerfile -t kiwi-auth:1.0 /root/docker/kiwi/auth/
-docker build -f /root/docker/kiwi/gate/Dockerfile -t kiwi-gate:1.0 /root/docker/kiwi/gate/
-docker build -f /root/docker/kiwi/word/Dockerfile -t kiwi-word:1.0 /root/docker/kiwi/word/
-docker build -f /root/docker/kiwi/crawler/Dockerfile -t kiwi-crawler:1.0 /root/docker/kiwi/crawler/
+docker build -f ~/docker/kiwi/eureka/Dockerfile -t kiwi-eureka:1.0 ~/docker/kiwi/eureka/
+docker build -f ~/docker/kiwi/config/Dockerfile -t kiwi-config:1.0 ~/docker/kiwi/config/
+docker build -f ~/docker/kiwi/upms/Dockerfile -t kiwi-upms:1.0 ~/docker/kiwi/upms/
+docker build -f ~/docker/kiwi/auth/Dockerfile -t kiwi-auth:1.0 ~/docker/kiwi/auth/
+docker build -f ~/docker/kiwi/gate/Dockerfile -t kiwi-gate:1.0 ~/docker/kiwi/gate/
+docker build -f ~/docker/kiwi/word/Dockerfile -t kiwi-word:1.0 ~/docker/kiwi/word/
+docker build -f ~/docker/kiwi/crawler/Dockerfile -t kiwi-crawler:1.0 ~/docker/kiwi/crawler/
 
 echo "docker-compose base beginning"
 
-docker-compose -f /root/microservice-kiwi/docker-compose-base.yml up -d
+docker-compose -f ~/microservice-kiwi/docker-compose-base.yml up -d
 
 echo "success wait 100s"
 
@@ -49,7 +49,7 @@ sleep 100s
 
 echo "docker-compose service beginning"
 
-docker-compose -f /root/microservice-kiwi/docker-compose-service.yml up -d
+docker-compose -f ~/microservice-kiwi/docker-compose-service.yml up -d
 
 docker stop `docker ps -a| grep kiwi-crawler | awk '{print $1}' `
 

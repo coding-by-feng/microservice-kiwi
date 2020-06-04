@@ -16,6 +16,7 @@ ignore:
     - /test/**
     - /word/main/query/**
     - /word/main/fuzzyQueryList/**
+    - /word/fetch/queue/**
   userNames:
     - admin
 

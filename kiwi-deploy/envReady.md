@@ -8,6 +8,13 @@ yum update
 ```
 [https://www.runoob.com/docker/centos-docker-install.html](https://www.runoob.com/docker/centos-docker-install.html "")
 
+# 安装docker-compose
+[参考](https://www.runoob.com/docker/docker-compose.html "")
+建议本机下载包，再手动上传到服务器，不然可能会出现莫名其妙的问题
+```
+sudo curl -L "https://github.com/docker/compose/releases/download/1.25.5/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+```
+
 # directory
 ```
 cd ~
@@ -131,3 +138,15 @@ exit
 
 docker container restart `docker ps -a| grep storage | awk '{print $1}' `
 ```
+
+# maven 安装
+- 先注释掉microservice-kiwi和kiwi-cloud-service的pom.xml所有子模块依赖，然后分别执行mvn install
+- 再放开所有注释在microservice-kiwi和kiwi-cloud-service下mvn install
+
+# 自动部署
+```
+cd ~/microservice-kiwi/kiwi-deploy/
+cp autoCheckService.sh autoDeployMicroservice.sh autoDeploy.sh ~
+chmod 777 autoCheckService.sh autoDeployMicroservice.sh autoDeploy.sh 
+```
+

@@ -23,7 +23,6 @@ import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.pagination.optimize.JsqlParserCountOptimize;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.cache.annotation.EnableCaching;
-import org.springframework.context.annotation.AdviceMode;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -32,8 +31,10 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @Configuration
 @MapperScan("me.fengorz.kiwi.**.mapper")
 @ComponentScan("me.fengorz.kiwi.**.service")
-@EnableTransactionManagement(mode = AdviceMode.ASPECTJ)
-@EnableCaching(mode = AdviceMode.ASPECTJ)
+// @EnableTransactionManagement(mode = AdviceMode.ASPECTJ)
+@EnableTransactionManagement()
+// @EnableCaching(mode = AdviceMode.ASPECTJ)
+@EnableCaching()
 public class CoreConfig {
 
     @Bean

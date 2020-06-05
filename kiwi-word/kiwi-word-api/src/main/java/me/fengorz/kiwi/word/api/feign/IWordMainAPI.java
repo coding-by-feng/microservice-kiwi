@@ -19,7 +19,7 @@
 package me.fengorz.kiwi.word.api.feign;
 
 import me.fengorz.kiwi.word.api.common.WordConstants;
-import me.fengorz.kiwi.word.api.feign.factory.RemoteWordMainServiceFallBackFactory;
+import me.fengorz.kiwi.word.api.feign.factory.WordMainServiceFallBackFactory;
 import org.springframework.cloud.openfeign.FeignClient;
 
 
@@ -29,7 +29,7 @@ import org.springframework.cloud.openfeign.FeignClient;
  * @author zhanshifeng
  * @date 2019-11-01 14:29:33
  */
-@FeignClient(contextId = "remoteWordMainService" , value = WordConstants.KIWI_WORD_BIZ, fallbackFactory = RemoteWordMainServiceFallBackFactory.class)
+@FeignClient(contextId = "remoteWordMainService" , value = WordConstants.KIWI_WORD_BIZ, fallbackFactory = WordMainServiceFallBackFactory.class)
 public interface IWordMainAPI {
 
     String WORD_MAIN = "/word/main" ;

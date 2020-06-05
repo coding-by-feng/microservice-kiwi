@@ -21,7 +21,6 @@ package me.fengorz.kiwi.flow.controller;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.RequiredArgsConstructor;
 import me.fengorz.kiwi.flow.service.MyService;
 import org.flowable.task.api.Task;
 import org.springframework.beans.factory.annotation.Autowired;

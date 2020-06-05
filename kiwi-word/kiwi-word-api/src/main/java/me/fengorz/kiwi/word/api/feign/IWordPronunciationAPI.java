@@ -19,7 +19,7 @@
 package me.fengorz.kiwi.word.api.feign;
 
 import me.fengorz.kiwi.word.api.common.WordConstants;
-import me.fengorz.kiwi.word.api.feign.factory.RemoteWordPronunciationServiceFallbackFactory;
+import me.fengorz.kiwi.word.api.feign.factory.WordPronunciationServiceFallbackFactory;
 import org.springframework.cloud.openfeign.FeignClient;
 
 
@@ -29,7 +29,7 @@ import org.springframework.cloud.openfeign.FeignClient;
  * @author zhanshifeng
  * @date 2019-11-01 14:44:45
  */
-@FeignClient(contextId = "remoteWordPronunciationService" , value = WordConstants.KIWI_WORD_BIZ, fallbackFactory = RemoteWordPronunciationServiceFallbackFactory.class)
+@FeignClient(contextId = "remoteWordPronunciationService" , value = WordConstants.KIWI_WORD_BIZ, fallbackFactory = WordPronunciationServiceFallbackFactory.class)
 public interface IWordPronunciationAPI {
 
     String WORD_PRONUNCIATION = "/word/pronunciation" ;

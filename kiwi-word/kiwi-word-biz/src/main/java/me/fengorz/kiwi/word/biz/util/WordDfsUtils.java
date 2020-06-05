@@ -1,6 +1,6 @@
 /*
  *
- *   Copyright [2019~2025] [zhanshifeng]
+ *   Copyright [2019~2025] [codingByFeng]
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -17,17 +17,16 @@
  *
  */
 
-package me.fengorz.kiwi.word.api.util;
+package me.fengorz.kiwi.word.biz.util;
 
 import cn.hutool.core.util.StrUtil;
 import me.fengorz.kiwi.common.api.constant.CommonConstants;
 
 /**
- * @Description TODO
  * @Author zhanshifeng
  * @Date 2019/11/4 4:51 PM
  */
-public class CrawlerUtils {
+public class WordDfsUtils {
 
     public static String getGroupName(String uploadResult) {
         if (StrUtil.isNotBlank(uploadResult)) {

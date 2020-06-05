@@ -16,25 +16,27 @@
  *
  *
  */
-
 package me.fengorz.kiwi.word.api.feign.factory;
 
 import feign.hystrix.FallbackFactory;
-import me.fengorz.kiwi.word.api.feign.IWordMainAPI;
-import me.fengorz.kiwi.word.api.feign.fallback.WordMainAPIFallback;
+import me.fengorz.kiwi.word.api.feign.IWordParaphraseAPI;
+import me.fengorz.kiwi.word.api.feign.fallback.WordParaphraseAPIFallback;
 import org.springframework.stereotype.Component;
 
+
 /**
- * @Description TODO
- * @Author zhanshifeng
- * @Date 2019/10/30 3:19 PM
+ * 单词释义表
+ *
+ * @author zhanshifeng
+ * @date 2019-11-01 14:41:24
  */
 @Component
-public class RemoteWordMainServiceFallBackFactory implements FallbackFactory<IWordMainAPI> {
+public class WordParaphraseServiceFallbackFactory implements FallbackFactory<IWordParaphraseAPI> {
     @Override
-    public IWordMainAPI create(Throwable throwable) {
-        WordMainAPIFallback remoteWordMainServiceFallback = new WordMainAPIFallback();
-        remoteWordMainServiceFallback.setThrowable(throwable);
-        return remoteWordMainServiceFallback;
+    public IWordParaphraseAPI create(Throwable throwable) {
+        WordParaphraseAPIFallback remoteWordParaphraseServiceFallback = new WordParaphraseAPIFallback();
+        remoteWordParaphraseServiceFallback.setThrowable(throwable);
+        return remoteWordParaphraseServiceFallback;
     }
 }
+

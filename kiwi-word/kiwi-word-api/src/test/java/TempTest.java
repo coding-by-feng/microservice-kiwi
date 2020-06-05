@@ -1,7 +1,6 @@
 import me.fengorz.kiwi.common.sdk.util.log.KiwiLogUtils;
 import me.fengorz.kiwi.word.api.dto.fetch.FetchWordResultDTO;
 import me.fengorz.kiwi.word.api.entity.WordFetchQueueDO;
-import me.fengorz.kiwi.word.api.util.CrawlerUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.validation.ConstraintViolation;
@@ -19,8 +18,8 @@ import java.util.Set;
 public class TempTest {
 
     public void test1() {
-        System.out.println(CrawlerUtils.getGroupName("group1/M00/00/00/rBpA2l3CvDKAYW2GAAAiLukT7YE158.ogg"));
-        System.out.println(CrawlerUtils.getUploadVoiceFilePath("group1/M00/00/00/rBpA2l3CvDKAYW2GAAAiLukT7YE158.ogg"));
+        // System.out.println(CrawlerUtils.getGroupName("group1/M00/00/00/rBpA2l3CvDKAYW2GAAAiLukT7YE158.ogg"));
+        // System.out.println(CrawlerUtils.getUploadVoiceFilePath("group1/M00/00/00/rBpA2l3CvDKAYW2GAAAiLukT7YE158.ogg"));
     }
 
     public void test2() {

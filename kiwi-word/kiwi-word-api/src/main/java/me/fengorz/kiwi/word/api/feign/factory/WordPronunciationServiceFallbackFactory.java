@@ -16,25 +16,27 @@
  *
  *
  */
-
 package me.fengorz.kiwi.word.api.feign.factory;
 
 import feign.hystrix.FallbackFactory;
-import me.fengorz.kiwi.word.api.feign.IWordFetchAPI;
-import me.fengorz.kiwi.word.api.feign.fallback.WordFetchAPIFallback;
+import me.fengorz.kiwi.word.api.feign.IWordPronunciationAPI;
+import me.fengorz.kiwi.word.api.feign.fallback.WordPronunciationAPIFallback;
 import org.springframework.stereotype.Component;
 
+
 /**
- * @Description TODO
- * @Author zhanshifeng
- * @Date 2019/10/30 3:19 PM
+ * 单词例句表
+ *
+ * @author zhanshifeng
+ * @date 2019-11-01 14:44:45
  */
 @Component
-public class RemoteWordFetchServiceFallbackFactory implements FallbackFactory<IWordFetchAPI> {
+public class WordPronunciationServiceFallbackFactory implements FallbackFactory<IWordPronunciationAPI> {
     @Override
-    public IWordFetchAPI create(Throwable throwable) {
-        WordFetchAPIFallback remoteWordFetchServiceFallBack = new WordFetchAPIFallback();
-        remoteWordFetchServiceFallBack.setThrowable(throwable);
-        return remoteWordFetchServiceFallBack;
+    public IWordPronunciationAPI create(Throwable throwable) {
+        WordPronunciationAPIFallback remoteWordPronunciationServiceFallback = new WordPronunciationAPIFallback();
+        remoteWordPronunciationServiceFallback.setThrowable(throwable);
+        return remoteWordPronunciationServiceFallback;
     }
 }
+

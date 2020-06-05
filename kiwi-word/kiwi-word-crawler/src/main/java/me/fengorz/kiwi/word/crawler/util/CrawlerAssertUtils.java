@@ -17,7 +17,7 @@
  *
  */
 
-package me.fengorz.kiwi.word.api.util;
+package me.fengorz.kiwi.word.crawler.util;
 
 import cn.hutool.core.util.StrUtil;
 import me.fengorz.kiwi.word.api.exception.JsoupFetchResultException;

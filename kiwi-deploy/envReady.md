@@ -65,6 +65,7 @@ exit
 
 # rabbitmq
 ```
+docker pull rabbitmq:management
 docker run -d --hostname kiwi-rabbit --name some-rabbit -p 15555:15672 rabbitmq:management
 ```
 
@@ -75,6 +76,7 @@ sshpass -p PASSWORD scp -r LOCAL_UI_PROJECT_BUILD_PATH root@x.x.x.x:~/docker/ui/
 ```
 ## 准备nginx环境
 ```
+docker pull nginx
 docker build -f ~/microservice-kiwi/kiwi-deploy/kiwi-ui/Dockerfile -t kiwi-ui:1.0 ~/docker/ui/
 docker run -d -v ~/docker/ui/dist/:/usr/share/nginx/html --net=host --name=kiwi-ui -it kiwi-ui:1.0
 ```
@@ -110,8 +112,11 @@ location / {
         proxy_pass http://kiwi-microservice:9991;
     }
 ```
-保存之后重启kiwi-ui容器
+保存之后覆盖原来的default.conf重启kiwi-ui容器
 ```
+sudo docker exec -it kiwi-ui bash
+mv /usr/share/nginx/html/default.conf /etc/nginx/conf.d/default.conf
+exit
 docker container restart `docker ps -a| grep kiwi-ui | awk '{print $1}'`
 ```
 
@@ -140,13 +145,18 @@ docker container restart `docker ps -a| grep storage | awk '{print $1}' `
 ```
 
 # maven 安装
-- 先注释掉microservice-kiwi和kiwi-cloud-service的pom.xml所有子模块依赖，然后分别执行mvn install
-- 再放开所有注释在microservice-kiwi和kiwi-cloud-service下mvn install
+```
+yum install maven
+```
+- 先注释掉microservice-kiwi和kiwi-cloud-service的pom.xml所有子模块依赖，然后分别执行mvn clean install -Dmaven.test.skip=true
+- 再放开所有注释在microservice-kiwi和kiwi-cloud-service下mvn clean install -Dmaven.test.skip=true
+- 分别在kiwi-common、kiwi-bdf、kiwi-upms、kiwi-word执行mvn clean install -Dmaven.test.skip=true（如果报错同样需要先注释子模块依赖）
 
 # 自动部署
 ```
 cd ~/microservice-kiwi/kiwi-deploy/
 cp autoCheckService.sh autoDeployMicroservice.sh autoDeploy.sh ~
+cd ~
 chmod 777 autoCheckService.sh autoDeployMicroservice.sh autoDeploy.sh 
 ```
 

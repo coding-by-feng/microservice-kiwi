@@ -24,7 +24,7 @@ import me.fengorz.kiwi.word.api.common.WordConstants;
 import me.fengorz.kiwi.word.api.dto.fetch.FetchWordResultDTO;
 import me.fengorz.kiwi.word.api.dto.remote.WordFetchQueuePageDTO;
 import me.fengorz.kiwi.word.api.entity.WordFetchQueueDO;
-import me.fengorz.kiwi.word.api.feign.factory.RemoteWordFetchServiceFallbackFactory;
+import me.fengorz.kiwi.word.api.feign.factory.WordFetchServiceFallbackFactory;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -34,7 +34,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 /**
  * @Author zhanshifeng
  */
-@FeignClient(contextId = "remoteWordFetchService", value = WordConstants.KIWI_WORD_BIZ, fallbackFactory = RemoteWordFetchServiceFallbackFactory.class)
+@FeignClient(contextId = "remoteWordFetchService", value = WordConstants.KIWI_WORD_BIZ, fallbackFactory = WordFetchServiceFallbackFactory.class)
 public interface IWordFetchAPI {
 
     String WORD_FETCH_QUEUE = "/word/fetch/queue";

@@ -19,7 +19,7 @@
 package me.fengorz.kiwi.word.api.feign;
 
 import me.fengorz.kiwi.word.api.common.WordConstants;
-import me.fengorz.kiwi.word.api.feign.factory.RemoteWordParaphraseServiceFallbackFactory;
+import me.fengorz.kiwi.word.api.feign.factory.WordParaphraseServiceFallbackFactory;
 import org.springframework.cloud.openfeign.FeignClient;
 
 
@@ -29,7 +29,7 @@ import org.springframework.cloud.openfeign.FeignClient;
  * @author zhanshifeng
  * @date 2019-11-01 14:41:24
  */
-@FeignClient(contextId = "remoteWordParaphraseService" , value = WordConstants.KIWI_WORD_BIZ, fallbackFactory = RemoteWordParaphraseServiceFallbackFactory.class)
+@FeignClient(contextId = "remoteWordParaphraseService" , value = WordConstants.KIWI_WORD_BIZ, fallbackFactory = WordParaphraseServiceFallbackFactory.class)
 public interface IWordParaphraseAPI {
 
     String WORD_PARAPHRASE = "/word/paraphrase";

@@ -47,8 +47,6 @@ import me.fengorz.kiwi.word.api.common.WordConstants;
 import me.fengorz.kiwi.word.api.common.WordCrawlerConstants;
 import me.fengorz.kiwi.word.api.dto.fetch.*;
 import me.fengorz.kiwi.word.api.entity.*;
-import me.fengorz.kiwi.word.api.factory.CrawlerEntityFactory;
-import me.fengorz.kiwi.word.api.util.CrawlerUtils;
 import me.fengorz.kiwi.word.api.vo.WordMainVO;
 import me.fengorz.kiwi.word.api.vo.WordParaphraseExampleVO;
 import me.fengorz.kiwi.word.api.vo.detail.WordCharacterVO;
@@ -58,6 +56,8 @@ import me.fengorz.kiwi.word.api.vo.detail.WordQueryVO;
 import me.fengorz.kiwi.word.biz.service.*;
 import me.fengorz.kiwi.word.biz.service.operate.IWordOperateEvictService;
 import me.fengorz.kiwi.word.biz.service.operate.IWordOperateService;
+import me.fengorz.kiwi.word.biz.util.WordBizUtils;
+import me.fengorz.kiwi.word.biz.util.WordDfsUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -121,7 +121,7 @@ public class WordOperateServiceImpl implements IWordOperateService {
     private void subRemoveWord(WordMainDO wordMainDO) throws DfsOperateDeleteException {
         final Integer wordId = wordMainDO.getWordId();
         final String wordName = wordMainDO.getWordName();
-        wordMainService.remove(Wrappers.<WordMainDO>lambdaQuery().eq(WordMainDO::getWordName,wordName));
+        wordMainService.remove(Wrappers.<WordMainDO>lambdaQuery().eq(WordMainDO::getWordName, wordName));
         wordOperateEvictService.evict(wordName);
         wordMainService.evictByName(wordName);
         wordMainService.evictById(wordId);
@@ -160,7 +160,7 @@ public class WordOperateServiceImpl implements IWordOperateService {
         List<FetchWordCodeDTO> fetchWordCodeDTOList = fetchWordResultDTO.getFetchWordCodeDTOList();
         if (CollUtil.isNotEmpty(fetchWordCodeDTOList)) {
             for (FetchWordCodeDTO fetchWordCodeDTO : fetchWordCodeDTOList) {
-                WordCharacterDO wordCharacter = CrawlerEntityFactory.initWordCharacter(fetchWordCodeDTO.getCode(), fetchWordCodeDTO.getLabel(), wordId);
+                WordCharacterDO wordCharacter = WordBizUtils.initWordCharacter(fetchWordCodeDTO.getCode(), fetchWordCodeDTO.getLabel(), wordId);
                 wordCharacter.setCharacterId(seqService.genIntSequence(MapperConstant.T_INS_SEQUENCE));
                 wordCharacterService.save(wordCharacter);
                 Integer characterId = wordCharacter.getCharacterId();
@@ -168,7 +168,7 @@ public class WordOperateServiceImpl implements IWordOperateService {
                 List<FetchParaphraseDTO> fetchParaphraseDTOList = fetchWordCodeDTO.getFetchParaphraseDTOList();
                 fetchParaphraseDTOList.forEach(fetchParaphraseDTO -> {
 
-                    WordParaphraseDO wordParaphraseDO = CrawlerEntityFactory.initWordParaphrase(characterId, wordId, fetchParaphraseDTO.getMeaningChinese(), fetchParaphraseDTO.getParaphraseEnglish(), fetchParaphraseDTO.getTranslateLanguage());
+                    WordParaphraseDO wordParaphraseDO = WordBizUtils.initWordParaphrase(characterId, wordId, fetchParaphraseDTO.getMeaningChinese(), fetchParaphraseDTO.getParaphraseEnglish(), fetchParaphraseDTO.getTranslateLanguage());
                     wordParaphraseDO.setParaphraseId(seqService.genIntSequence(MapperConstant.T_INS_SEQUENCE));
                     wordParaphraseService.save(wordParaphraseDO);
                     Integer paraphraseId = wordParaphraseDO.getParaphraseId();
@@ -188,7 +188,7 @@ public class WordOperateServiceImpl implements IWordOperateService {
                     }
 
                     Optional.ofNullable(fetchParaphraseDTO.getFetchParaphraseExampleDTOList()).ifPresent(fetchParaphraseExampleDTOS -> fetchParaphraseExampleDTOS.forEach(fetchParaphraseExampleDTO -> {
-                        WordParaphraseExampleDO wordParaphraseExampleDO = CrawlerEntityFactory.initWordParaphraseExample(paraphraseId, wordId, fetchParaphraseExampleDTO.getExampleSentence(), fetchParaphraseExampleDTO.getExampleTranslate(), fetchParaphraseExampleDTO.getTranslateLanguage());
+                        WordParaphraseExampleDO wordParaphraseExampleDO = WordBizUtils.initWordParaphraseExample(paraphraseId, wordId, fetchParaphraseExampleDTO.getExampleSentence(), fetchParaphraseExampleDTO.getExampleTranslate(), fetchParaphraseExampleDTO.getTranslateLanguage());
                         wordParaphraseExampleDO.setExampleId(seqService.genIntSequence(MapperConstant.T_INS_SEQUENCE));
                         wordParaphraseExampleService.save(wordParaphraseExampleDO);
                     }));
@@ -200,9 +200,9 @@ public class WordOperateServiceImpl implements IWordOperateService {
                     for (FetchWordPronunciationDTO fetchWordPronunciationDTO : fetchWordPronunciationDTOList) {
                         String voiceFileUrl = WordCrawlerConstants.CAMBRIDGE_BASE_URL + fetchWordPronunciationDTO.getVoiceFileUrl();
                         long voiceSize = HttpUtil.downloadFile(URLUtil.decode(voiceFileUrl), FileUtil.file(crawlerVoiceBasePath));
-                        String tempVoice = crawlerVoiceBasePath + CrawlerUtils.getVoiceFileName(voiceFileUrl);
+                        String tempVoice = crawlerVoiceBasePath + WordDfsUtils.getVoiceFileName(voiceFileUrl);
                         String uploadResult = dfsService.uploadFile(FileUtil.getInputStream(tempVoice), voiceSize, WordCrawlerConstants.EXT_OGG);
-                        WordPronunciationDO wordPronunciation = CrawlerEntityFactory.initWordPronunciation(wordId, characterId, uploadResult,
+                        WordPronunciationDO wordPronunciation = WordBizUtils.initWordPronunciation(wordId, characterId, uploadResult,
                                 fetchWordPronunciationDTO.getSoundmark(), fetchWordPronunciationDTO.getSoundmarkType());
                         wordPronunciation.setPronunciationId(seqService.genIntSequence(MapperConstant.T_INS_SEQUENCE));
                         wordPronunciationService.save(wordPronunciation);

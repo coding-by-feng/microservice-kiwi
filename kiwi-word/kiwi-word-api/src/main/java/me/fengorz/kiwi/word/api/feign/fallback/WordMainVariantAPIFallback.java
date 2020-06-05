@@ -19,7 +19,6 @@ package me.fengorz.kiwi.word.api.feign.fallback;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.api.R;
 import me.fengorz.kiwi.word.api.feign.IWordMainVariantAPI;
-import me.fengorz.kiwi.word.api.vo.WordMainVariantVO;
 import org.springframework.stereotype.Component;
 
 

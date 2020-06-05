@@ -23,6 +23,13 @@ spring:
       enabled: true
       max-file-size: 10MB
       max-request-size: 20MB
+  rabbitmq:
+    host: kiwi-rabbitmq
+    port: 5672
+    username: guest
+    password: guest
+  main:
+    allow-bean-definition-overriding: true
 #  sleuth:
 #    web:
 #      client:

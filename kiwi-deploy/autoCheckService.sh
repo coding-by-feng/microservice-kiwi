@@ -3,7 +3,7 @@
 runningCode='200'
 while true
 do
-        code=$(curl -I -m 10 -o /dev/null -s -w %{http_code} http://39.107.142.173:9991/wordBiz/word/main/query/test)
+        code=$(curl -I -m 10 -o /dev/null -s -w %{http_code} http://106.55.145.49:9991/wordBiz/word/main/query/test)
         if [ $code != $runningCode ]
         then
                 time=$(date "+%Y-%m-%d %H:%M:%S")
@@ -18,7 +18,7 @@ do
                 sleep 15s
         fi
 
-        crawlerCode=$(curl -I -m 10 -o /dev/null -s -w %{http_code} http://172.31.182.58:6001/actuator/info)
+        crawlerCode=$(curl -I -m 10 -o /dev/null -s -w %{http_code} http://172.16.16.9:6001/actuator/info)
         if [ $crawlerCode != $runningCode ]
         then
                 time=$(date "+%Y-%m-%d %H:%M:%S")
@@ -31,7 +31,7 @@ do
                 sleep 15s
         fi
 
-        gateCode=$(curl -I -m 10 -o /dev/null -s -w %{http_code} http://172.31.182.58:9001/actuator/info)
+        gateCode=$(curl -I -m 10 -o /dev/null -s -w %{http_code} http://172.16.16.9:9001/actuator/info)
         if [ $gateCode != $runningCode ]
         then
                 time=$(date "+%Y-%m-%d %H:%M:%S")
@@ -44,7 +44,7 @@ do
                 sleep 15s
         fi
 
-        authCode=$(curl -I -m 10 -o /dev/null -s -w %{http_code} http://172.31.182.58:3001/actuator/info)
+        authCode=$(curl -I -m 10 -o /dev/null -s -w %{http_code} http://172.16.16.9:3001/actuator/info)
         if [ $authCode != $runningCode ]
         then
                 time=$(date "+%Y-%m-%d %H:%M:%S")
@@ -57,7 +57,7 @@ do
                 sleep 15s
         fi
 
-        upmsCode=$(curl -I -m 10 -o /dev/null -s -w %{http_code} http://172.31.182.58:4001/actuator/info)
+        upmsCode=$(curl -I -m 10 -o /dev/null -s -w %{http_code} http://172.16.16.9:4001/actuator/info)
         if [ $upmsCode != $runningCode ]
         then
                 time=$(date "+%Y-%m-%d %H:%M:%S")

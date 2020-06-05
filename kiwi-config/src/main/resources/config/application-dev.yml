@@ -7,9 +7,9 @@ spring:
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
     driver-class-name: com.mysql.cj.jdbc.Driver
-    username: root
+    username: fengorz
     password: fengORZ123
-    url: jdbc:mysql://cdb-0bhxucw9.gz.tencentcdb.com:10069/kiwi_db
+    url: jdbc:mysql://rm-2ze1069p422u9507gso.mysql.rds.aliyuncs.com:3306/kiwi_db
     hikari:
       max-lifetime: 100000
       connection-timeout: 200000
@@ -23,6 +23,13 @@ spring:
       enabled: true
       max-file-size: 10MB
       max-request-size: 20MB
+  rabbitmq:
+    host: kiwi-rabbitmq
+    port: 5672
+    username: guest
+    password: guest
+  main:
+    allow-bean-definition-overriding: true
 #  sleuth:
 #    web:
 #      client:
@@ -90,7 +97,7 @@ mybatis-plus:
       select-strategy: NOT_EMPTY
   configuration:
     map-underscore-to-camel-case: true
-#    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 
 # spring security 配置
 security:

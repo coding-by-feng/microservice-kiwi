@@ -1,12 +1,3 @@
-spring:
-  rabbitmq:
-    host: kiwi-rabbitmq
-    port: 15555
-    username: guest
-    password: guest
-  main:
-    allow-bean-definition-overriding: true
-
 mq:
   config:
     fetch:

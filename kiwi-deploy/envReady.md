@@ -20,7 +20,7 @@ sudo curl -L "https://github.com/docker/compose/releases/download/1.25.5/docker-
 cd ~
 mkdir microservice-kiwi docker storage_data store_path tracker_data
 cd docker/
-mkdir kiwi ui
+mkdir kiwi ui rabbitmq
 cd kiwi
 mkdir auth config crawler eureka gate upms word
 mkdir auth/logs config/logs crawler/logs eureka/logs gate/logs upms/logs word/logs
@@ -66,7 +66,8 @@ exit
 # rabbitmq
 ```
 docker pull rabbitmq:management
-docker run -d --hostname kiwi-rabbit --name some-rabbit -p 15555:15672 rabbitmq:management
+# docker run -d --hostname kiwi-rabbit --name kiwi-rabbit -p 15555:15672 rabbitmq:management
+docker run -d --hostname kiwi-rabbit -v ~/docker/rabbitmq:/tmp --name kiwi-rabbit --net=host rabbitmq:management
 ```
 
 # nginx运行前端项目

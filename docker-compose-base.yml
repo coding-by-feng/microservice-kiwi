@@ -10,7 +10,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 150M  # 设置该容器最多只能使用 150M 的内存空间
+          memory: 200M  # 设置该容器最多只能使用 200M 的内存空间
   kiwi-config:
     image: kiwi-config:1.0
     ports:
@@ -23,4 +23,4 @@ services:
     deploy:
       resources:
         limits:
-          memory: 150M  # 设置该容器最多只能使用 150M 的内存空间
+          memory: 200M  # 设置该容器最多只能使用 200M 的内存空间

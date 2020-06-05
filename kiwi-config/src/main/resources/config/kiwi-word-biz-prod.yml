@@ -25,7 +25,7 @@ me:
     file:
       crawler:
         voice:
-          tmpPath: "/Users/zhanshifeng/Documents/myDocument/temp/microSerivceVocabularyEnhancer"
+          tmpPath: "/root/wordTmp"
 
 async:
   config:

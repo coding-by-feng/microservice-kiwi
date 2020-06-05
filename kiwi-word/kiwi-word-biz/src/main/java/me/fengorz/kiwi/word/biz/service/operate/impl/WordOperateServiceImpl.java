@@ -405,6 +405,7 @@ public class WordOperateServiceImpl implements IWordOperateService {
             });
         }
         wordParaphraseVO.setWordParaphraseExampleVOList(wordParaphraseExampleVOList);
+        wordParaphraseVO.setWordName(wordMainService.getWordName(wordParaphraseDO.getWordId()));
         return wordParaphraseVO;
     }
 

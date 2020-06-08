@@ -20,6 +20,7 @@ package me.fengorz.kiwi.word.biz.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import me.fengorz.kiwi.word.api.entity.WordCharacterDO;
+import me.fengorz.kiwi.word.api.vo.detail.WordCharacterVO;
 
 /**
  * 单词词性表
@@ -29,4 +30,7 @@ import me.fengorz.kiwi.word.api.entity.WordCharacterDO;
  */
 public interface IWordCharacterService extends IService<WordCharacterDO> {
 
+    WordCharacterVO getFromCache(Integer characterId);
+
+    void evict(Integer characterId);
 }

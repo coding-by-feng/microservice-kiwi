@@ -24,7 +24,6 @@ import me.fengorz.kiwi.common.api.exception.dfs.DfsOperateDeleteException;
 import me.fengorz.kiwi.common.api.exception.dfs.DfsOperateException;
 import me.fengorz.kiwi.word.api.dto.fetch.FetchWordResultDTO;
 import me.fengorz.kiwi.word.api.exception.WordResultStoreException;
-import me.fengorz.kiwi.word.api.vo.detail.WordCharacterVO;
 import me.fengorz.kiwi.word.api.vo.detail.WordParaphraseVO;
 import me.fengorz.kiwi.word.api.vo.detail.WordQueryVO;
 
@@ -54,8 +53,6 @@ public interface IWordOperateService {
     /* paraphrase methods end */
 
     boolean putExampleIntoStarList(Integer exampleId, Integer listId) throws ServiceException;
-
-    WordCharacterVO getByParaphraseId(Integer paraphraseId) throws ServiceException;
 
     boolean removeExampleStar(Integer exampleId, Integer listId) throws ServiceException;
 

@@ -41,6 +41,10 @@ public class WordParaphraseVO implements Serializable {
 
     private String wordName;
 
+    private String wordCharacter;
+
+    private String wordLabel;
+
     private List<String> phraseList;
 
     private Integer paraphraseId;
@@ -56,7 +60,11 @@ public class WordParaphraseVO implements Serializable {
      * 中文词义
      */
     private String meaningChinese;
+
     private String isCollect;
+
     private List<WordParaphraseExampleVO> wordParaphraseExampleVOList;
+
+    private List<WordPronunciationVO> wordPronunciationVOList;
 
 }

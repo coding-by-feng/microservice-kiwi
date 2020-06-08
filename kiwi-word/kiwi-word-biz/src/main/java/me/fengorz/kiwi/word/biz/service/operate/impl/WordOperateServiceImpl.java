@@ -406,6 +406,28 @@ public class WordOperateServiceImpl implements IWordOperateService {
         }
         wordParaphraseVO.setWordParaphraseExampleVOList(wordParaphraseExampleVOList);
         wordParaphraseVO.setWordName(wordMainService.getWordName(wordParaphraseDO.getWordId()));
+
+        WordCharacterVO characterVO = wordCharacterService.getFromCache(wordParaphraseDO.getCharacterId());
+        wordParaphraseVO.setWordCharacter(characterVO.getWordCharacter());
+        wordParaphraseVO.setWordLabel(characterVO.getWordLabel());
+
+        List<WordPronunciationDO> pronunciationList = wordPronunciationService.list(
+                new QueryWrapper<>(
+                        new WordPronunciationDO()
+                                .setCharacterId(characterVO.getCharacterId())
+                )
+        );
+
+        if (KiwiCollectionUtils.isNotEmpty(pronunciationList)) {
+            List<WordPronunciationVO> pronunciationVOList = new ArrayList<>();
+            pronunciationList.forEach(entity -> {
+                WordPronunciationVO vo = new WordPronunciationVO();
+                BeanUtil.copyProperties(entity, vo);
+                pronunciationVOList.add(vo);
+            });
+            wordParaphraseVO.setWordPronunciationVOList(pronunciationVOList);
+        }
+
         return wordParaphraseVO;
     }
 
@@ -418,53 +440,6 @@ public class WordOperateServiceImpl implements IWordOperateService {
                         .setListId(listId)
                         .setExampleId(exampleId)
         );
-    }
-
-    @Override
-    public WordCharacterVO getByParaphraseId(Integer paraphraseId) {
-        WordParaphraseDO paraphrase = wordParaphraseService.getOne(
-                new QueryWrapper<>(
-                        new WordParaphraseDO()
-                                .setParaphraseId(paraphraseId)
-                )
-        );
-        KiwiAssertUtils.serviceNotNull(paraphrase, "paraphrase[{}] is not exists!", paraphraseId);
-
-        final Integer characterId = paraphrase.getCharacterId();
-        WordCharacterDO character = wordCharacterService.getOne(
-                new QueryWrapper<>(
-                        new WordCharacterDO()
-                                .setCharacterId(characterId)
-                )
-        );
-        KiwiAssertUtils.serviceNotNull(character, "character[{}] is not exists!", characterId);
-
-        List<WordParaphraseVO> paraphraseVOList = new ArrayList<>();
-        WordParaphraseVO wordParaphraseVO = new WordParaphraseVO();
-        BeanUtil.copyProperties(paraphrase, wordParaphraseVO);
-        paraphraseVOList.add(wordParaphraseVO);
-        WordCharacterVO wordCharacterVO = new WordCharacterVO().setWordCharacter(character.getWordCharacter())
-                .setWordLabel(character.getWordLabel())
-                .setWordParaphraseVOList(paraphraseVOList);
-
-        List<WordPronunciationDO> pronunciationList = wordPronunciationService.list(
-                new QueryWrapper<>(
-                        new WordPronunciationDO()
-                                .setCharacterId(characterId)
-                )
-        );
-
-        if (CollUtil.isNotEmpty(pronunciationList)) {
-            List<WordPronunciationVO> pronunciationVOList = new ArrayList<>();
-            pronunciationList.forEach(entity -> {
-                WordPronunciationVO vo = new WordPronunciationVO();
-                BeanUtil.copyProperties(entity, vo);
-                pronunciationVOList.add(vo);
-            });
-            wordCharacterVO.setWordPronunciationVOList(pronunciationVOList);
-        }
-
-        return wordCharacterVO;
     }
 
     @Override
@@ -521,6 +496,7 @@ public class WordOperateServiceImpl implements IWordOperateService {
                 if (CollUtil.isNotEmpty(paraphraseList)) {
                     wordParaphraseService.remove(wordParaphraseQueryWrapper);
                 }
+                wordCharacterService.evict(characterId);
             }
             wordCharacterService.remove(wordCharacterQueryWrapper);
         }

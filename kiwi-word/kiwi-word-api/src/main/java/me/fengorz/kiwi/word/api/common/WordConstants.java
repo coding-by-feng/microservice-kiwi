@@ -52,6 +52,11 @@ public class WordConstants {
         String METHOD_ID_NAME = "id_name";
     }
 
+    public interface CACHE_KEY_PREFIX_CHARACTER {
+        String CLASS = "character";
+        String METHOD_ID= "id";
+    }
+
     public static final int VARIANT_TYPE_UNKNOWN = 0;
 
 }

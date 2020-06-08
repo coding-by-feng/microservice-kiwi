@@ -36,6 +36,7 @@ import java.util.List;
 @ToString
 public class WordCharacterVO implements Serializable {
 
+    private Integer characterId;
     private String wordCharacter;
     private String wordLabel;
     private List<WordParaphraseVO> wordParaphraseVOList;

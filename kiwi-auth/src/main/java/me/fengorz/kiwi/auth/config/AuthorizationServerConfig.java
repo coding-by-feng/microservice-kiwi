@@ -1,29 +1,26 @@
 /*
  *
- *   Copyright [2019~2025] [zhanshifeng]
+ * Copyright [2019~2025] [zhanshifeng]
  *
- *   Licensed under the Apache License, Version 2.0 (the "License");
- *   you may not use this file except in compliance with the License.
- *   You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *   Unless required by applicable law or agreed to in writing, software
- *   distributed under the License is distributed on an "AS IS" BASIS,
- *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *   See the License for the specific language governing permissions and
- *   limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  *
  *
  */
 
 package me.fengorz.kiwi.auth.config;
 
-import lombok.RequiredArgsConstructor;
-import me.fengorz.kiwi.bdf.security.component.KiwiWebResponseExceptionTranslator;
-import me.fengorz.kiwi.bdf.security.service.KiwiClientDetailsService;
-import me.fengorz.kiwi.common.api.constant.SecurityConstants;
-import me.fengorz.kiwi.common.api.entity.EnhancerUser;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.sql.DataSource;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -40,9 +37,11 @@ import org.springframework.security.oauth2.provider.token.TokenEnhancer;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.redis.RedisTokenStore;
 
-import javax.sql.DataSource;
-import java.util.HashMap;
-import java.util.Map;
+import lombok.RequiredArgsConstructor;
+import me.fengorz.kiwi.bdf.security.component.KiwiWebResponseExceptionTranslator;
+import me.fengorz.kiwi.bdf.security.service.KiwiClientDetailsService;
+import me.fengorz.kiwi.common.api.constant.SecurityConstants;
+import me.fengorz.kiwi.common.api.entity.EnhancerUser;
 
 /**
  * @Author zhanshifeng
@@ -73,15 +72,11 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 
     @Override
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
-        endpoints
-                .allowedTokenEndpointRequestMethods(HttpMethod.GET, HttpMethod.POST)
-                .tokenStore(tokenStore())
-                .tokenEnhancer(tokenEnhancer())
-                .userDetailsService(userDetailsService)
-                .authenticationManager(authenticationManager)
-                .reuseRefreshTokens(false)
-                // TODO zhanshifeng 这个API作用什么？
-                .exceptionTranslator(new KiwiWebResponseExceptionTranslator());
+        endpoints.allowedTokenEndpointRequestMethods(HttpMethod.GET, HttpMethod.POST).tokenStore(tokenStore())
+            .tokenEnhancer(tokenEnhancer()).userDetailsService(userDetailsService)
+            .authenticationManager(authenticationManager).reuseRefreshTokens(false)
+            // TODO zhanshifeng 这个API作用什么？
+            .exceptionTranslator(new KiwiWebResponseExceptionTranslator());
     }
 
     @Bean
@@ -95,12 +90,12 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
     public TokenEnhancer tokenEnhancer() {
         return (accessToken, authentication) -> {
             final Map<String, Object> additionalInfo = new HashMap<>(1);
-            EnhancerUser enhancerUser = (EnhancerUser) authentication.getPrincipal();
+            EnhancerUser enhancerUser = (EnhancerUser)authentication.getPrincipal();
             additionalInfo.put(SecurityConstants.DETAILS_LICENSE, SecurityConstants.PROJECT_LICENSE);
             additionalInfo.put(SecurityConstants.DETAILS_USER_ID, enhancerUser.getId());
             additionalInfo.put(SecurityConstants.DETAILS_USERNAME, enhancerUser.getUsername());
             additionalInfo.put(SecurityConstants.DETAILS_DEPT_ID, enhancerUser.getDeptId());
-            ((DefaultOAuth2AccessToken) accessToken).setAdditionalInformation(additionalInfo);
+            ((DefaultOAuth2AccessToken)accessToken).setAdditionalInformation(additionalInfo);
             return accessToken;
         };
     }

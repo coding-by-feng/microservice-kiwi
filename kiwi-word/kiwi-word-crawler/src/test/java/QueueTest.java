@@ -1,8 +1,8 @@
-import lombok.SneakyThrows;
+import org.springframework.boot.SpringApplication;
+
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.word.crawler.component.ScheduledProducer;
 import me.fengorz.kiwi.word.crawler.component.WordFetchProducer;
-import org.springframework.boot.SpringApplication;
 
 /**
  * @Description TODO
@@ -25,14 +25,13 @@ public class QueueTest {
     }
 
     // @Test
-    @SneakyThrows
     // @Transactional
     public void test() {
         // Long id = 1L;
         // while (id < 100L) {
-        //     Thread.sleep(1000);
-        //     log.info("word.fetch sending id = " + id);
-        //     this.wordFetchProducer.send(new WordMessage(id++, "test"));
+        // Thread.sleep(1000);
+        // log.info("word.fetch sending id = " + id);
+        // this.wordFetchProducer.send(new WordMessage(id++, "test"));
         // }
         // this.scheduledProducer.fetchWord();
         System.out.println("testing");

@@ -13,9 +13,9 @@ public class GeneratorTest {
         // TableEntity tableEntity = objectMapper.convertValue(map, TableEntity.class);
         // Map map1 = objectMapper.convertValue(tableEntity, Map.class);
         // map1.forEach((k, v) -> {
-        //     System.out.println(k + "+" + v);
+        // System.out.println(k + "+" + v);
         // });
 
-        System.out.println(KiwiBeanUtils.columnToBeanProperty("t_tactic_scheme" , "_"));
+        System.out.println(KiwiBeanUtils.columnToBeanProperty("t_tactic_scheme", "_"));
     }
 }

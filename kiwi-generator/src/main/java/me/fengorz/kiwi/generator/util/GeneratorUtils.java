@@ -1,41 +1,38 @@
 /*
  *
- *   Copyright [2019~2025] [zhanshifeng]
+ * Copyright [2019~2025] [zhanshifeng]
  *
- *   Licensed under the Apache License, Version 2.0 (the "License");
- *   you may not use this file except in compliance with the License.
- *   You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *   Unless required by applicable law or agreed to in writing, software
- *   distributed under the License is distributed on an "AS IS" BASIS,
- *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *   See the License for the specific language governing permissions and
- *   limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  *
  *
  */
 
 package me.fengorz.kiwi.generator.util;
 
-import cn.hutool.core.util.StrUtil;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.commons.configuration.Configuration;
+import org.apache.commons.configuration.ConfigurationException;
+import org.apache.commons.configuration.PropertiesConfiguration;
+
 import com.baomidou.mybatisplus.generator.AutoGenerator;
 import com.baomidou.mybatisplus.generator.InjectionConfig;
 import com.baomidou.mybatisplus.generator.config.*;
 import com.baomidou.mybatisplus.generator.config.po.TableInfo;
 import com.baomidou.mybatisplus.generator.engine.FreemarkerTemplateEngine;
-import lombok.SneakyThrows;
+
+import cn.hutool.core.util.StrUtil;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
-import me.fengorz.kiwi.common.api.exception.CheckedException;
 import me.fengorz.kiwi.generator.entity.FileOutEntity;
-import org.apache.commons.configuration.Configuration;
-import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.configuration.PropertiesConfiguration;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * 自定义的代码生成器
@@ -49,18 +46,18 @@ public class GeneratorUtils {
 
     private final Configuration CONFIG = getConfig();
 
-    private final String[] TEMPLATE_ARR = {"controllerJavaTemplate" , "entityJavaTemplate" , "mapperJavaTemplate" ,
-            "serviceJavaTemplate" , "serviceImplJavaTemplate"};
+    private final String[] TEMPLATE_ARR = {"controllerJavaTemplate", "entityJavaTemplate", "mapperJavaTemplate",
+        "serviceJavaTemplate", "serviceImplJavaTemplate"};
 
-    private final String OUTPUT_DIR = "outputDir" ;
-    private final String AUTHOR = "author" ;
-    private final String DB_URL = "dbUrl" ;
-    private final String DRIVER_CLASS = "driverClass" ;
-    private final String DB_USERNAME = "dbUsername" ;
-    private final String DB_PASSWORD = "dbPassword" ;
-    private final String PARENT_PACKAGE = "parentPackage" ;
-    private final String MODULE_NAME = "moduleName" ;
-    private final String MODULE_PACKAGE = "modulePackage" ;
+    private final String OUTPUT_DIR = "outputDir";
+    private final String AUTHOR = "author";
+    private final String DB_URL = "dbUrl";
+    private final String DRIVER_CLASS = "driverClass";
+    private final String DB_USERNAME = "dbUsername";
+    private final String DB_PASSWORD = "dbPassword";
+    private final String PARENT_PACKAGE = "parentPackage";
+    private final String MODULE_NAME = "moduleName";
+    private final String MODULE_PACKAGE = "modulePackage";
 
     public void generatorCode() {
         // 代码生成器
@@ -116,9 +113,9 @@ public class GeneratorUtils {
 
         // @Override
         // public String outputFile(TableInfo tableInfo) {
-        //     // 自定义输出文件名 ， 如果你 Entity 设置了前后缀、此处注意 xml 的名称会跟着发生变化！！
-        //     return "projectPath" + "/src/main/resources/mapper/" + pc.getModuleName()
-        //             + "/" + tableInfo.getEntityName() + "Mapper" + StringPool.DOT_XML;
+        // // 自定义输出文件名 ， 如果你 Entity 设置了前后缀、此处注意 xml 的名称会跟着发生变化！！
+        // return "projectPath" + "/src/main/resources/mapper/" + pc.getModuleName()
+        // + "/" + tableInfo.getEntityName() + "Mapper" + StringPool.DOT_XML;
         // }
 
         cfg.setFileOutConfigList(focList);
@@ -128,7 +125,7 @@ public class GeneratorUtils {
         TemplateConfig templateConfig = new TemplateConfig();
 
         // 配置自定义输出模板
-        //指定自定义模板路径，注意不要带上.ftl/.vm, 会根据使用的模板引擎自动识别
+        // 指定自定义模板路径，注意不要带上.ftl/.vm, 会根据使用的模板引擎自动识别
         // templateConfig.setEntity("templates/entity2.java");
         // templateConfig.setService();
         // templateConfig.setController();
@@ -155,13 +152,13 @@ public class GeneratorUtils {
         mpg.execute();
     }
 
-    @SneakyThrows
     private Configuration getConfig() {
         try {
             return new PropertiesConfiguration("generator.properties");
         } catch (ConfigurationException e) {
-            throw new CheckedException("获取代码生成的配置文件失败" , e);
+            log.error("获取代码生成的配置文件失败", e);
         }
+        return null;
     }
 
     private List<FileOutEntity> getFileOutEntitys(GlobalConfig gc, PackageConfig pc) {

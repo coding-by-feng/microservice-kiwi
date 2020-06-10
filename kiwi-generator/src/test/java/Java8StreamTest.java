@@ -1,12 +1,13 @@
-import cn.hutool.core.util.ArrayUtil;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import org.apache.commons.lang3.StringUtils;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
+
+import org.apache.commons.lang3.StringUtils;
+
+import cn.hutool.core.util.ArrayUtil;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 
 /**
  * @Description TODO
@@ -69,12 +70,18 @@ public class Java8StreamTest {
         actionList.add(new Action("Right Hook"));
         actionList.add(new Action("Up Hook"));
 
-        Stream<Person> personStream1 = Stream.of(new Person("jack" , Arrays.stream(ArrayUtil.toArray(actionList, Action.class))), new Person("mark" , Arrays.stream(ArrayUtil.toArray(actionList, Action.class))));
+        Stream<Person> personStream1 =
+            Stream.of(new Person("jack", Arrays.stream(ArrayUtil.toArray(actionList, Action.class))),
+                new Person("mark", Arrays.stream(ArrayUtil.toArray(actionList, Action.class))));
 
-        Stream<Person> personStream2 = Stream.of(new Person("jack" , Arrays.stream(ArrayUtil.toArray(actionList, Action.class))), new Person("mark" , Arrays.stream(ArrayUtil.toArray(actionList, Action.class))));
+        Stream<Person> personStream2 =
+            Stream.of(new Person("jack", Arrays.stream(ArrayUtil.toArray(actionList, Action.class))),
+                new Person("mark", Arrays.stream(ArrayUtil.toArray(actionList, Action.class))));
 
-        Stream<Stream<Action>> streamStream = personStream1.map(Person::getActionStream).filter(actionStream -> actionStream != null);
-        Stream<Action> actionStream = personStream2.flatMap(Person::getActionStream).filter(action -> StringUtils.isNotBlank(action.getActionName()));
+        Stream<Stream<Action>> streamStream =
+            personStream1.map(Person::getActionStream).filter(actionStream -> actionStream != null);
+        Stream<Action> actionStream = personStream2.flatMap(Person::getActionStream)
+            .filter(action -> StringUtils.isNotBlank(action.getActionName()));
 
     }
 

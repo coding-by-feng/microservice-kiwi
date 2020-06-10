@@ -15,7 +15,8 @@ public interface SeqMapper {
     /**
      * 生成一个整型序列
      *
-     * @param seq 序列对象
+     * @param seq
+     *            序列对象
      * @return 新生成的ID
      */
     Integer genSequence(Sequence seq);
@@ -23,10 +24,10 @@ public interface SeqMapper {
     /**
      * 删除序列
      *
-     * @param seq 序列对象
+     * @param seq
+     *            序列对象
      * @return 新生成的ID
      */
     Integer deleteSequence(Sequence seq);
 
 }
-

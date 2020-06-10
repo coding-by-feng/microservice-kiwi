@@ -1,23 +1,22 @@
 /*
  *
- *   Copyright [2019~2025] [zhanshifeng]
+ * Copyright [2019~2025] [zhanshifeng]
  *
- *   Licensed under the Apache License, Version 2.0 (the "License");
- *   you may not use this file except in compliance with the License.
- *   You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *   Unless required by applicable law or agreed to in writing, software
- *   distributed under the License is distributed on an "AS IS" BASIS,
- *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *   See the License for the specific language governing permissions and
- *   limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  *
  *
  */
 
 package me.fengorz.kiwi.word.crawler.service.impl;
+
+import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,7 +31,6 @@ import me.fengorz.kiwi.word.api.feign.IWordFetchAPI;
 import me.fengorz.kiwi.word.api.feign.IWordMainVariantAPI;
 import me.fengorz.kiwi.word.crawler.service.IJsoupService;
 import me.fengorz.kiwi.word.crawler.service.IWordFetchService;
-import org.springframework.stereotype.Service;
 
 /**
  * @Author zhanshifeng
@@ -50,8 +48,8 @@ public class WordFetchServiceImpl implements IWordFetchService {
     @Override
     public void work(WordMessageDTO wordMessageDTO) {
         final String inputWord = wordMessageDTO.getWord();
-        WordFetchQueueDO wordFetchQueue = new WordFetchQueueDO()
-                .setWordName(inputWord).setFetchStatus(WordCrawlerConstants.STATUS_SUCCESS);
+        WordFetchQueueDO wordFetchQueue =
+            new WordFetchQueueDO().setWordName(inputWord).setFetchStatus(WordCrawlerConstants.STATUS_SUCCESS);
         try {
             long oldTime = System.currentTimeMillis();
             FetchWordResultDTO fetchWordResultDTO = jsoupService.fetchWordInfo(wordMessageDTO);
@@ -66,18 +64,21 @@ public class WordFetchServiceImpl implements IWordFetchService {
                 // TODO ZSF 增加一个时态、单复数的变化关系对应逻辑
                 if (KiwiStringUtils.isNotEquals(inputWord, fetchWordResultDTO.getWordName())) {
                     wordMainVariantAPIService.insertVariant(inputWord, fetchWord);
-                    String insertVariantResult = KiwiStringUtils.format("word({}) has a variant({}), variant insert success!", fetchWord, inputWord);
+                    String insertVariantResult = KiwiStringUtils
+                        .format("word({}) has a variant({}), variant insert success!", fetchWord, inputWord);
                     log.info(insertVariantResult);
                     allFetchResult.append(insertVariantResult);
                 }
 
                 long newTime = System.currentTimeMillis();
-                String fetchResult = KiwiStringUtils.format("word({}) fetch store success! spent {}s", wordFetchQueue.getWordName(), (newTime - oldTime));
+                String fetchResult = KiwiStringUtils.format("word({}) fetch store success! spent {}s",
+                    wordFetchQueue.getWordName(), (newTime - oldTime));
                 log.info(fetchResult);
                 allFetchResult.append(fetchWord);
 
                 wordFetchAPI.invalid(wordFetchQueue.getWordName());
-                String queueDelResult = KiwiStringUtils.format("word({}) fetch queue del success!", wordFetchQueue.getWordName());
+                String queueDelResult =
+                    KiwiStringUtils.format("word({}) fetch queue del success!", wordFetchQueue.getWordName());
                 log.info(queueDelResult);
                 allFetchResult.append(queueDelResult);
 
@@ -85,9 +86,11 @@ public class WordFetchServiceImpl implements IWordFetchService {
                 wordFetchQueue.setFetchResult(allFetchResult.toString());
             }
         } catch (JsoupFetchConnectException e) {
-            subDealException(wordFetchQueue, WordCrawlerConstants.STATUS_ERROR_JSOUP_FETCH_CONNECT_FAILED, e.getMessage());
+            subDealException(wordFetchQueue, WordCrawlerConstants.STATUS_ERROR_JSOUP_FETCH_CONNECT_FAILED,
+                e.getMessage());
         } catch (Exception e) {
-            subDealException(wordFetchQueue, WordCrawlerConstants.STATUS_ERROR_JSOUP_RESULT_FETCH_FAILED, e.getMessage());
+            subDealException(wordFetchQueue, WordCrawlerConstants.STATUS_ERROR_JSOUP_RESULT_FETCH_FAILED,
+                e.getMessage());
         } finally {
             wordFetchAPI.updateByWordName(wordFetchQueue);
         }

@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -63,7 +64,6 @@ import me.fengorz.kiwi.word.api.vo.detail.WordParaphraseVO;
 import me.fengorz.kiwi.word.api.vo.detail.WordPronunciationVO;
 import me.fengorz.kiwi.word.api.vo.detail.WordQueryVO;
 import me.fengorz.kiwi.word.biz.service.*;
-import me.fengorz.kiwi.word.biz.service.operate.IWordOperateEvictService;
 import me.fengorz.kiwi.word.biz.service.operate.IWordOperateService;
 import me.fengorz.kiwi.word.biz.util.WordBizUtils;
 import me.fengorz.kiwi.word.biz.util.WordDfsUtils;
@@ -92,7 +92,6 @@ public class WordOperateServiceImpl implements IWordOperateService {
     private final IWordExampleStarRelService wordExampleStarRelService;
     private final IWordMainVariantService wordMainVariantService;
     private final IWordParaphrasePhraseService wordParaphrasePhraseService;
-    private final IWordOperateEvictService wordOperateEvictService;
     private final IDfsService dfsService;
     private final ISeqService seqService;
 
@@ -131,7 +130,7 @@ public class WordOperateServiceImpl implements IWordOperateService {
         final Integer wordId = wordMainDO.getWordId();
         final String wordName = wordMainDO.getWordName();
         wordMainService.remove(Wrappers.<WordMainDO>lambdaQuery().eq(WordMainDO::getWordName, wordName));
-        wordOperateEvictService.evict(wordName);
+        this.evict(wordName);
         wordMainService.evictByName(wordName);
         wordMainService.evictById(wordId);
         this.removeWordRelatedData(wordMainDO);
@@ -158,7 +157,7 @@ public class WordOperateServiceImpl implements IWordOperateService {
             wordMainDO.setIsDel(CommonConstants.FLAG_N);
             wordMainService.save(wordMainDO);
             subStoreFetchWordResult(fetchWordResultDTO, wordMainDO);
-            wordOperateEvictService.evict(wordName);
+            this.evict(wordName);
         }
 
         return true;
@@ -543,5 +542,27 @@ public class WordOperateServiceImpl implements IWordOperateService {
             }
         }
     }
+
+    @Override
+    @KiwiCacheKeyPrefix(WordConstants.CACHE_KEY_PREFIX_OPERATE.METHOD_WORD_NAME)
+    @CacheEvict(cacheNames = WordConstants.CACHE_NAMES, keyGenerator = CacheConstants.CACHE_KEY_GENERATOR_BEAN)
+    public void evict(String wordName) {
+        WordMainVO one = wordMainService.getOne(wordName);
+        if (one == null) {
+            return;
+        }
+        List<WordParaphraseDO> list = wordParaphraseService
+            .list(Wrappers.<WordParaphraseDO>lambdaQuery().eq(WordParaphraseDO::getWordId, one.getWordId())
+                .eq(WordParaphraseDO::getIsDel, CommonConstants.FLAG_DEL_NO));
+        if (KiwiCollectionUtils.isNotEmpty(list)) {
+            for (WordParaphraseDO paraphraseDO : list) {
+                this.evictParaphrase(paraphraseDO.getParaphraseId());
+            }
+        }
+    }
+
+    @KiwiCacheKeyPrefix(WordConstants.CACHE_KEY_PREFIX_OPERATE.METHOD_PARAPHRASE_ID)
+    @CacheEvict(cacheNames = WordConstants.CACHE_NAMES, keyGenerator = CacheConstants.CACHE_KEY_GENERATOR_BEAN)
+    private void evictParaphrase(@KiwiCacheKey Integer paraphraseId) {}
 
 }

@@ -1,10 +1,6 @@
-import lombok.SneakyThrows;
-import me.fengorz.kiwi.common.api.exception.CheckedException;
-import me.fengorz.kiwi.generator.CustomCodeGenerator;
-import me.fengorz.kiwi.generator.config.MybatisPlusConfigurer;
-import me.fengorz.kiwi.generator.entity.GenerateAbility;
-import me.fengorz.kiwi.generator.entity.GenerateConfig;
-import me.fengorz.kiwi.generator.service.SysGeneratorService;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
@@ -14,8 +10,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.util.List;
-import java.util.Map;
+import me.fengorz.kiwi.generator.CustomCodeGenerator;
+import me.fengorz.kiwi.generator.config.MybatisPlusConfigurer;
+import me.fengorz.kiwi.generator.entity.GenerateAbility;
+import me.fengorz.kiwi.generator.entity.GenerateConfig;
+import me.fengorz.kiwi.generator.service.SysGeneratorService;
 
 /**
  * @Author zhanshifeng
@@ -29,8 +28,8 @@ public class CustomCodeGeneratorTest {
     private SysGeneratorService sysGeneratorService;
 
     @Test
-    public void test() {
-        String tableName = "word_paraphrase_phrase" ;
+    public void test() throws Exception {
+        String tableName = "word_paraphrase_phrase";
         GenerateConfig config = new GenerateConfig();
         // "请输入表明前缀，比如t_table_name的话输入\"t_\""
         config.setTablePreName("");
@@ -63,13 +62,8 @@ public class CustomCodeGeneratorTest {
 
     }
 
-    @SneakyThrows
-    private Configuration getConfig() {
-        try {
-            return new PropertiesConfiguration("generator.properties");
-        } catch (ConfigurationException e) {
-            throw new CheckedException("获取代码生成的配置文件失败" , e);
-        }
+    private Configuration getConfig() throws ConfigurationException {
+        return new PropertiesConfiguration("generator.properties");
     }
 
 }

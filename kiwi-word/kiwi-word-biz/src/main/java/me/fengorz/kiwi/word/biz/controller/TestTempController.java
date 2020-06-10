@@ -1,22 +1,25 @@
 /*
  *
- *   Copyright [2019~2025] [zhanshifeng]
+ * Copyright [2019~2025] [zhanshifeng]
  *
- *   Licensed under the Apache License, Version 2.0 (the "License");
- *   you may not use this file except in compliance with the License.
- *   You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *   Unless required by applicable law or agreed to in writing, software
- *   distributed under the License is distributed on an "AS IS" BASIS,
- *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *   See the License for the specific language governing permissions and
- *   limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  *
  *
  */
 package me.fengorz.kiwi.word.biz.controller;
+
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.web.bind.annotation.*;
 
 import cn.hutool.core.util.StrUtil;
 import lombok.RequiredArgsConstructor;
@@ -28,12 +31,6 @@ import me.fengorz.kiwi.word.api.entity.WordFetchQueueDO;
 import me.fengorz.kiwi.word.api.entity.WordMainDO;
 import me.fengorz.kiwi.word.biz.service.IWordFetchQueueService;
 import me.fengorz.kiwi.word.biz.test.TestService;
-import org.springframework.web.bind.annotation.*;
-
-import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
-
 
 /**
  * 单词主表
@@ -79,7 +76,7 @@ public class TestTempController extends BaseController {
         List<String> wordList = new ArrayList<>();
         FileInputStream fis = null;
         InputStreamReader isr = null;
-        BufferedReader br = null; //用于包装InputStreamReader,提高处理性能。因为BufferedReader有缓冲的，而InputStreamReader没有。
+        BufferedReader br = null; // 用于包装InputStreamReader,提高处理性能。因为BufferedReader有缓冲的，而InputStreamReader没有。
         try {
             fis = new FileInputStream("/Users/zhanshifeng/Downloads/大学英语四级词汇表.txt");// FileInputStream
             // 从文件系统中的某个文件中获取字节

@@ -13,12 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ${package}.api.entity;
-
-import  ${package}.api.entity.${className}DO;
-
+package ${package}
+.api.entity;
+    ${package}
+        .api.entity.${className}DO;
 #if(${hasBigDecimal})
-import java.math.BigDecimal;
 #end
 
 /**

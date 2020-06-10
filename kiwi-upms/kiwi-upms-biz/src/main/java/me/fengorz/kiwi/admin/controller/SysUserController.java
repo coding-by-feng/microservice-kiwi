@@ -1,37 +1,35 @@
 /*
  *
- *   Copyright [2019~2025] [zhanshifeng]
+ * Copyright [2019~2025] [zhanshifeng]
  *
- *   Licensed under the Apache License, Version 2.0 (the "License");
- *   you may not use this file except in compliance with the License.
- *   You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *   Unless required by applicable law or agreed to in writing, software
- *   distributed under the License is distributed on an "AS IS" BASIS,
- *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *   See the License for the specific language governing permissions and
- *   limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  *
  *
  */
 package me.fengorz.kiwi.admin.controller;
 
+import java.util.Objects;
+import java.util.Optional;
+
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+
 import lombok.RequiredArgsConstructor;
 import me.fengorz.kiwi.admin.api.entity.SysUser;
 import me.fengorz.kiwi.admin.service.SysUserService;
 import me.fengorz.kiwi.common.api.R;
 import me.fengorz.kiwi.common.api.annotation.log.SysLog;
 import me.fengorz.kiwi.common.sdk.controller.BaseController;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.Objects;
-import java.util.Optional;
-
 
 /**
  * 用户表
@@ -81,8 +79,10 @@ public class SysUserController extends BaseController {
     /**
      * 分页查询
      *
-     * @param page    分页对象
-     * @param sysUser 用户表
+     * @param page
+     *            分页对象
+     * @param sysUser
+     *            用户表
      * @return
      */
     @GetMapping("/page")
@@ -90,11 +90,11 @@ public class SysUserController extends BaseController {
         return R.success(sysUserService.page(page, Wrappers.query(sysUser)));
     }
 
-
     /**
      * 通过id查询用户表
      *
-     * @param userId id
+     * @param userId
+     *            id
      * @return R
      */
     @GetMapping("/{userId}")
@@ -105,7 +105,8 @@ public class SysUserController extends BaseController {
     /**
      * 新增用户表
      *
-     * @param sysUser 用户表
+     * @param sysUser
+     *            用户表
      * @return R
      */
     @SysLog("新增用户表")
@@ -118,7 +119,8 @@ public class SysUserController extends BaseController {
     /**
      * 修改用户表
      *
-     * @param sysUser 用户表
+     * @param sysUser
+     *            用户表
      * @return R
      */
     @SysLog("修改用户表")
@@ -131,7 +133,8 @@ public class SysUserController extends BaseController {
     /**
      * 通过id删除用户表
      *
-     * @param userId id
+     * @param userId
+     *            id
      * @return R
      */
     @SysLog("通过id删除用户表")

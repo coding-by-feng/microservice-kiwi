@@ -1,27 +1,23 @@
 /*
  *
- *   Copyright [2019~2025] [zhanshifeng]
+ * Copyright [2019~2025] [zhanshifeng]
  *
- *   Licensed under the Apache License, Version 2.0 (the "License");
- *   you may not use this file except in compliance with the License.
- *   You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *   Unless required by applicable law or agreed to in writing, software
- *   distributed under the License is distributed on an "AS IS" BASIS,
- *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *   See the License for the specific language governing permissions and
- *   limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  *
  *
  */
 
 package me.fengorz.kiwi.word.biz.config;
 
-import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
-import com.zaxxer.hikari.HikariDataSource;
-import lombok.SneakyThrows;
+import javax.sql.DataSource;
+
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.springframework.context.annotation.Bean;
@@ -29,7 +25,8 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 
-import javax.sql.DataSource;
+import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
+import com.zaxxer.hikari.HikariDataSource;
 
 /**
  * @Description TODO
@@ -51,7 +48,6 @@ public class TransactionalTestConfig {
     }
 
     @Bean
-    @SneakyThrows
     public DataSource dataSource() {
         HikariDataSource dataSource = new HikariDataSource();
         dataSource.setJdbcUrl("jdbc:mysql://47.92.107.191:3306/vocabulary_enhancer_db");
@@ -69,7 +65,7 @@ public class TransactionalTestConfig {
         PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
         sqlSessionFactoryBean.setMapperLocations(resolver.getResources("classpath:/mapper/**/*.xml"));
 
-        //指定扫描别名包的路径，多个bean的扫描路径，拼接以分号隔开
+        // 指定扫描别名包的路径，多个bean的扫描路径，拼接以分号隔开
         // String typeAliasesPackage = "com.wzh.demo.domain;";
         // sqlSessionFactoryBean.setTypeAliasesPackage(typeAliasesPackage);
 

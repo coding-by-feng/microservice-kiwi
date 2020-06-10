@@ -13,26 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ${package}.${moduleName}.entity;
+package ${package}import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-
 import me.fengorz.kiwi.common.api.valid.ValidTypeInsert;
 import me.fengorz.kiwi.common.api.valid.ValidTypeUpdate;
 
-import java.time.LocalDateTime;
+        .${moduleName}.entity;
 #if(${hasBigDecimal})
-import java.math.BigDecimal;
 #end
 
 /**

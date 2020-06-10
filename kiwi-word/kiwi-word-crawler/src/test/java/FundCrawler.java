@@ -1,31 +1,28 @@
 /*
  *
- *   Copyright [2019~2025] [zhanshifeng]
+ * Copyright [2019~2025] [zhanshifeng]
  *
- *   Licensed under the Apache License, Version 2.0 (the "License");
- *   you may not use this file except in compliance with the License.
- *   You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *   Unless required by applicable law or agreed to in writing, software
- *   distributed under the License is distributed on an "AS IS" BASIS,
- *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *   See the License for the specific language governing permissions and
- *   limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  *
  *
  */
 
-import lombok.Data;
-import lombok.SneakyThrows;
+import java.io.File;
+import java.util.*;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import java.io.File;
-import java.util.*;
+import lombok.Data;
 
 /**
  * @Description TODO
@@ -41,16 +38,16 @@ public class FundCrawler {
 
         @Override
         public String toString() {
-            return "Fund{" +
-                    "code='" + code + '\'' +
-                    '}';
+            return "Fund{" + "code='" + code + '\'' + '}';
         }
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            Fund fund = (Fund) o;
+            if (this == o)
+                return true;
+            if (o == null || getClass() != o.getClass())
+                return false;
+            Fund fund = (Fund)o;
             return code.equals(fund.code);
         }
 
@@ -72,12 +69,12 @@ public class FundCrawler {
     private Set<Fund> year3FundCodeSet = new HashSet<>();
     private Set<Fund> year5FundCodeSet = new HashSet<>();
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         FundCrawler fundCrawler = new FundCrawler();
         fundCrawler.run();
     }
 
-    private void run() {
+    private void run() throws Exception {
         List<String> pathList = new ArrayList<>();
         String week1 = "/Users/zhanshifeng/Documents/myDocument/Document/long-term-bonds/1_week.html";
         String month1 = "/Users/zhanshifeng/Documents/myDocument/Document/long-term-bonds/1_month.html";
@@ -106,7 +103,8 @@ public class FundCrawler {
             boolean isYear2 = this.year2FundCodeSet.contains(fund);
             boolean isYear3 = this.year3FundCodeSet.contains(fund);
             boolean isYear5 = this.year5FundCodeSet.contains(fund);
-            // boolean isGreat = isWeek1 && isMonth1 && isMonth3 && isMonth6 && isYear1 && isYear2 && isYear3 && isYear5;
+            // boolean isGreat = isWeek1 && isMonth1 && isMonth3 && isMonth6 && isYear1 && isYear2 && isYear3 &&
+            // isYear5;
             // boolean isGreat = isMonth1 && isMonth3 && isMonth6 && isYear1 && isYear2 && isYear3 && isYear5;
             boolean isGreat = isWeek1 && isMonth1 && isMonth3 && isMonth6 && isYear1 && isYear2 && isYear3;
             // boolean isGreat = isMonth1 && isMonth3 && isMonth6 && isYear1 && isYear2 && isYear3;
@@ -121,8 +119,7 @@ public class FundCrawler {
         }
     }
 
-    @SneakyThrows
-    private void subRun(String path, Set<Fund> tempFundCodeSet) {
+    private void subRun(String path, Set<Fund> tempFundCodeSet) throws Exception {
 
         File in = new File(path);
 

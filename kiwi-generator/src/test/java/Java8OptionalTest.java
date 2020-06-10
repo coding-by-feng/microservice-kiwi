@@ -1,13 +1,13 @@
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.SneakyThrows;
-import org.junit.Assert;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.util.Optional;
+
+import org.junit.Assert;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
 
 /**
  * @Author zhanshifeng
@@ -18,7 +18,6 @@ public class Java8OptionalTest {
      * isPresent()返回是否为empty
      */
     // @Test
-    @SneakyThrows
     public void whenCreatesEmptyOptional_thenCorrect() {
         Optional<String> empty = Optional.empty();
         // 断言是否为false，是的话抛出异常
@@ -27,11 +26,10 @@ public class Java8OptionalTest {
     }
 
     // @Test
-    @SneakyThrows
     public void givenNonNull_whenCreatesOptional_thenCorrect() {
-        String test = "test" ;
+        String test = "test";
         Optional<String> opt = Optional.of(test);
-        Assert.assertEquals("Optional[test]" , opt);
+        Assert.assertEquals("Optional[test]", opt);
         System.out.println(opt);
         System.out.println(opt.get());
     }
@@ -52,7 +50,7 @@ public class Java8OptionalTest {
     public void givenNonNull_whenCreatesNullable_thenCorrect() {
         String name = null;
         Optional<String> opt = Optional.ofNullable(name);
-        Assert.assertEquals("Optional.empty" , opt.toString());
+        Assert.assertEquals("Optional.empty", opt.toString());
         System.out.println(opt);
     }
 
@@ -66,7 +64,7 @@ public class Java8OptionalTest {
         opt.ifPresent(name -> System.out.println(name.length()));
         // 老的写法
         // if(name != null){
-        //     System.out.println(name.length);
+        // System.out.println(name.length);
         // }
     }
 
@@ -76,7 +74,7 @@ public class Java8OptionalTest {
      */
     // @Test
     public void whenOrElseWorks_thenCorrect() {
-        String notEmpty = "ne" ;
+        String notEmpty = "ne";
         System.out.println(Optional.ofNullable(notEmpty).orElse(getNewValue()));
         System.out.println("------");
         System.out.println(Optional.ofNullable(notEmpty).orElseGet(this::getNewValue));
@@ -114,9 +112,8 @@ public class Java8OptionalTest {
     // @Test
     public void mapTest() {
         Optional.ofNullable("33").map(o -> "3").ifPresent(e -> {
-                    System.out.println(e);
-                }
-        );
+            System.out.println(e);
+        });
     }
 
     /*
@@ -124,30 +121,28 @@ public class Java8OptionalTest {
      */
     // @Test
     public void mapAndFilterDealLogin() {
-        String username = "admin" ;
-        String inputPassword = "123456" ;
+        String username = "admin";
+        String inputPassword = "123456";
 
         User user = new User();// 代表从数据库查出User对象
         Optional.ofNullable(user).filter(u -> username.equals(u.getUsername()))
-                .filter(u -> inputPassword.equals(u.getPassword()))
-                .ifPresent(u -> {
-                    System.out.println(u.getUsername() + "登录成功");
-                });
+            .filter(u -> inputPassword.equals(u.getPassword())).ifPresent(u -> {
+                System.out.println(u.getUsername() + "登录成功");
+            });
     }
 
     /*
      * map不会自动多层Optionnal封装解包，flatmap可以自动解包
      */
     // @Test
-    @SneakyThrows
-    public void mapAndflatmap() {
+    public void mapAndflatmap() throws Exception {
 
         Person zhanshifeng = new Person("zhanshifeng");
         Optional<Person> person = Optional.of(zhanshifeng);
         Optional<Optional<String>> stringOptional = person.map(Person::getName);
         Optional<String> optional = stringOptional.orElseThrow(Exception::new);
         String s = optional.orElse(null);
-        Assert.assertEquals("zhanshifeng" , s);
+        Assert.assertEquals("zhanshifeng", s);
 
         String s1 = person.flatMap(Person::getName).orElseThrow(Exception::new);
         Assert.assertEquals(s1, "zhanshifeng");
@@ -170,11 +165,10 @@ public class Java8OptionalTest {
         private String password;
 
         public User() {
-            this.username = "admin" ;
-            this.password = "123456" ;
+            this.username = "admin";
+            this.password = "123456";
         }
     }
-
 
     /*
      * 判断美女的颜值是否达标，同时也不能满分，满分
@@ -195,12 +189,10 @@ public class Java8OptionalTest {
 
     private String getNewValue() {
         System.out.println("getNewValue");
-        return "new" ;
+        return "new";
     }
-
 
     @Retention(RetentionPolicy.RUNTIME)
     @Target({ElementType.TYPE_USE, ElementType.TYPE_PARAMETER})
-    public @interface NonEmpty {
-    }
+    public @interface NonEmpty {}
 }

@@ -1,33 +1,23 @@
 /*
  *
- *   Copyright [2019~2025] [zhanshifeng]
+ * Copyright [2019~2025] [zhanshifeng]
  *
- *   Licensed under the Apache License, Version 2.0 (the "License");
- *   you may not use this file except in compliance with the License.
- *   You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *   Unless required by applicable law or agreed to in writing, software
- *   distributed under the License is distributed on an "AS IS" BASIS,
- *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *   See the License for the specific language governing permissions and
- *   limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  *
  *
  */
 
 package me.fengorz.kiwi.bdf.exception.handler;
 
-import com.github.tobato.fastdfs.exception.FdfsServerException;
-import lombok.extern.slf4j.Slf4j;
-import me.fengorz.kiwi.common.api.R;
-import me.fengorz.kiwi.common.api.constant.CommonConstants;
-import me.fengorz.kiwi.common.api.exception.BaseRuntimeException;
-import me.fengorz.kiwi.common.api.exception.ResourceNotFoundException;
-import me.fengorz.kiwi.common.api.exception.ServiceException;
-import me.fengorz.kiwi.common.api.exception.dfs.DfsOperateDeleteException;
-import me.fengorz.kiwi.common.api.exception.dfs.DfsOperateException;
+import java.util.Objects;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
@@ -36,7 +26,16 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import java.util.Objects;
+import com.github.tobato.fastdfs.exception.FdfsServerException;
+
+import lombok.extern.slf4j.Slf4j;
+import me.fengorz.kiwi.common.api.R;
+import me.fengorz.kiwi.common.api.constant.CommonConstants;
+import me.fengorz.kiwi.common.api.exception.BaseRuntimeException;
+import me.fengorz.kiwi.common.api.exception.ResourceNotFoundException;
+import me.fengorz.kiwi.common.api.exception.ServiceException;
+import me.fengorz.kiwi.common.api.exception.dfs.DfsOperateDeleteException;
+import me.fengorz.kiwi.common.api.exception.dfs.DfsOperateException;
 
 /**
  * @Description 全局的异常处理器
@@ -98,34 +97,34 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler({MethodArgumentNotValidException.class})
     public R handleValidException(MethodArgumentNotValidException e) {
-        //日志记录错误信息
+        // 日志记录错误信息
         final String errorMessage = getLogMessage(e);
         log.error(errorMessage);
-        //将错误信息返回给前台
+        // 将错误信息返回给前台
         return R.failed(errorMessage);
     }
 
     @ExceptionHandler({BindException.class})
     public R handleValidException(BindException e) {
-        //日志记录错误信息
+        // 日志记录错误信息
         final String errorMessage = getLogMessage(e);
         log.error(errorMessage);
-        //将错误信息返回给前台
+        // 将错误信息返回给前台
         return R.failed(errorMessage);
     }
 
     private static String getLogMessage(MethodArgumentNotValidException e) {
         FieldError fieldError = Objects.requireNonNull(e.getBindingResult().getFieldError());
-        return new StringBuilder().append(fieldError.getObjectName()).append(CommonConstants.SYMBOL_DOT).append(fieldError.getField())
-                .append(CommonConstants.SYMBOL_SQUARE_BRACKET_LEFT).append(fieldError.getDefaultMessage()).append(CommonConstants.SYMBOL_SQUARE_BRACKET_RIGHT)
-                .toString();
+        return new StringBuilder().append(fieldError.getObjectName()).append(CommonConstants.SYMBOL_DOT)
+            .append(fieldError.getField()).append(CommonConstants.SYMBOL_SQUARE_BRACKET_LEFT)
+            .append(fieldError.getDefaultMessage()).append(CommonConstants.SYMBOL_SQUARE_BRACKET_RIGHT).toString();
     }
 
     private static String getLogMessage(BindException e) {
         FieldError fieldError = Objects.requireNonNull(e.getBindingResult().getFieldError());
-        return new StringBuilder().append(fieldError.getObjectName()).append(CommonConstants.SYMBOL_DOT).append(fieldError.getField())
-                .append(CommonConstants.SYMBOL_SQUARE_BRACKET_LEFT).append(fieldError.getDefaultMessage()).append(CommonConstants.SYMBOL_SQUARE_BRACKET_RIGHT)
-                .toString();
+        return new StringBuilder().append(fieldError.getObjectName()).append(CommonConstants.SYMBOL_DOT)
+            .append(fieldError.getField()).append(CommonConstants.SYMBOL_SQUARE_BRACKET_LEFT)
+            .append(fieldError.getDefaultMessage()).append(CommonConstants.SYMBOL_SQUARE_BRACKET_RIGHT).toString();
     }
 
 }

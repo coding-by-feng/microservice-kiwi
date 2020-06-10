@@ -1,5 +1,3 @@
-import lombok.SneakyThrows;
-
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 
@@ -10,9 +8,8 @@ import java.lang.reflect.Parameter;
  */
 public class Java8ReflectTest {
     // @Test
-    @SneakyThrows
-    public void test1() {
-        Method method = GeneratorTest.class.getMethod("main" , String[].class);
+    public void test1() throws NoSuchMethodException {
+        Method method = GeneratorTest.class.getMethod("main", String[].class);
         for (Parameter parameter : method.getParameters()) {
             System.out.println(parameter.getName());
         }

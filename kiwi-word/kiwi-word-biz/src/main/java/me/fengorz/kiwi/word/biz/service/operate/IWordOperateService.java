@@ -67,4 +67,8 @@ public interface IWordOperateService {
 
     /* wordVariant methods end */
 
+    /* cache mothods begin */
+    void evict(String wordName);
+    /* cache mothods end */
+
 }

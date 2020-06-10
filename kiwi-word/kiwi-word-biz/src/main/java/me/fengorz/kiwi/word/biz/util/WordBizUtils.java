@@ -1,18 +1,15 @@
 /*
  *
- *   Copyright [2019~2025] [codingByFeng]
+ * Copyright [2019~2025] [codingByFeng]
  *
- *   Licensed under the Apache License, Version 2.0 (the "License");
- *   you may not use this file except in compliance with the License.
- *   You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *   Unless required by applicable law or agreed to in writing, software
- *   distributed under the License is distributed on an "AS IS" BASIS,
- *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *   See the License for the specific language governing permissions and
- *   limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  *
  *
  */
@@ -20,6 +17,7 @@
 package me.fengorz.kiwi.word.biz.util;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+
 import me.fengorz.kiwi.common.api.constant.CommonConstants;
 import me.fengorz.kiwi.word.api.dto.mapper.in.SelectStarListItemDTO;
 import me.fengorz.kiwi.word.api.entity.*;
@@ -46,7 +44,8 @@ public class WordBizUtils {
         return wordCharacter;
     }
 
-    public static WordParaphraseDO initWordParaphrase(Integer characterId, Integer wordId, String meaningChinese, String paraphraseEnglish, String translateLanguage) {
+    public static WordParaphraseDO initWordParaphrase(Integer characterId, Integer wordId, String meaningChinese,
+        String paraphraseEnglish, String translateLanguage) {
         WordParaphraseDO wordParaphraseDO = new WordParaphraseDO();
         wordParaphraseDO.setWordId(wordId);
         wordParaphraseDO.setCharacterId(characterId);
@@ -57,7 +56,8 @@ public class WordBizUtils {
         return wordParaphraseDO;
     }
 
-    public static WordParaphraseExampleDO initWordParaphraseExample(Integer paraphraseId, Integer wordId, String exampleSentence, String exampleTranslate, String translateLanguage) {
+    public static WordParaphraseExampleDO initWordParaphraseExample(Integer paraphraseId, Integer wordId,
+        String exampleSentence, String exampleTranslate, String translateLanguage) {
         WordParaphraseExampleDO wordParaphraseExampleDO = new WordParaphraseExampleDO();
         wordParaphraseExampleDO.setWordId(wordId);
         wordParaphraseExampleDO.setParaphraseId(paraphraseId);
@@ -67,7 +67,8 @@ public class WordBizUtils {
         return wordParaphraseExampleDO;
     }
 
-    public static WordPronunciationDO initWordPronunciation(Integer wordId, Integer characterId, String uploadResult, String soundmark, String soundmarkType) {
+    public static WordPronunciationDO initWordPronunciation(Integer wordId, Integer characterId, String uploadResult,
+        String soundmark, String soundmarkType) {
         WordPronunciationDO wordPronunciation = new WordPronunciationDO();
         wordPronunciation.setWordId(wordId);
         wordPronunciation.setCharacterId(characterId);
@@ -80,10 +81,8 @@ public class WordBizUtils {
     }
 
     public static SelectStarListItemDTO assembleSelectStarListItemDTO(Page page, Integer listId) {
-        return (SelectStarListItemDTO) new SelectStarListItemDTO()
-                .setListId(listId)
-                .setSize(page.getSize())
-                .setCurrent((page.getCurrent() - 1) * page.getSize());
+        return (SelectStarListItemDTO)new SelectStarListItemDTO().setListId(listId).setSize(page.getSize())
+            .setCurrent((page.getCurrent() - 1) * page.getSize());
     }
 
 }

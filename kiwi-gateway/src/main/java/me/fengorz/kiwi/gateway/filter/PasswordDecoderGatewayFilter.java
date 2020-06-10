@@ -1,23 +1,30 @@
 /*
  *
- *   Copyright [2019~2025] [zhanshifeng]
+ * Copyright [2019~2025] [zhanshifeng]
  *
- *   Licensed under the Apache License, Version 2.0 (the "License");
- *   you may not use this file except in compliance with the License.
- *   You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *   Unless required by applicable law or agreed to in writing, software
- *   distributed under the License is distributed on an "AS IS" BASIS,
- *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *   See the License for the specific language governing permissions and
- *   limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  *
  *
  */
 
 package me.fengorz.kiwi.gateway.filter;
+
+import java.net.URI;
+import java.util.HashMap;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.gateway.filter.GatewayFilter;
+import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
+import org.springframework.http.server.reactive.ServerHttpRequest;
+import org.springframework.stereotype.Component;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import cn.hutool.core.util.CharsetUtil;
 import cn.hutool.core.util.StrUtil;
@@ -25,16 +32,7 @@ import cn.hutool.http.HttpUtil;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.api.constant.SecurityConstants;
 import me.fengorz.kiwi.common.sdk.util.cipher.KiwiDecodeUtils;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.gateway.filter.GatewayFilter;
-import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
-import org.springframework.http.server.reactive.ServerHttpRequest;
-import org.springframework.stereotype.Component;
-import org.springframework.web.util.UriComponentsBuilder;
 import reactor.core.publisher.Mono;
-
-import java.net.URI;
-import java.util.HashMap;
 
 /**
  * @Author zhanshifeng
@@ -72,10 +70,8 @@ public class PasswordDecoderGatewayFilter extends AbstractGatewayFilterFactory {
                 decodeParamMap.put(SecurityConstants.KEY_PASSWORD, password.trim());
             }
 
-            URI newUri = UriComponentsBuilder.fromUri(uri)
-                    .replaceQuery(HttpUtil.toParams(decodeParamMap))
-                    .build(true)
-                    .toUri();
+            URI newUri =
+                UriComponentsBuilder.fromUri(uri).replaceQuery(HttpUtil.toParams(decodeParamMap)).build(true).toUri();
 
             ServerHttpRequest newRequest = exchange.getRequest().mutate().uri(newUri).build();
             return chain.filter(exchange.mutate().request(newRequest).build());

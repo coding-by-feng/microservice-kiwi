@@ -13,10 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ${package}.${moduleName}.mapper;
+package ${package}import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import ${package}.api.entity.${className}DO;
+.${moduleName}.mapper; ${package}.api.entity.${className}DO;
 
 /**
  * @author ${author}

@@ -13,14 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ${package}.${moduleName}.feign;
+package ${package}import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.*;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.vocabulary.enhancer.common.core.util.R;
-import ${package}.${moduleName}.entity.${className};
-import ${package}.${moduleName}.feign.factory.Remote${caseTableName}ServiceFallbackFactory;
-import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.*;
+
+.${moduleName}.feign;
+    ${package}
+        .${moduleName}.entity.${className};
+    ${package}
+        .${moduleName}.feign.factory.Remote${caseTableName}ServiceFallbackFactory;
 
 
 /**
@@ -29,7 +32,7 @@ import org.springframework.web.bind.annotation.*;
  * @author ${author}
  * @date ${datetime}
  */
-@FeignClient(contextId = "remote${caseTableName}Service" , value = "${serviceId}" , fallbackFactory = Remote${caseTableName}ServiceFallbackFactory.class)
+@FeignClient(contextId = "remote${caseTableName}Service", value = "${serviceId}", fallbackFactory = Remote${caseTableName}ServiceFallbackFactory.class)
 public interface IRemote${caseTableName}Service {
 
     String ${tableNameUpper} ='/${controllerRootPath}' ;

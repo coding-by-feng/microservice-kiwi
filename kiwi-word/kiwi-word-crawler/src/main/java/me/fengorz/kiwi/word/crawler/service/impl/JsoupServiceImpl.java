@@ -1,23 +1,31 @@
 /*
  *
- *   Copyright [2019~2025] [zhanshifeng]
+ * Copyright [2019~2025] [zhanshifeng]
  *
- *   Licensed under the Apache License, Version 2.0 (the "License");
- *   you may not use this file except in compliance with the License.
- *   You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *   Unless required by applicable law or agreed to in writing, software
- *   distributed under the License is distributed on an "AS IS" BASIS,
- *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *   See the License for the specific language governing permissions and
- *   limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  *
  *
  */
 
 package me.fengorz.kiwi.word.crawler.service.impl;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+import org.springframework.stereotype.Service;
 
 import cn.hutool.core.collection.CollUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -30,16 +38,6 @@ import me.fengorz.kiwi.word.api.exception.JsoupFetchPronunciationException;
 import me.fengorz.kiwi.word.api.exception.JsoupFetchResultException;
 import me.fengorz.kiwi.word.crawler.service.IJsoupService;
 import me.fengorz.kiwi.word.crawler.util.CrawlerAssertUtils;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
-import org.springframework.stereotype.Service;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 
 /**
  * @Description 爬虫抓取单词数据服务类
@@ -84,7 +82,8 @@ public class JsoupServiceImpl implements IJsoupService {
     public static final String KEY_DAUD = "daud";
 
     @Override
-    public FetchWordResultDTO fetchWordInfo(WordMessageDTO wordMessage) throws JsoupFetchResultException, JsoupFetchConnectException, JsoupFetchPronunciationException {
+    public FetchWordResultDTO fetchWordInfo(WordMessageDTO wordMessage)
+        throws JsoupFetchResultException, JsoupFetchConnectException, JsoupFetchPronunciationException {
         final String word = wordMessage.getWord();
         String jsoupWord = null;
 
@@ -97,7 +96,8 @@ public class JsoupServiceImpl implements IJsoupService {
         return fetchWordResultDTO;
     }
 
-    private FetchWordResultDTO subFetch(String url, String word) throws JsoupFetchConnectException, JsoupFetchResultException, JsoupFetchPronunciationException {
+    private FetchWordResultDTO subFetch(String url, String word)
+        throws JsoupFetchConnectException, JsoupFetchResultException, JsoupFetchPronunciationException {
         String jsoupWord;
         Document doc;
         try {
@@ -108,13 +108,12 @@ public class JsoupServiceImpl implements IJsoupService {
         }
 
         /**
-         * Fetch back the important data can not be empty,
-         * empty to throw an exception,
-         * let the upper logic to do callback processing
+         * Fetch back the important data can not be empty, empty to throw an exception, let the upper logic to do
+         * callback processing
          */
         FetchWordResultDTO fetchWordResultDTO = new FetchWordResultDTO();
 
-        //fetchWordResultDTO 放入 爬虫回来的wordName，不是传进来的wordName
+        // fetchWordResultDTO 放入 爬虫回来的wordName，不是传进来的wordName
         Elements wordNameHeader = doc.getElementsByClass(KEY_WORD_HEADER);
         CrawlerAssertUtils.notEmpty(wordNameHeader, FETCH_MAIN_WORD_NAME_EXCEPTION, word);
         Elements wordName = wordNameHeader.get(0).getElementsByClass(KEY_WORD_NAME);
@@ -136,19 +135,23 @@ public class JsoupServiceImpl implements IJsoupService {
             List<FetchWordPronunciationDTO> fetchWordPronunciationDTOList = new ArrayList<>();
             List<FetchParaphraseDTO> fetchParaphraseDTOList = new ArrayList<>();
             Elements codeHeader = block.getElementsByClass(KEY_CODE_HEADER);
-            //  The number of parts of code and label per main paraphrase block can normally only be 1
-            CrawlerAssertUtils.mustBeTrue(codeHeader != null && codeHeader.size() == 1,
-                    FETCH_CODE_HEADER_EXCEPTION, word);
+            // The number of parts of code and label per main paraphrase block can normally only be 1
+            CrawlerAssertUtils.mustBeTrue(codeHeader != null && codeHeader.size() == 1, FETCH_CODE_HEADER_EXCEPTION,
+                word);
             // TODO ZSF fetchWordResultDTO 放入 爬虫回来的wordName，不是传进来的wordName
             final Element header = codeHeader.get(0);
-            Optional.ofNullable(header.getElementsByClass(KEY_HEADER_CODE)).flatMap(element -> Optional.ofNullable(element.text())).ifPresent(fetchWordCodeDTO::setCode);
-            Optional.ofNullable(header.getElementsByClass(KEY_HEADER_LABEL)).flatMap(element -> Optional.ofNullable(element.text())).ifPresent(fetchWordCodeDTO::setLabel);
+            Optional.ofNullable(header.getElementsByClass(KEY_HEADER_CODE))
+                .flatMap(element -> Optional.ofNullable(element.text())).ifPresent(fetchWordCodeDTO::setCode);
+            Optional.ofNullable(header.getElementsByClass(KEY_HEADER_LABEL))
+                .flatMap(element -> Optional.ofNullable(element.text())).ifPresent(fetchWordCodeDTO::setLabel);
 
             // fetch UK pronunciation
             try {
-                fetchWordPronunciationDTOList.add(subFetchPronunciation(word, block, KEY_UK_PRONUNCIATIOIN, WordCrawlerConstants.PRONUNCIATION_TYPE_UK, isAlreadyFetchPronunciation));
+                fetchWordPronunciationDTOList.add(subFetchPronunciation(word, block, KEY_UK_PRONUNCIATIOIN,
+                    WordCrawlerConstants.PRONUNCIATION_TYPE_UK, isAlreadyFetchPronunciation));
                 // fetch US pronunciation
-                fetchWordPronunciationDTOList.add(subFetchPronunciation(word, block, KEY_US_PRONUNCIATIOIN, WordCrawlerConstants.PRONUNCIATION_TYPE_US, isAlreadyFetchPronunciation));
+                fetchWordPronunciationDTOList.add(subFetchPronunciation(word, block, KEY_US_PRONUNCIATIOIN,
+                    WordCrawlerConstants.PRONUNCIATION_TYPE_US, isAlreadyFetchPronunciation));
             } catch (JsoupFetchPronunciationException e) {
                 if (!isAlreadyFetchPronunciation) {
                     throw e;
@@ -163,7 +166,8 @@ public class JsoupServiceImpl implements IJsoupService {
                 Elements phrases = paraphrases.getElementsByClass(KEY_SINGLE_PHRASE);
                 boolean singleParaphraseIsEmpty = singleParaphrase != null && !singleParaphrase.isEmpty();
                 boolean phrasesIsEmpty = phrases != null && !phrases.isEmpty();
-                CrawlerAssertUtils.mustBeTrue(singleParaphraseIsEmpty || phrasesIsEmpty, FETCH_SINGLE_PARAPHRASE_EXCEPTION, word);
+                CrawlerAssertUtils.mustBeTrue(singleParaphraseIsEmpty || phrasesIsEmpty,
+                    FETCH_SINGLE_PARAPHRASE_EXCEPTION, word);
 
                 subFetchParaphrase(word, fetchParaphraseDTOList, singleParaphrase, phrases, phrasesIsEmpty);
             }
@@ -176,7 +180,8 @@ public class JsoupServiceImpl implements IJsoupService {
         return fetchWordResultDTO;
     }
 
-    private void subFetchParaphrase(String word, List<FetchParaphraseDTO> fetchParaphraseDTOList, Elements singleParaphrase, Elements phrases, boolean phrasesIsEmpty) throws JsoupFetchResultException {
+    private void subFetchParaphrase(String word, List<FetchParaphraseDTO> fetchParaphraseDTOList,
+        Elements singleParaphrase, Elements phrases, boolean phrasesIsEmpty) throws JsoupFetchResultException {
         for (Element paraphrase : singleParaphrase) {
             FetchParaphraseDTO fetchParaphraseDTO = new FetchParaphraseDTO();
 
@@ -197,7 +202,8 @@ public class JsoupServiceImpl implements IJsoupService {
                     }
                     for (int i = 0; i < subPhrases.size(); i++) {
                         String phraseDetail = subPhrases.get(i).text();
-                        String subPhrasesParaphrase = subPhrasesParaphrases.get(i).getElementsByClass(KEY_PARAPHRASE_ENGLISH).text();
+                        String subPhrasesParaphrase =
+                            subPhrasesParaphrases.get(i).getElementsByClass(KEY_PARAPHRASE_ENGLISH).text();
                         if (KiwiStringUtils.equals(subPhrasesParaphrase, paraphraseEnglishText)) {
                             fetchPhraseDTOList.add(new FetchPhraseDTO().setPhrase(phraseDetail));
                         }
@@ -219,13 +225,12 @@ public class JsoupServiceImpl implements IJsoupService {
                 for (Element sentence : exampleSentences) {
                     FetchParaphraseExampleDTO fetchParaphraseExampleDTO = new FetchParaphraseExampleDTO();
                     Optional.ofNullable(sentence.getElementsByClass(KEY_SENTENCE)).ifPresent(
-                            (Elements elements) -> fetchParaphraseExampleDTO.setExampleSentence(elements.text())
-                    );
-                    Optional.ofNullable(sentence.getElementsByClass(KEY_SENTENCE_TRANSLATE)).ifPresent(
-                            elements -> fetchParaphraseExampleDTO.setExampleTranslate(elements.text())
-                    );
+                        (Elements elements) -> fetchParaphraseExampleDTO.setExampleSentence(elements.text()));
+                    Optional.ofNullable(sentence.getElementsByClass(KEY_SENTENCE_TRANSLATE))
+                        .ifPresent(elements -> fetchParaphraseExampleDTO.setExampleTranslate(elements.text()));
 
-                    // TODO zhanshifeng The default is English, but consider how flexible it will be in the future if there are other languages
+                    // TODO zhanshifeng The default is English, but consider how flexible it will be in the future if
+                    // there are other languages
                     fetchParaphraseExampleDTO.setTranslateLanguage(WordCrawlerConstants.DEFAULT_TRANSLATE_LANGUAGE);
                     fetchParaphraseExampleDTOList.add(fetchParaphraseExampleDTO);
                     fetchParaphraseDTO.setFetchParaphraseExampleDTOList(fetchParaphraseExampleDTOList);
@@ -236,10 +241,12 @@ public class JsoupServiceImpl implements IJsoupService {
         }
     }
 
-    private FetchWordPronunciationDTO subFetchPronunciation(String word, Element block, String pronunciationKey, String pronunciationType, boolean isAlreadyFetchPronunciation) throws JsoupFetchPronunciationException {
+    private FetchWordPronunciationDTO subFetchPronunciation(String word, Element block, String pronunciationKey,
+        String pronunciationType, boolean isAlreadyFetchPronunciation) throws JsoupFetchPronunciationException {
         Elements ukPronunciations = block.getElementsByClass(pronunciationKey);
         try {
-            CrawlerAssertUtils.mustBeTrue(ukPronunciations != null && ukPronunciations.size() == 1, FETCH_PRONUNCIATION_EXCEPTION, word);
+            CrawlerAssertUtils.mustBeTrue(ukPronunciations != null && ukPronunciations.size() == 1,
+                FETCH_PRONUNCIATION_EXCEPTION, word);
         } catch (JsoupFetchResultException e) {
             throw new JsoupFetchPronunciationException(e);
         }
@@ -248,8 +255,9 @@ public class JsoupServiceImpl implements IJsoupService {
         FetchWordPronunciationDTO ukPronunciationDTO = new FetchWordPronunciationDTO();
         // index[0] is type="audio/mpeg", index[1] is type="audio/ogg"
         return ukPronunciationDTO.setSoundmarkType(pronunciationType)
-                .setSoundmark(Optional.ofNullable(ukPronunciation.getElementsByClass(KEY_SOUNDMARK))
-                        .orElseThrow(JsoupFetchPronunciationException::new).get(0).text())
-                .setVoiceFileUrl(Optional.ofNullable(ukPronunciation.getElementsByTag(KEY_SOURCE)).orElseThrow(JsoupFetchPronunciationException::new).get(0).attr(KEY_SRC));
+            .setSoundmark(Optional.ofNullable(ukPronunciation.getElementsByClass(KEY_SOUNDMARK))
+                .orElseThrow(JsoupFetchPronunciationException::new).get(0).text())
+            .setVoiceFileUrl(Optional.ofNullable(ukPronunciation.getElementsByTag(KEY_SOURCE))
+                .orElseThrow(JsoupFetchPronunciationException::new).get(0).attr(KEY_SRC));
     }
 }

@@ -1,10 +1,9 @@
-import lombok.SneakyThrows;
-import me.fengorz.kiwi.word.api.dto.fetch.WordMessageDTO;
-import me.fengorz.kiwi.word.crawler.component.WordFetchProducer;
-
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
+import me.fengorz.kiwi.word.api.dto.fetch.WordMessageDTO;
+import me.fengorz.kiwi.word.crawler.component.WordFetchProducer;
 
 /**
  * @Description TODO
@@ -35,13 +34,10 @@ public class CountDownLatchTest implements Runnable {
         latch.countDown();
     }
 
-    @SneakyThrows
     // @Test
-    public void test() {
+    public void test() throws InterruptedException {
         ExecutorService executorService = Executors.newFixedThreadPool(10);
-        for (int i = 0; i < 1000; i++) {
-            executorService.submit(this::test);
-        }
+        // for (int i = 0; i < 1000; i++) executorService.submit(this::test);
 
         latch.await();
 

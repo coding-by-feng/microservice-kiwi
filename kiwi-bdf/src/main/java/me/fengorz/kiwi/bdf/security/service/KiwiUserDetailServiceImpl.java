@@ -1,34 +1,26 @@
 /*
  *
- *   Copyright [2019~2025] [zhanshifeng]
+ * Copyright [2019~2025] [zhanshifeng]
  *
- *   Licensed under the Apache License, Version 2.0 (the "License");
- *   you may not use this file except in compliance with the License.
- *   You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *   Unless required by applicable law or agreed to in writing, software
- *   distributed under the License is distributed on an "AS IS" BASIS,
- *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *   See the License for the specific language governing permissions and
- *   limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  *
  *
  */
 
 package me.fengorz.kiwi.bdf.security.service;
 
-import cn.hutool.core.util.ArrayUtil;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import me.fengorz.kiwi.admin.api.dto.UserFullInfoDTO;
-import me.fengorz.kiwi.admin.api.entity.SysUser;
-import me.fengorz.kiwi.admin.api.feign.RemoteUserService;
-import me.fengorz.kiwi.common.api.R;
-import me.fengorz.kiwi.common.api.constant.CommonConstants;
-import me.fengorz.kiwi.common.api.constant.SecurityConstants;
-import me.fengorz.kiwi.common.api.entity.EnhancerUser;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.security.core.GrantedAuthority;
@@ -38,10 +30,16 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import cn.hutool.core.util.ArrayUtil;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import me.fengorz.kiwi.admin.api.dto.UserFullInfoDTO;
+import me.fengorz.kiwi.admin.api.entity.SysUser;
+import me.fengorz.kiwi.admin.api.feign.IUserAPI;
+import me.fengorz.kiwi.common.api.R;
+import me.fengorz.kiwi.common.api.constant.CommonConstants;
+import me.fengorz.kiwi.common.api.constant.SecurityConstants;
+import me.fengorz.kiwi.common.api.entity.EnhancerUser;
 
 /**
  * @Author zhanshifeng
@@ -51,15 +49,15 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class KiwiUserDetailServiceImpl implements UserDetailsService {
     private final CacheManager cacheManager;
-    private final RemoteUserService remoteUserService;
+    private final IUserAPI iUserAPI;
 
     @Override
     public UserDetails loadUserByUsername(String username) {
         Cache cache = cacheManager.getCache("user_details");
         if (cache != null && cache.get(username) != null) {
-            return (EnhancerUser) cache.get(username).get();
+            return (EnhancerUser)cache.get(username).get();
         }
-        R<UserFullInfoDTO> info = remoteUserService.info(username, SecurityConstants.FROM_IN);
+        R<UserFullInfoDTO> info = iUserAPI.info(username, SecurityConstants.FROM_IN);
         UserDetails userDetails = getUserDetails(info);
         cache.put(username, userDetails);
         return userDetails;
@@ -81,13 +79,13 @@ public class KiwiUserDetailServiceImpl implements UserDetailsService {
             dbAuthsSet.addAll(Arrays.asList(info.getPermissions()));
         }
 
-        Collection<? extends GrantedAuthority> authorities
-                = AuthorityUtils.createAuthorityList(dbAuthsSet.toArray(new String[0]));
+        Collection<? extends GrantedAuthority> authorities =
+            AuthorityUtils.createAuthorityList(dbAuthsSet.toArray(new String[0]));
         SysUser user = info.getSysUser();
 
-        return new EnhancerUser(user.getUserId(), user.getDeptId(), user.getUsername(), SecurityConstants.BCRYPT + user.getPassword(),
-                CommonConstants.FLAG_DEL_NO == user.getDelFlag(), true, true, true, authorities);
+        return new EnhancerUser(user.getUserId(), user.getDeptId(), user.getUsername(),
+            SecurityConstants.BCRYPT + user.getPassword(), CommonConstants.FLAG_DEL_NO == user.getDelFlag(), true, true,
+            true, authorities);
     }
-
 
 }

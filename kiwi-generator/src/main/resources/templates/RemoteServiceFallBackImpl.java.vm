@@ -14,15 +14,19 @@
  * limitations under the License.
  */
 
-package ${package}.${moduleName}.feign.fallback;
+package ${package}import org.springframework.stereotype.Component;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.vocabulary.enhancer.common.core.util.R;
-import ${package}.${moduleName}.entity.${className};
-import ${package}.${moduleName}.feign.IRemote${caseTableName}Service;
+
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
+
+.${moduleName}.feign.fallback;
+    ${package}
+        .${moduleName}.entity.${className};
+    ${package}
+        .${moduleName}.feign.IRemote${caseTableName}Service;
 
 
 /**

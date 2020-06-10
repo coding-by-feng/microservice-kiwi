@@ -13,13 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ${package}.${moduleName}.service;
-
+package ${package}import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import ${package}.api.entity.${className}DO;
-import ${package}.api.dto.${className}DTO;
-import ${package}.api.vo.${className}VO;
+
+.${moduleName}.service;
+    ${package}
+        .api.entity.${className}DO;
+    ${package}
+        .api.dto.${className}DTO; ${package}.api.vo.${className}VO;
 
 /**
  * 服务类

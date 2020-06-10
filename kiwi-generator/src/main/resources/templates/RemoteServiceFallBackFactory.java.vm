@@ -13,12 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ${package}.${moduleName}.feign.factory;
+package ${package}import org.springframework.stereotype.Component;
 
-import ${package}.${moduleName}.feign.IRemote${caseTableName}Service;
-import ${package}.${moduleName}.feign.fallback.Remote${caseTableName}ServiceFallbackImpl;
 import feign.hystrix.FallbackFactory;
-import org.springframework.stereotype.Component;
+
+.${moduleName}.feign.factory;
+    ${package}
+        .${moduleName}.feign.IRemote${caseTableName}Service;
+    ${package}
+        .${moduleName}.feign.fallback.Remote${caseTableName}ServiceFallbackImpl;
 
 
 /**

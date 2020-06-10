@@ -1,25 +1,32 @@
 /*
  *
- *   Copyright [2019~2025] [zhanshifeng]
+ * Copyright [2019~2025] [zhanshifeng]
  *
- *   Licensed under the Apache License, Version 2.0 (the "License");
- *   you may not use this file except in compliance with the License.
- *   You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *   Unless required by applicable law or agreed to in writing, software
- *   distributed under the License is distributed on an "AS IS" BASIS,
- *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *   See the License for the specific language governing permissions and
- *   limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  *
  *
  */
 package me.fengorz.kiwi.word.biz.controller;
 
+import java.util.List;
+
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+
+import org.hibernate.validator.constraints.Range;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.bdf.core.service.ISeqService;
@@ -34,14 +41,6 @@ import me.fengorz.kiwi.word.api.vo.WordExampleStarListVO;
 import me.fengorz.kiwi.word.api.vo.star.ExampleStarItemVO;
 import me.fengorz.kiwi.word.biz.service.IWordExampleStarListService;
 import me.fengorz.kiwi.word.biz.service.operate.IWordOperateService;
-import org.hibernate.validator.constraints.Range;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
-import java.util.List;
-
 
 /**
  * @author zhanshifeng
@@ -57,7 +56,6 @@ public class WordExampleStarListController extends BaseController {
     private final IWordExampleStarListService wordExampleStarListService;
     private final IWordOperateService wordOperateService;
     private final ISeqService seqService;
-
 
     /**
      * 新增
@@ -90,7 +88,8 @@ public class WordExampleStarListController extends BaseController {
     /**
      * 通过id删除
      *
-     * @param id id
+     * @param id
+     *            id
      * @return R
      */
     @SysLog("通过id删除")
@@ -121,9 +120,8 @@ public class WordExampleStarListController extends BaseController {
     }
 
     @PostMapping("/getListItems/{size}/{current}")
-    public R<IPage<ExampleStarItemVO>> getListItems(@NotNull Integer listId,
-                                                    @PathVariable @Min(1) Integer current,
-                                                    @PathVariable @Range(min = 1, max = 100) Integer size) {
+    public R<IPage<ExampleStarItemVO>> getListItems(@NotNull Integer listId, @PathVariable @Min(1) Integer current,
+        @PathVariable @Range(min = 1, max = 100) Integer size) {
         return R.success(wordExampleStarListService.getListItems(new Page(current, size), listId));
     }
 

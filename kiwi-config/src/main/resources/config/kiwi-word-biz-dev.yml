@@ -18,6 +18,7 @@ ignore:
     - /word/main/fuzzyQueryList/**
     - /word/fetch/queue/**
     - /word/pronunciation/downloadVoice/**
+    - /word/main/variant/**
   userNames:
     - admin
 

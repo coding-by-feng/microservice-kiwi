@@ -13,13 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ${package}.${moduleName}.service.impl;
+package ${package}import org.springframework.stereotype.Service;
 
-import ${package}.api.entity.${className}DO;
-import ${package}.${moduleName}.service.I${caseTableName}Service;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import ${package}.${moduleName}.mapper.${caseTableName}Mapper;
-import org.springframework.stereotype.Service;
+.${moduleName}.service.impl;
+    ${package}
+        .api.entity.${className}DO;
+    ${package}
+        .${moduleName}.service.I${caseTableName}Service;
+    ${package}
+        .${moduleName}.mapper.${caseTableName}Mapper;
 
 /**
  * ${comments}

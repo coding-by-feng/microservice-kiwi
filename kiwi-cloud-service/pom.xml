@@ -33,8 +33,8 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>../kiwi-bdf</module>
         <module>../kiwi-upms</module>
+        <module>../kiwi-bdf</module>
         <module>../kiwi-word</module>
         <module>../kiwi-auth</module>
         <module>../kiwi-flow</module>
@@ -86,10 +86,18 @@
             <artifactId>springfox-swagger2</artifactId>
             <version>${swagger.version}</version>
         </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-aspects</artifactId>
-        </dependency>
+        <!--
+                <dependency>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-aspects</artifactId>
+                </dependency>
+        -->
+        <!--
+                <dependency>
+                    <groupId>org.aspectj</groupId>
+                    <artifactId>aspectjrt</artifactId>
+                </dependency>
+        -->
         <!--mybatis-plus-->
         <dependency>
             <groupId>com.baomidou</groupId>

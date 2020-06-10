@@ -1,34 +1,21 @@
 /*
  *
- *   Copyright [2019~2025] [zhanshifeng]
+ * Copyright [2019~2025] [zhanshifeng]
  *
- *   Licensed under the Apache License, Version 2.0 (the "License");
- *   you may not use this file except in compliance with the License.
- *   You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *   Unless required by applicable law or agreed to in writing, software
- *   distributed under the License is distributed on an "AS IS" BASIS,
- *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *   See the License for the specific language governing permissions and
- *   limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  *
  *
  */
 
 package me.fengorz.kiwi.gateway.filter;
 
-import cn.hutool.core.util.StrUtil;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import me.fengorz.kiwi.common.api.R;
-import me.fengorz.kiwi.common.api.constant.SecurityConstants;
-import me.fengorz.kiwi.common.api.exception.AuthException;
-import me.fengorz.kiwi.common.sdk.config.FilterIgnorePropertiesConfig;
-import me.fengorz.kiwi.common.sdk.web.WebTools;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -36,6 +23,18 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.stereotype.Component;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import cn.hutool.core.util.StrUtil;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import me.fengorz.kiwi.common.api.R;
+import me.fengorz.kiwi.common.api.constant.SecurityConstants;
+import me.fengorz.kiwi.common.api.exception.AuthException;
+import me.fengorz.kiwi.common.sdk.config.FilterIgnorePropertiesConfig;
+import me.fengorz.kiwi.common.sdk.web.WebTools;
 import reactor.core.publisher.Mono;
 
 /**
@@ -81,10 +80,10 @@ public class ValidateCodeGatewayFilter extends AbstractGatewayFilterFactory {
                 httpResponse.setStatusCode(HttpStatus.UNAUTHORIZED);
 
                 try {
-                    return httpResponse.writeWith(Mono.just(httpResponse.bufferFactory()
-                            .wrap(objectMapper.writeValueAsBytes(R.failed(e.getMessage())))));
+                    return httpResponse.writeWith(Mono.just(
+                        httpResponse.bufferFactory().wrap(objectMapper.writeValueAsBytes(R.failed(e.getMessage())))));
                 } catch (JsonProcessingException ex) {
-                    log.error("httpResponse 流输出异常" , e);
+                    log.error("httpResponse 流输出异常", e);
                 }
             }
 

@@ -19,6 +19,7 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
 import cn.hutool.core.util.StrUtil;
@@ -46,6 +47,8 @@ public class TestTempController extends BaseController {
 
     private final TestService testService;
     private final IWordFetchQueueService wordFetchQueueService;
+    @Value("${me.fengorz.file.vocabulary.word.list.path}")
+    private String tmp;
 
     @GetMapping("/test")
     public R getOne() throws Exception {
@@ -78,7 +81,7 @@ public class TestTempController extends BaseController {
         InputStreamReader isr = null;
         BufferedReader br = null; // 用于包装InputStreamReader,提高处理性能。因为BufferedReader有缓冲的，而InputStreamReader没有。
         try {
-            fis = new FileInputStream("/Users/zhanshifeng/Downloads/大学英语四级词汇表.txt");// FileInputStream
+            fis = new FileInputStream(this.tmp + "/vocabulary.txt");// FileInputStream
             // 从文件系统中的某个文件中获取字节
             isr = new InputStreamReader(fis);// InputStreamReader 是字节流通向字符流的桥梁,
             br = new BufferedReader(isr);// 从字符输入流中读取文件中的内容,封装了一个new InputStreamReader的对象

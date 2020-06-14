@@ -53,10 +53,9 @@ public class WordFetchQueueServiceImpl extends ServiceImpl<WordFetchQueueMapper,
         WordFetchQueueDO one = this.getOne(wordName);
 
         if (one != null) {
-            // TODO ZSF 锁住的暂时也重新抓取
-            // if (CommonConstants.FLAG_YES == one.getIsLock()) {
-            // return false;
-            // }
+            if (CommonConstants.FLAG_YES == one.getIsLock()) {
+                return false;
+            }
             this.del(wordName);
         }
 

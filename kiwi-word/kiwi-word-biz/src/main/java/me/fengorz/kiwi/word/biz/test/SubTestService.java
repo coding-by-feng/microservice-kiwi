@@ -37,7 +37,7 @@ public class SubTestService {
 
     @Transactional(rollbackFor = Exception.class)
     public boolean testTransactional() throws Exception {
-        this.wordMainMapper.insert(new WordMainDO().setWordName("SubTestService").setIsDel(CommonConstants.FLAG_N));
+        this.wordMainMapper.insert(new WordMainDO().setWordName("SubTestService").setIsDel(CommonConstants.FLAG_DEL_NO));
         return true;
     }
 

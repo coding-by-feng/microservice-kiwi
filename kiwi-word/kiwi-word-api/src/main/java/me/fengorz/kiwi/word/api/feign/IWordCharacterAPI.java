@@ -18,7 +18,7 @@ package me.fengorz.kiwi.word.api.feign;
 import org.springframework.cloud.openfeign.FeignClient;
 
 import me.fengorz.kiwi.word.api.common.WordConstants;
-import me.fengorz.kiwi.word.api.feign.factory.WordCharacterServiceFallbackFactory;
+import me.fengorz.kiwi.word.api.feign.factory.WordCharacterFallbackFactory;
 
 /**
  * 单词词性表
@@ -27,7 +27,7 @@ import me.fengorz.kiwi.word.api.feign.factory.WordCharacterServiceFallbackFactor
  * @date 2019-11-01 14:37:07
  */
 @FeignClient(contextId = "remoteWordCharacterService", value = WordConstants.KIWI_WORD_BIZ,
-    fallbackFactory = WordCharacterServiceFallbackFactory.class)
+    fallbackFactory = WordCharacterFallbackFactory.class)
 public interface IWordCharacterAPI {
 
     String WORD_CHARACTER = "/word/character";

@@ -27,13 +27,13 @@ import me.fengorz.kiwi.word.api.common.WordConstants;
 import me.fengorz.kiwi.word.api.dto.fetch.FetchWordResultDTO;
 import me.fengorz.kiwi.word.api.dto.remote.WordFetchQueuePageDTO;
 import me.fengorz.kiwi.word.api.entity.WordFetchQueueDO;
-import me.fengorz.kiwi.word.api.feign.factory.WordFetchServiceFallbackFactory;
+import me.fengorz.kiwi.word.api.feign.factory.WordFetchFallbackFactory;
 
 /**
  * @Author zhanshifeng
  */
 @FeignClient(contextId = "remoteWordFetchService", value = WordConstants.KIWI_WORD_BIZ,
-    fallbackFactory = WordFetchServiceFallbackFactory.class)
+    fallbackFactory = WordFetchFallbackFactory.class)
 public interface IWordFetchAPI {
 
     String WORD_FETCH_QUEUE = "/word/fetch/queue";

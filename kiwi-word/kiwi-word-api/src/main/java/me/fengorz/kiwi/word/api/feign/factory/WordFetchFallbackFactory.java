@@ -13,26 +13,26 @@
  *
  *
  */
+
 package me.fengorz.kiwi.word.api.feign.factory;
 
 import org.springframework.stereotype.Component;
 
 import feign.hystrix.FallbackFactory;
-import me.fengorz.kiwi.word.api.feign.IWordCharacterAPI;
-import me.fengorz.kiwi.word.api.feign.fallback.WordCharacterAPIFallback;
+import me.fengorz.kiwi.word.api.feign.IWordFetchAPI;
+import me.fengorz.kiwi.word.api.feign.fallback.WordFetchAPIFallback;
 
 /**
- * 单词词性表
- *
- * @author zhanshifeng
- * @date 2019-11-01 14:37:07
+ * @Description TODO
+ * @Author zhanshifeng
+ * @Date 2019/10/30 3:19 PM
  */
 @Component
-public class WordCharacterServiceFallbackFactory implements FallbackFactory<IWordCharacterAPI> {
+public class WordFetchFallbackFactory implements FallbackFactory<IWordFetchAPI> {
     @Override
-    public IWordCharacterAPI create(Throwable throwable) {
-        WordCharacterAPIFallback remoteWordCharacterServiceFallback = new WordCharacterAPIFallback();
-        remoteWordCharacterServiceFallback.setThrowable(throwable);
-        return remoteWordCharacterServiceFallback;
+    public IWordFetchAPI create(Throwable throwable) {
+        WordFetchAPIFallback remoteWordFetchServiceFallBack = new WordFetchAPIFallback();
+        remoteWordFetchServiceFallBack.setThrowable(throwable);
+        return remoteWordFetchServiceFallBack;
     }
 }

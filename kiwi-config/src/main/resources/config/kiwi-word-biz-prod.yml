@@ -30,7 +30,7 @@ me:
       vocabulary:
         word:
           list:
-            path: "~/tmp"
+            path: "/root/tmp"
 
 async:
   config:

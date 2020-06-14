@@ -18,14 +18,14 @@ package me.fengorz.kiwi.word.api.feign;
 import org.springframework.cloud.openfeign.FeignClient;
 
 import me.fengorz.kiwi.word.api.common.WordConstants;
-import me.fengorz.kiwi.word.api.feign.factory.WordParaphraseExampleListServiceFallbackFactory;
+import me.fengorz.kiwi.word.api.feign.factory.WordParaphraseExampleListFallbackFactory;
 
 /**
  * @author zhanshifeng
  * @date 2019-12-08 23:27:12
  */
 @FeignClient(contextId = "remoteWordParaphraseExampleListDOService", value = WordConstants.KIWI_WORD_BIZ,
-    fallbackFactory = WordParaphraseExampleListServiceFallbackFactory.class)
+    fallbackFactory = WordParaphraseExampleListFallbackFactory.class)
 public interface IWordParaphraseExampleListAPI {
 
     String WORD_PARAPHRASE_EXAMPLE_LIST = "/word/paraphrase/example/list";

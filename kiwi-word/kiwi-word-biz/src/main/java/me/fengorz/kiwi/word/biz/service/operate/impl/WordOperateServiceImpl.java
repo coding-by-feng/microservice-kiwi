@@ -64,6 +64,7 @@ import me.fengorz.kiwi.word.api.vo.detail.WordCharacterVO;
 import me.fengorz.kiwi.word.api.vo.detail.WordParaphraseVO;
 import me.fengorz.kiwi.word.api.vo.detail.WordPronunciationVO;
 import me.fengorz.kiwi.word.api.vo.detail.WordQueryVO;
+import me.fengorz.kiwi.word.biz.exception.WordGetOneException;
 import me.fengorz.kiwi.word.biz.service.*;
 import me.fengorz.kiwi.word.biz.service.operate.IWordOperateService;
 import me.fengorz.kiwi.word.biz.util.WordBizUtils;
@@ -147,11 +148,13 @@ public class WordOperateServiceImpl implements IWordOperateService {
         wordMainDO.setWordName(wordName);
 
         // If the word already exists, update the original word information
-        WordMainDO existsWordMainDO = wordMainService.getOne(wordName);
         try {
+            WordMainDO existsWordMainDO = wordMainService.getOne(wordName);
             if (existsWordMainDO != null) {
                 subRemoveWord(existsWordMainDO);
             }
+        } catch (WordGetOneException e) {
+            this.removeWord(wordName);
         } catch (DfsOperateDeleteException e) {
             throw e;
         } finally {
@@ -259,9 +262,14 @@ public class WordOperateServiceImpl implements IWordOperateService {
     @KiwiCacheKeyPrefix(WordConstants.CACHE_KEY_PREFIX_OPERATE.METHOD_WORD_NAME)
     @Cacheable(cacheNames = WordConstants.CACHE_NAMES, keyGenerator = CacheConstants.CACHE_KEY_GENERATOR_BEAN,
         unless = "#result == null")
-    public WordQueryVO queryWord(@KiwiCacheKey String wordName) {
+    public WordQueryVO queryWord(@KiwiCacheKey String wordName) throws DfsOperateDeleteException {
         WordQueryVO wordQueryVO = new WordQueryVO();
-        WordMainDO word = wordMainService.getOne(wordName);
+        WordMainDO word = null;
+        try {
+            word = wordMainService.getOne(wordName);
+        } catch (WordGetOneException e) {
+            this.removeWord(wordName);
+        }
         // if you can't find the result after the tense is determined, insert a record into the queue to be fetched
         if (word == null) {
             Integer sourceWordId = wordMainVariantService.getWordId(wordName);
@@ -475,13 +483,18 @@ public class WordOperateServiceImpl implements IWordOperateService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public boolean insertVariant(String inputWordName, String fetchWordName) {
+    public boolean insertVariant(String inputWordName, String fetchWordName) throws DfsOperateDeleteException {
         if (KiwiStringUtils.equals(inputWordName, fetchWordName)) {
             return false;
         }
 
         // 先判断变种是否存在，如果不存在再插入
-        WordMainVO mainVO = wordMainService.getOne(fetchWordName);
+        WordMainVO mainVO = null;
+        try {
+            mainVO = wordMainService.getOne(fetchWordName);
+        } catch (WordGetOneException e) {
+            this.removeWord(fetchWordName);
+        }
         if (mainVO == null) {
             throw new ResourceNotFoundException("word {} 不存在！", fetchWordName);
         }
@@ -549,8 +562,13 @@ public class WordOperateServiceImpl implements IWordOperateService {
     @Override
     @KiwiCacheKeyPrefix(WordConstants.CACHE_KEY_PREFIX_OPERATE.METHOD_WORD_NAME)
     @CacheEvict(cacheNames = WordConstants.CACHE_NAMES, keyGenerator = CacheConstants.CACHE_KEY_GENERATOR_BEAN)
-    public void evict(String wordName) {
-        WordMainVO one = wordMainService.getOne(wordName);
+    public void evict(String wordName) throws DfsOperateDeleteException {
+        WordMainVO one = null;
+        try {
+            one = wordMainService.getOne(wordName);
+        } catch (WordGetOneException e) {
+            this.removeWord(wordName);
+        }
         if (one == null) {
             return;
         }

@@ -23,6 +23,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 
 import me.fengorz.kiwi.word.api.entity.WordMainDO;
 import me.fengorz.kiwi.word.api.vo.WordMainVO;
+import me.fengorz.kiwi.word.biz.exception.WordGetOneException;
 
 /**
  * 单词主表
@@ -32,13 +33,13 @@ import me.fengorz.kiwi.word.api.vo.WordMainVO;
  */
 public interface IWordMainService extends IService<WordMainDO> {
 
-    WordMainVO getOne(String wordName);
+    WordMainVO getOne(String wordName) throws WordGetOneException;
 
     String getWordName(Integer id);
 
     List<Map> fuzzyQueryList(Page page, String wordName);
 
-    boolean isExist(String wordName);
+    boolean isExist(String wordName) throws WordGetOneException;
 
     void evictByName(String wordName);
 

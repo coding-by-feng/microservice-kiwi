@@ -22,6 +22,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+
 import cn.hutool.core.util.StrUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -60,7 +62,18 @@ public class TestTempController extends BaseController {
     public R readTxt() throws Exception {
         List<String> words = this.readWords();
         for (String word : words) {
-            WordFetchQueueDO wordFetchQueue = new WordFetchQueueDO();
+            WordFetchQueueDO one = wordFetchQueueService
+                .getOne(new LambdaQueryWrapper<WordFetchQueueDO>().eq(WordFetchQueueDO::getWordName, word));
+            WordFetchQueueDO wordFetchQueue = null;
+            if (one != null) {
+                if (WordCrawlerConstants.STATUS_SUCCESS == one.getFetchStatus()) {
+                    continue;
+                } else {
+                    wordFetchQueue = one;
+                }
+            } else {
+                wordFetchQueue = new WordFetchQueueDO();
+            }
             wordFetchQueue.setFetchStatus(WordCrawlerConstants.STATUS_TO_FETCH);
             wordFetchQueue.setWordName(word.trim());
             wordFetchQueue.setFetchPriority(100);

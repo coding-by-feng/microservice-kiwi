@@ -60,12 +60,12 @@ public class WordMainController extends BaseController {
     }
 
     @GetMapping("/query/{wordName}")
-    public R<WordQueryVO> queryWord(@PathVariable("wordName") String wordName) {
+    public R<WordQueryVO> queryWord(@PathVariable("wordName") String wordName) throws DfsOperateDeleteException {
         return R.success(wordOperateService.queryWord(wordName));
     }
 
     @GetMapping("/queryById/{wordId}")
-    public R<WordQueryVO> queryWord(@PathVariable Integer wordId) {
+    public R<WordQueryVO> queryWord(@PathVariable Integer wordId) throws DfsOperateDeleteException {
         String wordName = wordMainService.getWordName(wordId);
         if (KiwiStringUtils.isBlank(wordName)) {
             return R.failed();

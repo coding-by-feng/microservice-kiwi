@@ -22,13 +22,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.apache.ibatis.exceptions.TooManyResultsException;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
@@ -42,6 +40,7 @@ import me.fengorz.kiwi.common.sdk.util.lang.collection.KiwiCollectionUtils;
 import me.fengorz.kiwi.word.api.common.WordConstants;
 import me.fengorz.kiwi.word.api.entity.WordMainDO;
 import me.fengorz.kiwi.word.api.vo.WordMainVO;
+import me.fengorz.kiwi.word.biz.exception.WordGetOneException;
 import me.fengorz.kiwi.word.biz.mapper.WordMainMapper;
 import me.fengorz.kiwi.word.biz.service.IWordMainService;
 
@@ -75,17 +74,17 @@ public class WordMainServiceImpl extends ServiceImpl<WordMainMapper, WordMainDO>
     @KiwiCacheKeyPrefix(WordConstants.CACHE_KEY_PREFIX_WORD_MAIN.METHOD_NAME)
     @Cacheable(cacheNames = WordConstants.CACHE_NAMES, keyGenerator = CacheConstants.CACHE_KEY_GENERATOR_BEAN,
         unless = "#result == null")
-    public WordMainVO getOne(@KiwiCacheKey String wordName) {
+    public WordMainVO getOne(@KiwiCacheKey String wordName) throws WordGetOneException {
         // TODO ZSF isDel要改成tinyint类型
         try {
             return KiwiBeanUtils.convertFrom(this.getOne(new LambdaQueryWrapper<WordMainDO>()
                 .eq(WordMainDO::getWordName, wordName).eq(WordMainDO::getIsDel, CommonConstants.FLAG_DEL_NO)),
                 WordMainVO.class);
-        } catch (TooManyResultsException e) {
+        } catch (Exception e) {
             log.error(e.getMessage());
-            this.remove(Wrappers.<WordMainDO>lambdaQuery().eq(WordMainDO::getWordName, wordName));
+            throw new WordGetOneException();
+            // this.remove(Wrappers.<WordMainDO>lambdaQuery().eq(WordMainDO::getWordName, wordName));
         }
-        return null;
     }
 
     @Override
@@ -114,7 +113,7 @@ public class WordMainServiceImpl extends ServiceImpl<WordMainMapper, WordMainDO>
     }
 
     @Override
-    public boolean isExist(String wordName) {
+    public boolean isExist(String wordName) throws WordGetOneException {
         return this.getOne(wordName) != null;
     }
 

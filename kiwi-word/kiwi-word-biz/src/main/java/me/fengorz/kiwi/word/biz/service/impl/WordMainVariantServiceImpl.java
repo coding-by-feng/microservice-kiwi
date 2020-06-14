@@ -145,6 +145,7 @@ public class WordMainVariantServiceImpl extends ServiceImpl<WordMainVariantMappe
     @CacheEvict(cacheNames = WordConstants.CACHE_NAMES, keyGenerator = CacheConstants.CACHE_KEY_GENERATOR_BEAN)
     private void evictOne(@KiwiCacheKey String variantName) {}
 
+    @Transactional(rollbackFor = Exception.class)
     private boolean insertOne(Integer wordId, String variantName, Integer type) {
         WordMainVariantDO entity =
             new WordMainVariantDO().setId(seqService.genIntSequence(MapperConstant.T_INS_SEQUENCE)).setWordId(wordId)

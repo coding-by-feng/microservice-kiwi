@@ -20,6 +20,7 @@ import org.springframework.stereotype.Component;
 
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import me.fengorz.kiwi.common.api.R;
 import me.fengorz.kiwi.word.api.feign.IWordMainAPI;
 
 /**
@@ -35,4 +36,8 @@ public class WordMainAPIFallback implements IWordMainAPI {
     @Setter
     private Throwable throwable;
 
+    @Override
+    public R<Boolean> removeByWordName(String wordName) {
+        return R.feignCallFailed();
+    }
 }

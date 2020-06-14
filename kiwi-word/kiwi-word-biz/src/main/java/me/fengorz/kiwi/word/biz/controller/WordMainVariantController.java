@@ -14,8 +14,8 @@ package me.fengorz.kiwi.word.biz.controller;
 
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
@@ -36,8 +36,8 @@ public class WordMainVariantController {
 
     private final IWordOperateService wordOperateService;
 
-    @GetMapping("/insertVariant")
-    public R<Void> insertVariant(@RequestParam String inputWordName, @RequestParam String fetchWordName) {
+    @GetMapping("/insertVariant/{inputWordName}/{fetchWordName}")
+    public R<Void> insertVariant(@PathVariable String inputWordName, @PathVariable String fetchWordName) {
         return R.auto(wordOperateService.insertVariant(inputWordName, fetchWordName));
     }
 

@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.api.R;
+import me.fengorz.kiwi.common.api.constant.CommonConstants;
 import me.fengorz.kiwi.common.sdk.util.lang.string.KiwiStringUtils;
 import me.fengorz.kiwi.word.api.common.WordCrawlerConstants;
 import me.fengorz.kiwi.word.api.dto.fetch.FetchWordResultDTO;
@@ -92,6 +93,7 @@ public class WordFetchServiceImpl implements IWordFetchService {
             subDealException(wordFetchQueue, WordCrawlerConstants.STATUS_ERROR_JSOUP_RESULT_FETCH_FAILED,
                 e.getMessage());
         } finally {
+            wordFetchQueue.setIsLock(CommonConstants.FLAG_NO);
             wordFetchAPI.updateByWordName(wordFetchQueue);
         }
     }

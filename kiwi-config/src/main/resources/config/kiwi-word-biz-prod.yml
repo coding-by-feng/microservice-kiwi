@@ -27,6 +27,10 @@ me:
       crawler:
         voice:
           tmpPath: "/root/wordTmp"
+      vocabulary:
+        word:
+          list:
+            path: "~/tmp"
 
 async:
   config:

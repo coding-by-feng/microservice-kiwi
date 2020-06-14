@@ -18,7 +18,7 @@ package me.fengorz.kiwi.word.api.feign;
 import org.springframework.cloud.openfeign.FeignClient;
 
 import me.fengorz.kiwi.word.api.common.WordConstants;
-import me.fengorz.kiwi.word.api.feign.factory.WordParaphraseExampleServiceFallbackFactory;
+import me.fengorz.kiwi.word.api.feign.factory.WordParaphraseExampleFallbackFactory;
 
 /**
  * 单词例句表
@@ -27,7 +27,7 @@ import me.fengorz.kiwi.word.api.feign.factory.WordParaphraseExampleServiceFallba
  * @date 2019-11-01 14:43:28
  */
 @FeignClient(contextId = "remoteWordParaphraseExampleService", value = WordConstants.KIWI_WORD_BIZ,
-    fallbackFactory = WordParaphraseExampleServiceFallbackFactory.class)
+    fallbackFactory = WordParaphraseExampleFallbackFactory.class)
 public interface IWordParaphraseExampleAPI {
 
     String WORD_PARAPHRASE_EXAMPLE = "/word/paraphrase/example";

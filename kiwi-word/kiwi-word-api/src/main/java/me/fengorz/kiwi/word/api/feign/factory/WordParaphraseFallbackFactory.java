@@ -13,12 +13,13 @@
  *
  *
  */
-package me.fengorz.kiwi.word.api.feign;
+package me.fengorz.kiwi.word.api.feign.factory;
 
-import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.stereotype.Component;
 
-import me.fengorz.kiwi.word.api.common.WordConstants;
-import me.fengorz.kiwi.word.api.feign.factory.WordParaphraseFallbackFactory;
+import feign.hystrix.FallbackFactory;
+import me.fengorz.kiwi.word.api.feign.IWordParaphraseAPI;
+import me.fengorz.kiwi.word.api.feign.fallback.WordParaphraseAPIFallback;
 
 /**
  * 单词释义表
@@ -26,10 +27,12 @@ import me.fengorz.kiwi.word.api.feign.factory.WordParaphraseFallbackFactory;
  * @author zhanshifeng
  * @date 2019-11-01 14:41:24
  */
-@FeignClient(contextId = "remoteWordParaphraseService", value = WordConstants.KIWI_WORD_BIZ,
-    fallbackFactory = WordParaphraseFallbackFactory.class)
-public interface IWordParaphraseAPI {
-
-    String WORD_PARAPHRASE = "/word/paraphrase";
-
+@Component
+public class WordParaphraseFallbackFactory implements FallbackFactory<IWordParaphraseAPI> {
+    @Override
+    public IWordParaphraseAPI create(Throwable throwable) {
+        WordParaphraseAPIFallback remoteWordParaphraseServiceFallback = new WordParaphraseAPIFallback();
+        remoteWordParaphraseServiceFallback.setThrowable(throwable);
+        return remoteWordParaphraseServiceFallback;
+    }
 }

@@ -7,7 +7,7 @@ cd ~/microservice-kiwi/
 rm -rf ./*
 
 git reset --hard master
-git pull https://github.com/coding-by-feng/microservice-kiwi.git/
+git pull https://coding-by-feng:7b865131835aeb7cb6c826f43f62399ad8fc483d@github.com/coding-by-feng/microservice-kiwi.git/
 
 cd kiwi-word
 mvn clean install -Dmaven.test.skip=true

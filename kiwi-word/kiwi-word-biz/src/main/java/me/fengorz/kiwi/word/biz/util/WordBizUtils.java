@@ -31,7 +31,7 @@ public class WordBizUtils {
     public static WordMainDO initWordMain(String wordName) {
         WordMainDO wordMainDO = new WordMainDO();
         wordMainDO.setWordName(wordName);
-        wordMainDO.setIsDel(CommonConstants.FLAG_N);
+        wordMainDO.setIsDel(CommonConstants.FLAG_DEL_NO);
         return wordMainDO;
     }
 

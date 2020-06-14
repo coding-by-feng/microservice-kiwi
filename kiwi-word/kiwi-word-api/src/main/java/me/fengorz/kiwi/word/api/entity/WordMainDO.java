@@ -61,6 +61,6 @@ public class WordMainDO extends Model<WordMainDO> {
     /**
      * 逻辑删除标记(Y--正常 N--删除)
      */
-    private String isDel;
+    private Integer isDel;
 
 }

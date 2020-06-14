@@ -79,7 +79,7 @@ public class WordMainServiceImpl extends ServiceImpl<WordMainMapper, WordMainDO>
         // TODO ZSF isDel要改成tinyint类型
         try {
             return KiwiBeanUtils.convertFrom(this.getOne(new LambdaQueryWrapper<WordMainDO>()
-                .eq(WordMainDO::getWordName, wordName).eq(WordMainDO::getIsDel, CommonConstants.FLAG_N)),
+                .eq(WordMainDO::getWordName, wordName).eq(WordMainDO::getIsDel, CommonConstants.FLAG_DEL_NO)),
                 WordMainVO.class);
         } catch (TooManyResultsException e) {
             log.error(e.getMessage());
@@ -100,7 +100,7 @@ public class WordMainServiceImpl extends ServiceImpl<WordMainMapper, WordMainDO>
     @Override
     public List<Map> fuzzyQueryList(Page page, String wordName) {
         LambdaQueryWrapper queryWrapper = new LambdaQueryWrapper<WordMainDO>()
-            .likeRight(WordMainDO::getWordName, wordName).eq(WordMainDO::getIsDel, CommonConstants.FLAG_N)
+            .likeRight(WordMainDO::getWordName, wordName).eq(WordMainDO::getIsDel, CommonConstants.FLAG_DEL_NO)
             .orderByAsc(WordMainDO::getWordName).select(WordMainDO::getWordName);
 
         List<WordMainDO> records = this.page(page, queryWrapper).getRecords();

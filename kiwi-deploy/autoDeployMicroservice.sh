@@ -4,30 +4,32 @@ killall autoCheckService.sh
 
 cd ~/microservice-kiwi/
 
-rm -rf ./*
+#rm -rf ./*
 
 git reset --hard master
-git pull https://coding-by-feng:7b865131835aeb7cb6c826f43f62399ad8fc483d@github.com/coding-by-feng/microservice-kiwi.git/
+git pull git@github.com/coding-by-feng/microservice-kiwi.git/
 
-cd kiwi-word
-mvn clean install -Dmaven.test.skip=true
-cd ..
-cd kiwi-eureka/
-mvn clean install -Dmaven.test.skip=true
-cd ..
-cd kiwi-config/
-mvn clean install -Dmaven.test.skip=true
-cd ..
-cd kiwi-gateway/
-mvn clean install -Dmaven.test.skip=true
-cd ..
-cd kiwi-auth/
-mvn clean install -Dmaven.test.skip=true
-cd ..
-cd kiwi-upms/
 mvn clean install -Dmaven.test.skip=true
 
-cd ~/microservice-kiwi/
+#cd kiwi-word
+#mvn clean install -Dmaven.test.skip=true
+#cd ..
+#cd kiwi-eureka/
+#mvn clean install -Dmaven.test.skip=true
+#cd ..
+#cd kiwi-config/
+#mvn clean install -Dmaven.test.skip=true
+#cd ..
+#cd kiwi-gateway/
+#mvn clean install -Dmaven.test.skip=true
+#cd ..
+#cd kiwi-auth/
+#mvn clean install -Dmaven.test.skip=true
+#cd ..
+#cd kiwi-upms/
+#mvn clean install -Dmaven.test.skip=true
+
+#cd ~/microservice-kiwi/
 
 mv -f kiwi-eureka/Dockerfile ~/docker/kiwi/eureka/
 mv -f kiwi-config/Dockerfile ~/docker/kiwi/config/
@@ -48,6 +50,6 @@ mv -f ~/.m2/repository/me/fengorz/kiwi-word-crawler/1.0-SNAPSHOT/kiwi-word-crawl
 ~/autoDeploy.sh
 
 echo sleep 300
-sleep 300s
+sleep 100s
 
 nohup ~/autoCheckService.sh  >~/autoCheck.log 2>&1 &

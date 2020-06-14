@@ -14,7 +14,7 @@ package me.fengorz.kiwi.word.api.feign;
 
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import me.fengorz.kiwi.common.api.R;
 import me.fengorz.kiwi.word.api.common.WordConstants;
@@ -28,7 +28,7 @@ public interface IWordMainVariantAPI {
 
     String WORD_MAIN_VARIANT = "/word/main/variant";
 
-    @GetMapping(WORD_MAIN_VARIANT + "/insertVariant")
-    R<Void> insertVariant(@RequestParam String inputWordName, @RequestParam String fetchWordName);
+    @GetMapping(WORD_MAIN_VARIANT + "/insertVariant/{inputWordName}/{fetchWordName}")
+    R<Void> insertVariant(@PathVariable String inputWordName, @PathVariable String fetchWordName);
 
 }

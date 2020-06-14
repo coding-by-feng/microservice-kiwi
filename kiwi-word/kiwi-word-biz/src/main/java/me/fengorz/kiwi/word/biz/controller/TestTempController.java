@@ -27,7 +27,9 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import cn.hutool.core.util.StrUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import me.fengorz.kiwi.bdf.core.service.ISeqService;
 import me.fengorz.kiwi.common.api.R;
+import me.fengorz.kiwi.common.api.constant.MapperConstant;
 import me.fengorz.kiwi.common.sdk.controller.BaseController;
 import me.fengorz.kiwi.word.api.common.WordCrawlerConstants;
 import me.fengorz.kiwi.word.api.entity.WordFetchQueueDO;
@@ -49,6 +51,7 @@ public class TestTempController extends BaseController {
 
     private final TestService testService;
     private final IWordFetchQueueService wordFetchQueueService;
+    private final ISeqService seqService;
     @Value("${me.fengorz.file.vocabulary.word.list.path}")
     private String tmp;
 
@@ -70,14 +73,19 @@ public class TestTempController extends BaseController {
                     continue;
                 } else {
                     wordFetchQueue = one;
+                    wordFetchQueue.setFetchStatus(WordCrawlerConstants.STATUS_TO_FETCH);
+                    wordFetchQueue.setWordName(word.trim());
+                    wordFetchQueue.setFetchPriority(100);
+                    wordFetchQueueService.updateById(wordFetchQueue);
                 }
             } else {
                 wordFetchQueue = new WordFetchQueueDO();
+                wordFetchQueue.setQueueId(seqService.genIntSequence(MapperConstant.T_INS_SEQUENCE));
+                wordFetchQueue.setFetchStatus(WordCrawlerConstants.STATUS_TO_FETCH);
+                wordFetchQueue.setWordName(word.trim());
+                wordFetchQueue.setFetchPriority(100);
+                wordFetchQueueService.save(wordFetchQueue);
             }
-            wordFetchQueue.setFetchStatus(WordCrawlerConstants.STATUS_TO_FETCH);
-            wordFetchQueue.setWordName(word.trim());
-            wordFetchQueue.setFetchPriority(100);
-            this.wordFetchQueueService.save(wordFetchQueue);
             log.info(word + "insert success!");
         }
         return R.success();
@@ -94,7 +102,8 @@ public class TestTempController extends BaseController {
         InputStreamReader isr = null;
         BufferedReader br = null; // 用于包装InputStreamReader,提高处理性能。因为BufferedReader有缓冲的，而InputStreamReader没有。
         try {
-            fis = new FileInputStream(this.tmp + "/vocabulary.txt");// FileInputStream
+            fis = new FileInputStream("/root/tmp/vocabulary.txt");// FileInputStream
+            // fis = new FileInputStream(this.tmp + "/vocabulary.txt");// FileInputStream
             // 从文件系统中的某个文件中获取字节
             isr = new InputStreamReader(fis);// InputStreamReader 是字节流通向字符流的桥梁,
             br = new BufferedReader(isr);// 从字符输入流中读取文件中的内容,封装了一个new InputStreamReader的对象

@@ -156,7 +156,7 @@ public class WordOperateServiceImpl implements IWordOperateService {
             throw e;
         } finally {
             wordMainDO.setWordId(seqService.genIntSequence(MapperConstant.T_INS_SEQUENCE));
-            wordMainDO.setIsDel(CommonConstants.FLAG_N);
+            wordMainDO.setIsDel(CommonConstants.FLAG_DEL_NO);
             wordMainService.save(wordMainDO);
             subStoreFetchWordResult(fetchWordResultDTO, wordMainDO);
             this.evict(wordName);
@@ -480,37 +480,19 @@ public class WordOperateServiceImpl implements IWordOperateService {
             return false;
         }
 
-        try {
-            // 先判断变种是否存在，如果不存在再插入
-            WordMainVO mainVO = wordMainService.getOne(fetchWordName);
-            if (mainVO == null) {
-                throw new ResourceNotFoundException("word {} 不存在！", fetchWordName);
-            }
-
-            final Integer wordId = mainVO.getWordId();
-
-            if (wordMainVariantService.isExist(wordId, inputWordName)) {
-                return false;
-            }
-
-            return wordMainVariantService.insertOne(wordId, inputWordName);
-        } catch (Exception e) {
-            log.error(e.getMessage());
-        } finally {
-            List<WordMainDO> list =
-                wordMainService.list(new LambdaQueryWrapper<WordMainDO>().eq(WordMainDO::getWordName, fetchWordName));
-            if (KiwiCollectionUtils.isEmpty(list)) {
-                return false;
-            }
-            for (WordMainDO wordMainDO : list) {
-                try {
-                    this.removeWordRelatedData(wordMainDO);
-                } catch (DfsOperateDeleteException e) {
-                    log.error(e.getMessage());
-                }
-            }
+        // 先判断变种是否存在，如果不存在再插入
+        WordMainVO mainVO = wordMainService.getOne(fetchWordName);
+        if (mainVO == null) {
+            throw new ResourceNotFoundException("word {} 不存在！", fetchWordName);
         }
-        return false;
+
+        final Integer wordId = mainVO.getWordId();
+
+        if (wordMainVariantService.isExist(wordId, inputWordName)) {
+            return false;
+        }
+
+        return wordMainVariantService.insertOne(wordId, inputWordName);
     }
 
     /* private methods beginning */

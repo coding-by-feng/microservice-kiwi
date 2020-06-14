@@ -130,12 +130,11 @@ public class WordOperateServiceImpl implements IWordOperateService {
     @Transactional(rollbackFor = Exception.class, noRollbackFor = DfsOperateDeleteException.class,
         propagation = Propagation.REQUIRES_NEW)
     private void subRemoveWord(WordMainDO wordMainDO) throws DfsOperateDeleteException {
-        final Integer wordId = wordMainDO.getWordId();
         final String wordName = wordMainDO.getWordName();
         wordMainService.remove(Wrappers.<WordMainDO>lambdaQuery().eq(WordMainDO::getWordName, wordName));
         this.evict(wordName);
         wordMainService.evictByName(wordName);
-        wordMainService.evictById(wordId);
+        wordMainService.evictById(wordMainDO.getWordId());
         this.removeWordRelatedData(wordMainDO);
     }
 

@@ -18,22 +18,21 @@ package me.fengorz.kiwi.word.api.feign.factory;
 import org.springframework.stereotype.Component;
 
 import feign.hystrix.FallbackFactory;
-import me.fengorz.kiwi.word.api.feign.IWordParaphraseExampleAPI;
-import me.fengorz.kiwi.word.api.feign.fallback.WordParaphraseExampleAPIFallback;
+import me.fengorz.kiwi.word.api.feign.IWordStarListAPI;
+import me.fengorz.kiwi.word.api.feign.fallback.WordStarListAPIFallback;
 
 /**
- * 单词例句表
+ * 单词本
  *
  * @author zhanshifeng
- * @date 2019-11-01 14:43:28
+ * @date 2019-12-08 23:26:57
  */
 @Component
-public class WordParaphraseExampleServiceFallbackFactory implements FallbackFactory<IWordParaphraseExampleAPI> {
+public class WordStarListFallbackFactory implements FallbackFactory<IWordStarListAPI> {
     @Override
-    public IWordParaphraseExampleAPI create(Throwable throwable) {
-        WordParaphraseExampleAPIFallback remoteWordParaphraseExampleServiceFallback =
-            new WordParaphraseExampleAPIFallback();
-        remoteWordParaphraseExampleServiceFallback.setThrowable(throwable);
-        return remoteWordParaphraseExampleServiceFallback;
+    public IWordStarListAPI create(Throwable throwable) {
+        WordStarListAPIFallback remoteWordStarListServiceFallback = new WordStarListAPIFallback();
+        remoteWordStarListServiceFallback.setThrowable(throwable);
+        return remoteWordStarListServiceFallback;
     }
 }

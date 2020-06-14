@@ -18,21 +18,21 @@ package me.fengorz.kiwi.word.api.feign.factory;
 import org.springframework.stereotype.Component;
 
 import feign.hystrix.FallbackFactory;
-import me.fengorz.kiwi.word.api.feign.IWordPronunciationAPI;
-import me.fengorz.kiwi.word.api.feign.fallback.WordPronunciationAPIFallback;
+import me.fengorz.kiwi.word.api.feign.IWordCharacterAPI;
+import me.fengorz.kiwi.word.api.feign.fallback.WordCharacterAPIFallback;
 
 /**
- * 单词例句表
+ * 单词词性表
  *
  * @author zhanshifeng
- * @date 2019-11-01 14:44:45
+ * @date 2019-11-01 14:37:07
  */
 @Component
-public class WordPronunciationServiceFallbackFactory implements FallbackFactory<IWordPronunciationAPI> {
+public class WordCharacterFallbackFactory implements FallbackFactory<IWordCharacterAPI> {
     @Override
-    public IWordPronunciationAPI create(Throwable throwable) {
-        WordPronunciationAPIFallback remoteWordPronunciationServiceFallback = new WordPronunciationAPIFallback();
-        remoteWordPronunciationServiceFallback.setThrowable(throwable);
-        return remoteWordPronunciationServiceFallback;
+    public IWordCharacterAPI create(Throwable throwable) {
+        WordCharacterAPIFallback remoteWordCharacterServiceFallback = new WordCharacterAPIFallback();
+        remoteWordCharacterServiceFallback.setThrowable(throwable);
+        return remoteWordCharacterServiceFallback;
     }
 }

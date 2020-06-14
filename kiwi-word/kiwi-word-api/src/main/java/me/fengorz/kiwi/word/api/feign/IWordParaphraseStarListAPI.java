@@ -18,7 +18,7 @@ package me.fengorz.kiwi.word.api.feign;
 import org.springframework.cloud.openfeign.FeignClient;
 
 import me.fengorz.kiwi.word.api.common.WordConstants;
-import me.fengorz.kiwi.word.api.feign.factory.WordParaphraseStarListServiceFallbackFactory;
+import me.fengorz.kiwi.word.api.feign.factory.WordParaphraseStarListFallbackFactory;
 
 /**
  * 单词本
@@ -27,7 +27,7 @@ import me.fengorz.kiwi.word.api.feign.factory.WordParaphraseStarListServiceFallb
  * @date 2019-12-08 23:27:41
  */
 @FeignClient(contextId = "remoteWordParaphraseStarListDOService", value = WordConstants.KIWI_WORD_BIZ,
-    fallbackFactory = WordParaphraseStarListServiceFallbackFactory.class)
+    fallbackFactory = WordParaphraseStarListFallbackFactory.class)
 public interface IWordParaphraseStarListAPI {
 
     String WORD_PARAPHRASE_STAR = "/word/paraphrase/star";

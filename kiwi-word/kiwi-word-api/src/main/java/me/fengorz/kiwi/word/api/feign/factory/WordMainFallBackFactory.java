@@ -13,26 +13,26 @@
  *
  *
  */
+
 package me.fengorz.kiwi.word.api.feign.factory;
 
 import org.springframework.stereotype.Component;
 
 import feign.hystrix.FallbackFactory;
-import me.fengorz.kiwi.word.api.feign.IWordStarListAPI;
-import me.fengorz.kiwi.word.api.feign.fallback.WordStarListAPIFallback;
+import me.fengorz.kiwi.word.api.feign.IWordMainAPI;
+import me.fengorz.kiwi.word.api.feign.fallback.WordMainAPIFallback;
 
 /**
- * 单词本
- *
- * @author zhanshifeng
- * @date 2019-12-08 23:26:57
+ * @Description TODO
+ * @Author zhanshifeng
+ * @Date 2019/10/30 3:19 PM
  */
 @Component
-public class WordStarListServiceFallbackFactory implements FallbackFactory<IWordStarListAPI> {
+public class WordMainFallBackFactory implements FallbackFactory<IWordMainAPI> {
     @Override
-    public IWordStarListAPI create(Throwable throwable) {
-        WordStarListAPIFallback remoteWordStarListServiceFallback = new WordStarListAPIFallback();
-        remoteWordStarListServiceFallback.setThrowable(throwable);
-        return remoteWordStarListServiceFallback;
+    public IWordMainAPI create(Throwable throwable) {
+        WordMainAPIFallback remoteWordMainServiceFallback = new WordMainAPIFallback();
+        remoteWordMainServiceFallback.setThrowable(throwable);
+        return remoteWordMainServiceFallback;
     }
 }

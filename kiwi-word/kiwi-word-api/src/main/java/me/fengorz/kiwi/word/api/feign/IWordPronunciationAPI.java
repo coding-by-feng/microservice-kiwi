@@ -18,7 +18,7 @@ package me.fengorz.kiwi.word.api.feign;
 import org.springframework.cloud.openfeign.FeignClient;
 
 import me.fengorz.kiwi.word.api.common.WordConstants;
-import me.fengorz.kiwi.word.api.feign.factory.WordPronunciationServiceFallbackFactory;
+import me.fengorz.kiwi.word.api.feign.factory.WordPronunciationFallbackFactory;
 
 /**
  * 单词例句表
@@ -27,7 +27,7 @@ import me.fengorz.kiwi.word.api.feign.factory.WordPronunciationServiceFallbackFa
  * @date 2019-11-01 14:44:45
  */
 @FeignClient(contextId = "remoteWordPronunciationService", value = WordConstants.KIWI_WORD_BIZ,
-    fallbackFactory = WordPronunciationServiceFallbackFactory.class)
+    fallbackFactory = WordPronunciationFallbackFactory.class)
 public interface IWordPronunciationAPI {
 
     String WORD_PRONUNCIATION = "/word/pronunciation";

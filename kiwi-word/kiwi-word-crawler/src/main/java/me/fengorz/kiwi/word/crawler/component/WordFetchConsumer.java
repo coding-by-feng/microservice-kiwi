@@ -16,6 +16,7 @@
 
 package me.fengorz.kiwi.word.crawler.component;
 
+import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.locks.ReentrantLock;
 
 import javax.annotation.Resource;
@@ -70,9 +71,22 @@ public class WordFetchConsumer {
                 }
             }
 
-            threadPoolTaskExecutor.execute(() -> {
-                wordFetchService.work(wordMessageDTO);
-            });
+            while (true) {
+                try {
+                    threadPoolTaskExecutor.execute(() -> {
+                        wordFetchService.work(wordMessageDTO);
+                    });
+                    break;
+                } catch (RejectedExecutionException e) {
+                    try {
+                        log.info("threadPoolTaskExecutor is full, sleep 1s!");
+                        Thread.sleep(1000);
+                    } catch (InterruptedException ie) {
+                        log.error("WordFetchConsumer.fetch sleep error!", ie);
+                        return;
+                    }
+                }
+            }
         } finally {
             this.lock.unlock();
         }

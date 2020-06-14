@@ -36,7 +36,7 @@ public interface IWordOperateService {
 
     void dfsDeleteExceptionBackCall(String wordName);
 
-    WordQueryVO queryWord(String wordName) throws ServiceException;
+    WordQueryVO queryWord(String wordName) throws ServiceException, DfsOperateDeleteException;
 
     boolean putWordIntoStarList(Integer wordId, Integer listId) throws ServiceException;
 
@@ -63,12 +63,12 @@ public interface IWordOperateService {
      *            实际爬虫抓取到的单词原形
      * @return
      */
-    boolean insertVariant(String inputWordName, String fetchWordName);
+    boolean insertVariant(String inputWordName, String fetchWordName) throws DfsOperateDeleteException;
 
     /* wordVariant methods end */
 
     /* cache mothods begin */
-    void evict(String wordName);
+    void evict(String wordName) throws DfsOperateDeleteException;
     /* cache mothods end */
 
 }

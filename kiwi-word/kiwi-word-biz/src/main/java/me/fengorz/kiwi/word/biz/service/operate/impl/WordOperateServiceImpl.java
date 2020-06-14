@@ -39,6 +39,7 @@ import cn.hutool.core.util.StrUtil;
 import cn.hutool.core.util.URLUtil;
 import cn.hutool.http.HttpUtil;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.bdf.core.service.ISeqService;
 import me.fengorz.kiwi.common.api.annotation.cache.KiwiCacheKey;
 import me.fengorz.kiwi.common.api.annotation.cache.KiwiCacheKeyPrefix;
@@ -73,6 +74,7 @@ import me.fengorz.kiwi.word.biz.util.WordDfsUtils;
  * @Author zhanshifeng
  * @Date 2019/11/25 3:13 PM
  */
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @KiwiCacheKeyPrefix(WordConstants.CACHE_KEY_PREFIX_OPERATE.CLASS)
@@ -477,19 +479,38 @@ public class WordOperateServiceImpl implements IWordOperateService {
         if (KiwiStringUtils.equals(inputWordName, fetchWordName)) {
             return false;
         }
-        // 先判断变种是否存在，如果不存在再插入
-        WordMainVO mainVO = wordMainService.getOne(fetchWordName);
-        if (mainVO == null) {
-            throw new ResourceNotFoundException("word {} 不存在！", fetchWordName);
+
+        try {
+            // 先判断变种是否存在，如果不存在再插入
+            WordMainVO mainVO = wordMainService.getOne(fetchWordName);
+            if (mainVO == null) {
+                throw new ResourceNotFoundException("word {} 不存在！", fetchWordName);
+            }
+
+            final Integer wordId = mainVO.getWordId();
+
+            if (wordMainVariantService.isExist(wordId, inputWordName)) {
+                return false;
+            }
+
+            return wordMainVariantService.insertOne(wordId, inputWordName);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+        } finally {
+            List<WordMainDO> list =
+                wordMainService.list(new LambdaQueryWrapper<WordMainDO>().eq(WordMainDO::getWordName, fetchWordName));
+            if (KiwiCollectionUtils.isEmpty(list)) {
+                return false;
+            }
+            for (WordMainDO wordMainDO : list) {
+                try {
+                    this.removeWordRelatedData(wordMainDO);
+                } catch (DfsOperateDeleteException e) {
+                    log.error(e.getMessage());
+                }
+            }
         }
-
-        final Integer wordId = mainVO.getWordId();
-
-        if (wordMainVariantService.isExist(wordId, inputWordName)) {
-            return false;
-        }
-
-        return wordMainVariantService.insertOne(wordId, inputWordName);
+        return false;
     }
 
     /* private methods beginning */

@@ -28,6 +28,10 @@ me:
       crawler:
         voice:
           tmpPath: "/Users/zhanshifeng/Documents/myDocument/temp/microSerivceVocabularyEnhancer"
+      vocabulary:
+        word:
+          list:
+            path: "/Users/zhanshifeng/Downloads"
 
 async:
   config:

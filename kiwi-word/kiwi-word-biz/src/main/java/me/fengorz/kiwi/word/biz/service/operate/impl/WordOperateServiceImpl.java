@@ -147,7 +147,7 @@ public class WordOperateServiceImpl implements IWordOperateService {
         wordMainDO.setWordName(wordName);
 
         // If the word already exists, update the original word information
-        WordMainDO existsWordMainDO = wordMainService.getOne(new QueryWrapper<>(wordMainDO));
+        WordMainDO existsWordMainDO = wordMainService.getOne(wordName);
         try {
             if (existsWordMainDO != null) {
                 subRemoveWord(existsWordMainDO);

@@ -30,8 +30,8 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.optimize.JsqlParser
 @Configuration
 @MapperScan("me.fengorz.kiwi.**.mapper")
 @ComponentScan("me.fengorz.kiwi.**.service")
-@EnableTransactionManagement(mode = AdviceMode.ASPECTJ)
-// @EnableTransactionManagement()
+// @EnableTransactionManagement(mode = AdviceMode.ASPECTJ)
+@EnableTransactionManagement()
 @EnableCaching(mode = AdviceMode.ASPECTJ)
 // @EnableCaching()
 public class CoreConfig {

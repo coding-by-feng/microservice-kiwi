@@ -1,0 +1,36 @@
+security:
+  oauth2:
+    client:
+      client-id: ENC(wORgugqWfXlIuzbal/3pjXTNXij/RSpo)
+      client-secret: ENC(rMd1buB3iI+si+W99eB+QFa3QburIEmY)
+      scope: server
+
+# 数据源
+spring:
+  main:
+    allow-bean-definition-overriding: true
+
+ignore:
+  urls:
+    - /test/**
+    - /word/main/query/**
+    - /word/main/queryById/**
+    - /word/main/fuzzyQueryList/**
+    - /word/fetch/queue/**
+    - /word/pronunciation/downloadVoice/**
+    - /word/main/variant/**
+  userNames:
+    - admin
+
+async:
+  config:
+    core:
+      pool:
+        size: 5
+    max:
+      pool:
+        size: 15
+    queue:
+      capacity: 5
+
+

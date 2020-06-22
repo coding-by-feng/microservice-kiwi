@@ -31,4 +31,6 @@ public interface IWordStarRelService extends IService<WordStarRelDO> {
 
     List<Integer> findAllWordId(Integer listId);
 
+    void replaceFetchResult(Integer oldRelId, Integer newRelId);
+
 }

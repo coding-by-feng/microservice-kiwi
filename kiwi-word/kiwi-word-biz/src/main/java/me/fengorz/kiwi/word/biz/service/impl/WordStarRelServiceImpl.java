@@ -19,8 +19,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
 import lombok.RequiredArgsConstructor;
@@ -35,7 +37,7 @@ import me.fengorz.kiwi.word.biz.service.IWordStarRelService;
  * @author zhanshifeng
  * @date 2020-01-03 14:39:28
  */
-@Service()
+@Service
 @RequiredArgsConstructor
 public class WordStarRelServiceImpl extends ServiceImpl<WordStarRelMapper, WordStarRelDO>
     implements IWordStarRelService {
@@ -54,6 +56,16 @@ public class WordStarRelServiceImpl extends ServiceImpl<WordStarRelMapper, WordS
             return result;
         }
         return null;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void replaceFetchResult(Integer oldRelId, Integer newRelId) {
+        if (oldRelId == null || newRelId == null) {
+            return;
+        }
+        wordStarRelMapper.update(new WordStarRelDO().setWordId(newRelId),
+            Wrappers.<WordStarRelDO>lambdaUpdate().eq(WordStarRelDO::getWordId, oldRelId));
     }
 
 }

@@ -23,6 +23,7 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -145,11 +146,14 @@ public class WordOperateServiceImpl implements IWordOperateService {
 
         WordMainDO wordMainDO = new WordMainDO();
         wordMainDO.setWordName(wordName);
+        Integer oldRelWordId = null;
+        Integer newRelWordId = null;
 
         // If the word already exists, update the original word information
         try {
             WordMainDO existsWordMainDO = wordMainService.getOne(wordName);
             if (existsWordMainDO != null) {
+                oldRelWordId = existsWordMainDO.getWordId();
                 subRemoveWord(existsWordMainDO);
             }
         } catch (WordGetOneException e) {
@@ -161,6 +165,8 @@ public class WordOperateServiceImpl implements IWordOperateService {
             wordMainDO.setIsDel(CommonConstants.FLAG_DEL_NO);
             wordMainService.save(wordMainDO);
             subStoreFetchWordResult(fetchWordResultDTO, wordMainDO);
+            newRelWordId = wordMainDO.getWordId();
+            wordStarRelService.replaceFetchResult(oldRelWordId, newRelWordId);
             this.evict(wordName);
         }
 
@@ -584,5 +590,22 @@ public class WordOperateServiceImpl implements IWordOperateService {
     @KiwiCacheKeyPrefix(WordConstants.CACHE_KEY_PREFIX_OPERATE.METHOD_PARAPHRASE_ID)
     @CacheEvict(cacheNames = WordConstants.CACHE_NAMES, keyGenerator = CacheConstants.CACHE_KEY_GENERATOR_BEAN)
     private void evictParaphrase(@KiwiCacheKey Integer paraphraseId) {}
+
+    @KiwiCacheKeyPrefix(WordConstants.CACHE_KEY_PREFIX_OPERATE.METHOD_FETCH_REPLACE)
+    @CachePut(cacheNames = WordConstants.CACHE_NAMES, keyGenerator = CacheConstants.CACHE_KEY_GENERATOR_BEAN,
+        unless = "#result == null")
+    private FetchWordReplaceDTO cacheFetchReplace(@KiwiCacheKey String wordName, FetchWordReplaceDTO dto) {
+        if (dto == null) {
+            return null;
+        }
+        // TODO ZSF
+        // if () {
+        // }
+        if (KiwiCollectionUtils.isNotEmpty(dto.getNewParaphraseIdMap())
+            && KiwiCollectionUtils.isNotEmpty(dto.getOldParaphraseIdMap())) {
+            return dto;
+        }
+        return null;
+    }
 
 }

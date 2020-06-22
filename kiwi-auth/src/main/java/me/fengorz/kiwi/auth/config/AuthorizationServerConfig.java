@@ -33,6 +33,7 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.A
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
+import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
 import org.springframework.security.oauth2.provider.token.TokenEnhancer;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.redis.RedisTokenStore;
@@ -77,6 +78,17 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
             .authenticationManager(authenticationManager).reuseRefreshTokens(false)
             // TODO zhanshifeng 这个API作用什么？
             .exceptionTranslator(new KiwiWebResponseExceptionTranslator());
+
+
+        DefaultTokenServices defaultTokenServices = new DefaultTokenServices();
+        defaultTokenServices.setTokenStore(endpoints.getTokenStore());
+        // TODO ZSF 是否有效？
+        defaultTokenServices.setAccessTokenValiditySeconds(60 * 60 * 240);
+        defaultTokenServices.setSupportRefreshToken(true);
+        defaultTokenServices.setClientDetailsService(endpoints.getClientDetailsService());
+        defaultTokenServices.setTokenEnhancer(endpoints.getTokenEnhancer());
+
+        endpoints.tokenServices(defaultTokenServices);
     }
 
     @Bean

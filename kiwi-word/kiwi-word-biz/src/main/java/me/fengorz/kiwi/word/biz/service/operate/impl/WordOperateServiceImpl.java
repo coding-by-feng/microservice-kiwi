@@ -19,6 +19,7 @@ package me.fengorz.kiwi.word.biz.service.operate.impl;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -136,6 +137,8 @@ public class WordOperateServiceImpl implements IWordOperateService {
         this.evict(wordName);
         wordMainService.evictByName(wordName);
         wordMainService.evictById(wordMainDO.getWordId());
+        // 这里缓存的删除要在Mysql的删除之前做
+        this.evict(wordName);
         this.removeWordRelatedData(wordMainDO);
     }
 
@@ -146,14 +149,13 @@ public class WordOperateServiceImpl implements IWordOperateService {
 
         WordMainDO wordMainDO = new WordMainDO();
         wordMainDO.setWordName(wordName);
-        Integer oldRelWordId = null;
-        Integer newRelWordId = null;
+        FetchWordReplaceDTO replaceDTO = this.cacheGetFetchReplace(wordName);
 
         // If the word already exists, update the original word information
         try {
             WordMainDO existsWordMainDO = wordMainService.getOne(wordName);
             if (existsWordMainDO != null) {
-                oldRelWordId = existsWordMainDO.getWordId();
+                replaceDTO.setOldRelWordId(existsWordMainDO.getWordId());
                 subRemoveWord(existsWordMainDO);
             }
         } catch (WordGetOneException e) {
@@ -165,9 +167,9 @@ public class WordOperateServiceImpl implements IWordOperateService {
             wordMainDO.setIsDel(CommonConstants.FLAG_DEL_NO);
             wordMainService.save(wordMainDO);
             subStoreFetchWordResult(fetchWordResultDTO, wordMainDO);
-            newRelWordId = wordMainDO.getWordId();
-            wordStarRelService.replaceFetchResult(oldRelWordId, newRelWordId);
-            this.evict(wordName);
+            replaceDTO.setNewRelWordId(wordMainDO.getWordId());
+            this.cachePutFetchReplace(wordName, replaceDTO);
+            this.fetchReplaceCallBack(wordName);
         }
 
         return true;
@@ -534,10 +536,28 @@ public class WordOperateServiceImpl implements IWordOperateService {
                 if (CollUtil.isNotEmpty(paraphraseList)) {
                     for (WordParaphraseDO wordParaphraseDO : paraphraseList) {
                         Integer paraphraseId = wordParaphraseDO.getParaphraseId();
-                        wordParaphraseExampleService
-                            .remove(new QueryWrapper<>(new WordParaphraseExampleDO().setParaphraseId(paraphraseId)));
+                        LambdaQueryWrapper<WordParaphraseExampleDO> exampleDOLambdaQueryWrapper =
+                            Wrappers.<WordParaphraseExampleDO>lambdaQuery().eq(WordParaphraseExampleDO::getParaphraseId,
+                                paraphraseId);
+                        List<WordParaphraseExampleDO> exampleDOList =
+                            wordParaphraseExampleService.list(exampleDOLambdaQueryWrapper);
+                        if (KiwiCollectionUtils.isNotEmpty(exampleDOList)) {
+                            for (WordParaphraseExampleDO wordParaphraseExampleDO : exampleDOList) {
+                                // 将已删除的老的exampleId缓存起来，这样可以替换掉收藏本的关联id
+                                FetchWordReplaceDTO replaceDTO = this.cacheGetFetchReplace(wordMainDO.getWordName());
+                                replaceDTO.getOldExampleIdMap().put(wordParaphraseExampleDO.getExampleSentence(),
+                                    wordParaphraseExampleDO.getExampleId());
+                                this.cachePutFetchReplace(wordMainDO.getWordName(), replaceDTO);
+                            }
+                            wordParaphraseExampleService.remove(exampleDOLambdaQueryWrapper);
+                        }
                         wordParaphrasePhraseService.remove(Wrappers.<WordParaphrasePhraseDO>lambdaQuery()
                             .eq(WordParaphrasePhraseDO::getParaphraseId, paraphraseId));
+
+                        // 将已删除的老的paraphraseId缓存起来，这样可以替换掉收藏本的关联id
+                        FetchWordReplaceDTO replaceDTO = this.cacheGetFetchReplace(wordMainDO.getWordName());
+                        replaceDTO.getOldParaphraseIdMap().put(wordParaphraseDO.getParaphraseEnglish(), paraphraseId);
+                        this.cachePutFetchReplace(wordMainDO.getWordName(), replaceDTO);
                     }
                 }
                 if (CollUtil.isNotEmpty(paraphraseList)) {
@@ -592,20 +612,48 @@ public class WordOperateServiceImpl implements IWordOperateService {
     private void evictParaphrase(@KiwiCacheKey Integer paraphraseId) {}
 
     @KiwiCacheKeyPrefix(WordConstants.CACHE_KEY_PREFIX_OPERATE.METHOD_FETCH_REPLACE)
+    @Cacheable(cacheNames = WordConstants.CACHE_NAMES, keyGenerator = CacheConstants.CACHE_KEY_GENERATOR_BEAN,
+        unless = "#result == null")
+    private FetchWordReplaceDTO cacheGetFetchReplace(@KiwiCacheKey String wordName) {
+        return new FetchWordReplaceDTO();
+    }
+
+    @KiwiCacheKeyPrefix(WordConstants.CACHE_KEY_PREFIX_OPERATE.METHOD_FETCH_REPLACE)
     @CachePut(cacheNames = WordConstants.CACHE_NAMES, keyGenerator = CacheConstants.CACHE_KEY_GENERATOR_BEAN,
         unless = "#result == null")
-    private FetchWordReplaceDTO cacheFetchReplace(@KiwiCacheKey String wordName, FetchWordReplaceDTO dto) {
+    private FetchWordReplaceDTO cachePutFetchReplace(@KiwiCacheKey String wordName, FetchWordReplaceDTO dto) {
         if (dto == null) {
-            return null;
-        }
-        // TODO ZSF
-        // if () {
-        // }
-        if (KiwiCollectionUtils.isNotEmpty(dto.getNewParaphraseIdMap())
-            && KiwiCollectionUtils.isNotEmpty(dto.getOldParaphraseIdMap())) {
+            return new FetchWordReplaceDTO();
+        } else {
             return dto;
         }
-        return null;
+    }
+
+    @KiwiCacheKeyPrefix(WordConstants.CACHE_KEY_PREFIX_OPERATE.METHOD_FETCH_REPLACE)
+    @CacheEvict(cacheNames = WordConstants.CACHE_NAMES, keyGenerator = CacheConstants.CACHE_KEY_GENERATOR_BEAN)
+    private void cacheEvictFetchReplace(@KiwiCacheKey String wordName) {}
+
+    private void fetchReplaceCallBack(String wordName) {
+        FetchWordReplaceDTO replaceDTO = this.cacheGetFetchReplace(wordName);
+        wordStarRelService.replaceFetchResult(replaceDTO.getOldRelWordId(), replaceDTO.getNewRelWordId());
+        Map<String, Integer> newParaphraseIdMap = replaceDTO.getNewParaphraseIdMap();
+        Optional.ofNullable(replaceDTO.getOldParaphraseIdMap()).ifPresent(oldParaphraseIdMap -> {
+            oldParaphraseIdMap.forEach((text, id) -> {
+                if (newParaphraseIdMap.containsKey(text)) {
+                    wordParaphraseStarRelService.replaceFetchResult(id, newParaphraseIdMap.get(text));
+                }
+            });
+        });
+
+        Map<String, Integer> newExampleIdMap = replaceDTO.getNewExampleIdMap();
+        Optional.ofNullable(replaceDTO.getOldExampleIdMap()).ifPresent(oldExampleIdMap -> {
+            oldExampleIdMap.forEach((text, id) -> {
+                if (newExampleIdMap.containsKey(text)) {
+                    wordExampleStarRelService.replaceFetchResult(id, newExampleIdMap.get(text));
+                }
+            });
+        });
+        this.cacheEvictFetchReplace(wordName);
     }
 
 }

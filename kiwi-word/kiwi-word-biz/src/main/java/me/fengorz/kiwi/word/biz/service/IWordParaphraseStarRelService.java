@@ -25,4 +25,6 @@ import me.fengorz.kiwi.word.api.entity.WordParaphraseStarRelDO;
  */
 public interface IWordParaphraseStarRelService extends IService<WordParaphraseStarRelDO> {
 
+    void replaceFetchResult(Integer oldRelId, Integer newRelId);
+
 }

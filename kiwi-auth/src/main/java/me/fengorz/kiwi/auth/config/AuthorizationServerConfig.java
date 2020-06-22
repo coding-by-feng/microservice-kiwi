@@ -83,7 +83,7 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
         DefaultTokenServices defaultTokenServices = new DefaultTokenServices();
         defaultTokenServices.setTokenStore(endpoints.getTokenStore());
         // TODO ZSF 是否有效？
-        defaultTokenServices.setAccessTokenValiditySeconds(60 * 60 * 240);
+        defaultTokenServices.setAccessTokenValiditySeconds(0);
         defaultTokenServices.setSupportRefreshToken(true);
         defaultTokenServices.setClientDetailsService(endpoints.getClientDetailsService());
         defaultTokenServices.setTokenEnhancer(endpoints.getTokenEnhancer());

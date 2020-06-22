@@ -33,11 +33,17 @@ public class FetchWordReplaceDTO implements Serializable {
     private static final long serialVersionUID = -7940740618350547699L;
 
     public FetchWordReplaceDTO() {
-        this.oldParaphraseIdMap = new HashMap<>();
-        this.newParaphraseIdMap = new HashMap<>();
+        this.setNewParaphraseIdMap(new HashMap<>());
+        this.setOldParaphraseIdMap(new HashMap<>());
+        this.setNewExampleIdMap(new HashMap<>());
+        this.setOldParaphraseIdMap(new HashMap<>());
     }
 
+    private Integer newRelWordId;
+    private Integer oldRelWordId;
     private Map<String, Integer> oldParaphraseIdMap;
     private Map<String, Integer> newParaphraseIdMap;
+    private Map<String, Integer> oldExampleIdMap;
+    private Map<String, Integer> newExampleIdMap;
 
 }

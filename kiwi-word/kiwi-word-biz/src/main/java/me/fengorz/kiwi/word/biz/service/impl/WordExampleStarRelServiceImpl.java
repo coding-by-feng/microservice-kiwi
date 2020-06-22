@@ -16,9 +16,12 @@
 package me.fengorz.kiwi.word.biz.service.impl;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
+import lombok.RequiredArgsConstructor;
 import me.fengorz.kiwi.word.api.entity.WordExampleStarRelDO;
 import me.fengorz.kiwi.word.biz.mapper.WordExampleStarRelMapper;
 import me.fengorz.kiwi.word.biz.service.IWordExampleStarRelService;
@@ -29,8 +32,21 @@ import me.fengorz.kiwi.word.biz.service.IWordExampleStarRelService;
  * @author zhanshifeng
  * @date 2020-01-03 14:48:48
  */
-@Service()
+@Service
+@RequiredArgsConstructor
 public class WordExampleStarRelServiceImpl extends ServiceImpl<WordExampleStarRelMapper, WordExampleStarRelDO>
     implements IWordExampleStarRelService {
 
+    private final WordExampleStarRelMapper wordExampleStarRelMapper;
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void replaceFetchResult(Integer oldRelId, Integer newRelId) {
+        if (oldRelId == null || newRelId == null) {
+            return;
+        }
+
+        wordExampleStarRelMapper.update(new WordExampleStarRelDO().setExampleId(newRelId),
+            Wrappers.<WordExampleStarRelDO>lambdaUpdate().eq(WordExampleStarRelDO::getExampleId, oldRelId));
+    }
 }

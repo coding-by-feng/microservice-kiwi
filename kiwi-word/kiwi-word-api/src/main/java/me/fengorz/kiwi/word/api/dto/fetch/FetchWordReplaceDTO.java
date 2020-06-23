@@ -36,7 +36,7 @@ public class FetchWordReplaceDTO implements Serializable {
         this.setNewParaphraseIdMap(new HashMap<>());
         this.setOldParaphraseIdMap(new HashMap<>());
         this.setNewExampleIdMap(new HashMap<>());
-        this.setOldParaphraseIdMap(new HashMap<>());
+        this.setOldExampleIdMap(new HashMap<>());
     }
 
     private Integer newRelWordId;

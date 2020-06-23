@@ -545,7 +545,8 @@ public class WordOperateServiceImpl implements IWordOperateService {
                             for (WordParaphraseExampleDO wordParaphraseExampleDO : exampleDOList) {
                                 // 将已删除的老的exampleId缓存起来，这样可以替换掉收藏本的关联id
                                 FetchWordReplaceDTO replaceDTO = this.cacheGetFetchReplace(wordMainDO.getWordName());
-                                replaceDTO.getOldExampleIdMap().put(wordParaphraseExampleDO.getExampleSentence(),
+                                Map<String, Integer> oldExampleIdMap = replaceDTO.getOldExampleIdMap();
+                                oldExampleIdMap.put(wordParaphraseExampleDO.getExampleSentence(),
                                     wordParaphraseExampleDO.getExampleId());
                                 this.cachePutFetchReplace(wordMainDO.getWordName(), replaceDTO);
                             }

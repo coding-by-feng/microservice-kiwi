@@ -79,11 +79,10 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
             // TODO zhanshifeng 这个API作用什么？
             .exceptionTranslator(new KiwiWebResponseExceptionTranslator());
 
-
         DefaultTokenServices defaultTokenServices = new DefaultTokenServices();
         defaultTokenServices.setTokenStore(endpoints.getTokenStore());
-        // TODO ZSF 是否有效？
-        defaultTokenServices.setAccessTokenValiditySeconds(0);
+        // 默认30天
+        defaultTokenServices.setAccessTokenValiditySeconds(60 * 60 * 24 * 30);
         defaultTokenServices.setSupportRefreshToken(true);
         defaultTokenServices.setClientDetailsService(endpoints.getClientDetailsService());
         defaultTokenServices.setTokenEnhancer(endpoints.getTokenEnhancer());

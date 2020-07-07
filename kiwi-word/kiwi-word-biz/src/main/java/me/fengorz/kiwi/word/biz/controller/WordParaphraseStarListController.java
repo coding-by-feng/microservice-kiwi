@@ -144,6 +144,12 @@ public class WordParaphraseStarListController extends BaseController {
         return R.success();
     }
 
+    @PostMapping("/forgetOne")
+    public R<Void> forgetOne(@NotNull Integer paraphraseId, @NotNull Integer listId) {
+        wordParaphraseStarListService.forgetOne(paraphraseId, listId);
+        return R.success();
+    }
+
     @PostMapping("/removeParaphraseStar")
     public R<Integer> removeParaphraseStar(@NotNull Integer paraphraseId, @NotNull Integer listId) {
         wordParaphraseStarListService.removeParaphraseStar(paraphraseId, listId);

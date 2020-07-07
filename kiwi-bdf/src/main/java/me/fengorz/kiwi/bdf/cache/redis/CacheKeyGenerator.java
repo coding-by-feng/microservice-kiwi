@@ -18,8 +18,10 @@ package me.fengorz.kiwi.bdf.cache.redis;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
-import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import org.springframework.cache.interceptor.SimpleKeyGenerator;
 
@@ -59,17 +61,16 @@ public class CacheKeyGenerator extends SimpleKeyGenerator {
 
         Parameter[] parameters = method.getParameters();
         if (KiwiArrayUtils.isNotEmpty(parameters)) {
-            AtomicInteger paramsIndex = new AtomicInteger();
             SortedMap<Integer, Object> sortedMap = new TreeMap<>();
-            Arrays.stream(parameters).peek(parameter -> {
-                Object param = params[paramsIndex.get()];
+            int i = 0;
+            for (Parameter parameter : parameters) {
+                Object param = params[i++];
                 Optional.ofNullable(parameter.getAnnotation(KiwiCacheKey.class)).ifPresent(kiwiCacheKey -> {
                     if (kiwiCacheKey.nullable() || KiwiObjectUtils.isNotEmpty(param)) {
                         sortedMap.put(kiwiCacheKey.value(), param);
                     }
                 });
-                paramsIndex.getAndIncrement();
-            });
+            }
 
             if (!sortedMap.isEmpty()) {
                 return prefix.concat(KiwiStringUtils.join(CommonConstants.SYMBOL_DELIMITER_STR, sortedMap.values()));

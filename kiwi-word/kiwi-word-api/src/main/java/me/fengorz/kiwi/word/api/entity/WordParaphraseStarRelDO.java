@@ -49,4 +49,8 @@ public class WordParaphraseStarRelDO extends Model<WordParaphraseStarRelDO> {
      */
     private LocalDateTime createTime;
 
+    private Integer isRemember;
+
+    private LocalDateTime rememberTime;
+
 }

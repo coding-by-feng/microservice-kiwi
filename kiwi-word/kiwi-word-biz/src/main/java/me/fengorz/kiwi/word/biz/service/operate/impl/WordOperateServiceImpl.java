@@ -133,7 +133,11 @@ public class WordOperateServiceImpl implements IWordOperateService {
         propagation = Propagation.REQUIRES_NEW)
     private void subRemoveWord(WordMainDO wordMainDO) throws DfsOperateDeleteException {
         final String wordName = wordMainDO.getWordName();
+        FetchWordReplaceDTO replaceDTO = this.cacheGetFetchReplace(wordName);
+        replaceDTO.setOldRelWordId(wordMainDO.getWordId());
+
         wordMainService.remove(Wrappers.<WordMainDO>lambdaQuery().eq(WordMainDO::getWordName, wordName));
+        this.cachePutFetchReplace(wordName, replaceDTO);
         this.evict(wordName);
         wordMainService.evictByName(wordName);
         wordMainService.evictById(wordMainDO.getWordId());
@@ -188,6 +192,7 @@ public class WordOperateServiceImpl implements IWordOperateService {
                 Integer characterId = wordCharacter.getCharacterId();
 
                 List<FetchParaphraseDTO> fetchParaphraseDTOList = fetchWordCodeDTO.getFetchParaphraseDTOList();
+                FetchWordReplaceDTO replaceDTO = this.cacheGetFetchReplace(wordMainDO.getWordName());
                 fetchParaphraseDTOList.forEach(fetchParaphraseDTO -> {
 
                     WordParaphraseDO wordParaphraseDO =
@@ -196,6 +201,7 @@ public class WordOperateServiceImpl implements IWordOperateService {
                     wordParaphraseDO.setParaphraseId(seqService.genIntSequence(MapperConstant.T_INS_SEQUENCE));
                     wordParaphraseService.save(wordParaphraseDO);
                     Integer paraphraseId = wordParaphraseDO.getParaphraseId();
+                    replaceDTO.getNewParaphraseIdMap().put(wordParaphraseDO.getParaphraseEnglish(), paraphraseId);
                     List<FetchPhraseDTO> fetchPhraseDTOList = fetchParaphraseDTO.getFetchPhraseDTOList();
                     if (KiwiCollectionUtils.isNotEmpty(fetchPhraseDTOList)) {
                         for (FetchPhraseDTO fetchPhraseDTO : fetchPhraseDTOList) {
@@ -220,8 +226,10 @@ public class WordOperateServiceImpl implements IWordOperateService {
                             wordParaphraseExampleDO
                                 .setExampleId(seqService.genIntSequence(MapperConstant.T_INS_SEQUENCE));
                             wordParaphraseExampleService.save(wordParaphraseExampleDO);
+                            replaceDTO.getNewExampleIdMap().put(wordParaphraseExampleDO.getExampleSentence(), wordParaphraseExampleDO.getExampleId());
                         }));
                 });
+                this.cachePutFetchReplace(wordMainDO.getWordName(), replaceDTO);
 
                 // save pronunciation and voice's file
                 List<FetchWordPronunciationDTO> fetchWordPronunciationDTOList =
@@ -635,6 +643,7 @@ public class WordOperateServiceImpl implements IWordOperateService {
     private void cacheEvictFetchReplace(@KiwiCacheKey String wordName) {}
 
     private void fetchReplaceCallBack(String wordName) {
+        System.out.println("---------------fetchReplaceCallBack");
         FetchWordReplaceDTO replaceDTO = this.cacheGetFetchReplace(wordName);
         wordStarRelService.replaceFetchResult(replaceDTO.getOldRelWordId(), replaceDTO.getNewRelWordId());
         Map<String, Integer> newParaphraseIdMap = replaceDTO.getNewParaphraseIdMap();

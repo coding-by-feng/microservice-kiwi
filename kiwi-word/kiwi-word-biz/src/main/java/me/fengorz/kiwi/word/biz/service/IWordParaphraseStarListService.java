@@ -40,7 +40,11 @@ public interface IWordParaphraseStarListService extends IService<WordParaphraseS
 
     R updateListByUser(WordParaphraseStarListDO entity, Integer id, Integer userId);
 
-    IPage<ParaphraseStarItemVO> getListItems(Page page, Integer listId);
+    IPage<ParaphraseStarItemVO> selectListItems(Page page, Integer listId);
+
+    IPage<ParaphraseStarItemVO> selectReviewListItems(Page page, Integer listId);
 
     int removeParaphraseStar(Integer paraphraseId, Integer listId);
+
+    void rememberOne(Integer paraphraseId, Integer listId);
 }

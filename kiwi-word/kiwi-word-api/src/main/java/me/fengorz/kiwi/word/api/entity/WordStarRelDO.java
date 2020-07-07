@@ -51,4 +51,8 @@ public class WordStarRelDO extends Model<WordStarRelDO> {
      */
     private LocalDateTime createTime;
 
+    private Integer isRemember;
+
+    private LocalDateTime rememberTime;
+
 }

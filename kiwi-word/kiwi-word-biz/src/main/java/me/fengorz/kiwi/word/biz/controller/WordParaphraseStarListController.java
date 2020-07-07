@@ -124,7 +124,13 @@ public class WordParaphraseStarListController extends BaseController {
     @PostMapping("/getListItems/{size}/{current}")
     public R<IPage<ParaphraseStarItemVO>> getListItems(@NotNull Integer listId, @PathVariable @Min(1) Integer current,
         @PathVariable @Range(min = 1, max = 100) Integer size) {
-        return R.success(wordParaphraseStarListService.getListItems(new Page(current, size), listId));
+        return R.success(wordParaphraseStarListService.selectListItems(new Page(current, size), listId));
+    }
+
+    @PostMapping("/getReviewListItems/{size}/{current}")
+    public R<IPage<ParaphraseStarItemVO>> getReviewListItems(@NotNull Integer listId,
+        @PathVariable @Min(1) Integer current, @PathVariable @Range(min = 1, max = 100) Integer size) {
+        return R.success(wordParaphraseStarListService.selectReviewListItems(new Page(current, size), listId));
     }
 
     @GetMapping("/getItemDetail/{paraphraseId}")
@@ -132,10 +138,16 @@ public class WordParaphraseStarListController extends BaseController {
         return R.success(wordOperateService.findWordParaphraseVO(paraphraseId));
     }
 
+    @PostMapping("/rememberOne")
+    public R<Void> rememberOne(@NotNull Integer paraphraseId, @NotNull Integer listId) {
+        wordParaphraseStarListService.rememberOne(paraphraseId, listId);
+        return R.success();
+    }
+
     @PostMapping("/removeParaphraseStar")
-    public R<Integer> removeParaphraseStar(@NotNull Integer paraphraseId, @NotNull Integer listId)
-        throws ServiceException {
-        return R.success(this.wordParaphraseStarListService.removeParaphraseStar(paraphraseId, listId));
+    public R<Integer> removeParaphraseStar(@NotNull Integer paraphraseId, @NotNull Integer listId) {
+        wordParaphraseStarListService.removeParaphraseStar(paraphraseId, listId);
+        return R.success();
     }
 
 }

@@ -15,6 +15,7 @@
  */
 package me.fengorz.kiwi.word.biz.service.impl;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -23,6 +24,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
@@ -45,7 +47,7 @@ import me.fengorz.kiwi.word.biz.service.IWordParaphraseStarListService;
  * @author zhanshifeng
  * @date 2019-12-08 23:27:41
  */
-@Service()
+@Service
 @RequiredArgsConstructor
 public class WordParaphraseStarListServiceImpl extends
     ServiceImpl<WordParaphraseStarListMapper, WordParaphraseStarListDO> implements IWordParaphraseStarListService {
@@ -79,8 +81,13 @@ public class WordParaphraseStarListServiceImpl extends
     }
 
     @Override
-    public IPage<ParaphraseStarItemVO> getListItems(Page page, Integer listId) {
+    public IPage<ParaphraseStarItemVO> selectListItems(Page page, Integer listId) {
         return this.wordParaphraseStarListMapper.selectListItems(page, listId);
+    }
+
+    @Override
+    public IPage<ParaphraseStarItemVO> selectReviewListItems(Page page, Integer listId) {
+        return this.wordParaphraseStarListMapper.selectReviewListItems(page, listId);
     }
 
     @Override
@@ -92,6 +99,15 @@ public class WordParaphraseStarListServiceImpl extends
             return 0;
         }
         return wordParaphraseStarRelMapper.delete(wrapper);
+    }
+
+    @Override
+    public void rememberOne(Integer paraphraseId, Integer listId) {
+        wordParaphraseStarRelMapper.update(
+            new WordParaphraseStarRelDO().setIsRemember(CommonConstants.FLAG_DEL_YES)
+                .setRememberTime(LocalDateTime.now()),
+            Wrappers.<WordParaphraseStarRelDO>lambdaQuery().eq(WordParaphraseStarRelDO::getListId, listId)
+                .eq(WordParaphraseStarRelDO::getParaphraseId, paraphraseId));
     }
 
 }

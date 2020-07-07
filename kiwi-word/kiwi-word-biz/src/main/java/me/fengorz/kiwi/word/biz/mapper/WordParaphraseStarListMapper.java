@@ -32,4 +32,6 @@ public interface WordParaphraseStarListMapper extends BaseMapper<WordParaphraseS
 
     IPage<ParaphraseStarItemVO> selectListItems(Page<?> page, Integer listId);
 
+    IPage<ParaphraseStarItemVO> selectReviewListItems(Page<?> page, Integer listId);
+
 }

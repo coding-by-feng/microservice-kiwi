@@ -47,4 +47,6 @@ public interface IWordParaphraseStarListService extends IService<WordParaphraseS
     int removeParaphraseStar(Integer paraphraseId, Integer listId);
 
     void rememberOne(Integer paraphraseId, Integer listId);
+
+    void forgetOne(Integer paraphraseId, Integer listId);
 }

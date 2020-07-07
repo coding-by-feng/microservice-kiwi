@@ -110,4 +110,13 @@ public class WordParaphraseStarListServiceImpl extends
                 .eq(WordParaphraseStarRelDO::getParaphraseId, paraphraseId));
     }
 
+    @Override
+    public void forgetOne(Integer paraphraseId, Integer listId) {
+        wordParaphraseStarRelMapper.update(
+            new WordParaphraseStarRelDO().setIsRemember(CommonConstants.FLAG_DEL_NO)
+                .setRememberTime(LocalDateTime.now()),
+            Wrappers.<WordParaphraseStarRelDO>lambdaQuery().eq(WordParaphraseStarRelDO::getListId, listId)
+                .eq(WordParaphraseStarRelDO::getParaphraseId, paraphraseId));
+    }
+
 }

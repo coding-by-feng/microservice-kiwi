@@ -51,7 +51,7 @@
                      wpsr.create_time
               from word_paraphrase_star_rel wpsr
                        left join word_paraphrase wp on wpsr.paraphrase_id = wp.paraphrase_id
-              where wpsr.list_id = #{params.listId}
+              where wpsr.list_id = #{listId}
                 and wpsr.is_remember = 0
                 and wp.is_del = 'N') temp
                  left join word_main wm on temp.word_id = wm.word_id

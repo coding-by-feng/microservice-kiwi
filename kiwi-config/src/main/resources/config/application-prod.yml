@@ -16,7 +16,7 @@ spring:
       maximum-pool-size: 60
   redis:
     host: kiwi-redis
-    password:
+    password: fengORZ123
     port: 6379
   servlet:
     multipart:

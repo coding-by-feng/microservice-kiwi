@@ -56,3 +56,4 @@ security:
 ignore:
   clients:
     - test
+    - admin

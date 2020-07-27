@@ -4,11 +4,11 @@ me:
     file:
       crawler:
         voice:
-          tmpPath: "/tmp"
+          tmpPath: "/wordTmp"
       vocabulary:
         word:
           list:
-            path: "/tmp"
+            path: "/wordTmp"
 
 
 

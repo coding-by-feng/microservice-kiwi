@@ -153,13 +153,13 @@ public class WordOperateServiceImpl implements IWordOperateService {
 
         WordMainDO wordMainDO = new WordMainDO();
         wordMainDO.setWordName(wordName);
-        FetchWordReplaceDTO replaceDTO = this.cacheGetFetchReplace(wordName);
 
         // If the word already exists, update the original word information
         try {
             WordMainDO existsWordMainDO = wordMainService.getOne(wordName);
             if (existsWordMainDO != null) {
-                replaceDTO.setOldRelWordId(existsWordMainDO.getWordId());
+                this.cachePutFetchReplace(wordName,
+                    this.cacheGetFetchReplace(wordName).setOldRelWordId(existsWordMainDO.getWordId()));
                 subRemoveWord(existsWordMainDO);
             }
         } catch (WordGetOneException e) {
@@ -171,8 +171,8 @@ public class WordOperateServiceImpl implements IWordOperateService {
             wordMainDO.setIsDel(CommonConstants.FLAG_DEL_NO);
             wordMainService.save(wordMainDO);
             subStoreFetchWordResult(fetchWordResultDTO, wordMainDO);
-            replaceDTO.setNewRelWordId(wordMainDO.getWordId());
-            this.cachePutFetchReplace(wordName, replaceDTO);
+            this.cachePutFetchReplace(wordName,
+                this.cacheGetFetchReplace(wordName).setNewRelWordId(wordMainDO.getWordId()));
             this.fetchReplaceCallBack(wordName);
         }
 
@@ -226,7 +226,8 @@ public class WordOperateServiceImpl implements IWordOperateService {
                             wordParaphraseExampleDO
                                 .setExampleId(seqService.genIntSequence(MapperConstant.T_INS_SEQUENCE));
                             wordParaphraseExampleService.save(wordParaphraseExampleDO);
-                            replaceDTO.getNewExampleIdMap().put(wordParaphraseExampleDO.getExampleSentence(), wordParaphraseExampleDO.getExampleId());
+                            replaceDTO.getNewExampleIdMap().put(wordParaphraseExampleDO.getExampleSentence(),
+                                wordParaphraseExampleDO.getExampleId());
                         }));
                 });
                 this.cachePutFetchReplace(wordMainDO.getWordName(), replaceDTO);
@@ -412,7 +413,9 @@ public class WordOperateServiceImpl implements IWordOperateService {
         LambdaQueryWrapper<WordStarRelDO> queryWrapper = new LambdaQueryWrapper<WordStarRelDO>()
             .eq(WordStarRelDO::getListId, listId).eq(WordStarRelDO::getWordId, wordId);
         int count = wordStarRelService.count(queryWrapper);
-        KiwiAssertUtils.serviceEmpty(count, "wordStar is exists!");
+        if (count > 0) {
+            return false;
+        }
         return wordStarRelService.save(new WordStarRelDO().setListId(listId).setWordId(wordId));
     }
 
@@ -560,13 +563,14 @@ public class WordOperateServiceImpl implements IWordOperateService {
                             }
                             wordParaphraseExampleService.remove(exampleDOLambdaQueryWrapper);
                         }
-                        wordParaphrasePhraseService.remove(Wrappers.<WordParaphrasePhraseDO>lambdaQuery()
-                            .eq(WordParaphrasePhraseDO::getParaphraseId, paraphraseId));
 
                         // 将已删除的老的paraphraseId缓存起来，这样可以替换掉收藏本的关联id
                         FetchWordReplaceDTO replaceDTO = this.cacheGetFetchReplace(wordMainDO.getWordName());
                         replaceDTO.getOldParaphraseIdMap().put(wordParaphraseDO.getParaphraseEnglish(), paraphraseId);
                         this.cachePutFetchReplace(wordMainDO.getWordName(), replaceDTO);
+
+                        wordParaphrasePhraseService.remove(Wrappers.<WordParaphrasePhraseDO>lambdaQuery()
+                            .eq(WordParaphrasePhraseDO::getParaphraseId, paraphraseId));
                     }
                 }
                 if (CollUtil.isNotEmpty(paraphraseList)) {
@@ -643,7 +647,6 @@ public class WordOperateServiceImpl implements IWordOperateService {
     private void cacheEvictFetchReplace(@KiwiCacheKey String wordName) {}
 
     private void fetchReplaceCallBack(String wordName) {
-        System.out.println("---------------fetchReplaceCallBack");
         FetchWordReplaceDTO replaceDTO = this.cacheGetFetchReplace(wordName);
         wordStarRelService.replaceFetchResult(replaceDTO.getOldRelWordId(), replaceDTO.getNewRelWordId());
         Map<String, Integer> newParaphraseIdMap = replaceDTO.getNewParaphraseIdMap();

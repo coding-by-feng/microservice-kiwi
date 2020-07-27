@@ -97,6 +97,7 @@ public class TestTempController extends BaseController {
     }
 
     public List<String> readWords() {
+        log.info("=================>this.tmp=" + this.tmp);
         List<String> wordList = new ArrayList<>();
         FileInputStream fis = null;
         InputStreamReader isr = null;

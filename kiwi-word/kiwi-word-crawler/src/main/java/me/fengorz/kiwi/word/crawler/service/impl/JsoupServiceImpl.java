@@ -258,6 +258,7 @@ public class JsoupServiceImpl implements IJsoupService {
             .setSoundmark(Optional.ofNullable(ukPronunciation.getElementsByClass(KEY_SOUNDMARK))
                 .orElseThrow(JsoupFetchPronunciationException::new).get(0).text())
             .setVoiceFileUrl(Optional.ofNullable(ukPronunciation.getElementsByTag(KEY_SOURCE))
-                .orElseThrow(JsoupFetchPronunciationException::new).get(0).attr(KEY_SRC));
+                // .orElseThrow(JsoupFetchPronunciationException::new).get(0).attr(KEY_SRC)); // mp3
+                .orElseThrow(JsoupFetchPronunciationException::new).get(1).attr(KEY_SRC)); // ogg
     }
 }

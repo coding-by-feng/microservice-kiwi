@@ -4,7 +4,7 @@ me:
     file:
       crawler:
         voice:
-          tmpPath: "/root/wordTmp"
+          tmpPath: "/root/tmp"
       vocabulary:
         word:
           list:

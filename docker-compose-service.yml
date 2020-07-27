@@ -39,6 +39,7 @@ services:
       - '5001:5001'
     volumes:
       - /root/docker/kiwi/word/logs:/logs
+      - /root/docker/kiwi/word/tmp:/tmp
     network_mode: "host"
     depends_on:
       - kiwi-gate

@@ -81,7 +81,7 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 
         DefaultTokenServices defaultTokenServices = new DefaultTokenServices();
         defaultTokenServices.setTokenStore(endpoints.getTokenStore());
-        // 默认30天
+        // token默认永久不失效
         defaultTokenServices.setAccessTokenValiditySeconds(-1);
         defaultTokenServices.setRefreshTokenValiditySeconds(-1);
         defaultTokenServices.setSupportRefreshToken(true);

@@ -23,7 +23,7 @@ cd docker/
 mkdir kiwi ui rabbitmq
 cd kiwi
 mkdir auth config crawler eureka gate upms word
-mkdir auth/logs config/logs crawler/logs eureka/logs gate/logs upms/logs word/logs
+mkdir auth/logs config/logs crawler/logs eureka/logs gate/logs upms/logs word/logs word/tmp
 cd ../ui
 mkdir dist nginx
 ```

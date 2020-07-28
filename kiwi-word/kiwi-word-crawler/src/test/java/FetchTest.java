@@ -1,6 +1,6 @@
 import me.fengorz.kiwi.common.sdk.util.json.KiwiJsonUtils;
-import me.fengorz.kiwi.word.api.dto.fetch.FetchWordResultDTO;
-import me.fengorz.kiwi.word.api.dto.fetch.WordMessageDTO;
+import me.fengorz.kiwi.word.api.dto.queue.WordFetchMessageDTO;
+import me.fengorz.kiwi.word.api.dto.queue.fetch.FetchWordResultDTO;
 import me.fengorz.kiwi.word.api.exception.JsoupFetchConnectException;
 import me.fengorz.kiwi.word.api.exception.JsoupFetchPronunciationException;
 import me.fengorz.kiwi.word.api.exception.JsoupFetchResultException;
@@ -17,7 +17,7 @@ public class FetchTest {
     // @Test
     public void test() throws JsoupFetchResultException, JsoupFetchConnectException, JsoupFetchPronunciationException {
         IJsoupService jsoupService = new JsoupServiceImpl();
-        FetchWordResultDTO test = jsoupService.fetchWordInfo(new WordMessageDTO().setWord("mandatory"));
+        FetchWordResultDTO test = jsoupService.fetchWordInfo(new WordFetchMessageDTO().setWord("mandatory"));
         System.out.println(KiwiJsonUtils.toJsonStr(test));
     }
 

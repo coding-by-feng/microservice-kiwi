@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
 import me.fengorz.kiwi.common.sdk.controller.BaseController;
-import me.fengorz.kiwi.word.biz.service.IWordParaphraseExampleService;
+import me.fengorz.kiwi.word.biz.service.base.IWordParaphraseExampleService;
 
 /**
  * 单词例句表

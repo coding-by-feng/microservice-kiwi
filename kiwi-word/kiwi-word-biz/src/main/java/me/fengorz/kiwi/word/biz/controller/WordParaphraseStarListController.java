@@ -40,8 +40,8 @@ import me.fengorz.kiwi.word.api.entity.WordParaphraseStarListDO;
 import me.fengorz.kiwi.word.api.vo.WordParaphraseStarListVO;
 import me.fengorz.kiwi.word.api.vo.detail.WordParaphraseVO;
 import me.fengorz.kiwi.word.api.vo.star.ParaphraseStarItemVO;
-import me.fengorz.kiwi.word.biz.service.IWordParaphraseService;
-import me.fengorz.kiwi.word.biz.service.IWordParaphraseStarListService;
+import me.fengorz.kiwi.word.biz.service.base.IWordParaphraseService;
+import me.fengorz.kiwi.word.biz.service.base.IWordParaphraseStarListService;
 import me.fengorz.kiwi.word.biz.service.operate.IWordOperateService;
 
 /**

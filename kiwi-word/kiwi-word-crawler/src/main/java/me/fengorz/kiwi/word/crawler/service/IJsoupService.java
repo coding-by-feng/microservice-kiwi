@@ -16,15 +16,15 @@
 
 package me.fengorz.kiwi.word.crawler.service;
 
-import me.fengorz.kiwi.word.api.dto.fetch.FetchWordResultDTO;
-import me.fengorz.kiwi.word.api.dto.fetch.WordMessageDTO;
+import me.fengorz.kiwi.word.api.dto.queue.WordFetchMessageDTO;
+import me.fengorz.kiwi.word.api.dto.queue.fetch.FetchWordResultDTO;
 import me.fengorz.kiwi.word.api.exception.JsoupFetchConnectException;
 import me.fengorz.kiwi.word.api.exception.JsoupFetchPronunciationException;
 import me.fengorz.kiwi.word.api.exception.JsoupFetchResultException;
 
 public interface IJsoupService {
 
-    FetchWordResultDTO fetchWordInfo(WordMessageDTO wordMessage)
+    FetchWordResultDTO fetchWordInfo(WordFetchMessageDTO wordMessage)
         throws JsoupFetchConnectException, JsoupFetchResultException, JsoupFetchPronunciationException;
 
 }

@@ -18,9 +18,7 @@ package me.fengorz.kiwi.word.biz.service.operate;
 
 import me.fengorz.kiwi.common.api.exception.ServiceException;
 import me.fengorz.kiwi.common.api.exception.dfs.DfsOperateDeleteException;
-import me.fengorz.kiwi.common.api.exception.dfs.DfsOperateException;
-import me.fengorz.kiwi.word.api.dto.fetch.FetchWordResultDTO;
-import me.fengorz.kiwi.word.api.exception.WordResultStoreException;
+import me.fengorz.kiwi.word.api.dto.queue.fetch.FetchWordReplaceDTO;
 import me.fengorz.kiwi.word.api.vo.detail.WordParaphraseVO;
 import me.fengorz.kiwi.word.api.vo.detail.WordQueryVO;
 
@@ -30,9 +28,6 @@ import me.fengorz.kiwi.word.api.vo.detail.WordQueryVO;
 public interface IWordOperateService {
 
     boolean removeWord(String wordName) throws DfsOperateDeleteException;
-
-    boolean storeFetchWordResult(FetchWordResultDTO fetchWordResultDTO)
-        throws WordResultStoreException, DfsOperateException, DfsOperateDeleteException;
 
     void dfsDeleteExceptionBackCall(String wordName);
 
@@ -68,7 +63,13 @@ public interface IWordOperateService {
     /* wordVariant methods end */
 
     /* cache mothods begin */
+
     void evict(String wordName) throws DfsOperateDeleteException;
+
+    FetchWordReplaceDTO cacheGetFetchReplace(String wordName);
+
+    FetchWordReplaceDTO cachePutFetchReplace(String wordName, FetchWordReplaceDTO dto);
+
     /* cache mothods end */
 
 }

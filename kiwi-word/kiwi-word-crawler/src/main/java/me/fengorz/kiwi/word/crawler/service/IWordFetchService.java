@@ -16,13 +16,13 @@
 
 package me.fengorz.kiwi.word.crawler.service;
 
-import me.fengorz.kiwi.word.api.dto.fetch.WordMessageDTO;
+import me.fengorz.kiwi.word.api.dto.queue.WordFetchMessageDTO;
 
 /**
  * @Author zhanshifeng
  */
 public interface IWordFetchService {
 
-    void work(WordMessageDTO wordMessageDTO);
+    void handle(WordFetchMessageDTO wordFetchMessageDTO);
 
 }

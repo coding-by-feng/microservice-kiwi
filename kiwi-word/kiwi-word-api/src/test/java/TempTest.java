@@ -9,7 +9,7 @@ import javax.validation.ValidatorFactory;
 import org.apache.commons.lang3.StringUtils;
 
 import me.fengorz.kiwi.common.sdk.util.log.KiwiLogUtils;
-import me.fengorz.kiwi.word.api.dto.fetch.FetchWordResultDTO;
+import me.fengorz.kiwi.word.api.dto.queue.fetch.FetchWordResultDTO;
 import me.fengorz.kiwi.word.api.entity.WordFetchQueueDO;
 
 /**

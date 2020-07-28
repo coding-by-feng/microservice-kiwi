@@ -39,10 +39,10 @@ import me.fengorz.kiwi.word.api.entity.WordFetchQueueDO;
 public class WordFetchQueuePageDTO {
 
     @NotNull
-    private Page page;
+    private Page<WordFetchQueueDO> page;
     private WordFetchQueueDO wordFetchQueue;
 
-    public WordFetchQueuePageDTO(@JsonProperty("page") Page page,
+    public WordFetchQueuePageDTO(@JsonProperty("page") Page<WordFetchQueueDO> page,
         @JsonProperty("wordFetchQueue") WordFetchQueueDO wordFetchQueue) {
         this.page = page;
         this.wordFetchQueue = wordFetchQueue;

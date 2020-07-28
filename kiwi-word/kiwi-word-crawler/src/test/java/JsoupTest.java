@@ -8,10 +8,10 @@ import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
 import cn.hutool.core.lang.Assert;
-import me.fengorz.kiwi.word.api.dto.fetch.FetchParaphraseDTO;
-import me.fengorz.kiwi.word.api.dto.fetch.FetchParaphraseExampleDTO;
-import me.fengorz.kiwi.word.api.dto.fetch.FetchWordCodeDTO;
-import me.fengorz.kiwi.word.api.dto.fetch.FetchWordResultDTO;
+import me.fengorz.kiwi.word.api.dto.queue.fetch.FetchParaphraseDTO;
+import me.fengorz.kiwi.word.api.dto.queue.fetch.FetchParaphraseExampleDTO;
+import me.fengorz.kiwi.word.api.dto.queue.fetch.FetchWordCodeDTO;
+import me.fengorz.kiwi.word.api.dto.queue.fetch.FetchWordResultDTO;
 
 // import me.fengorz.kiwi.common.core.util.JsonPackagedUtil;
 

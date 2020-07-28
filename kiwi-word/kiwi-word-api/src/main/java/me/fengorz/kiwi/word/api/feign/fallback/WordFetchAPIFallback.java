@@ -16,14 +16,14 @@
 
 package me.fengorz.kiwi.word.api.feign.fallback;
 
-import org.springframework.stereotype.Component;
+import java.util.List;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
+import org.springframework.stereotype.Component;
 
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.api.R;
-import me.fengorz.kiwi.word.api.dto.fetch.FetchWordResultDTO;
+import me.fengorz.kiwi.word.api.dto.queue.fetch.FetchWordResultDTO;
 import me.fengorz.kiwi.word.api.dto.remote.WordFetchQueuePageDTO;
 import me.fengorz.kiwi.word.api.entity.WordFetchQueueDO;
 import me.fengorz.kiwi.word.api.feign.IWordFetchAPI;
@@ -41,37 +41,37 @@ public class WordFetchAPIFallback implements IWordFetchAPI {
     private Throwable throwable;
 
     @Override
-    public R<IPage<WordFetchQueueDO>> getWordFetchQueuePage(WordFetchQueuePageDTO wordFetchQueuePage) {
-        log.error("getWordFetchQueuePage error, wordFetchQueuePage=" + wordFetchQueuePage, throwable);
+    public R<List<WordFetchQueueDO>> pageQueue(WordFetchQueuePageDTO dto) {
+        log.error("getWordFetchQueuePage error, wordFetchQueuePage=" + dto, throwable);
         return R.feignCallFailed();
     }
 
     @Override
-    public R updateQueueById(WordFetchQueueDO wordFetchQueue) {
-        log.error("update wordFetchQueue error, wordFetchQueue=" + wordFetchQueue, throwable);
+    public R<Boolean> updateQueueById(WordFetchQueueDO queueDO) {
+        log.error("update wordFetchQueue error, wordFetchQueue=" + queueDO, throwable);
         return R.feignCallFailed();
     }
 
     @Override
-    public R storeFetchWordResult(FetchWordResultDTO fetchWordResultDTO) {
-        log.error("update storeFetchWordResult error, fetchWordResultDTO=" + fetchWordResultDTO, throwable);
+    public R<Void> storeResult(FetchWordResultDTO dto) {
+        log.error("update storeFetchWordResult error, fetchWordResultDTO=" + dto, throwable);
         // TODO ZSF This method of R applies to the template file
         return R.feignCallFailed();
     }
 
     @Override
-    public R updateByWordName(WordFetchQueueDO wordFetchQueue) {
-        log.error("updateByWordName error, wordFetchQueue=" + wordFetchQueue, throwable);
+    public R<Boolean> updateByWordName(WordFetchQueueDO queueDO) {
+        log.error("updateByWordName error, wordFetchQueue=" + queueDO, throwable);
         return R.feignCallFailed(throwable.getMessage());
     }
 
     @Override
-    public R invalid(String wordName) {
+    public R<Boolean> invalid(String wordName) {
         return R.feignCallFailed();
     }
 
     @Override
-    public R lock(String wordName) {
+    public R<Boolean> lock(String wordName) {
         return R.feignCallFailed();
     }
 }

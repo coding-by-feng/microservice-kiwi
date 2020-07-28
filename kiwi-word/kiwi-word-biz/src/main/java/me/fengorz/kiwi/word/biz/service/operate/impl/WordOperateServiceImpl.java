@@ -16,13 +16,11 @@
 
 package me.fengorz.kiwi.word.biz.service.operate.impl;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
@@ -36,10 +34,7 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.StrUtil;
-import cn.hutool.core.util.URLUtil;
-import cn.hutool.http.HttpUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.bdf.core.service.ISeqService;
@@ -47,18 +42,16 @@ import me.fengorz.kiwi.common.api.annotation.cache.KiwiCacheKey;
 import me.fengorz.kiwi.common.api.annotation.cache.KiwiCacheKeyPrefix;
 import me.fengorz.kiwi.common.api.constant.CacheConstants;
 import me.fengorz.kiwi.common.api.constant.CommonConstants;
-import me.fengorz.kiwi.common.api.constant.MapperConstant;
 import me.fengorz.kiwi.common.api.exception.ResourceNotFoundException;
 import me.fengorz.kiwi.common.api.exception.ServiceException;
 import me.fengorz.kiwi.common.api.exception.dfs.DfsOperateDeleteException;
-import me.fengorz.kiwi.common.api.exception.dfs.DfsOperateException;
 import me.fengorz.kiwi.common.fastdfs.service.IDfsService;
 import me.fengorz.kiwi.common.sdk.util.lang.collection.KiwiCollectionUtils;
 import me.fengorz.kiwi.common.sdk.util.lang.string.KiwiStringUtils;
 import me.fengorz.kiwi.common.sdk.util.validate.KiwiAssertUtils;
 import me.fengorz.kiwi.word.api.common.WordConstants;
 import me.fengorz.kiwi.word.api.common.WordCrawlerConstants;
-import me.fengorz.kiwi.word.api.dto.fetch.*;
+import me.fengorz.kiwi.word.api.dto.queue.fetch.FetchWordReplaceDTO;
 import me.fengorz.kiwi.word.api.entity.*;
 import me.fengorz.kiwi.word.api.vo.WordMainVO;
 import me.fengorz.kiwi.word.api.vo.WordParaphraseExampleVO;
@@ -67,10 +60,8 @@ import me.fengorz.kiwi.word.api.vo.detail.WordParaphraseVO;
 import me.fengorz.kiwi.word.api.vo.detail.WordPronunciationVO;
 import me.fengorz.kiwi.word.api.vo.detail.WordQueryVO;
 import me.fengorz.kiwi.word.biz.exception.WordGetOneException;
-import me.fengorz.kiwi.word.biz.service.*;
+import me.fengorz.kiwi.word.biz.service.base.*;
 import me.fengorz.kiwi.word.biz.service.operate.IWordOperateService;
-import me.fengorz.kiwi.word.biz.util.WordBizUtils;
-import me.fengorz.kiwi.word.biz.util.WordDfsUtils;
 
 /**
  * @Description 单词相关业务的复杂逻辑解耦
@@ -99,9 +90,6 @@ public class WordOperateServiceImpl implements IWordOperateService {
     private final IWordParaphrasePhraseService wordParaphrasePhraseService;
     private final IDfsService dfsService;
     private final ISeqService seqService;
-
-    @Value("${me.fengorz.file.crawler.voice.tmpPath}")
-    private String crawlerVoiceBasePath;
 
     @Override
     @Transactional(rollbackFor = Exception.class, noRollbackFor = DfsOperateDeleteException.class)
@@ -142,115 +130,6 @@ public class WordOperateServiceImpl implements IWordOperateService {
         // 这里缓存的删除要在Mysql的删除之前做
         this.evict(wordName);
         this.removeWordRelatedData(wordMainDO);
-    }
-
-    @Override
-    @Transactional(rollbackFor = Exception.class, noRollbackFor = DfsOperateDeleteException.class)
-    public boolean storeFetchWordResult(FetchWordResultDTO fetchWordResultDTO) throws DfsOperateException {
-        final String wordName = fetchWordResultDTO.getWordName();
-
-        WordMainDO wordMainDO = new WordMainDO();
-        wordMainDO.setWordName(wordName);
-
-        // If the word already exists, update the original word information
-        try {
-            WordMainDO existsWordMainDO = wordMainService.getOne(wordName);
-            if (existsWordMainDO != null) {
-                this.cachePutFetchReplace(wordName,
-                    this.cacheGetFetchReplace(wordName).setOldRelWordId(existsWordMainDO.getWordId()));
-                subRemoveWord(existsWordMainDO);
-            }
-        } catch (WordGetOneException e) {
-            this.removeWord(wordName);
-        } catch (DfsOperateDeleteException e) {
-            throw e;
-        } finally {
-            wordMainDO.setWordId(seqService.genIntSequence(MapperConstant.T_INS_SEQUENCE));
-            wordMainDO.setIsDel(CommonConstants.FLAG_DEL_NO);
-            wordMainService.save(wordMainDO);
-            subStoreFetchWordResult(fetchWordResultDTO, wordMainDO);
-            this.cachePutFetchReplace(wordName,
-                this.cacheGetFetchReplace(wordName).setNewRelWordId(wordMainDO.getWordId()));
-            this.fetchReplaceCallBack(wordName);
-        }
-
-        return true;
-    }
-
-    private void subStoreFetchWordResult(FetchWordResultDTO fetchWordResultDTO, WordMainDO wordMainDO)
-        throws DfsOperateException {
-        final Integer wordId = wordMainDO.getWordId();
-        List<FetchWordCodeDTO> fetchWordCodeDTOList = fetchWordResultDTO.getFetchWordCodeDTOList();
-        if (CollUtil.isNotEmpty(fetchWordCodeDTOList)) {
-            for (FetchWordCodeDTO fetchWordCodeDTO : fetchWordCodeDTOList) {
-                WordCharacterDO wordCharacter =
-                    WordBizUtils.initWordCharacter(fetchWordCodeDTO.getCode(), fetchWordCodeDTO.getLabel(), wordId);
-                wordCharacter.setCharacterId(seqService.genIntSequence(MapperConstant.T_INS_SEQUENCE));
-                wordCharacterService.save(wordCharacter);
-                Integer characterId = wordCharacter.getCharacterId();
-
-                List<FetchParaphraseDTO> fetchParaphraseDTOList = fetchWordCodeDTO.getFetchParaphraseDTOList();
-                FetchWordReplaceDTO replaceDTO = this.cacheGetFetchReplace(wordMainDO.getWordName());
-                fetchParaphraseDTOList.forEach(fetchParaphraseDTO -> {
-
-                    WordParaphraseDO wordParaphraseDO =
-                        WordBizUtils.initWordParaphrase(characterId, wordId, fetchParaphraseDTO.getMeaningChinese(),
-                            fetchParaphraseDTO.getParaphraseEnglish(), fetchParaphraseDTO.getTranslateLanguage());
-                    wordParaphraseDO.setParaphraseId(seqService.genIntSequence(MapperConstant.T_INS_SEQUENCE));
-                    wordParaphraseService.save(wordParaphraseDO);
-                    Integer paraphraseId = wordParaphraseDO.getParaphraseId();
-                    replaceDTO.getNewParaphraseIdMap().put(wordParaphraseDO.getParaphraseEnglish(), paraphraseId);
-                    List<FetchPhraseDTO> fetchPhraseDTOList = fetchParaphraseDTO.getFetchPhraseDTOList();
-                    if (KiwiCollectionUtils.isNotEmpty(fetchPhraseDTOList)) {
-                        for (FetchPhraseDTO fetchPhraseDTO : fetchPhraseDTOList) {
-                            WordParaphrasePhraseDO phraseDO = new WordParaphrasePhraseDO();
-                            phraseDO.setId(seqService.genIntSequence(MapperConstant.T_INS_SEQUENCE));
-                            phraseDO.setParaphraseId(paraphraseId);
-                            phraseDO.setPhrase(fetchPhraseDTO.getPhrase());
-                            phraseDO.setIsValid(CommonConstants.FLAG_YES);
-                            phraseDO.setCreateTime(LocalDateTime.now());
-                            wordParaphrasePhraseService.save(phraseDO);
-                            wordParaphraseDO.setIsHavePhrase(CommonConstants.FLAG_YES);
-                            wordParaphraseService.updateById(wordParaphraseDO);
-                        }
-                    }
-
-                    Optional.ofNullable(fetchParaphraseDTO.getFetchParaphraseExampleDTOList()).ifPresent(
-                        fetchParaphraseExampleDTOS -> fetchParaphraseExampleDTOS.forEach(fetchParaphraseExampleDTO -> {
-                            WordParaphraseExampleDO wordParaphraseExampleDO = WordBizUtils.initWordParaphraseExample(
-                                paraphraseId, wordId, fetchParaphraseExampleDTO.getExampleSentence(),
-                                fetchParaphraseExampleDTO.getExampleTranslate(),
-                                fetchParaphraseExampleDTO.getTranslateLanguage());
-                            wordParaphraseExampleDO
-                                .setExampleId(seqService.genIntSequence(MapperConstant.T_INS_SEQUENCE));
-                            wordParaphraseExampleService.save(wordParaphraseExampleDO);
-                            replaceDTO.getNewExampleIdMap().put(wordParaphraseExampleDO.getExampleSentence(),
-                                wordParaphraseExampleDO.getExampleId());
-                        }));
-                });
-                this.cachePutFetchReplace(wordMainDO.getWordName(), replaceDTO);
-
-                // save pronunciation and voice's file
-                List<FetchWordPronunciationDTO> fetchWordPronunciationDTOList =
-                    fetchWordCodeDTO.getFetchWordPronunciationDTOList();
-                if (CollUtil.isNotEmpty(fetchWordPronunciationDTOList)) {
-                    for (FetchWordPronunciationDTO fetchWordPronunciationDTO : fetchWordPronunciationDTOList) {
-                        String voiceFileUrl =
-                            WordCrawlerConstants.CAMBRIDGE_BASE_URL + fetchWordPronunciationDTO.getVoiceFileUrl();
-                        long voiceSize =
-                            HttpUtil.downloadFile(URLUtil.decode(voiceFileUrl), FileUtil.file(crawlerVoiceBasePath));
-                        String tempVoice = crawlerVoiceBasePath + WordDfsUtils.getVoiceFileName(voiceFileUrl);
-                        String uploadResult = dfsService.uploadFile(FileUtil.getInputStream(tempVoice), voiceSize,
-                            WordCrawlerConstants.EXT_OGG);
-                        WordPronunciationDO wordPronunciation =
-                            WordBizUtils.initWordPronunciation(wordId, characterId, uploadResult,
-                                fetchWordPronunciationDTO.getSoundmark(), fetchWordPronunciationDTO.getSoundmarkType());
-                        wordPronunciation.setPronunciationId(seqService.genIntSequence(MapperConstant.T_INS_SEQUENCE));
-                        wordPronunciationService.save(wordPronunciation);
-                    }
-                }
-            }
-        }
     }
 
     @Override
@@ -628,18 +507,20 @@ public class WordOperateServiceImpl implements IWordOperateService {
      * @param wordName
      * @return
      */
+    @Override
     @KiwiCacheKeyPrefix(WordConstants.CACHE_KEY_PREFIX_OPERATE.METHOD_FETCH_REPLACE)
     @Cacheable(cacheNames = WordConstants.CACHE_NAMES, keyGenerator = CacheConstants.CACHE_KEY_GENERATOR_BEAN,
         unless = "#result == null")
-    private FetchWordReplaceDTO cacheGetFetchReplace(@KiwiCacheKey String wordName) {
+    public FetchWordReplaceDTO cacheGetFetchReplace(@KiwiCacheKey String wordName) {
         // TODO ZSF 这里要设置超时时间，这块逻辑改成不用注解实现
         return new FetchWordReplaceDTO();
     }
 
+    @Override
     @KiwiCacheKeyPrefix(WordConstants.CACHE_KEY_PREFIX_OPERATE.METHOD_FETCH_REPLACE)
     @CachePut(cacheNames = WordConstants.CACHE_NAMES, keyGenerator = CacheConstants.CACHE_KEY_GENERATOR_BEAN,
         unless = "#result == null")
-    private FetchWordReplaceDTO cachePutFetchReplace(@KiwiCacheKey String wordName, FetchWordReplaceDTO dto) {
+    public FetchWordReplaceDTO cachePutFetchReplace(@KiwiCacheKey String wordName, FetchWordReplaceDTO dto) {
         if (dto == null) {
             return new FetchWordReplaceDTO();
         } else {
@@ -651,7 +532,7 @@ public class WordOperateServiceImpl implements IWordOperateService {
     @CacheEvict(cacheNames = WordConstants.CACHE_NAMES, keyGenerator = CacheConstants.CACHE_KEY_GENERATOR_BEAN)
     private void cacheEvictFetchReplace(@KiwiCacheKey String wordName) {}
 
-    private void fetchReplaceCallBack(String wordName) {
+    public void fetchReplaceCallBack(String wordName) {
         FetchWordReplaceDTO replaceDTO = this.cacheGetFetchReplace(wordName);
         wordStarRelService.replaceFetchResult(replaceDTO.getOldRelWordId(), replaceDTO.getNewRelWordId());
         Map<String, Integer> newParaphraseIdMap = replaceDTO.getNewParaphraseIdMap();

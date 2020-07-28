@@ -34,7 +34,7 @@ import me.fengorz.kiwi.common.sdk.controller.BaseController;
 import me.fengorz.kiwi.common.sdk.util.lang.string.KiwiStringUtils;
 import me.fengorz.kiwi.word.api.entity.WordMainDO;
 import me.fengorz.kiwi.word.api.vo.detail.WordQueryVO;
-import me.fengorz.kiwi.word.biz.service.IWordMainService;
+import me.fengorz.kiwi.word.biz.service.base.IWordMainService;
 import me.fengorz.kiwi.word.biz.service.operate.IWordOperateService;
 
 /**

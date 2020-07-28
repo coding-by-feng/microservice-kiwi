@@ -2,13 +2,29 @@ mq:
   config:
     fetch:
       interval: 200
-    wordFetch:
-      exchange: word.fetch
-      queue:
-        name: crawler
-      routing:
-        key: cambridge
-    youdaoTranslate:
+    word:
+      fetch:
+        exchange: word
+        queue: crawler
+        routing:
+          cambridge: cambridge
+      del:
+        exchange: word
+        queue: word.data.del
+        routing:
+          cambridge: cambridge
+    pronunciation:
+      fetch:
+        exchange: pronunciation
+        queue: pronunciation.fetch
+        routing:
+          cambridge: cambridge
+      remove:
+        exchange: pronunciation
+        queue: pronunciation.remove
+        routing:
+          cambridge: cambridge
+    youdao:
       exchange: youdao.translate
       queue:
         name: translateParaphrase

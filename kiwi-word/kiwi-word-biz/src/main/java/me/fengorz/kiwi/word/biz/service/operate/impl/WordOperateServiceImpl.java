@@ -133,11 +133,9 @@ public class WordOperateServiceImpl implements IWordOperateService {
         propagation = Propagation.REQUIRES_NEW)
     private void subRemoveWord(WordMainDO wordMainDO) throws DfsOperateDeleteException {
         final String wordName = wordMainDO.getWordName();
-        FetchWordReplaceDTO replaceDTO = this.cacheGetFetchReplace(wordName);
-        replaceDTO.setOldRelWordId(wordMainDO.getWordId());
-
         wordMainService.remove(Wrappers.<WordMainDO>lambdaQuery().eq(WordMainDO::getWordName, wordName));
-        this.cachePutFetchReplace(wordName, replaceDTO);
+        this.cachePutFetchReplace(wordName,
+            this.cacheGetFetchReplace(wordName).setOldRelWordId(wordMainDO.getWordId()));
         this.evict(wordName);
         wordMainService.evictByName(wordName);
         wordMainService.evictById(wordMainDO.getWordId());
@@ -624,10 +622,17 @@ public class WordOperateServiceImpl implements IWordOperateService {
     @CacheEvict(cacheNames = WordConstants.CACHE_NAMES, keyGenerator = CacheConstants.CACHE_KEY_GENERATOR_BEAN)
     private void evictParaphrase(@KiwiCacheKey Integer paraphraseId) {}
 
+    /**
+     * 获取DTO之后，要立马调用cachePutFetchReplace更新
+     * 
+     * @param wordName
+     * @return
+     */
     @KiwiCacheKeyPrefix(WordConstants.CACHE_KEY_PREFIX_OPERATE.METHOD_FETCH_REPLACE)
     @Cacheable(cacheNames = WordConstants.CACHE_NAMES, keyGenerator = CacheConstants.CACHE_KEY_GENERATOR_BEAN,
         unless = "#result == null")
     private FetchWordReplaceDTO cacheGetFetchReplace(@KiwiCacheKey String wordName) {
+        // TODO ZSF 这里要设置超时时间，这块逻辑改成不用注解实现
         return new FetchWordReplaceDTO();
     }
 

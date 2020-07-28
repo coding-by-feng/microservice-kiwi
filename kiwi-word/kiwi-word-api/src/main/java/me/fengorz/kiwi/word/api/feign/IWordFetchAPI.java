@@ -16,6 +16,8 @@
 
 package me.fengorz.kiwi.word.api.feign;
 
+import java.util.List;
+
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -24,7 +26,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import me.fengorz.kiwi.common.api.R;
 import me.fengorz.kiwi.word.api.common.WordConstants;
-import me.fengorz.kiwi.word.api.dto.fetch.FetchWordResultDTO;
+import me.fengorz.kiwi.word.api.dto.queue.fetch.FetchWordResultDTO;
 import me.fengorz.kiwi.word.api.dto.remote.WordFetchQueuePageDTO;
 import me.fengorz.kiwi.word.api.entity.WordFetchQueueDO;
 import me.fengorz.kiwi.word.api.feign.factory.WordFetchFallbackFactory;
@@ -36,20 +38,22 @@ import me.fengorz.kiwi.word.api.feign.factory.WordFetchFallbackFactory;
     fallbackFactory = WordFetchFallbackFactory.class)
 public interface IWordFetchAPI {
 
-    String WORD_FETCH_QUEUE = "/word/fetch/queue";
+    String WORD_FETCH_QUEUE = "/word/fetch";
 
-    @PostMapping(WORD_FETCH_QUEUE + "/getWordFetchQueuePage")
-    R getWordFetchQueuePage(@RequestBody WordFetchQueuePageDTO wordFetchQueuePage);
+    @PostMapping(WORD_FETCH_QUEUE + "/pageQueue")
+    R<List<WordFetchQueueDO>> pageQueue(@RequestBody WordFetchQueuePageDTO dto);
 
     @PutMapping(WORD_FETCH_QUEUE + "/updateById")
-    R<Boolean> updateQueueById(@RequestBody WordFetchQueueDO wordFetchQueue);
+    R<Boolean> updateQueueById(@RequestBody WordFetchQueueDO queueDO);
 
     @PostMapping(WORD_FETCH_QUEUE + "/storeFetchWordResult")
-    R<Void> storeFetchWordResult(@RequestBody FetchWordResultDTO fetchWordResultDTO);
+    R<Void> storeResult(@RequestBody FetchWordResultDTO dto);
 
+    @Deprecated
     @PostMapping(WORD_FETCH_QUEUE + "/updateByWordName")
-    R<Boolean> updateByWordName(@RequestBody WordFetchQueueDO wordFetchQueue);
+    R<Boolean> updateByWordName(@RequestBody WordFetchQueueDO queueDO);
 
+    @Deprecated
     @PostMapping(WORD_FETCH_QUEUE + "/invalid")
     R<Boolean> invalid(@RequestParam String wordName);
 

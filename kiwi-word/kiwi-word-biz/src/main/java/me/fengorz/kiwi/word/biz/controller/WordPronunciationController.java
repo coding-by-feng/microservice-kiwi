@@ -32,7 +32,7 @@ import me.fengorz.kiwi.common.fastdfs.service.IDfsService;
 import me.fengorz.kiwi.common.sdk.controller.BaseController;
 import me.fengorz.kiwi.common.sdk.web.WebTools;
 import me.fengorz.kiwi.word.api.entity.WordPronunciationDO;
-import me.fengorz.kiwi.word.biz.service.IWordPronunciationService;
+import me.fengorz.kiwi.word.biz.service.base.IWordPronunciationService;
 
 /**
  * 单词例句表

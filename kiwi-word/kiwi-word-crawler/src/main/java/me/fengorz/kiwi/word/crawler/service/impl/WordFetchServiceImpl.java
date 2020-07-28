@@ -24,8 +24,8 @@ import me.fengorz.kiwi.common.api.R;
 import me.fengorz.kiwi.common.api.constant.CommonConstants;
 import me.fengorz.kiwi.common.sdk.util.lang.string.KiwiStringUtils;
 import me.fengorz.kiwi.word.api.common.WordCrawlerConstants;
-import me.fengorz.kiwi.word.api.dto.fetch.FetchWordResultDTO;
-import me.fengorz.kiwi.word.api.dto.fetch.WordMessageDTO;
+import me.fengorz.kiwi.word.api.dto.queue.WordFetchMessageDTO;
+import me.fengorz.kiwi.word.api.dto.queue.fetch.FetchWordResultDTO;
 import me.fengorz.kiwi.word.api.entity.WordFetchQueueDO;
 import me.fengorz.kiwi.word.api.exception.JsoupFetchConnectException;
 import me.fengorz.kiwi.word.api.feign.IWordFetchAPI;
@@ -47,20 +47,20 @@ public class WordFetchServiceImpl implements IWordFetchService {
     private final IWordMainVariantAPI wordMainVariantAPIService;
 
     @Override
-    public void work(WordMessageDTO wordMessageDTO) {
-        final String inputWord = wordMessageDTO.getWord();
-        WordFetchQueueDO wordFetchQueue =
-            new WordFetchQueueDO().setWordName(inputWord).setFetchStatus(WordCrawlerConstants.STATUS_SUCCESS);
-        try {
-            long oldTime = System.currentTimeMillis();
-            FetchWordResultDTO fetchWordResultDTO = jsoupService.fetchWordInfo(wordMessageDTO);
-            final String fetchWord = fetchWordResultDTO.getWordName();
-            StringBuilder allFetchResult = new StringBuilder();
+    public void handle(WordFetchMessageDTO messageDTO) {
+        final long oldTime = System.currentTimeMillis();
+        final String inputWord = messageDTO.getWord();
+        final Integer queueId = messageDTO.getQueueId();
+        WordFetchQueueDO queue = new WordFetchQueueDO().setWordName(inputWord).setQueueId(queueId);
 
-            // All exceptions are called back to the data in the word_fetch_queue
-            R storeResult = wordFetchAPI.storeFetchWordResult(fetchWordResultDTO);
+        try {
+            FetchWordResultDTO fetchWordResultDTO = jsoupService.fetchWordInfo(messageDTO).setQueueId(queueId);
+            final String fetchWord = fetchWordResultDTO.getWordName();
+            StringBuilder handleLog = new StringBuilder();
+
+            R<Void> storeResult = wordFetchAPI.storeResult(fetchWordResultDTO);
             if (storeResult.isFail()) {
-                subDealException(wordFetchQueue, storeResult.getCode(), storeResult.getMsg());
+                handleException(queue, WordCrawlerConstants.STATUS_FETCH_FAIL, storeResult.getMsg());
             } else {
                 // TODO ZSF 增加一个时态、单复数的变化关系对应逻辑
                 if (KiwiStringUtils.isNotEquals(inputWord, fetchWordResultDTO.getWordName())) {
@@ -68,39 +68,32 @@ public class WordFetchServiceImpl implements IWordFetchService {
                     String insertVariantResult = KiwiStringUtils
                         .format("word({}) has a variant({}), variant insert success!", fetchWord, inputWord);
                     log.info(insertVariantResult);
-                    allFetchResult.append(insertVariantResult);
+                    handleLog.append(insertVariantResult);
                 }
 
                 long newTime = System.currentTimeMillis();
                 String fetchResult = KiwiStringUtils.format("word({}) fetch store success! spent {}s",
-                    wordFetchQueue.getWordName(), (newTime - oldTime));
+                    queue.getWordName(), (newTime - oldTime));
                 log.info(fetchResult);
-                allFetchResult.append(fetchWord);
+                handleLog.append(fetchWord);
 
-                wordFetchAPI.invalid(wordFetchQueue.getWordName());
-                String queueDelResult =
-                    KiwiStringUtils.format("word({}) fetch queue del success!", wordFetchQueue.getWordName());
-                log.info(queueDelResult);
-                allFetchResult.append(queueDelResult);
-
-                wordFetchQueue.setFetchStatus(WordCrawlerConstants.STATUS_SUCCESS);
-                wordFetchQueue.setFetchResult(allFetchResult.toString());
+                queue.setFetchStatus(WordCrawlerConstants.STATUS_TO_FETCH_PRONUNCIATION);
+                queue.setFetchResult(handleLog.toString());
+                queue.setIsLock(CommonConstants.FLAG_NO);
             }
         } catch (JsoupFetchConnectException e) {
-            subDealException(wordFetchQueue, WordCrawlerConstants.STATUS_ERROR_JSOUP_FETCH_CONNECT_FAILED,
-                e.getMessage());
+            handleException(queue, WordCrawlerConstants.STATUS_JSOUP_CONNECT_FAILED, e.getMessage());
         } catch (Exception e) {
-            subDealException(wordFetchQueue, WordCrawlerConstants.STATUS_ERROR_JSOUP_RESULT_FETCH_FAILED,
-                e.getMessage());
+            handleException(queue, WordCrawlerConstants.STATUS_FETCH_WORD_FAIL, e.getMessage());
         } finally {
-            wordFetchQueue.setIsLock(CommonConstants.FLAG_NO);
-            wordFetchAPI.updateByWordName(wordFetchQueue);
+            wordFetchAPI.updateQueueById(queue);
         }
     }
 
-    private void subDealException(WordFetchQueueDO wordFetchQueue, int status, String message) {
-        wordFetchQueue.setFetchStatus(status);
-        wordFetchQueue.setFetchResult(message);
+    private void handleException(WordFetchQueueDO queue, int status, String message) {
+        queue.setFetchStatus(status);
+        queue.setFetchResult(message);
+        queue.setIsLock(CommonConstants.FLAG_YES);
         if (KiwiStringUtils.isNotBlank(message)) {
             log.error(message);
         }

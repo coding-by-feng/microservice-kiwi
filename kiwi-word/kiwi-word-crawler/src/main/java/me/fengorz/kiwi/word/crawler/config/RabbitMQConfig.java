@@ -16,10 +16,6 @@
 
 package me.fengorz.kiwi.word.crawler.config;
 
-import org.springframework.amqp.core.Binding;
-import org.springframework.amqp.core.BindingBuilder;
-import org.springframework.amqp.core.DirectExchange;
-import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
@@ -36,14 +32,14 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class RabbitMQConfig {
 
-    @Value("${mq.config.wordFetch.queue.name}")
-    private String fetchWordQueueName;
-
-    @Value("${mq.config.wordFetch.exchange}")
-    private String exchange;
-
-    @Value("${mq.config.wordFetch.routing.key}")
-    private String routingKey;
+    // @Value("${mq.config.word.fetch.queue}")
+    // private String fetchWordQueueName;
+    //
+    // @Value("${mq.config.word.fetch.exchange}")
+    // private String exchange;
+    //
+    // @Value("${mq.config.word.fetch.routing.cambridge}")
+    // private String routingKey;
 
     @Value("${spring.rabbitmq.host}")
     private String host;
@@ -54,20 +50,20 @@ public class RabbitMQConfig {
     @Value("${spring.rabbitmq.password}")
     private String password;
 
-    @Bean
-    public Queue queue() {
-        return new Queue(fetchWordQueueName, false);
-    }
-
-    @Bean
-    public DirectExchange exchange() {
-        return new DirectExchange(exchange);
-    }
-
-    @Bean
-    public Binding binding(Queue queue, DirectExchange exchange) {
-        return BindingBuilder.bind(queue).to(exchange).with(routingKey);
-    }
+    // @Bean
+    // public Queue queue() {
+    //     return new Queue(fetchWordQueueName, false);
+    // }
+    //
+    // @Bean
+    // public DirectExchange exchange() {
+    //     return new DirectExchange(exchange);
+    // }
+    //
+    // @Bean
+    // public Binding binding(Queue queue, DirectExchange exchange) {
+    //     return BindingBuilder.bind(queue).to(exchange).with(routingKey);
+    // }
 
     @Bean
     public MessageConverter jsonMessageConverter() {
@@ -80,8 +76,8 @@ public class RabbitMQConfig {
     // }
 
     // @Bean
-    // public ScheduledProducer scheduledProducer(){
-    // return new ScheduledProducer();
+    // public ScheduledChiefProducer scheduledProducer(){
+    // return new ScheduledChiefProducer();
     // }
 
     // @Bean

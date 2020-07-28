@@ -22,6 +22,26 @@ public interface WordCrawlerConstants {
 
     /*待抓取*/
     int STATUS_TO_FETCH = 0;
+    /*Jsoup连接失败*/
+    int STATUS_JSOUP_CONNECT_FAILED = 1;
+    /*爬虫抓取单词失败*/
+    int STATUS_FETCH_FAIL = 10;
+    /*等待删除单词基础数据*/
+    int STATUS_TO_DEL_BASE = 20;
+    /*删除单词基础数据失败*/
+    int STATUS_DEL_BASE_FAIL = 30;
+    /*等待删除单词发音文件*/
+    int STATUS_TO_DEL_PRONUNCIATION = 40;
+    /*删除单词发音文件失败*/
+    int STATUS_DEL_PRONUNCIATION_FAIL = 50;
+    /*抓取单词基础数据失败*/
+    int STATUS_FETCH_WORD_FAIL = 70;
+    /*等待下载单词发音文件*/
+    int STATUS_TO_FETCH_PRONUNCIATION = 80;
+    /*单词数据抓取完毕*/
+    int STATUS_ALL_SUCCESS = 100;
+
+    // TODO ZSF 删掉
     /*抓取中*/
     int STATUS_FETCHING = 1;
     /*抓取成功*/

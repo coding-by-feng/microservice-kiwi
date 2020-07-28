@@ -1,8 +1,8 @@
 import org.springframework.boot.SpringApplication;
 
 import lombok.extern.slf4j.Slf4j;
-import me.fengorz.kiwi.word.crawler.component.ScheduledProducer;
-import me.fengorz.kiwi.word.crawler.component.WordFetchProducer;
+import me.fengorz.kiwi.word.crawler.component.producer.MqSender;
+import me.fengorz.kiwi.word.crawler.component.producer.ScheduledChiefProducer;
 
 /**
  * @Description TODO
@@ -15,10 +15,10 @@ import me.fengorz.kiwi.word.crawler.component.WordFetchProducer;
 public class QueueTest {
 
     // @Autowired
-    private WordFetchProducer wordFetchProducer;
+    private MqSender mqSender;
 
     // @Autowired
-    private ScheduledProducer scheduledProducer;
+    private ScheduledChiefProducer scheduledChiefProducer;
 
     public void main() {
         SpringApplication.run(QueueTest.class);
@@ -33,7 +33,7 @@ public class QueueTest {
         // log.info("word.fetch sending id = " + id);
         // this.wordFetchProducer.send(new WordMessage(id++, "test"));
         // }
-        // this.scheduledProducer.fetchWord();
+        // this.scheduledChiefProducer.fetchWord();
         System.out.println("testing");
     }
 

@@ -39,8 +39,8 @@ import me.fengorz.kiwi.common.sdk.web.security.SecurityUtils;
 import me.fengorz.kiwi.word.api.entity.WordStarListDO;
 import me.fengorz.kiwi.word.api.vo.WordStarListVO;
 import me.fengorz.kiwi.word.api.vo.star.WordStarItemVO;
-import me.fengorz.kiwi.word.biz.service.IWordStarListService;
-import me.fengorz.kiwi.word.biz.service.IWordStarRelService;
+import me.fengorz.kiwi.word.biz.service.base.IWordStarListService;
+import me.fengorz.kiwi.word.biz.service.base.IWordStarRelService;
 import me.fengorz.kiwi.word.biz.service.operate.IWordOperateService;
 
 /**

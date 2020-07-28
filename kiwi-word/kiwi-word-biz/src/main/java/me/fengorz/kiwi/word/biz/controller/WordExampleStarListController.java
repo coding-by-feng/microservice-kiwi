@@ -39,7 +39,7 @@ import me.fengorz.kiwi.common.sdk.web.security.SecurityUtils;
 import me.fengorz.kiwi.word.api.entity.WordExampleStarListDO;
 import me.fengorz.kiwi.word.api.vo.WordExampleStarListVO;
 import me.fengorz.kiwi.word.api.vo.star.ExampleStarItemVO;
-import me.fengorz.kiwi.word.biz.service.IWordExampleStarListService;
+import me.fengorz.kiwi.word.biz.service.base.IWordExampleStarListService;
 import me.fengorz.kiwi.word.biz.service.operate.IWordOperateService;
 
 /**

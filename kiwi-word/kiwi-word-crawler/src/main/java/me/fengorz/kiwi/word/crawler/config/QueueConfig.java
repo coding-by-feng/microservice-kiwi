@@ -42,8 +42,18 @@ public class QueueConfig {
     @Value("${crawler.config.queue.capacity}")
     private int queueCapacity;
 
-    @Bean(name = "concurrentFetchWordThreadExecutor")
-    public ThreadPoolTaskExecutor threadPoolTaskExecutor() {
+    @Bean(name = "fetchWordThreadExecutor")
+    public ThreadPoolTaskExecutor fetchWordThreadExecutor() {
+        ThreadPoolTaskExecutor taskExecutor = new ThreadPoolTaskExecutor();
+        taskExecutor.setCorePoolSize(this.corePoolSize);
+        taskExecutor.setMaxPoolSize(this.maxPoolSize);
+        taskExecutor.setQueueCapacity(this.queueCapacity);
+        taskExecutor.initialize();
+        return taskExecutor;
+    }
+
+    @Bean(name = "fetchPronunciationThreadExecutor")
+    public ThreadPoolTaskExecutor fetchPronunciationThreadExecutor() {
         ThreadPoolTaskExecutor taskExecutor = new ThreadPoolTaskExecutor();
         taskExecutor.setCorePoolSize(this.corePoolSize);
         taskExecutor.setMaxPoolSize(this.maxPoolSize);

@@ -67,16 +67,29 @@ public class WordBizUtils {
         return wordParaphraseExampleDO;
     }
 
+    @Deprecated
     public static WordPronunciationDO initWordPronunciation(Integer wordId, Integer characterId, String uploadResult,
         String soundmark, String soundmarkType) {
         WordPronunciationDO wordPronunciation = new WordPronunciationDO();
         wordPronunciation.setWordId(wordId);
         wordPronunciation.setCharacterId(characterId);
         wordPronunciation.setGroupName(WordDfsUtils.getGroupName(uploadResult));
-        wordPronunciation.setIsDel(CommonConstants.FLAG_N);
+        wordPronunciation.setIsDel(CommonConstants.FLAG_DEL_NO);
         wordPronunciation.setSoundmark(soundmark);
         wordPronunciation.setSoundmarkType(soundmarkType);
         wordPronunciation.setVoiceFilePath(WordDfsUtils.getUploadVoiceFilePath(uploadResult));
+        return wordPronunciation;
+    }
+
+    public static WordPronunciationDO initPronunciation(Integer wordId, Integer characterId, String voiceUrl,
+        String soundmark, String soundmarkType) {
+        WordPronunciationDO wordPronunciation = new WordPronunciationDO();
+        wordPronunciation.setWordId(wordId);
+        wordPronunciation.setCharacterId(characterId);
+        wordPronunciation.setIsDel(CommonConstants.FLAG_DEL_NO);
+        wordPronunciation.setSoundmark(soundmark);
+        wordPronunciation.setSoundmarkType(soundmarkType);
+        wordPronunciation.setVoiceFilePath(voiceUrl);
         return wordPronunciation;
     }
 

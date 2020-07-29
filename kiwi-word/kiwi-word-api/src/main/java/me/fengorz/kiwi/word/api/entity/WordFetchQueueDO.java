@@ -54,6 +54,7 @@ public class WordFetchQueueDO extends Model<WordFetchQueueDO> {
      * 单词
      */
     private String wordName;
+    private Integer wordId;
     /**
      * 入库时间
      */
@@ -65,13 +66,9 @@ public class WordFetchQueueDO extends Model<WordFetchQueueDO> {
      */
     private Integer fetchPriority;
     /**
-     * 抓取状态 （0：待抓取，1：抓取中，2：抓取完毕，4：抓取异常）
+     * 抓取状态
      */
     private Integer fetchStatus;
-    /**
-     * 发音文件存放路径
-     */
-    private String voiceFilePath;
     /**
      * 是否有效标记(Y--正常 N--删除)
      */

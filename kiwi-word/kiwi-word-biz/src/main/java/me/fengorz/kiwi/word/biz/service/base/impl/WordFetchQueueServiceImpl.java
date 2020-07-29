@@ -102,8 +102,8 @@ public class WordFetchQueueServiceImpl extends ServiceImpl<WordFetchQueueMapper,
     }
 
     @Override
-    public void finishFetchBase(Integer queueId) {
-        this.updateById(new WordFetchQueueDO().setQueueId(queueId).setIsLock(CommonConstants.FLAG_NO)
+    public void finishFetchBase(Integer queueId, Integer wordId) {
+        this.updateById(new WordFetchQueueDO().setQueueId(queueId).setWordId(wordId).setIsLock(CommonConstants.FLAG_NO)
             .setFetchStatus(WordCrawlerConstants.STATUS_TO_FETCH_PRONUNCIATION));
     }
 

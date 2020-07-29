@@ -2,8 +2,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import me.fengorz.kiwi.word.api.dto.queue.WordFetchMessageDTO;
-import me.fengorz.kiwi.word.crawler.component.producer.MqSender;
+import me.fengorz.kiwi.word.crawler.component.MqSender;
 
 /**
  * @Description TODO
@@ -28,10 +27,10 @@ public class CountDownLatchTest implements Runnable {
 
     @Override
     public void run() {
-        WordFetchMessageDTO wordMessage = new WordFetchMessageDTO("test");
-        System.out.println("mq sending a message is " + wordMessage);
-        this.mqSender.send(wordMessage);
-        latch.countDown();
+        // FetchWordMqDTO wordMessage = new FetchWordMqDTO("test");
+        // System.out.println("mq sending a message is " + wordMessage);
+        // this.mqSender.fetchWord(wordMessage);
+        // latch.countDown();
     }
 
     // @Test

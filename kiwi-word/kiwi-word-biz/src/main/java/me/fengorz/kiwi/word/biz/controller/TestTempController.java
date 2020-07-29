@@ -61,7 +61,7 @@ public class TestTempController extends BaseController {
                 .getOne(new LambdaQueryWrapper<WordFetchQueueDO>().eq(WordFetchQueueDO::getWordName, word));
             WordFetchQueueDO wordFetchQueue = null;
             if (one != null) {
-                if (WordCrawlerConstants.STATUS_SUCCESS == one.getFetchStatus()) {
+                if (WordCrawlerConstants.STATUS_ALL_SUCCESS == one.getFetchStatus()) {
                     continue;
                 } else {
                     wordFetchQueue = one;

@@ -43,7 +43,7 @@ public interface IWordFetchQueueService extends IService<WordFetchQueueDO> {
 
     boolean lock(String wordName);
 
-    void finishFetchBase(Integer queueId);
+    void finishFetchBase(Integer queueId, Integer wordId);
 
     List<WordFetchQueueDO> page2List(WordFetchQueuePageDTO dto);
 }

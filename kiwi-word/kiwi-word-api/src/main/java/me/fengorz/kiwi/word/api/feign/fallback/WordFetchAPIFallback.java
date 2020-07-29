@@ -42,36 +42,41 @@ public class WordFetchAPIFallback implements IWordFetchAPI {
 
     @Override
     public R<List<WordFetchQueueDO>> pageQueue(WordFetchQueuePageDTO dto) {
-        log.error("getWordFetchQueuePage error, wordFetchQueuePage=" + dto, throwable);
-        return R.feignCallFailed();
+        return R.feignCallFailed(throwable.getMessage());
     }
 
     @Override
     public R<Boolean> updateQueueById(WordFetchQueueDO queueDO) {
-        log.error("update wordFetchQueue error, wordFetchQueue=" + queueDO, throwable);
-        return R.feignCallFailed();
+        return R.feignCallFailed(throwable.getMessage());
     }
 
     @Override
     public R<Void> storeResult(FetchWordResultDTO dto) {
-        log.error("update storeFetchWordResult error, fetchWordResultDTO=" + dto, throwable);
-        // TODO ZSF This method of R applies to the template file
-        return R.feignCallFailed();
+        return R.feignCallFailed(throwable.getMessage());
+    }
+
+    @Override
+    public R<Boolean> fetchPronunciation(Integer wordId) {
+        return R.feignCallFailed(throwable.getMessage());
+    }
+
+    @Override
+    public R<Boolean> removeWord(Integer wordId) {
+        return R.feignCallFailed(throwable.getMessage());
     }
 
     @Override
     public R<Boolean> updateByWordName(WordFetchQueueDO queueDO) {
-        log.error("updateByWordName error, wordFetchQueue=" + queueDO, throwable);
         return R.feignCallFailed(throwable.getMessage());
     }
 
     @Override
     public R<Boolean> invalid(String wordName) {
-        return R.feignCallFailed();
+        return R.feignCallFailed(throwable.getMessage());
     }
 
     @Override
     public R<Boolean> lock(String wordName) {
-        return R.feignCallFailed();
+        return R.feignCallFailed(throwable.getMessage());
     }
 }

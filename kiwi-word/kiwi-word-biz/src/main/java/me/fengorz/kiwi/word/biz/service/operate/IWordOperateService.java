@@ -29,8 +29,6 @@ public interface IWordOperateService {
 
     boolean removeWord(String wordName) throws DfsOperateDeleteException;
 
-    void dfsDeleteExceptionBackCall(String wordName);
-
     WordQueryVO queryWord(String wordName) throws ServiceException, DfsOperateDeleteException;
 
     boolean putWordIntoStarList(Integer wordId, Integer listId) throws ServiceException;

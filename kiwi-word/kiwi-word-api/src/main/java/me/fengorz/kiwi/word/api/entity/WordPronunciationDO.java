@@ -59,9 +59,9 @@ public class WordPronunciationDO extends Model<WordPronunciationDO> {
      */
     private String voiceFilePath;
     /**
-     * 逻辑删除标记(Y--正常 N--删除)
+     * 逻辑删除标记
      */
-    private String isDel;
+    private Integer isDel;
     /**
      * 分布式文件系统存放的组名
      */

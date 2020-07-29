@@ -19,10 +19,7 @@ package me.fengorz.kiwi.word.api.feign;
 import java.util.List;
 
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import me.fengorz.kiwi.common.api.R;
 import me.fengorz.kiwi.word.api.common.WordConstants;
@@ -34,7 +31,7 @@ import me.fengorz.kiwi.word.api.feign.factory.WordFetchFallbackFactory;
 /**
  * @Author zhanshifeng
  */
-@FeignClient(contextId = "remoteWordFetchService", value = WordConstants.KIWI_WORD_BIZ,
+@FeignClient(contextId = "wordFetchApi", value = WordConstants.KIWI_WORD_BIZ,
     fallbackFactory = WordFetchFallbackFactory.class)
 public interface IWordFetchAPI {
 
@@ -46,18 +43,22 @@ public interface IWordFetchAPI {
     @PutMapping(WORD_FETCH_QUEUE + "/updateById")
     R<Boolean> updateQueueById(@RequestBody WordFetchQueueDO queueDO);
 
-    @PostMapping(WORD_FETCH_QUEUE + "/storeFetchWordResult")
+    @PostMapping(WORD_FETCH_QUEUE + "/storeResult")
     R<Void> storeResult(@RequestBody FetchWordResultDTO dto);
 
-    @Deprecated
-    @PostMapping(WORD_FETCH_QUEUE + "/updateByWordName")
-    R<Boolean> updateByWordName(@RequestBody WordFetchQueueDO queueDO);
+    @GetMapping("/fetchPronunciation")
+    R<Boolean> fetchPronunciation(Integer wordId);
 
-    @Deprecated
-    @PostMapping(WORD_FETCH_QUEUE + "/invalid")
-    R<Boolean> invalid(@RequestParam String wordName);
+    @GetMapping("/removeWord")
+    R<Boolean> removeWord(Integer wordId);
 
     @PostMapping(WORD_FETCH_QUEUE + "/lock")
     R<Boolean> lock(@RequestParam String wordName);
+
+    @PostMapping(WORD_FETCH_QUEUE + "/updateByWordName")
+    R<Boolean> updateByWordName(@RequestBody WordFetchQueueDO queueDO);
+
+    @PostMapping(WORD_FETCH_QUEUE + "/invalid")
+    R<Boolean> invalid(@RequestParam String wordName);
 
 }

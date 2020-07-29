@@ -16,28 +16,30 @@
 
 package me.fengorz.kiwi.word.crawler.component.producer;
 
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Service;
+import java.util.Objects;
 
-import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
+
 import lombok.extern.slf4j.Slf4j;
+import me.fengorz.kiwi.common.sdk.util.spring.SpringUtils;
+import me.fengorz.kiwi.word.crawler.component.producer.base.IProducer;
 
 /**
  * @Description TODO
  * @Author zhanshifeng
  * @Date 2019/10/29 4:12 PM
  */
-@Service("scheduledProducer")
+@Component
 @Slf4j
-@RequiredArgsConstructor
 public class ScheduledChiefProducer implements IProducer {
 
-    private final AsyncFetchWordProducer asyncFetchWordProducer;
-
     @Override
-    @Scheduled(fixedDelay = 2000L)
+    @Scheduled(fixedDelay = 5000L)
     public void produce() {
-        asyncFetchWordProducer.produce();
+        for (IProducer producer : Objects.requireNonNull(SpringUtils.getBeansList(IProducer.class))) {
+            producer.produce();
+        }
     }
 
 }

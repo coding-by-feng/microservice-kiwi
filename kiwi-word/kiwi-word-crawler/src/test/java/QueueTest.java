@@ -1,7 +1,7 @@
 import org.springframework.boot.SpringApplication;
 
 import lombok.extern.slf4j.Slf4j;
-import me.fengorz.kiwi.word.crawler.component.producer.MqSender;
+import me.fengorz.kiwi.word.crawler.component.MqSender;
 import me.fengorz.kiwi.word.crawler.component.producer.ScheduledChiefProducer;
 
 /**

@@ -17,7 +17,7 @@
  *
  */
 
-package me.fengorz.kiwi.word.crawler.component.producer;
+package me.fengorz.kiwi.word.crawler.component.producer.base;
 
 public interface IProducer {
 

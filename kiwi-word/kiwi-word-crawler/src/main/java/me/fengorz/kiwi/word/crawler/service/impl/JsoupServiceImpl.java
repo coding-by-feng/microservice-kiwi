@@ -32,7 +32,7 @@ import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.sdk.util.lang.string.KiwiStringUtils;
 import me.fengorz.kiwi.common.sdk.util.validate.KiwiAssertUtils;
 import me.fengorz.kiwi.word.api.common.WordCrawlerConstants;
-import me.fengorz.kiwi.word.api.dto.queue.WordFetchMessageDTO;
+import me.fengorz.kiwi.word.api.dto.queue.FetchWordMqDTO;
 import me.fengorz.kiwi.word.api.dto.queue.fetch.*;
 import me.fengorz.kiwi.word.api.exception.JsoupFetchConnectException;
 import me.fengorz.kiwi.word.api.exception.JsoupFetchPronunciationException;
@@ -83,7 +83,7 @@ public class JsoupServiceImpl implements IJsoupService {
     public static final String KEY_DAUD = "daud";
 
     @Override
-    public FetchWordResultDTO fetchWordInfo(WordFetchMessageDTO wordMessage)
+    public FetchWordResultDTO fetchWordInfo(FetchWordMqDTO wordMessage)
         throws JsoupFetchResultException, JsoupFetchConnectException, JsoupFetchPronunciationException {
         final String word = wordMessage.getWord();
         String jsoupWord = null;

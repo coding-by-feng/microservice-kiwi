@@ -38,25 +38,10 @@ public interface WordCrawlerConstants {
     int STATUS_FETCH_WORD_FAIL = 70;
     /*等待下载单词发音文件*/
     int STATUS_TO_FETCH_PRONUNCIATION = 80;
+    /*下载单词发音文件失败*/
+    int STATUS_TO_FETCH_PRONUNCIATION_FAIL = 90;
     /*单词数据抓取完毕*/
     int STATUS_ALL_SUCCESS = 100;
-
-    // TODO ZSF 删掉
-    /*抓取中*/
-    int STATUS_FETCHING = 1;
-    /*抓取成功*/
-    int STATUS_SUCCESS = 2;
-    /*抓取异常*/
-    int STATUS_ERROR = 400;
-    /*wordId空异常*/
-    int STATUS_ERROR_WORD_ID_NOT_NULL = 401;
-    /*fastDfs操作异常*/
-    int STATUS_ERROR_DFS_OPERATE_FAILED = 402;
-    int STATUS_ERROR_DFS_OPERATE_DELETE_FAILED = 404;
-    /*Jsoup连接失败*/
-    int STATUS_ERROR_JSOUP_FETCH_CONNECT_FAILED = 405;
-    /*Jsoup抓取结果失败*/
-    int STATUS_ERROR_JSOUP_RESULT_FETCH_FAILED = 406;
 
     String CAMBRIDGE_FETCH_CHINESE_URL = "https://dictionary.cambridge.org/zhs/词典/英语-汉语-简体/";
     String CAMBRIDGE_FETCH_ENGLISH_URL = "https://dictionary.cambridge.org/dictionary/english/";

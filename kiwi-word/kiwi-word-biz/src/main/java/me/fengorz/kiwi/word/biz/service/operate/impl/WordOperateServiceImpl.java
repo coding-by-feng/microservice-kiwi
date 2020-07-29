@@ -50,7 +50,6 @@ import me.fengorz.kiwi.common.sdk.util.lang.collection.KiwiCollectionUtils;
 import me.fengorz.kiwi.common.sdk.util.lang.string.KiwiStringUtils;
 import me.fengorz.kiwi.common.sdk.util.validate.KiwiAssertUtils;
 import me.fengorz.kiwi.word.api.common.WordConstants;
-import me.fengorz.kiwi.word.api.common.WordCrawlerConstants;
 import me.fengorz.kiwi.word.api.dto.queue.fetch.FetchWordReplaceDTO;
 import me.fengorz.kiwi.word.api.entity.*;
 import me.fengorz.kiwi.word.api.vo.WordMainVO;
@@ -130,19 +129,6 @@ public class WordOperateServiceImpl implements IWordOperateService {
         // 这里缓存的删除要在Mysql的删除之前做
         this.evict(wordName);
         this.removeWordRelatedData(wordMainDO);
-    }
-
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public void dfsDeleteExceptionBackCall(String wordName) {
-        WordFetchQueueDO wordFetchQueue = new WordFetchQueueDO();
-        wordFetchQueue.setFetchStatus(WordCrawlerConstants.STATUS_ERROR_DFS_OPERATE_DELETE_FAILED)
-            .setFetchResult("delete pronunciation voice file error");
-        wordFetchQueueService.update(wordFetchQueue, new QueryWrapper<>(new WordFetchQueueDO().setWordName(wordName)));
-
-        // If you fail to delete the pronunciation file, leave the pronunciation file path blank to prevent the same
-        // exception from being thrown again
-        wordPronunciationService.deleteByWordName(wordName);
     }
 
     /**

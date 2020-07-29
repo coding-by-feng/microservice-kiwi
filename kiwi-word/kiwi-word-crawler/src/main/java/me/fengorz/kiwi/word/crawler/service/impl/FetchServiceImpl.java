@@ -16,6 +16,8 @@
 
 package me.fengorz.kiwi.word.crawler.service.impl;
 
+import java.util.Optional;
+
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
@@ -24,14 +26,15 @@ import me.fengorz.kiwi.common.api.R;
 import me.fengorz.kiwi.common.api.constant.CommonConstants;
 import me.fengorz.kiwi.common.sdk.util.lang.string.KiwiStringUtils;
 import me.fengorz.kiwi.word.api.common.WordCrawlerConstants;
-import me.fengorz.kiwi.word.api.dto.queue.WordFetchMessageDTO;
+import me.fengorz.kiwi.word.api.dto.queue.FetchPronunciationMqDTO;
+import me.fengorz.kiwi.word.api.dto.queue.FetchWordMqDTO;
 import me.fengorz.kiwi.word.api.dto.queue.fetch.FetchWordResultDTO;
 import me.fengorz.kiwi.word.api.entity.WordFetchQueueDO;
 import me.fengorz.kiwi.word.api.exception.JsoupFetchConnectException;
 import me.fengorz.kiwi.word.api.feign.IWordFetchAPI;
 import me.fengorz.kiwi.word.api.feign.IWordMainVariantAPI;
+import me.fengorz.kiwi.word.crawler.service.IFetchService;
 import me.fengorz.kiwi.word.crawler.service.IJsoupService;
-import me.fengorz.kiwi.word.crawler.service.IWordFetchService;
 
 /**
  * @Author zhanshifeng
@@ -40,14 +43,14 @@ import me.fengorz.kiwi.word.crawler.service.IWordFetchService;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class WordFetchServiceImpl implements IWordFetchService {
+public class FetchServiceImpl implements IFetchService {
 
     private final IJsoupService jsoupService;
     private final IWordFetchAPI wordFetchAPI;
     private final IWordMainVariantAPI wordMainVariantAPIService;
 
     @Override
-    public void handle(WordFetchMessageDTO messageDTO) {
+    public void handle(FetchWordMqDTO messageDTO) {
         final long oldTime = System.currentTimeMillis();
         final String inputWord = messageDTO.getWord();
         final Integer queueId = messageDTO.getQueueId();
@@ -77,6 +80,7 @@ public class WordFetchServiceImpl implements IWordFetchService {
                 log.info(fetchResult);
                 handleLog.append(fetchWord);
 
+                // 标记单词基础信息已经抓取完毕，即将抓取发音文件
                 queue.setFetchStatus(WordCrawlerConstants.STATUS_TO_FETCH_PRONUNCIATION);
                 queue.setFetchResult(handleLog.toString());
                 queue.setIsLock(CommonConstants.FLAG_NO);
@@ -88,6 +92,19 @@ public class WordFetchServiceImpl implements IWordFetchService {
         } finally {
             wordFetchAPI.updateQueueById(queue);
         }
+    }
+
+    @Override
+    public void handle(FetchPronunciationMqDTO dto) {
+        WordFetchQueueDO queue = new WordFetchQueueDO().setQueueId(dto.getQueueId());
+        R<Boolean> response = Optional.of(wordFetchAPI.fetchPronunciation(dto.getWordId())).get();
+        if (response.isSuccess()) {
+            queue.setIsLock(CommonConstants.FLAG_NO);
+            queue.setFetchStatus(WordCrawlerConstants.STATUS_ALL_SUCCESS);
+        } else {
+            this.handleException(queue, WordCrawlerConstants.STATUS_TO_FETCH_PRONUNCIATION_FAIL, response.getMsg());
+        }
+        wordFetchAPI.updateQueueById(queue);
     }
 
     private void handleException(WordFetchQueueDO queue, int status, String message) {

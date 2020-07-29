@@ -19,6 +19,7 @@ import java.util.List;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.springframework.validation.annotation.Validated;
@@ -101,29 +102,13 @@ public class WordFetchController extends BaseController {
         return R.auto(wordFetchQueueService.lock(wordName));
     }
 
-    @PostMapping("/storeFetchWordResult")
-    public R<Boolean> storeFetchWordResult(@RequestBody @Valid FetchWordResultDTO dto) {
+    @PostMapping("/storeResult")
+    public R<Boolean> storeResult(@RequestBody @Valid FetchWordResultDTO dto) {
         return R.success(wordCrawlerService.storeFetchWordResult(dto));
     }
 
-    // @PostMapping("/storeFetchWordResult")
-    // public R<Void> storeFetchWordResult(@RequestBody @Valid FetchWordResultDTO fetchWordResultDTO) {
-    // try {
-    // wordOperateService.storeFetchWordResult(fetchWordResultDTO);
-    // } catch (WordResultStoreException e) {
-    // return R.failed(
-    // ResultCode.build(() -> WordCrawlerConstants.STATUS_ERROR_WORD_ID_NOT_NULL, () -> CommonConstants.EMPTY),
-    // e.getMessage());
-    // } catch (DfsOperateDeleteException e) {
-    // log.error(KiwiLogUtils.getClassName() + CommonConstants.SYMBOL_DOT + KiwiLogUtils.getMethodName(),
-    // e.getMessage());
-    // wordOperateService.dfsDeleteExceptionBackCall(fetchWordResultDTO.getWordName());
-    // return R.failed(ResultCode.build(() -> WordCrawlerConstants.STATUS_ERROR_DFS_OPERATE_DELETE_FAILED,
-    // () -> CommonConstants.EMPTY), e.getMessage());
-    // } catch (DfsOperateException e) {
-    // return R.failed(ResultCode.build(() -> WordCrawlerConstants.STATUS_ERROR_DFS_OPERATE_FAILED,
-    // () -> CommonConstants.EMPTY), e.getMessage());
-    // }
-    // return R.success();
-    // }
+    @GetMapping("/fetchPronunciation")
+    public R<Boolean> fetchPronunciation(@NotNull Integer wordId) {
+        return R.success(wordCrawlerService.fetchPronunciation(wordId));
+    }
 }

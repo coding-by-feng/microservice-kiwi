@@ -1,6 +1,6 @@
 /*
  *
- * Copyright [2019~2025] [zhanshifeng]
+ * Copyright [2019~2025] [codingByFeng]
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -14,17 +14,16 @@
  *
  */
 
-package me.fengorz.kiwi.word.crawler.service;
+package me.fengorz.kiwi.word.crawler.component.producer.base;
 
+import me.fengorz.kiwi.word.api.dto.queue.FetchPronunciationMqDTO;
 import me.fengorz.kiwi.word.api.dto.queue.FetchWordMqDTO;
-import me.fengorz.kiwi.word.api.dto.queue.fetch.FetchWordResultDTO;
-import me.fengorz.kiwi.word.api.exception.JsoupFetchConnectException;
-import me.fengorz.kiwi.word.api.exception.JsoupFetchPronunciationException;
-import me.fengorz.kiwi.word.api.exception.JsoupFetchResultException;
+import me.fengorz.kiwi.word.api.dto.queue.RemoveWordMqDTO;
 
-public interface IJsoupService {
+public interface ISender {
+    void fetchWord(FetchWordMqDTO dto);
 
-    FetchWordResultDTO fetchWordInfo(FetchWordMqDTO wordMessage)
-        throws JsoupFetchConnectException, JsoupFetchResultException, JsoupFetchPronunciationException;
+    void fetchPronunciation(FetchPronunciationMqDTO dto);
 
+    void removeWord(RemoveWordMqDTO dto);
 }

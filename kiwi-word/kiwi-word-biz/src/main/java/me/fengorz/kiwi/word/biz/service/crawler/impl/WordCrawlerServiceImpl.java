@@ -18,11 +18,14 @@ package me.fengorz.kiwi.word.biz.service.crawler.impl;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.io.FileUtil;
@@ -33,10 +36,12 @@ import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.bdf.core.service.ISeqService;
 import me.fengorz.kiwi.common.api.constant.CommonConstants;
 import me.fengorz.kiwi.common.api.constant.MapperConstant;
+import me.fengorz.kiwi.common.api.exception.ServiceException;
 import me.fengorz.kiwi.common.api.exception.dfs.DfsOperateDeleteException;
 import me.fengorz.kiwi.common.api.exception.dfs.DfsOperateException;
 import me.fengorz.kiwi.common.fastdfs.service.IDfsService;
 import me.fengorz.kiwi.common.sdk.util.lang.collection.KiwiCollectionUtils;
+import me.fengorz.kiwi.common.sdk.util.lang.string.KiwiStringUtils;
 import me.fengorz.kiwi.word.api.common.WordCrawlerConstants;
 import me.fengorz.kiwi.word.api.dto.queue.fetch.*;
 import me.fengorz.kiwi.word.api.entity.*;
@@ -47,7 +52,7 @@ import me.fengorz.kiwi.word.biz.util.WordBizUtils;
 import me.fengorz.kiwi.word.biz.util.WordDfsUtils;
 
 /**
- * @Description TODO
+ * @Description 爬虫服务
  * @Author zhanshifeng
  * @Date 2020/7/28 8:03 PM
  */
@@ -86,7 +91,6 @@ public class WordCrawlerServiceImpl implements IWordCrawlerService {
             .setWordId(seqService.genIntSequence(MapperConstant.T_INS_SEQUENCE)).setIsDel(CommonConstants.FLAG_DEL_NO);
         wordMainService.save(wordMainDO);
         this.subStoreFetchWordResult(dto, wordMainDO);
-        wordFetchQueueService.finishFetchBase(dto.getQueueId());
         wordOperateService.cachePutFetchReplace(wordName,
             wordOperateService.cacheGetFetchReplace(wordName).setNewRelWordId(wordMainDO.getWordId()));
         return true;
@@ -149,7 +153,7 @@ public class WordCrawlerServiceImpl implements IWordCrawlerService {
                     fetchWordCodeDTO.getFetchWordPronunciationDTOList();
                 if (CollUtil.isNotEmpty(fetchWordPronunciationDTOList)) {
                     for (FetchWordPronunciationDTO fetchWordPronunciationDTO : fetchWordPronunciationDTOList) {
-                        WordPronunciationDO wordPronunciation = WordBizUtils.initWordPronunciation(wordId, characterId,
+                        WordPronunciationDO wordPronunciation = WordBizUtils.initPronunciation(wordId, characterId,
                             fetchWordPronunciationDTO.getVoiceFileUrl(), fetchWordPronunciationDTO.getSoundmark(),
                             fetchWordPronunciationDTO.getSoundmarkType());
                         wordPronunciation.setPronunciationId(seqService.genIntSequence(MapperConstant.T_INS_SEQUENCE));
@@ -160,11 +164,30 @@ public class WordCrawlerServiceImpl implements IWordCrawlerService {
         }
     }
 
-    @Deprecated
-    private String fetchPronunciationVoice(String originVoiceFileUrl) throws DfsOperateException {
-        String voiceFileUrl = WordCrawlerConstants.CAMBRIDGE_BASE_URL + originVoiceFileUrl;
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public boolean fetchPronunciation(Integer wordId) {
+        Objects
+            .requireNonNull(wordPronunciationService
+                .list(Wrappers.<WordPronunciationDO>lambdaQuery().eq(WordPronunciationDO::getWordId, wordId)))
+            .forEach(this::fetchPronunciationVoice);
+        return true;
+    }
+
+    private void fetchPronunciationVoice(WordPronunciationDO pronunciation) {
+        String voiceUrl = pronunciation.getVoiceFilePath();
+        String voiceFileUrl = WordCrawlerConstants.CAMBRIDGE_BASE_URL + voiceUrl;
         long voiceSize = HttpUtil.downloadFile(URLUtil.decode(voiceFileUrl), FileUtil.file(crawlerVoiceBasePath));
         String tempVoice = crawlerVoiceBasePath + WordDfsUtils.getVoiceFileName(voiceFileUrl);
-        return dfsService.uploadFile(FileUtil.getInputStream(tempVoice), voiceSize, WordCrawlerConstants.EXT_OGG);
+        try {
+            String uploadResult =
+                dfsService.uploadFile(FileUtil.getInputStream(tempVoice), voiceSize, WordCrawlerConstants.EXT_OGG);
+            pronunciation.setGroupName(WordDfsUtils.getGroupName(uploadResult));
+            pronunciation.setVoiceFilePath(WordDfsUtils.getUploadVoiceFilePath(uploadResult));
+            wordPronunciationService.updateById(pronunciation);
+        } catch (DfsOperateException e) {
+            throw new ServiceException(
+                KiwiStringUtils.format("fetchPronunciationVoice error, pronunciation.url={}", voiceUrl));
+        }
     }
 }

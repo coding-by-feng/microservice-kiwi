@@ -21,37 +21,32 @@ import java.util.Optional;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.api.constant.CommonConstants;
 import me.fengorz.kiwi.word.api.common.WordCrawlerConstants;
-import me.fengorz.kiwi.word.api.dto.queue.WordFetchMessageDTO;
-import me.fengorz.kiwi.word.api.dto.remote.WordFetchQueuePageDTO;
+import me.fengorz.kiwi.word.api.dto.queue.FetchWordMqDTO;
 import me.fengorz.kiwi.word.api.entity.WordFetchQueueDO;
 import me.fengorz.kiwi.word.api.feign.IWordFetchAPI;
+import me.fengorz.kiwi.word.crawler.component.producer.base.AbstractProducer;
+import me.fengorz.kiwi.word.crawler.component.producer.base.IProducer;
+import me.fengorz.kiwi.word.crawler.component.producer.base.ISender;
 
 /**
  * @Description TODO
  * @Author zhanshifeng
  * @Date 2019/10/30 10:33 AM
  */
-@Component
+@Component("asyncFetchWordProducer")
 @Slf4j
-@RequiredArgsConstructor
-public class AsyncFetchWordProducer implements IProducer {
+public class AsyncFetchWordProducer extends AbstractProducer implements IProducer {
 
-    private final MqSender mqSender;
-    private final IWordFetchAPI wordFetchAPI;
+    public AsyncFetchWordProducer(IWordFetchAPI api, ISender sender) {
+        super(api, sender);
+    }
 
     @Override
     public void produce() {
-        WordFetchQueueDO wordFetchQueue = new WordFetchQueueDO().setFetchStatus(WordCrawlerConstants.STATUS_TO_FETCH)
-            .setIsValid(CommonConstants.FLAG_Y).setIsLock(CommonConstants.FLAG_NO);
-        WordFetchQueuePageDTO wordFetchQueuePage =
-            new WordFetchQueuePageDTO().setWordFetchQueue(wordFetchQueue).setPage(new Page<>(1, 20));
-        Optional.of(wordFetchAPI.pageQueue(wordFetchQueuePage)).get().getData().forEach(this::fetchWord);
+        super.produce(WordCrawlerConstants.STATUS_TO_FETCH);
     }
 
     /**
@@ -60,13 +55,11 @@ public class AsyncFetchWordProducer implements IProducer {
      * @param queue
      */
     @Async
-    public void fetchWord(WordFetchQueueDO queue) {
+    @Override
+    protected void execute(WordFetchQueueDO queue) {
         queue.setIsLock(CommonConstants.FLAG_YES);
-        Optional.of(wordFetchAPI.updateQueueById(queue)).ifPresent(response -> {
-            if (response.isSuccess()) {
-                mqSender.send(new WordFetchMessageDTO().setWord(queue.getWordName()).setQueueId(queue.getQueueId()));
-            }
-        });
+        if (Optional.of(wordFetchAPI.updateQueueById(queue)).get().isSuccess()) {
+            sender.fetchWord(new FetchWordMqDTO().setWord(queue.getWordName()).setQueueId(queue.getQueueId()));
+        }
     }
-
 }

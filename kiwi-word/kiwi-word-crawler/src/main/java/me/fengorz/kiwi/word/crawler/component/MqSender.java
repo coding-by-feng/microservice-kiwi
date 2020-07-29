@@ -14,14 +14,17 @@
  *
  */
 
-package me.fengorz.kiwi.word.crawler.component.producer;
+package me.fengorz.kiwi.word.crawler.component;
 
 import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import me.fengorz.kiwi.word.api.dto.queue.WordFetchMessageDTO;
+import me.fengorz.kiwi.word.api.dto.queue.FetchPronunciationMqDTO;
+import me.fengorz.kiwi.word.api.dto.queue.FetchWordMqDTO;
+import me.fengorz.kiwi.word.api.dto.queue.RemoveWordMqDTO;
+import me.fengorz.kiwi.word.crawler.component.producer.base.ISender;
 
 /**
  * @Description TODO
@@ -29,7 +32,7 @@ import me.fengorz.kiwi.word.api.dto.queue.WordFetchMessageDTO;
  * @Date 2019/10/28 9:20 AM
  */
 @Component
-public class MqSender {
+public class MqSender implements ISender {
 
     @Autowired
     private AmqpTemplate amqpTemplate;
@@ -40,8 +43,25 @@ public class MqSender {
     @Value("${mq.config.word.fetch.routing.cambridge}")
     private String wordFetchRoutingKey;
 
-    public void send(WordFetchMessageDTO wordMessage) {
-        this.amqpTemplate.convertAndSend(this.wordFetchExchange, this.wordFetchRoutingKey, wordMessage);
+    @Value("${mq.config.pronunciation.fetch.exchange}")
+    private String pronunciationFetchExchange;
+
+    @Value("${mq.config.pronunciation.fetch.routing.cambridge}")
+    private String pronunciationFetchRoutingKey;
+
+    @Override
+    public void fetchWord(FetchWordMqDTO dto) {
+        this.amqpTemplate.convertAndSend(this.wordFetchExchange, this.wordFetchRoutingKey, dto);
+    }
+
+    @Override
+    public void fetchPronunciation(FetchPronunciationMqDTO dto) {
+        this.amqpTemplate.convertAndSend(this.pronunciationFetchExchange, this.pronunciationFetchRoutingKey, dto);
+    }
+
+    @Override
+    public void removeWord(RemoveWordMqDTO dto) {
+
     }
 
 }

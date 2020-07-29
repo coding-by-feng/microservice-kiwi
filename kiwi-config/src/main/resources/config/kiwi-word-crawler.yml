@@ -7,23 +7,23 @@ mq:
         exchange: word
         queue: crawler
         routing:
-          cambridge: cambridge
+          cambridge: cambridgeCrawler
       del:
         exchange: word
         queue: word.data.del
         routing:
-          cambridge: cambridge
+          cambridge: cambridgeDel
     pronunciation:
       fetch:
         exchange: pronunciation
         queue: pronunciation.fetch
         routing:
-          cambridge: cambridge
+          cambridge: cambridgeFetch
       remove:
         exchange: pronunciation
         queue: pronunciation.remove
         routing:
-          cambridge: cambridge
+          cambridge: cambridgeRemove
     youdao:
       exchange: youdao.translate
       queue:
@@ -47,11 +47,10 @@ crawler:
   config:
     core:
       pool:
-        #        size: 5
-        size: 10
+        size: 5
     max:
       pool:
-        size: 15
+        size: 10
     queue:
       capacity: 5
 

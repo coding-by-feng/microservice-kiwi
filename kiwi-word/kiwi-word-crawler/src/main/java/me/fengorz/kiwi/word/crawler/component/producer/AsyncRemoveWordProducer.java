@@ -24,38 +24,38 @@ import org.springframework.stereotype.Component;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.api.constant.CommonConstants;
 import me.fengorz.kiwi.word.api.common.WordCrawlerConstants;
-import me.fengorz.kiwi.word.api.dto.queue.FetchPronunciationMqDTO;
+import me.fengorz.kiwi.word.api.dto.queue.RemoveWordMqDTO;
 import me.fengorz.kiwi.word.api.entity.WordFetchQueueDO;
 import me.fengorz.kiwi.word.api.feign.IWordFetchAPI;
-import me.fengorz.kiwi.word.crawler.component.MqSender;
 import me.fengorz.kiwi.word.crawler.component.producer.base.AbstractProducer;
 import me.fengorz.kiwi.word.crawler.component.producer.base.IProducer;
+import me.fengorz.kiwi.word.crawler.component.producer.base.ISender;
 
 /**
  * @Description TODO
  * @Author zhanshifeng
  * @Date 2019/10/30 10:33 AM
  */
-@Component("asyncFetchPronunciationProducer")
+@Component("asyncFetchWordProducer")
 @Slf4j
-public class AsyncFetchPronunciationProducer extends AbstractProducer implements IProducer {
+public class AsyncRemoveWordProducer extends AbstractProducer implements IProducer {
 
-    public AsyncFetchPronunciationProducer(IWordFetchAPI api, MqSender mqSender) {
-        super(api, mqSender);
+    public AsyncRemoveWordProducer(IWordFetchAPI api, ISender sender) {
+        super(api, sender);
     }
 
     @Override
     public void produce() {
-        super.produce(WordCrawlerConstants.STATUS_TO_FETCH_PRONUNCIATION);
+        super.produce(WordCrawlerConstants.STATUS_TO_DEL_BASE);
     }
 
-    @Async
     @Override
-    protected void execute(WordFetchQueueDO queue) {
+    @Async
+    public void execute(WordFetchQueueDO queue) {
         queue.setIsLock(CommonConstants.FLAG_YES);
         if (Optional.of(wordFetchAPI.updateQueueById(queue)).get().isSuccess()) {
-            sender.fetchPronunciation(
-                new FetchPronunciationMqDTO().setWordId(queue.getWordId()).setQueueId(queue.getQueueId()));
+            sender.removeWord(new RemoveWordMqDTO().setWordId(queue.getWordId()).setQueueId(queue.getQueueId()));
         }
     }
+
 }

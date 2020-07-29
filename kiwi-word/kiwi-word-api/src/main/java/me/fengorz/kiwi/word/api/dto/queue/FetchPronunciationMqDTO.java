@@ -16,9 +16,25 @@
 
 package me.fengorz.kiwi.word.api.dto.queue;
 
+import java.io.Serializable;
+
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
+import lombok.experimental.Accessors;
+
 /**
- * @Description TODO
  * @Author zhanshifeng
- * @Date 2020/7/28 11:33 PM
+ * @Date 2019/10/28 9:28 AM
  */
-public class QueueDTO {}
+@Data
+@ToString
+@Accessors(chain = true)
+@EqualsAndHashCode(callSuper = true)
+public class FetchPronunciationMqDTO extends MqDTO implements Serializable {
+
+    private static final long serialVersionUID = -6240769340338323275L;
+
+    private Integer wordId;
+    private Integer queueId;
+}

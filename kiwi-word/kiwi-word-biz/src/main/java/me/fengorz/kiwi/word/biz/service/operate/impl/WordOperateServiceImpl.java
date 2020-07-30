@@ -385,6 +385,7 @@ public class WordOperateServiceImpl implements IWordOperateService {
     @CacheEvict(cacheNames = WordConstants.CACHE_NAMES, keyGenerator = CacheConstants.CACHE_KEY_GENERATOR_BEAN)
     private void cacheEvictFetchReplace(@KiwiCacheKey String wordName) {}
 
+    @Override
     public void fetchReplaceCallBack(String wordName) {
         FetchWordReplaceDTO replaceDTO = this.cacheGetFetchReplace(wordName);
         wordStarRelService.replaceFetchResult(replaceDTO.getOldRelWordId(), replaceDTO.getNewRelWordId());

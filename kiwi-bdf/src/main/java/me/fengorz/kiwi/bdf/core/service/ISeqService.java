@@ -1,6 +1,3 @@
-/*
- * Copyright (c) 2019, CCSSOFT All Rights Reserved.
- */
 package me.fengorz.kiwi.bdf.core.service;
 
 /**

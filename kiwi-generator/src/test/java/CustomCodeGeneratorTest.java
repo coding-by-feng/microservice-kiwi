@@ -35,7 +35,6 @@ public class CustomCodeGeneratorTest {
         config.setTablePreName("");
         // 请输入模块名称：
         config.setModuleName("biz");
-        // 请输入代码包名(比如com.ccssoft.ngbip)：
         config.setPackageName("me.fengorz.kiwi.word");
         // 请输入@FeignClient的value属性值,不需要的话置空
         config.setServiceId(null);

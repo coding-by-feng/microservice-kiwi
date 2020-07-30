@@ -32,15 +32,6 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class RabbitMQConfig {
 
-    // @Value("${mq.config.word.fetch.queue}")
-    // private String fetchWordQueueName;
-    //
-    // @Value("${mq.config.word.fetch.exchange}")
-    // private String exchange;
-    //
-    // @Value("${mq.config.word.fetch.routing.cambridge}")
-    // private String routingKey;
-
     @Value("${spring.rabbitmq.host}")
     private String host;
     @Value("${spring.rabbitmq.port}")
@@ -50,41 +41,16 @@ public class RabbitMQConfig {
     @Value("${spring.rabbitmq.password}")
     private String password;
 
-    // @Bean
-    // public Queue queue() {
-    //     return new Queue(fetchWordQueueName, false);
-    // }
-    //
-    // @Bean
-    // public DirectExchange exchange() {
-    //     return new DirectExchange(exchange);
-    // }
-    //
-    // @Bean
-    // public Binding binding(Queue queue, DirectExchange exchange) {
-    //     return BindingBuilder.bind(queue).to(exchange).with(routingKey);
-    // }
-
     @Bean
     public MessageConverter jsonMessageConverter() {
         return new Jackson2JsonMessageConverter();
     }
 
     // @Bean
-    // public WordFetchProducer sender() {
-    // return new WordFetchProducer();
-    // }
-
-    // @Bean
-    // public ScheduledChiefProducer scheduledProducer(){
-    // return new ScheduledChiefProducer();
-    // }
-
-    // @Bean
     // public AmqpTemplate rabbitTemplate(ConnectionFactory connectionFactory) {
-    // final RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
-    // rabbitTemplate.setMessageConverter(this.jsonMessageConverter());
-    // return rabbitTemplate;
+    //     final RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
+    //     rabbitTemplate.setMessageConverter(this.jsonMessageConverter());
+    //     return rabbitTemplate;
     // }
 
     @Bean

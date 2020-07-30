@@ -16,9 +16,9 @@
 
 package me.fengorz.kiwi.word.biz.service.operate;
 
-import me.fengorz.kiwi.common.api.exception.ServiceException;
-import me.fengorz.kiwi.common.api.exception.dfs.DfsOperateDeleteException;
+import me.fengorz.kiwi.common.api.annotation.cache.KiwiCacheKey;
 import me.fengorz.kiwi.word.api.dto.queue.fetch.FetchWordReplaceDTO;
+import me.fengorz.kiwi.word.api.entity.WordMainDO;
 import me.fengorz.kiwi.word.api.vo.detail.WordParaphraseVO;
 import me.fengorz.kiwi.word.api.vo.detail.WordQueryVO;
 
@@ -27,25 +27,23 @@ import me.fengorz.kiwi.word.api.vo.detail.WordQueryVO;
  */
 public interface IWordOperateService {
 
-    boolean removeWord(String wordName) throws DfsOperateDeleteException;
+    WordQueryVO queryWord(String wordName);
 
-    WordQueryVO queryWord(String wordName) throws ServiceException, DfsOperateDeleteException;
+    boolean putWordIntoStarList(Integer wordId, Integer listId);
 
-    boolean putWordIntoStarList(Integer wordId, Integer listId) throws ServiceException;
-
-    boolean removeWordStarList(Integer wordId, Integer listId) throws ServiceException;
+    boolean removeWordStarList(Integer wordId, Integer listId);
 
     /* paraphrase methods begin */
 
-    boolean putParaphraseIntoStarList(Integer paraphraseId, Integer listId) throws ServiceException;
+    boolean putParaphraseIntoStarList(Integer paraphraseId, Integer listId);
 
     WordParaphraseVO findWordParaphraseVO(Integer paraphraseId);
 
     /* paraphrase methods end */
 
-    boolean putExampleIntoStarList(Integer exampleId, Integer listId) throws ServiceException;
+    boolean putExampleIntoStarList(Integer exampleId, Integer listId);
 
-    boolean removeExampleStar(Integer exampleId, Integer listId) throws ServiceException;
+    boolean removeExampleStar(Integer exampleId, Integer listId);
 
     /* wordVariant methods begin */
 
@@ -56,13 +54,13 @@ public interface IWordOperateService {
      *            实际爬虫抓取到的单词原形
      * @return
      */
-    boolean insertVariant(String inputWordName, String fetchWordName) throws DfsOperateDeleteException;
+    boolean insertVariant(String inputWordName, String fetchWordName);
 
     /* wordVariant methods end */
 
     /* cache mothods begin */
 
-    void evict(String wordName) throws DfsOperateDeleteException;
+    void evict(@KiwiCacheKey String wordName, WordMainDO one);
 
     FetchWordReplaceDTO cacheGetFetchReplace(String wordName);
 

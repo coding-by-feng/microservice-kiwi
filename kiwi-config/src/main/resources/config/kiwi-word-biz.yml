@@ -16,7 +16,7 @@ ignore:
     - /word/main/query/**
     - /word/main/queryById/**
     - /word/main/fuzzyQueryList/**
-    - /word/fetch/queue/**
+    - /word/fetch/**
     - /word/pronunciation/downloadVoice/**
     - /word/main/variant/**
   userNames:

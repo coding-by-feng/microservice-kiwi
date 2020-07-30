@@ -36,7 +36,7 @@ import me.fengorz.kiwi.word.crawler.component.producer.base.ISender;
  * @Author zhanshifeng
  * @Date 2019/10/30 10:33 AM
  */
-@Component("asyncFetchWordProducer")
+@Component("asyncRemoveWordProducer")
 @Slf4j
 public class AsyncRemoveWordProducer extends AbstractProducer implements IProducer {
 
@@ -54,7 +54,8 @@ public class AsyncRemoveWordProducer extends AbstractProducer implements IProduc
     public void execute(WordFetchQueueDO queue) {
         queue.setIsLock(CommonConstants.FLAG_YES);
         if (Optional.of(wordFetchAPI.updateQueueById(queue)).get().isSuccess()) {
-            sender.removeWord(new RemoveWordMqDTO().setWordId(queue.getWordId()).setQueueId(queue.getQueueId()));
+            sender.removeWord(new RemoveWordMqDTO().setWordName(queue.getWordName()).setWordId(queue.getWordId())
+                .setQueueId(queue.getQueueId()));
         }
     }
 

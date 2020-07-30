@@ -18,6 +18,7 @@ package me.fengorz.kiwi.word.crawler.component.producer.base;
 
 import me.fengorz.kiwi.word.api.dto.queue.FetchPronunciationMqDTO;
 import me.fengorz.kiwi.word.api.dto.queue.FetchWordMqDTO;
+import me.fengorz.kiwi.word.api.dto.queue.RemovePronunciatioinMqDTO;
 import me.fengorz.kiwi.word.api.dto.queue.RemoveWordMqDTO;
 
 public interface ISender {
@@ -26,4 +27,6 @@ public interface ISender {
     void fetchPronunciation(FetchPronunciationMqDTO dto);
 
     void removeWord(RemoveWordMqDTO dto);
+
+    void removePronunciation(RemovePronunciatioinMqDTO dto);
 }

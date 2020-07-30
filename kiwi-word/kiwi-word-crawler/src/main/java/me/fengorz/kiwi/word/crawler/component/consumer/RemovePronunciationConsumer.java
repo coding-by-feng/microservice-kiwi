@@ -26,7 +26,7 @@ import org.springframework.stereotype.Component;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import me.fengorz.kiwi.word.api.dto.queue.FetchPronunciationMqDTO;
+import me.fengorz.kiwi.word.api.dto.queue.RemovePronunciatioinMqDTO;
 import me.fengorz.kiwi.word.crawler.component.consumer.base.AbstractConsumer;
 import me.fengorz.kiwi.word.crawler.component.consumer.base.IConsumer;
 import me.fengorz.kiwi.word.crawler.service.IFetchService;
@@ -39,40 +39,42 @@ import me.fengorz.kiwi.word.crawler.service.IFetchService;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-@RabbitListener(bindings = @QueueBinding(value = @Queue(value = "${mq.config.pronunciation.fetch.queue}", autoDelete = "true"),
-    exchange = @Exchange(value = "${mq.config.pronunciation.fetch.exchange}"),
-    key = "${mq.config.pronunciation.fetch.routing.cambridge}"))
-public class FetchPronunciationConsumer extends AbstractConsumer<FetchPronunciationMqDTO>
-    implements IConsumer<FetchPronunciationMqDTO> {
+@RabbitListener(
+    bindings = @QueueBinding(value = @Queue(value = "${mq.config.pronunciation.remove.queue}", autoDelete = "true"),
+        exchange = @Exchange(value = "${mq.config.pronunciation.remove.exchange}"),
+        key = "${mq.config.pronunciation.remove.routing.cambridge}"))
+public class RemovePronunciationConsumer extends AbstractConsumer<RemovePronunciatioinMqDTO>
+    implements IConsumer<RemovePronunciatioinMqDTO> {
 
     private final IFetchService fetchService;
 
-    @Resource(name = "fetchPronunciationThreadExecutor")
-    private ThreadPoolTaskExecutor fetchPronunciationThreadExecutor;
+    @Resource(name = "removePronunciationThreadExecutor")
+    private ThreadPoolTaskExecutor removePronunciationThreadExecutor;
 
     @Value("${crawler.config.max.pool.size}")
     private int maxPoolSize;
 
     @PostConstruct
     private void init() {
-        super.threadPoolTaskExecutor = this.fetchPronunciationThreadExecutor;
+        super.threadPoolTaskExecutor = this.removePronunciationThreadExecutor;
         super.maxPoolSize = this.maxPoolSize;
-        super.startWorkLog = "rabbitMQ fetch one pronunciation is 【{}】";
+        super.startWorkLog = "rabbitMQ remove one pronunciation is 【{}】";
     }
 
     @Override
     @RabbitHandler
-    public void consume(FetchPronunciationMqDTO dto) {
+    public void consume(RemovePronunciatioinMqDTO dto) {
         super.work(dto);
     }
 
     @Override
-    protected void execute(FetchPronunciationMqDTO dto) {
+    protected void execute(RemovePronunciatioinMqDTO dto) {
         fetchService.handle(dto);
     }
 
     @Override
-    protected void errorCallback(FetchPronunciationMqDTO dto) {
-
+    protected void errorCallback(RemovePronunciatioinMqDTO dto) {
+        // TODO ZSF 增加一个抓取队列状态恢复到待抓取的接口，防止数据抓取丢失
     }
+
 }

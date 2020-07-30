@@ -18,14 +18,13 @@ package me.fengorz.kiwi.bdf.core.config;
 
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.cache.annotation.EnableCaching;
-import org.springframework.context.annotation.AdviceMode;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.*;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.pagination.optimize.JsqlParserCountOptimize;
+
+import me.fengorz.kiwi.common.sdk.config.UtilsBeanConfiguration;
 
 @Configuration
 @MapperScan("me.fengorz.kiwi.**.mapper")
@@ -34,6 +33,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.optimize.JsqlParser
 @EnableTransactionManagement()
 @EnableCaching(mode = AdviceMode.ASPECTJ)
 // @EnableCaching()
+@Import({UtilsBeanConfiguration.class})
 public class CoreConfig {
 
     @Bean

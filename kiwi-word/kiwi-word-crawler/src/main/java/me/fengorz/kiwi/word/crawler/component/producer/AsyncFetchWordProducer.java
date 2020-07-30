@@ -57,9 +57,16 @@ public class AsyncFetchWordProducer extends AbstractProducer implements IProduce
     @Async
     @Override
     protected void execute(WordFetchQueueDO queue) {
-        queue.setIsLock(CommonConstants.FLAG_YES);
-        if (Optional.of(wordFetchAPI.updateQueueById(queue)).get().isSuccess()) {
-            sender.fetchWord(new FetchWordMqDTO().setWord(queue.getWordName()).setQueueId(queue.getQueueId()));
+        if (null == queue.getWordId() || 0 == queue.getWordId()) {
+            queue.setIsLock(CommonConstants.FLAG_YES);
+            if (Optional.of(wordFetchAPI.updateQueueById(queue)).get().isSuccess()) {
+                sender.fetchWord(new FetchWordMqDTO().setWord(queue.getWordName()).setQueueId(queue.getQueueId()));
+            }
+        } else {
+            // 删除老的数据
+            queue.setIsLock(CommonConstants.FLAG_NO);
+            queue.setFetchStatus(WordCrawlerConstants.STATUS_TO_DEL_BASE);
+            wordFetchAPI.updateQueueById(queue);
         }
     }
 }

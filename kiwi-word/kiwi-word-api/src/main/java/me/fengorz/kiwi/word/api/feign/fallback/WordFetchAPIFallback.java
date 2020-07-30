@@ -23,8 +23,8 @@ import org.springframework.stereotype.Component;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.api.R;
+import me.fengorz.kiwi.word.api.dto.queue.RemovePronunciatioinMqDTO;
 import me.fengorz.kiwi.word.api.dto.queue.fetch.FetchWordResultDTO;
-import me.fengorz.kiwi.word.api.dto.remote.WordFetchQueuePageDTO;
 import me.fengorz.kiwi.word.api.entity.WordFetchQueueDO;
 import me.fengorz.kiwi.word.api.feign.IWordFetchAPI;
 
@@ -41,42 +41,50 @@ public class WordFetchAPIFallback implements IWordFetchAPI {
     private Throwable throwable;
 
     @Override
-    public R<List<WordFetchQueueDO>> pageQueue(WordFetchQueuePageDTO dto) {
+    public R<List<WordFetchQueueDO>> pageQueue(Integer status, Integer current, Integer size) {
+        log.error(throwable.getCause().getMessage());
         return R.feignCallFailed(throwable.getMessage());
     }
 
     @Override
     public R<Boolean> updateQueueById(WordFetchQueueDO queueDO) {
+        log.error(throwable.getCause().getMessage());
         return R.feignCallFailed(throwable.getMessage());
     }
 
     @Override
     public R<Void> storeResult(FetchWordResultDTO dto) {
+        log.error(throwable.getCause().getMessage());
         return R.feignCallFailed(throwable.getMessage());
     }
 
     @Override
     public R<Boolean> fetchPronunciation(Integer wordId) {
+        log.error(throwable.getCause().getMessage());
         return R.feignCallFailed(throwable.getMessage());
     }
 
     @Override
-    public R<Boolean> removeWord(Integer wordId) {
+    public R<List<RemovePronunciatioinMqDTO>> removeWord(String wordName, Integer queueId) {
+        log.error(throwable.getCause().getMessage());
         return R.feignCallFailed(throwable.getMessage());
     }
 
     @Override
     public R<Boolean> updateByWordName(WordFetchQueueDO queueDO) {
+        log.error(throwable.getCause().getMessage());
         return R.feignCallFailed(throwable.getMessage());
     }
 
     @Override
     public R<Boolean> invalid(String wordName) {
+        log.error(throwable.getCause().getMessage());
         return R.feignCallFailed(throwable.getMessage());
     }
 
     @Override
     public R<Boolean> lock(String wordName) {
+        log.error(throwable.getCause().getMessage());
         return R.feignCallFailed(throwable.getMessage());
     }
 }

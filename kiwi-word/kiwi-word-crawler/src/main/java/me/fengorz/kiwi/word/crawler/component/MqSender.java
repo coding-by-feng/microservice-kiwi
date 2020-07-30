@@ -23,6 +23,7 @@ import org.springframework.stereotype.Component;
 
 import me.fengorz.kiwi.word.api.dto.queue.FetchPronunciationMqDTO;
 import me.fengorz.kiwi.word.api.dto.queue.FetchWordMqDTO;
+import me.fengorz.kiwi.word.api.dto.queue.RemovePronunciatioinMqDTO;
 import me.fengorz.kiwi.word.api.dto.queue.RemoveWordMqDTO;
 import me.fengorz.kiwi.word.crawler.component.producer.base.ISender;
 
@@ -49,6 +50,18 @@ public class MqSender implements ISender {
     @Value("${mq.config.pronunciation.fetch.routing.cambridge}")
     private String pronunciationFetchRoutingKey;
 
+    @Value("${mq.config.word.remove.exchange}")
+    private String wordRemoveExchange;
+
+    @Value("${mq.config.word.remove.routing.cambridge}")
+    private String wordRemoveRoutingKey;
+
+    @Value("${mq.config.pronunciation.remove.exchange}")
+    private String pronunciationRemoveExchange;
+
+    @Value("${mq.config.pronunciation.remove.routing.cambridge}")
+    private String pronunciationRemoveRoutingKey;
+
     @Override
     public void fetchWord(FetchWordMqDTO dto) {
         this.amqpTemplate.convertAndSend(this.wordFetchExchange, this.wordFetchRoutingKey, dto);
@@ -61,7 +74,12 @@ public class MqSender implements ISender {
 
     @Override
     public void removeWord(RemoveWordMqDTO dto) {
+        this.amqpTemplate.convertAndSend(this.wordRemoveExchange, this.wordRemoveRoutingKey, dto);
+    }
 
+    @Override
+    public void removePronunciation(RemovePronunciatioinMqDTO dto) {
+        this.amqpTemplate.convertAndSend(this.pronunciationRemoveExchange, this.pronunciationRemoveRoutingKey, dto);
     }
 
 }

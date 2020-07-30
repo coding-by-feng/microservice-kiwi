@@ -34,6 +34,7 @@ import lombok.experimental.Accessors;
 public class RemoveWordMqDTO extends MqDTO implements Serializable {
 
     private static final long serialVersionUID = -752676784093492634L;
+    private String wordName;
     private Integer wordId;
     private Integer queueId;
 }

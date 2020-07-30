@@ -35,13 +35,15 @@ import me.fengorz.kiwi.common.api.annotation.cache.KiwiCacheKey;
 import me.fengorz.kiwi.common.api.annotation.cache.KiwiCacheKeyPrefix;
 import me.fengorz.kiwi.common.api.constant.CacheConstants;
 import me.fengorz.kiwi.common.api.constant.CommonConstants;
+import me.fengorz.kiwi.common.api.exception.ServiceException;
 import me.fengorz.kiwi.common.sdk.util.bean.KiwiBeanUtils;
 import me.fengorz.kiwi.common.sdk.util.lang.collection.KiwiCollectionUtils;
+import me.fengorz.kiwi.common.sdk.util.lang.string.KiwiStringUtils;
 import me.fengorz.kiwi.word.api.common.WordConstants;
 import me.fengorz.kiwi.word.api.entity.WordMainDO;
 import me.fengorz.kiwi.word.api.vo.WordMainVO;
-import me.fengorz.kiwi.word.biz.exception.WordGetOneException;
 import me.fengorz.kiwi.word.biz.mapper.WordMainMapper;
+import me.fengorz.kiwi.word.biz.service.base.IWordFetchQueueService;
 import me.fengorz.kiwi.word.biz.service.base.IWordMainService;
 
 /**
@@ -55,7 +57,9 @@ import me.fengorz.kiwi.word.biz.service.base.IWordMainService;
 @KiwiCacheKeyPrefix(WordConstants.CACHE_KEY_PREFIX_WORD_MAIN.CLASS)
 public class WordMainServiceImpl extends ServiceImpl<WordMainMapper, WordMainDO> implements IWordMainService {
 
-    public static final String VALUE = "value";
+    private static final String VALUE = "value";
+
+    private final IWordFetchQueueService queueService;
 
     @Override
     public boolean save(WordMainDO entity) {
@@ -74,16 +78,15 @@ public class WordMainServiceImpl extends ServiceImpl<WordMainMapper, WordMainDO>
     @KiwiCacheKeyPrefix(WordConstants.CACHE_KEY_PREFIX_WORD_MAIN.METHOD_NAME)
     @Cacheable(cacheNames = WordConstants.CACHE_NAMES, keyGenerator = CacheConstants.CACHE_KEY_GENERATOR_BEAN,
         unless = "#result == null")
-    public WordMainVO getOne(@KiwiCacheKey String wordName) throws WordGetOneException {
-        // TODO ZSF isDel要改成tinyint类型
+    public WordMainVO getOne(@KiwiCacheKey String wordName) {
         try {
             return KiwiBeanUtils.convertFrom(this.getOne(new LambdaQueryWrapper<WordMainDO>()
                 .eq(WordMainDO::getWordName, wordName).eq(WordMainDO::getIsDel, CommonConstants.FLAG_DEL_NO)),
                 WordMainVO.class);
         } catch (Exception e) {
             log.error(e.getMessage());
-            throw new WordGetOneException();
-            // this.remove(Wrappers.<WordMainDO>lambdaQuery().eq(WordMainDO::getWordName, wordName));
+            queueService.flagWordQueryException(wordName);
+            throw new ServiceException(KiwiStringUtils.format("wordMainService.getOne error, wordName={}", wordName));
         }
     }
 
@@ -113,7 +116,7 @@ public class WordMainServiceImpl extends ServiceImpl<WordMainMapper, WordMainDO>
     }
 
     @Override
-    public boolean isExist(String wordName) throws WordGetOneException {
+    public boolean isExist(String wordName) {
         return this.getOne(wordName) != null;
     }
 

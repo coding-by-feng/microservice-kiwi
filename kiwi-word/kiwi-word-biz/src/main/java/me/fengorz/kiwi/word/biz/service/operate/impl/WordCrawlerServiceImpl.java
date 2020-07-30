@@ -14,7 +14,7 @@
  *
  */
 
-package me.fengorz.kiwi.word.biz.service.crawler.impl;
+package me.fengorz.kiwi.word.biz.service.operate.impl;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -46,7 +46,7 @@ import me.fengorz.kiwi.word.api.common.WordCrawlerConstants;
 import me.fengorz.kiwi.word.api.dto.queue.fetch.*;
 import me.fengorz.kiwi.word.api.entity.*;
 import me.fengorz.kiwi.word.biz.service.base.*;
-import me.fengorz.kiwi.word.biz.service.crawler.IWordCrawlerService;
+import me.fengorz.kiwi.word.biz.service.operate.IWordCrawlerService;
 import me.fengorz.kiwi.word.biz.service.operate.IWordOperateService;
 import me.fengorz.kiwi.word.biz.util.WordBizUtils;
 import me.fengorz.kiwi.word.biz.util.WordDfsUtils;
@@ -91,6 +91,7 @@ public class WordCrawlerServiceImpl implements IWordCrawlerService {
             .setWordId(seqService.genIntSequence(MapperConstant.T_INS_SEQUENCE)).setIsDel(CommonConstants.FLAG_DEL_NO);
         wordMainService.save(wordMainDO);
         this.subStoreFetchWordResult(dto, wordMainDO);
+        wordFetchQueueService.flagFetchBaseFinish(dto.getQueueId(), wordMainDO.getWordId());
         wordOperateService.cachePutFetchReplace(wordName,
             wordOperateService.cacheGetFetchReplace(wordName).setNewRelWordId(wordMainDO.getWordId()));
         return true;

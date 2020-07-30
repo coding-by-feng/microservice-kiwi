@@ -183,10 +183,6 @@ public class CustomCodeGenerator {
         templates.add("templates/RemoteService.java.vm");
         templates.add("templates/RemoteServiceFallBackImpl.java.vm");
         templates.add("templates/RemoteServiceFallBackFactory.java.vm");
-        // templates.add("templatesForCcssoft/menu.sql.vm");
-        // templates.add("templatesForCcssoft/index.vue.vm");
-        // templates.add("templatesForCcssoft/api.js.vm");
-        // templates.add("templatesForCcssoft/crud.js.vm");
         return templates;
     }
 

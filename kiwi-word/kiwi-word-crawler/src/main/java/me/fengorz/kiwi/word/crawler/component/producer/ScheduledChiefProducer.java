@@ -34,7 +34,7 @@ import me.fengorz.kiwi.word.crawler.component.producer.base.IProducer;
 @Slf4j
 public class ScheduledChiefProducer {
 
-    @Scheduled(fixedDelay = 5000L)
+    @Scheduled(fixedDelay = 2000L)
     public void produce() {
         for (IProducer producer : Objects.requireNonNull(SpringUtils.getBeansList(IProducer.class))) {
             producer.produce();

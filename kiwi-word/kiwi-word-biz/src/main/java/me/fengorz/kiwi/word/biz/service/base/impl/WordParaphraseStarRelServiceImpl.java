@@ -72,12 +72,13 @@ public class WordParaphraseStarRelServiceImpl extends ServiceImpl<WordParaphrase
             if (update < 1) {
                 List<Integer> list =
                     wordParaphraseMapper.selectList(wrapper.orderByDesc(WordParaphraseDO::getParaphraseId)).stream()
-                        .map(WordParaphraseDO::getParaphraseId).collect(Collectors.toList());
+                        .map(WordParaphraseDO::getParaphraseId).filter(id -> !id.equals(newRelId))
+                        .collect(Collectors.toList());
                 if (KiwiCollectionUtils.isEmpty(list)) {
                     return;
                 }
                 wordParaphraseStarRelMapper.update(new WordParaphraseStarRelDO().setParaphraseId(newRelId), Wrappers
-                    .<WordParaphraseStarRelDO>lambdaUpdate().eq(WordParaphraseStarRelDO::getParaphraseId, list.get(0)));
+                    .<WordParaphraseStarRelDO>lambdaUpdate().in(WordParaphraseStarRelDO::getParaphraseId, list));
             }
         }
     }

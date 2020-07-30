@@ -8,7 +8,7 @@ mq:
         queue: crawler
         routing:
           cambridge: cambridgeCrawler
-      del:
+      remove:
         exchange: word
         queue: word.data.del
         routing:

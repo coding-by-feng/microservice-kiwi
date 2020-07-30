@@ -34,6 +34,7 @@ import me.fengorz.kiwi.common.sdk.controller.BaseController;
 import me.fengorz.kiwi.common.sdk.util.lang.string.KiwiStringUtils;
 import me.fengorz.kiwi.word.api.entity.WordMainDO;
 import me.fengorz.kiwi.word.api.vo.detail.WordQueryVO;
+import me.fengorz.kiwi.word.biz.service.base.IWordFetchQueueService;
 import me.fengorz.kiwi.word.biz.service.base.IWordMainService;
 import me.fengorz.kiwi.word.biz.service.operate.IWordOperateService;
 
@@ -52,11 +53,13 @@ public class WordMainController extends BaseController {
 
     private final IWordMainService wordMainService;
     private final IWordOperateService wordOperateService;
+    private final IWordFetchQueueService queueService;
 
     @GetMapping("/removeByWordName/{wordName}")
     // @PreAuthorize("@pms.hasPermission('biz_wordmain_del')")
     public R<Boolean> removeByWordName(@PathVariable String wordName) throws DfsOperateDeleteException {
-        return R.auto(wordOperateService.removeWord(wordName));
+        queueService.flagStartFetchOnAsync(wordName);
+        return R.success();
     }
 
     @GetMapping("/query/{wordName}")

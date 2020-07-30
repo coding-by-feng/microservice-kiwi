@@ -14,24 +14,20 @@
  *
  */
 
-package me.fengorz.kiwi.word.crawler.service;
+package me.fengorz.kiwi.word.crawler.config;
 
-import me.fengorz.kiwi.word.api.dto.queue.FetchPronunciationMqDTO;
-import me.fengorz.kiwi.word.api.dto.queue.FetchWordMqDTO;
-import me.fengorz.kiwi.word.api.dto.queue.RemovePronunciatioinMqDTO;
-import me.fengorz.kiwi.word.api.dto.queue.RemoveWordMqDTO;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
+
+import me.fengorz.kiwi.bdf.core.config.CoreConfig;
+import me.fengorz.kiwi.common.fastdfs.config.DfsConfig;
 
 /**
  * @Author zhanshifeng
+ * @Date 2019/10/30 3:45 PM
  */
-public interface IFetchService {
-
-    void handle(FetchWordMqDTO dto);
-
-    void handle(FetchPronunciationMqDTO dto);
-
-    void handle(RemoveWordMqDTO dto);
-
-    void handle(RemovePronunciatioinMqDTO dto);
+@Configuration
+@Import({CoreConfig.class, DfsConfig.class})
+public class CrawlerConfig {
 
 }

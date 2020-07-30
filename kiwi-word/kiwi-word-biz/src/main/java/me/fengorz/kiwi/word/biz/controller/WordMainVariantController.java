@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
 import me.fengorz.kiwi.common.api.R;
-import me.fengorz.kiwi.common.api.exception.dfs.DfsOperateDeleteException;
 import me.fengorz.kiwi.word.biz.service.operate.IWordOperateService;
 
 /**
@@ -38,7 +37,7 @@ public class WordMainVariantController {
     private final IWordOperateService wordOperateService;
 
     @GetMapping("/insertVariant/{inputWordName}/{fetchWordName}")
-    public R<Void> insertVariant(@PathVariable String inputWordName, @PathVariable String fetchWordName) throws DfsOperateDeleteException {
+    public R<Void> insertVariant(@PathVariable String inputWordName, @PathVariable String fetchWordName) {
         return R.auto(wordOperateService.insertVariant(inputWordName, fetchWordName));
     }
 

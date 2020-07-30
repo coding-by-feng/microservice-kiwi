@@ -23,8 +23,8 @@ import org.springframework.web.bind.annotation.*;
 
 import me.fengorz.kiwi.common.api.R;
 import me.fengorz.kiwi.word.api.common.WordConstants;
+import me.fengorz.kiwi.word.api.dto.queue.RemovePronunciatioinMqDTO;
 import me.fengorz.kiwi.word.api.dto.queue.fetch.FetchWordResultDTO;
-import me.fengorz.kiwi.word.api.dto.remote.WordFetchQueuePageDTO;
 import me.fengorz.kiwi.word.api.entity.WordFetchQueueDO;
 import me.fengorz.kiwi.word.api.feign.factory.WordFetchFallbackFactory;
 
@@ -37,20 +37,21 @@ public interface IWordFetchAPI {
 
     String WORD_FETCH_QUEUE = "/word/fetch";
 
-    @PostMapping(WORD_FETCH_QUEUE + "/pageQueue")
-    R<List<WordFetchQueueDO>> pageQueue(@RequestBody WordFetchQueuePageDTO dto);
+    @GetMapping(WORD_FETCH_QUEUE + "/pageQueue/{status}/{current}/{size}")
+    R<List<WordFetchQueueDO>> pageQueue(@PathVariable Integer status, @PathVariable Integer current,
+        @PathVariable Integer size);
 
-    @PutMapping(WORD_FETCH_QUEUE + "/updateById")
+    @PostMapping(WORD_FETCH_QUEUE + "/updateById")
     R<Boolean> updateQueueById(@RequestBody WordFetchQueueDO queueDO);
 
     @PostMapping(WORD_FETCH_QUEUE + "/storeResult")
     R<Void> storeResult(@RequestBody FetchWordResultDTO dto);
 
-    @GetMapping("/fetchPronunciation")
-    R<Boolean> fetchPronunciation(Integer wordId);
+    @GetMapping(WORD_FETCH_QUEUE + "/fetchPronunciation/{wordId}")
+    R<Boolean> fetchPronunciation(@PathVariable Integer wordId);
 
-    @GetMapping("/removeWord")
-    R<Boolean> removeWord(Integer wordId);
+    @GetMapping(WORD_FETCH_QUEUE + "/removeWord/{wordName}/{queueId}")
+    R<List<RemovePronunciatioinMqDTO>> removeWord(@PathVariable String wordName, @PathVariable Integer queueId);
 
     @PostMapping(WORD_FETCH_QUEUE + "/lock")
     R<Boolean> lock(@RequestParam String wordName);

@@ -94,6 +94,7 @@ public class WordCrawlerServiceImpl implements IWordCrawlerService {
         wordFetchQueueService.flagFetchBaseFinish(dto.getQueueId(), wordMainDO.getWordId());
         wordOperateService.cachePutFetchReplace(wordName,
             wordOperateService.cacheGetFetchReplace(wordName).setNewRelWordId(wordMainDO.getWordId()));
+        wordOperateService.fetchReplaceCallBack(wordName);
         return true;
     }
 

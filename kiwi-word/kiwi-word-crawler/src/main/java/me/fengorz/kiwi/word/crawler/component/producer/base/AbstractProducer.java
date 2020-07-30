@@ -19,12 +19,8 @@ package me.fengorz.kiwi.word.crawler.component.producer.base;
 import java.util.List;
 import java.util.Optional;
 
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-
 import lombok.RequiredArgsConstructor;
-import me.fengorz.kiwi.common.api.constant.CommonConstants;
 import me.fengorz.kiwi.common.sdk.util.lang.collection.KiwiCollectionUtils;
-import me.fengorz.kiwi.word.api.dto.remote.WordFetchQueuePageDTO;
 import me.fengorz.kiwi.word.api.entity.WordFetchQueueDO;
 import me.fengorz.kiwi.word.api.feign.IWordFetchAPI;
 
@@ -34,17 +30,13 @@ import me.fengorz.kiwi.word.api.feign.IWordFetchAPI;
  * @Date 2020/7/29 2:16 PM
  */
 @RequiredArgsConstructor
-public abstract class AbstractProducer {
+public abstract class AbstractProducer implements IProducer {
 
     protected final IWordFetchAPI wordFetchAPI;
     protected final ISender sender;
 
     protected List<WordFetchQueueDO> getQueueDO(Integer status) {
-        WordFetchQueueDO wordFetchQueue = new WordFetchQueueDO().setFetchStatus(status)
-            .setIsValid(CommonConstants.FLAG_Y).setIsLock(CommonConstants.FLAG_NO);
-        WordFetchQueuePageDTO wordFetchQueuePage =
-            new WordFetchQueuePageDTO().setWordFetchQueue(wordFetchQueue).setPage(new Page<>(1, 20));
-        return Optional.of(wordFetchAPI.pageQueue(wordFetchQueuePage)).get().getData();
+        return Optional.of(wordFetchAPI.pageQueue(status, 0, 20)).get().getData();
     }
 
     protected void produce(Integer status) {

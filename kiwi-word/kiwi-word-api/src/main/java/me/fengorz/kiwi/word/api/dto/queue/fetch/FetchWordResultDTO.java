@@ -20,6 +20,7 @@ import java.util.List;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
 import lombok.Data;
 import lombok.ToString;
@@ -38,7 +39,7 @@ public class FetchWordResultDTO {
     @NotBlank(message = "抓取不到剑桥词典对应的单词数据")
     private String wordName;
 
-    @NotBlank(message = "队列id不能为空")
+    @NotNull(message = "队列id不能为空")
     private Integer queueId;
 
     @NotEmpty(message = "抓取不到单词对应的词性数据")

@@ -16,6 +16,8 @@
 
 package me.fengorz.kiwi.word.crawler.service.impl;
 
+import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
@@ -24,15 +26,20 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.api.R;
 import me.fengorz.kiwi.common.api.constant.CommonConstants;
+import me.fengorz.kiwi.common.api.exception.dfs.DfsOperateDeleteException;
+import me.fengorz.kiwi.common.fastdfs.service.IDfsService;
 import me.fengorz.kiwi.common.sdk.util.lang.string.KiwiStringUtils;
 import me.fengorz.kiwi.word.api.common.WordCrawlerConstants;
 import me.fengorz.kiwi.word.api.dto.queue.FetchPronunciationMqDTO;
 import me.fengorz.kiwi.word.api.dto.queue.FetchWordMqDTO;
+import me.fengorz.kiwi.word.api.dto.queue.RemovePronunciatioinMqDTO;
+import me.fengorz.kiwi.word.api.dto.queue.RemoveWordMqDTO;
 import me.fengorz.kiwi.word.api.dto.queue.fetch.FetchWordResultDTO;
 import me.fengorz.kiwi.word.api.entity.WordFetchQueueDO;
 import me.fengorz.kiwi.word.api.exception.JsoupFetchConnectException;
 import me.fengorz.kiwi.word.api.feign.IWordFetchAPI;
 import me.fengorz.kiwi.word.api.feign.IWordMainVariantAPI;
+import me.fengorz.kiwi.word.crawler.component.producer.base.ISender;
 import me.fengorz.kiwi.word.crawler.service.IFetchService;
 import me.fengorz.kiwi.word.crawler.service.IJsoupService;
 
@@ -48,6 +55,8 @@ public class FetchServiceImpl implements IFetchService {
     private final IJsoupService jsoupService;
     private final IWordFetchAPI wordFetchAPI;
     private final IWordMainVariantAPI wordMainVariantAPIService;
+    private final ISender sender;
+    private final IDfsService dfsService;
 
     @Override
     public void handle(FetchWordMqDTO messageDTO) {
@@ -96,8 +105,9 @@ public class FetchServiceImpl implements IFetchService {
 
     @Override
     public void handle(FetchPronunciationMqDTO dto) {
-        WordFetchQueueDO queue = new WordFetchQueueDO().setQueueId(dto.getQueueId());
-        R<Boolean> response = Optional.of(wordFetchAPI.fetchPronunciation(dto.getWordId())).get();
+        WordFetchQueueDO queue = new WordFetchQueueDO().setQueueId(Objects.requireNonNull(dto.getQueueId()));
+        R<Boolean> response =
+            Optional.of(wordFetchAPI.fetchPronunciation(Objects.requireNonNull(dto.getWordId()))).get();
         if (response.isSuccess()) {
             queue.setIsLock(CommonConstants.FLAG_NO);
             queue.setFetchStatus(WordCrawlerConstants.STATUS_ALL_SUCCESS);
@@ -105,6 +115,34 @@ public class FetchServiceImpl implements IFetchService {
             this.handleException(queue, WordCrawlerConstants.STATUS_TO_FETCH_PRONUNCIATION_FAIL, response.getMsg());
         }
         wordFetchAPI.updateQueueById(queue);
+    }
+
+    @Override
+    public void handle(RemoveWordMqDTO dto) {
+        WordFetchQueueDO queue = new WordFetchQueueDO().setQueueId(Objects.requireNonNull(dto.getQueueId()));
+        R<List<RemovePronunciatioinMqDTO>> response =
+            Optional.of(wordFetchAPI.removeWord(dto.getWordName(), dto.getQueueId())).get();
+        if (response.isSuccess()) {
+            queue.setIsLock(CommonConstants.FLAG_NO);
+            // 删除完老的基础数据重新开始抓取单词
+            queue.setFetchStatus(WordCrawlerConstants.STATUS_TO_FETCH);
+            queue.setWordId(0);
+            response.getData().forEach(sender::removePronunciation);
+        } else {
+            this.handleException(queue, WordCrawlerConstants.STATUS_DEL_BASE_FAIL, response.getMsg());
+        }
+        wordFetchAPI.updateQueueById(queue);
+    }
+
+    @Override
+    public void handle(RemovePronunciatioinMqDTO dto) {
+        try {
+            dfsService.deleteFile(dto.getGroupName(), dto.getVoiceFilePath());
+        } catch (DfsOperateDeleteException e) {
+            WordFetchQueueDO queue = new WordFetchQueueDO().setQueueId(Objects.requireNonNull(dto.getQueueId()));
+            this.handleException(queue, WordCrawlerConstants.STATUS_DEL_PRONUNCIATION_FAIL, "del pronunciation error!");
+            wordFetchAPI.updateQueueById(queue);
+        }
     }
 
     private void handleException(WordFetchQueueDO queue, int status, String message) {

@@ -20,6 +20,8 @@ public interface WordCrawlerConstants {
 
     String RECORDS = "records";
 
+    /*单词查询异常*/
+    int STATUS_TO_QUERY_ERROR = -1;
     /*待抓取*/
     int STATUS_TO_FETCH = 0;
     /*Jsoup连接失败*/

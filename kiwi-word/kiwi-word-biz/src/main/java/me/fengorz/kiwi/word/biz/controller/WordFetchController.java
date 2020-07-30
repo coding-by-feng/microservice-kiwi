@@ -19,9 +19,7 @@ import java.util.List;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 
-import org.apache.ibatis.session.SqlSessionFactory;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,11 +30,12 @@ import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.api.R;
 import me.fengorz.kiwi.common.api.annotation.log.SysLog;
 import me.fengorz.kiwi.common.sdk.controller.BaseController;
+import me.fengorz.kiwi.word.api.dto.queue.RemovePronunciatioinMqDTO;
 import me.fengorz.kiwi.word.api.dto.queue.fetch.FetchWordResultDTO;
-import me.fengorz.kiwi.word.api.dto.remote.WordFetchQueuePageDTO;
 import me.fengorz.kiwi.word.api.entity.WordFetchQueueDO;
 import me.fengorz.kiwi.word.biz.service.base.IWordFetchQueueService;
-import me.fengorz.kiwi.word.biz.service.crawler.IWordCrawlerService;
+import me.fengorz.kiwi.word.biz.service.operate.IWordCleanerService;
+import me.fengorz.kiwi.word.biz.service.operate.IWordCrawlerService;
 import me.fengorz.kiwi.word.biz.service.operate.IWordOperateService;
 
 /**
@@ -55,16 +54,12 @@ public class WordFetchController extends BaseController {
     private final IWordFetchQueueService wordFetchQueueService;
     private final IWordOperateService wordOperateService;
     private final IWordCrawlerService wordCrawlerService;
-    private final SqlSessionFactory sqlSessionFactory;
+    private final IWordCleanerService wordCleanerService;
 
-    @RequestMapping(value = "/pageQueue", method = {RequestMethod.POST, RequestMethod.GET})
-    public R<List<WordFetchQueueDO>> pageQueue(@RequestBody @Valid WordFetchQueuePageDTO dto) {
-        return R.success(wordFetchQueueService.page2List(dto));
-    }
-
-    @GetMapping("/fetchNewWord/{wordName}")
-    public R<Void> fetchNewWord(@PathVariable String wordName) {
-        return R.auto(wordFetchQueueService.fetchNewWord(wordName));
+    @GetMapping(value = "/pageQueue/{status}/{current}/{size}")
+    public R<List<WordFetchQueueDO>> pageQueue(@PathVariable Integer status, @PathVariable Integer current,
+        @PathVariable Integer size) {
+        return R.success(wordFetchQueueService.page2List(status, current, size));
     }
 
     /**
@@ -75,8 +70,7 @@ public class WordFetchController extends BaseController {
      * @return R
      */
     @SysLog("修改单词待抓取列表")
-    @PutMapping("/updateById")
-    // @PreAuthorize("@pms.hasPermission('queue_wordfetchqueue_edit')")
+    @PostMapping("/updateById")
     public R<Boolean> updateById(@RequestBody WordFetchQueueDO wordFetchQueue) {
         return R.success(wordFetchQueueService.updateById(wordFetchQueue));
     }
@@ -107,8 +101,13 @@ public class WordFetchController extends BaseController {
         return R.success(wordCrawlerService.storeFetchWordResult(dto));
     }
 
-    @GetMapping("/fetchPronunciation")
-    public R<Boolean> fetchPronunciation(@NotNull Integer wordId) {
+    @GetMapping("/fetchPronunciation/{wordId}")
+    public R<Boolean> fetchPronunciation(@PathVariable Integer wordId) {
         return R.success(wordCrawlerService.fetchPronunciation(wordId));
+    }
+
+    @GetMapping("/removeWord/{wordName}/{queueId}")
+    public R<List<RemovePronunciatioinMqDTO>> removeWord(@PathVariable String wordName, @PathVariable Integer queueId) {
+        return R.success(wordCleanerService.removeWord(wordName, queueId));
     }
 }

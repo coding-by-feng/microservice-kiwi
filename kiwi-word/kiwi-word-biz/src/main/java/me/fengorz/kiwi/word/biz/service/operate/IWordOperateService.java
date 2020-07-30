@@ -66,6 +66,8 @@ public interface IWordOperateService {
 
     FetchWordReplaceDTO cachePutFetchReplace(String wordName, FetchWordReplaceDTO dto);
 
+    void fetchReplaceCallBack(String wordName);
+
     /* cache mothods end */
 
 }

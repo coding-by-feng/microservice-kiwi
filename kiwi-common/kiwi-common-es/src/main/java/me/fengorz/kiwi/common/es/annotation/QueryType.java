@@ -1,6 +1,3 @@
-/*
- * Copyright (c) 2020, CCSSOFT All Rights Reserved.
- */
 package me.fengorz.kiwi.common.es.annotation;
 
 /**

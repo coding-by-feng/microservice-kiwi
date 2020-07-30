@@ -27,6 +27,7 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
 import lombok.RequiredArgsConstructor;
+import me.fengorz.kiwi.common.sdk.util.lang.collection.KiwiCollectionUtils;
 import me.fengorz.kiwi.word.api.entity.WordParaphraseDO;
 import me.fengorz.kiwi.word.api.entity.WordParaphraseStarRelDO;
 import me.fengorz.kiwi.word.biz.mapper.WordParaphraseMapper;
@@ -57,16 +58,27 @@ public class WordParaphraseStarRelServiceImpl extends ServiceImpl<WordParaphrase
 
         // 更新失败的话，可能是因为单词删除的逻辑出现异常，下面做补偿处理
         if (update < 1) {
-            Optional.of(wordParaphraseMapper.selectById(newRelId)).ifPresent(paraphrase -> {
-                LambdaQueryWrapper<WordParaphraseDO> wrapper = Wrappers.<WordParaphraseDO>lambdaQuery()
-                    .eq(WordParaphraseDO::getParaphraseEnglish, paraphrase.getParaphraseEnglish())
-                    .eq(WordParaphraseDO::getMeaningChinese, paraphrase.getMeaningChinese())
-                    .eq(WordParaphraseDO::getIsHavePhrase, paraphrase.getIsHavePhrase());
-                List<Integer> allStockId = wordParaphraseMapper.selectList(wrapper).stream()
-                    .map(WordParaphraseDO::getParaphraseId).collect(Collectors.toList());
+            WordParaphraseDO paraphrase = Optional.of(wordParaphraseMapper.selectById(newRelId)).get();
+            LambdaQueryWrapper<WordParaphraseDO> wrapper = Wrappers.<WordParaphraseDO>lambdaQuery()
+                .eq(WordParaphraseDO::getParaphraseEnglish, paraphrase.getParaphraseEnglish())
+                .eq(WordParaphraseDO::getMeaningChinese, paraphrase.getMeaningChinese())
+                .eq(WordParaphraseDO::getIsHavePhrase, paraphrase.getIsHavePhrase());
+            List<Integer> allStockId = wordParaphraseMapper.selectList(wrapper).stream()
+                .map(WordParaphraseDO::getParaphraseId).collect(Collectors.toList());
+            update =
                 wordParaphraseStarRelMapper.update(new WordParaphraseStarRelDO().setParaphraseId(newRelId), Wrappers
                     .<WordParaphraseStarRelDO>lambdaUpdate().in(WordParaphraseStarRelDO::getParaphraseId, allStockId));
-            });
+
+            if (update < 1) {
+                List<Integer> list =
+                    wordParaphraseMapper.selectList(wrapper.orderByDesc(WordParaphraseDO::getParaphraseId)).stream()
+                        .map(WordParaphraseDO::getParaphraseId).collect(Collectors.toList());
+                if (KiwiCollectionUtils.isEmpty(list)) {
+                    return;
+                }
+                wordParaphraseStarRelMapper.update(new WordParaphraseStarRelDO().setParaphraseId(newRelId), Wrappers
+                    .<WordParaphraseStarRelDO>lambdaUpdate().eq(WordParaphraseStarRelDO::getParaphraseId, list.get(0)));
+            }
         }
     }
 }

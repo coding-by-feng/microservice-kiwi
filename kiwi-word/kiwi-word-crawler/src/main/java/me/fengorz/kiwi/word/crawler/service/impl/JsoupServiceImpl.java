@@ -16,17 +16,6 @@
 
 package me.fengorz.kiwi.word.crawler.service.impl;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
-import org.springframework.stereotype.Service;
-
 import cn.hutool.core.collection.CollUtil;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.sdk.util.lang.string.KiwiStringUtils;
@@ -39,6 +28,16 @@ import me.fengorz.kiwi.word.api.exception.JsoupFetchPronunciationException;
 import me.fengorz.kiwi.word.api.exception.JsoupFetchResultException;
 import me.fengorz.kiwi.word.crawler.service.IJsoupService;
 import me.fengorz.kiwi.word.crawler.util.CrawlerAssertUtils;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+import org.springframework.stereotype.Service;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * @Description 爬虫抓取单词数据服务类
@@ -259,7 +258,7 @@ public class JsoupServiceImpl implements IJsoupService {
             .setSoundmark(Optional.ofNullable(ukPronunciation.getElementsByClass(KEY_SOUNDMARK))
                 .orElseThrow(JsoupFetchPronunciationException::new).get(0).text())
             .setVoiceFileUrl(Optional.ofNullable(ukPronunciation.getElementsByTag(KEY_SOURCE))
-                // .orElseThrow(JsoupFetchPronunciationException::new).get(0).attr(KEY_SRC)); // mp3
-                .orElseThrow(JsoupFetchPronunciationException::new).get(1).attr(KEY_SRC)); // ogg
+                .orElseThrow(JsoupFetchPronunciationException::new).get(0).attr(KEY_SRC)); // mp3
+                // .orElseThrow(JsoupFetchPronunciationException::new).get(1).attr(KEY_SRC)); // ogg
     }
 }

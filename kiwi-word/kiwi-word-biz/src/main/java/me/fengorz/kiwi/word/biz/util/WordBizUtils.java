@@ -17,8 +17,8 @@
 package me.fengorz.kiwi.word.biz.util;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-
 import me.fengorz.kiwi.common.api.constant.CommonConstants;
+import me.fengorz.kiwi.word.api.common.WordCrawlerConstants;
 import me.fengorz.kiwi.word.api.dto.mapper.in.SelectStarListItemDTO;
 import me.fengorz.kiwi.word.api.entity.*;
 
@@ -45,7 +45,7 @@ public class WordBizUtils {
     }
 
     public static WordParaphraseDO initWordParaphrase(Integer characterId, Integer wordId, String meaningChinese,
-        String paraphraseEnglish, String translateLanguage) {
+                                                      String paraphraseEnglish, String translateLanguage) {
         WordParaphraseDO wordParaphraseDO = new WordParaphraseDO();
         wordParaphraseDO.setWordId(wordId);
         wordParaphraseDO.setCharacterId(characterId);
@@ -57,7 +57,7 @@ public class WordBizUtils {
     }
 
     public static WordParaphraseExampleDO initWordParaphraseExample(Integer paraphraseId, Integer wordId,
-        String exampleSentence, String exampleTranslate, String translateLanguage) {
+                                                                    String exampleSentence, String exampleTranslate, String translateLanguage) {
         WordParaphraseExampleDO wordParaphraseExampleDO = new WordParaphraseExampleDO();
         wordParaphraseExampleDO.setWordId(wordId);
         wordParaphraseExampleDO.setParaphraseId(paraphraseId);
@@ -69,7 +69,7 @@ public class WordBizUtils {
 
     @Deprecated
     public static WordPronunciationDO initWordPronunciation(Integer wordId, Integer characterId, String uploadResult,
-        String soundmark, String soundmarkType) {
+                                                            String soundmark, String soundmarkType) {
         WordPronunciationDO wordPronunciation = new WordPronunciationDO();
         wordPronunciation.setWordId(wordId);
         wordPronunciation.setCharacterId(characterId);
@@ -82,7 +82,7 @@ public class WordBizUtils {
     }
 
     public static WordPronunciationDO initPronunciation(Integer wordId, Integer characterId, String voiceUrl,
-        String soundmark, String soundmarkType) {
+                                                        String soundmark, String soundmarkType) {
         WordPronunciationDO wordPronunciation = new WordPronunciationDO();
         wordPronunciation.setWordId(wordId);
         wordPronunciation.setCharacterId(characterId);
@@ -90,12 +90,13 @@ public class WordBizUtils {
         wordPronunciation.setSoundmark(soundmark);
         wordPronunciation.setSoundmarkType(soundmarkType);
         wordPronunciation.setVoiceFilePath(voiceUrl);
+        wordPronunciation.setSourceUrl(WordCrawlerConstants.CAMBRIDGE_BASE_URL + voiceUrl);
         return wordPronunciation;
     }
 
     public static SelectStarListItemDTO assembleSelectStarListItemDTO(Page page, Integer listId) {
-        return (SelectStarListItemDTO)new SelectStarListItemDTO().setListId(listId).setSize(page.getSize())
-            .setCurrent((page.getCurrent() - 1) * page.getSize());
+        return (SelectStarListItemDTO) new SelectStarListItemDTO().setListId(listId).setSize(page.getSize())
+                .setCurrent((page.getCurrent() - 1) * page.getSize());
     }
 
 }

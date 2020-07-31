@@ -16,14 +16,13 @@
 
 package me.fengorz.kiwi.word.crawler.component.producer;
 
-import java.util.Objects;
-
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
-
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.sdk.util.spring.SpringUtils;
 import me.fengorz.kiwi.word.crawler.component.producer.base.IProducer;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
+
+import java.util.Objects;
 
 /**
  * @Description TODO
@@ -34,7 +33,7 @@ import me.fengorz.kiwi.word.crawler.component.producer.base.IProducer;
 @Slf4j
 public class ScheduledChiefProducer {
 
-    @Scheduled(fixedDelay = 2000L)
+    @Scheduled(fixedDelay = 1000L)
     public void produce() {
         for (IProducer producer : Objects.requireNonNull(SpringUtils.getBeansList(IProducer.class))) {
             producer.produce();

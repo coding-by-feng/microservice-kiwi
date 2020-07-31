@@ -16,11 +16,11 @@
 
 package me.fengorz.kiwi.word.api.vo.detail;
 
-import java.io.Serializable;
-
 import lombok.Data;
 import lombok.ToString;
 import lombok.experimental.Accessors;
+
+import java.io.Serializable;
 
 /**
  * @Description TODO
@@ -43,5 +43,7 @@ public class WordPronunciationVO implements Serializable {
      * 音标类别
      */
     private String soundmarkType;
+
+    private String sourceUrl;
 
 }

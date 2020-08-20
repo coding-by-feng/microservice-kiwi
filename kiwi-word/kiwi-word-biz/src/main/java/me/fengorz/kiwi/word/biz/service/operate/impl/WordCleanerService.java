@@ -16,20 +16,11 @@
 
 package me.fengorz.kiwi.word.biz.service.operate.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
+import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-
-import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.util.StrUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.fastdfs.service.IDfsService;
@@ -40,6 +31,13 @@ import me.fengorz.kiwi.word.api.entity.*;
 import me.fengorz.kiwi.word.biz.service.base.*;
 import me.fengorz.kiwi.word.biz.service.operate.IWordCleanerService;
 import me.fengorz.kiwi.word.biz.service.operate.IWordOperateService;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @Description TODO
@@ -163,7 +161,6 @@ public class WordCleanerService implements IWordCleanerService {
     private void evictAll(WordMainDO wordMainDO) {
         // 这里缓存的删除要在Mysql的删除之前做
         operateService.evict(wordMainDO.getWordName(), wordMainDO);
-        wordMainService.evictByName(wordMainDO.getWordName());
         wordMainService.evictById(wordMainDO.getWordId());
     }
 

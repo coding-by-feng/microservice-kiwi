@@ -18,14 +18,13 @@
  */
 package me.fengorz.kiwi.word.biz.service.base;
 
-import java.util.List;
-import java.util.Map;
-
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
-
 import me.fengorz.kiwi.word.api.entity.WordMainDO;
 import me.fengorz.kiwi.word.api.vo.WordMainVO;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * 单词主表
@@ -42,8 +41,6 @@ public interface IWordMainService extends IService<WordMainDO> {
     List<Map> fuzzyQueryList(Page page, String wordName);
 
     boolean isExist(String wordName);
-
-    void evictByName(String wordName);
 
     void evictById(Integer id);
 }

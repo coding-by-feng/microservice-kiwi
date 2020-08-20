@@ -15,21 +15,9 @@
  */
 package me.fengorz.kiwi.word.biz.service.base.impl;
 
-import java.io.Serializable;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.stereotype.Service;
-
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-
 import lombok.RequiredArgsConstructor;
 import me.fengorz.kiwi.common.api.annotation.cache.KiwiCacheKey;
 import me.fengorz.kiwi.common.api.annotation.cache.KiwiCacheKeyPrefix;
@@ -45,6 +33,16 @@ import me.fengorz.kiwi.word.api.vo.WordMainVO;
 import me.fengorz.kiwi.word.biz.mapper.WordMainMapper;
 import me.fengorz.kiwi.word.biz.service.base.IWordFetchQueueService;
 import me.fengorz.kiwi.word.biz.service.base.IWordMainService;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.stereotype.Service;
+
+import java.io.Serializable;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * 单词主表
@@ -75,10 +73,7 @@ public class WordMainServiceImpl extends ServiceImpl<WordMainMapper, WordMainDO>
     }
 
     @Override
-    @KiwiCacheKeyPrefix(WordConstants.CACHE_KEY_PREFIX_WORD_MAIN.METHOD_NAME)
-    @Cacheable(cacheNames = WordConstants.CACHE_NAMES, keyGenerator = CacheConstants.CACHE_KEY_GENERATOR_BEAN,
-        unless = "#result == null")
-    public WordMainVO getOne(@KiwiCacheKey String wordName) {
+    public WordMainVO getOne(String wordName) {
         try {
             return KiwiBeanUtils.convertFrom(this.getOne(new LambdaQueryWrapper<WordMainDO>()
                 .eq(WordMainDO::getWordName, wordName).eq(WordMainDO::getIsDel, CommonConstants.FLAG_DEL_NO)),
@@ -119,11 +114,6 @@ public class WordMainServiceImpl extends ServiceImpl<WordMainMapper, WordMainDO>
     public boolean isExist(String wordName) {
         return this.getOne(wordName) != null;
     }
-
-    @Override
-    @KiwiCacheKeyPrefix(WordConstants.CACHE_KEY_PREFIX_WORD_MAIN.METHOD_NAME)
-    @CacheEvict(cacheNames = WordConstants.CACHE_NAMES, keyGenerator = CacheConstants.CACHE_KEY_GENERATOR_BEAN)
-    public void evictByName(@KiwiCacheKey String wordName) {}
 
     @Override
     @KiwiCacheKeyPrefix(WordConstants.CACHE_KEY_PREFIX_WORD_MAIN.METHOD_ID)

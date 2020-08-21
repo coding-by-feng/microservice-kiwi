@@ -87,6 +87,7 @@ public class WordCleanerService implements IWordCleanerService {
     private List<RemovePronunciatioinMqDTO> subRemoveWord(WordMainDO wordMainDO) {
         final String wordName = wordMainDO.getWordName();
         wordMainService.remove(Wrappers.<WordMainDO>lambdaQuery().eq(WordMainDO::getWordName, wordName));
+        wordMainVariantService.remove(Wrappers.<WordMainVariantDO>lambdaQuery().eq(WordMainVariantDO::getVariantName, wordName));
         operateService.cachePutFetchReplace(wordName,
                 operateService.cacheGetFetchReplace(wordName).setOldRelWordId(wordMainDO.getWordId()));
         return this.removeWordRelatedData(wordMainDO);

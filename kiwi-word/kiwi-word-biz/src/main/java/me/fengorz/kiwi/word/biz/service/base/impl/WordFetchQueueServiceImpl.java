@@ -15,18 +15,10 @@
  */
 package me.fengorz.kiwi.word.biz.service.base.impl;
 
-import java.util.List;
-import java.util.Optional;
-
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-
 import lombok.RequiredArgsConstructor;
 import me.fengorz.kiwi.bdf.core.service.ISeqService;
 import me.fengorz.kiwi.common.api.constant.CommonConstants;
@@ -36,6 +28,12 @@ import me.fengorz.kiwi.word.api.common.WordCrawlerConstants;
 import me.fengorz.kiwi.word.api.entity.WordFetchQueueDO;
 import me.fengorz.kiwi.word.biz.mapper.WordFetchQueueMapper;
 import me.fengorz.kiwi.word.biz.service.base.IWordFetchQueueService;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.Optional;
 
 /**
  * 单词待抓取列表
@@ -46,7 +44,7 @@ import me.fengorz.kiwi.word.biz.service.base.IWordFetchQueueService;
 @Service()
 @RequiredArgsConstructor
 public class WordFetchQueueServiceImpl extends ServiceImpl<WordFetchQueueMapper, WordFetchQueueDO>
-    implements IWordFetchQueueService {
+        implements IWordFetchQueueService {
 
     private final ISeqService seqService;
 
@@ -63,7 +61,7 @@ public class WordFetchQueueServiceImpl extends ServiceImpl<WordFetchQueueMapper,
         }
 
         this.save(new WordFetchQueueDO().setQueueId(seqService.genIntSequence(MapperConstant.T_INS_SEQUENCE))
-            .setWordName(wordName).setFetchStatus(WordCrawlerConstants.STATUS_TO_FETCH).setFetchPriority(100));
+                .setWordName(wordName).setFetchStatus(WordCrawlerConstants.STATUS_TO_FETCH).setFetchPriority(100));
     }
 
     @Async
@@ -83,7 +81,7 @@ public class WordFetchQueueServiceImpl extends ServiceImpl<WordFetchQueueMapper,
             return false;
         }
         return this.update(new WordFetchQueueDO().setIsValid(CommonConstants.FLAG_N).setIsLock(CommonConstants.FLAG_NO),
-            new LambdaQueryWrapper<WordFetchQueueDO>().eq(WordFetchQueueDO::getWordName, wordName));
+                new LambdaQueryWrapper<WordFetchQueueDO>().eq(WordFetchQueueDO::getWordName, wordName));
     }
 
     @Override
@@ -93,30 +91,30 @@ public class WordFetchQueueServiceImpl extends ServiceImpl<WordFetchQueueMapper,
             return false;
         }
         return this.update(new WordFetchQueueDO().setIsLock(CommonConstants.FLAG_YES),
-            new LambdaQueryWrapper<WordFetchQueueDO>().eq(WordFetchQueueDO::getWordName, wordName)
-                .eq(WordFetchQueueDO::getIsLock, CommonConstants.FLAG_NO));
+                new LambdaQueryWrapper<WordFetchQueueDO>().eq(WordFetchQueueDO::getWordName, wordName)
+                        .eq(WordFetchQueueDO::getIsLock, CommonConstants.FLAG_NO));
     }
 
     @Override
     public void flagFetchBaseFinish(Integer queueId, Integer wordId) {
         this.updateById(
-            new WordFetchQueueDO().setQueueId(queueId).setWordId(wordId).setIsLock(CommonConstants.FLAG_NO));
+                new WordFetchQueueDO().setQueueId(queueId).setWordId(wordId));
     }
 
     @Override
     public void flagWordQueryException(String wordName) {
         this.update(
-            new WordFetchQueueDO().setIsLock(CommonConstants.FLAG_NO)
-                .setFetchStatus(WordCrawlerConstants.STATUS_TO_QUERY_ERROR),
-            new LambdaQueryWrapper<WordFetchQueueDO>().eq(WordFetchQueueDO::getWordName, wordName));
+                new WordFetchQueueDO().setIsLock(CommonConstants.FLAG_NO)
+                        .setFetchStatus(WordCrawlerConstants.STATUS_TO_QUERY_ERROR),
+                new LambdaQueryWrapper<WordFetchQueueDO>().eq(WordFetchQueueDO::getWordName, wordName));
     }
 
     @Override
     public List<WordFetchQueueDO> page2List(Integer status, Integer current, Integer size) {
         return Optional
-            .of(this.page(new Page<>(current, size), Wrappers.<WordFetchQueueDO>lambdaQuery()
-                .eq(WordFetchQueueDO::getFetchStatus, status).eq(WordFetchQueueDO::getIsLock, CommonConstants.FLAG_NO)))
-            .get().getRecords();
+                .of(this.page(new Page<>(current, size), Wrappers.<WordFetchQueueDO>lambdaQuery()
+                        .eq(WordFetchQueueDO::getFetchStatus, status).eq(WordFetchQueueDO::getIsLock, CommonConstants.FLAG_NO)))
+                .get().getRecords();
     }
 
     private WordFetchQueueDO getOne(String wordName) {

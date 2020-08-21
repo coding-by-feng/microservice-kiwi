@@ -25,6 +25,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.fastdfs.service.IDfsService;
 import me.fengorz.kiwi.common.sdk.util.lang.collection.KiwiCollectionUtils;
+import me.fengorz.kiwi.common.sdk.util.lang.string.KiwiStringUtils;
 import me.fengorz.kiwi.word.api.dto.queue.RemovePronunciatioinMqDTO;
 import me.fengorz.kiwi.word.api.dto.queue.fetch.FetchWordReplaceDTO;
 import me.fengorz.kiwi.word.api.entity.*;
@@ -75,7 +76,7 @@ public class WordCleanerService implements IWordCleanerService {
         }
 
         for (WordMainDO wordMainDO : list) {
-            this.evictAll(wordMainDO);
+            this.evictAll(wordMainDO, wordName);
             List<RemovePronunciatioinMqDTO> dtoList = this.subRemoveWord(wordMainDO);
             dtoList.forEach(dto -> dto.setQueueId(queueId));
             KiwiCollectionUtils.addAllIfNotContains(result, dtoList);
@@ -155,9 +156,13 @@ public class WordCleanerService implements IWordCleanerService {
                 .collect(Collectors.toList());
     }
 
-    private void evictAll(WordMainDO wordMainDO) {
+    private void evictAll(WordMainDO wordMainDO, String wordName) {
         // 这里缓存的删除要在Mysql的删除之前做
-        operateService.evict(wordMainDO.getWordName(), wordMainDO);
+        if (KiwiStringUtils.isNotEquals(wordName, wordMainDO.getWordName())) {
+            operateService.evict(wordName, wordMainDO);
+        } else {
+            operateService.evict(wordMainDO.getWordName(), wordMainDO);
+        }
         wordMainService.evictById(wordMainDO.getWordId());
     }
 

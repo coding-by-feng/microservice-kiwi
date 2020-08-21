@@ -32,6 +32,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -53,10 +54,10 @@ public class WordFetchQueueServiceImpl extends ServiceImpl<WordFetchQueueMapper,
         WordFetchQueueDO one = this.getOne(wordName);
 
         if (one != null) {
-            if (CommonConstants.FLAG_YES == one.getIsLock()) {
+            if (one.getInTime().compareTo(LocalDateTime.now().minusMinutes(1)) > 0) {
                 return;
             }
-            this.updateById(one.setFetchStatus(WordCrawlerConstants.STATUS_TO_FETCH));
+            this.updateById(one.setFetchStatus(WordCrawlerConstants.STATUS_TO_FETCH).setInTime(LocalDateTime.now()));
             return;
         }
 

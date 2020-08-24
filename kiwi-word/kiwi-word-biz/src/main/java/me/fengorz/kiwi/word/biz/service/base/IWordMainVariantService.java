@@ -20,10 +20,12 @@ package me.fengorz.kiwi.word.biz.service.base;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
-
 import me.fengorz.kiwi.word.api.dto.WordMainVariantDTO;
+import me.fengorz.kiwi.word.api.entity.WordMainDO;
 import me.fengorz.kiwi.word.api.entity.WordMainVariantDO;
 import me.fengorz.kiwi.word.api.vo.WordMainVariantVO;
+
+import java.util.List;
 
 /**
  * 服务类
@@ -37,7 +39,9 @@ public interface IWordMainVariantService extends IService<WordMainVariantDO> {
 
     WordMainVariantVO getVO(Integer id);
 
-    Integer getWordId(String variantName);
+    List<Integer> getWordId(String variantName);
+
+    List<WordMainDO> listWordMain(String variantName);
 
     boolean saveOne(WordMainVariantDTO dto);
 

@@ -43,4 +43,6 @@ public interface IWordMainService extends IService<WordMainDO> {
     boolean isExist(String wordName);
 
     void evictById(Integer id);
+
+    List<WordMainDO> listDirtyData(Integer wordId);
 }

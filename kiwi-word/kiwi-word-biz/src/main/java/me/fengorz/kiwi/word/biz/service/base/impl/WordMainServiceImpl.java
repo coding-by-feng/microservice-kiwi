@@ -16,6 +16,7 @@
 package me.fengorz.kiwi.word.biz.service.base.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.RequiredArgsConstructor;
@@ -67,7 +68,7 @@ public class WordMainServiceImpl extends ServiceImpl<WordMainMapper, WordMainDO>
     @Override
     @KiwiCacheKeyPrefix(WordConstants.CACHE_KEY_PREFIX_WORD_MAIN.METHOD_ID)
     @Cacheable(cacheNames = WordConstants.CACHE_NAMES, keyGenerator = CacheConstants.CACHE_KEY_GENERATOR_BEAN,
-        unless = "#result == null")
+            unless = "#result == null")
     public WordMainDO getById(@KiwiCacheKey Serializable id) {
         return super.getById(id);
     }
@@ -76,8 +77,8 @@ public class WordMainServiceImpl extends ServiceImpl<WordMainMapper, WordMainDO>
     public WordMainVO getOne(String wordName) {
         try {
             return KiwiBeanUtils.convertFrom(this.getOne(new LambdaQueryWrapper<WordMainDO>()
-                .eq(WordMainDO::getWordName, wordName).eq(WordMainDO::getIsDel, CommonConstants.FLAG_DEL_NO)),
-                WordMainVO.class);
+                            .eq(WordMainDO::getWordName, wordName).eq(WordMainDO::getIsDel, CommonConstants.FLAG_DEL_NO)),
+                    WordMainVO.class);
         } catch (Exception e) {
             log.error(e.getMessage());
             queueService.flagWordQueryException(wordName);
@@ -97,8 +98,8 @@ public class WordMainServiceImpl extends ServiceImpl<WordMainMapper, WordMainDO>
     @Override
     public List<Map> fuzzyQueryList(Page page, String wordName) {
         LambdaQueryWrapper queryWrapper = new LambdaQueryWrapper<WordMainDO>()
-            .likeRight(WordMainDO::getWordName, wordName).eq(WordMainDO::getIsDel, CommonConstants.FLAG_DEL_NO)
-            .orderByAsc(WordMainDO::getWordName).select(WordMainDO::getWordName);
+                .likeRight(WordMainDO::getWordName, wordName).eq(WordMainDO::getIsDel, CommonConstants.FLAG_DEL_NO)
+                .orderByAsc(WordMainDO::getWordName).select(WordMainDO::getWordName);
 
         List<WordMainDO> records = this.page(page, queryWrapper).getRecords();
         if (KiwiCollectionUtils.isEmpty(records)) {
@@ -106,8 +107,8 @@ public class WordMainServiceImpl extends ServiceImpl<WordMainMapper, WordMainDO>
         }
 
         return records.parallelStream()
-            .map(wordMainDO -> KiwiCollectionUtils.putAndReturn(new HashMap<>(), VALUE, wordMainDO.getWordName()))
-            .collect(Collectors.toList());
+                .map(wordMainDO -> KiwiCollectionUtils.putAndReturn(new HashMap<>(), VALUE, wordMainDO.getWordName()))
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -118,5 +119,12 @@ public class WordMainServiceImpl extends ServiceImpl<WordMainMapper, WordMainDO>
     @Override
     @KiwiCacheKeyPrefix(WordConstants.CACHE_KEY_PREFIX_WORD_MAIN.METHOD_ID)
     @CacheEvict(cacheNames = WordConstants.CACHE_NAMES, keyGenerator = CacheConstants.CACHE_KEY_GENERATOR_BEAN)
-    public void evictById(@KiwiCacheKey Integer id) {}
+    public void evictById(@KiwiCacheKey Integer id) {
+    }
+
+    @Override
+    public List<WordMainDO> listDirtyData(Integer wordId) {
+        return this.list(Wrappers.<WordMainDO>lambdaQuery().eq(WordMainDO::getWordName, this.getWordName(wordId)));
+    }
+
 }

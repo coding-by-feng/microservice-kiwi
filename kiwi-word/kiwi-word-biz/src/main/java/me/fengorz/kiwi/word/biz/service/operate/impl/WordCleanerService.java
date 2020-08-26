@@ -68,7 +68,7 @@ public class WordCleanerService implements IWordCleanerService {
         List<WordMainDO> list =
                 wordMainService.list(Wrappers.<WordMainDO>lambdaQuery().eq(WordMainDO::getWordName, wordName));
         if (KiwiCollectionUtils.isEmpty(list)) {
-            Optional.ofNullable(wordMainVariantService.listWordMain(wordName)).ifPresent(list::addAll);
+            Optional.ofNullable(wordMainVariantService.listWordMain(wordName, queueId)).ifPresent(list::addAll);
         }
 
         if (KiwiCollectionUtils.isEmpty(list)) {

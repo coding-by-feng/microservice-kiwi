@@ -30,6 +30,7 @@ import me.fengorz.kiwi.word.api.entity.WordMainDO;
 import me.fengorz.kiwi.word.api.entity.WordMainVariantDO;
 import me.fengorz.kiwi.word.api.vo.WordMainVariantVO;
 import me.fengorz.kiwi.word.biz.mapper.WordMainVariantMapper;
+import me.fengorz.kiwi.word.biz.service.base.IWordFetchQueueService;
 import me.fengorz.kiwi.word.biz.service.base.IWordMainService;
 import me.fengorz.kiwi.word.biz.service.base.IWordMainVariantService;
 import org.springframework.stereotype.Service;
@@ -38,6 +39,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * 单词时态、单复数等的变化
@@ -52,6 +54,7 @@ public class WordMainVariantServiceImpl extends ServiceImpl<WordMainVariantMappe
         implements IWordMainVariantService {
 
     private final WordMainVariantMapper wordMainVariantMapper;
+    private final IWordFetchQueueService wordFetchQueueService;
     private final IWordMainService wordMainService;
     private final ISeqService seqService;
 
@@ -71,7 +74,7 @@ public class WordMainVariantServiceImpl extends ServiceImpl<WordMainVariantMappe
     @Override
     public List<Integer> getWordId(String variantName) {
         List<Integer> result = new ArrayList<>();
-        Optional.ofNullable(this.listWordMain(variantName)).ifPresent(list -> {
+        Optional.ofNullable(this.listWordMain(variantName, null)).ifPresent(list -> {
             for (WordMainDO wordMainDO : list) {
                 result.add(wordMainDO.getWordId());
             }
@@ -80,14 +83,21 @@ public class WordMainVariantServiceImpl extends ServiceImpl<WordMainVariantMappe
     }
 
     @Override
-    public List<WordMainDO> listWordMain(String variantName) {
+    public List<WordMainDO> listWordMain(String variantName, Integer queueId) {
         WordMainVariantDO one = wordMainVariantMapper
                 .selectOne(Wrappers.<WordMainVariantDO>lambdaQuery().eq(WordMainVariantDO::getVariantName, variantName)
                         .eq(WordMainVariantDO::getIsValid, CommonConstants.FLAG_YES));
+        AtomicReference<List<WordMainDO>> result = new AtomicReference<>();
         if (one == null) {
-            return null;
+            if (queueId == null) {
+                return null;
+            }
+            Optional.ofNullable(wordFetchQueueService.getById(queueId)).ifPresent(queue -> {
+                result.set(wordMainService.listDirtyData(queue.getWordId()));
+            });
+            return result.get();
         }
-        return wordMainService.list(Wrappers.<WordMainDO>lambdaQuery().eq(WordMainDO::getWordName, wordMainService.getWordName(one.getWordId())));
+        return wordMainService.listDirtyData(one.getWordId());
     }
 
     @Override

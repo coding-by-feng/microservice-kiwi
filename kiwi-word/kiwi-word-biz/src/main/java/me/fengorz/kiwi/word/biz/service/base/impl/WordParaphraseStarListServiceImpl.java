@@ -15,11 +15,6 @@
  */
 package me.fengorz.kiwi.word.biz.service.base.impl;
 
-import java.time.LocalDateTime;
-import java.util.List;
-
-import org.springframework.stereotype.Service;
-
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
@@ -27,7 +22,6 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-
 import lombok.RequiredArgsConstructor;
 import me.fengorz.kiwi.common.api.R;
 import me.fengorz.kiwi.common.api.constant.CommonConstants;
@@ -40,6 +34,10 @@ import me.fengorz.kiwi.word.api.vo.star.ParaphraseStarItemVO;
 import me.fengorz.kiwi.word.biz.mapper.WordParaphraseStarListMapper;
 import me.fengorz.kiwi.word.biz.mapper.WordParaphraseStarRelMapper;
 import me.fengorz.kiwi.word.biz.service.base.IWordParaphraseStarListService;
+import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * 单词本
@@ -50,7 +48,7 @@ import me.fengorz.kiwi.word.biz.service.base.IWordParaphraseStarListService;
 @Service
 @RequiredArgsConstructor
 public class WordParaphraseStarListServiceImpl extends
-    ServiceImpl<WordParaphraseStarListMapper, WordParaphraseStarListDO> implements IWordParaphraseStarListService {
+        ServiceImpl<WordParaphraseStarListMapper, WordParaphraseStarListDO> implements IWordParaphraseStarListService {
 
     private final WordParaphraseStarListMapper wordParaphraseStarListMapper;
     private final WordParaphraseStarRelMapper wordParaphraseStarRelMapper;
@@ -63,20 +61,20 @@ public class WordParaphraseStarListServiceImpl extends
     @Override
     public List<WordParaphraseStarListVO> getCurrentUserList(Integer userId) {
         QueryWrapper<WordParaphraseStarListDO> queryWrapper =
-            new QueryWrapper<>(new WordParaphraseStarListDO().setOwner(userId).setIsDel(CommonConstants.FLAG_N)).select(
-                WordParaphraseStarListDO.class,
-                tableFieldInfo -> WordParaphraseStarListColumn.ID.equals(tableFieldInfo.getColumn())
-                    || WordParaphraseStarListColumn.LIST_NAME.equals(tableFieldInfo.getColumn())
-                    || WordParaphraseStarListColumn.REMARK.equals(tableFieldInfo.getColumn()));
+                new QueryWrapper<>(new WordParaphraseStarListDO().setOwner(userId).setIsDel(CommonConstants.FLAG_N)).select(
+                        WordParaphraseStarListDO.class,
+                        tableFieldInfo -> WordParaphraseStarListColumn.ID.equals(tableFieldInfo.getColumn())
+                                || WordParaphraseStarListColumn.LIST_NAME.equals(tableFieldInfo.getColumn())
+                                || WordParaphraseStarListColumn.REMARK.equals(tableFieldInfo.getColumn()));
 
         return KiwiBeanUtils.convertFrom(wordParaphraseStarListMapper.selectList(queryWrapper),
-            WordParaphraseStarListVO.class);
+                WordParaphraseStarListVO.class);
     }
 
     @Override
     public R updateListByUser(WordParaphraseStarListDO entity, Integer id, Integer userId) {
         UpdateWrapper<WordParaphraseStarListDO> updateWrapper =
-            new UpdateWrapper<>(new WordParaphraseStarListDO().setOwner(userId).setId(id));
+                new UpdateWrapper<>(new WordParaphraseStarListDO().setOwner(userId).setId(id));
         return R.success(this.update(entity, updateWrapper));
     }
 
@@ -91,9 +89,14 @@ public class WordParaphraseStarListServiceImpl extends
     }
 
     @Override
+    public IPage<ParaphraseStarItemVO> selectRememberListItems(Page page, Integer listId) {
+        return this.wordParaphraseStarListMapper.selectRememberListItems(page, listId);
+    }
+
+    @Override
     public int removeParaphraseStar(Integer paraphraseId, Integer listId) {
         LambdaQueryWrapper<WordParaphraseStarRelDO> wrapper = new LambdaQueryWrapper<WordParaphraseStarRelDO>()
-            .eq(WordParaphraseStarRelDO::getListId, listId).eq(WordParaphraseStarRelDO::getParaphraseId, paraphraseId);
+                .eq(WordParaphraseStarRelDO::getListId, listId).eq(WordParaphraseStarRelDO::getParaphraseId, paraphraseId);
         Integer count = wordParaphraseStarRelMapper.selectCount(wrapper);
         if (count < 0) {
             return 0;
@@ -104,19 +107,28 @@ public class WordParaphraseStarListServiceImpl extends
     @Override
     public void rememberOne(Integer paraphraseId, Integer listId) {
         wordParaphraseStarRelMapper.update(
-            new WordParaphraseStarRelDO().setIsRemember(CommonConstants.FLAG_DEL_YES)
-                .setRememberTime(LocalDateTime.now()),
-            Wrappers.<WordParaphraseStarRelDO>lambdaQuery().eq(WordParaphraseStarRelDO::getListId, listId)
-                .eq(WordParaphraseStarRelDO::getParaphraseId, paraphraseId));
+                new WordParaphraseStarRelDO().setIsRemember(CommonConstants.FLAG_DEL_YES)
+                        .setRememberTime(LocalDateTime.now()),
+                Wrappers.<WordParaphraseStarRelDO>lambdaQuery().eq(WordParaphraseStarRelDO::getListId, listId)
+                        .eq(WordParaphraseStarRelDO::getParaphraseId, paraphraseId));
+    }
+
+    @Override
+    public void keepInMind(Integer paraphraseId, Integer listId) {
+        wordParaphraseStarRelMapper.update(
+                new WordParaphraseStarRelDO().setIsKeepInMind(CommonConstants.FLAG_DEL_YES)
+                        .setKeepInMindTime(LocalDateTime.now()),
+                Wrappers.<WordParaphraseStarRelDO>lambdaQuery().eq(WordParaphraseStarRelDO::getListId, listId)
+                        .eq(WordParaphraseStarRelDO::getParaphraseId, paraphraseId));
     }
 
     @Override
     public void forgetOne(Integer paraphraseId, Integer listId) {
         wordParaphraseStarRelMapper.update(
-            new WordParaphraseStarRelDO().setIsRemember(CommonConstants.FLAG_DEL_NO)
-                .setRememberTime(LocalDateTime.now()),
-            Wrappers.<WordParaphraseStarRelDO>lambdaQuery().eq(WordParaphraseStarRelDO::getListId, listId)
-                .eq(WordParaphraseStarRelDO::getParaphraseId, paraphraseId));
+                new WordParaphraseStarRelDO().setIsRemember(CommonConstants.FLAG_DEL_NO)
+                        .setIsKeepInMind(CommonConstants.FLAG_DEL_NO),
+                Wrappers.<WordParaphraseStarRelDO>lambdaQuery().eq(WordParaphraseStarRelDO::getListId, listId)
+                        .eq(WordParaphraseStarRelDO::getParaphraseId, paraphraseId));
     }
 
 }

@@ -35,7 +35,7 @@
               from word_paraphrase_star_rel wpsr
                        left join word_paraphrase wp on wpsr.paraphrase_id = wp.paraphrase_id
               where wpsr.list_id = #{listId}
-                and wp.is_del = 'N') temp
+                and wp.is_del = 0) temp
                  left join word_main wm on temp.word_id = wm.word_id
         order by temp.create_time desc
     </select>
@@ -53,7 +53,26 @@
                        left join word_paraphrase wp on wpsr.paraphrase_id = wp.paraphrase_id
               where wpsr.list_id = #{listId}
                 and wpsr.is_remember = 0
-                and wp.is_del = 'N') temp
+                and wp.is_del = 0) temp
+                 left join word_main wm on temp.word_id = wm.word_id
+        order by temp.create_time desc
+    </select>
+
+    <select id="selectRememberListItems" resultType="me.fengorz.kiwi.word.api.vo.star.ParaphraseStarItemVO">
+        select temp.*, wm.word_name
+        from (select wp.paraphrase_id,
+                     wp.word_id,
+                     wp.paraphrase_english,
+                     wp.meaning_chinese,
+                     wp.character_id,
+                     wp.paraphrase_english_translate,
+                     wpsr.create_time
+              from word_paraphrase_star_rel wpsr
+                       left join word_paraphrase wp on wpsr.paraphrase_id = wp.paraphrase_id
+              where wpsr.list_id = #{listId}
+                and wpsr.is_remember = 1
+                and wpsr.is_keep_in_mind= 0
+                and wp.is_del = 0) temp
                  left join word_main wm on temp.word_id = wm.word_id
         order by temp.create_time desc
     </select>

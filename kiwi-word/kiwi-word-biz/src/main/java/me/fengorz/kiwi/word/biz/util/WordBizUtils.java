@@ -50,7 +50,7 @@ public class WordBizUtils {
         wordParaphraseDO.setWordId(wordId);
         wordParaphraseDO.setCharacterId(characterId);
         wordParaphraseDO.setMeaningChinese(meaningChinese);
-        wordParaphraseDO.setIsDel(CommonConstants.FLAG_N);
+        wordParaphraseDO.setIsDel(CommonConstants.FLAG_DEL_NO);
         wordParaphraseDO.setParaphraseEnglish(paraphraseEnglish);
         wordParaphraseDO.setTranslateLanguage(translateLanguage);
         return wordParaphraseDO;

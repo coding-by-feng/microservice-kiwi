@@ -15,14 +15,13 @@
  */
 package me.fengorz.kiwi.word.api.entity;
 
-import java.time.LocalDateTime;
-
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
-
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
+
+import java.time.LocalDateTime;
 
 /**
  * @author zhanshifeng
@@ -36,21 +35,18 @@ public class WordParaphraseStarRelDO extends Model<WordParaphraseStarRelDO> {
 
     private static final long serialVersionUID = 1L;
 
-    /**
-     *
-     */
     private Integer listId;
-    /**
-     *
-     */
+
     private Integer paraphraseId;
-    /**
-     *
-     */
+
     private LocalDateTime createTime;
 
     private Integer isRemember;
 
     private LocalDateTime rememberTime;
+
+    private Integer isKeepInMind;
+
+    private LocalDateTime keepInMindTime;
 
 }

@@ -15,13 +15,8 @@
  */
 package me.fengorz.kiwi.word.biz.service.base.impl;
 
-import java.util.List;
-
-import org.springframework.stereotype.Service;
-
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-
 import lombok.RequiredArgsConstructor;
 import me.fengorz.kiwi.common.api.constant.CommonConstants;
 import me.fengorz.kiwi.word.api.dto.mapper.in.SelectEntityIsCollectDTO;
@@ -29,6 +24,9 @@ import me.fengorz.kiwi.word.api.entity.WordParaphraseDO;
 import me.fengorz.kiwi.word.api.vo.detail.WordParaphraseVO;
 import me.fengorz.kiwi.word.biz.mapper.WordParaphraseMapper;
 import me.fengorz.kiwi.word.biz.service.base.IWordParaphraseService;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * 单词释义表
@@ -46,7 +44,7 @@ public class WordParaphraseServiceImpl extends ServiceImpl<WordParaphraseMapper,
     @Override
     public Integer countById(Integer id) {
         return this
-            .count(new QueryWrapper<>(new WordParaphraseDO().setParaphraseId(id).setIsDel(CommonConstants.FLAG_N)));
+            .count(new QueryWrapper<>(new WordParaphraseDO().setParaphraseId(id).setIsDel(CommonConstants.FLAG_DEL_NO)));
     }
 
     @Override

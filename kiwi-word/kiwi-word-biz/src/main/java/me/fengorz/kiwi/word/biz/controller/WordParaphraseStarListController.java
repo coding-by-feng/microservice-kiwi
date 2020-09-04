@@ -15,18 +15,8 @@
  */
 package me.fengorz.kiwi.word.biz.controller;
 
-import java.util.List;
-
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
-
-import org.hibernate.validator.constraints.Range;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.bdf.core.service.ISeqService;
@@ -43,6 +33,13 @@ import me.fengorz.kiwi.word.api.vo.star.ParaphraseStarItemVO;
 import me.fengorz.kiwi.word.biz.service.base.IWordParaphraseService;
 import me.fengorz.kiwi.word.biz.service.base.IWordParaphraseStarListService;
 import me.fengorz.kiwi.word.biz.service.operate.IWordOperateService;
+import org.hibernate.validator.constraints.Range;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import java.util.List;
 
 /**
  * 单词本
@@ -65,8 +62,7 @@ public class WordParaphraseStarListController extends BaseController {
     /**
      * 新增单词本
      *
-     * @param vo
-     *            单词本
+     * @param vo 单词本
      * @return R
      */
     @SysLog("新增单词本")
@@ -81,8 +77,7 @@ public class WordParaphraseStarListController extends BaseController {
     /**
      * 修改单词本
      *
-     * @param wordParaphraseStarListDO
-     *            单词本
+     * @param wordParaphraseStarListDO 单词本
      * @return R
      */
     @SysLog("修改单词本")
@@ -95,8 +90,7 @@ public class WordParaphraseStarListController extends BaseController {
     /**
      * 通过id删除单词本
      *
-     * @param id
-     *            id
+     * @param id id
      * @return R
      */
     @SysLog("通过id删除单词本")
@@ -123,14 +117,20 @@ public class WordParaphraseStarListController extends BaseController {
 
     @PostMapping("/getListItems/{size}/{current}")
     public R<IPage<ParaphraseStarItemVO>> getListItems(@NotNull Integer listId, @PathVariable @Min(1) Integer current,
-        @PathVariable @Range(min = 1, max = 100) Integer size) {
+                                                       @PathVariable @Range(min = 1, max = 100) Integer size) {
         return R.success(wordParaphraseStarListService.selectListItems(new Page(current, size), listId));
     }
 
     @PostMapping("/getReviewListItems/{size}/{current}")
     public R<IPage<ParaphraseStarItemVO>> getReviewListItems(@NotNull Integer listId,
-        @PathVariable @Min(1) Integer current, @PathVariable @Range(min = 1, max = 100) Integer size) {
+                                                             @PathVariable @Min(1) Integer current, @PathVariable @Range(min = 1, max = 100) Integer size) {
         return R.success(wordParaphraseStarListService.selectReviewListItems(new Page(current, size), listId));
+    }
+
+    @PostMapping("/getRememberListItems/{size}/{current}")
+    public R<IPage<ParaphraseStarItemVO>> getRememberListItems(@NotNull Integer listId,
+                                                               @PathVariable @Min(1) Integer current, @PathVariable @Range(min = 1, max = 100) Integer size) {
+        return R.success(wordParaphraseStarListService.selectRememberListItems(new Page(current, size), listId));
     }
 
     @GetMapping("/getItemDetail/{paraphraseId}")
@@ -141,6 +141,12 @@ public class WordParaphraseStarListController extends BaseController {
     @PostMapping("/rememberOne")
     public R<Void> rememberOne(@NotNull Integer paraphraseId, @NotNull Integer listId) {
         wordParaphraseStarListService.rememberOne(paraphraseId, listId);
+        return R.success();
+    }
+
+    @PostMapping("/keepInMind")
+    public R<Void> keepInMind(@NotNull Integer paraphraseId, @NotNull Integer listId) {
+        wordParaphraseStarListService.keepInMind(paraphraseId, listId);
         return R.success();
     }
 

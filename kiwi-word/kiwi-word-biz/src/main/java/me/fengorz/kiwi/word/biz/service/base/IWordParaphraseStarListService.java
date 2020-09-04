@@ -18,16 +18,15 @@
  */
 package me.fengorz.kiwi.word.biz.service.base;
 
-import java.util.List;
-
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
-
 import me.fengorz.kiwi.common.api.R;
 import me.fengorz.kiwi.word.api.entity.WordParaphraseStarListDO;
 import me.fengorz.kiwi.word.api.vo.WordParaphraseStarListVO;
 import me.fengorz.kiwi.word.api.vo.star.ParaphraseStarItemVO;
+
+import java.util.List;
 
 /**
  * 单词本
@@ -47,9 +46,13 @@ public interface IWordParaphraseStarListService extends IService<WordParaphraseS
 
     IPage<ParaphraseStarItemVO> selectReviewListItems(Page page, Integer listId);
 
+    IPage<ParaphraseStarItemVO> selectRememberListItems(Page page, Integer listId);
+
     int removeParaphraseStar(Integer paraphraseId, Integer listId);
 
     void rememberOne(Integer paraphraseId, Integer listId);
+
+    void keepInMind(Integer paraphraseId, Integer listId);
 
     void forgetOne(Integer paraphraseId, Integer listId);
 }

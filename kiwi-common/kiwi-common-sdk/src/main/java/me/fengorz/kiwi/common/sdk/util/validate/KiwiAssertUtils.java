@@ -16,13 +16,13 @@
 
 package me.fengorz.kiwi.common.sdk.util.validate;
 
-import java.util.Collection;
-
 import cn.hutool.core.lang.Assert;
 import cn.hutool.core.util.StrUtil;
 import me.fengorz.kiwi.common.api.exception.ResourceNotFoundException;
 import me.fengorz.kiwi.common.api.exception.ServiceException;
 import me.fengorz.kiwi.common.sdk.util.lang.string.KiwiStringUtils;
+
+import java.util.Collection;
 
 /**
  * @Description 断言工具类
@@ -51,7 +51,7 @@ public class KiwiAssertUtils extends Assert {
             throw new ServiceException(StrUtil.format(errorMsgTemplate, params));
         }
 
-        if (object instanceof Collection && !((Collection)object).isEmpty()) {
+        if (object instanceof Collection && !((Collection) object).isEmpty()) {
             throw new ServiceException(StrUtil.format(errorMsgTemplate, params));
         }
         if ((object instanceof Integer) && !object.equals(0)) {
@@ -62,13 +62,19 @@ public class KiwiAssertUtils extends Assert {
 
     public static <T> T serviceNotEmpty(T object, String errorMsgTemplate, Object... params) {
         serviceNotNull(object, errorMsgTemplate, params);
-        if (object instanceof Collection && ((Collection)object).isEmpty()) {
+        if (object instanceof Collection && ((Collection) object).isEmpty()) {
             throw new ServiceException(StrUtil.format(errorMsgTemplate, params));
         }
-        if ((object instanceof Integer) && ((Integer)object).equals(0)) {
+        if ((object instanceof Integer) && ((Integer) object).equals(0)) {
             throw new ServiceException(StrUtil.format(errorMsgTemplate, params));
         }
         return object;
+    }
+
+    public static void isTrue(boolean expression, String errorMsgTemplate, Object... params) throws IllegalArgumentException {
+        if (!expression) {
+            throw new ServiceException(StrUtil.format(errorMsgTemplate, params));
+        }
     }
 
 }

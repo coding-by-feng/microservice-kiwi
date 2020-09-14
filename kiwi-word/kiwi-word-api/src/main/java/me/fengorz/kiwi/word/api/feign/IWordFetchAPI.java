@@ -16,7 +16,7 @@
 
 package me.fengorz.kiwi.word.api.feign;
 
-import me.fengorz.kiwi.common.api.R;
+import com.baomidou.mybatisplus.extension.api.R;
 import me.fengorz.kiwi.word.api.common.WordConstants;
 import me.fengorz.kiwi.word.api.dto.queue.RemovePronunciatioinMqDTO;
 import me.fengorz.kiwi.word.api.dto.queue.fetch.FetchWordResultDTO;
@@ -38,7 +38,7 @@ public interface IWordFetchAPI {
 
     @GetMapping(WORD_FETCH_QUEUE + "/pageQueue/{status}/{current}/{size}")
     R<List<WordFetchQueueDO>> pageQueue(@PathVariable Integer status, @PathVariable Integer current,
-        @PathVariable Integer size);
+                                        @PathVariable Integer size);
 
     @GetMapping(WORD_FETCH_QUEUE + "/pageQueueLockIn/{status}/{current}/{size}")
     R<List<WordFetchQueueDO>> pageQueueLockIn(@PathVariable Integer status, @PathVariable Integer current,

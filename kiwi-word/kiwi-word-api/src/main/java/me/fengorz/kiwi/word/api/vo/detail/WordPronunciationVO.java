@@ -23,8 +23,7 @@ import lombok.experimental.Accessors;
 import java.io.Serializable;
 
 /**
- * @Description TODO
- * @Author zhanshifeng
+* @Author zhanshifeng
  * @Date 2019/11/26 10:01 AM
  */
 @Data

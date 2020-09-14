@@ -19,18 +19,16 @@
 
 package me.fengorz.kiwi.word.crawler.component.consumer.base;
 
+import lombok.extern.slf4j.Slf4j;
+import me.fengorz.kiwi.word.api.dto.queue.MqDTO;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+
 import java.util.Objects;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.locks.ReentrantLock;
 
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
-
-import lombok.extern.slf4j.Slf4j;
-import me.fengorz.kiwi.word.api.dto.queue.MqDTO;
-
 /**
- * @Description TODO
- * @Author zhanshifeng
+* @Author zhanshifeng
  * @Date 2020/7/29 4:34 PM
  */
 @Slf4j

@@ -16,15 +16,13 @@
 
 package me.fengorz.kiwi.common.api;
 
-import java.util.function.Supplier;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import me.fengorz.kiwi.common.api.constant.CommonConstants;
 
+import java.util.function.Supplier;
+
 /**
- * @Description TODO
- * @Author zhanshifeng
+* @Author zhanshifeng
  * @Date 2020/5/23 1:28 PM
  */
 public interface ResultCode {

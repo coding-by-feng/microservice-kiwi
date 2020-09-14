@@ -16,14 +16,12 @@
 
 package me.fengorz.kiwi.word.crawler;
 
+import me.fengorz.kiwi.bdf.feign.annotation.EnableEnhancerFeignClients;
 import org.springframework.boot.SpringApplication;
 import org.springframework.cloud.client.SpringCloudApplication;
 
-import me.fengorz.kiwi.bdf.feign.annotation.EnableEnhancerFeignClients;
-
 /**
- * @Description TODO
- * @Author zhanshifeng
+* @Author zhanshifeng
  * @Date 2019/10/29 9:27 AM
  */
 @SpringCloudApplication

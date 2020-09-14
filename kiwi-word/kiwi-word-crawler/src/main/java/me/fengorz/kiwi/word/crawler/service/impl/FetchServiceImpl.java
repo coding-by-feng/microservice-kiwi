@@ -16,12 +16,6 @@
 
 package me.fengorz.kiwi.word.crawler.service.impl;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-
-import org.springframework.stereotype.Service;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.api.R;
@@ -42,6 +36,11 @@ import me.fengorz.kiwi.word.api.feign.IWordMainVariantAPI;
 import me.fengorz.kiwi.word.crawler.component.producer.base.ISender;
 import me.fengorz.kiwi.word.crawler.service.IFetchService;
 import me.fengorz.kiwi.word.crawler.service.IJsoupService;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 /**
  * @Author zhanshifeng
@@ -74,7 +73,6 @@ public class FetchServiceImpl implements IFetchService {
             if (storeResult.isFail()) {
                 handleException(queue, WordCrawlerConstants.STATUS_FETCH_FAIL, storeResult.getMsg());
             } else {
-                // TODO ZSF 增加一个时态、单复数的变化关系对应逻辑
                 if (KiwiStringUtils.isNotEquals(inputWord, fetchWordResultDTO.getWordName())) {
                     wordMainVariantAPIService.insertVariant(inputWord, fetchWord);
                     String insertVariantResult = KiwiStringUtils

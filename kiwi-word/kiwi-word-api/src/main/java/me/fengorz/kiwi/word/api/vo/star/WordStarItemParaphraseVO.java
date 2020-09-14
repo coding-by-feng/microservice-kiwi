@@ -16,15 +16,14 @@
 
 package me.fengorz.kiwi.word.api.vo.star;
 
-import java.io.Serializable;
-
 import lombok.Data;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 
+import java.io.Serializable;
+
 /**
- * @Description TODO
- * @Author zhanshifeng
+* @Author zhanshifeng
  * @Date 2020/1/3 4:54 PM
  */
 @Data

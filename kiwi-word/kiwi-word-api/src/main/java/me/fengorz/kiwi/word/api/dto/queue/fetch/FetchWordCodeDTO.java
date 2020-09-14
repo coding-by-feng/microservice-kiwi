@@ -16,14 +16,13 @@
 
 package me.fengorz.kiwi.word.api.dto.queue.fetch;
 
-import java.util.List;
-
 import lombok.Data;
 import lombok.ToString;
 
+import java.util.List;
+
 /**
- * @Description TODO
- * @Author zhanshifeng
+* @Author zhanshifeng
  * @Date 2019/10/24 10:30 PM
  */
 @Data

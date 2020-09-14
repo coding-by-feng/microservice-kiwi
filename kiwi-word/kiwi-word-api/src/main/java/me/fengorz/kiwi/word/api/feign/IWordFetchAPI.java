@@ -16,7 +16,7 @@
 
 package me.fengorz.kiwi.word.api.feign;
 
-import com.baomidou.mybatisplus.extension.api.R;
+import me.fengorz.kiwi.common.api.R;
 import me.fengorz.kiwi.word.api.common.WordConstants;
 import me.fengorz.kiwi.word.api.dto.queue.RemovePronunciatioinMqDTO;
 import me.fengorz.kiwi.word.api.dto.queue.fetch.FetchWordResultDTO;

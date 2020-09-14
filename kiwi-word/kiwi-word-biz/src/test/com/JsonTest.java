@@ -9,6 +9,5 @@ import me.fengorz.kiwi.word.api.entity.WordFetchQueueDO;
 public class JsonTest {
 
     public void test() {
-
     }
 }

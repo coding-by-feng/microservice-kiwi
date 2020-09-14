@@ -61,6 +61,8 @@ public class WordParaphraseVO implements Serializable {
 
     private String isCollect;
 
+    private Boolean isOverlength;
+
     private List<WordParaphraseExampleVO> wordParaphraseExampleVOList;
 
     private List<WordPronunciationVO> wordPronunciationVOList;

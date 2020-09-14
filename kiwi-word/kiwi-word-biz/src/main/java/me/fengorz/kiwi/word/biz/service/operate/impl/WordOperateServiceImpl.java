@@ -95,7 +95,7 @@ public class WordOperateServiceImpl implements IWordOperateService {
     @Cacheable(cacheNames = WordConstants.CACHE_NAMES, keyGenerator = CacheConstants.CACHE_KEY_GENERATOR_BEAN,
             unless = "#result == null")
     public WordQueryVO queryWord(@KiwiCacheKey String wordName) {
-        WordQueryVO wordQueryVO = new WordQueryVO();
+        WordQueryVO vo = new WordQueryVO();
         WordMainDO word = wordMainService.getOne(wordName);
         // if you can't find the result after the tense is determined, insert a record into the queue to be fetched
         if (word == null) {
@@ -118,42 +118,42 @@ public class WordOperateServiceImpl implements IWordOperateService {
 
         KiwiAssertUtils.resourceNotNull(word, "No results for [{}]!", wordName);
 
-        wordQueryVO.setWordId(word.getWordId());
-        wordQueryVO.setWordName(word.getWordName());
-        wordQueryVO.setIsCollect(CommonConstants.FLAG_N);
+        vo.setWordId(word.getWordId());
+        vo.setWordName(word.getWordName());
+        vo.setIsCollect(CommonConstants.FLAG_N);
 
         Integer wordId = word.getWordId();
-        wordQueryVO.setWordCharacterVOList(assembleWordCharacterVOS(wordName, wordId));
-        return wordQueryVO;
+        vo.setWordCharacterVOList(assembleWordQueryVO(wordName, wordId));
+        return vo;
     }
 
-    private List<WordCharacterVO> assembleWordCharacterVOS(String wordName, Integer wordId) throws ServiceException {
-        List<WordCharacterDO> wordCharacterList =
+    private List<WordCharacterVO> assembleWordQueryVO(String wordName, Integer wordId) throws ServiceException {
+        List<WordCharacterDO> characterList =
                 wordCharacterService.list(new QueryWrapper<>(new WordCharacterDO().setWordId(wordId)));
-        KiwiAssertUtils.serviceNotEmpty(wordCharacterList, "No character for [{}]!", wordName);
+        KiwiAssertUtils.serviceNotEmpty(characterList, "No character for [{}]!", wordName);
 
-        List<WordCharacterVO> wordCharacterVOList = new ArrayList<>();
-        for (WordCharacterDO wordCharacter : wordCharacterList) {
-            WordCharacterVO wordCharacterVO = new WordCharacterVO();
-            BeanUtil.copyProperties(wordCharacter, wordCharacterVO);
-            wordCharacterVOList.add(wordCharacterVO);
+        List<WordCharacterVO> characterVOList = new ArrayList<>();
+        for (WordCharacterDO character : characterList) {
+            WordCharacterVO characterVO = new WordCharacterVO();
+            BeanUtil.copyProperties(character, characterVO);
+            characterVOList.add(characterVO);
 
-            List<WordParaphraseVO> wordParaphraseVOList = assembleWordParaphraseVOS(wordCharacter.getCharacterId());
-            if (KiwiCollectionUtils.isEmpty(wordParaphraseVOList)) {
+            List<WordParaphraseVO> paraphraseVOList = assembleParaphraseVOList(character.getCharacterId());
+            if (KiwiCollectionUtils.isEmpty(paraphraseVOList)) {
                 continue;
             }
-            wordCharacterVO.setWordParaphraseVOList(wordParaphraseVOList);
+            characterVO.setWordParaphraseVOList(paraphraseVOList);
 
-            List<WordPronunciationVO> wordPronunciationVOList = assembleWordPronunciationVOS(wordCharacter);
-            if (KiwiCollectionUtils.isEmpty(wordPronunciationVOList)) {
+            List<WordPronunciationVO> pronunciationVOList = assemblePronunciationVOList(character);
+            if (KiwiCollectionUtils.isEmpty(pronunciationVOList)) {
                 continue;
             }
-            wordCharacterVO.setWordPronunciationVOList(wordPronunciationVOList);
+            characterVO.setWordPronunciationVOList(pronunciationVOList);
         }
-        return wordCharacterVOList;
+        return characterVOList;
     }
 
-    private List<WordPronunciationVO> assembleWordPronunciationVOS(WordCharacterDO wordCharacter) {
+    private List<WordPronunciationVO> assemblePronunciationVOList(WordCharacterDO wordCharacter) {
         List<WordPronunciationDO> wordPronunciationList = wordPronunciationService
                 .list(new QueryWrapper<>(new WordPronunciationDO().setCharacterId(wordCharacter.getCharacterId())));
         // 单词发音音频文件传给pronunciationId给前端，让前端再次调用接口下载文件流
@@ -171,57 +171,57 @@ public class WordOperateServiceImpl implements IWordOperateService {
         return wordPronunciationVOList;
     }
 
-    private List<WordParaphraseVO> assembleWordParaphraseVOS(Integer characterId) {
-        List<WordParaphraseVO> wordParaphraseVOList = new ArrayList<>();
-        List<WordParaphraseDO> wordParaphraseDOList =
+    private List<WordParaphraseVO> assembleParaphraseVOList(Integer characterId) {
+        List<WordParaphraseVO> paraphraseVOList = new ArrayList<>();
+        List<WordParaphraseDO> paraphraseDOList =
                 wordParaphraseService.list(new QueryWrapper<>(new WordParaphraseDO().setCharacterId(characterId)));
-        if (CollUtil.isEmpty(wordParaphraseDOList)) {
-            return wordParaphraseVOList;
+        if (CollUtil.isEmpty(paraphraseDOList)) {
+            return paraphraseVOList;
         }
 
-        for (WordParaphraseDO wordParaphraseDO : wordParaphraseDOList) {
-            WordParaphraseVO wordParaphraseVO = new WordParaphraseVO();
-            BeanUtil.copyProperties(wordParaphraseDO, wordParaphraseVO);
+        for (WordParaphraseDO paraphrase : paraphraseDOList) {
+            WordParaphraseVO vo = new WordParaphraseVO();
+            BeanUtil.copyProperties(paraphrase, vo);
 
-            if (1 == wordParaphraseDO.getIsHavePhrase()) {
+            if (1 == paraphrase.getIsHavePhrase()) {
                 List<String> phraseList = new ArrayList<>();
                 List<WordParaphrasePhraseDO> phraseDOList =
                         wordParaphrasePhraseService.list(Wrappers.<WordParaphrasePhraseDO>lambdaQuery()
-                                .eq(WordParaphrasePhraseDO::getParaphraseId, wordParaphraseDO.getParaphraseId())
+                                .eq(WordParaphrasePhraseDO::getParaphraseId, paraphrase.getParaphraseId())
                                 .eq(WordParaphrasePhraseDO::getIsValid, CommonConstants.FLAG_YES));
                 if (KiwiCollectionUtils.isNotEmpty(phraseDOList)) {
                     for (WordParaphrasePhraseDO phraseDO : phraseDOList) {
                         phraseList.add(phraseDO.getPhrase());
                     }
                 }
-                wordParaphraseVO.setPhraseList(phraseList);
+                vo.setPhraseList(phraseList);
             }
 
-            wordParaphraseVOList.add(wordParaphraseVO);
+            paraphraseVOList.add(vo);
 
-            List<WordParaphraseExampleVO> wordParaphraseExampleVOList =
-                    assembleWordParaphraseExampleVOS(wordParaphraseVO.getParaphraseId());
-            if (wordParaphraseExampleVOList == null) {
+            List<WordParaphraseExampleVO> exampleVOList =
+                    assembleExampleVOList(vo.getParaphraseId());
+            if (exampleVOList == null) {
                 continue;
             }
-            wordParaphraseVO.setWordParaphraseExampleVOList(wordParaphraseExampleVOList);
+            vo.setWordParaphraseExampleVOList(exampleVOList);
         }
-        return wordParaphraseVOList;
+        return paraphraseVOList;
     }
 
-    private List<WordParaphraseExampleVO> assembleWordParaphraseExampleVOS(Integer paraphraseId) {
-        List<WordParaphraseExampleVO> wordParaphraseExampleVOList = new ArrayList<>();
-        List<WordParaphraseExampleDO> wordParaphraseExampleDOList = wordParaphraseExampleService
+    private List<WordParaphraseExampleVO> assembleExampleVOList(Integer paraphraseId) {
+        List<WordParaphraseExampleVO> ExampleVOList = new ArrayList<>();
+        List<WordParaphraseExampleDO> exampleDOList = wordParaphraseExampleService
                 .list(new QueryWrapper<>(new WordParaphraseExampleDO().setParaphraseId(paraphraseId)));
-        if (CollUtil.isEmpty(wordParaphraseExampleDOList)) {
+        if (CollUtil.isEmpty(exampleDOList)) {
             return null;
         }
-        for (WordParaphraseExampleDO wordParaphraseExampleDO : wordParaphraseExampleDOList) {
-            WordParaphraseExampleVO wordParaphraseExampleVO = new WordParaphraseExampleVO();
-            BeanUtil.copyProperties(wordParaphraseExampleDO, wordParaphraseExampleVO);
-            wordParaphraseExampleVOList.add(wordParaphraseExampleVO);
+        for (WordParaphraseExampleDO example : exampleDOList) {
+            WordParaphraseExampleVO vo = new WordParaphraseExampleVO();
+            BeanUtil.copyProperties(example, vo);
+            ExampleVOList.add(vo);
         }
-        return wordParaphraseExampleVOList;
+        return ExampleVOList;
     }
 
     @Override
@@ -261,26 +261,27 @@ public class WordOperateServiceImpl implements IWordOperateService {
     @Cacheable(cacheNames = WordConstants.CACHE_NAMES, keyGenerator = CacheConstants.CACHE_KEY_GENERATOR_BEAN,
             unless = "#result == null")
     public WordParaphraseVO findWordParaphraseVO(@KiwiCacheKey Integer paraphraseId) {
-        WordParaphraseVO wordParaphraseVO = new WordParaphraseVO();
-        List<WordParaphraseExampleVO> wordParaphraseExampleVOList = new ArrayList<>();
-        WordParaphraseDO wordParaphraseDO = wordParaphraseService.getById(paraphraseId);
-        BeanUtil.copyProperties(wordParaphraseDO, wordParaphraseVO);
-        List<WordParaphraseExampleDO> exampleDOS =
+        WordParaphraseVO paraphraseVO = new WordParaphraseVO();
+        List<WordParaphraseExampleVO> exampleVOList = new ArrayList<>();
+        WordParaphraseDO paraphrase = wordParaphraseService.getById(paraphraseId);
+        BeanUtil.copyProperties(paraphrase, paraphraseVO);
+        List<WordParaphraseExampleDO> exampleDOList =
                 wordParaphraseExampleService.list(new LambdaQueryWrapper<WordParaphraseExampleDO>()
                         .eq(WordParaphraseExampleDO::getParaphraseId, paraphraseId));
-        if (CollUtil.isNotEmpty(exampleDOS)) {
-            exampleDOS.forEach(wordParaphraseExampleDO -> {
+        if (CollUtil.isNotEmpty(exampleDOList)) {
+            exampleDOList.forEach(wordParaphraseExampleDO -> {
                 WordParaphraseExampleVO exampleVO = new WordParaphraseExampleVO();
                 BeanUtil.copyProperties(wordParaphraseExampleDO, exampleVO);
-                wordParaphraseExampleVOList.add(exampleVO);
+                exampleVOList.add(exampleVO);
             });
         }
-        wordParaphraseVO.setWordParaphraseExampleVOList(wordParaphraseExampleVOList);
-        wordParaphraseVO.setWordName(wordMainService.getWordName(wordParaphraseDO.getWordId()));
+        paraphraseVO.setWordParaphraseExampleVOList(exampleVOList);
+        paraphraseVO.setWordName(wordMainService.getWordName(paraphrase.getWordId()));
+        paraphraseVO.setCodes(paraphrase.getCodes());
 
-        WordCharacterVO characterVO = wordCharacterService.getFromCache(wordParaphraseDO.getCharacterId());
-        wordParaphraseVO.setWordCharacter(characterVO.getWordCharacter());
-        wordParaphraseVO.setWordLabel(characterVO.getWordLabel());
+        WordCharacterVO characterVO = wordCharacterService.getFromCache(paraphrase.getCharacterId());
+        paraphraseVO.setWordCharacter(characterVO.getWordCharacter());
+        paraphraseVO.setWordLabel(characterVO.getWordLabel());
 
         List<WordPronunciationDO> pronunciationList = wordPronunciationService
                 .list(new QueryWrapper<>(new WordPronunciationDO().setCharacterId(characterVO.getCharacterId())));
@@ -292,10 +293,10 @@ public class WordOperateServiceImpl implements IWordOperateService {
                 BeanUtil.copyProperties(entity, vo);
                 pronunciationVOList.add(vo);
             });
-            wordParaphraseVO.setWordPronunciationVOList(pronunciationVOList);
+            paraphraseVO.setWordPronunciationVOList(pronunciationVOList);
         }
 
-        return wordParaphraseVO;
+        return paraphraseVO;
     }
 
     @Override

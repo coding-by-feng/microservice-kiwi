@@ -96,29 +96,29 @@ public class WordCrawlerServiceImpl implements IWordCrawlerService {
         return true;
     }
 
-    private void subStoreFetchWordResult(FetchWordResultDTO fetchWordResultDTO, WordMainDO wordMainDO) {
-        final Integer wordId = wordMainDO.getWordId();
-        List<FetchWordCodeDTO> fetchWordCodeDTOList = fetchWordResultDTO.getFetchWordCodeDTOList();
-        if (CollUtil.isNotEmpty(fetchWordCodeDTOList)) {
-            for (FetchWordCodeDTO fetchWordCodeDTO : fetchWordCodeDTOList) {
+    private void subStoreFetchWordResult(FetchWordResultDTO fetchDTO, WordMainDO word) {
+        final Integer wordId = word.getWordId();
+        List<FetchWordCodeDTO> codeDTOList = fetchDTO.getFetchWordCodeDTOList();
+        if (CollUtil.isNotEmpty(codeDTOList)) {
+            for (FetchWordCodeDTO fetchWordCodeDTO : codeDTOList) {
                 WordCharacterDO wordCharacter =
-                        WordBizUtils.initWordCharacter(fetchWordCodeDTO.getCode(), fetchWordCodeDTO.getLabel(), wordId);
+                        WordBizUtils.initCharacter(fetchWordCodeDTO.getCode(), fetchWordCodeDTO.getLabel(), wordId);
                 wordCharacter.setCharacterId(seqService.genIntSequence(MapperConstant.T_INS_SEQUENCE));
                 wordCharacterService.save(wordCharacter);
                 Integer characterId = wordCharacter.getCharacterId();
 
-                List<FetchParaphraseDTO> fetchParaphraseDTOList = fetchWordCodeDTO.getFetchParaphraseDTOList();
-                FetchWordReplaceDTO replaceDTO = wordOperateService.cacheGetFetchReplace(wordMainDO.getWordName());
-                fetchParaphraseDTOList.forEach(fetchParaphraseDTO -> {
+                List<FetchParaphraseDTO> paraphraseDTOList = fetchWordCodeDTO.getFetchParaphraseDTOList();
+                FetchWordReplaceDTO replaceDTO = wordOperateService.cacheGetFetchReplace(word.getWordName());
+                paraphraseDTOList.forEach(paraphraseDTO -> {
 
-                    WordParaphraseDO wordParaphraseDO =
-                            WordBizUtils.initWordParaphrase(characterId, wordId, fetchParaphraseDTO.getMeaningChinese(),
-                                    fetchParaphraseDTO.getParaphraseEnglish(), fetchParaphraseDTO.getTranslateLanguage());
-                    wordParaphraseDO.setParaphraseId(seqService.genIntSequence(MapperConstant.T_INS_SEQUENCE));
-                    wordParaphraseService.save(wordParaphraseDO);
-                    Integer paraphraseId = wordParaphraseDO.getParaphraseId();
-                    replaceDTO.getNewParaphraseIdMap().put(wordParaphraseDO.getParaphraseEnglish(), paraphraseId);
-                    List<FetchPhraseDTO> fetchPhraseDTOList = fetchParaphraseDTO.getFetchPhraseDTOList();
+                    WordParaphraseDO paraphrase =
+                            WordBizUtils.initParaphrase(characterId, wordId, paraphraseDTO.getMeaningChinese(),
+                                    paraphraseDTO.getParaphraseEnglish(), paraphraseDTO.getTranslateLanguage(), paraphraseDTO.getCodes());
+                    paraphrase.setParaphraseId(seqService.genIntSequence(MapperConstant.T_INS_SEQUENCE));
+                    wordParaphraseService.save(paraphrase);
+                    Integer paraphraseId = paraphrase.getParaphraseId();
+                    replaceDTO.getNewParaphraseIdMap().put(paraphrase.getParaphraseEnglish(), paraphraseId);
+                    List<FetchPhraseDTO> fetchPhraseDTOList = paraphraseDTO.getPhraseDTOList();
                     if (KiwiCollectionUtils.isNotEmpty(fetchPhraseDTOList)) {
                         for (FetchPhraseDTO fetchPhraseDTO : fetchPhraseDTOList) {
                             WordParaphrasePhraseDO phraseDO = new WordParaphrasePhraseDO();
@@ -128,14 +128,14 @@ public class WordCrawlerServiceImpl implements IWordCrawlerService {
                             phraseDO.setIsValid(CommonConstants.FLAG_YES);
                             phraseDO.setCreateTime(LocalDateTime.now());
                             wordParaphrasePhraseService.save(phraseDO);
-                            wordParaphraseDO.setIsHavePhrase(CommonConstants.FLAG_YES);
-                            wordParaphraseService.updateById(wordParaphraseDO);
+                            paraphrase.setIsHavePhrase(CommonConstants.FLAG_YES);
+                            wordParaphraseService.updateById(paraphrase);
                         }
                     }
 
-                    Optional.ofNullable(fetchParaphraseDTO.getFetchParaphraseExampleDTOList())
+                    Optional.ofNullable(paraphraseDTO.getExampleDTOList())
                             .ifPresent(list -> list.forEach(fetchParaphraseExampleDTO -> {
-                                WordParaphraseExampleDO wordParaphraseExampleDO = WordBizUtils.initWordParaphraseExample(
+                                WordParaphraseExampleDO wordParaphraseExampleDO = WordBizUtils.initExample(
                                         paraphraseId, wordId, fetchParaphraseExampleDTO.getExampleSentence(),
                                         fetchParaphraseExampleDTO.getExampleTranslate(),
                                         fetchParaphraseExampleDTO.getTranslateLanguage());
@@ -146,7 +146,7 @@ public class WordCrawlerServiceImpl implements IWordCrawlerService {
                                         wordParaphraseExampleDO.getExampleId());
                             }));
                 });
-                wordOperateService.cachePutFetchReplace(wordMainDO.getWordName(), replaceDTO);
+                wordOperateService.cachePutFetchReplace(word.getWordName(), replaceDTO);
 
                 // save pronunciation and voice's file
                 List<FetchWordPronunciationDTO> fetchWordPronunciationDTOList =

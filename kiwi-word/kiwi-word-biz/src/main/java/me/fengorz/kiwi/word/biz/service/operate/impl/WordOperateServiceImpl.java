@@ -261,10 +261,10 @@ public class WordOperateServiceImpl implements IWordOperateService {
     @Cacheable(cacheNames = WordConstants.CACHE_NAMES, keyGenerator = CacheConstants.CACHE_KEY_GENERATOR_BEAN,
             unless = "#result == null")
     public WordParaphraseVO findWordParaphraseVO(@KiwiCacheKey Integer paraphraseId) {
-        WordParaphraseVO paraphraseVO = new WordParaphraseVO();
+        WordParaphraseVO vo = new WordParaphraseVO();
         List<WordParaphraseExampleVO> exampleVOList = new ArrayList<>();
         WordParaphraseDO paraphrase = wordParaphraseService.getById(paraphraseId);
-        BeanUtil.copyProperties(paraphrase, paraphraseVO);
+        BeanUtil.copyProperties(paraphrase, vo);
         List<WordParaphraseExampleDO> exampleDOList =
                 wordParaphraseExampleService.list(new LambdaQueryWrapper<WordParaphraseExampleDO>()
                         .eq(WordParaphraseExampleDO::getParaphraseId, paraphraseId));
@@ -275,13 +275,13 @@ public class WordOperateServiceImpl implements IWordOperateService {
                 exampleVOList.add(exampleVO);
             });
         }
-        paraphraseVO.setWordParaphraseExampleVOList(exampleVOList);
-        paraphraseVO.setWordName(wordMainService.getWordName(paraphrase.getWordId()));
-        paraphraseVO.setCodes(paraphrase.getCodes());
+        vo.setWordParaphraseExampleVOList(exampleVOList);
+        vo.setWordName(wordMainService.getWordName(paraphrase.getWordId()));
+        vo.setCodes(paraphrase.getCodes());
 
         WordCharacterVO characterVO = wordCharacterService.getFromCache(paraphrase.getCharacterId());
-        paraphraseVO.setWordCharacter(characterVO.getWordCharacter());
-        paraphraseVO.setWordLabel(characterVO.getWordLabel());
+        vo.setWordCharacter(characterVO.getWordCharacter());
+        vo.setWordLabel(characterVO.getWordLabel());
 
         List<WordPronunciationDO> pronunciationList = wordPronunciationService
                 .list(new QueryWrapper<>(new WordPronunciationDO().setCharacterId(characterVO.getCharacterId())));
@@ -289,14 +289,18 @@ public class WordOperateServiceImpl implements IWordOperateService {
         if (KiwiCollectionUtils.isNotEmpty(pronunciationList)) {
             List<WordPronunciationVO> pronunciationVOList = new ArrayList<>();
             pronunciationList.forEach(entity -> {
-                WordPronunciationVO vo = new WordPronunciationVO();
-                BeanUtil.copyProperties(entity, vo);
-                pronunciationVOList.add(vo);
+                WordPronunciationVO pronunciationVO = new WordPronunciationVO();
+                BeanUtil.copyProperties(entity, pronunciationVO);
+                pronunciationVOList.add(pronunciationVO);
+
+                if (entity.getSoundmark().length() > WordConstants.SOUND_MARK_OVERLENGTH_THRESHOLD) {
+                    vo.setIsOverlength(true);
+                }
             });
-            paraphraseVO.setWordPronunciationVOList(pronunciationVOList);
+            vo.setWordPronunciationVOList(pronunciationVOList);
         }
 
-        return paraphraseVO;
+        return vo;
     }
 
     @Override

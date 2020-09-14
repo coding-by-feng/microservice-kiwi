@@ -23,6 +23,8 @@ package me.fengorz.kiwi.word.api.common;
  */
 public class WordConstants {
 
+    public static final int SOUND_MARK_OVERLENGTH_THRESHOLD = 16;
+
     public static final String KIWI_WORD_BIZ = "kiwi-word-biz";
 
     public static final String CACHE_NAMES = "kiwi";

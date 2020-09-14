@@ -16,6 +16,9 @@
 
 package me.fengorz.kiwi.bdf.security.component;
 
+import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import me.fengorz.kiwi.bdf.security.exception.*;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,10 +33,6 @@ import org.springframework.security.oauth2.common.exceptions.OAuth2Exception;
 import org.springframework.security.oauth2.provider.error.WebResponseExceptionTranslator;
 import org.springframework.security.web.util.ThrowableAnalyzer;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
-
-import lombok.NoArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import me.fengorz.kiwi.bdf.security.exception.*;
 
 /**
  * 异常处理,重写oauth 默认实现

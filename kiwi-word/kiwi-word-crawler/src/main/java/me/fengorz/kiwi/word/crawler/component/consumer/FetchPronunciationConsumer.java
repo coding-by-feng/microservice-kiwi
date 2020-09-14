@@ -16,24 +16,22 @@
 
 package me.fengorz.kiwi.word.crawler.component.consumer;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
-
-import org.springframework.amqp.rabbit.annotation.*;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
-import org.springframework.stereotype.Component;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.word.api.dto.queue.FetchPronunciationMqDTO;
 import me.fengorz.kiwi.word.crawler.component.consumer.base.AbstractConsumer;
 import me.fengorz.kiwi.word.crawler.component.consumer.base.IConsumer;
 import me.fengorz.kiwi.word.crawler.service.IFetchService;
+import org.springframework.amqp.rabbit.annotation.*;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+import org.springframework.stereotype.Component;
+
+import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
 
 /**
- * @Description TODO
- * @Author zhanshifeng
+* @Author zhanshifeng
  * @Date 2019/10/28 4:25 PM
  */
 @Slf4j

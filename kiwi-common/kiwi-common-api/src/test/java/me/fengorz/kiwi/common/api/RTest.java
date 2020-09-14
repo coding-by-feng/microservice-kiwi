@@ -16,14 +16,12 @@
 
 package me.fengorz.kiwi.common.api;
 
-import org.junit.Test;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.Test;
 
 /**
- * @Description TODO
- * @Author zhanshifeng
+* @Author zhanshifeng
  * @Date 2020/5/23 3:31 PM
  */
 public class RTest {

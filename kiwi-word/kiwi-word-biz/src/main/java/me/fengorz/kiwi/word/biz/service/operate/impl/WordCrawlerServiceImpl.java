@@ -176,6 +176,10 @@ public class WordCrawlerServiceImpl implements IWordCrawlerService {
 
     private void fetchPronunciationVoice(WordPronunciationDO pronunciation) {
         String voiceUrl = pronunciation.getVoiceFilePath();
+        // 如果音标资源链接为空，可能是爬虫没有抓到，那就放弃当前音标资源
+        if (KiwiStringUtils.isBlank(voiceUrl)) {
+            return;
+        }
         String voiceFileUrl = WordCrawlerConstants.CAMBRIDGE_BASE_URL + voiceUrl;
         long voiceSize = HttpUtil.downloadFile(URLUtil.decode(voiceFileUrl), FileUtil.file(crawlerVoiceBasePath));
         String tempVoice = crawlerVoiceBasePath + WordDfsUtils.getVoiceFileName(voiceFileUrl);

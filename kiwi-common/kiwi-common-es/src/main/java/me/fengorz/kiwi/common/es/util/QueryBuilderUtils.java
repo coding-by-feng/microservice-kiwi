@@ -16,14 +16,13 @@
 
 package me.fengorz.kiwi.common.es.util;
 
-import java.lang.reflect.Field;
-
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.springframework.lang.NonNull;
 
+import java.lang.reflect.Field;
+
 /**
- * @Description TODO
- * @Author zhanshifeng
+* @Author zhanshifeng
  * @Date 2020/6/11 11:05 AM
  */
 public class QueryBuilderUtils {

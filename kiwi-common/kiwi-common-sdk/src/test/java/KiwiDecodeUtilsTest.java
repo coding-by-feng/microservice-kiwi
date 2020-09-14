@@ -14,14 +14,12 @@
  *
  */
 
+import me.fengorz.kiwi.common.sdk.util.cipher.KiwiDecodeUtils;
 import org.junit.Test;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import me.fengorz.kiwi.common.sdk.util.cipher.KiwiDecodeUtils;
-
 /**
- * @Description TODO
  * @Author zhanshifeng
  * @Date 2020/6/3 12:10 AM
  */

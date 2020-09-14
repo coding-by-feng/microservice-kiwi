@@ -16,20 +16,18 @@
 
 package me.fengorz.kiwi.word.crawler.component;
 
-import org.springframework.amqp.core.AmqpTemplate;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
-
 import me.fengorz.kiwi.word.api.dto.queue.FetchPronunciationMqDTO;
 import me.fengorz.kiwi.word.api.dto.queue.FetchWordMqDTO;
 import me.fengorz.kiwi.word.api.dto.queue.RemovePronunciatioinMqDTO;
 import me.fengorz.kiwi.word.api.dto.queue.RemoveWordMqDTO;
 import me.fengorz.kiwi.word.crawler.component.producer.base.ISender;
+import org.springframework.amqp.core.AmqpTemplate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 /**
- * @Description TODO
- * @Author zhanshifeng
+* @Author zhanshifeng
  * @Date 2019/10/28 9:20 AM
  */
 @Component

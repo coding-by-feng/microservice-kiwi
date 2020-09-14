@@ -1,23 +1,21 @@
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.select.Elements;
-
 import cn.hutool.core.lang.Assert;
 import me.fengorz.kiwi.word.api.dto.queue.fetch.FetchParaphraseDTO;
 import me.fengorz.kiwi.word.api.dto.queue.fetch.FetchParaphraseExampleDTO;
 import me.fengorz.kiwi.word.api.dto.queue.fetch.FetchWordCodeDTO;
 import me.fengorz.kiwi.word.api.dto.queue.fetch.FetchWordResultDTO;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 // import me.fengorz.kiwi.common.core.util.JsonPackagedUtil;
 
 /**
- * @Description TODO
- * @Author zhanshifeng
+* @Author zhanshifeng
  * @Date 2019/10/23 9:17 PM
  */
 public class JsoupTest {
@@ -83,7 +81,6 @@ public class JsoupTest {
                                     fetchParaphraseExampleDTO.setExampleTranslate(elements.text());
                                 });
 
-                            // TODO zhanshifeng The default is English, but consider how flexible it will be in the
                             // future if there are other languages
                             fetchParaphraseExampleDTO.setTranslateLanguage("English");
                             fetchParaphraseExampleDTOList.add(fetchParaphraseExampleDTO);

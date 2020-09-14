@@ -1,5 +1,3 @@
-import org.junit.Test;
-
 import me.fengorz.kiwi.common.sdk.util.json.KiwiJsonUtils;
 import me.fengorz.kiwi.word.api.dto.queue.FetchWordMqDTO;
 import me.fengorz.kiwi.word.api.dto.queue.fetch.FetchWordResultDTO;
@@ -8,10 +6,10 @@ import me.fengorz.kiwi.word.api.exception.JsoupFetchPronunciationException;
 import me.fengorz.kiwi.word.api.exception.JsoupFetchResultException;
 import me.fengorz.kiwi.word.crawler.service.IJsoupService;
 import me.fengorz.kiwi.word.crawler.service.impl.JsoupServiceImpl;
+import org.junit.Test;
 
 /**
- * @Description TODO
- * @Author zhanshifeng
+* @Author zhanshifeng
  * @Date 2019/11/4 3:01 PM
  */
 public class FetchTest {

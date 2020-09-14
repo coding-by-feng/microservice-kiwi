@@ -16,6 +16,7 @@
 
 package me.fengorz.kiwi.word.crawler.config;
 
+import me.fengorz.kiwi.common.fastdfs.config.DfsConfig;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -24,11 +25,8 @@ import org.springframework.context.annotation.Import;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
-import me.fengorz.kiwi.common.fastdfs.config.DfsConfig;
-
 /**
- * @Description TODO
- * @Author zhanshifeng
+* @Author zhanshifeng
  * @Date 2019/10/29 4:57 PM
  */
 @Configuration

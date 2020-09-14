@@ -14,10 +14,9 @@
  *
  */
 
+import io.netty.handler.codec.http.HttpMethod;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
-
-import io.netty.handler.codec.http.HttpMethod;
 import reactor.core.publisher.ConnectableFlux;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -27,7 +26,6 @@ import reactor.netty.http.client.HttpClientResponse;
 import reactor.netty.resources.ConnectionProvider;
 
 /**
- * @Description TODO
  * @Author zhanshifeng
  * @Date 2019/12/16 4:27 PM
  */

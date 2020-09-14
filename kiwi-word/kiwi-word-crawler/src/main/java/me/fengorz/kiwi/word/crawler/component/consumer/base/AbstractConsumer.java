@@ -25,6 +25,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import java.util.Objects;
 import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
@@ -51,7 +52,7 @@ public abstract class AbstractConsumer<T extends MqDTO> {
             // 线程池如果满了的话，先睡眠一段时间，等待有空闲的现场出来
             while (threadPoolTaskExecutor.getActiveCount() == maxPoolSize) {
                 try {
-                    Thread.sleep(1000);
+                    TimeUnit.SECONDS.sleep(1);
                 } catch (InterruptedException e) {
                     log.error("threadPoolTaskExecutor sleep error!", e);
                     this.errorCallback(dto);
@@ -67,7 +68,7 @@ public abstract class AbstractConsumer<T extends MqDTO> {
                     break;
                 } catch (RejectedExecutionException e) {
                     try {
-                        Thread.sleep(1000);
+                        TimeUnit.SECONDS.sleep(1);
                     } catch (InterruptedException ie) {
                         log.error("threadPoolTaskExecutor sleep error!", ie);
                         return;

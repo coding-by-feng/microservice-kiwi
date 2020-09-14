@@ -16,12 +16,10 @@
 
 package me.fengorz.kiwi.bdf.security.exception;
 
-import org.springframework.security.oauth2.common.exceptions.OAuth2Exception;
-
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-
 import lombok.Getter;
 import me.fengorz.kiwi.bdf.security.component.KiwiAuth2ExceptionSerializer;
+import org.springframework.security.oauth2.common.exceptions.OAuth2Exception;
 
 /**
  * 自定义OAuth2Exception

@@ -16,14 +16,13 @@
 
 package me.fengorz.kiwi.common.api;
 
-import java.io.Serializable;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import lombok.Data;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 import me.fengorz.kiwi.common.api.constant.CommonConstants;
+
+import java.io.Serializable;
 
 /**
  * 响应体

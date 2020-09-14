@@ -47,11 +47,16 @@ public class AsyncErrorResumeProducer extends AbstractProducer implements IProdu
 
     @Override
     public void produce() {
-        List<WordFetchQueueDO> list = new LinkedList<>((wordFetchAPI.pageQueueLockIn(WordCrawlerConstants.STATUS_DEL_PRONUNCIATION_FAIL, 0, 20)).getData());
+        List<WordFetchQueueDO> list;
+        synchronized (barrier) {
+            list = new LinkedList<>((wordFetchAPI.pageQueueLockIn(WordCrawlerConstants.STATUS_DEL_PRONUNCIATION_FAIL, 0, 20)).getData());
+        }
         if (KiwiCollectionUtils.isEmpty(list)) {
             return;
         }
-        list.forEach(this::execute);
+        synchronized (barrier) {
+            list.forEach(this::execute);
+        }
     }
 
     /**

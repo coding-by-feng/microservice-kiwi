@@ -16,16 +16,14 @@
 
 package me.fengorz.kiwi.common.fastdfs.config;
 
+import com.github.tobato.fastdfs.FdfsClientConfig;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableMBeanExport;
 import org.springframework.context.annotation.Import;
 import org.springframework.jmx.support.RegistrationPolicy;
 
-import com.github.tobato.fastdfs.FdfsClientConfig;
-
 /**
- * @Description TODO
- * @Author zhanshifeng
+* @Author zhanshifeng
  * @Date 2019/11/4 10:51 AM
  */
 @Configuration

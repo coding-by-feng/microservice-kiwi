@@ -1,12 +1,10 @@
-import org.springframework.boot.SpringApplication;
-
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.word.crawler.component.MqSender;
 import me.fengorz.kiwi.word.crawler.component.producer.ScheduledChiefProducer;
+import org.springframework.boot.SpringApplication;
 
 /**
- * @Description TODO
- * @Author zhanshifeng
+* @Author zhanshifeng
  * @Date 2019/10/28 10:21 AM
  */
 // @RunWith(SpringRunner.class)

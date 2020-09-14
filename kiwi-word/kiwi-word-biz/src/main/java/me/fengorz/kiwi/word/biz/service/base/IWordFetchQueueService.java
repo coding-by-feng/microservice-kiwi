@@ -15,11 +15,10 @@
  */
 package me.fengorz.kiwi.word.biz.service.base;
 
-import java.util.List;
-
 import com.baomidou.mybatisplus.extension.service.IService;
-
 import me.fengorz.kiwi.word.api.entity.WordFetchQueueDO;
+
+import java.util.List;
 
 /**
  * 单词待抓取列表
@@ -39,5 +38,5 @@ public interface IWordFetchQueueService extends IService<WordFetchQueueDO> {
 
     void flagWordQueryException(String wordName);
 
-    List<WordFetchQueueDO> page2List(Integer status, Integer current, Integer size);
+    List<WordFetchQueueDO> page2List(Integer status, Integer current, Integer size, Integer isLock);
 }

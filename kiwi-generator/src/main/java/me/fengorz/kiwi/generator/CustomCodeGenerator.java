@@ -16,21 +16,7 @@
 
 package me.fengorz.kiwi.generator;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.StringWriter;
-import java.util.*;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
-
-import org.apache.commons.lang3.StringUtils;
-import org.apache.velocity.Template;
-import org.apache.velocity.VelocityContext;
-import org.apache.velocity.app.Velocity;
-
 import com.baomidou.mybatisplus.core.toolkit.Constants;
-
 import me.fengorz.kiwi.common.sdk.util.time.KiwiDateFormatUtils;
 import me.fengorz.kiwi.common.sdk.util.time.KiwiDateUtils;
 import me.fengorz.kiwi.generator.common.ToolConstants;
@@ -40,6 +26,18 @@ import me.fengorz.kiwi.generator.entity.GenerateConfig;
 import me.fengorz.kiwi.generator.entity.TableEntity;
 import me.fengorz.kiwi.generator.util.ToolBeanUtils;
 import me.fengorz.kiwi.generator.util.ToolIOUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.velocity.Template;
+import org.apache.velocity.VelocityContext;
+import org.apache.velocity.app.Velocity;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.StringWriter;
+import java.util.*;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 /**
  * @Author zhanshifeng
@@ -157,7 +155,6 @@ public class CustomCodeGenerator {
                     continue;
                 }
                 zip.putNextEntry(new ZipEntry(fileName));
-                // TODO: 2020/2/24
                 ToolIOUtils.write(zip, ToolConstants.UTF_8, false, sw.toString());
                 ToolIOUtils.close(sw);
                 zip.closeEntry();

@@ -3,7 +3,6 @@ package com;
 import me.fengorz.kiwi.word.api.entity.WordFetchQueueDO;
 
 /**
- * @Description TODO
  * @Author zhanshifeng
  * @Date 2019/10/31 10:21 AM
  */

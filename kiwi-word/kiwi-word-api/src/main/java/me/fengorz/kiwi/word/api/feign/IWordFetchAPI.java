@@ -16,17 +16,16 @@
 
 package me.fengorz.kiwi.word.api.feign;
 
-import java.util.List;
-
-import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.*;
-
 import me.fengorz.kiwi.common.api.R;
 import me.fengorz.kiwi.word.api.common.WordConstants;
 import me.fengorz.kiwi.word.api.dto.queue.RemovePronunciatioinMqDTO;
 import me.fengorz.kiwi.word.api.dto.queue.fetch.FetchWordResultDTO;
 import me.fengorz.kiwi.word.api.entity.WordFetchQueueDO;
 import me.fengorz.kiwi.word.api.feign.factory.WordFetchFallbackFactory;
+import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * @Author zhanshifeng
@@ -39,6 +38,10 @@ public interface IWordFetchAPI {
 
     @GetMapping(WORD_FETCH_QUEUE + "/pageQueue/{status}/{current}/{size}")
     R<List<WordFetchQueueDO>> pageQueue(@PathVariable Integer status, @PathVariable Integer current,
+        @PathVariable Integer size);
+
+    @GetMapping(WORD_FETCH_QUEUE + "/pageQueueLockIn/{status}/{current}/{size}")
+    R<List<WordFetchQueueDO>> pageQueueLockIn(@PathVariable Integer status, @PathVariable Integer current,
         @PathVariable Integer size);
 
     @PostMapping(WORD_FETCH_QUEUE + "/updateById")

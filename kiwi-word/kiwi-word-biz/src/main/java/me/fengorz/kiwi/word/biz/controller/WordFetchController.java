@@ -15,20 +15,12 @@
  */
 package me.fengorz.kiwi.word.biz.controller;
 
-import java.util.List;
-
-import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
-
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.api.R;
 import me.fengorz.kiwi.common.api.annotation.log.SysLog;
+import me.fengorz.kiwi.common.api.constant.CommonConstants;
 import me.fengorz.kiwi.common.sdk.controller.BaseController;
 import me.fengorz.kiwi.word.api.dto.queue.RemovePronunciatioinMqDTO;
 import me.fengorz.kiwi.word.api.dto.queue.fetch.FetchWordResultDTO;
@@ -37,6 +29,12 @@ import me.fengorz.kiwi.word.biz.service.base.IWordFetchQueueService;
 import me.fengorz.kiwi.word.biz.service.operate.IWordCleanerService;
 import me.fengorz.kiwi.word.biz.service.operate.IWordCrawlerService;
 import me.fengorz.kiwi.word.biz.service.operate.IWordOperateService;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
+import java.util.List;
 
 /**
  * 单词待抓取列表
@@ -58,15 +56,20 @@ public class WordFetchController extends BaseController {
 
     @GetMapping(value = "/pageQueue/{status}/{current}/{size}")
     public R<List<WordFetchQueueDO>> pageQueue(@PathVariable Integer status, @PathVariable Integer current,
-        @PathVariable Integer size) {
-        return R.success(wordFetchQueueService.page2List(status, current, size));
+                                               @PathVariable Integer size) {
+        return R.success(wordFetchQueueService.page2List(status, current, size, CommonConstants.FLAG_YES));
+    }
+
+    @GetMapping(value = "/pageQueueLockIn/{status}/{current}/{size}")
+    public R<List<WordFetchQueueDO>> pageQueueLockIn(@PathVariable Integer status, @PathVariable Integer current,
+                                                     @PathVariable Integer size) {
+        return R.success(wordFetchQueueService.page2List(status, current, size, CommonConstants.FLAG_YES));
     }
 
     /**
      * 修改单词待抓取列表
      *
-     * @param wordFetchQueue
-     *            单词待抓取列表
+     * @param wordFetchQueue 单词待抓取列表
      * @return R
      */
     @SysLog("修改单词待抓取列表")
@@ -80,7 +83,7 @@ public class WordFetchController extends BaseController {
     // @PreAuthorize("@pms.hasPermission('queue_wordfetchqueue_edit')")
     public R<Boolean> updateByWordName(@RequestBody WordFetchQueueDO wordFetchQueue) {
         return R.success(wordFetchQueueService.update(wordFetchQueue,
-            new QueryWrapper<>(new WordFetchQueueDO().setWordName(wordFetchQueue.getWordName()))));
+                new QueryWrapper<>(new WordFetchQueueDO().setWordName(wordFetchQueue.getWordName()))));
     }
 
     @SysLog("通过id删除单词待抓取列表")

@@ -16,11 +16,6 @@
 
 package me.fengorz.kiwi.word.crawler.component.producer;
 
-import java.util.Optional;
-
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.stereotype.Component;
-
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.api.constant.CommonConstants;
 import me.fengorz.kiwi.word.api.common.WordCrawlerConstants;
@@ -30,13 +25,17 @@ import me.fengorz.kiwi.word.api.feign.IWordFetchAPI;
 import me.fengorz.kiwi.word.crawler.component.MqSender;
 import me.fengorz.kiwi.word.crawler.component.producer.base.AbstractProducer;
 import me.fengorz.kiwi.word.crawler.component.producer.base.IProducer;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Component;
+
+import java.util.Optional;
 
 /**
- * @Description TODO
+ * 抓取音标和发音资源-消息队列生产者
  * @Author zhanshifeng
  * @Date 2019/10/30 10:33 AM
  */
-@Component("asyncFetchPronunciationProducer")
+@Component
 @Slf4j
 public class AsyncFetchPronunciationProducer extends AbstractProducer implements IProducer {
 
@@ -55,7 +54,7 @@ public class AsyncFetchPronunciationProducer extends AbstractProducer implements
         queue.setIsLock(CommonConstants.FLAG_YES);
         if (Optional.of(wordFetchAPI.updateQueueById(queue)).get().isSuccess()) {
             sender.fetchPronunciation(
-                new FetchPronunciationMqDTO().setWordId(queue.getWordId()).setQueueId(queue.getQueueId()));
+                    new FetchPronunciationMqDTO().setWordId(queue.getWordId()).setQueueId(queue.getQueueId()));
         }
     }
 }

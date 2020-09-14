@@ -1,20 +1,17 @@
-import java.util.List;
-import java.util.Set;
+import me.fengorz.kiwi.common.sdk.util.log.KiwiLogUtils;
+import me.fengorz.kiwi.word.api.dto.queue.fetch.FetchWordResultDTO;
+import me.fengorz.kiwi.word.api.entity.WordFetchQueueDO;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
-
-import org.apache.commons.lang3.StringUtils;
-
-import me.fengorz.kiwi.common.sdk.util.log.KiwiLogUtils;
-import me.fengorz.kiwi.word.api.dto.queue.fetch.FetchWordResultDTO;
-import me.fengorz.kiwi.word.api.entity.WordFetchQueueDO;
+import java.util.List;
+import java.util.Set;
 
 /**
- * @Description TODO
- * @Author zhanshifeng
+* @Author zhanshifeng
  * @Date 2019/11/6 9:01 PM
  */
 public class TempTest {

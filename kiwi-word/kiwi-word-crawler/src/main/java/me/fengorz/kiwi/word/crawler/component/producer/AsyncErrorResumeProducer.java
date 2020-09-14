@@ -18,8 +18,8 @@ package me.fengorz.kiwi.word.crawler.component.producer;
 
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.api.constant.CommonConstants;
+import me.fengorz.kiwi.common.sdk.util.lang.collection.KiwiCollectionUtils;
 import me.fengorz.kiwi.word.api.common.WordCrawlerConstants;
-import me.fengorz.kiwi.word.api.dto.queue.FetchWordMqDTO;
 import me.fengorz.kiwi.word.api.entity.WordFetchQueueDO;
 import me.fengorz.kiwi.word.api.feign.IWordFetchAPI;
 import me.fengorz.kiwi.word.crawler.component.producer.base.AbstractProducer;
@@ -28,24 +28,30 @@ import me.fengorz.kiwi.word.crawler.component.producer.base.ISender;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
-import java.util.Optional;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
- * 抓取单词基本信息-消息队列生产者
+ * 爬虫异常重启-消息队列生产者
+ *
  * @Author zhanshifeng
  * @Date 2019/10/30 10:33 AM
  */
 @Component
 @Slf4j
-public class AsyncFetchWordProducer extends AbstractProducer implements IProducer {
+public class AsyncErrorResumeProducer extends AbstractProducer implements IProducer {
 
-    public AsyncFetchWordProducer(IWordFetchAPI api, ISender sender) {
+    public AsyncErrorResumeProducer(IWordFetchAPI api, ISender sender) {
         super(api, sender);
     }
 
     @Override
     public void produce() {
-        super.produce(WordCrawlerConstants.STATUS_TO_FETCH);
+        List<WordFetchQueueDO> list = new LinkedList<>((wordFetchAPI.pageQueueLockIn(WordCrawlerConstants.STATUS_DEL_PRONUNCIATION_FAIL, 0, 20)).getData());
+        if (KiwiCollectionUtils.isEmpty(list)) {
+            return;
+        }
+        list.forEach(this::execute);
     }
 
     /**
@@ -56,16 +62,9 @@ public class AsyncFetchWordProducer extends AbstractProducer implements IProduce
     @Async
     @Override
     protected void execute(WordFetchQueueDO queue) {
-        if (null == queue.getWordId() || 0 == queue.getWordId()) {
-            queue.setIsLock(CommonConstants.FLAG_YES);
-            if (Optional.of(wordFetchAPI.updateQueueById(queue)).get().isSuccess()) {
-                sender.fetchWord(new FetchWordMqDTO().setWord(queue.getWordName()).setQueueId(queue.getQueueId()));
-            }
-        } else {
-            // 删除老的数据
-            queue.setIsLock(CommonConstants.FLAG_NO);
-            queue.setFetchStatus(WordCrawlerConstants.STATUS_TO_DEL_BASE);
-            wordFetchAPI.updateQueueById(queue);
-        }
+        queue.setIsLock(CommonConstants.FLAG_NO);
+        queue.setFetchStatus(WordCrawlerConstants.STATUS_TO_FETCH);
+        queue.setWordId(0);
+        wordFetchAPI.updateQueueById(queue);
     }
 }

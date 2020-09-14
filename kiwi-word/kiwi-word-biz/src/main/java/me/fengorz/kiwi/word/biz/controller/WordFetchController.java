@@ -57,7 +57,7 @@ public class WordFetchController extends BaseController {
     @GetMapping(value = "/pageQueue/{status}/{current}/{size}")
     public R<List<WordFetchQueueDO>> pageQueue(@PathVariable Integer status, @PathVariable Integer current,
                                                @PathVariable Integer size) {
-        return R.success(wordFetchQueueService.page2List(status, current, size, CommonConstants.FLAG_YES));
+        return R.success(wordFetchQueueService.page2List(status, current, size, CommonConstants.FLAG_NO));
     }
 
     @GetMapping(value = "/pageQueueLockIn/{status}/{current}/{size}")

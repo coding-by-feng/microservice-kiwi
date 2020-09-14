@@ -65,6 +65,7 @@ public class JsoupServiceImpl implements IJsoupService {
     private static final String KEY_SINGLE_PHRASE_DETAIL = "phrase-title dphrase-title";
     private static final String FETCH_SINGLE_PARAPHRASE_EXCEPTION = "The singleParaphrase of {} is not found!";
     private static final String KEY_PARAPHRASE_ENGLISH = "def ddef_d db";
+    private static final String KEY_PARAPHRASE_CODES = "gram dgram";
     private static final String FETCH_PARAPHRASE_ENGLISH_EXCEPTION = "The paraphraseEnglish of {} is not found!";
     private static final String KEY_MEANING_CHINESE = "trans dtrans dtrans-se ";
     private static final String FETCH_MEANING_CHINESE_EXCEPTION = "The meaningChinese of {} is not found!";
@@ -166,12 +167,12 @@ public class JsoupServiceImpl implements IJsoupService {
             for (Element paraphrases : mainParaphrases) {
                 Elements singleParaphrase = paraphrases.getElementsByClass(KEY_SINGLE_PARAPHRASE);
                 Elements phrases = paraphrases.getElementsByClass(KEY_SINGLE_PHRASE);
-                boolean singleParaphraseIsEmpty = singleParaphrase != null && !singleParaphrase.isEmpty();
-                boolean phrasesIsEmpty = phrases != null && !phrases.isEmpty();
-                CrawlerAssertUtils.mustBeTrue(singleParaphraseIsEmpty || phrasesIsEmpty,
+                boolean singleParaphraseIsNotEmpty = singleParaphrase != null && !singleParaphrase.isEmpty();
+                boolean phrasesIsNotEmpty = phrases != null && !phrases.isEmpty();
+                CrawlerAssertUtils.mustBeTrue(singleParaphraseIsNotEmpty || phrasesIsNotEmpty,
                         FETCH_SINGLE_PARAPHRASE_EXCEPTION, word);
 
-                subFetchParaphrase(word, fetchParaphraseDTOList, singleParaphrase, phrases, phrasesIsEmpty);
+                subFetchParaphrase(word, fetchParaphraseDTOList, singleParaphrase, phrases, phrasesIsNotEmpty);
             }
 
             fetchWordCodeDTO.setFetchParaphraseDTOList(fetchParaphraseDTOList);
@@ -182,20 +183,33 @@ public class JsoupServiceImpl implements IJsoupService {
         return fetchWordResultDTO;
     }
 
-    private void subFetchParaphrase(String word, List<FetchParaphraseDTO> fetchParaphraseDTOList,
-                                    Elements singleParaphrase, Elements phrases, boolean phrasesIsEmpty) throws JsoupFetchResultException {
-        for (Element paraphrase : singleParaphrase) {
-            FetchParaphraseDTO fetchParaphraseDTO = new FetchParaphraseDTO();
+    /**
+     * 抓取单词的某个释义
+     *
+     * @param word
+     * @param paraphraseDTOList
+     * @param paraphraseElements
+     * @param phrases 释义附带的词组
+     * @param phrasesIsEmpty 释义是否附带词组
+     * @throws JsoupFetchResultException
+     */
+    private void subFetchParaphrase(String word, List<FetchParaphraseDTO> paraphraseDTOList,
+                                    Elements paraphraseElements, Elements phrases, boolean phrasesIsEmpty) throws JsoupFetchResultException {
+        for (Element paraphrase : paraphraseElements) {
+            FetchParaphraseDTO paraphraseDTO = new FetchParaphraseDTO();
 
             // fetch English paraphrase
             Elements paraphraseEnglish = paraphrase.getElementsByClass(KEY_PARAPHRASE_ENGLISH);
+            Elements codes = paraphrase.getElementsByClass(KEY_PARAPHRASE_CODES);
             CrawlerAssertUtils.notEmpty(paraphraseEnglish, FETCH_PARAPHRASE_ENGLISH_EXCEPTION, word);
             String paraphraseEnglishText = paraphraseEnglish.text();
+            String codesText = codes != null && !codes.isEmpty() ? codes.text() : "";
             CrawlerAssertUtils.fetchValueNotEmpty(paraphraseEnglishText, FETCH_PARAPHRASE_ENGLISH_EXCEPTION, word);
-            fetchParaphraseDTO.setParaphraseEnglish(paraphraseEnglishText);
+            paraphraseDTO.setParaphraseEnglish(paraphraseEnglishText);
+            paraphraseDTO.setCodes(codesText);
 
             if (phrasesIsEmpty) {
-                List<FetchPhraseDTO> fetchPhraseDTOList = new ArrayList<>();
+                List<FetchPhraseDTO> phraseDTOList = new ArrayList<>();
                 for (Element phraseBlock : phrases) {
                     Elements subPhrases = phraseBlock.getElementsByClass(KEY_SINGLE_PHRASE_DETAIL);
                     Elements subPhrasesParaphrases = phraseBlock.getElementsByClass(KEY_SINGLE_PARAPHRASE);
@@ -207,39 +221,39 @@ public class JsoupServiceImpl implements IJsoupService {
                         String subPhrasesParaphrase =
                                 subPhrasesParaphrases.get(i).getElementsByClass(KEY_PARAPHRASE_ENGLISH).text();
                         if (KiwiStringUtils.equals(subPhrasesParaphrase, paraphraseEnglishText)) {
-                            fetchPhraseDTOList.add(new FetchPhraseDTO().setPhrase(phraseDetail));
+                            phraseDTOList.add(new FetchPhraseDTO().setPhrase(phraseDetail));
                         }
                     }
                 }
-                fetchParaphraseDTO.setFetchPhraseDTOList(fetchPhraseDTOList);
+                paraphraseDTO.setPhraseDTOList(phraseDTOList);
             }
 
             // fetch Chinese meaning
             Elements meaningChinese = paraphrase.getElementsByClass(KEY_MEANING_CHINESE);
             // CrawlerAssertUtils.notEmpty(meaningChinese, FETCH_MEANING_CHINESE_EXCEPTION, word);
             // CrawlerAssertUtils.fetchValueNotEmpty(meaningChinese.text(), FETCH_MEANING_CHINESE_EXCEPTION, word);
-            fetchParaphraseDTO.setMeaningChinese(meaningChinese.text());
+            paraphraseDTO.setMeaningChinese(meaningChinese.text());
 
             // fetch example sentences, it can be empty.
             Elements exampleSentences = paraphrase.getElementsByClass(KEY_EXAMPLE_SENTENCES);
             if (CollUtil.isNotEmpty(exampleSentences)) {
-                List<FetchParaphraseExampleDTO> fetchParaphraseExampleDTOList = new ArrayList<>();
+                List<FetchParaphraseExampleDTO> paraphraseExampleDTOList = new ArrayList<>();
                 for (Element sentence : exampleSentences) {
-                    FetchParaphraseExampleDTO fetchParaphraseExampleDTO = new FetchParaphraseExampleDTO();
+                    FetchParaphraseExampleDTO paraphraseExampleDTO = new FetchParaphraseExampleDTO();
                     Optional.ofNullable(sentence.getElementsByClass(KEY_SENTENCE)).ifPresent(
-                            (Elements elements) -> fetchParaphraseExampleDTO.setExampleSentence(elements.text()));
+                            (Elements elements) -> paraphraseExampleDTO.setExampleSentence(elements.text()));
                     Optional.ofNullable(sentence.getElementsByClass(KEY_SENTENCE_TRANSLATE))
-                            .ifPresent(elements -> fetchParaphraseExampleDTO.setExampleTranslate(elements.text()));
+                            .ifPresent(elements -> paraphraseExampleDTO.setExampleTranslate(elements.text()));
 
                     // TODO zhanshifeng The default is English, but consider how flexible it will be in the future if
                     // there are other languages
-                    fetchParaphraseExampleDTO.setTranslateLanguage(WordCrawlerConstants.DEFAULT_TRANSLATE_LANGUAGE);
-                    fetchParaphraseExampleDTOList.add(fetchParaphraseExampleDTO);
-                    fetchParaphraseDTO.setFetchParaphraseExampleDTOList(fetchParaphraseExampleDTOList);
+                    paraphraseExampleDTO.setTranslateLanguage(WordCrawlerConstants.DEFAULT_TRANSLATE_LANGUAGE);
+                    paraphraseExampleDTOList.add(paraphraseExampleDTO);
+                    paraphraseDTO.setExampleDTOList(paraphraseExampleDTOList);
                 }
             }
 
-            fetchParaphraseDTOList.add(fetchParaphraseDTO);
+            paraphraseDTOList.add(paraphraseDTO);
         }
     }
 

@@ -84,7 +84,7 @@ public class JsoupTest {
                             // future if there are other languages
                             fetchParaphraseExampleDTO.setTranslateLanguage("English");
                             fetchParaphraseExampleDTOList.add(fetchParaphraseExampleDTO);
-                            fetchParaphraseDTO.setFetchParaphraseExampleDTOList(fetchParaphraseExampleDTOList);
+                            fetchParaphraseDTO.setExampleDTOList(fetchParaphraseExampleDTOList);
                         });
                     }
 

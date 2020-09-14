@@ -139,7 +139,8 @@ public class JsoupServiceImpl implements IJsoupService {
             List<FetchParaphraseDTO> fetchParaphraseDTOList = new ArrayList<>();
             Elements codeHeader = block.getElementsByClass(KEY_CODE_HEADER);
             // The number of parts of code and label per main paraphrase block can normally only be 1
-            CrawlerAssertUtils.mustBeTrue(codeHeader != null && codeHeader.size() == 1, FETCH_CODE_HEADER_EXCEPTION,
+            // TODO ZSF 大于0的时候这里要特殊处理，比如：flirt，目前只是抓取主要词性，关联单词没有抓到
+            CrawlerAssertUtils.mustBeTrue(codeHeader != null && !codeHeader.isEmpty(), FETCH_CODE_HEADER_EXCEPTION,
                     word);
             // TODO ZSF fetchWordResultDTO 放入 爬虫回来的wordName，不是传进来的wordName
             final Element header = codeHeader.get(0);
@@ -150,11 +151,11 @@ public class JsoupServiceImpl implements IJsoupService {
 
             try {
                 // fetch UK pronunciation
-                fetchWordPronunciationDTOList.add(subFetchPronunciation(word, block, KEY_UK_PRONUNCIATIOIN,
-                        WordCrawlerConstants.PRONUNCIATION_TYPE_UK, isAlreadyFetchPronunciation));
+                Optional.ofNullable(subFetchPronunciation(word, block, KEY_UK_PRONUNCIATIOIN,
+                        WordCrawlerConstants.PRONUNCIATION_TYPE_UK, isAlreadyFetchPronunciation)).ifPresent(fetchWordPronunciationDTOList::add);
                 // fetch US pronunciation
-                fetchWordPronunciationDTOList.add(subFetchPronunciation(word, block, KEY_US_PRONUNCIATIOIN,
-                        WordCrawlerConstants.PRONUNCIATION_TYPE_US, isAlreadyFetchPronunciation));
+                Optional.ofNullable(subFetchPronunciation(word, block, KEY_US_PRONUNCIATIOIN,
+                        WordCrawlerConstants.PRONUNCIATION_TYPE_US, isAlreadyFetchPronunciation)).ifPresent(fetchWordPronunciationDTOList::add);
             } catch (JsoupFetchPronunciationException e) {
                 if (!isAlreadyFetchPronunciation) {
                     throw e;
@@ -189,8 +190,8 @@ public class JsoupServiceImpl implements IJsoupService {
      * @param word
      * @param paraphraseDTOList
      * @param paraphraseElements
-     * @param phrases 释义附带的词组
-     * @param phrasesIsEmpty 释义是否附带词组
+     * @param phrases            释义附带的词组
+     * @param phrasesIsEmpty     释义是否附带词组
      * @throws JsoupFetchResultException
      */
     private void subFetchParaphrase(String word, List<FetchParaphraseDTO> paraphraseDTOList,
@@ -259,14 +260,19 @@ public class JsoupServiceImpl implements IJsoupService {
 
     private FetchWordPronunciationDTO subFetchPronunciation(String word, Element block, String pronunciationKey,
                                                             String pronunciationType, boolean isAlreadyFetchPronunciation) throws JsoupFetchPronunciationException {
-        Elements ukPronunciations = block.getElementsByClass(pronunciationKey);
-        try {
-            CrawlerAssertUtils.mustBeTrue(ukPronunciations != null && ukPronunciations.size() == 1,
-                    FETCH_PRONUNCIATION_EXCEPTION, word);
-        } catch (JsoupFetchResultException e) {
-            throw new JsoupFetchPronunciationException(e);
+        Elements pronunciations = block.getElementsByClass(pronunciationKey);
+        if (pronunciations == null || pronunciations.isEmpty()) {
+            return null;
         }
-        Element ukPronunciation = ukPronunciations.get(0);
+
+        // try {
+        //     CrawlerAssertUtils.mustBeTrue(pronunciations != null && pronunciations.size() == 1,
+        //             FETCH_PRONUNCIATION_EXCEPTION, word);
+        // } catch (JsoupFetchResultException e) {
+        //     throw new JsoupFetchPronunciationException(e);
+        // }
+
+        Element ukPronunciation = pronunciations.get(0);
 
         FetchWordPronunciationDTO ukPronunciationDTO = new FetchWordPronunciationDTO();
         // index[0] is type="audio/mpeg", index[1] is type="audio/ogg"

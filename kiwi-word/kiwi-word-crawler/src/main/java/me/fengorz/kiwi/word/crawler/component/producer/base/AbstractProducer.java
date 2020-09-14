@@ -33,9 +33,12 @@ public abstract class AbstractProducer implements IProducer {
 
     protected final IWordFetchAPI wordFetchAPI;
     protected final ISender sender;
+    protected final Object barrier = new Object();
 
     protected List<WordFetchQueueDO> getQueueDO(Integer status) {
-        return wordFetchAPI.pageQueue(status, 0, 20).getData();
+        synchronized (barrier) {
+            return wordFetchAPI.pageQueue(status, 0, 20).getData();
+        }
     }
 
     protected void produce(Integer... status) {
@@ -46,7 +49,11 @@ public abstract class AbstractProducer implements IProducer {
         if (KiwiCollectionUtils.isEmpty(list)) {
             return;
         }
-        list.forEach(this::execute);
+
+        // 列表里面每一批查到数据处理完之前先上锁
+        synchronized (barrier) {
+            list.forEach(this::execute);
+        }
     }
 
     protected abstract void execute(WordFetchQueueDO queue);

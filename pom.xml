@@ -12,7 +12,7 @@
     <groupId>me.fengorz</groupId>
     <artifactId>microservice-kiwi</artifactId>
     <packaging>pom</packaging>
-    <version>1.0-SNAPSHOT</version>
+    <version>${kiwi.version}</version>
     <name>microservice-kiwi</name>
 
     <modules>
@@ -59,18 +59,21 @@
         <aspectj-maven-plugin.version>1.11</aspectj-maven-plugin.version>
         <lombok-maven-plugin.version>1.18.12.0</lombok-maven-plugin.version>
         <maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
+        <junit.version>4.13</junit.version>
 
+        <kiwi.version>1.0-SNAPSHOT</kiwi.version>
         <kiwi-eureka.version>1.0-SNAPSHOT</kiwi-eureka.version>
         <kiwi-config.version>1.0-SNAPSHOT</kiwi-config.version>
         <kiwi-cloud-service.version>1.0-SNAPSHOT</kiwi-cloud-service.version>
         <kiwi-common.version>1.0-SNAPSHOT</kiwi-common.version>
-        <kiwi-upms.version>1.0-SNAPSHOT</kiwi-upms.version>
-        <kiwi-bdf.version>1.0-SNAPSHOT</kiwi-bdf.version>
         <kiwi-gateway.version>1.0-SNAPSHOT</kiwi-gateway.version>
-        <kiwi-auth.version>1.0-SNAPSHOT</kiwi-auth.version>
-        <kiwi-word.version>1.0-SNAPSHOT</kiwi-word.version>
-        <kiwi-flow.version>1.0-SNAPSHOT</kiwi-flow.version>
         <kiwi-generator.version>1.0-SNAPSHOT</kiwi-generator.version>
+
+        <kiwi-upms.version>1.0-SNAPSHOT</kiwi-upms.version>
+        <kiwi-word.version>1.0-SNAPSHOT</kiwi-word.version>
+        <kiwi-bdf.version>1.0-SNAPSHOT</kiwi-bdf.version>
+        <kiwi-auth.version>1.0-SNAPSHOT</kiwi-auth.version>
+        <kiwi-flow.version>1.0-SNAPSHOT</kiwi-flow.version>
     </properties>
 
     <dependencies>
@@ -140,6 +143,13 @@
         <dependency>
             <groupId>org.aspectj</groupId>
             <artifactId>aspectjrt</artifactId>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/junit/junit -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit.version}</version>
         </dependency>
 
     </dependencies>

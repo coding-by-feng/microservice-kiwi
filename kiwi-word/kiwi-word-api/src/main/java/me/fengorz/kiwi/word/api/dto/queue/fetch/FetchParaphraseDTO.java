@@ -29,6 +29,8 @@ import java.util.List;
 @ToString
 public class FetchParaphraseDTO {
 
+    private String codes;
+
     private String paraphraseEnglish;
 
     private String paraphraseEnglishTranslate;
@@ -37,8 +39,8 @@ public class FetchParaphraseDTO {
 
     private String translateLanguage;
 
-    private List<FetchParaphraseExampleDTO> fetchParaphraseExampleDTOList;
+    private List<FetchParaphraseExampleDTO> exampleDTOList;
 
-    private List<FetchPhraseDTO> fetchPhraseDTOList;
+    private List<FetchPhraseDTO> phraseDTOList;
 
 }

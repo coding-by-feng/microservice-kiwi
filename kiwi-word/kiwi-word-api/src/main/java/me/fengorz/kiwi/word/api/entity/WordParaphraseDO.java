@@ -50,6 +50,10 @@ public class WordParaphraseDO extends Model<WordParaphraseDO> {
      */
     private Integer characterId;
     /**
+     * 词性
+     */
+    private String codes;
+    /**
      * 英文释义
      */
     private String paraphraseEnglish;

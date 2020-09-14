@@ -29,69 +29,56 @@ import me.fengorz.kiwi.word.api.entity.*;
 public class WordBizUtils {
 
     public static WordMainDO initWordMain(String wordName) {
-        WordMainDO wordMainDO = new WordMainDO();
-        wordMainDO.setWordName(wordName);
-        wordMainDO.setIsDel(CommonConstants.FLAG_DEL_NO);
-        return wordMainDO;
+        WordMainDO word = new WordMainDO();
+        word.setWordName(wordName);
+        word.setIsDel(CommonConstants.FLAG_DEL_NO);
+        return word;
     }
 
-    public static WordCharacterDO initWordCharacter(String wordCode, String wordLabel, Integer wordId) {
-        WordCharacterDO wordCharacter = new WordCharacterDO();
-        wordCharacter.setWordId(wordId);
-        wordCharacter.setWordCharacter(wordCode);
-        wordCharacter.setWordLabel(wordLabel);
-        wordCharacter.setIsDel(CommonConstants.FLAG_N);
-        return wordCharacter;
+    public static WordCharacterDO initCharacter(String wordCode, String wordLabel, Integer wordId) {
+        WordCharacterDO character = new WordCharacterDO();
+        character.setWordId(wordId);
+        character.setWordCharacter(wordCode);
+        character.setWordLabel(wordLabel);
+        character.setIsDel(CommonConstants.FLAG_N);
+        return character;
     }
 
-    public static WordParaphraseDO initWordParaphrase(Integer characterId, Integer wordId, String meaningChinese,
-                                                      String paraphraseEnglish, String translateLanguage) {
-        WordParaphraseDO wordParaphraseDO = new WordParaphraseDO();
-        wordParaphraseDO.setWordId(wordId);
-        wordParaphraseDO.setCharacterId(characterId);
-        wordParaphraseDO.setMeaningChinese(meaningChinese);
-        wordParaphraseDO.setIsDel(CommonConstants.FLAG_DEL_NO);
-        wordParaphraseDO.setParaphraseEnglish(paraphraseEnglish);
-        wordParaphraseDO.setTranslateLanguage(translateLanguage);
-        return wordParaphraseDO;
+    public static WordParaphraseDO initParaphrase(Integer characterId, Integer wordId, String meaningChinese,
+                                                  String paraphraseEnglish, String translateLanguage, String codes) {
+        WordParaphraseDO paraphrase = new WordParaphraseDO();
+        paraphrase.setWordId(wordId);
+        paraphrase.setCharacterId(characterId);
+        paraphrase.setCodes(codes);
+        paraphrase.setMeaningChinese(meaningChinese);
+        paraphrase.setIsDel(CommonConstants.FLAG_DEL_NO);
+        paraphrase.setParaphraseEnglish(paraphraseEnglish);
+        paraphrase.setTranslateLanguage(translateLanguage);
+        return paraphrase;
     }
 
-    public static WordParaphraseExampleDO initWordParaphraseExample(Integer paraphraseId, Integer wordId,
-                                                                    String exampleSentence, String exampleTranslate, String translateLanguage) {
-        WordParaphraseExampleDO wordParaphraseExampleDO = new WordParaphraseExampleDO();
-        wordParaphraseExampleDO.setWordId(wordId);
-        wordParaphraseExampleDO.setParaphraseId(paraphraseId);
-        wordParaphraseExampleDO.setExampleSentence(exampleSentence);
-        wordParaphraseExampleDO.setExampleTranslate(exampleTranslate);
-        wordParaphraseExampleDO.setTranslateLanguage(translateLanguage);
-        return wordParaphraseExampleDO;
-    }
-
-    @Deprecated
-    public static WordPronunciationDO initWordPronunciation(Integer wordId, Integer characterId, String uploadResult,
-                                                            String soundmark, String soundmarkType) {
-        WordPronunciationDO wordPronunciation = new WordPronunciationDO();
-        wordPronunciation.setWordId(wordId);
-        wordPronunciation.setCharacterId(characterId);
-        wordPronunciation.setGroupName(WordDfsUtils.getGroupName(uploadResult));
-        wordPronunciation.setIsDel(CommonConstants.FLAG_DEL_NO);
-        wordPronunciation.setSoundmark(soundmark);
-        wordPronunciation.setSoundmarkType(soundmarkType);
-        wordPronunciation.setVoiceFilePath(WordDfsUtils.getUploadVoiceFilePath(uploadResult));
-        return wordPronunciation;
+    public static WordParaphraseExampleDO initExample(Integer paraphraseId, Integer wordId,
+                                                      String exampleSentence, String exampleTranslate, String translateLanguage) {
+        WordParaphraseExampleDO example = new WordParaphraseExampleDO();
+        example.setWordId(wordId);
+        example.setParaphraseId(paraphraseId);
+        example.setExampleSentence(exampleSentence);
+        example.setExampleTranslate(exampleTranslate);
+        example.setTranslateLanguage(translateLanguage);
+        return example;
     }
 
     public static WordPronunciationDO initPronunciation(Integer wordId, Integer characterId, String voiceUrl,
                                                         String soundmark, String soundmarkType) {
-        WordPronunciationDO wordPronunciation = new WordPronunciationDO();
-        wordPronunciation.setWordId(wordId);
-        wordPronunciation.setCharacterId(characterId);
-        wordPronunciation.setIsDel(CommonConstants.FLAG_DEL_NO);
-        wordPronunciation.setSoundmark(soundmark);
-        wordPronunciation.setSoundmarkType(soundmarkType);
-        wordPronunciation.setVoiceFilePath(voiceUrl);
-        wordPronunciation.setSourceUrl(WordCrawlerConstants.CAMBRIDGE_BASE_URL + voiceUrl);
-        return wordPronunciation;
+        WordPronunciationDO pronunciation = new WordPronunciationDO();
+        pronunciation.setWordId(wordId);
+        pronunciation.setCharacterId(characterId);
+        pronunciation.setIsDel(CommonConstants.FLAG_DEL_NO);
+        pronunciation.setSoundmark(soundmark);
+        pronunciation.setSoundmarkType(soundmarkType);
+        pronunciation.setVoiceFilePath(voiceUrl);
+        pronunciation.setSourceUrl(WordCrawlerConstants.CAMBRIDGE_BASE_URL + voiceUrl);
+        return pronunciation;
     }
 
     public static SelectStarListItemDTO assembleSelectStarListItemDTO(Page page, Integer listId) {

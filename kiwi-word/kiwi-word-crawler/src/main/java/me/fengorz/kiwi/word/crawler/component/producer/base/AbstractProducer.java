@@ -16,16 +16,15 @@
 
 package me.fengorz.kiwi.word.crawler.component.producer.base;
 
-import java.util.List;
-import java.util.Optional;
-
 import lombok.RequiredArgsConstructor;
 import me.fengorz.kiwi.common.sdk.util.lang.collection.KiwiCollectionUtils;
 import me.fengorz.kiwi.word.api.entity.WordFetchQueueDO;
 import me.fengorz.kiwi.word.api.feign.IWordFetchAPI;
 
+import java.util.LinkedList;
+import java.util.List;
+
 /**
- * @Description TODO
  * @Author zhanshifeng
  * @Date 2020/7/29 2:16 PM
  */
@@ -36,11 +35,14 @@ public abstract class AbstractProducer implements IProducer {
     protected final ISender sender;
 
     protected List<WordFetchQueueDO> getQueueDO(Integer status) {
-        return Optional.of(wordFetchAPI.pageQueue(status, 0, 20)).get().getData();
+        return wordFetchAPI.pageQueue(status, 0, 20).getData();
     }
 
-    protected void produce(Integer status) {
-        List<WordFetchQueueDO> list = this.getQueueDO(status);
+    protected void produce(Integer... status) {
+        List<WordFetchQueueDO> list = new LinkedList<>();
+        for (Integer temp : status) {
+            list.addAll(this.getQueueDO(temp));
+        }
         if (KiwiCollectionUtils.isEmpty(list)) {
             return;
         }

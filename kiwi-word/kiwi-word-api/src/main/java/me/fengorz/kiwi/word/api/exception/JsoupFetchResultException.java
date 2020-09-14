@@ -19,8 +19,7 @@ package me.fengorz.kiwi.word.api.exception;
 import me.fengorz.kiwi.common.api.exception.BaseException;
 
 /**
- * @Description TODO
- * @Author zhanshifeng
+* @Author zhanshifeng
  * @Date 2019/10/31 4:01 PM
  */
 public class JsoupFetchResultException extends BaseException {

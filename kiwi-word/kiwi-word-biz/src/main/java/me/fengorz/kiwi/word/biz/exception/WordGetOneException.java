@@ -22,8 +22,7 @@ package me.fengorz.kiwi.word.biz.exception;
 import me.fengorz.kiwi.common.api.exception.BaseException;
 
 /**
- * @Description TODO
- * @Author zhanshifeng
+* @Author zhanshifeng
  * @Date 2020/6/14 7:18 PM
  */
 public class WordGetOneException extends BaseException {

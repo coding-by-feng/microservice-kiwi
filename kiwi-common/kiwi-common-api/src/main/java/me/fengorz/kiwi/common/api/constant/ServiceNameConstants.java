@@ -19,8 +19,7 @@ package me.fengorz.kiwi.common.api.constant;
 import lombok.experimental.UtilityClass;
 
 /**
- * @Description TODO
- * @Author zhanshifeng
+* @Author zhanshifeng
  * @Date 2019-09-26 16:54
  */
 @UtilityClass

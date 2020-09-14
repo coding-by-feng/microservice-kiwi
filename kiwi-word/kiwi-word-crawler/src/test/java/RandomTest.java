@@ -1,8 +1,7 @@
 import java.util.Random;
 
 /**
- * @Description TODO
- * @Author zhanshifeng
+* @Author zhanshifeng
  * @Date 2019/10/29 3:24 PM
  */
 public class RandomTest {

@@ -14,19 +14,17 @@
  *
  */
 
-import java.io.File;
-import java.util.*;
-
+import lombok.Data;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import lombok.Data;
+import java.io.File;
+import java.util.*;
 
 /**
- * @Description TODO
- * @Author zhanshifeng
+* @Author zhanshifeng
  * @Date 2020/4/22 6:16 PM
  */
 public class FundCrawler {

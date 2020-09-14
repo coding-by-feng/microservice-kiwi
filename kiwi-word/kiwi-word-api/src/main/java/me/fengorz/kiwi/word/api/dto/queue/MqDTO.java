@@ -17,8 +17,7 @@
 package me.fengorz.kiwi.word.api.dto.queue;
 
 /**
- * @Description TODO
- * @Author zhanshifeng
+* @Author zhanshifeng
  * @Date 2020/7/28 11:33 PM
  */
 public class MqDTO {}

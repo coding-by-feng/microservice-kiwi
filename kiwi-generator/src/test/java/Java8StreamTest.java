@@ -1,16 +1,14 @@
+import cn.hutool.core.util.ArrayUtil;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
 
-import org.apache.commons.lang3.StringUtils;
-
-import cn.hutool.core.util.ArrayUtil;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-
 /**
- * @Description TODO
  * @Author zhanshifeng
  * @Date 2019-09-12 14:29
  */

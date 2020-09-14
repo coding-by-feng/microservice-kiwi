@@ -16,10 +16,6 @@
 
 package me.fengorz.kiwi.word.api.feign.fallback;
 
-import java.util.List;
-
-import org.springframework.stereotype.Component;
-
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.api.R;
@@ -27,9 +23,11 @@ import me.fengorz.kiwi.word.api.dto.queue.RemovePronunciatioinMqDTO;
 import me.fengorz.kiwi.word.api.dto.queue.fetch.FetchWordResultDTO;
 import me.fengorz.kiwi.word.api.entity.WordFetchQueueDO;
 import me.fengorz.kiwi.word.api.feign.IWordFetchAPI;
+import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 /**
- * @Description TODO
  * @Author zhanshifeng
  * @Date 2019/10/30 3:20 PM
  */
@@ -42,6 +40,12 @@ public class WordFetchAPIFallback implements IWordFetchAPI {
 
     @Override
     public R<List<WordFetchQueueDO>> pageQueue(Integer status, Integer current, Integer size) {
+        log.error(throwable.getCause().getMessage());
+        return R.feignCallFailed(throwable.getMessage());
+    }
+
+    @Override
+    public R<List<WordFetchQueueDO>> pageQueueLockIn(Integer status, Integer current, Integer size) {
         log.error(throwable.getCause().getMessage());
         return R.feignCallFailed(throwable.getMessage());
     }

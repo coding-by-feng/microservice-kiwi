@@ -111,10 +111,10 @@ public class WordFetchQueueServiceImpl extends ServiceImpl<WordFetchQueueMapper,
     }
 
     @Override
-    public List<WordFetchQueueDO> page2List(Integer status, Integer current, Integer size) {
+    public List<WordFetchQueueDO> page2List(Integer status, Integer current, Integer size, Integer isLock) {
         return Optional
                 .of(this.page(new Page<>(current, size), Wrappers.<WordFetchQueueDO>lambdaQuery()
-                        .eq(WordFetchQueueDO::getFetchStatus, status).eq(WordFetchQueueDO::getIsLock, CommonConstants.FLAG_NO)))
+                        .eq(WordFetchQueueDO::getFetchStatus, status).eq(WordFetchQueueDO::getIsLock, isLock)))
                 .get().getRecords();
     }
 

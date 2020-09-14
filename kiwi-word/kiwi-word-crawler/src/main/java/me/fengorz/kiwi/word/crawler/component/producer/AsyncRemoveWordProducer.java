@@ -16,11 +16,6 @@
 
 package me.fengorz.kiwi.word.crawler.component.producer;
 
-import java.util.Optional;
-
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.stereotype.Component;
-
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.api.constant.CommonConstants;
 import me.fengorz.kiwi.word.api.common.WordCrawlerConstants;
@@ -30,13 +25,17 @@ import me.fengorz.kiwi.word.api.feign.IWordFetchAPI;
 import me.fengorz.kiwi.word.crawler.component.producer.base.AbstractProducer;
 import me.fengorz.kiwi.word.crawler.component.producer.base.IProducer;
 import me.fengorz.kiwi.word.crawler.component.producer.base.ISender;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Component;
+
+import java.util.Optional;
 
 /**
- * @Description TODO
+ * 老旧单词数据清除--消息队列生产者
  * @Author zhanshifeng
  * @Date 2019/10/30 10:33 AM
  */
-@Component("asyncRemoveWordProducer")
+@Component
 @Slf4j
 public class AsyncRemoveWordProducer extends AbstractProducer implements IProducer {
 
@@ -55,7 +54,7 @@ public class AsyncRemoveWordProducer extends AbstractProducer implements IProduc
         queue.setIsLock(CommonConstants.FLAG_YES);
         if (Optional.of(wordFetchAPI.updateQueueById(queue)).get().isSuccess()) {
             sender.removeWord(new RemoveWordMqDTO().setWordName(queue.getWordName()).setWordId(queue.getWordId())
-                .setQueueId(queue.getQueueId()));
+                    .setQueueId(queue.getQueueId()));
         }
     }
 

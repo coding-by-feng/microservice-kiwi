@@ -1,12 +1,11 @@
+import me.fengorz.kiwi.word.crawler.component.MqSender;
+
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import me.fengorz.kiwi.word.crawler.component.MqSender;
-
 /**
- * @Description TODO
- * @Author zhanshifeng
+* @Author zhanshifeng
  * @Date 2019/10/29 3:19 PM
  */
 // @RunWith(SpringRunner.class)

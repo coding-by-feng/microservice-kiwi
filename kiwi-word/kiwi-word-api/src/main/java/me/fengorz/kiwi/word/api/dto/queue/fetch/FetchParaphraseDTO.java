@@ -29,6 +29,8 @@ import java.util.List;
 @ToString
 public class FetchParaphraseDTO {
 
+    private Integer serialNumber;
+
     private String codes;
 
     private String paraphraseEnglish;

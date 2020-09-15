@@ -90,8 +90,8 @@ public class WordCrawlerServiceImpl implements IWordCrawlerService {
         wordMainService.save(wordMainDO);
         this.subStoreFetchWordResult(dto, wordMainDO);
         wordFetchQueueService.flagFetchBaseFinish(dto.getQueueId(), wordMainDO.getWordId());
-        wordOperateService.cachePutFetchReplace(wordName,
-                wordOperateService.cacheGetFetchReplace(wordName).setNewRelWordId(wordMainDO.getWordId()));
+        wordOperateService.cacheReplace(wordName,
+                wordOperateService.cacheReplace(wordName).setNewRelWordId(wordMainDO.getWordId()));
         wordOperateService.fetchReplaceCallBack(wordName);
         return true;
     }
@@ -108,7 +108,7 @@ public class WordCrawlerServiceImpl implements IWordCrawlerService {
                 Integer characterId = wordCharacter.getCharacterId();
 
                 List<FetchParaphraseDTO> paraphraseDTOList = fetchWordCodeDTO.getFetchParaphraseDTOList();
-                FetchWordReplaceDTO replaceDTO = wordOperateService.cacheGetFetchReplace(word.getWordName());
+                FetchWordReplaceDTO replaceDTO = wordOperateService.cacheReplace(word.getWordName());
                 paraphraseDTOList.forEach(paraphraseDTO -> {
 
                     WordParaphraseDO paraphrase =
@@ -146,7 +146,7 @@ public class WordCrawlerServiceImpl implements IWordCrawlerService {
                                         wordParaphraseExampleDO.getExampleId());
                             }));
                 });
-                wordOperateService.cachePutFetchReplace(word.getWordName(), replaceDTO);
+                wordOperateService.cacheReplace(word.getWordName(), replaceDTO);
 
                 // save pronunciation and voice's file
                 List<FetchWordPronunciationDTO> fetchWordPronunciationDTOList =

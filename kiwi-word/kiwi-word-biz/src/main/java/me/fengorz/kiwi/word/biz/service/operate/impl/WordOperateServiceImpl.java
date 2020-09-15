@@ -382,7 +382,7 @@ public class WordOperateServiceImpl implements IWordOperateService {
     @KiwiCacheKeyPrefix(WordConstants.CACHE_KEY_PREFIX_OPERATE.METHOD_FETCH_REPLACE)
     @Cacheable(cacheNames = WordConstants.CACHE_NAMES, keyGenerator = CacheConstants.CACHE_KEY_GENERATOR_BEAN,
             unless = "#result == null")
-    public FetchWordReplaceDTO cacheGetFetchReplace(@KiwiCacheKey String wordName) {
+    public FetchWordReplaceDTO cacheReplace(@KiwiCacheKey String wordName) {
         // TODO ZSF 这里要设置超时时间，这块逻辑改成不用注解实现
         return new FetchWordReplaceDTO();
     }
@@ -391,7 +391,7 @@ public class WordOperateServiceImpl implements IWordOperateService {
     @KiwiCacheKeyPrefix(WordConstants.CACHE_KEY_PREFIX_OPERATE.METHOD_FETCH_REPLACE)
     @CachePut(cacheNames = WordConstants.CACHE_NAMES, keyGenerator = CacheConstants.CACHE_KEY_GENERATOR_BEAN,
             unless = "#result == null")
-    public FetchWordReplaceDTO cachePutFetchReplace(@KiwiCacheKey String wordName, FetchWordReplaceDTO dto) {
+    public FetchWordReplaceDTO cacheReplace(@KiwiCacheKey String wordName, FetchWordReplaceDTO dto) {
         if (dto == null) {
             return new FetchWordReplaceDTO();
         } else {
@@ -406,7 +406,7 @@ public class WordOperateServiceImpl implements IWordOperateService {
 
     @Override
     public void fetchReplaceCallBack(String wordName) {
-        FetchWordReplaceDTO replaceDTO = this.cacheGetFetchReplace(wordName);
+        FetchWordReplaceDTO replaceDTO = this.cacheReplace(wordName);
         wordStarRelService.replaceFetchResult(replaceDTO.getOldRelWordId(), replaceDTO.getNewRelWordId());
         Map<String, Integer> newParaphraseIdMap = replaceDTO.getNewParaphraseIdMap();
         Optional.ofNullable(replaceDTO.getOldParaphraseIdMap()).ifPresent(oldParaphraseIdMap -> {

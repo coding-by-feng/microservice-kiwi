@@ -49,6 +49,7 @@ public class WordParaphraseDO extends Model<WordParaphraseDO> {
      *
      */
     private Integer characterId;
+    private Integer serialNumber;
     /**
      * 词性
      */

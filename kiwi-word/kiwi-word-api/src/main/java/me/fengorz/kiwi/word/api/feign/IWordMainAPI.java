@@ -15,13 +15,14 @@
  */
 package me.fengorz.kiwi.word.api.feign;
 
+import me.fengorz.kiwi.common.api.R;
+import me.fengorz.kiwi.word.api.common.WordConstants;
+import me.fengorz.kiwi.word.api.feign.factory.WordMainFallBackFactory;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
-import me.fengorz.kiwi.common.api.R;
-import me.fengorz.kiwi.word.api.common.WordConstants;
-import me.fengorz.kiwi.word.api.feign.factory.WordMainFallBackFactory;
+import java.util.List;
 
 /**
  * 单词主表
@@ -30,12 +31,15 @@ import me.fengorz.kiwi.word.api.feign.factory.WordMainFallBackFactory;
  * @date 2019-11-01 14:29:33
  */
 @FeignClient(contextId = "remoteWordMainService", value = WordConstants.KIWI_WORD_BIZ,
-    fallbackFactory = WordMainFallBackFactory.class)
+        fallbackFactory = WordMainFallBackFactory.class)
 public interface IWordMainAPI {
 
     String WORD_MAIN = "/word/main";
 
     @GetMapping("/removeByWordName/{wordName}")
     R<Boolean> removeByWordName(@PathVariable String wordName);
+
+    @GetMapping("/listOverlapInUnLock")
+    R<List<String>> listOverlapInUnLock();
 
 }

@@ -15,16 +15,7 @@
  */
 package me.fengorz.kiwi.word.biz.controller;
 
-import java.util.List;
-import java.util.Map;
-
-import javax.validation.constraints.NotBlank;
-
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.api.R;
@@ -37,6 +28,12 @@ import me.fengorz.kiwi.word.api.vo.detail.WordQueryVO;
 import me.fengorz.kiwi.word.biz.service.base.IWordFetchQueueService;
 import me.fengorz.kiwi.word.biz.service.base.IWordMainService;
 import me.fengorz.kiwi.word.biz.service.operate.IWordOperateService;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.constraints.NotBlank;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 单词主表
@@ -80,6 +77,11 @@ public class WordMainController extends BaseController {
     @PostMapping("/fuzzyQueryList")
     public R<List<Map>> fuzzyQueryList(@NotBlank String wordName, Page<WordMainDO> page) {
         return R.success(wordMainService.fuzzyQueryList(page, wordName));
+    }
+
+    @GetMapping("/listOverlapInUnLock")
+    public R<List<String>> listOverlapInUnLock() {
+        return R.success(wordMainService.listOverlapInUnLock());
     }
 
 }

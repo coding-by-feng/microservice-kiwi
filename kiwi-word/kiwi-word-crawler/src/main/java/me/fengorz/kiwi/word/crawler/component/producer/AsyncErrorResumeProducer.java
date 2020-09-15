@@ -22,6 +22,7 @@ import me.fengorz.kiwi.common.sdk.util.lang.collection.KiwiCollectionUtils;
 import me.fengorz.kiwi.word.api.common.WordCrawlerConstants;
 import me.fengorz.kiwi.word.api.entity.WordFetchQueueDO;
 import me.fengorz.kiwi.word.api.feign.IWordFetchAPI;
+import me.fengorz.kiwi.word.api.feign.IWordMainAPI;
 import me.fengorz.kiwi.word.crawler.component.producer.base.AbstractProducer;
 import me.fengorz.kiwi.word.crawler.component.producer.base.IProducer;
 import me.fengorz.kiwi.word.crawler.component.producer.base.ISender;
@@ -30,6 +31,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * 爬虫异常重启-消息队列生产者
@@ -41,15 +43,42 @@ import java.util.List;
 @Slf4j
 public class AsyncErrorResumeProducer extends AbstractProducer implements IProducer {
 
-    public AsyncErrorResumeProducer(IWordFetchAPI api, ISender sender) {
-        super(api, sender);
+    public AsyncErrorResumeProducer(IWordFetchAPI wordFetchAPI, IWordMainAPI wordMainAPI, ISender sender) {
+        super(wordFetchAPI, wordMainAPI, sender);
     }
 
     @Override
     public void produce() {
+        resumeDelPronunciationError();
+        resumeOverlap();
+    }
+
+    private void resumeDelPronunciationError() {
         List<WordFetchQueueDO> list;
         synchronized (barrier) {
-            list = new LinkedList<>((wordFetchAPI.pageQueueLockIn(WordCrawlerConstants.STATUS_DEL_PRONUNCIATION_FAIL, 0, 20)).getData());
+            list = new LinkedList<>((fetchAPI.pageQueueLockIn(WordCrawlerConstants.STATUS_DEL_PRONUNCIATION_FAIL, 0, 20)).getData());
+        }
+        if (KiwiCollectionUtils.isEmpty(list)) {
+            return;
+        }
+        synchronized (barrier) {
+            list.forEach(queue -> {
+                queue.setWordId(0);
+                this.execute(queue);
+            });
+        }
+    }
+
+    private void resumeOverlap() {
+        List<WordFetchQueueDO> list = new LinkedList<>();
+        synchronized (barrier) {
+            Optional.ofNullable(wordMainAPI.listOverlapInUnLock()).ifPresent(wordNameList -> {
+                List<String> wordList = wordNameList.getData();
+                if (KiwiCollectionUtils.isEmpty(wordList)) {
+                    return;
+                }
+                wordList.forEach(wordName -> Optional.ofNullable(fetchAPI.getOneByWordName(wordName).getData()).ifPresent(list::add));
+            });
         }
         if (KiwiCollectionUtils.isEmpty(list)) {
             return;
@@ -67,9 +96,8 @@ public class AsyncErrorResumeProducer extends AbstractProducer implements IProdu
     @Async
     @Override
     protected void execute(WordFetchQueueDO queue) {
-        queue.setIsLock(CommonConstants.FLAG_NO);
+        queue.setIsLock(CommonConstants.FLAG_YES);
         queue.setFetchStatus(WordCrawlerConstants.STATUS_TO_FETCH);
-        queue.setWordId(0);
-        wordFetchAPI.updateQueueById(queue);
+        fetchAPI.updateQueueById(queue);
     }
 }

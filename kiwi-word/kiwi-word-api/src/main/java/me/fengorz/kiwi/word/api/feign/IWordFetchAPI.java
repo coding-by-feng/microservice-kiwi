@@ -31,10 +31,16 @@ import java.util.List;
  * @Author zhanshifeng
  */
 @FeignClient(contextId = "wordFetchApi", value = WordConstants.KIWI_WORD_BIZ,
-    fallbackFactory = WordFetchFallbackFactory.class)
+        fallbackFactory = WordFetchFallbackFactory.class)
 public interface IWordFetchAPI {
 
     String WORD_FETCH_QUEUE = "/word/fetch";
+
+    @GetMapping(WORD_FETCH_QUEUE + "/getOne/{queueId}")
+    R<WordFetchQueueDO> getOne(@PathVariable Integer queueId);
+
+    @GetMapping(WORD_FETCH_QUEUE + "/getOneByWordName/{wordName}")
+    R<WordFetchQueueDO> getOneByWordName(@PathVariable String wordName);
 
     @GetMapping(WORD_FETCH_QUEUE + "/pageQueue/{status}/{current}/{size}")
     R<List<WordFetchQueueDO>> pageQueue(@PathVariable Integer status, @PathVariable Integer current,
@@ -42,7 +48,7 @@ public interface IWordFetchAPI {
 
     @GetMapping(WORD_FETCH_QUEUE + "/pageQueueLockIn/{status}/{current}/{size}")
     R<List<WordFetchQueueDO>> pageQueueLockIn(@PathVariable Integer status, @PathVariable Integer current,
-        @PathVariable Integer size);
+                                              @PathVariable Integer size);
 
     @PostMapping(WORD_FETCH_QUEUE + "/updateById")
     R<Boolean> updateQueueById(@RequestBody WordFetchQueueDO queueDO);
@@ -53,8 +59,12 @@ public interface IWordFetchAPI {
     @GetMapping(WORD_FETCH_QUEUE + "/fetchPronunciation/{wordId}")
     R<Boolean> fetchPronunciation(@PathVariable Integer wordId);
 
+    @Deprecated
     @GetMapping(WORD_FETCH_QUEUE + "/removeWord/{wordName}/{queueId}")
     R<List<RemovePronunciatioinMqDTO>> removeWord(@PathVariable String wordName, @PathVariable Integer queueId);
+
+    @GetMapping(WORD_FETCH_QUEUE + "/removeWord/{queueId}")
+    R<List<RemovePronunciatioinMqDTO>> removeWord(@PathVariable Integer queueId);
 
     @PostMapping(WORD_FETCH_QUEUE + "/lock")
     R<Boolean> lock(@RequestParam String wordName);

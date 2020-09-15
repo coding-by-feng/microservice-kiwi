@@ -20,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 import me.fengorz.kiwi.common.sdk.util.lang.collection.KiwiCollectionUtils;
 import me.fengorz.kiwi.word.api.entity.WordFetchQueueDO;
 import me.fengorz.kiwi.word.api.feign.IWordFetchAPI;
+import me.fengorz.kiwi.word.api.feign.IWordMainAPI;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -31,13 +32,14 @@ import java.util.List;
 @RequiredArgsConstructor
 public abstract class AbstractProducer implements IProducer {
 
-    protected final IWordFetchAPI wordFetchAPI;
+    protected final IWordFetchAPI fetchAPI;
+    protected final IWordMainAPI wordMainAPI;
     protected final ISender sender;
     protected final Object barrier = new Object();
 
     protected List<WordFetchQueueDO> getQueueDO(Integer status) {
         synchronized (barrier) {
-            return wordFetchAPI.pageQueue(status, 0, 20).getData();
+            return fetchAPI.pageQueueLockIn(status, 0, 20).getData();
         }
     }
 

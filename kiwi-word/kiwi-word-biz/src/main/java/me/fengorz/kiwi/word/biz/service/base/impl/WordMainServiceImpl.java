@@ -59,6 +59,7 @@ public class WordMainServiceImpl extends ServiceImpl<WordMainMapper, WordMainDO>
     private static final String VALUE = "value";
 
     private final IWordFetchQueueService queueService;
+    private final WordMainMapper mapper;
 
     @Override
     public boolean save(WordMainDO entity) {
@@ -123,8 +124,18 @@ public class WordMainServiceImpl extends ServiceImpl<WordMainMapper, WordMainDO>
     }
 
     @Override
+    public List<WordMainDO> list(String wordName) {
+        return this.list(Wrappers.<WordMainDO>lambdaQuery().eq(WordMainDO::getWordName, wordName));
+    }
+
+    @Override
     public List<WordMainDO> listDirtyData(Integer wordId) {
         return this.list(Wrappers.<WordMainDO>lambdaQuery().eq(WordMainDO::getWordName, this.getWordName(wordId)));
+    }
+
+    @Override
+    public List<String> listOverlapInUnLock() {
+        return mapper.selectOverlapInUnLock();
     }
 
 }

@@ -44,5 +44,9 @@ public interface IWordMainService extends IService<WordMainDO> {
 
     void evictById(Integer id);
 
+    List<WordMainDO> list(String wordName);
+
     List<WordMainDO> listDirtyData(Integer wordId);
+
+    List<String> listOverlapInUnLock();
 }

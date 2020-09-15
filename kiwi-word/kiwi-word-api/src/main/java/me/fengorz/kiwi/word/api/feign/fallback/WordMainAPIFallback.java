@@ -16,12 +16,13 @@
 
 package me.fengorz.kiwi.word.api.feign.fallback;
 
-import org.springframework.stereotype.Component;
-
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.api.R;
 import me.fengorz.kiwi.word.api.feign.IWordMainAPI;
+import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 /**
  * 单词主表
@@ -38,6 +39,11 @@ public class WordMainAPIFallback implements IWordMainAPI {
 
     @Override
     public R<Boolean> removeByWordName(String wordName) {
+        return R.feignCallFailed();
+    }
+
+    @Override
+    public R<List<String>> listOverlapInUnLock() {
         return R.feignCallFailed();
     }
 }

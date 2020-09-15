@@ -31,6 +31,8 @@ import me.fengorz.kiwi.word.api.dto.queue.RemoveWordMqDTO;
 import me.fengorz.kiwi.word.api.dto.queue.fetch.FetchWordResultDTO;
 import me.fengorz.kiwi.word.api.entity.WordFetchQueueDO;
 import me.fengorz.kiwi.word.api.exception.JsoupFetchConnectException;
+import me.fengorz.kiwi.word.api.exception.JsoupFetchPronunciationException;
+import me.fengorz.kiwi.word.api.exception.WordRemoveException;
 import me.fengorz.kiwi.word.api.feign.IWordFetchAPI;
 import me.fengorz.kiwi.word.api.feign.IWordMainVariantAPI;
 import me.fengorz.kiwi.word.crawler.component.producer.base.ISender;
@@ -52,8 +54,8 @@ import java.util.Optional;
 public class FetchServiceImpl implements IFetchService {
 
     private final IJsoupService jsoupService;
-    private final IWordFetchAPI wordFetchAPI;
-    private final IWordMainVariantAPI wordMainVariantAPIService;
+    private final IWordFetchAPI fetchAPI;
+    private final IWordMainVariantAPI wordVariantAPI;
     private final ISender sender;
     private final IDfsService dfsService;
 
@@ -69,67 +71,78 @@ public class FetchServiceImpl implements IFetchService {
             final String fetchWord = fetchWordResultDTO.getWordName();
             StringBuilder handleLog = new StringBuilder();
 
-            R<Void> storeResult = wordFetchAPI.storeResult(fetchWordResultDTO);
+            R<Void> storeResult = fetchAPI.storeResult(fetchWordResultDTO);
             if (storeResult.isFail()) {
                 handleException(queue, WordCrawlerConstants.STATUS_FETCH_FAIL, storeResult.getMsg());
             } else {
                 if (KiwiStringUtils.isNotEquals(inputWord, fetchWordResultDTO.getWordName())) {
-                    wordMainVariantAPIService.insertVariant(inputWord, fetchWord);
+                    wordVariantAPI.insertVariant(inputWord, fetchWord);
                     String insertVariantResult = KiwiStringUtils
-                        .format("word({}) has a variant({}), variant insert success!", fetchWord, inputWord);
+                            .format("word({}) has a variant({}), variant insert success!", fetchWord, inputWord);
                     log.info(insertVariantResult);
                     handleLog.append(insertVariantResult);
+                } else {
+                    // 插入单词是单词的原型时也要记录成一致
+                    fetchAPI.updateQueueById(queue.setDerivation(queue.getWordName()));
                 }
 
                 long newTime = System.currentTimeMillis();
                 String fetchResult = KiwiStringUtils.format("word({}) fetch store success! spent {}s",
-                    queue.getWordName(), (newTime - oldTime));
+                        queue.getWordName(), (newTime - oldTime));
                 log.info(fetchResult);
                 handleLog.append(fetchWord);
 
                 // 标记单词基础信息已经抓取完毕，即将抓取发音文件
                 queue.setFetchStatus(WordCrawlerConstants.STATUS_TO_FETCH_PRONUNCIATION);
                 queue.setFetchResult(handleLog.toString());
-                queue.setIsLock(CommonConstants.FLAG_NO);
+                queue.setIsLock(CommonConstants.FLAG_YES);
             }
         } catch (JsoupFetchConnectException e) {
             handleException(queue, WordCrawlerConstants.STATUS_JSOUP_CONNECT_FAILED, e.getMessage());
         } catch (Exception e) {
             handleException(queue, WordCrawlerConstants.STATUS_FETCH_WORD_FAIL, e.getMessage());
         } finally {
-            wordFetchAPI.updateQueueById(queue);
+            fetchAPI.updateQueueById(queue);
         }
     }
 
     @Override
     public void handle(FetchPronunciationMqDTO dto) {
         WordFetchQueueDO queue = new WordFetchQueueDO().setQueueId(Objects.requireNonNull(dto.getQueueId()));
-        R<Boolean> response =
-            Optional.of(wordFetchAPI.fetchPronunciation(Objects.requireNonNull(dto.getWordId()))).get();
-        if (response.isSuccess()) {
-            queue.setIsLock(CommonConstants.FLAG_NO);
-            queue.setFetchStatus(WordCrawlerConstants.STATUS_ALL_SUCCESS);
-        } else {
-            this.handleException(queue, WordCrawlerConstants.STATUS_TO_FETCH_PRONUNCIATION_FAIL, response.getMsg());
+        try {
+            R<Boolean> response =
+                    Optional.of(fetchAPI.fetchPronunciation(Objects.requireNonNull(dto.getWordId()))).get();
+            if (response.isSuccess()) {
+                queue.setIsLock(CommonConstants.FLAG_NO);
+                queue.setFetchStatus(WordCrawlerConstants.STATUS_ALL_SUCCESS);
+            } else {
+                throw new JsoupFetchPronunciationException();
+            }
+        } catch (Exception e) {
+            this.handleException(queue, WordCrawlerConstants.STATUS_TO_FETCH_PRONUNCIATION_FAIL, "fetch pronunciation error!");
         }
-        wordFetchAPI.updateQueueById(queue);
+        fetchAPI.updateQueueById(queue);
     }
 
     @Override
     public void handle(RemoveWordMqDTO dto) {
         WordFetchQueueDO queue = new WordFetchQueueDO().setQueueId(Objects.requireNonNull(dto.getQueueId()));
-        R<List<RemovePronunciatioinMqDTO>> response =
-            Optional.of(wordFetchAPI.removeWord(dto.getWordName(), dto.getQueueId())).get();
-        if (response.isSuccess()) {
-            queue.setIsLock(CommonConstants.FLAG_NO);
-            // 删除完老的基础数据重新开始抓取单词
-            queue.setFetchStatus(WordCrawlerConstants.STATUS_TO_FETCH);
-            queue.setWordId(0);
-            response.getData().forEach(sender::removePronunciation);
-        } else {
-            this.handleException(queue, WordCrawlerConstants.STATUS_DEL_BASE_FAIL, response.getMsg());
+        try {
+            R<List<RemovePronunciatioinMqDTO>> response =
+                    Optional.of(fetchAPI.removeWord(dto.getQueueId())).get();
+            if (response.isSuccess()) {
+                // 删除完老的基础数据重新开始抓取单词
+                queue.setFetchStatus(WordCrawlerConstants.STATUS_TO_FETCH);
+                queue.setWordId(0);
+                queue.setIsLock(CommonConstants.FLAG_YES);
+                response.getData().forEach(sender::removePronunciation);
+            } else {
+                throw new WordRemoveException();
+            }
+        } catch (Exception e) {
+            this.handleException(queue, WordCrawlerConstants.STATUS_DEL_BASE_FAIL, "remove word error!");
         }
-        wordFetchAPI.updateQueueById(queue);
+        fetchAPI.updateQueueById(queue);
     }
 
     @Override
@@ -139,14 +152,14 @@ public class FetchServiceImpl implements IFetchService {
         } catch (DfsOperateDeleteException e) {
             WordFetchQueueDO queue = new WordFetchQueueDO().setQueueId(Objects.requireNonNull(dto.getQueueId()));
             this.handleException(queue, WordCrawlerConstants.STATUS_DEL_PRONUNCIATION_FAIL, "del pronunciation error!");
-            wordFetchAPI.updateQueueById(queue);
+            fetchAPI.updateQueueById(queue);
         }
     }
 
     private void handleException(WordFetchQueueDO queue, int status, String message) {
         queue.setFetchStatus(status);
         queue.setFetchResult(message);
-        queue.setIsLock(CommonConstants.FLAG_YES);
+        queue.setIsLock(CommonConstants.FLAG_NO);
         if (KiwiStringUtils.isNotBlank(message)) {
             log.error(message);
         }

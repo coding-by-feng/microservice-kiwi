@@ -15,8 +15,6 @@
  */
 package me.fengorz.kiwi.word.api.entity;
 
-import java.time.LocalDateTime;
-
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
@@ -24,11 +22,12 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
-
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import lombok.experimental.Accessors;
+
+import java.time.LocalDateTime;
 
 /**
  * 单词待抓取列表
@@ -54,13 +53,11 @@ public class WordFetchQueueDO extends Model<WordFetchQueueDO> {
      * 单词
      */
     private String wordName;
+
     private Integer wordId;
-    /**
-     * 入库时间
-     */
-    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
-    @JsonSerialize(using = LocalDateTimeSerializer.class)
-    private LocalDateTime inTime;
+
+    private String derivation;
+
     /**
      * 优先级，越小越高
      */
@@ -78,5 +75,14 @@ public class WordFetchQueueDO extends Model<WordFetchQueueDO> {
      */
     private String fetchResult;
     private Integer isLock;
+
+    /**
+     * 入库时间
+     */
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    private LocalDateTime inTime;
+
+    private Integer fetchTime;
 
 }

@@ -10,4 +10,4 @@ RUN mkdir /root/crawlerTmp
 
 ADD kiwi-word-crawler-1.0-SNAPSHOT.jar app.jar
 EXPOSE 6001
-ENTRYPOINT java -jar -Xmx256m -Dspring.profiles.active=prod /app.jar > /logs/crawler.log
+ENTRYPOINT java -jar -Xmx256m -Dspring.profiles.active=prod -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5006,suspend=n /app.jar > /logs/crawler.log

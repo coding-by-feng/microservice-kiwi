@@ -58,6 +58,7 @@ public class AsyncFetchWordProducer extends AbstractProducer implements IProduce
     @Async
     @Override
     protected void execute(WordFetchQueueDO queue) {
+        queue.setIsLock(CommonConstants.FLAG_YES);
         queue.setFetchTime(queue.getFetchTime() + 1);
         queue.setFetchResult(CommonConstants.EMPTY);
         if (null == queue.getWordId() || 0 == queue.getWordId()) {

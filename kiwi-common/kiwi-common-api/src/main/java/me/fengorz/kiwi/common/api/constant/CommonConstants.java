@@ -30,6 +30,7 @@ public interface CommonConstants {
     String SYMBOL_FORWARD_SLASH = "/";
     String SYMBOL_BACK_SLASH = "\\";
     String SYMBOL_DELIMITER_STR = "_";
+    String SYMBOL_LF = "\n";
 
     String FLAG_Y = "Y";
     String FLAG_N = "N";

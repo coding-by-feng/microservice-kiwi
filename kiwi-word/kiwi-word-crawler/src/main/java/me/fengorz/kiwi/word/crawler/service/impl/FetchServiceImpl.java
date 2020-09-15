@@ -69,7 +69,7 @@ public class FetchServiceImpl implements IFetchService {
         try {
             FetchWordResultDTO fetchWordResultDTO = jsoupService.fetchWordInfo(messageDTO).setQueueId(queueId);
             final String fetchWord = fetchWordResultDTO.getWordName();
-            StringBuilder handleLog = new StringBuilder();
+            StringBuilder handleLog = new StringBuilder().append(queue.getFetchResult()).append(CommonConstants.SYMBOL_LF);
 
             R<Void> storeResult = fetchAPI.storeResult(fetchWordResultDTO);
             if (storeResult.isFail()) {
@@ -83,7 +83,7 @@ public class FetchServiceImpl implements IFetchService {
                     handleLog.append(insertVariantResult);
                 } else {
                     // 插入单词是单词的原型时也要记录成一致
-                    fetchAPI.updateQueueById(queue.setDerivation(queue.getWordName()));
+                    queue.setDerivation(queue.getWordName());
                 }
 
                 long newTime = System.currentTimeMillis();
@@ -158,7 +158,7 @@ public class FetchServiceImpl implements IFetchService {
 
     private void handleException(WordFetchQueueDO queue, int status, String message) {
         queue.setFetchStatus(status);
-        queue.setFetchResult(message);
+        queue.setFetchResult(queue.getFetchResult() + message);
         queue.setIsLock(CommonConstants.FLAG_NO);
         if (KiwiStringUtils.isNotBlank(message)) {
             log.error(message);

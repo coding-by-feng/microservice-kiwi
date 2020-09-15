@@ -93,7 +93,7 @@ public class JsoupServiceImpl implements IJsoupService {
         try {
             fetchWordResultDTO = subFetch(WordCrawlerConstants.CAMBRIDGE_FETCH_CHINESE_URL, word);
         } catch (JsoupFetchConnectException | JsoupFetchResultException | JsoupFetchPronunciationException e) {
-            log.error(e.getMessage(), e);
+            log.error(e.getMessage());
             fetchWordResultDTO = subFetch(WordCrawlerConstants.CAMBRIDGE_FETCH_ENGLISH_URL, word);
         }
         return fetchWordResultDTO;

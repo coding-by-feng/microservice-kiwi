@@ -19,6 +19,7 @@ ignore:
     - /word/fetch/**
     - /word/pronunciation/downloadVoice/**
     - /word/main/variant/**
+    - /word/main/listOverlapInUnLock
   userNames:
     - admin
 

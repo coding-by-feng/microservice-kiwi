@@ -22,6 +22,7 @@ import me.fengorz.kiwi.word.api.common.WordCrawlerConstants;
 import me.fengorz.kiwi.word.api.dto.queue.RemoveWordMqDTO;
 import me.fengorz.kiwi.word.api.entity.WordFetchQueueDO;
 import me.fengorz.kiwi.word.api.feign.IWordFetchAPI;
+import me.fengorz.kiwi.word.api.feign.IWordMainAPI;
 import me.fengorz.kiwi.word.crawler.component.producer.base.AbstractProducer;
 import me.fengorz.kiwi.word.crawler.component.producer.base.IProducer;
 import me.fengorz.kiwi.word.crawler.component.producer.base.ISender;
@@ -39,8 +40,8 @@ import java.util.Optional;
 @Slf4j
 public class AsyncRemoveWordProducer extends AbstractProducer implements IProducer {
 
-    public AsyncRemoveWordProducer(IWordFetchAPI api, ISender sender) {
-        super(api, sender);
+    public AsyncRemoveWordProducer(IWordFetchAPI fetchAPI, IWordMainAPI wordMainAPI, ISender sender) {
+        super(fetchAPI, wordMainAPI, sender);
     }
 
     @Override
@@ -52,7 +53,8 @@ public class AsyncRemoveWordProducer extends AbstractProducer implements IProduc
     @Async
     public void execute(WordFetchQueueDO queue) {
         queue.setIsLock(CommonConstants.FLAG_YES);
-        if (Optional.of(wordFetchAPI.updateQueueById(queue)).get().isSuccess()) {
+        queue.setFetchStatus(WordCrawlerConstants.STATUS_DOING_DEL_BASE);
+        if (Optional.of(fetchAPI.updateQueueById(queue)).get().isSuccess()) {
             sender.removeWord(new RemoveWordMqDTO().setWordName(queue.getWordName()).setWordId(queue.getWordId())
                     .setQueueId(queue.getQueueId()));
         }

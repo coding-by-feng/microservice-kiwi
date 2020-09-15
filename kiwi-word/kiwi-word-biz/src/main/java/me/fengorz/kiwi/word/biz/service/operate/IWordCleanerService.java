@@ -19,12 +19,15 @@
 
 package me.fengorz.kiwi.word.biz.service.operate;
 
-import java.util.List;
-
 import me.fengorz.kiwi.word.api.dto.queue.RemovePronunciatioinMqDTO;
+
+import java.util.List;
 
 public interface IWordCleanerService {
 
+    @Deprecated
     List<RemovePronunciatioinMqDTO> removeWord(String wordName, Integer queueId);
+
+    List<RemovePronunciatioinMqDTO> removeWord( Integer queueId);
 
 }

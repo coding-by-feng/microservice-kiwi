@@ -334,14 +334,16 @@ public class WordOperateServiceImpl implements IWordOperateService {
             return false;
         }
 
-        // 先判断变种是否存在，如果不存在再插入
+        // 先判断变种是否存在，如果存在再插入
         WordMainVO mainVO = mainService.getOne(fetchWordName);
         if (mainVO == null) {
             throw new ResourceNotFoundException("word {} 不存在！", fetchWordName);
         }
 
-        final Integer wordId = mainVO.getWordId();
+        // 记录单词原型到队列表
+        fetchQueueService.saveDerivation(inputWordName, fetchWordName);
 
+        final Integer wordId = mainVO.getWordId();
         if (mainVariantService.isExist(wordId, inputWordName)) {
             return false;
         }

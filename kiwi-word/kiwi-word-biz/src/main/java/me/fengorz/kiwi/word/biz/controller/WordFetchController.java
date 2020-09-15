@@ -49,21 +49,31 @@ import java.util.List;
 @RequestMapping("/word/fetch")
 public class WordFetchController extends BaseController {
 
-    private final IWordFetchQueueService wordFetchQueueService;
-    private final IWordOperateService wordOperateService;
-    private final IWordCrawlerService wordCrawlerService;
-    private final IWordCleanerService wordCleanerService;
+    private final IWordFetchQueueService queueService;
+    private final IWordOperateService operateService;
+    private final IWordCrawlerService crawlerService;
+    private final IWordCleanerService cleanerService;
+
+    @GetMapping("/getOne/{queueId}")
+    public R<WordFetchQueueDO> getOne(@PathVariable Integer queueId) {
+        return R.success(queueService.getOneInUnLock(queueId));
+    }
+
+    @GetMapping("/getOneByWordName/{wordName}")
+    public R<WordFetchQueueDO> getOneByWordName(@PathVariable String wordName) {
+        return R.success(queueService.getOneInUnLock(wordName));
+    }
 
     @GetMapping(value = "/pageQueue/{status}/{current}/{size}")
     public R<List<WordFetchQueueDO>> pageQueue(@PathVariable Integer status, @PathVariable Integer current,
                                                @PathVariable Integer size) {
-        return R.success(wordFetchQueueService.page2List(status, current, size, CommonConstants.FLAG_NO));
+        return R.success(queueService.page2List(status, current, size, CommonConstants.FLAG_NO));
     }
 
     @GetMapping(value = "/pageQueueLockIn/{status}/{current}/{size}")
     public R<List<WordFetchQueueDO>> pageQueueLockIn(@PathVariable Integer status, @PathVariable Integer current,
                                                      @PathVariable Integer size) {
-        return R.success(wordFetchQueueService.page2List(status, current, size, CommonConstants.FLAG_YES));
+        return R.success(queueService.page2List(status, current, size, CommonConstants.FLAG_YES));
     }
 
     /**
@@ -75,42 +85,41 @@ public class WordFetchController extends BaseController {
     @SysLog("修改单词待抓取列表")
     @PostMapping("/updateById")
     public R<Boolean> updateById(@RequestBody WordFetchQueueDO wordFetchQueue) {
-        return R.success(wordFetchQueueService.updateById(wordFetchQueue));
+        return R.success(queueService.updateById(wordFetchQueue));
     }
 
     @SysLog("修改单词待抓取列表")
     @PostMapping("/updateByWordName")
     // @PreAuthorize("@pms.hasPermission('queue_wordfetchqueue_edit')")
     public R<Boolean> updateByWordName(@RequestBody WordFetchQueueDO wordFetchQueue) {
-        return R.success(wordFetchQueueService.update(wordFetchQueue,
+        return R.success(queueService.update(wordFetchQueue,
                 new QueryWrapper<>(new WordFetchQueueDO().setWordName(wordFetchQueue.getWordName()))));
     }
 
-    @SysLog("通过id删除单词待抓取列表")
     @PostMapping("/invalid")
     // @PreAuthorize("@pms.hasPermission('queue_wordfetchqueue_del')")
     public R<Boolean> invalid(@RequestParam @NotBlank String wordName) {
-        return R.auto(wordFetchQueueService.invalid(wordName));
+        return R.auto(queueService.invalid(wordName));
     }
 
     @PostMapping("/lock")
     // @PreAuthorize("@pms.hasPermission('queue_wordfetchqueue_del')")
     public R<Boolean> lock(@RequestParam @NotBlank String wordName) {
-        return R.auto(wordFetchQueueService.lock(wordName));
+        return R.auto(queueService.lock(wordName));
     }
 
     @PostMapping("/storeResult")
     public R<Boolean> storeResult(@RequestBody @Valid FetchWordResultDTO dto) {
-        return R.success(wordCrawlerService.storeFetchWordResult(dto));
+        return R.success(crawlerService.storeFetchWordResult(dto));
     }
 
     @GetMapping("/fetchPronunciation/{wordId}")
     public R<Boolean> fetchPronunciation(@PathVariable Integer wordId) {
-        return R.success(wordCrawlerService.fetchPronunciation(wordId));
+        return R.success(crawlerService.fetchPronunciation(wordId));
     }
 
-    @GetMapping("/removeWord/{wordName}/{queueId}")
-    public R<List<RemovePronunciatioinMqDTO>> removeWord(@PathVariable String wordName, @PathVariable Integer queueId) {
-        return R.success(wordCleanerService.removeWord(wordName, queueId));
+    @GetMapping("/removeWord/{queueId}")
+    public R<List<RemovePronunciatioinMqDTO>> removeWord(@PathVariable Integer queueId) {
+        return R.success(cleanerService.removeWord(queueId));
     }
 }

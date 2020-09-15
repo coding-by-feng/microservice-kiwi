@@ -23,11 +23,11 @@ public interface WordCrawlerConstants {
     /**
      * 状态>0，代表当前爬虫正常或者已经完成；
      * 状态<0，代表当前爬虫已经发生异常；
-     * 状态=0，达标爬虫等待开始中。
+     * 状态=0，代表爬虫等待开始中。
      */
+
     /*分割线*/
     int STATUS_PARTITION = -1;
-
     /*单词查询异常*/
     int STATUS_TO_QUERY_ERROR = -404;
     /*Jsoup连接失败*/
@@ -43,7 +43,7 @@ public interface WordCrawlerConstants {
 
     /*待抓取*/
     int STATUS_TO_FETCH = 0;
-    /*正在抓取基础数据中*/
+    /*正在抓取基础数据*/
     int STATUS_DOING_FETCH = 5;
     /*等待删除单词基础数据*/
     int STATUS_TO_DEL_BASE = 1;
@@ -62,7 +62,7 @@ public interface WordCrawlerConstants {
     /*单词数据抓取完毕*/
     int STATUS_ALL_SUCCESS = 200;
 
-    int WORD_MAX_FETCH_LIMITED_TIME = 10;
+    int WORD_MAX_FETCH_LIMITED_TIME = 100;
 
     String CAMBRIDGE_FETCH_CHINESE_URL = "https://dictionary.cambridge.org/zhs/词典/英语-汉语-简体/";
     String CAMBRIDGE_FETCH_ENGLISH_URL = "https://dictionary.cambridge.org/dictionary/english/";

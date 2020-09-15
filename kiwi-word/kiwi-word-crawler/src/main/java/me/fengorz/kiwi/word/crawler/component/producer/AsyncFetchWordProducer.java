@@ -17,6 +17,7 @@
 package me.fengorz.kiwi.word.crawler.component.producer;
 
 import lombok.extern.slf4j.Slf4j;
+import me.fengorz.kiwi.common.api.constant.CommonConstants;
 import me.fengorz.kiwi.word.api.common.WordCrawlerConstants;
 import me.fengorz.kiwi.word.api.dto.queue.FetchWordMqDTO;
 import me.fengorz.kiwi.word.api.entity.WordFetchQueueDO;
@@ -58,6 +59,7 @@ public class AsyncFetchWordProducer extends AbstractProducer implements IProduce
     @Override
     protected void execute(WordFetchQueueDO queue) {
         queue.setFetchTime(queue.getFetchTime() + 1);
+        queue.setFetchResult(CommonConstants.EMPTY);
         if (null == queue.getWordId() || 0 == queue.getWordId()) {
             queue.setFetchStatus(WordCrawlerConstants.STATUS_DOING_FETCH);
             if (Optional.of(fetchAPI.updateQueueById(queue)).get().isSuccess()) {

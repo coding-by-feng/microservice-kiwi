@@ -35,14 +35,11 @@ import me.fengorz.kiwi.word.biz.service.operate.IWordOperateService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
-* @Author zhanshifeng
+ * @Author zhanshifeng
  * @Date 2020/7/29 8:56 PM
  */
 @Slf4j
@@ -51,13 +48,14 @@ import java.util.stream.Collectors;
 public class WordCleanerService implements IWordCleanerService {
 
     private final IWordOperateService operateService;
+    private final IWordFetchQueueService queueService;
     private final IWordMainService wordMainService;
-    private final IWordCharacterService wordCharacterService;
-    private final IWordParaphraseService wordParaphraseService;
-    private final IWordParaphraseExampleService wordParaphraseExampleService;
-    private final IWordPronunciationService wordPronunciationService;
-    private final IWordMainVariantService wordMainVariantService;
-    private final IWordParaphrasePhraseService wordParaphrasePhraseService;
+    private final IWordCharacterService characterService;
+    private final IWordParaphraseService paraphraseService;
+    private final IWordParaphraseExampleService exampleService;
+    private final IWordPronunciationService pronunciationService;
+    private final IWordMainVariantService variantService;
+    private final IWordParaphrasePhraseService phraseService;
     private final IDfsService dfsService;
 
     @Override
@@ -67,7 +65,7 @@ public class WordCleanerService implements IWordCleanerService {
         List<WordMainDO> list =
                 wordMainService.list(Wrappers.<WordMainDO>lambdaQuery().eq(WordMainDO::getWordName, wordName));
         if (KiwiCollectionUtils.isEmpty(list)) {
-            Optional.ofNullable(wordMainVariantService.listWordMain(wordName, queueId)).ifPresent(list::addAll);
+            Optional.ofNullable(variantService.listWordMain(wordName, queueId)).ifPresent(list::addAll);
         }
 
         if (KiwiCollectionUtils.isEmpty(list)) {
@@ -83,10 +81,37 @@ public class WordCleanerService implements IWordCleanerService {
         return result;
     }
 
+    @Override
+    public List<RemovePronunciatioinMqDTO> removeWord(Integer queueId) {
+        List<RemovePronunciatioinMqDTO> result = new LinkedList<>();
+        Optional.ofNullable(queueService.getOneAnyhow(queueId)).ifPresent(queue -> {
+            String wordName = queue.getWordName();
+            String derivation = queue.getDerivation();
+            List<WordMainDO> list = new LinkedList<>();
+            // 如果所查单词和单词的原型不同的话
+            if (KiwiStringUtils.equals(wordName, derivation)) {
+                list.addAll(wordMainService.list(wordName));
+            } else {
+                list.addAll(wordMainService.list(derivation));
+            }
+            if (KiwiCollectionUtils.isEmpty(list)) {
+                return;
+            }
+
+            for (WordMainDO wordMainDO : list) {
+                this.evictAll(wordMainDO, wordName);
+                List<RemovePronunciatioinMqDTO> temps = this.subRemoveWord(wordMainDO);
+                temps.forEach(dto -> dto.setQueueId(queueId));
+                KiwiCollectionUtils.addAllIfNotContains(result, temps);
+            }
+        });
+        return result;
+    }
+
     private List<RemovePronunciatioinMqDTO> subRemoveWord(WordMainDO wordMainDO) {
         final String wordName = wordMainDO.getWordName();
         wordMainService.remove(Wrappers.<WordMainDO>lambdaQuery().eq(WordMainDO::getWordName, wordName));
-        wordMainVariantService.remove(Wrappers.<WordMainVariantDO>lambdaQuery().eq(WordMainVariantDO::getVariantName, wordName));
+        variantService.remove(Wrappers.<WordMainVariantDO>lambdaQuery().eq(WordMainVariantDO::getVariantName, wordName));
         operateService.cachePutFetchReplace(wordName,
                 operateService.cacheGetFetchReplace(wordName).setOldRelWordId(wordMainDO.getWordId()));
         return this.removeWordRelatedData(wordMainDO);
@@ -95,16 +120,16 @@ public class WordCleanerService implements IWordCleanerService {
     private List<RemovePronunciatioinMqDTO> removeWordRelatedData(WordMainDO wordMainDO) {
         Integer wordId = wordMainDO.getWordId();
 
-        wordMainVariantService.delByWordId(wordId);
+        variantService.delByWordId(wordId);
         QueryWrapper<WordCharacterDO> wordCharacterQueryWrapper =
                 new QueryWrapper<>(new WordCharacterDO().setWordId(wordId));
-        List<WordCharacterDO> characterList = wordCharacterService.list(wordCharacterQueryWrapper);
+        List<WordCharacterDO> characterList = characterService.list(wordCharacterQueryWrapper);
         if (CollUtil.isNotEmpty(characterList)) {
             for (WordCharacterDO wordCharacter : characterList) {
                 Integer characterId = wordCharacter.getCharacterId();
                 QueryWrapper<WordParaphraseDO> wordParaphraseQueryWrapper =
                         new QueryWrapper<>(new WordParaphraseDO().setCharacterId(characterId));
-                List<WordParaphraseDO> paraphraseList = wordParaphraseService.list(wordParaphraseQueryWrapper);
+                List<WordParaphraseDO> paraphraseList = paraphraseService.list(wordParaphraseQueryWrapper);
                 if (CollUtil.isNotEmpty(paraphraseList)) {
                     for (WordParaphraseDO wordParaphraseDO : paraphraseList) {
                         Integer paraphraseId = wordParaphraseDO.getParaphraseId();
@@ -112,7 +137,7 @@ public class WordCleanerService implements IWordCleanerService {
                                 Wrappers.<WordParaphraseExampleDO>lambdaQuery().eq(WordParaphraseExampleDO::getParaphraseId,
                                         paraphraseId);
                         List<WordParaphraseExampleDO> exampleDOList =
-                                wordParaphraseExampleService.list(exampleDOLambdaQueryWrapper);
+                                exampleService.list(exampleDOLambdaQueryWrapper);
                         if (KiwiCollectionUtils.isNotEmpty(exampleDOList)) {
                             for (WordParaphraseExampleDO wordParaphraseExampleDO : exampleDOList) {
                                 // 将已删除的老的exampleId缓存起来，这样可以替换掉收藏本的关联id
@@ -123,7 +148,7 @@ public class WordCleanerService implements IWordCleanerService {
                                         wordParaphraseExampleDO.getExampleId());
                                 operateService.cachePutFetchReplace(wordMainDO.getWordName(), replaceDTO);
                             }
-                            wordParaphraseExampleService.remove(exampleDOLambdaQueryWrapper);
+                            exampleService.remove(exampleDOLambdaQueryWrapper);
                         }
 
                         // 将已删除的老的paraphraseId缓存起来，这样可以替换掉收藏本的关联id
@@ -131,23 +156,23 @@ public class WordCleanerService implements IWordCleanerService {
                         replaceDTO.getOldParaphraseIdMap().put(wordParaphraseDO.getParaphraseEnglish(), paraphraseId);
                         operateService.cachePutFetchReplace(wordMainDO.getWordName(), replaceDTO);
 
-                        wordParaphrasePhraseService.remove(Wrappers.<WordParaphrasePhraseDO>lambdaQuery()
+                        phraseService.remove(Wrappers.<WordParaphrasePhraseDO>lambdaQuery()
                                 .eq(WordParaphrasePhraseDO::getParaphraseId, paraphraseId));
                     }
                 }
                 if (CollUtil.isNotEmpty(paraphraseList)) {
-                    wordParaphraseService.remove(wordParaphraseQueryWrapper);
+                    paraphraseService.remove(wordParaphraseQueryWrapper);
                 }
-                wordCharacterService.evict(characterId);
+                characterService.evict(characterId);
             }
-            wordCharacterService.remove(wordCharacterQueryWrapper);
+            characterService.remove(wordCharacterQueryWrapper);
         }
 
         // 删除分布式文件系统里面的文件
         LambdaQueryWrapper<WordPronunciationDO> pronunciationWrapper =
                 Wrappers.<WordPronunciationDO>lambdaQuery().eq(WordPronunciationDO::getWordId, wordId);
-        List<WordPronunciationDO> wordPronunciationList = wordPronunciationService.list(pronunciationWrapper);
-        wordPronunciationService.remove(pronunciationWrapper);
+        List<WordPronunciationDO> wordPronunciationList = pronunciationService.list(pronunciationWrapper);
+        pronunciationService.remove(pronunciationWrapper);
 
         return wordPronunciationList.stream()
                 .filter(pronunciationDO -> StrUtil.isNotBlank(pronunciationDO.getVoiceFilePath()))

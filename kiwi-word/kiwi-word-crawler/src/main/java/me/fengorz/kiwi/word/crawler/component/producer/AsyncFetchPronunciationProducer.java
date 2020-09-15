@@ -22,9 +22,10 @@ import me.fengorz.kiwi.word.api.common.WordCrawlerConstants;
 import me.fengorz.kiwi.word.api.dto.queue.FetchPronunciationMqDTO;
 import me.fengorz.kiwi.word.api.entity.WordFetchQueueDO;
 import me.fengorz.kiwi.word.api.feign.IWordFetchAPI;
-import me.fengorz.kiwi.word.crawler.component.MqSender;
+import me.fengorz.kiwi.word.api.feign.IWordMainAPI;
 import me.fengorz.kiwi.word.crawler.component.producer.base.AbstractProducer;
 import me.fengorz.kiwi.word.crawler.component.producer.base.IProducer;
+import me.fengorz.kiwi.word.crawler.component.producer.base.ISender;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
@@ -39,8 +40,8 @@ import java.util.Optional;
 @Slf4j
 public class AsyncFetchPronunciationProducer extends AbstractProducer implements IProducer {
 
-    public AsyncFetchPronunciationProducer(IWordFetchAPI api, MqSender mqSender) {
-        super(api, mqSender);
+    public AsyncFetchPronunciationProducer(IWordFetchAPI fetchAPI, IWordMainAPI wordMainAPI, ISender sender) {
+        super(fetchAPI, wordMainAPI, sender);
     }
 
     @Override
@@ -52,7 +53,8 @@ public class AsyncFetchPronunciationProducer extends AbstractProducer implements
     @Override
     protected void execute(WordFetchQueueDO queue) {
         queue.setIsLock(CommonConstants.FLAG_YES);
-        if (Optional.of(wordFetchAPI.updateQueueById(queue)).get().isSuccess()) {
+        queue.setFetchStatus(WordCrawlerConstants.STATUS_DOING_FETCH_PRONUNCIATION);
+        if (Optional.of(fetchAPI.updateQueueById(queue)).get().isSuccess()) {
             sender.fetchPronunciation(
                     new FetchPronunciationMqDTO().setWordId(queue.getWordId()).setQueueId(queue.getQueueId()));
         }

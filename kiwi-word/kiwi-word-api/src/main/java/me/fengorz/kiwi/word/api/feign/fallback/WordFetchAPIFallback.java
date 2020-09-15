@@ -39,6 +39,18 @@ public class WordFetchAPIFallback implements IWordFetchAPI {
     private Throwable throwable;
 
     @Override
+    public R<WordFetchQueueDO> getOne(Integer queueId) {
+        log.error(throwable.getCause().getMessage());
+        return R.feignCallFailed(throwable.getMessage());
+    }
+
+    @Override
+    public R<WordFetchQueueDO> getOneByWordName(String wordName) {
+        log.error(throwable.getCause().getMessage());
+        return R.feignCallFailed(throwable.getMessage());
+    }
+
+    @Override
     public R<List<WordFetchQueueDO>> pageQueue(Integer status, Integer current, Integer size) {
         log.error(throwable.getCause().getMessage());
         return R.feignCallFailed(throwable.getMessage());
@@ -70,6 +82,12 @@ public class WordFetchAPIFallback implements IWordFetchAPI {
 
     @Override
     public R<List<RemovePronunciatioinMqDTO>> removeWord(String wordName, Integer queueId) {
+        log.error(throwable.getCause().getMessage());
+        return R.feignCallFailed(throwable.getMessage());
+    }
+
+    @Override
+    public R<List<RemovePronunciatioinMqDTO>> removeWord(Integer queueId) {
         log.error(throwable.getCause().getMessage());
         return R.feignCallFailed(throwable.getMessage());
     }

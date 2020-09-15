@@ -71,6 +71,7 @@ public abstract class AbstractConsumer<T extends MqDTO> {
                         TimeUnit.SECONDS.sleep(1);
                     } catch (InterruptedException ie) {
                         log.error("threadPoolTaskExecutor sleep error!", ie);
+                        this.errorCallback(dto);
                         return;
                     }
                 }

@@ -17,11 +17,11 @@
 package me.fengorz.kiwi.word.crawler.component.producer;
 
 import lombok.extern.slf4j.Slf4j;
-import me.fengorz.kiwi.common.api.constant.CommonConstants;
 import me.fengorz.kiwi.word.api.common.WordCrawlerConstants;
 import me.fengorz.kiwi.word.api.dto.queue.FetchWordMqDTO;
 import me.fengorz.kiwi.word.api.entity.WordFetchQueueDO;
 import me.fengorz.kiwi.word.api.feign.IWordFetchAPI;
+import me.fengorz.kiwi.word.api.feign.IWordMainAPI;
 import me.fengorz.kiwi.word.crawler.component.producer.base.AbstractProducer;
 import me.fengorz.kiwi.word.crawler.component.producer.base.IProducer;
 import me.fengorz.kiwi.word.crawler.component.producer.base.ISender;
@@ -32,6 +32,7 @@ import java.util.Optional;
 
 /**
  * 抓取单词基本信息-消息队列生产者
+ *
  * @Author zhanshifeng
  * @Date 2019/10/30 10:33 AM
  */
@@ -39,8 +40,8 @@ import java.util.Optional;
 @Slf4j
 public class AsyncFetchWordProducer extends AbstractProducer implements IProducer {
 
-    public AsyncFetchWordProducer(IWordFetchAPI api, ISender sender) {
-        super(api, sender);
+    public AsyncFetchWordProducer(IWordFetchAPI wordFetchAPI, IWordMainAPI wordMainAPI, ISender sender) {
+        super(wordFetchAPI, wordMainAPI, sender);
     }
 
     @Override
@@ -56,16 +57,16 @@ public class AsyncFetchWordProducer extends AbstractProducer implements IProduce
     @Async
     @Override
     protected void execute(WordFetchQueueDO queue) {
+        queue.setFetchTime(queue.getFetchTime() + 1);
         if (null == queue.getWordId() || 0 == queue.getWordId()) {
-            queue.setIsLock(CommonConstants.FLAG_YES);
-            if (Optional.of(wordFetchAPI.updateQueueById(queue)).get().isSuccess()) {
+            queue.setFetchStatus(WordCrawlerConstants.STATUS_DOING_FETCH);
+            if (Optional.of(fetchAPI.updateQueueById(queue)).get().isSuccess()) {
                 sender.fetchWord(new FetchWordMqDTO().setWord(queue.getWordName()).setQueueId(queue.getQueueId()));
             }
         } else {
             // 删除老的数据
-            queue.setIsLock(CommonConstants.FLAG_NO);
             queue.setFetchStatus(WordCrawlerConstants.STATUS_TO_DEL_BASE);
-            wordFetchAPI.updateQueueById(queue);
+            fetchAPI.updateQueueById(queue);
         }
     }
 }

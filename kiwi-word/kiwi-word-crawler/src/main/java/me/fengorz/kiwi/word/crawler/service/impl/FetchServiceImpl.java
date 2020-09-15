@@ -67,23 +67,21 @@ public class FetchServiceImpl implements IFetchService {
         WordFetchQueueDO queue = new WordFetchQueueDO().setWordName(inputWord).setQueueId(queueId);
 
         try {
+            StringBuilder handleLog = new StringBuilder().append(queue.getFetchResult() != null ? queue.getFetchResult() : CommonConstants.EMPTY).append(CommonConstants.SYMBOL_LF);
             FetchWordResultDTO fetchWordResultDTO = jsoupService.fetchWordInfo(messageDTO).setQueueId(queueId);
             final String fetchWord = fetchWordResultDTO.getWordName();
-            StringBuilder handleLog = new StringBuilder().append(queue.getFetchResult()).append(CommonConstants.SYMBOL_LF);
+            queue.setDerivation(fetchWord);
 
             R<Void> storeResult = fetchAPI.storeResult(fetchWordResultDTO);
             if (storeResult.isFail()) {
                 handleException(queue, WordCrawlerConstants.STATUS_FETCH_FAIL, storeResult.getMsg());
             } else {
-                if (KiwiStringUtils.isNotEquals(inputWord, fetchWordResultDTO.getWordName())) {
+                if (KiwiStringUtils.isNotEquals(inputWord, fetchWord)) {
                     wordVariantAPI.insertVariant(inputWord, fetchWord);
                     String insertVariantResult = KiwiStringUtils
                             .format("word({}) has a variant({}), variant insert success!", fetchWord, inputWord);
                     log.info(insertVariantResult);
                     handleLog.append(insertVariantResult);
-                } else {
-                    // 插入单词是单词的原型时也要记录成一致
-                    queue.setDerivation(queue.getWordName());
                 }
 
                 long newTime = System.currentTimeMillis();
@@ -100,7 +98,7 @@ public class FetchServiceImpl implements IFetchService {
         } catch (JsoupFetchConnectException e) {
             handleException(queue, WordCrawlerConstants.STATUS_JSOUP_CONNECT_FAILED, e.getMessage());
         } catch (Exception e) {
-            handleException(queue, WordCrawlerConstants.STATUS_FETCH_WORD_FAIL, e.getMessage());
+            handleException(queue, WordCrawlerConstants.STATUS_FETCH_FAIL, e.getMessage());
         } finally {
             fetchAPI.updateQueueById(queue);
         }

@@ -33,6 +33,7 @@ import java.util.Optional;
 
 /**
  * 老旧单词数据清除--消息队列生产者
+ *
  * @Author zhanshifeng
  * @Date 2019/10/30 10:33 AM
  */
@@ -55,8 +56,7 @@ public class AsyncRemoveWordProducer extends AbstractProducer implements IProduc
         queue.setIsLock(CommonConstants.FLAG_YES);
         queue.setFetchStatus(WordCrawlerConstants.STATUS_DOING_DEL_BASE);
         if (Optional.of(fetchAPI.updateQueueById(queue)).get().isSuccess()) {
-            sender.removeWord(new RemoveWordMqDTO().setWordName(queue.getWordName()).setWordId(queue.getWordId())
-                    .setQueueId(queue.getQueueId()));
+            sender.removeWord(new RemoveWordMqDTO().setQueueId(queue.getQueueId()));
         }
     }
 

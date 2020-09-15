@@ -156,7 +156,7 @@ public class FetchServiceImpl implements IFetchService {
 
     private void handleException(WordFetchQueueDO queue, int status, String message) {
         queue.setFetchStatus(status);
-        queue.setFetchResult(queue.getFetchResult() + message);
+        queue.setFetchResult(queue.getFetchResult() == null ? message : queue.getFetchResult() + message);
         queue.setIsLock(CommonConstants.FLAG_NO);
         if (KiwiStringUtils.isNotBlank(message)) {
             log.error(message);

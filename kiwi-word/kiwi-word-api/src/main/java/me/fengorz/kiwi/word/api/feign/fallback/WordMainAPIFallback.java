@@ -38,11 +38,6 @@ public class WordMainAPIFallback implements IWordMainAPI {
     private Throwable throwable;
 
     @Override
-    public R<Boolean> removeByWordName(String wordName) {
-        return R.feignCallFailed();
-    }
-
-    @Override
     public R<List<String>> listOverlapInUnLock() {
         return R.feignCallFailed();
     }

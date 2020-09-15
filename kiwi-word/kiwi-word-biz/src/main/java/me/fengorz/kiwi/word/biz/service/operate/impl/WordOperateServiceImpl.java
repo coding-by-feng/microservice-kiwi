@@ -341,7 +341,7 @@ public class WordOperateServiceImpl implements IWordOperateService {
         }
 
         // 记录单词原型到队列表
-        fetchQueueService.saveDerivation(inputWordName, fetchWordName);
+        // fetchQueueService.saveDerivation(inputWordName, fetchWordName);
 
         final Integer wordId = mainVO.getWordId();
         if (mainVariantService.isExist(wordId, inputWordName)) {

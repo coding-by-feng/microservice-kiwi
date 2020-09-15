@@ -36,10 +36,8 @@ public interface WordCrawlerConstants {
     int STATUS_FETCH_FAIL = -3;
     /*删除单词发音文件失败*/
     int STATUS_DEL_PRONUNCIATION_FAIL = -4;
-    /*抓取单词基础数据失败*/
-    int STATUS_FETCH_WORD_FAIL = -5;
     /*下载单词发音文件失败*/
-    int STATUS_TO_FETCH_PRONUNCIATION_FAIL = -6;
+    int STATUS_TO_FETCH_PRONUNCIATION_FAIL = -5;
 
     /*待抓取*/
     int STATUS_TO_FETCH = 0;

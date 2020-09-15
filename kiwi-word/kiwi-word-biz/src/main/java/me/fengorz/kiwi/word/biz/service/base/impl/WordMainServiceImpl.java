@@ -77,7 +77,7 @@ public class WordMainServiceImpl extends ServiceImpl<WordMainMapper, WordMainDO>
     @Override
     public WordMainVO getOne(String wordName) {
         try {
-            return KiwiBeanUtils.convertFrom(this.getOne(new LambdaQueryWrapper<WordMainDO>()
+            return KiwiBeanUtils.convertFrom(this.getOne(Wrappers.<WordMainDO>lambdaQuery()
                             .eq(WordMainDO::getWordName, wordName).eq(WordMainDO::getIsDel, CommonConstants.FLAG_DEL_NO)),
                     WordMainVO.class);
         } catch (Exception e) {

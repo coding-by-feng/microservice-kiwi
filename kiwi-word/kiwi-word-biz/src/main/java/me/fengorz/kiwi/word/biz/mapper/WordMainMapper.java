@@ -16,8 +16,9 @@
 package me.fengorz.kiwi.word.biz.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-
 import me.fengorz.kiwi.word.api.entity.WordMainDO;
+
+import java.util.List;
 
 /**
  * 单词主表
@@ -26,5 +27,7 @@ import me.fengorz.kiwi.word.api.entity.WordMainDO;
  * @date 2019-10-31 20:32:07
  */
 public interface WordMainMapper extends BaseMapper<WordMainDO> {
+
+    List<String> selectOverlapInUnLock();
 
 }

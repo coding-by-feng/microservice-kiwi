@@ -15,26 +15,25 @@
  */
 package me.fengorz.kiwi.word.biz.controller;
 
-import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.web.bind.annotation.*;
-
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-
 import cn.hutool.core.util.StrUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.bdf.core.service.ISeqService;
 import me.fengorz.kiwi.common.api.R;
+import me.fengorz.kiwi.common.api.constant.CommonConstants;
 import me.fengorz.kiwi.common.api.constant.MapperConstant;
 import me.fengorz.kiwi.common.sdk.controller.BaseController;
 import me.fengorz.kiwi.word.api.common.WordCrawlerConstants;
 import me.fengorz.kiwi.word.api.entity.WordFetchQueueDO;
 import me.fengorz.kiwi.word.api.entity.WordMainDO;
 import me.fengorz.kiwi.word.biz.service.base.IWordFetchQueueService;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.web.bind.annotation.*;
+
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 单词主表
@@ -59,24 +58,26 @@ public class TestTempController extends BaseController {
         for (String word : words) {
             WordFetchQueueDO one = wordFetchQueueService
                 .getOne(new LambdaQueryWrapper<WordFetchQueueDO>().eq(WordFetchQueueDO::getWordName, word));
-            WordFetchQueueDO wordFetchQueue = null;
+            WordFetchQueueDO queue = null;
             if (one != null) {
                 if (WordCrawlerConstants.STATUS_ALL_SUCCESS == one.getFetchStatus()) {
                     continue;
                 } else {
-                    wordFetchQueue = one;
-                    wordFetchQueue.setFetchStatus(WordCrawlerConstants.STATUS_TO_FETCH);
-                    wordFetchQueue.setWordName(word.trim());
-                    wordFetchQueue.setFetchPriority(100);
-                    wordFetchQueueService.updateById(wordFetchQueue);
+                    queue = one;
+                    queue.setFetchStatus(WordCrawlerConstants.STATUS_TO_FETCH);
+                    queue.setWordName(word.trim());
+                    queue.setFetchPriority(100);
+                    queue.setIsLock(CommonConstants.FLAG_YES);
+                    wordFetchQueueService.updateById(queue);
                 }
             } else {
-                wordFetchQueue = new WordFetchQueueDO();
-                wordFetchQueue.setQueueId(seqService.genIntSequence(MapperConstant.T_INS_SEQUENCE));
-                wordFetchQueue.setFetchStatus(WordCrawlerConstants.STATUS_TO_FETCH);
-                wordFetchQueue.setWordName(word.trim());
-                wordFetchQueue.setFetchPriority(100);
-                wordFetchQueueService.save(wordFetchQueue);
+                queue = new WordFetchQueueDO();
+                queue.setQueueId(seqService.genIntSequence(MapperConstant.T_INS_SEQUENCE));
+                queue.setFetchStatus(WordCrawlerConstants.STATUS_TO_FETCH);
+                queue.setWordName(word.trim());
+                queue.setFetchPriority(100);
+                queue.setIsLock(CommonConstants.FLAG_YES);
+                wordFetchQueueService.save(queue);
             }
             log.info(word + "insert success!");
         }

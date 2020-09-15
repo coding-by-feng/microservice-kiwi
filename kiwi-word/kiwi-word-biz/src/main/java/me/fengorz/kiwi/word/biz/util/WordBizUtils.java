@@ -86,4 +86,11 @@ public class WordBizUtils {
                 .setCurrent((page.getCurrent() - 1) * page.getSize());
     }
 
+    public static boolean fetchQueueIsRunning(Integer status) {
+        if (status == WordCrawlerConstants.STATUS_ALL_SUCCESS) {
+            return false;
+        }
+        return status >= WordCrawlerConstants.STATUS_PARTITION ;
+    }
+
 }

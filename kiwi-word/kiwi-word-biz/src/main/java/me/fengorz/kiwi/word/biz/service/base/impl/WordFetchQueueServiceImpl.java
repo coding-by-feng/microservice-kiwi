@@ -28,6 +28,7 @@ import me.fengorz.kiwi.word.api.common.WordCrawlerConstants;
 import me.fengorz.kiwi.word.api.entity.WordFetchQueueDO;
 import me.fengorz.kiwi.word.biz.mapper.WordFetchQueueMapper;
 import me.fengorz.kiwi.word.biz.service.base.IWordFetchQueueService;
+import me.fengorz.kiwi.word.biz.util.WordBizUtils;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -51,18 +52,18 @@ public class WordFetchQueueServiceImpl extends ServiceImpl<WordFetchQueueMapper,
 
     @Transactional(rollbackFor = Exception.class, noRollbackFor = ServiceException.class)
     private void fetchNewWord(String wordName) {
-        WordFetchQueueDO one = this.getOne(wordName);
+        WordFetchQueueDO one = this.getOneInUnLock(wordName);
 
         if (one != null) {
             if (one.getInTime().compareTo(LocalDateTime.now().minusMinutes(1)) > 0) {
                 return;
             }
-            this.updateById(one.setFetchStatus(WordCrawlerConstants.STATUS_TO_FETCH).setInTime(LocalDateTime.now()));
+            this.updateById(one.setFetchStatus(WordCrawlerConstants.STATUS_TO_FETCH).setIsLock(CommonConstants.FLAG_YES).setInTime(LocalDateTime.now()));
             return;
         }
 
         this.save(new WordFetchQueueDO().setQueueId(seqService.genIntSequence(MapperConstant.T_INS_SEQUENCE))
-                .setWordName(wordName).setFetchStatus(WordCrawlerConstants.STATUS_TO_FETCH).setFetchPriority(100));
+                .setWordName(wordName).setFetchStatus(WordCrawlerConstants.STATUS_TO_FETCH).setFetchPriority(100).setIsLock(CommonConstants.FLAG_YES));
     }
 
     @Async
@@ -92,7 +93,7 @@ public class WordFetchQueueServiceImpl extends ServiceImpl<WordFetchQueueMapper,
             return false;
         }
         return this.update(new WordFetchQueueDO().setIsLock(CommonConstants.FLAG_YES),
-                new LambdaQueryWrapper<WordFetchQueueDO>().eq(WordFetchQueueDO::getWordName, wordName)
+                Wrappers.<WordFetchQueueDO>lambdaUpdate().eq(WordFetchQueueDO::getWordName, wordName)
                         .eq(WordFetchQueueDO::getIsLock, CommonConstants.FLAG_NO));
     }
 
@@ -104,26 +105,67 @@ public class WordFetchQueueServiceImpl extends ServiceImpl<WordFetchQueueMapper,
 
     @Override
     public void flagWordQueryException(String wordName) {
-        this.update(
-                new WordFetchQueueDO().setIsLock(CommonConstants.FLAG_NO)
-                        .setFetchStatus(WordCrawlerConstants.STATUS_TO_QUERY_ERROR),
-                new LambdaQueryWrapper<WordFetchQueueDO>().eq(WordFetchQueueDO::getWordName, wordName));
+
+        WordFetchQueueDO one = this.getOneAnyhow(wordName);
+        // 爬虫状态进行中的不可以打断
+        if (WordBizUtils.fetchQueueIsRunning(one.getFetchStatus())) {
+            return;
+        }
+
+        this.updateById(one.setFetchStatus(WordCrawlerConstants.STATUS_TO_QUERY_ERROR).setIsLock(CommonConstants.FLAG_NO));
     }
 
     @Override
     public List<WordFetchQueueDO> page2List(Integer status, Integer current, Integer size, Integer isLock) {
         return Optional
                 .of(this.page(new Page<>(current, size), Wrappers.<WordFetchQueueDO>lambdaQuery()
-                        .eq(WordFetchQueueDO::getFetchStatus, status).eq(WordFetchQueueDO::getIsLock, isLock)))
+                        .eq(WordFetchQueueDO::getFetchStatus, status).eq(WordFetchQueueDO::getIsLock, isLock).le(WordFetchQueueDO::getFetchTime, WordCrawlerConstants.WORD_MAX_FETCH_LIMITED_TIME)))
                 .get().getRecords();
     }
 
-    private WordFetchQueueDO getOne(String wordName) {
-        return this.getOne(new LambdaQueryWrapper<WordFetchQueueDO>().eq(WordFetchQueueDO::getWordName, wordName));
+    @Override
+    public void saveDerivation(String inputWordName, String fetchWordName) {
+        Optional.ofNullable(this.getOneInUnLock(inputWordName)).ifPresent(one -> {
+            this.updateById(one.setDerivation(fetchWordName));
+        });
+    }
+
+    /**
+     * 拿到非锁住状态的记录
+     *
+     * @param wordName
+     * @return
+     */
+    @Override
+    public WordFetchQueueDO getOneInUnLock(String wordName) {
+        return this.getOne(Wrappers.<WordFetchQueueDO>lambdaQuery().eq(WordFetchQueueDO::getWordName, wordName)
+                .eq(WordFetchQueueDO::getIsLock, CommonConstants.FLAG_NO));
+    }
+
+    @Override
+    public WordFetchQueueDO getOneInUnLock(Integer queueId) {
+        return this.getOne(Wrappers.<WordFetchQueueDO>lambdaQuery().eq(WordFetchQueueDO::getQueueId, queueId)
+                .eq(WordFetchQueueDO::getIsLock, CommonConstants.FLAG_NO));
+    }
+
+    /**
+     * 拿到记录，无论是否锁住
+     *
+     * @param wordName
+     * @return
+     */
+    @Override
+    public WordFetchQueueDO getOneAnyhow(String wordName) {
+        return this.getOne(Wrappers.<WordFetchQueueDO>lambdaQuery().eq(WordFetchQueueDO::getWordName, wordName));
+    }
+
+    @Override
+    public WordFetchQueueDO getOneAnyhow(Integer queueId) {
+        return this.getOne(Wrappers.<WordFetchQueueDO>lambdaQuery().eq(WordFetchQueueDO::getQueueId, queueId));
     }
 
     private boolean isExist(String wordName) {
-        return this.getOne(wordName) != null;
+        return this.getOneInUnLock(wordName) != null;
     }
 
 }

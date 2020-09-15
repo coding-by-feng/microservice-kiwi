@@ -28,6 +28,7 @@ import java.util.List;
  */
 public interface IWordFetchQueueService extends IService<WordFetchQueueDO> {
 
+    @Deprecated
     boolean invalid(String wordName);
 
     boolean lock(String wordName);
@@ -39,4 +40,15 @@ public interface IWordFetchQueueService extends IService<WordFetchQueueDO> {
     void flagWordQueryException(String wordName);
 
     List<WordFetchQueueDO> page2List(Integer status, Integer current, Integer size, Integer isLock);
+
+    void saveDerivation(String inputWordName, String fetchWordName);
+
+    WordFetchQueueDO getOneInUnLock(String wordName);
+
+    WordFetchQueueDO getOneInUnLock(Integer queueId);
+
+    WordFetchQueueDO getOneAnyhow(String wordName);
+
+    WordFetchQueueDO getOneAnyhow(Integer queueId);
+
 }

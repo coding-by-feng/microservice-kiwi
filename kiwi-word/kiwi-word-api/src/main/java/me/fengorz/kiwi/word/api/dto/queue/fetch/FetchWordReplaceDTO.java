@@ -43,7 +43,10 @@ public class FetchWordReplaceDTO implements Serializable {
     private Map<Integer, Binder> paraphraseBinderMap;
     private Map<Integer, Binder> exampleBinderMap;
 
-    public static class Binder {
+    public static class Binder implements Serializable {
+
+        private static final long serialVersionUID = 3541504398792790251L;
+
         private Integer oldId;
         private Integer newId;
 

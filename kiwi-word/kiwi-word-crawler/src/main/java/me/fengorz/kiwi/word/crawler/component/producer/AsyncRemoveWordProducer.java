@@ -20,7 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.api.constant.CommonConstants;
 import me.fengorz.kiwi.word.api.common.WordCrawlerConstants;
 import me.fengorz.kiwi.word.api.dto.queue.RemoveWordMqDTO;
-import me.fengorz.kiwi.word.api.entity.WordFetchQueueDO;
+import me.fengorz.kiwi.word.api.entity.FetchQueueDO;
 import me.fengorz.kiwi.word.api.feign.IWordFetchAPI;
 import me.fengorz.kiwi.word.api.feign.IWordMainAPI;
 import me.fengorz.kiwi.word.crawler.component.producer.base.AbstractProducer;
@@ -52,7 +52,7 @@ public class AsyncRemoveWordProducer extends AbstractProducer implements IProduc
 
     @Override
     @Async
-    public void execute(WordFetchQueueDO queue) {
+    public void execute(FetchQueueDO queue) {
         queue.setIsLock(CommonConstants.FLAG_YES);
         queue.setFetchStatus(WordCrawlerConstants.STATUS_DOING_DEL_BASE);
         if (Optional.of(fetchAPI.updateQueueById(queue)).get().isSuccess()) {

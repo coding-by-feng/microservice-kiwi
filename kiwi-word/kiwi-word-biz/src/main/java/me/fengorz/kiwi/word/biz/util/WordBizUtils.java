@@ -36,8 +36,8 @@ public class WordBizUtils {
     }
 
     @Deprecated
-    public static WordCharacterDO initCharacter(String wordCode, String wordLabel, Integer wordId) {
-        WordCharacterDO character = new WordCharacterDO();
+    public static CharacterDO initCharacter(String wordCode, String wordLabel, Integer wordId) {
+        CharacterDO character = new CharacterDO();
         character.setWordId(wordId);
         character.setCharacterCode(wordCode);
         character.setTag(wordLabel);
@@ -46,9 +46,9 @@ public class WordBizUtils {
     }
 
     @Deprecated
-    public static WordParaphraseDO initParaphrase(Integer characterId, Integer wordId, String meaningChinese,
-                                                  String paraphraseEnglish, String translateLanguage, String codes) {
-        WordParaphraseDO paraphrase = new WordParaphraseDO();
+    public static ParaphraseDO initParaphrase(Integer characterId, Integer wordId, String meaningChinese,
+                                              String paraphraseEnglish, String translateLanguage, String codes) {
+        ParaphraseDO paraphrase = new ParaphraseDO();
         paraphrase.setWordId(wordId);
         paraphrase.setCharacterId(characterId);
         paraphrase.setCodes(codes);
@@ -60,9 +60,9 @@ public class WordBizUtils {
     }
 
     @Deprecated
-    public static WordParaphraseExampleDO initExample(Integer paraphraseId, Integer wordId,
-                                                      String exampleSentence, String exampleTranslate, String translateLanguage) {
-        WordParaphraseExampleDO example = new WordParaphraseExampleDO();
+    public static ParaphraseExampleDO initExample(Integer paraphraseId, Integer wordId,
+                                                  String exampleSentence, String exampleTranslate, String translateLanguage) {
+        ParaphraseExampleDO example = new ParaphraseExampleDO();
         example.setWordId(wordId);
         example.setParaphraseId(paraphraseId);
         example.setExampleSentence(exampleSentence);
@@ -71,9 +71,9 @@ public class WordBizUtils {
         return example;
     }
 
-    public static WordPronunciationDO initPronunciation(Integer wordId, Integer characterId, String voiceUrl,
-                                                        String soundmark, String soundmarkType) {
-        WordPronunciationDO pronunciation = new WordPronunciationDO();
+    public static PronunciationDO initPronunciation(Integer wordId, Integer characterId, String voiceUrl,
+                                                    String soundmark, String soundmarkType) {
+        PronunciationDO pronunciation = new PronunciationDO();
         pronunciation.setWordId(wordId);
         pronunciation.setCharacterId(characterId);
         pronunciation.setIsDel(CommonConstants.FLAG_DEL_NO);

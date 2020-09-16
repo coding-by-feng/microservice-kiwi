@@ -20,7 +20,7 @@ import me.fengorz.kiwi.common.api.R;
 import me.fengorz.kiwi.word.api.common.WordConstants;
 import me.fengorz.kiwi.word.api.dto.queue.RemovePronunciatioinMqDTO;
 import me.fengorz.kiwi.word.api.dto.queue.fetch.FetchWordResultDTO;
-import me.fengorz.kiwi.word.api.entity.WordFetchQueueDO;
+import me.fengorz.kiwi.word.api.entity.FetchQueueDO;
 import me.fengorz.kiwi.word.api.feign.factory.WordFetchFallbackFactory;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
@@ -37,21 +37,21 @@ public interface IWordFetchAPI {
     String WORD_FETCH_QUEUE = "/word/fetch";
 
     @GetMapping(WORD_FETCH_QUEUE + "/getOne/{queueId}")
-    R<WordFetchQueueDO> getOne(@PathVariable Integer queueId);
+    R<FetchQueueDO> getOne(@PathVariable Integer queueId);
 
     @GetMapping(WORD_FETCH_QUEUE + "/getOneByWordName/{wordName}")
-    R<WordFetchQueueDO> getOneByWordName(@PathVariable String wordName);
+    R<FetchQueueDO> getOneByWordName(@PathVariable String wordName);
 
     @GetMapping(WORD_FETCH_QUEUE + "/pageQueue/{status}/{current}/{size}")
-    R<List<WordFetchQueueDO>> pageQueue(@PathVariable Integer status, @PathVariable Integer current,
-                                        @PathVariable Integer size);
+    R<List<FetchQueueDO>> pageQueue(@PathVariable Integer status, @PathVariable Integer current,
+                                    @PathVariable Integer size);
 
     @GetMapping(WORD_FETCH_QUEUE + "/pageQueueLockIn/{status}/{current}/{size}")
-    R<List<WordFetchQueueDO>> pageQueueLockIn(@PathVariable Integer status, @PathVariable Integer current,
-                                              @PathVariable Integer size);
+    R<List<FetchQueueDO>> pageQueueLockIn(@PathVariable Integer status, @PathVariable Integer current,
+                                          @PathVariable Integer size);
 
     @PostMapping(WORD_FETCH_QUEUE + "/updateById")
-    R<Boolean> updateQueueById(@RequestBody WordFetchQueueDO queueDO);
+    R<Boolean> updateQueueById(@RequestBody FetchQueueDO queueDO);
 
     @PostMapping(WORD_FETCH_QUEUE + "/storeResult")
     R<Void> storeResult(@RequestBody FetchWordResultDTO dto);
@@ -70,7 +70,7 @@ public interface IWordFetchAPI {
     R<Boolean> lock(@RequestParam String wordName);
 
     @PostMapping(WORD_FETCH_QUEUE + "/updateByWordName")
-    R<Boolean> updateByWordName(@RequestBody WordFetchQueueDO queueDO);
+    R<Boolean> updateByWordName(@RequestBody FetchQueueDO queueDO);
 
     @PostMapping(WORD_FETCH_QUEUE + "/invalid")
     R<Boolean> invalid(@RequestParam String wordName);

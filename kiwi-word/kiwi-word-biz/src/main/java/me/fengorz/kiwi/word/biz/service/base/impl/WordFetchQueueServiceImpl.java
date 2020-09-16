@@ -52,9 +52,12 @@ public class WordFetchQueueServiceImpl extends ServiceImpl<WordFetchQueueMapper,
 
     @Transactional(rollbackFor = Exception.class, noRollbackFor = ServiceException.class)
     private void fetchNewWord(String wordName) {
-        WordFetchQueueDO one = this.getOneInUnLock(wordName);
+        WordFetchQueueDO one = this.getOneAnyhow(wordName);
 
         if (one != null) {
+            if (one.getIsLock() > 0) {
+                return;
+            }
             if (one.getInTime().compareTo(LocalDateTime.now().minusMinutes(1)) > 0) {
                 return;
             }

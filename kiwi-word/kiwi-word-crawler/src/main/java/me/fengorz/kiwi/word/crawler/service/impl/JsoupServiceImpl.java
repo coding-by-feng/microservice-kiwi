@@ -35,9 +35,7 @@ import org.jsoup.select.Elements;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * @Description 爬虫抓取单词数据服务类
@@ -83,18 +81,29 @@ public class JsoupServiceImpl implements IJsoupService {
     private static final String KEY_DAUD = "daud";
     private static final String SOUND_MARK_DEFAULT = "音标缺失";
 
+    private Map<String, Integer> paraphraseSerialNumMap;
+    private Map<String, Integer> exampleSerialNumMap;
+
+    public JsoupServiceImpl() {
+        this.paraphraseSerialNumMap = Collections.synchronizedMap(new HashMap<>());
+        this.exampleSerialNumMap = Collections.synchronizedMap(new HashMap<>());
+    }
+
     @Override
     public FetchWordResultDTO fetchWordInfo(FetchWordMqDTO wordMessage)
             throws JsoupFetchResultException, JsoupFetchConnectException, JsoupFetchPronunciationException {
         final String word = wordMessage.getWord();
-        String jsoupWord = null;
-
         FetchWordResultDTO result = null;
         try {
+            this.paraphraseSerialNumMap.put(word, 1);
+            this.exampleSerialNumMap.put(word, 1);
             result = subFetch(WordCrawlerConstants.CAMBRIDGE_FETCH_CHINESE_URL, word);
         } catch (JsoupFetchConnectException | JsoupFetchResultException | JsoupFetchPronunciationException e) {
             log.error(e.getMessage());
             return result = subFetch(WordCrawlerConstants.CAMBRIDGE_FETCH_ENGLISH_URL, word);
+        } finally {
+            this.paraphraseSerialNumMap.remove(word);
+            this.exampleSerialNumMap.remove(word);
         }
         return result;
     }
@@ -145,9 +154,9 @@ public class JsoupServiceImpl implements IJsoupService {
             // TODO ZSF fetchWordResultDTO 放入 爬虫回来的wordName，不是传进来的wordName
             final Element header = codeHeader.get(0);
             Optional.ofNullable(header.getElementsByClass(KEY_HEADER_CODE))
-                    .flatMap(element -> Optional.ofNullable(element.text())).ifPresent(codeDTO::setCode);
+                    .flatMap(element -> Optional.ofNullable(element.text())).ifPresent(codeDTO::setCharacterCode);
             Optional.ofNullable(header.getElementsByClass(KEY_HEADER_LABEL))
-                    .flatMap(element -> Optional.ofNullable(element.text())).ifPresent(codeDTO::setLabel);
+                    .flatMap(element -> Optional.ofNullable(element.text())).ifPresent(codeDTO::setTag);
 
             try {
                 // fetch UK pronunciation
@@ -196,7 +205,6 @@ public class JsoupServiceImpl implements IJsoupService {
      */
     private void subFetchParaphrase(String word, List<FetchParaphraseDTO> paraphraseDTOList,
                                     Elements paraphraseElements, Elements phrases, boolean phrasesIsEmpty) throws JsoupFetchResultException {
-        int serialNumber = 0;
         for (Element paraphrase : paraphraseElements) {
             FetchParaphraseDTO paraphraseDTO = new FetchParaphraseDTO();
 
@@ -210,7 +218,10 @@ public class JsoupServiceImpl implements IJsoupService {
 
             paraphraseDTO.setParaphraseEnglish(paraphraseEnglishText);
             paraphraseDTO.setCodes(codesText);
-            paraphraseDTO.setSerialNumber(serialNumber++);
+            Optional.ofNullable(this.paraphraseSerialNumMap.get(word)).ifPresent(serialNumber -> {
+                paraphraseDTO.setSerialNumber(serialNumber);
+                this.paraphraseSerialNumMap.put(word, ++serialNumber);
+            });
 
             if (phrasesIsEmpty) {
                 List<FetchPhraseDTO> phraseDTOList = new LinkedList<>();
@@ -253,6 +264,12 @@ public class JsoupServiceImpl implements IJsoupService {
                     // there are other languages
                     exampleDTO.setTranslateLanguage(WordCrawlerConstants.DEFAULT_TRANSLATE_LANGUAGE);
                     exampleDTOList.add(exampleDTO);
+
+                    Optional.ofNullable(this.exampleSerialNumMap.get(word)).ifPresent(serialNumber -> {
+                        exampleDTO.setSerialNumber(serialNumber);
+                        this.exampleSerialNumMap.put(word, ++serialNumber);
+                    });
+
                     paraphraseDTO.setExampleDTOList(exampleDTOList);
                 }
             }

@@ -30,6 +30,7 @@ import me.fengorz.kiwi.common.api.exception.ServiceException;
 import me.fengorz.kiwi.common.api.exception.dfs.DfsOperateDeleteException;
 import me.fengorz.kiwi.common.api.exception.dfs.DfsOperateException;
 import me.fengorz.kiwi.common.fastdfs.service.IDfsService;
+import me.fengorz.kiwi.common.sdk.util.bean.KiwiBeanUtils;
 import me.fengorz.kiwi.common.sdk.util.lang.collection.KiwiCollectionUtils;
 import me.fengorz.kiwi.common.sdk.util.lang.string.KiwiStringUtils;
 import me.fengorz.kiwi.word.api.common.WordCrawlerConstants;
@@ -59,23 +60,21 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class WordCrawlerServiceImpl implements IWordCrawlerService {
 
-    private final IWordMainService wordMainService;
-    private final IWordCharacterService wordCharacterService;
+    private final IWordMainService mainService;
+    private final IWordCharacterService characterService;
     private final IWordParaphraseService wordParaphraseService;
-    private final IWordParaphraseExampleService wordParaphraseExampleService;
-    private final IWordPronunciationService wordPronunciationService;
-    private final IWordFetchQueueService wordFetchQueueService;
-    private final IWordParaphrasePhraseService wordParaphrasePhraseService;
+    private final IWordParaphraseExampleService exampleService;
+    private final IWordPronunciationService pronunciationService;
+    private final IWordFetchQueueService queueService;
+    private final IWordParaphrasePhraseService phraseService;
     private final IDfsService dfsService;
     private final ISeqService seqService;
-    private final IWordOperateService wordOperateService;
+    private final IWordOperateService operateService;
 
     @Value("${me.fengorz.file.crawler.voice.tmpPath}")
     private String crawlerVoiceBasePath;
 
     /**
-     * 存储单词数据逻辑不关注如果清除数据，如果有老数据未被清除，那么队列抓取记录暂时锁住，等到老数据清除干净再开始爬虫
-     *
      * @param dto
      * @return
      * @throws DfsOperateException
@@ -87,12 +86,12 @@ public class WordCrawlerServiceImpl implements IWordCrawlerService {
         final String wordName = dto.getWordName();
         WordMainDO wordMainDO = new WordMainDO().setWordName(wordName)
                 .setWordId(seqService.genIntSequence(MapperConstant.T_INS_SEQUENCE)).setIsDel(CommonConstants.FLAG_DEL_NO);
-        wordMainService.save(wordMainDO);
+        mainService.save(wordMainDO);
         this.subStoreFetchWordResult(dto, wordMainDO);
-        wordFetchQueueService.flagFetchBaseFinish(dto.getQueueId(), wordMainDO.getWordId());
-        wordOperateService.cacheReplace(wordName,
-                wordOperateService.cacheReplace(wordName).setNewRelWordId(wordMainDO.getWordId()));
-        wordOperateService.fetchReplaceCallBack(wordName);
+        queueService.flagFetchBaseFinish(dto.getQueueId(), wordMainDO.getWordId());
+        operateService.cacheReplace(wordName,
+                operateService.getCacheReplace(wordName).setNewRelWordId(wordMainDO.getWordId()));
+        operateService.fetchReplaceCallBack(wordName);
         return true;
     }
 
@@ -100,64 +99,80 @@ public class WordCrawlerServiceImpl implements IWordCrawlerService {
         final Integer wordId = word.getWordId();
         List<FetchWordCodeDTO> codeDTOList = fetchDTO.getFetchWordCodeDTOList();
         if (CollUtil.isNotEmpty(codeDTOList)) {
-            for (FetchWordCodeDTO fetchWordCodeDTO : codeDTOList) {
-                WordCharacterDO wordCharacter =
-                        WordBizUtils.initCharacter(fetchWordCodeDTO.getCode(), fetchWordCodeDTO.getLabel(), wordId);
-                wordCharacter.setCharacterId(seqService.genIntSequence(MapperConstant.T_INS_SEQUENCE));
-                wordCharacterService.save(wordCharacter);
-                Integer characterId = wordCharacter.getCharacterId();
+            for (FetchWordCodeDTO codeDTO : codeDTOList) {
+                WordCharacterDO character = new WordCharacterDO();
+                KiwiBeanUtils.copyProperties(codeDTO, character);
+                character.setWordId(wordId);
+                character.setCharacterId(seqService.genIntSequence(MapperConstant.T_INS_SEQUENCE));
+                characterService.save(character);
+                Integer characterId = character.getCharacterId();
 
-                List<FetchParaphraseDTO> paraphraseDTOList = fetchWordCodeDTO.getFetchParaphraseDTOList();
-                FetchWordReplaceDTO replaceDTO = wordOperateService.cacheReplace(word.getWordName());
+                List<FetchParaphraseDTO> paraphraseDTOList = codeDTO.getFetchParaphraseDTOList();
+                FetchWordReplaceDTO replaceDTO = operateService.getCacheReplace(word.getWordName());
                 paraphraseDTOList.forEach(paraphraseDTO -> {
 
-                    WordParaphraseDO paraphrase =
-                            WordBizUtils.initParaphrase(characterId, wordId, paraphraseDTO.getMeaningChinese(),
-                                    paraphraseDTO.getParaphraseEnglish(), paraphraseDTO.getTranslateLanguage(), paraphraseDTO.getCodes());
+                    WordParaphraseDO paraphrase = new WordParaphraseDO();
+                    KiwiBeanUtils.copyProperties(paraphraseDTO, paraphrase);
+                    paraphrase.setCharacterId(characterId).setWordId(wordId);
                     paraphrase.setParaphraseId(seqService.genIntSequence(MapperConstant.T_INS_SEQUENCE));
                     wordParaphraseService.save(paraphrase);
+
                     Integer paraphraseId = paraphrase.getParaphraseId();
-                    replaceDTO.getNewParaphraseIdMap().put(paraphrase.getParaphraseEnglish(), paraphraseId);
-                    List<FetchPhraseDTO> fetchPhraseDTOList = paraphraseDTO.getPhraseDTOList();
-                    if (KiwiCollectionUtils.isNotEmpty(fetchPhraseDTOList)) {
-                        for (FetchPhraseDTO fetchPhraseDTO : fetchPhraseDTOList) {
-                            WordParaphrasePhraseDO phraseDO = new WordParaphrasePhraseDO();
-                            phraseDO.setId(seqService.genIntSequence(MapperConstant.T_INS_SEQUENCE));
-                            phraseDO.setParaphraseId(paraphraseId);
-                            phraseDO.setPhrase(fetchPhraseDTO.getPhrase());
-                            phraseDO.setIsValid(CommonConstants.FLAG_YES);
-                            phraseDO.setCreateTime(LocalDateTime.now());
-                            wordParaphrasePhraseService.save(phraseDO);
+                    Optional.ofNullable(paraphrase.getSerialNumber()).filter(serialNumber -> serialNumber > 0).ifPresent(serialNumber -> {
+                        FetchWordReplaceDTO.Binder binder = replaceDTO.getParaphraseBinderMap().get(serialNumber);
+                        if (binder == null) {
+                            return;
+                        }
+                        binder.setNewId(paraphraseId);
+                        replaceDTO.getParaphraseBinderMap().put(serialNumber, binder);
+                    });
+
+                    List<FetchPhraseDTO> phraseDTOList = paraphraseDTO.getPhraseDTOList();
+                    if (KiwiCollectionUtils.isNotEmpty(phraseDTOList)) {
+                        for (FetchPhraseDTO fetchPhraseDTO : phraseDTOList) {
+                            WordParaphrasePhraseDO phrase = new WordParaphrasePhraseDO();
+                            phrase.setId(seqService.genIntSequence(MapperConstant.T_INS_SEQUENCE));
+                            phrase.setParaphraseId(paraphraseId);
+                            phrase.setPhrase(fetchPhraseDTO.getPhrase());
+                            phrase.setIsValid(CommonConstants.FLAG_YES);
+                            phrase.setCreateTime(LocalDateTime.now());
+                            phraseService.save(phrase);
                             paraphrase.setIsHavePhrase(CommonConstants.FLAG_YES);
                             wordParaphraseService.updateById(paraphrase);
                         }
                     }
 
                     Optional.ofNullable(paraphraseDTO.getExampleDTOList())
-                            .ifPresent(list -> list.forEach(fetchParaphraseExampleDTO -> {
-                                WordParaphraseExampleDO wordParaphraseExampleDO = WordBizUtils.initExample(
-                                        paraphraseId, wordId, fetchParaphraseExampleDTO.getExampleSentence(),
-                                        fetchParaphraseExampleDTO.getExampleTranslate(),
-                                        fetchParaphraseExampleDTO.getTranslateLanguage());
-                                wordParaphraseExampleDO
-                                        .setExampleId(seqService.genIntSequence(MapperConstant.T_INS_SEQUENCE));
-                                wordParaphraseExampleService.save(wordParaphraseExampleDO);
-                                replaceDTO.getNewExampleIdMap().put(wordParaphraseExampleDO.getExampleSentence(),
-                                        wordParaphraseExampleDO.getExampleId());
+                            .ifPresent(list -> list.forEach(exampleDTO -> {
+                                WordParaphraseExampleDO example = new WordParaphraseExampleDO();
+                                KiwiBeanUtils.copyProperties(exampleDTO, example);
+                                example.setWordId(wordId);
+                                example.setParaphraseId(paraphraseId);
+                                example.setExampleId(seqService.genIntSequence(MapperConstant.T_INS_SEQUENCE));
+                                exampleService.save(example);
+
+                                Optional.ofNullable(example.getSerialNumber()).filter(serialNumber -> serialNumber > 0).ifPresent(serialNumber -> {
+                                    FetchWordReplaceDTO.Binder binder = replaceDTO.getExampleBinderMap().get(serialNumber);
+                                    if (binder == null) {
+                                        return;
+                                    }
+                                    binder.setNewId(example.getExampleId());
+                                    replaceDTO.getExampleBinderMap().put(serialNumber, binder);
+                                });
                             }));
                 });
-                wordOperateService.cacheReplace(word.getWordName(), replaceDTO);
+                operateService.cacheReplace(word.getWordName(), replaceDTO);
 
                 // save pronunciation and voice's file
-                List<FetchWordPronunciationDTO> fetchWordPronunciationDTOList =
-                        fetchWordCodeDTO.getFetchWordPronunciationDTOList();
-                if (CollUtil.isNotEmpty(fetchWordPronunciationDTOList)) {
-                    for (FetchWordPronunciationDTO fetchWordPronunciationDTO : fetchWordPronunciationDTOList) {
-                        WordPronunciationDO wordPronunciation = WordBizUtils.initPronunciation(wordId, characterId,
-                                fetchWordPronunciationDTO.getVoiceFileUrl(), fetchWordPronunciationDTO.getSoundmark(),
-                                fetchWordPronunciationDTO.getSoundmarkType());
-                        wordPronunciation.setPronunciationId(seqService.genIntSequence(MapperConstant.T_INS_SEQUENCE));
-                        wordPronunciationService.save(wordPronunciation);
+                List<FetchWordPronunciationDTO> pronunciationDTOList =
+                        codeDTO.getFetchWordPronunciationDTOList();
+                if (CollUtil.isNotEmpty(pronunciationDTOList)) {
+                    for (FetchWordPronunciationDTO pronunciationDTO : pronunciationDTOList) {
+                        WordPronunciationDO pronunciation = WordBizUtils.initPronunciation(wordId, characterId,
+                                pronunciationDTO.getVoiceFileUrl(), pronunciationDTO.getSoundmark(),
+                                pronunciationDTO.getSoundmarkType());
+                        pronunciation.setPronunciationId(seqService.genIntSequence(MapperConstant.T_INS_SEQUENCE));
+                        pronunciationService.save(pronunciation);
                     }
                 }
             }
@@ -168,7 +183,7 @@ public class WordCrawlerServiceImpl implements IWordCrawlerService {
     @Transactional(rollbackFor = Exception.class)
     public boolean fetchPronunciation(Integer wordId) {
         Objects
-                .requireNonNull(wordPronunciationService
+                .requireNonNull(pronunciationService
                         .list(Wrappers.<WordPronunciationDO>lambdaQuery().eq(WordPronunciationDO::getWordId, wordId)))
                 .forEach(this::fetchPronunciationVoice);
         return true;
@@ -188,7 +203,7 @@ public class WordCrawlerServiceImpl implements IWordCrawlerService {
                     dfsService.uploadFile(FileUtil.getInputStream(tempVoice), voiceSize, WordCrawlerConstants.EXT_OGG);
             pronunciation.setGroupName(WordDfsUtils.getGroupName(uploadResult));
             pronunciation.setVoiceFilePath(WordDfsUtils.getUploadVoiceFilePath(uploadResult));
-            wordPronunciationService.updateById(pronunciation);
+            pronunciationService.updateById(pronunciation);
         } catch (DfsOperateException e) {
             throw new ServiceException(
                     KiwiStringUtils.format("fetchPronunciationVoice error, pronunciation.url={}", voiceUrl));

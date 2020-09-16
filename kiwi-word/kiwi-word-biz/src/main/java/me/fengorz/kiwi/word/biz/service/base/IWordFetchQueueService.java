@@ -16,7 +16,7 @@
 package me.fengorz.kiwi.word.biz.service.base;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import me.fengorz.kiwi.word.api.entity.WordFetchQueueDO;
+import me.fengorz.kiwi.word.api.entity.FetchQueueDO;
 
 import java.util.List;
 
@@ -26,7 +26,7 @@ import java.util.List;
  * @author zhanshifeng
  * @date 2019-10-30 14:45:45
  */
-public interface IWordFetchQueueService extends IService<WordFetchQueueDO> {
+public interface IWordFetchQueueService extends IService<FetchQueueDO> {
 
     @Deprecated
     boolean invalid(String wordName);
@@ -39,16 +39,16 @@ public interface IWordFetchQueueService extends IService<WordFetchQueueDO> {
 
     void flagWordQueryException(String wordName);
 
-    List<WordFetchQueueDO> page2List(Integer status, Integer current, Integer size, Integer isLock);
+    List<FetchQueueDO> page2List(Integer status, Integer current, Integer size, Integer isLock);
 
     void saveDerivation(String inputWordName, String fetchWordName);
 
-    WordFetchQueueDO getOneInUnLock(String wordName);
+    FetchQueueDO getOneInUnLock(String wordName);
 
-    WordFetchQueueDO getOneInUnLock(Integer queueId);
+    FetchQueueDO getOneInUnLock(Integer queueId);
 
-    WordFetchQueueDO getOneAnyhow(String wordName);
+    FetchQueueDO getOneAnyhow(String wordName);
 
-    WordFetchQueueDO getOneAnyhow(Integer queueId);
+    FetchQueueDO getOneAnyhow(Integer queueId);
 
 }

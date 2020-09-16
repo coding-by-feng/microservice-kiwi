@@ -1,6 +1,6 @@
 import me.fengorz.kiwi.common.sdk.util.log.KiwiLogUtils;
 import me.fengorz.kiwi.word.api.dto.queue.fetch.FetchWordResultDTO;
-import me.fengorz.kiwi.word.api.entity.WordFetchQueueDO;
+import me.fengorz.kiwi.word.api.entity.FetchQueueDO;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.validation.ConstraintViolation;
@@ -31,12 +31,12 @@ public class TempTest {
 
     // @Test
     public void test3() {
-        WordFetchQueueDO wordFetchQueue = new WordFetchQueueDO();
+        FetchQueueDO wordFetchQueue = new FetchQueueDO();
         this.subTest3(wordFetchQueue, 100);
         System.out.println(wordFetchQueue);
     }
 
-    private void subTest3(WordFetchQueueDO wordFetchQueue, int status) {
+    private void subTest3(FetchQueueDO wordFetchQueue, int status) {
         wordFetchQueue.setFetchStatus(status);
     }
 

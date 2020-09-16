@@ -27,7 +27,7 @@ import me.fengorz.kiwi.word.api.entity.WordMainDO;
 import me.fengorz.kiwi.word.api.vo.detail.WordQueryVO;
 import me.fengorz.kiwi.word.biz.service.base.IWordFetchQueueService;
 import me.fengorz.kiwi.word.biz.service.base.IWordMainService;
-import me.fengorz.kiwi.word.biz.service.operate.IWordOperateService;
+import me.fengorz.kiwi.word.biz.service.operate.IOperateService;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -49,7 +49,7 @@ import java.util.Map;
 public class WordMainController extends BaseController {
 
     private final IWordMainService wordMainService;
-    private final IWordOperateService wordOperateService;
+    private final IOperateService wordOperateService;
     private final IWordFetchQueueService queueService;
 
     @GetMapping("/removeByWordName/{wordName}")

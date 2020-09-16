@@ -29,7 +29,7 @@ import me.fengorz.kiwi.word.api.dto.queue.FetchWordMqDTO;
 import me.fengorz.kiwi.word.api.dto.queue.RemovePronunciatioinMqDTO;
 import me.fengorz.kiwi.word.api.dto.queue.RemoveWordMqDTO;
 import me.fengorz.kiwi.word.api.dto.queue.fetch.FetchWordResultDTO;
-import me.fengorz.kiwi.word.api.entity.WordFetchQueueDO;
+import me.fengorz.kiwi.word.api.entity.FetchQueueDO;
 import me.fengorz.kiwi.word.api.exception.JsoupFetchConnectException;
 import me.fengorz.kiwi.word.api.exception.JsoupFetchPronunciationException;
 import me.fengorz.kiwi.word.api.exception.WordRemoveException;
@@ -64,7 +64,7 @@ public class FetchServiceImpl implements IFetchService {
         final long oldTime = System.currentTimeMillis();
         final String inputWord = messageDTO.getWord();
         final Integer queueId = messageDTO.getQueueId();
-        WordFetchQueueDO queue = new WordFetchQueueDO().setWordName(inputWord).setQueueId(queueId);
+        FetchQueueDO queue = new FetchQueueDO().setWordName(inputWord).setQueueId(queueId);
 
         try {
             StringBuilder handleLog = new StringBuilder().append(queue.getFetchResult() != null ? queue.getFetchResult() : CommonConstants.EMPTY).append(CommonConstants.SYMBOL_LF);
@@ -106,7 +106,7 @@ public class FetchServiceImpl implements IFetchService {
 
     @Override
     public void handle(FetchPronunciationMqDTO dto) {
-        WordFetchQueueDO queue = new WordFetchQueueDO().setQueueId(Objects.requireNonNull(dto.getQueueId()));
+        FetchQueueDO queue = new FetchQueueDO().setQueueId(Objects.requireNonNull(dto.getQueueId()));
         try {
             R<Boolean> response =
                     Optional.of(fetchAPI.fetchPronunciation(Objects.requireNonNull(dto.getWordId()))).get();
@@ -124,7 +124,7 @@ public class FetchServiceImpl implements IFetchService {
 
     @Override
     public void handle(RemoveWordMqDTO dto) {
-        WordFetchQueueDO queue = new WordFetchQueueDO().setQueueId(Objects.requireNonNull(dto.getQueueId()));
+        FetchQueueDO queue = new FetchQueueDO().setQueueId(Objects.requireNonNull(dto.getQueueId()));
         try {
             R<List<RemovePronunciatioinMqDTO>> response =
                     Optional.of(fetchAPI.removeWord(dto.getQueueId())).get();
@@ -148,13 +148,13 @@ public class FetchServiceImpl implements IFetchService {
         try {
             dfsService.deleteFile(dto.getGroupName(), dto.getVoiceFilePath());
         } catch (DfsOperateDeleteException e) {
-            WordFetchQueueDO queue = new WordFetchQueueDO().setQueueId(Objects.requireNonNull(dto.getQueueId()));
+            FetchQueueDO queue = new FetchQueueDO().setQueueId(Objects.requireNonNull(dto.getQueueId()));
             this.handleException(queue, WordCrawlerConstants.STATUS_DEL_PRONUNCIATION_FAIL, "del pronunciation error!");
             fetchAPI.updateQueueById(queue);
         }
     }
 
-    private void handleException(WordFetchQueueDO queue, int status, String message) {
+    private void handleException(FetchQueueDO queue, int status, String message) {
         queue.setFetchStatus(status);
         queue.setFetchResult(queue.getFetchResult() == null ? message : queue.getFetchResult() + message);
         queue.setIsLock(CommonConstants.FLAG_NO);

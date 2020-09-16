@@ -18,7 +18,7 @@ package me.fengorz.kiwi.word.crawler.component.producer.base;
 
 import lombok.RequiredArgsConstructor;
 import me.fengorz.kiwi.common.sdk.util.lang.collection.KiwiCollectionUtils;
-import me.fengorz.kiwi.word.api.entity.WordFetchQueueDO;
+import me.fengorz.kiwi.word.api.entity.FetchQueueDO;
 import me.fengorz.kiwi.word.api.feign.IWordFetchAPI;
 import me.fengorz.kiwi.word.api.feign.IWordMainAPI;
 
@@ -37,14 +37,14 @@ public abstract class AbstractProducer implements IProducer {
     protected final ISender sender;
     protected final Object barrier = new Object();
 
-    protected List<WordFetchQueueDO> getQueueDO(Integer status) {
+    protected List<FetchQueueDO> getQueueDO(Integer status) {
         synchronized (barrier) {
             return fetchAPI.pageQueueLockIn(status, 0, 20).getData();
         }
     }
 
     protected void produce(Integer... status) {
-        List<WordFetchQueueDO> list = new LinkedList<>();
+        List<FetchQueueDO> list = new LinkedList<>();
         for (Integer temp : status) {
             list.addAll(this.getQueueDO(temp));
         }
@@ -58,5 +58,5 @@ public abstract class AbstractProducer implements IProducer {
         }
     }
 
-    protected abstract void execute(WordFetchQueueDO queue);
+    protected abstract void execute(FetchQueueDO queue);
 }

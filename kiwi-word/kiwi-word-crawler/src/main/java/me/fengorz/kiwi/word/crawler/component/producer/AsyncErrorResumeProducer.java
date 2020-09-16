@@ -20,7 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.api.constant.CommonConstants;
 import me.fengorz.kiwi.common.sdk.util.lang.collection.KiwiCollectionUtils;
 import me.fengorz.kiwi.word.api.common.WordCrawlerConstants;
-import me.fengorz.kiwi.word.api.entity.WordFetchQueueDO;
+import me.fengorz.kiwi.word.api.entity.FetchQueueDO;
 import me.fengorz.kiwi.word.api.feign.IWordFetchAPI;
 import me.fengorz.kiwi.word.api.feign.IWordMainAPI;
 import me.fengorz.kiwi.word.crawler.component.producer.base.AbstractProducer;
@@ -54,7 +54,7 @@ public class AsyncErrorResumeProducer extends AbstractProducer implements IProdu
     }
 
     private void resumeDelPronunciationError() {
-        List<WordFetchQueueDO> list;
+        List<FetchQueueDO> list;
         synchronized (barrier) {
             list = new LinkedList<>((fetchAPI.pageQueueLockIn(WordCrawlerConstants.STATUS_DEL_PRONUNCIATION_FAIL, 0, 20)).getData());
         }
@@ -70,7 +70,7 @@ public class AsyncErrorResumeProducer extends AbstractProducer implements IProdu
     }
 
     private void resumeOverlap() {
-        List<WordFetchQueueDO> list = new LinkedList<>();
+        List<FetchQueueDO> list = new LinkedList<>();
         synchronized (barrier) {
             Optional.ofNullable(wordMainAPI.listOverlapInUnLock()).ifPresent(wordNameList -> {
                 List<String> wordList = wordNameList.getData();
@@ -95,7 +95,7 @@ public class AsyncErrorResumeProducer extends AbstractProducer implements IProdu
      */
     @Async
     @Override
-    protected void execute(WordFetchQueueDO queue) {
+    protected void execute(FetchQueueDO queue) {
         queue.setIsLock(CommonConstants.FLAG_YES);
         queue.setFetchStatus(WordCrawlerConstants.STATUS_TO_FETCH);
         fetchAPI.updateQueueById(queue);

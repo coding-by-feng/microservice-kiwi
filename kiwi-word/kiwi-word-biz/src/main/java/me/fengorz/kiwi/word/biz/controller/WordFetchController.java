@@ -24,11 +24,11 @@ import me.fengorz.kiwi.common.api.constant.CommonConstants;
 import me.fengorz.kiwi.common.sdk.controller.BaseController;
 import me.fengorz.kiwi.word.api.dto.queue.RemovePronunciatioinMqDTO;
 import me.fengorz.kiwi.word.api.dto.queue.fetch.FetchWordResultDTO;
-import me.fengorz.kiwi.word.api.entity.WordFetchQueueDO;
+import me.fengorz.kiwi.word.api.entity.FetchQueueDO;
 import me.fengorz.kiwi.word.biz.service.base.IWordFetchQueueService;
-import me.fengorz.kiwi.word.biz.service.operate.IWordCleanerService;
-import me.fengorz.kiwi.word.biz.service.operate.IWordCrawlerService;
-import me.fengorz.kiwi.word.biz.service.operate.IWordOperateService;
+import me.fengorz.kiwi.word.biz.service.operate.ICleanerService;
+import me.fengorz.kiwi.word.biz.service.operate.ICrawlerService;
+import me.fengorz.kiwi.word.biz.service.operate.IOperateService;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -50,29 +50,29 @@ import java.util.List;
 public class WordFetchController extends BaseController {
 
     private final IWordFetchQueueService queueService;
-    private final IWordOperateService operateService;
-    private final IWordCrawlerService crawlerService;
-    private final IWordCleanerService cleanerService;
+    private final IOperateService operateService;
+    private final ICrawlerService crawlerService;
+    private final ICleanerService cleanerService;
 
     @GetMapping("/getOne/{queueId}")
-    public R<WordFetchQueueDO> getOne(@PathVariable Integer queueId) {
+    public R<FetchQueueDO> getOne(@PathVariable Integer queueId) {
         return R.success(queueService.getOneInUnLock(queueId));
     }
 
     @GetMapping("/getOneByWordName/{wordName}")
-    public R<WordFetchQueueDO> getOneByWordName(@PathVariable String wordName) {
+    public R<FetchQueueDO> getOneByWordName(@PathVariable String wordName) {
         return R.success(queueService.getOneInUnLock(wordName));
     }
 
     @GetMapping(value = "/pageQueue/{status}/{current}/{size}")
-    public R<List<WordFetchQueueDO>> pageQueue(@PathVariable Integer status, @PathVariable Integer current,
-                                               @PathVariable Integer size) {
+    public R<List<FetchQueueDO>> pageQueue(@PathVariable Integer status, @PathVariable Integer current,
+                                           @PathVariable Integer size) {
         return R.success(queueService.page2List(status, current, size, CommonConstants.FLAG_NO));
     }
 
     @GetMapping(value = "/pageQueueLockIn/{status}/{current}/{size}")
-    public R<List<WordFetchQueueDO>> pageQueueLockIn(@PathVariable Integer status, @PathVariable Integer current,
-                                                     @PathVariable Integer size) {
+    public R<List<FetchQueueDO>> pageQueueLockIn(@PathVariable Integer status, @PathVariable Integer current,
+                                                 @PathVariable Integer size) {
         return R.success(queueService.page2List(status, current, size, CommonConstants.FLAG_YES));
     }
 
@@ -84,16 +84,16 @@ public class WordFetchController extends BaseController {
      */
     @SysLog("修改单词待抓取列表")
     @PostMapping("/updateById")
-    public R<Boolean> updateById(@RequestBody WordFetchQueueDO wordFetchQueue) {
+    public R<Boolean> updateById(@RequestBody FetchQueueDO wordFetchQueue) {
         return R.success(queueService.updateById(wordFetchQueue));
     }
 
     @SysLog("修改单词待抓取列表")
     @PostMapping("/updateByWordName")
     // @PreAuthorize("@pms.hasPermission('queue_wordfetchqueue_edit')")
-    public R<Boolean> updateByWordName(@RequestBody WordFetchQueueDO wordFetchQueue) {
+    public R<Boolean> updateByWordName(@RequestBody FetchQueueDO wordFetchQueue) {
         return R.success(queueService.update(wordFetchQueue,
-                new QueryWrapper<>(new WordFetchQueueDO().setWordName(wordFetchQueue.getWordName()))));
+                new QueryWrapper<>(new FetchQueueDO().setWordName(wordFetchQueue.getWordName()))));
     }
 
     @PostMapping("/invalid")

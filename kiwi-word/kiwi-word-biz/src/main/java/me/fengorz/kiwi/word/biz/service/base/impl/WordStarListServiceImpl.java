@@ -15,30 +15,34 @@
  */
 package me.fengorz.kiwi.word.biz.service.base.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.springframework.stereotype.Service;
-
+import cn.hutool.core.util.StrUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-
-import cn.hutool.core.util.StrUtil;
 import lombok.RequiredArgsConstructor;
 import me.fengorz.kiwi.common.api.constant.CommonConstants;
 import me.fengorz.kiwi.common.sdk.util.bean.KiwiBeanUtils;
+import me.fengorz.kiwi.common.sdk.util.validate.KiwiAssertUtils;
+import me.fengorz.kiwi.common.sdk.web.security.SecurityUtils;
 import me.fengorz.kiwi.word.api.dto.mapper.in.CountEntityIsCollectDTO;
 import me.fengorz.kiwi.word.api.dto.mapper.out.SelectWordStarListResultDTO;
 import me.fengorz.kiwi.word.api.entity.WordStarListDO;
+import me.fengorz.kiwi.word.api.entity.WordStarRelDO;
 import me.fengorz.kiwi.word.api.entity.column.WordStarListColumn;
 import me.fengorz.kiwi.word.api.vo.WordStarListVO;
 import me.fengorz.kiwi.word.api.vo.star.WordStarItemParaphraseVO;
 import me.fengorz.kiwi.word.api.vo.star.WordStarItemVO;
 import me.fengorz.kiwi.word.biz.mapper.WordStarListMapper;
 import me.fengorz.kiwi.word.biz.service.base.IWordStarListService;
+import me.fengorz.kiwi.word.biz.service.base.IWordStarRelService;
+import me.fengorz.kiwi.word.biz.service.operate.IAsyncArchiveService;
+import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 单词本
@@ -49,9 +53,11 @@ import me.fengorz.kiwi.word.biz.service.base.IWordStarListService;
 @Service()
 @RequiredArgsConstructor
 public class WordStarListServiceImpl extends ServiceImpl<WordStarListMapper, WordStarListDO>
-    implements IWordStarListService {
+        implements IWordStarListService {
 
     private final WordStarListMapper wordStarListMapper;
+    private final IWordStarRelService relService;
+    private final IAsyncArchiveService archiveService;
 
     @Override
     public Integer countById(Integer id) {
@@ -61,9 +67,9 @@ public class WordStarListServiceImpl extends ServiceImpl<WordStarListMapper, Wor
     @Override
     public List<WordStarListVO> getCurrentUserList(Integer userId) {
         QueryWrapper<WordStarListDO> queryWrapper =
-            new QueryWrapper<>(new WordStarListDO().setOwner(userId).setIsDel(CommonConstants.FLAG_N))
-                .select(WordStarListDO.class, tableFieldInfo -> WordStarListColumn.ID.equals(tableFieldInfo.getColumn())
-                    || WordStarListColumn.LIST_NAME.equals(tableFieldInfo.getColumn()));
+                new QueryWrapper<>(new WordStarListDO().setOwner(userId).setIsDel(CommonConstants.FLAG_N))
+                        .select(WordStarListDO.class, tableFieldInfo -> WordStarListColumn.ID.equals(tableFieldInfo.getColumn())
+                                || WordStarListColumn.LIST_NAME.equals(tableFieldInfo.getColumn()));
 
         return KiwiBeanUtils.convertFrom(wordStarListMapper.selectList(queryWrapper), WordStarListVO.class);
     }
@@ -71,7 +77,7 @@ public class WordStarListServiceImpl extends ServiceImpl<WordStarListMapper, Wor
     @Override
     public boolean updateListByUser(WordStarListDO entity, Integer id, Integer userId) {
         UpdateWrapper<WordStarListDO> updateWrapper =
-            new UpdateWrapper<>(new WordStarListDO().setOwner(userId).setId(id));
+                new UpdateWrapper<>(new WordStarListDO().setOwner(userId).setId(id));
         return this.update(entity, updateWrapper);
     }
 
@@ -81,7 +87,7 @@ public class WordStarListServiceImpl extends ServiceImpl<WordStarListMapper, Wor
         if (iPage.getSize() > 0) {
             List<WordStarItemVO> voList = new ArrayList<>();
             for (Object record : iPage.getRecords()) {
-                SelectWordStarListResultDTO resultDTO = (SelectWordStarListResultDTO)record;
+                SelectWordStarListResultDTO resultDTO = (SelectWordStarListResultDTO) record;
                 WordStarItemVO wordStarItemVO = new WordStarItemVO();
                 wordStarItemVO.setWordName(resultDTO.getWordName());
                 wordStarItemVO.setWordId(resultDTO.getWordId());
@@ -112,8 +118,31 @@ public class WordStarListServiceImpl extends ServiceImpl<WordStarListMapper, Wor
     @Override
     public boolean countWordIsCollect(Integer wordId, Integer owner) {
         Integer count =
-            wordStarListMapper.countWordIsCollect(new CountEntityIsCollectDTO().setEntityId(wordId).setOwner(owner));
+                wordStarListMapper.countWordIsCollect(new CountEntityIsCollectDTO().setEntityId(wordId).setOwner(owner));
         return count > 0;
+    }
+
+    @Override
+    public void putIntoStarList(Integer wordId, Integer listId) {
+        LambdaQueryWrapper<WordStarRelDO> queryWrapper = new LambdaQueryWrapper<WordStarRelDO>()
+                .eq(WordStarRelDO::getListId, listId).eq(WordStarRelDO::getWordId, wordId);
+        int count = relService.count(queryWrapper);
+        if (count > 0) {
+            return;
+        }
+        relService.save(new WordStarRelDO().setListId(listId).setWordId(wordId));
+
+        archiveService.archiveWordRel(wordId, listId, SecurityUtils.getCurrentUserId());
+    }
+
+    @Override
+    public void removeStarList(Integer wordId, Integer listId) {
+        LambdaQueryWrapper<WordStarRelDO> queryWrapper = new LambdaQueryWrapper<WordStarRelDO>()
+                .eq(WordStarRelDO::getListId, listId).eq(WordStarRelDO::getWordId, wordId);
+        KiwiAssertUtils.serviceNotEmpty(relService.count(queryWrapper), "wordStar is not exists!");
+        relService.remove(queryWrapper);
+
+        archiveService.invalidArchiveWordRel(wordId, listId, SecurityUtils.getCurrentUserId());
     }
 
 }

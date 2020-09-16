@@ -18,7 +18,6 @@ package me.fengorz.kiwi.word.api.entity;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
-
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -49,11 +48,11 @@ public class WordCharacterDO extends Model<WordCharacterDO> {
     /**
      * 词性
      */
-    private String wordCharacter;
+    private String characterCode;
     /**
      * 词性的标签
      */
-    private String wordLabel;
+    private String tag;
     /**
      * 逻辑删除标记(Y--正常 N--删除)
      */

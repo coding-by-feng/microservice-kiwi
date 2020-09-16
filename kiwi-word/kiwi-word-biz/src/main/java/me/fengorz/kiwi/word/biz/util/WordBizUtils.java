@@ -35,15 +35,17 @@ public class WordBizUtils {
         return word;
     }
 
+    @Deprecated
     public static WordCharacterDO initCharacter(String wordCode, String wordLabel, Integer wordId) {
         WordCharacterDO character = new WordCharacterDO();
         character.setWordId(wordId);
-        character.setWordCharacter(wordCode);
-        character.setWordLabel(wordLabel);
+        character.setCharacterCode(wordCode);
+        character.setTag(wordLabel);
         character.setIsDel(CommonConstants.FLAG_N);
         return character;
     }
 
+    @Deprecated
     public static WordParaphraseDO initParaphrase(Integer characterId, Integer wordId, String meaningChinese,
                                                   String paraphraseEnglish, String translateLanguage, String codes) {
         WordParaphraseDO paraphrase = new WordParaphraseDO();
@@ -57,6 +59,7 @@ public class WordBizUtils {
         return paraphrase;
     }
 
+    @Deprecated
     public static WordParaphraseExampleDO initExample(Integer paraphraseId, Integer wordId,
                                                       String exampleSentence, String exampleTranslate, String translateLanguage) {
         WordParaphraseExampleDO example = new WordParaphraseExampleDO();

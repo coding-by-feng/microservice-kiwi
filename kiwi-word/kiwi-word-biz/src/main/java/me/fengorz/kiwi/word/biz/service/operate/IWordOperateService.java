@@ -62,7 +62,7 @@ public interface IWordOperateService {
 
     void evict(@KiwiCacheKey String wordName, WordMainDO one);
 
-    FetchWordReplaceDTO cacheReplace(String wordName);
+    FetchWordReplaceDTO getCacheReplace(String wordName);
 
     FetchWordReplaceDTO cacheReplace(String wordName, FetchWordReplaceDTO dto);
 

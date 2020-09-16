@@ -33,4 +33,6 @@ public class FetchParaphraseExampleDTO {
 
     private String translateLanguage;
 
+    private Integer serialNumber;
+
 }

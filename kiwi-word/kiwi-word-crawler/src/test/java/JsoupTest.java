@@ -42,11 +42,11 @@ public class JsoupTest {
                     elements.forEach(head -> {
                         Optional.ofNullable(head.getElementsByClass("pos dpos"))
                             .flatMap(element -> Optional.ofNullable(element.text())).ifPresent(code -> {
-                                fetchWordCodeDTO.setCode(code);
+                                fetchWordCodeDTO.setCharacterCode(code);
                             });
                         Optional.ofNullable(head.getElementsByClass("gram dgram"))
                             .flatMap(element -> Optional.ofNullable(element.text())).ifPresent(label -> {
-                                fetchWordCodeDTO.setLabel(label);
+                                fetchWordCodeDTO.setTag(label);
                             });
                     });
                 });

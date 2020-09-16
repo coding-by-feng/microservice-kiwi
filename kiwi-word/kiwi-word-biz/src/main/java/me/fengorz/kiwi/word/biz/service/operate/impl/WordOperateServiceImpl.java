@@ -53,7 +53,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -382,7 +381,7 @@ public class WordOperateServiceImpl implements IWordOperateService {
     @KiwiCacheKeyPrefix(WordConstants.CACHE_KEY_PREFIX_OPERATE.METHOD_FETCH_REPLACE)
     @Cacheable(cacheNames = WordConstants.CACHE_NAMES, keyGenerator = CacheConstants.CACHE_KEY_GENERATOR_BEAN,
             unless = "#result == null")
-    public FetchWordReplaceDTO cacheReplace(@KiwiCacheKey String wordName) {
+    public FetchWordReplaceDTO getCacheReplace(@KiwiCacheKey String wordName) {
         // TODO ZSF 这里要设置超时时间，这块逻辑改成不用注解实现
         return new FetchWordReplaceDTO();
     }
@@ -406,23 +405,19 @@ public class WordOperateServiceImpl implements IWordOperateService {
 
     @Override
     public void fetchReplaceCallBack(String wordName) {
-        FetchWordReplaceDTO replaceDTO = this.cacheReplace(wordName);
+        FetchWordReplaceDTO replaceDTO = this.getCacheReplace(wordName);
         wordStarRelService.replaceFetchResult(replaceDTO.getOldRelWordId(), replaceDTO.getNewRelWordId());
-        Map<String, Integer> newParaphraseIdMap = replaceDTO.getNewParaphraseIdMap();
-        Optional.ofNullable(replaceDTO.getOldParaphraseIdMap()).ifPresent(oldParaphraseIdMap -> {
-            oldParaphraseIdMap.forEach((text, id) -> {
-                if (newParaphraseIdMap.containsKey(text)) {
-                    paraphraseStarRelService.replaceFetchResult(id, newParaphraseIdMap.get(text));
-                }
+        Optional.ofNullable(replaceDTO.getParaphraseBinderMap()).ifPresent(binderMap -> {
+            binderMap.forEach((num, binder) -> {
+                // TODO ZSF 这里需要校验为空，如果为空要终止队列，详细记录收藏数据
+                paraphraseStarRelService.replaceFetchResult(binder.getOldId(), binder.getNewId());
             });
         });
 
-        Map<String, Integer> newExampleIdMap = replaceDTO.getNewExampleIdMap();
-        Optional.ofNullable(replaceDTO.getOldExampleIdMap()).ifPresent(oldExampleIdMap -> {
-            oldExampleIdMap.forEach((text, id) -> {
-                if (newExampleIdMap.containsKey(text)) {
-                    exampleStarRelService.replaceFetchResult(id, newExampleIdMap.get(text));
-                }
+        Optional.ofNullable(replaceDTO.getExampleBinderMap()).ifPresent(binderMap -> {
+            binderMap.forEach((num, binder) -> {
+                // TODO ZSF 这里需要校验为空，如果为空要终止队列，详细记录收藏数据
+                exampleStarRelService.replaceFetchResult(binder.getOldId(), binder.getNewId());
             });
         });
         this.cacheEvictFetchReplace(wordName);

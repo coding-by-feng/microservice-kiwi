@@ -29,8 +29,8 @@ import java.util.List;
 @ToString
 public class FetchWordCodeDTO {
 
-    private String code;
-    private String label;
+    private String characterCode;
+    private String tag;
 
     private List<FetchParaphraseDTO> fetchParaphraseDTOList;
     private List<FetchWordPronunciationDTO> fetchWordPronunciationDTOList;

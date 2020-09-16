@@ -15,18 +15,8 @@
  */
 package me.fengorz.kiwi.word.biz.controller;
 
-import java.util.List;
-
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
-
-import org.hibernate.validator.constraints.Range;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.bdf.core.service.ISeqService;
@@ -41,7 +31,14 @@ import me.fengorz.kiwi.word.api.vo.WordStarListVO;
 import me.fengorz.kiwi.word.api.vo.star.WordStarItemVO;
 import me.fengorz.kiwi.word.biz.service.base.IWordStarListService;
 import me.fengorz.kiwi.word.biz.service.base.IWordStarRelService;
-import me.fengorz.kiwi.word.biz.service.operate.IWordOperateService;
+import me.fengorz.kiwi.word.biz.service.operate.IOperateService;
+import org.hibernate.validator.constraints.Range;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import java.util.List;
 
 /**
  * 单词本
@@ -56,16 +53,15 @@ import me.fengorz.kiwi.word.biz.service.operate.IWordOperateService;
 @RequestMapping("/word/star/list")
 public class WordStarListController extends BaseController {
 
-    private final IWordStarListService wordStarListService;
-    private final IWordOperateService wordOperateService;
-    private final IWordStarRelService wordStarRelService;
+    private final IWordStarListService starListService;
+    private final IOperateService operateService;
+    private final IWordStarRelService relService;
     private final ISeqService seqService;
 
     /**
      * 新增单词本
      *
-     * @param vo
-     *            单词本
+     * @param vo 单词本
      * @return R
      */
     @SysLog("新增单词本")
@@ -74,60 +70,60 @@ public class WordStarListController extends BaseController {
     public R<Boolean> save(WordStarListVO vo) {
         vo.setOwner(SecurityUtils.getCurrentUserId());
         vo.setId(seqService.genIntSequence(MapperConstant.T_INS_SEQUENCE));
-        return R.success(wordStarListService.save(vo));
+        return R.success(starListService.save(vo));
     }
 
     /**
      * 修改单词本
      *
-     * @param wordStarListDO
-     *            单词本
+     * @param wordStarListDO 单词本
      * @return R
      */
     @SysLog("修改单词本")
     @PostMapping("/updateById")
     // @PreAuthorize("@pms.hasPermission('api_wordstarlist_edit')")
     public R<Boolean> updateById(WordStarListDO wordStarListDO) {
-        return R.success(wordStarListService.updateById(wordStarListDO));
+        return R.success(starListService.updateById(wordStarListDO));
     }
 
     /**
      * 通过id删除单词本
      *
-     * @param id
-     *            id
+     * @param id id
      * @return R
      */
     @SysLog("通过id删除单词本")
     @PostMapping("/del/{id}")
     // @PreAuthorize("@pms.hasPermission('api_wordstarlist_del')")
     public R<Boolean> del(@PathVariable Integer id) {
-        return R.success(wordStarListService.removeById(id));
+        return R.success(starListService.removeById(id));
     }
 
     @GetMapping("/getCurrentUserList")
     public R<List<WordStarListVO>> getCurrentUserList() {
-        return R.success(wordStarListService.getCurrentUserList(SecurityUtils.getCurrentUserId()));
+        return R.success(starListService.getCurrentUserList(SecurityUtils.getCurrentUserId()));
     }
 
     @PostMapping("/getListItems/{size}/{current}")
     public R<IPage<WordStarItemVO>> getListItems(@NotNull Integer listId, @PathVariable @Min(1) Integer current,
-        @PathVariable @Range(min = 1, max = 100) Integer size) {
-        return R.success(wordStarListService.getListItems(new Page(current, size), listId));
+                                                 @PathVariable @Range(min = 1, max = 100) Integer size) {
+        return R.success(starListService.getListItems(new Page(current, size), listId));
     }
 
     @PostMapping("/putWordStarList")
     public R<Boolean> putWordStarList(@NotNull Integer wordId, @NotNull Integer listId) throws ServiceException {
-        return R.success(wordOperateService.putWordIntoStarList(wordId, listId));
+        starListService.putIntoStarList(wordId, listId);
+        return R.success();
     }
 
     @PostMapping("/removeWordStarList")
     public R<Boolean> removeWordStarList(@NotNull Integer wordId, @NotNull Integer listId) throws ServiceException {
-        return R.success(wordOperateService.removeWordStarList(wordId, listId));
+        starListService.removeStarList(wordId, listId);
+        return R.success();
     }
 
     @GetMapping("/findAllWordId/{listId}")
     public R<List<Integer>> findAllWordName(@PathVariable Integer listId) {
-        return R.success(wordStarRelService.findAllWordId(listId));
+        return R.success(relService.findAllWordId(listId));
     }
 }

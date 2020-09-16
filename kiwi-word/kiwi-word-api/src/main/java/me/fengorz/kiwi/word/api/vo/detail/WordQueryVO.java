@@ -16,12 +16,12 @@
 
 package me.fengorz.kiwi.word.api.vo.detail;
 
-import java.io.Serializable;
-import java.util.List;
-
 import lombok.Data;
 import lombok.ToString;
 import lombok.experimental.Accessors;
+
+import java.io.Serializable;
+import java.util.List;
 
 /**
  * @Description A view of the word query results
@@ -39,6 +39,6 @@ public class WordQueryVO implements Serializable {
     private String wordName;
     private String isCollect;
     private String isLogin;
-    private List<WordCharacterVO> wordCharacterVOList;
+    private List<CharacterVO> characterVOList;
 
 }

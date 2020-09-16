@@ -19,8 +19,7 @@
 package me.fengorz.kiwi.word.biz.service.base;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-
-import me.fengorz.kiwi.word.api.entity.WordExampleStarRelDO;
+import me.fengorz.kiwi.word.api.entity.ExampleStarRelDO;
 
 /**
  * 释义例句本与例句关系表
@@ -28,7 +27,7 @@ import me.fengorz.kiwi.word.api.entity.WordExampleStarRelDO;
  * @author zhanshifeng
  * @date 2020-01-03 14:48:48
  */
-public interface IWordExampleStarRelService extends IService<WordExampleStarRelDO> {
+public interface IWordExampleStarRelService extends IService<ExampleStarRelDO> {
 
     void replaceFetchResult(Integer oldRelId, Integer newRelId);
 

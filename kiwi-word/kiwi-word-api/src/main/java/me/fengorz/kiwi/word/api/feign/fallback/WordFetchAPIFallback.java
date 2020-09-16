@@ -21,7 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.api.R;
 import me.fengorz.kiwi.word.api.dto.queue.RemovePronunciatioinMqDTO;
 import me.fengorz.kiwi.word.api.dto.queue.fetch.FetchWordResultDTO;
-import me.fengorz.kiwi.word.api.entity.WordFetchQueueDO;
+import me.fengorz.kiwi.word.api.entity.FetchQueueDO;
 import me.fengorz.kiwi.word.api.feign.IWordFetchAPI;
 import org.springframework.stereotype.Component;
 
@@ -39,31 +39,31 @@ public class WordFetchAPIFallback implements IWordFetchAPI {
     private Throwable throwable;
 
     @Override
-    public R<WordFetchQueueDO> getOne(Integer queueId) {
+    public R<FetchQueueDO> getOne(Integer queueId) {
         log.error(throwable.getCause().getMessage());
         return R.feignCallFailed(throwable.getMessage());
     }
 
     @Override
-    public R<WordFetchQueueDO> getOneByWordName(String wordName) {
+    public R<FetchQueueDO> getOneByWordName(String wordName) {
         log.error(throwable.getCause().getMessage());
         return R.feignCallFailed(throwable.getMessage());
     }
 
     @Override
-    public R<List<WordFetchQueueDO>> pageQueue(Integer status, Integer current, Integer size) {
+    public R<List<FetchQueueDO>> pageQueue(Integer status, Integer current, Integer size) {
         log.error(throwable.getCause().getMessage());
         return R.feignCallFailed(throwable.getMessage());
     }
 
     @Override
-    public R<List<WordFetchQueueDO>> pageQueueLockIn(Integer status, Integer current, Integer size) {
+    public R<List<FetchQueueDO>> pageQueueLockIn(Integer status, Integer current, Integer size) {
         log.error(throwable.getCause().getMessage());
         return R.feignCallFailed(throwable.getMessage());
     }
 
     @Override
-    public R<Boolean> updateQueueById(WordFetchQueueDO queueDO) {
+    public R<Boolean> updateQueueById(FetchQueueDO queueDO) {
         log.error(throwable.getCause().getMessage());
         return R.feignCallFailed(throwable.getMessage());
     }
@@ -93,7 +93,7 @@ public class WordFetchAPIFallback implements IWordFetchAPI {
     }
 
     @Override
-    public R<Boolean> updateByWordName(WordFetchQueueDO queueDO) {
+    public R<Boolean> updateByWordName(FetchQueueDO queueDO) {
         log.error(throwable.getCause().getMessage());
         return R.feignCallFailed(throwable.getMessage());
     }

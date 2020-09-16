@@ -136,9 +136,8 @@ public class WordCleanerService implements IWordCleanerService {
                         if (KiwiCollectionUtils.isNotEmpty(exampleList)) {
                             for (WordParaphraseExampleDO example : exampleList) {
                                 // 将已删除的老的exampleId缓存起来，这样可以替换掉收藏本的关联id
-                                FetchWordReplaceDTO replaceDTO =
-                                        operateService.getCacheReplace(word.getWordName());
                                 Optional.ofNullable(example.getSerialNumber()).filter(serialNumber -> serialNumber > 0).ifPresent(serialNumber -> {
+                                    FetchWordReplaceDTO replaceDTO = operateService.getCacheReplace(word.getWordName());
                                     Map<Integer, FetchWordReplaceDTO.Binder> exampleBinderMap = replaceDTO.getExampleBinderMap();
                                     exampleBinderMap.put(serialNumber, new FetchWordReplaceDTO.Binder().setOldId(example.getExampleId()));
                                     operateService.cacheReplace(word.getWordName(), replaceDTO);

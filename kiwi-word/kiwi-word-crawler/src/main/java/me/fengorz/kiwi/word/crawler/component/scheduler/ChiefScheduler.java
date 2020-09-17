@@ -32,8 +32,8 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class ChiefScheduler {
 
-    private static String CACHE_WORD_SCHEDULER = "cacheWordScheduler";
-    private final long CACHEING_WORD_INTERVAL = 1000 * 50;
+    private static final String CACHE_WORD_SCHEDULER = "cacheWordScheduler";
+    private static final long CACHEING_WORD_INTERVAL = 1000 * 8;
 
     @Scheduled(fixedDelay = CACHEING_WORD_INTERVAL)
     public void cachingWord() {

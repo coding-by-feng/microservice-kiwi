@@ -127,6 +127,16 @@ public class WordFetchQueueServiceImpl extends ServiceImpl<FetchQueueMapper, Fet
     }
 
     @Override
+    public List<FetchQueueDO> listNotIntoCache() {
+        return Optional
+                .of(this.page(new Page<>(1, 20), Wrappers.<FetchQueueDO>lambdaQuery()
+                        .eq(FetchQueueDO::getFetchStatus, WordCrawlerConstants.STATUS_ALL_SUCCESS)
+                        .eq(FetchQueueDO::getIsLock, CommonConstants.FLAG_NO)
+                        .eq(FetchQueueDO::getIsIntoCache, CommonConstants.FLAG_NO)))
+                .get().getRecords();
+    }
+
+    @Override
     public void saveDerivation(String inputWordName, String fetchWordName) {
         Optional.ofNullable(this.getOneInUnLock(inputWordName)).ifPresent(one -> {
             this.updateById(one.setDerivation(fetchWordName));

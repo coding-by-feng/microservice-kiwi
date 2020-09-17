@@ -80,7 +80,7 @@ public class WordBizUtils {
         pronunciation.setSoundmark(soundmark);
         pronunciation.setSoundmarkType(soundmarkType);
         pronunciation.setVoiceFilePath(voiceUrl);
-        pronunciation.setSourceUrl(WordCrawlerConstants.CAMBRIDGE_BASE_URL + voiceUrl);
+        pronunciation.setSourceUrl(WordCrawlerConstants.URL_CAMBRIDGE_BASE + voiceUrl);
         return pronunciation;
     }
 

@@ -41,6 +41,8 @@ public interface IWordFetchQueueService extends IService<FetchQueueDO> {
 
     List<FetchQueueDO> page2List(Integer status, Integer current, Integer size, Integer isLock);
 
+    List<FetchQueueDO> listNotIntoCache();
+
     void saveDerivation(String inputWordName, String fetchWordName);
 
     FetchQueueDO getOneInUnLock(String wordName);

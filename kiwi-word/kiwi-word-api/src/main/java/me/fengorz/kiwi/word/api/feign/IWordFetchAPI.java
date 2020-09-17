@@ -46,6 +46,9 @@ public interface IWordFetchAPI {
     R<List<FetchQueueDO>> pageQueue(@PathVariable Integer status, @PathVariable Integer current,
                                     @PathVariable Integer size);
 
+    @GetMapping(WORD_FETCH_QUEUE + "/listNotIntoCache")
+    public R<List<FetchQueueDO>> listNotIntoCache();
+
     @GetMapping(WORD_FETCH_QUEUE + "/pageQueueLockIn/{status}/{current}/{size}")
     R<List<FetchQueueDO>> pageQueueLockIn(@PathVariable Integer status, @PathVariable Integer current,
                                           @PathVariable Integer size);

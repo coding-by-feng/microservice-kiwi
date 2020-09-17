@@ -33,7 +33,7 @@ import org.springframework.stereotype.Component;
 public class ChiefScheduler {
 
     private static String CACHE_WORD_SCHEDULER = "cacheWordScheduler";
-    private final long CACHEING_WORD_INTERVAL = 1000 * 20;
+    private final long CACHEING_WORD_INTERVAL = 1000 * 50;
 
     @Scheduled(fixedDelay = CACHEING_WORD_INTERVAL)
     public void cachingWord() {

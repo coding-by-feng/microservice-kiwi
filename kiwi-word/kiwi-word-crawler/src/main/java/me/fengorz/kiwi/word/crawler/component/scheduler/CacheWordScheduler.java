@@ -22,6 +22,7 @@ package me.fengorz.kiwi.word.crawler.component.scheduler;
 import cn.hutool.http.HttpUtil;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.api.constant.CommonConstants;
+import me.fengorz.kiwi.common.sdk.util.lang.collection.KiwiCollectionUtils;
 import me.fengorz.kiwi.word.api.common.WordCrawlerConstants;
 import me.fengorz.kiwi.word.api.entity.FetchQueueDO;
 import me.fengorz.kiwi.word.api.feign.IWordFetchAPI;
@@ -31,6 +32,7 @@ import me.fengorz.kiwi.word.crawler.component.scheduler.base.SchedulerDTO;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 
 /**
  * 自动将所有未入缓存的单词纳入缓存
@@ -42,7 +44,7 @@ import java.util.List;
 @Component("cacheWordScheduler")
 public class CacheWordScheduler extends AbstractScheduler implements IScheduler {
 
-    private static String CACHING_WORD = "caching word {}!";
+    private static final String CACHING_WORD = "caching word {}!";
 
     public CacheWordScheduler(IWordFetchAPI fetchAPI) {
         super(fetchAPI);
@@ -55,7 +57,11 @@ public class CacheWordScheduler extends AbstractScheduler implements IScheduler 
 
     @Override
     public List<FetchQueueDO> getQueueDO(SchedulerDTO dto) {
-        return fetchAPI.listNotIntoCache().getData();
+        List<FetchQueueDO> list = fetchAPI.listNotIntoCache().getData();
+        if (!KiwiCollectionUtils.isEmpty(list)) {
+            countDownLatch = new CountDownLatch(list.size());
+        }
+        return list;
     }
 
     /**
@@ -67,9 +73,16 @@ public class CacheWordScheduler extends AbstractScheduler implements IScheduler 
     protected void execute(FetchQueueDO queue) {
         String wordName = queue.getWordName();
         log.info(CACHING_WORD, wordName);
-        HttpUtil.get(WordCrawlerConstants.URL_QUERY_WORD + wordName);
-        queue.setIsIntoCache(CommonConstants.FLAG_YES);
-        fetchAPI.updateQueueById(queue);
+        try {
+            HttpUtil.get(WordCrawlerConstants.URL_QUERY_WORD + wordName);
+            queue.setIsIntoCache(CommonConstants.FLAG_YES);
+        } catch (Exception e) {
+            queue.setIsIntoCache(CommonConstants.FLAG_NO);
+            log.error(e.getMessage());
+        } finally {
+            countDownLatch.countDown();
+            fetchAPI.updateQueueById(queue);
+        }
     }
 
 }

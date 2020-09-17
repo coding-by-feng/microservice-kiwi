@@ -24,7 +24,6 @@ import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.api.constant.CommonConstants;
 import me.fengorz.kiwi.word.api.common.WordCrawlerConstants;
 import me.fengorz.kiwi.word.api.entity.FetchQueueDO;
-import me.fengorz.kiwi.word.api.exception.SchedulerException;
 import me.fengorz.kiwi.word.api.feign.IWordFetchAPI;
 import me.fengorz.kiwi.word.crawler.component.scheduler.base.AbstractScheduler;
 import me.fengorz.kiwi.word.crawler.component.scheduler.base.IScheduler;
@@ -32,7 +31,6 @@ import me.fengorz.kiwi.word.crawler.component.scheduler.base.SchedulerDTO;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 /**
  * 自动将所有未入缓存的单词纳入缓存
@@ -70,11 +68,6 @@ public class CacheWordScheduler extends AbstractScheduler implements IScheduler 
         String wordName = queue.getWordName();
         log.info(CACHING_WORD, wordName);
         HttpUtil.get(WordCrawlerConstants.URL_QUERY_WORD + wordName);
-        try {
-            TimeUnit.SECONDS.sleep(1);
-        } catch (InterruptedException e) {
-            throw new SchedulerException("caching word error!");
-        }
         queue.setIsIntoCache(CommonConstants.FLAG_YES);
         fetchAPI.updateQueueById(queue);
     }

@@ -85,4 +85,6 @@ public class FetchQueueDO extends Model<FetchQueueDO> {
 
     private Integer fetchTime;
 
+    private Integer isIntoCache;
+
 }

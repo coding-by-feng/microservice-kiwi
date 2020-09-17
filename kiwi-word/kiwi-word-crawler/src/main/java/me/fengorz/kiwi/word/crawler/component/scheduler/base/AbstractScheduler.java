@@ -19,9 +19,11 @@ package me.fengorz.kiwi.word.crawler.component.scheduler.base;
 import lombok.RequiredArgsConstructor;
 import me.fengorz.kiwi.common.sdk.util.lang.collection.KiwiCollectionUtils;
 import me.fengorz.kiwi.word.api.entity.FetchQueueDO;
+import me.fengorz.kiwi.word.api.exception.SchedulerException;
 import me.fengorz.kiwi.word.api.feign.IWordFetchAPI;
 
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 
 /**
  * @Author zhanshifeng
@@ -32,8 +34,11 @@ public abstract class AbstractScheduler implements IScheduler {
 
     protected final IWordFetchAPI fetchAPI;
     protected final Object barrier = new Object();
+    protected CountDownLatch countDownLatch;
 
     protected abstract List<FetchQueueDO> getQueueDO(SchedulerDTO dto);
+
+    private static final String COUNT_DOWN_LATCH_ERROR = "countDownLatch error!";
 
     protected void schedule(SchedulerDTO dto) {
         List<FetchQueueDO> list = getQueueDO(dto);
@@ -41,10 +46,17 @@ public abstract class AbstractScheduler implements IScheduler {
             return;
         }
 
-        // 列表里面每一批查到数据处理完之前先上锁
-        synchronized (barrier) {
-            list.forEach(this::execute);
+        list.forEach(this::execute);
+        if (countDownLatch == null) {
+            return;
         }
+
+        try {
+            countDownLatch.await();
+        } catch (InterruptedException e) {
+            throw new SchedulerException(COUNT_DOWN_LATCH_ERROR);
+        }
+
     }
 
     protected abstract void execute(FetchQueueDO queue);

@@ -18,6 +18,7 @@ package me.fengorz.kiwi.word.biz.service.base.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.RequiredArgsConstructor;
@@ -76,11 +77,12 @@ public class ExampleStarListServiceImpl extends ServiceImpl<ExampleStarListMappe
 
     @Override
     public void putIntoStarList(Integer exampleId, Integer listId) {
-        LambdaQueryWrapper<ExampleStarRelDO> queryWrapper = new LambdaQueryWrapper<ExampleStarRelDO>()
+        LambdaQueryWrapper<ExampleStarRelDO> queryWrapper = Wrappers.<ExampleStarRelDO>lambdaQuery()
                 .eq(ExampleStarRelDO::getListId, listId).eq(ExampleStarRelDO::getExampleId, exampleId);
-        KiwiAssertUtils.serviceEmpty(relService.count(queryWrapper), "example rel is already exists!");
+        if (relService.count(queryWrapper) > 0) {
+            return;
+        }
         relService.save(new ExampleStarRelDO().setListId(listId).setExampleId(exampleId));
-
         archiveService.archiveExampleRel(exampleId, listId, SecurityUtils.getCurrentUserId());
     }
 
@@ -91,7 +93,6 @@ public class ExampleStarListServiceImpl extends ServiceImpl<ExampleStarListMappe
         int count = relService.count(queryWrapper);
         KiwiAssertUtils.serviceNotEmpty(count, "example is not exists!");
         relService.remove(queryWrapper);
-
         archiveService.invalidArchiveExampleRel(exampleId, listId, SecurityUtils.getCurrentUserId());
     }
 

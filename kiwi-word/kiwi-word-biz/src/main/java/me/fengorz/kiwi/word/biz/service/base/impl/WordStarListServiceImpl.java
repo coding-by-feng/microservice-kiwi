@@ -20,6 +20,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.RequiredArgsConstructor;
@@ -124,10 +125,9 @@ public class WordStarListServiceImpl extends ServiceImpl<WordStarListMapper, Wor
 
     @Override
     public void putIntoStarList(Integer wordId, Integer listId) {
-        LambdaQueryWrapper<WordStarRelDO> queryWrapper = new LambdaQueryWrapper<WordStarRelDO>()
+        LambdaQueryWrapper<WordStarRelDO> queryWrapper = Wrappers.<WordStarRelDO>lambdaQuery()
                 .eq(WordStarRelDO::getListId, listId).eq(WordStarRelDO::getWordId, wordId);
-        int count = relService.count(queryWrapper);
-        if (count > 0) {
+        if (relService.count(queryWrapper) > 0) {
             return;
         }
         relService.save(new WordStarRelDO().setListId(listId).setWordId(wordId));

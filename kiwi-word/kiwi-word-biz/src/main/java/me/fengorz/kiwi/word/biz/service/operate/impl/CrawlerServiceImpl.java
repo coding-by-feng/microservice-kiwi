@@ -195,7 +195,7 @@ public class CrawlerServiceImpl implements ICrawlerService {
         if (KiwiStringUtils.isBlank(voiceUrl)) {
             return;
         }
-        String voiceFileUrl = WordCrawlerConstants.CAMBRIDGE_BASE_URL + voiceUrl;
+        String voiceFileUrl = WordCrawlerConstants.URL_CAMBRIDGE_BASE + voiceUrl;
         long voiceSize = HttpUtil.downloadFile(URLUtil.decode(voiceFileUrl), FileUtil.file(crawlerVoiceBasePath));
         String tempVoice = crawlerVoiceBasePath + WordDfsUtils.getVoiceFileName(voiceFileUrl);
         try {

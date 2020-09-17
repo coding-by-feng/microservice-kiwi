@@ -62,13 +62,16 @@ public interface WordCrawlerConstants {
 
     int WORD_MAX_FETCH_LIMITED_TIME = 100;
 
-    String CAMBRIDGE_FETCH_CHINESE_URL = "https://dictionary.cambridge.org/zhs/词典/英语-汉语-简体/";
-    String CAMBRIDGE_FETCH_ENGLISH_URL = "https://dictionary.cambridge.org/dictionary/english/";
-    String CAMBRIDGE_BASE_URL = "https://dictionary.cambridge.org/";
+    String URL_CAMBRIDGE_FETCH_CHINESE = "https://dictionary.cambridge.org/zhs/词典/英语-汉语-简体/";
+    String URL_CAMBRIDGE_FETCH_ENGLISH = "https://dictionary.cambridge.org/dictionary/english/";
+    String URL_CAMBRIDGE_BASE = "https://dictionary.cambridge.org/";
+    String URL_QUERY_WORD = "http://kiwidict.com/#/index/vocabulary/detail?active=search&lazy=y&word=";
+
     String EXT_OGG = "ogg";
 
     String DEFAULT_TRANSLATE_LANGUAGE = "Chinese";
 
     String PRONUNCIATION_TYPE_UK = "UK";
     String PRONUNCIATION_TYPE_US = "US";
+
 }

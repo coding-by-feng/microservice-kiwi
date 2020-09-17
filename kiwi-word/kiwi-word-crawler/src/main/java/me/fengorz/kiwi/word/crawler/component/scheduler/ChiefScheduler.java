@@ -14,30 +14,31 @@
  *
  */
 
-package me.fengorz.kiwi.word.crawler.component.producer;
+package me.fengorz.kiwi.word.crawler.component.scheduler;
 
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.sdk.util.spring.SpringUtils;
-import me.fengorz.kiwi.word.crawler.component.producer.base.IProducer;
+import me.fengorz.kiwi.word.crawler.component.scheduler.base.IScheduler;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import java.util.Objects;
-
 /**
  * 定时扫描对列表
+ *
  * @Author zhanshifeng
  * @Date 2019/10/29 4:12 PM
  */
 @Component
 @Slf4j
-public class ScheduledChiefProducer {
+public class ChiefScheduler {
 
-    @Scheduled(fixedDelay = 2000L)
-    public void produce() {
-        for (IProducer producer : Objects.requireNonNull(SpringUtils.getBeansList(IProducer.class))) {
-            producer.produce();
-        }
+    private static String CACHE_WORD_SCHEDULER = "cacheWordScheduler";
+    private final long CACHEING_WORD_INTERVAL = 1000 * 3 * 20;
+
+    @Scheduled(fixedDelay = CACHEING_WORD_INTERVAL)
+    public void cachingWord() {
+        IScheduler scheduler = SpringUtils.getBean(CACHE_WORD_SCHEDULER);
+        scheduler.schedule();
     }
 
 }

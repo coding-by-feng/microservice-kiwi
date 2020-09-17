@@ -76,6 +76,11 @@ public class WordFetchController extends BaseController {
         return R.success(queueService.page2List(status, current, size, CommonConstants.FLAG_YES));
     }
 
+    @GetMapping(value = "/listNotIntoCache")
+    public R<List<FetchQueueDO>> listNotIntoCache() {
+        return R.success(queueService.listNotIntoCache());
+    }
+
     /**
      * 修改单词待抓取列表
      *

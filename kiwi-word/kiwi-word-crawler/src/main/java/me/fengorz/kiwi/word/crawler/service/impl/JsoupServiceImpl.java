@@ -97,10 +97,10 @@ public class JsoupServiceImpl implements IJsoupService {
         try {
             this.paraphraseSerialNumMap.put(word, 1);
             this.exampleSerialNumMap.put(word, 1);
-            result = subFetch(WordCrawlerConstants.CAMBRIDGE_FETCH_CHINESE_URL, word);
+            result = subFetch(WordCrawlerConstants.URL_CAMBRIDGE_FETCH_CHINESE, word);
         } catch (JsoupFetchConnectException | JsoupFetchResultException | JsoupFetchPronunciationException e) {
             log.error(e.getMessage());
-            return result = subFetch(WordCrawlerConstants.CAMBRIDGE_FETCH_ENGLISH_URL, word);
+            return result = subFetch(WordCrawlerConstants.URL_CAMBRIDGE_FETCH_ENGLISH, word);
         } finally {
             this.paraphraseSerialNumMap.remove(word);
             this.exampleSerialNumMap.remove(word);

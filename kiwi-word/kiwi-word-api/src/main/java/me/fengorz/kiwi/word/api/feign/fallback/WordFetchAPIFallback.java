@@ -57,6 +57,12 @@ public class WordFetchAPIFallback implements IWordFetchAPI {
     }
 
     @Override
+    public R<List<FetchQueueDO>> listNotIntoCache() {
+        log.error(throwable.getCause().getMessage());
+        return R.feignCallFailed(throwable.getMessage());
+    }
+
+    @Override
     public R<List<FetchQueueDO>> pageQueueLockIn(Integer status, Integer current, Integer size) {
         log.error(throwable.getCause().getMessage());
         return R.feignCallFailed(throwable.getMessage());

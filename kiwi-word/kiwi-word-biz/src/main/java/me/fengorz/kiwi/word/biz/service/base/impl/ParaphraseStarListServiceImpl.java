@@ -25,7 +25,6 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.RequiredArgsConstructor;
 import me.fengorz.kiwi.common.api.constant.CommonConstants;
 import me.fengorz.kiwi.common.sdk.util.bean.KiwiBeanUtils;
-import me.fengorz.kiwi.common.sdk.util.validate.KiwiAssertUtils;
 import me.fengorz.kiwi.common.sdk.web.security.SecurityUtils;
 import me.fengorz.kiwi.word.api.entity.ParaphraseStarListDO;
 import me.fengorz.kiwi.word.api.entity.ParaphraseStarRelDO;
@@ -105,7 +104,6 @@ public class ParaphraseStarListServiceImpl extends
             return;
         }
         relService.remove(wrapper);
-
         archiveService.invalidArchiveParaphraseRel(paraphraseId, listId, SecurityUtils.getCurrentUserId());
     }
 
@@ -138,11 +136,12 @@ public class ParaphraseStarListServiceImpl extends
 
     @Override
     public void putIntoStarList(Integer paraphraseId, Integer listId) {
-        LambdaQueryWrapper<ParaphraseStarRelDO> wrapper = new LambdaQueryWrapper<ParaphraseStarRelDO>()
+        LambdaQueryWrapper<ParaphraseStarRelDO> wrapper = Wrappers.<ParaphraseStarRelDO>lambdaQuery()
                 .eq(ParaphraseStarRelDO::getListId, listId).eq(ParaphraseStarRelDO::getParaphraseId, paraphraseId);
-        KiwiAssertUtils.serviceEmpty(relService.count(wrapper), "paraphrase already exists!");
+        if (relService.count(wrapper) > 0) {
+            return;
+        }
         relService.save(new ParaphraseStarRelDO().setListId(listId).setParaphraseId(paraphraseId));
-
         archiveService.archiveParaphraseRel(paraphraseId, listId, SecurityUtils.getCurrentUserId());
     }
 

@@ -82,17 +82,26 @@ public class ParaphraseStarListServiceImpl extends
 
     @Override
     public IPage<ParaphraseStarItemVO> selectListItems(Page page, Integer listId) {
-        return this.mapper.selectListItems(page, listId);
+        if (listId == 0) {
+            return mapper.selectRecentItems(page, SecurityUtils.getCurrentUserId());
+        }
+        return mapper.selectItems(page, listId);
     }
 
     @Override
     public IPage<ParaphraseStarItemVO> selectReviewListItems(Page page, Integer listId) {
-        return this.mapper.selectReviewListItems(page, listId);
+        if (listId == 0) {
+            return mapper.selectRecentReviewItems(page, SecurityUtils.getCurrentUserId());
+        }
+        return mapper.selectReviewItems(page, listId);
     }
 
     @Override
     public IPage<ParaphraseStarItemVO> selectRememberListItems(Page page, Integer listId) {
-        return this.mapper.selectRememberListItems(page, listId);
+        if (listId == 0) {
+            return mapper.selectRecentRememberItems(page, SecurityUtils.getCurrentUserId());
+        }
+        return mapper.selectRememberItems(page, listId);
     }
 
     @Override

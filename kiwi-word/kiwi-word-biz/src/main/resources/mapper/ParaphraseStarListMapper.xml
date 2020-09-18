@@ -23,7 +23,7 @@
 
 <mapper namespace="me.fengorz.kiwi.word.biz.mapper.ParaphraseStarListMapper">
 
-    <select id="selectListItems" resultType="me.fengorz.kiwi.word.api.vo.star.ParaphraseStarItemVO">
+    <select id="selectItems" resultType="me.fengorz.kiwi.word.api.vo.star.ParaphraseStarItemVO">
         select temp.*, wm.word_name
         from (select wp.paraphrase_id,
                      wp.word_id,
@@ -40,7 +40,23 @@
         order by temp.create_time desc
     </select>
 
-    <select id="selectReviewListItems" resultType="me.fengorz.kiwi.word.api.vo.star.ParaphraseStarItemVO">
+    <select id="selectRecentItems" resultType="me.fengorz.kiwi.word.api.vo.star.ParaphraseStarItemVO">
+select temp.*, wm.word_name
+        from (select wp.paraphrase_id,
+                     wp.word_id,
+                     wp.paraphrase_english,
+                     wp.meaning_chinese,
+                     wp.character_id,
+                     wp.paraphrase_english_translate,
+                     wpsr.create_time
+              from word_paraphrase_star_rel wpsr
+                       left join word_paraphrase wp on wpsr.paraphrase_id = wp.paraphrase_id
+              where wpsr.list_id in (select wpsl.id from word_paraphrase_star_list wpsl where wpsl.owner = #{userId})
+                and wp.is_del = 0) temp
+                 left join word_main wm on temp.word_id = wm.word_id
+        order by temp.create_time desc    </select>
+
+    <select id="selectReviewItems" resultType="me.fengorz.kiwi.word.api.vo.star.ParaphraseStarItemVO">
         select temp.*, wm.word_name
         from (select wp.paraphrase_id,
                      wp.word_id,
@@ -58,7 +74,25 @@
         order by temp.create_time desc
     </select>
 
-    <select id="selectRememberListItems" resultType="me.fengorz.kiwi.word.api.vo.star.ParaphraseStarItemVO">
+    <select id="selectRecentReviewItems" resultType="me.fengorz.kiwi.word.api.vo.star.ParaphraseStarItemVO">
+        select temp.*, wm.word_name
+        from (select wp.paraphrase_id,
+                     wp.word_id,
+                     wp.paraphrase_english,
+                     wp.meaning_chinese,
+                     wp.character_id,
+                     wp.paraphrase_english_translate,
+                     wpsr.create_time
+              from word_paraphrase_star_rel wpsr
+                       left join word_paraphrase wp on wpsr.paraphrase_id = wp.paraphrase_id
+              where wpsr.list_id in (select wpsl.id from word_paraphrase_star_list wpsl where wpsl.owner = #{userId})
+                and wpsr.is_remember = 0
+                and wp.is_del = 0) temp
+                 left join word_main wm on temp.word_id = wm.word_id
+        order by temp.create_time desc
+    </select>
+
+    <select id="selectRememberItems" resultType="me.fengorz.kiwi.word.api.vo.star.ParaphraseStarItemVO">
         select temp.*, wm.word_name
         from (select wp.paraphrase_id,
                      wp.word_id,
@@ -70,6 +104,25 @@
               from word_paraphrase_star_rel wpsr
                        left join word_paraphrase wp on wpsr.paraphrase_id = wp.paraphrase_id
               where wpsr.list_id = #{listId}
+                and wpsr.is_remember = 1
+                and wpsr.is_keep_in_mind= 0
+                and wp.is_del = 0) temp
+                 left join word_main wm on temp.word_id = wm.word_id
+        order by temp.create_time desc
+    </select>
+
+    <select id="selectRecentRememberItems" resultType="me.fengorz.kiwi.word.api.vo.star.ParaphraseStarItemVO">
+        select temp.*, wm.word_name
+        from (select wp.paraphrase_id,
+                     wp.word_id,
+                     wp.paraphrase_english,
+                     wp.meaning_chinese,
+                     wp.character_id,
+                     wp.paraphrase_english_translate,
+                     wpsr.create_time
+              from word_paraphrase_star_rel wpsr
+                       left join word_paraphrase wp on wpsr.paraphrase_id = wp.paraphrase_id
+              where wpsr.list_id in (select wpsl.id from word_paraphrase_star_list wpsl where wpsl.owner = #{userId})
                 and wpsr.is_remember = 1
                 and wpsr.is_keep_in_mind= 0
                 and wp.is_del = 0) temp

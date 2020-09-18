@@ -29,10 +29,16 @@ import me.fengorz.kiwi.word.api.vo.star.ParaphraseStarItemVO;
  */
 public interface ParaphraseStarListMapper extends BaseMapper<ParaphraseStarListDO> {
 
-    IPage<ParaphraseStarItemVO> selectListItems(Page<?> page, Integer listId);
+    IPage<ParaphraseStarItemVO> selectItems(Page<?> page, Integer listId);
 
-    IPage<ParaphraseStarItemVO> selectReviewListItems(Page<?> page, Integer listId);
+    IPage<ParaphraseStarItemVO> selectRecentItems(Page<?> page, Integer userId);
 
-    IPage<ParaphraseStarItemVO> selectRememberListItems(Page<?> page, Integer listId);
+    IPage<ParaphraseStarItemVO> selectReviewItems(Page<?> page, Integer listId);
+
+    IPage<ParaphraseStarItemVO> selectRecentReviewItems(Page<?> page, Integer userId);
+
+    IPage<ParaphraseStarItemVO> selectRememberItems(Page<?> page, Integer listId);
+
+    IPage<ParaphraseStarItemVO> selectRecentRememberItems(Page<?> page, Integer userId);
 
 }

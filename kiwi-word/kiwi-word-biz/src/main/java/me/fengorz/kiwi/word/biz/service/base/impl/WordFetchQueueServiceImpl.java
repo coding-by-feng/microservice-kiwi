@@ -24,6 +24,7 @@ import me.fengorz.kiwi.bdf.core.service.ISeqService;
 import me.fengorz.kiwi.common.api.constant.CommonConstants;
 import me.fengorz.kiwi.common.api.constant.MapperConstant;
 import me.fengorz.kiwi.common.api.exception.ServiceException;
+import me.fengorz.kiwi.common.sdk.util.lang.string.KiwiStringUtils;
 import me.fengorz.kiwi.word.api.common.WordCrawlerConstants;
 import me.fengorz.kiwi.word.api.entity.FetchQueueDO;
 import me.fengorz.kiwi.word.biz.mapper.FetchQueueMapper;
@@ -65,8 +66,14 @@ public class WordFetchQueueServiceImpl extends ServiceImpl<FetchQueueMapper, Fet
             return;
         }
 
+        this.insertOne(wordName, null, WordCrawlerConstants.STATUS_TO_FETCH);
+    }
+
+    private void insertOne(String wordName, String derivation, int status) {
         this.save(new FetchQueueDO().setQueueId(seqService.genIntSequence(MapperConstant.T_INS_SEQUENCE))
-                .setWordName(wordName).setFetchStatus(WordCrawlerConstants.STATUS_TO_FETCH).setFetchPriority(100).setIsLock(CommonConstants.FLAG_YES));
+                .setWordName(wordName)
+                .setDerivation(KiwiStringUtils.isNotBlank(derivation) ? derivation : null)
+                .setFetchStatus(status).setFetchPriority(100).setIsLock(CommonConstants.FLAG_YES));
     }
 
     @Async
@@ -110,6 +117,12 @@ public class WordFetchQueueServiceImpl extends ServiceImpl<FetchQueueMapper, Fet
     public void flagWordQueryException(String wordName) {
 
         FetchQueueDO one = this.getOneAnyhow(wordName);
+        // 如果队列记录不存在
+        if (one == null) {
+            this.insertOne(wordName, wordName, WordCrawlerConstants.STATUS_TO_DEL_BASE);
+            return;
+        }
+
         // 爬虫状态进行中的不可以打断
         if (WordBizUtils.fetchQueueIsRunning(one.getFetchStatus())) {
             return;

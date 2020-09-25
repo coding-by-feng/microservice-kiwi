@@ -1,4 +1,10 @@
 FROM openjdk:8-jdk-alpine
+
+ENV TINI_VERSION v0.19.0
+ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /tini
+RUN chmod +x /tini
+ENTRYPOINT ["/tini", "--"]
+
 RUN mkdir /logs
 RUN mkdir /wordTmp
 ADD kiwi-word-biz-1.0-SNAPSHOT.jar app.jar

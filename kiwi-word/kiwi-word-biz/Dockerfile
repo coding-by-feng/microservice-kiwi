@@ -1,4 +1,4 @@
-FROM 13-jdk-alpine3.9
+FROM openjdk:13-jdk-alpine3.9
 
 # RUN apk add --no-cache tini
 # Tini is now available at /sbin/tini

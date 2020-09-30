@@ -1,4 +1,4 @@
-FROM openjdk:13-jdk-alpine3.9
+FROM airdock/oracle-jdk:1.8
 RUN mkdir /logs
 RUN mkdir /root/crawlerTmp
 
@@ -11,4 +11,4 @@ RUN mkdir /root/crawlerTmp
 ADD kiwi-word-crawler-1.0-SNAPSHOT.jar app.jar
 EXPOSE 6001
 ENTRYPOINT java -jar -Xmx256m -Dspring.profiles.active=prod -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5006,suspend=n /app.jar > /logs/crawler.log
-# ENTRYPOINT java -jar -Xmx256m -Dcom.sun.management.jmxremote.port=9210 -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.authenticate=false -XX:+UnlockCommercialFeatures -XX:+FlightRecorder -Dspring.profiles.active=prod -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5006,suspend=n /app.jar > /logs/crawler.log
+# ENTRYPOINT java -jar -Xmx256m -Dcom.sun.management.jmxremote.port=9211 -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.authenticate=false -XX:+UnlockCommercialFeatures -XX:+FlightRecorder -Dspring.profiles.active=prod -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5006,suspend=n /app.jar > /logs/crawler.log

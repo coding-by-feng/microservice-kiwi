@@ -1,4 +1,4 @@
-FROM airdock/oracle-jdk:1.8
+FROM blackbelt/oraclejdk8
 
 # RUN apk add --no-cache tini
 # Tini is now available at /sbin/tini

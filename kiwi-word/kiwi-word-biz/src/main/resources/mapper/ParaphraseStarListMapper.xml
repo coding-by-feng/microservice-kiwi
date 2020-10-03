@@ -100,7 +100,8 @@ select temp.*, wm.word_name
                      wp.meaning_chinese,
                      wp.character_id,
                      wp.paraphrase_english_translate,
-                     wpsr.create_time
+                     wpsr.create_time,
+                     wpsr.list_id
               from word_paraphrase_star_rel wpsr
                        left join word_paraphrase wp on wpsr.paraphrase_id = wp.paraphrase_id
               where wpsr.list_id = #{listId}

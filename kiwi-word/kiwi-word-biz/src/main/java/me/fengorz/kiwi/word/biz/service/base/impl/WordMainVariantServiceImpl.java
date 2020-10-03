@@ -101,6 +101,7 @@ public class WordMainVariantServiceImpl extends ServiceImpl<WordMainVariantMappe
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public boolean saveOne(WordMainVariantDTO dto) {
         final Integer id = dto.getId();
         boolean isInsert = id == null || !isExist(id);

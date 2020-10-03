@@ -36,6 +36,7 @@ import me.fengorz.kiwi.word.biz.service.base.IExampleStarListService;
 import me.fengorz.kiwi.word.biz.service.base.IWordExampleStarRelService;
 import me.fengorz.kiwi.word.biz.service.operate.IAsyncArchiveService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -76,6 +77,7 @@ public class ExampleStarListServiceImpl extends ServiceImpl<ExampleStarListMappe
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void putIntoStarList(Integer exampleId, Integer listId) {
         LambdaQueryWrapper<ExampleStarRelDO> queryWrapper = Wrappers.<ExampleStarRelDO>lambdaQuery()
                 .eq(ExampleStarRelDO::getListId, listId).eq(ExampleStarRelDO::getExampleId, exampleId);
@@ -87,6 +89,7 @@ public class ExampleStarListServiceImpl extends ServiceImpl<ExampleStarListMappe
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void removeOneRel(Integer exampleId, Integer listId) {
         LambdaQueryWrapper<ExampleStarRelDO> queryWrapper = new LambdaQueryWrapper<ExampleStarRelDO>()
                 .eq(ExampleStarRelDO::getListId, listId).eq(ExampleStarRelDO::getExampleId, exampleId);

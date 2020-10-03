@@ -36,6 +36,7 @@ public class ParaphraseStarItemVO implements Serializable {
     private Integer wordId;
     private String wordName;
     private Integer paraphraseId;
+    private Integer listId;
     private String paraphraseEnglish;
     private String meaningChinese;
     private String characterId;

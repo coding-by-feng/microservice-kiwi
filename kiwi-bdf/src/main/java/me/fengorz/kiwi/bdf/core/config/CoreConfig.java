@@ -16,15 +16,14 @@
 
 package me.fengorz.kiwi.bdf.core.config;
 
+import com.baomidou.mybatisplus.core.MybatisConfiguration;
+import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
+import com.baomidou.mybatisplus.extension.plugins.pagination.optimize.JsqlParserCountOptimize;
+import me.fengorz.kiwi.common.sdk.config.UtilsBeanConfiguration;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.*;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-
-import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
-import com.baomidou.mybatisplus.extension.plugins.pagination.optimize.JsqlParserCountOptimize;
-
-import me.fengorz.kiwi.common.sdk.config.UtilsBeanConfiguration;
 
 @Configuration
 @MapperScan("me.fengorz.kiwi.**.mapper")
@@ -41,6 +40,13 @@ public class CoreConfig {
         PaginationInterceptor paginationInterceptor = new PaginationInterceptor();
         paginationInterceptor.setCountSqlParser(new JsqlParserCountOptimize(true));
         return paginationInterceptor;
+    }
+
+    @Bean
+    public MybatisConfiguration mybatisConfiguration() {
+        MybatisConfiguration configuration = new MybatisConfiguration();
+        configuration.setCacheEnabled(false);
+        return configuration;
     }
 
 }

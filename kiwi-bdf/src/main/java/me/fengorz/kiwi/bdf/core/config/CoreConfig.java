@@ -42,7 +42,7 @@ public class CoreConfig {
         return paginationInterceptor;
     }
 
-    @Bean
+    // @Bean
     public MybatisConfiguration mybatisConfiguration() {
         MybatisConfiguration configuration = new MybatisConfiguration();
         configuration.setCacheEnabled(false);

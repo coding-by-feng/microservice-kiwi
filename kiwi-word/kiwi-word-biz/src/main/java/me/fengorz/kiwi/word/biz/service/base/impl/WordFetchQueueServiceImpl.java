@@ -82,6 +82,7 @@ public class WordFetchQueueServiceImpl extends ServiceImpl<FetchQueueMapper, Fet
         this.fetchNewWord(wordName);
     }
 
+    @Transactional(rollbackFor = Exception.class)
     private boolean del(String wordName) {
         return this.remove(new LambdaQueryWrapper<FetchQueueDO>().eq(FetchQueueDO::getWordName, wordName));
     }
@@ -114,6 +115,7 @@ public class WordFetchQueueServiceImpl extends ServiceImpl<FetchQueueMapper, Fet
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void flagWordQueryException(String wordName) {
 
         FetchQueueDO one = this.getOneAnyhow(wordName);
@@ -150,6 +152,7 @@ public class WordFetchQueueServiceImpl extends ServiceImpl<FetchQueueMapper, Fet
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void saveDerivation(String inputWordName, String fetchWordName) {
         Optional.ofNullable(this.getOneInUnLock(inputWordName)).ifPresent(one -> {
             this.updateById(one.setDerivation(fetchWordName));

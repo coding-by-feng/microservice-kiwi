@@ -21,6 +21,7 @@ import me.fengorz.kiwi.word.api.entity.PronunciationDO;
 import me.fengorz.kiwi.word.biz.mapper.PronunciationMapper;
 import me.fengorz.kiwi.word.biz.service.base.IPronunciationService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 单词例句表
@@ -36,11 +37,13 @@ public class PronunciationServiceImpl extends ServiceImpl<PronunciationMapper, P
     private final PronunciationMapper pronunciationMapper;
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public int blankPronunciationVoice(String wordName) {
         return pronunciationMapper.blankPronunciationVoice(wordName);
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public int deleteByWordName(String wordName) {
         return pronunciationMapper.deleteByWordName(wordName);
     }

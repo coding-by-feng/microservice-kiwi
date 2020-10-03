@@ -41,6 +41,7 @@ import me.fengorz.kiwi.word.biz.service.base.IWordStarListService;
 import me.fengorz.kiwi.word.biz.service.base.IWordStarRelService;
 import me.fengorz.kiwi.word.biz.service.operate.IAsyncArchiveService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -76,6 +77,7 @@ public class WordStarListServiceImpl extends ServiceImpl<WordStarListMapper, Wor
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public boolean updateListByUser(WordStarListDO entity, Integer id, Integer userId) {
         UpdateWrapper<WordStarListDO> updateWrapper =
                 new UpdateWrapper<>(new WordStarListDO().setOwner(userId).setId(id));
@@ -124,6 +126,7 @@ public class WordStarListServiceImpl extends ServiceImpl<WordStarListMapper, Wor
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void putIntoStarList(Integer wordId, Integer listId) {
         LambdaQueryWrapper<WordStarRelDO> queryWrapper = Wrappers.<WordStarRelDO>lambdaQuery()
                 .eq(WordStarRelDO::getListId, listId).eq(WordStarRelDO::getWordId, wordId);
@@ -136,6 +139,7 @@ public class WordStarListServiceImpl extends ServiceImpl<WordStarListMapper, Wor
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void removeStarList(Integer wordId, Integer listId) {
         LambdaQueryWrapper<WordStarRelDO> queryWrapper = new LambdaQueryWrapper<WordStarRelDO>()
                 .eq(WordStarRelDO::getListId, listId).eq(WordStarRelDO::getWordId, wordId);

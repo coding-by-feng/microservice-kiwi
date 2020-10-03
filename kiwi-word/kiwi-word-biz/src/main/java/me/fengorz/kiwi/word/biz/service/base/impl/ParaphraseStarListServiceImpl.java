@@ -36,6 +36,7 @@ import me.fengorz.kiwi.word.biz.service.base.IParaphraseStarListService;
 import me.fengorz.kiwi.word.biz.service.base.IParaphraseStarRelService;
 import me.fengorz.kiwi.word.biz.service.operate.IAsyncArchiveService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -74,6 +75,7 @@ public class ParaphraseStarListServiceImpl extends
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public boolean updateListByUser(ParaphraseStarListDO entity, Integer id, Integer userId) {
         UpdateWrapper<ParaphraseStarListDO> updateWrapper =
                 new UpdateWrapper<>(new ParaphraseStarListDO().setOwner(userId).setId(id));
@@ -105,6 +107,7 @@ public class ParaphraseStarListServiceImpl extends
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void removeParaphraseStar(Integer paraphraseId, Integer listId) {
         LambdaQueryWrapper<ParaphraseStarRelDO> wrapper = new LambdaQueryWrapper<ParaphraseStarRelDO>()
                 .eq(ParaphraseStarRelDO::getListId, listId).eq(ParaphraseStarRelDO::getParaphraseId, paraphraseId);
@@ -117,6 +120,7 @@ public class ParaphraseStarListServiceImpl extends
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void rememberOne(Integer paraphraseId, Integer listId) {
         relService.update(
                 new ParaphraseStarRelDO().setIsRemember(CommonConstants.FLAG_DEL_YES)
@@ -126,6 +130,7 @@ public class ParaphraseStarListServiceImpl extends
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void keepInMind(Integer paraphraseId, Integer listId) {
         relService.update(
                 new ParaphraseStarRelDO().setIsKeepInMind(CommonConstants.FLAG_DEL_YES)
@@ -135,6 +140,7 @@ public class ParaphraseStarListServiceImpl extends
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void forgetOne(Integer paraphraseId, Integer listId) {
         relService.update(
                 new ParaphraseStarRelDO().setIsRemember(CommonConstants.FLAG_DEL_NO)
@@ -144,6 +150,7 @@ public class ParaphraseStarListServiceImpl extends
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void putIntoStarList(Integer paraphraseId, Integer listId) {
         LambdaQueryWrapper<ParaphraseStarRelDO> wrapper = Wrappers.<ParaphraseStarRelDO>lambdaQuery()
                 .eq(ParaphraseStarRelDO::getListId, listId).eq(ParaphraseStarRelDO::getParaphraseId, paraphraseId);

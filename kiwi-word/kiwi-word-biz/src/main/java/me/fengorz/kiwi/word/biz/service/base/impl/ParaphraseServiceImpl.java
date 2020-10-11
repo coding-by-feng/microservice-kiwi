@@ -16,9 +16,11 @@
 package me.fengorz.kiwi.word.biz.service.base.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.RequiredArgsConstructor;
 import me.fengorz.kiwi.common.api.constant.CommonConstants;
+import me.fengorz.kiwi.common.sdk.util.bean.KiwiBeanUtils;
 import me.fengorz.kiwi.word.api.dto.mapper.in.SelectEntityIsCollectDTO;
 import me.fengorz.kiwi.word.api.entity.ParaphraseDO;
 import me.fengorz.kiwi.word.api.vo.detail.ParaphraseVO;
@@ -37,20 +39,25 @@ import java.util.List;
 @Service()
 @RequiredArgsConstructor
 public class ParaphraseServiceImpl extends ServiceImpl<ParaphraseMapper, ParaphraseDO>
-    implements IParaphraseService {
+        implements IParaphraseService {
 
-    private final ParaphraseMapper paraphraseMapper;
+    private final ParaphraseMapper mapper;
 
     @Override
     public Integer countById(Integer id) {
         return this
-            .count(new QueryWrapper<>(new ParaphraseDO().setParaphraseId(id).setIsDel(CommonConstants.FLAG_DEL_NO)));
+                .count(new QueryWrapper<>(new ParaphraseDO().setParaphraseId(id).setIsDel(CommonConstants.FLAG_DEL_NO)));
     }
 
     @Override
     public List<ParaphraseVO> selectParaphraseAndIsCollect(Integer characterId, Integer currentUserId) {
-        return this.paraphraseMapper.selectParaphraseAndIsCollect(
-            new SelectEntityIsCollectDTO().setEntityId(characterId).setOwner(currentUserId));
+        return mapper.selectParaphraseAndIsCollect(
+                new SelectEntityIsCollectDTO().setEntityId(characterId).setOwner(currentUserId));
+    }
+
+    @Override
+    public List<ParaphraseVO> listPhrase(Integer wordId) {
+        return KiwiBeanUtils.convertFrom(mapper.selectList(Wrappers.<ParaphraseDO>lambdaQuery().eq(ParaphraseDO::getWordId, wordId).eq(ParaphraseDO::getIsDel, CommonConstants.FLAG_NO)), ParaphraseVO.class);
     }
 
 }

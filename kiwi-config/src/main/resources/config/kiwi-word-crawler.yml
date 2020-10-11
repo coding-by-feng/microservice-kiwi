@@ -13,6 +13,21 @@ mq:
         queue: word.data.del
         routing:
           cambridge: cambridgeDel
+    phrase:
+      fetch:
+        exchange: phrase
+        queue:
+          runUp: phrase.crawler.runUp
+          real: phrase.crawler.real
+        routing:
+          cambridge:
+            runUp: cambridge.runUp
+            real: cambridge.real
+      remove:
+        exchange: phrase
+        queue: phrase.data.del
+        routing:
+          cambridge: cambridgeDel
     pronunciation:
       fetch:
         exchange: pronunciation

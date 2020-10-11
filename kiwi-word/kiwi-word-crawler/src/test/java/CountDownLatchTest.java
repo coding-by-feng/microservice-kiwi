@@ -1,4 +1,4 @@
-import me.fengorz.kiwi.word.crawler.component.MqSender;
+import me.fengorz.kiwi.vocabulary.crawler.component.MqSender;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;

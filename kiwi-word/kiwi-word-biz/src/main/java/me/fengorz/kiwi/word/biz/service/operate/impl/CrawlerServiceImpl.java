@@ -34,7 +34,7 @@ import me.fengorz.kiwi.common.sdk.util.bean.KiwiBeanUtils;
 import me.fengorz.kiwi.common.sdk.util.lang.collection.KiwiCollectionUtils;
 import me.fengorz.kiwi.common.sdk.util.lang.string.KiwiStringUtils;
 import me.fengorz.kiwi.word.api.common.WordCrawlerConstants;
-import me.fengorz.kiwi.word.api.dto.queue.fetch.*;
+import me.fengorz.kiwi.word.api.dto.queue.result.*;
 import me.fengorz.kiwi.word.api.entity.*;
 import me.fengorz.kiwi.word.biz.service.base.*;
 import me.fengorz.kiwi.word.biz.service.operate.ICrawlerService;
@@ -49,6 +49,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * @Description 爬虫服务
@@ -182,10 +183,80 @@ public class CrawlerServiceImpl implements ICrawlerService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public boolean fetchPronunciation(Integer wordId) {
-        Objects
-                .requireNonNull(pronunciationService
-                        .list(Wrappers.<PronunciationDO>lambdaQuery().eq(PronunciationDO::getWordId, wordId)))
+        Objects.requireNonNull(pronunciationService
+                .list(Wrappers.<PronunciationDO>lambdaQuery().eq(PronunciationDO::getWordId, wordId)))
                 .forEach(this::fetchPronunciationVoice);
+        return true;
+    }
+
+    @Override
+    public boolean handlePhrasesFetchResult(FetchPhraseRunUpResultDTO dto) {
+        for (String phrase : dto.getPhrases()) {
+            // 包含空格说明是词组
+            if (KiwiStringUtils.containsBlank(phrase)) {
+                queueService.startFetchPhrase(phrase, dto.getWord(), dto.getWordId());
+            } else {
+                // 单词队列表不存在插入新记录
+                if (queueService.getOneAnyhow(phrase) == null) {
+                    queueService.startFetch(phrase);
+                }
+            }
+        }
+        Optional.ofNullable(dto.getRelatedWords()).ifPresent(relatedWords -> {
+            for (String relatedWord : relatedWords) {
+                if (queueService.getOneAnyhow(relatedWord) == null) {
+                    queueService.startForceFetchWord(relatedWord);
+                }
+            }
+        });
+        return true;
+    }
+
+    @Override
+    public boolean storePhrasesFetchResult(FetchPhraseResultDTO dto) {
+        // 把关联词组插入队列
+        final Set<String> relatedWords = dto.getRelatedWords();
+        if (KiwiCollectionUtils.isNotEmpty(relatedWords)) {
+            for (String relatedWord : relatedWords) {
+                queueService.startFetch(relatedWord);
+            }
+        }
+
+        final String phrase = dto.getPhrase();
+        WordMainDO wordMain = new WordMainDO().setWordId(seqService.genIntSequence(MapperConstant.T_INS_SEQUENCE))
+                .setWordName(phrase).setInfoType(WordCrawlerConstants.QUEUE_INFO_TYPE_PHRASE);
+        mainService.save(wordMain);
+
+        final List<FetchParaphraseDTO> paraphrases = dto.getFetchParaphraseDTOList();
+        if (KiwiCollectionUtils.isEmpty(paraphrases)) {
+            return false;
+        }
+        for (FetchParaphraseDTO paraphrase : paraphrases) {
+            ParaphraseDO paraphraseDO = new ParaphraseDO();
+            KiwiBeanUtils.copyProperties(paraphrase, paraphraseDO);
+            paraphraseDO.setParaphraseId(seqService.genIntSequence(MapperConstant.T_INS_SEQUENCE));
+            paraphraseDO.setWordId(wordMain.getWordId());
+            paraphraseDO.setCharacterId(0);
+            paraphraseDO.setSerialNumber(0);
+            wordParaphraseService.save(paraphraseDO);
+            Optional.ofNullable(paraphrase.getExampleDTOList()).ifPresent(examples -> {
+                for (FetchParaphraseExampleDTO example : examples) {
+                    ParaphraseExampleDO exampleDO = new ParaphraseExampleDO();
+                    KiwiBeanUtils.copyProperties(example, exampleDO);
+                    exampleDO.setExampleId(seqService.genIntSequence(MapperConstant.T_INS_SEQUENCE));
+                    exampleDO.setParaphraseId(paraphraseDO.getParaphraseId());
+                    exampleDO.setWordId(wordMain.getWordId());
+                    exampleDO.setSerialNumber(0);
+                    exampleService.save(exampleDO);
+                }
+            });
+        }
+
+        Optional.ofNullable(queueService.getOneAnyhow(dto.getQueueId())).ifPresent(queue -> {
+            queue.setWordId(wordMain.getWordId());
+            queueService.updateById(queue);
+        });
+
         return true;
     }
 

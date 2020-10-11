@@ -16,17 +16,13 @@
 package me.fengorz.kiwi.word.biz.service.base.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import me.fengorz.kiwi.common.api.annotation.cache.KiwiCacheKey;
 import me.fengorz.kiwi.common.api.annotation.cache.KiwiCacheKeyPrefix;
-import me.fengorz.kiwi.common.api.constant.CacheConstants;
 import me.fengorz.kiwi.common.sdk.util.bean.KiwiBeanUtils;
 import me.fengorz.kiwi.word.api.common.WordConstants;
 import me.fengorz.kiwi.word.api.entity.CharacterDO;
 import me.fengorz.kiwi.word.api.vo.detail.CharacterVO;
 import me.fengorz.kiwi.word.biz.mapper.CharacterMapper;
 import me.fengorz.kiwi.word.biz.service.base.ICharacterService;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 /**
@@ -38,19 +34,15 @@ import org.springframework.stereotype.Service;
 @Service()
 @KiwiCacheKeyPrefix(WordConstants.CACHE_KEY_PREFIX_CHARACTER.CLASS)
 public class CharacterServiceImpl extends ServiceImpl<CharacterMapper, CharacterDO>
-    implements ICharacterService {
+        implements ICharacterService {
 
     @Override
-    @KiwiCacheKeyPrefix(WordConstants.CACHE_KEY_PREFIX_CHARACTER.METHOD_ID)
-    @Cacheable(cacheNames = WordConstants.CACHE_NAMES, keyGenerator = CacheConstants.CACHE_KEY_GENERATOR_BEAN,
-        unless = "#result == null")
-    public CharacterVO getFromCache(@KiwiCacheKey Integer characterId) {
+    public CharacterVO get(Integer characterId) {
         return KiwiBeanUtils.convertFrom(this.getById(characterId), CharacterVO.class);
     }
 
     @Override
-    @KiwiCacheKeyPrefix(WordConstants.CACHE_KEY_PREFIX_CHARACTER.METHOD_ID)
-    @CacheEvict(cacheNames = WordConstants.CACHE_NAMES, keyGenerator = CacheConstants.CACHE_KEY_GENERATOR_BEAN)
-    public void evict(@KiwiCacheKey Integer characterId) {}
+    public void evict(Integer characterId) {
+    }
 
 }

@@ -20,15 +20,18 @@ import lombok.Data;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 
+import java.io.Serializable;
+
 /**
-* @Author zhanshifeng
+ * @Author zhanshifeng
  * @Date 2020/1/6 9:28 AM
  */
 @Data
 @ToString
 @Accessors(chain = true)
-public class SelectWordStarListResultDTO {
+public class SelectWordStarListResultDTO implements Serializable {
 
+    private static final long serialVersionUID = 9041683408969598287L;
     private String paraphrases;
     private Integer wordId;
     private String wordName;

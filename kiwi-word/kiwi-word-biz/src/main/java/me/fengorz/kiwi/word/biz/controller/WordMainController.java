@@ -20,9 +20,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.api.R;
 import me.fengorz.kiwi.common.api.annotation.log.SysLog;
-import me.fengorz.kiwi.common.api.exception.dfs.DfsOperateDeleteException;
 import me.fengorz.kiwi.common.sdk.controller.BaseController;
 import me.fengorz.kiwi.common.sdk.util.lang.string.KiwiStringUtils;
+import me.fengorz.kiwi.common.sdk.util.time.KiwiDateUtils;
+import me.fengorz.kiwi.word.api.dto.mapper.out.FuzzyQueryResultDTO;
 import me.fengorz.kiwi.word.api.entity.WordMainDO;
 import me.fengorz.kiwi.word.api.vo.detail.WordQueryVO;
 import me.fengorz.kiwi.word.biz.service.base.IWordFetchQueueService;
@@ -31,9 +32,9 @@ import me.fengorz.kiwi.word.biz.service.operate.IOperateService;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotBlank;
 import java.util.List;
-import java.util.Map;
 
 /**
  * 单词主表
@@ -54,18 +55,19 @@ public class WordMainController extends BaseController {
 
     @GetMapping("/removeByWordName/{wordName}")
     // @PreAuthorize("@pms.hasPermission('biz_wordmain_del')")
-    public R<Boolean> removeByWordName(@PathVariable String wordName) throws DfsOperateDeleteException {
-        queueService.flagStartFetchOnAsync(wordName);
+    public R<Boolean> removeByWordName(@PathVariable String wordName) {
+        queueService.startFetchOnAsync(wordName);
         return R.success();
     }
 
     @GetMapping("/query/{wordName}")
-    public R<WordQueryVO> queryWord(@PathVariable("wordName") String wordName) throws DfsOperateDeleteException {
+    public R<WordQueryVO> queryWord(@PathVariable("wordName") String wordName, HttpServletRequest request) {
+        log.info(KiwiStringUtils.format("========>queryWord[{}],[ip={}],[time={}]", wordName, request.getRemoteAddr(), KiwiDateUtils.now()));
         return R.success(wordOperateService.queryWord(wordName));
     }
 
     @GetMapping("/queryById/{wordId}")
-    public R<WordQueryVO> queryWord(@PathVariable Integer wordId) throws DfsOperateDeleteException {
+    public R<WordQueryVO> queryWord(@PathVariable Integer wordId) {
         String wordName = wordMainService.getWordName(wordId);
         if (KiwiStringUtils.isBlank(wordName)) {
             return R.failed();
@@ -75,7 +77,7 @@ public class WordMainController extends BaseController {
 
     @SysLog("模糊查询单词列表")
     @PostMapping("/fuzzyQueryList")
-    public R<List<Map>> fuzzyQueryList(@NotBlank String wordName, Page<WordMainDO> page) {
+    public R<List<FuzzyQueryResultDTO>> fuzzyQueryList(@NotBlank String wordName, Page<WordMainDO> page) {
         return R.success(wordMainService.fuzzyQueryList(page, wordName));
     }
 

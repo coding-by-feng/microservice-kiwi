@@ -17,8 +17,8 @@
 package me.fengorz.kiwi.word.api.feign.factory;
 
 import feign.hystrix.FallbackFactory;
-import me.fengorz.kiwi.word.api.feign.IWordMainAPI;
-import me.fengorz.kiwi.word.api.feign.fallback.WordMainAPIFallback;
+import me.fengorz.kiwi.word.api.feign.IPhraseBizAPI;
+import me.fengorz.kiwi.word.api.feign.fallback.PhraseBizAPIFallback;
 import org.springframework.stereotype.Component;
 
 /**
@@ -26,10 +26,10 @@ import org.springframework.stereotype.Component;
  * @Date 2019/10/30 3:19 PM
  */
 @Component
-public class WordMainFallBackFactory implements FallbackFactory<IWordMainAPI> {
+public class WordMainFallBackFactory implements FallbackFactory<IPhraseBizAPI> {
     @Override
-    public IWordMainAPI create(Throwable throwable) {
-        WordMainAPIFallback remoteWordMainServiceFallback = new WordMainAPIFallback();
+    public IPhraseBizAPI create(Throwable throwable) {
+        PhraseBizAPIFallback remoteWordMainServiceFallback = new PhraseBizAPIFallback();
         remoteWordMainServiceFallback.setThrowable(throwable);
         return remoteWordMainServiceFallback;
     }

@@ -58,8 +58,10 @@ public class WordConstants {
     }
 
     public static final int VARIANT_TYPE_UNKNOWN = 0;
+    public static final String PHRASE_CODE = "phrase";
 
     public static final int REMEMBER_ARCHIVE_TYPE_WORD = 1;
     public static final int REMEMBER_ARCHIVE_TYPE_PARAPHRASE = 2;
     public static final int REMEMBER_ARCHIVE_TYPE_EXAMPLE = 3;
+
 }

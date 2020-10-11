@@ -23,6 +23,7 @@ package me.fengorz.kiwi.common.api.constant;
 public interface CommonConstants {
 
     String EMPTY = "";
+    String SPACING = " ";
     String SYMBOL_DOT = ".";
     String SYMBOL_COMMA = ",";
     String SYMBOL_SQUARE_BRACKET_LEFT = "[";
@@ -31,6 +32,7 @@ public interface CommonConstants {
     String SYMBOL_BACK_SLASH = "\\";
     String SYMBOL_DELIMITER_STR = "_";
     String SYMBOL_LF = "\n";
+    String SYMBOL_PERCENT = "%";
 
     String FLAG_Y = "Y";
     String FLAG_N = "N";

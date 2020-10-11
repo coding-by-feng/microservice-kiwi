@@ -26,9 +26,10 @@ import me.fengorz.kiwi.common.api.constant.CacheConstants;
 import me.fengorz.kiwi.common.api.constant.CommonConstants;
 import me.fengorz.kiwi.common.api.exception.ServiceException;
 import me.fengorz.kiwi.common.sdk.util.bean.KiwiBeanUtils;
-import me.fengorz.kiwi.common.sdk.util.lang.collection.KiwiCollectionUtils;
 import me.fengorz.kiwi.common.sdk.util.lang.string.KiwiStringUtils;
 import me.fengorz.kiwi.word.api.common.WordConstants;
+import me.fengorz.kiwi.word.api.common.WordCrawlerConstants;
+import me.fengorz.kiwi.word.api.dto.mapper.out.FuzzyQueryResultDTO;
 import me.fengorz.kiwi.word.api.entity.WordMainDO;
 import me.fengorz.kiwi.word.api.vo.WordMainVO;
 import me.fengorz.kiwi.word.biz.mapper.WordMainMapper;
@@ -39,11 +40,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.io.Serializable;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * 单词主表
@@ -75,11 +72,17 @@ public class WordMainServiceImpl extends ServiceImpl<WordMainMapper, WordMainDO>
     }
 
     @Override
-    public WordMainVO getOne(String wordName) {
+    public WordMainVO getOne(String wordName, Integer... infoType) {
         try {
-            return KiwiBeanUtils.convertFrom(this.getOne(Wrappers.<WordMainDO>lambdaQuery()
-                            .eq(WordMainDO::getWordName, wordName).eq(WordMainDO::getIsDel, CommonConstants.FLAG_DEL_NO)),
-                    WordMainVO.class);
+            final LambdaQueryWrapper<WordMainDO> query = Wrappers.<WordMainDO>lambdaQuery()
+                    .eq(WordMainDO::getWordName, wordName).eq(WordMainDO::getIsDel, CommonConstants.FLAG_DEL_NO);
+            // 如果指定infoType直接指定查询，如果不指定默认查询单词
+            boolean isNotSpecialize = infoType == null || infoType.length == 0;
+            WordMainDO one = this.getOne(query.clone().eq(WordMainDO::getInfoType, isNotSpecialize ? WordCrawlerConstants.QUEUE_INFO_TYPE_WORD : infoType[0]));
+            if (one == null && isNotSpecialize) {
+                one = this.getOne(query.eq(WordMainDO::getInfoType, WordCrawlerConstants.QUEUE_INFO_TYPE_PHRASE));
+            }
+            return KiwiBeanUtils.convertFrom(one, WordMainVO.class);
         } catch (Exception e) {
             log.error(e.getMessage());
             queueService.flagWordQueryException(wordName);
@@ -97,19 +100,8 @@ public class WordMainServiceImpl extends ServiceImpl<WordMainMapper, WordMainDO>
     }
 
     @Override
-    public List<Map> fuzzyQueryList(Page page, String wordName) {
-        LambdaQueryWrapper queryWrapper = new LambdaQueryWrapper<WordMainDO>()
-                .likeRight(WordMainDO::getWordName, wordName).eq(WordMainDO::getIsDel, CommonConstants.FLAG_DEL_NO)
-                .orderByAsc(WordMainDO::getWordName).select(WordMainDO::getWordName);
-
-        List<WordMainDO> records = this.page(page, queryWrapper).getRecords();
-        if (KiwiCollectionUtils.isEmpty(records)) {
-            return Collections.emptyList();
-        }
-
-        return records.parallelStream()
-                .map(wordMainDO -> KiwiCollectionUtils.putAndReturn(new HashMap<>(), VALUE, wordMainDO.getWordName()))
-                .collect(Collectors.toList());
+    public List<FuzzyQueryResultDTO> fuzzyQueryList(Page page, String wordName) {
+        return mapper.fuzzyQuery(page, wordName + CommonConstants.SYMBOL_PERCENT).getRecords();
     }
 
     @Override
@@ -121,6 +113,7 @@ public class WordMainServiceImpl extends ServiceImpl<WordMainMapper, WordMainDO>
     @KiwiCacheKeyPrefix(WordConstants.CACHE_KEY_PREFIX_WORD_MAIN.METHOD_ID)
     @CacheEvict(cacheNames = WordConstants.CACHE_NAMES, keyGenerator = CacheConstants.CACHE_KEY_GENERATOR_BEAN)
     public void evictById(@KiwiCacheKey Integer id) {
+
     }
 
     @Override
@@ -130,7 +123,8 @@ public class WordMainServiceImpl extends ServiceImpl<WordMainMapper, WordMainDO>
 
     @Override
     public List<WordMainDO> listDirtyData(Integer wordId) {
-        return this.list(Wrappers.<WordMainDO>lambdaQuery().eq(WordMainDO::getWordName, this.getWordName(wordId)));
+        WordMainDO one = this.getById(wordId);
+        return this.list(Wrappers.<WordMainDO>lambdaQuery().eq(WordMainDO::getWordName, one.getWordName()).eq(WordMainDO::getInfoType, one.getInfoType()));
     }
 
     @Override

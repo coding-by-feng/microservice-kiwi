@@ -87,4 +87,6 @@ public class FetchQueueDO extends Model<FetchQueueDO> {
 
     private Integer isIntoCache;
 
+    private Integer infoType;
+
 }

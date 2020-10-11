@@ -34,6 +34,9 @@ public interface IParaphraseService extends IService<ParaphraseDO> {
 
     Integer countById(Integer id);
 
+    @Deprecated
     List<ParaphraseVO> selectParaphraseAndIsCollect(Integer characterId, Integer currentUserId);
+
+    List<ParaphraseVO> listPhrase(Integer wordId);
 
 }

@@ -23,7 +23,9 @@ import me.fengorz.kiwi.common.api.annotation.log.SysLog;
 import me.fengorz.kiwi.common.api.constant.CommonConstants;
 import me.fengorz.kiwi.common.sdk.controller.BaseController;
 import me.fengorz.kiwi.word.api.dto.queue.RemovePronunciatioinMqDTO;
-import me.fengorz.kiwi.word.api.dto.queue.fetch.FetchWordResultDTO;
+import me.fengorz.kiwi.word.api.dto.queue.result.FetchPhraseResultDTO;
+import me.fengorz.kiwi.word.api.dto.queue.result.FetchPhraseRunUpResultDTO;
+import me.fengorz.kiwi.word.api.dto.queue.result.FetchWordResultDTO;
 import me.fengorz.kiwi.word.api.entity.FetchQueueDO;
 import me.fengorz.kiwi.word.biz.service.base.IWordFetchQueueService;
 import me.fengorz.kiwi.word.biz.service.operate.ICleanerService;
@@ -64,16 +66,16 @@ public class WordFetchController extends BaseController {
         return R.success(queueService.getOneInUnLock(wordName));
     }
 
-    @GetMapping(value = "/pageQueue/{status}/{current}/{size}")
+    @GetMapping(value = "/pageQueue/{status}/{current}/{size}/{infoType}")
     public R<List<FetchQueueDO>> pageQueue(@PathVariable Integer status, @PathVariable Integer current,
-                                           @PathVariable Integer size) {
-        return R.success(queueService.page2List(status, current, size, CommonConstants.FLAG_NO));
+                                           @PathVariable Integer size, @PathVariable Integer infoType) {
+        return R.success(queueService.page2List(status, current, size, CommonConstants.FLAG_NO, infoType));
     }
 
-    @GetMapping(value = "/pageQueueLockIn/{status}/{current}/{size}")
+    @GetMapping(value = "/pageQueueLockIn/{status}/{current}/{size}/{infoType}")
     public R<List<FetchQueueDO>> pageQueueLockIn(@PathVariable Integer status, @PathVariable Integer current,
-                                                 @PathVariable Integer size) {
-        return R.success(queueService.page2List(status, current, size, CommonConstants.FLAG_YES));
+                                                 @PathVariable Integer size, @PathVariable Integer infoType) {
+        return R.success(queueService.page2List(status, current, size, CommonConstants.FLAG_YES, infoType));
     }
 
     @GetMapping(value = "/listNotIntoCache")
@@ -117,6 +119,17 @@ public class WordFetchController extends BaseController {
     public R<Boolean> storeResult(@RequestBody @Valid FetchWordResultDTO dto) {
         return R.success(crawlerService.storeFetchWordResult(dto));
     }
+
+    @PostMapping("/handlePhrasesFetchResult")
+    public R<Boolean> handlePhrasesFetchResult(@RequestBody @Valid FetchPhraseRunUpResultDTO dto) {
+        return R.success(crawlerService.handlePhrasesFetchResult(dto));
+    }
+
+    @PostMapping("/storePhrasesFetchResult")
+    public R<Boolean> storePhrasesFetchResult(@RequestBody FetchPhraseResultDTO dto) {
+        return R.success(crawlerService.storePhrasesFetchResult(dto));
+    }
+
 
     @GetMapping("/fetchPronunciation/{wordId}")
     public R<Boolean> fetchPronunciation(@PathVariable Integer wordId) {

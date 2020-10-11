@@ -20,11 +20,11 @@ package me.fengorz.kiwi.word.biz.service.base;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
+import me.fengorz.kiwi.word.api.dto.mapper.out.FuzzyQueryResultDTO;
 import me.fengorz.kiwi.word.api.entity.WordMainDO;
 import me.fengorz.kiwi.word.api.vo.WordMainVO;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * 单词主表
@@ -34,11 +34,11 @@ import java.util.Map;
  */
 public interface IWordMainService extends IService<WordMainDO> {
 
-    WordMainVO getOne(String wordName);
+    WordMainVO getOne(String wordName, Integer... infoType);
 
     String getWordName(Integer id);
 
-    List<Map> fuzzyQueryList(Page page, String wordName);
+    List<FuzzyQueryResultDTO> fuzzyQueryList(Page page, String wordName);
 
     boolean isExist(String wordName);
 

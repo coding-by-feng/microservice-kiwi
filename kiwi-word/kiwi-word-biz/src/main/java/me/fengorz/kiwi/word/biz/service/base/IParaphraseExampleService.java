@@ -34,6 +34,9 @@ public interface IParaphraseExampleService extends IService<ParaphraseExampleDO>
 
     Integer countById(Integer id);
 
+    List<ParaphraseExampleVO> listExamples(Integer paraphraseId);
+
+    @Deprecated
     List<ParaphraseExampleVO> selectExampleAndIsCollect(Integer owner, Integer paraphraseId);
 
 }

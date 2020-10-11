@@ -17,7 +17,7 @@
 package me.fengorz.kiwi.word.biz.service.operate;
 
 import me.fengorz.kiwi.common.api.annotation.cache.KiwiCacheKey;
-import me.fengorz.kiwi.word.api.dto.queue.fetch.FetchWordReplaceDTO;
+import me.fengorz.kiwi.word.api.dto.queue.result.FetchWordReplaceDTO;
 import me.fengorz.kiwi.word.api.entity.WordMainDO;
 import me.fengorz.kiwi.word.api.vo.detail.ParaphraseVO;
 import me.fengorz.kiwi.word.api.vo.detail.WordQueryVO;
@@ -27,9 +27,9 @@ import me.fengorz.kiwi.word.api.vo.detail.WordQueryVO;
  */
 public interface IOperateService {
 
-    WordQueryVO queryWord(String wordName);
-
     /* paraphrase methods begin */
+
+    WordQueryVO queryWord(@KiwiCacheKey String wordName, Integer... intoType);
 
     ParaphraseVO findWordParaphraseVO(Integer paraphraseId);
 

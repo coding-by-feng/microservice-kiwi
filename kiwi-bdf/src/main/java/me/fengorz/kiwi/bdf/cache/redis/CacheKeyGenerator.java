@@ -16,15 +16,6 @@
 
 package me.fengorz.kiwi.bdf.cache.redis;
 
-import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.SortedMap;
-import java.util.TreeMap;
-
-import org.springframework.cache.interceptor.SimpleKeyGenerator;
-
 import lombok.NoArgsConstructor;
 import me.fengorz.kiwi.common.api.annotation.cache.KiwiCacheKey;
 import me.fengorz.kiwi.common.api.annotation.cache.KiwiCacheKeyPrefix;
@@ -33,6 +24,14 @@ import me.fengorz.kiwi.common.sdk.util.lang.array.KiwiArrayUtils;
 import me.fengorz.kiwi.common.sdk.util.lang.object.KiwiObjectUtils;
 import me.fengorz.kiwi.common.sdk.util.lang.string.KiwiStringUtils;
 import me.fengorz.kiwi.common.sdk.util.validate.KiwiAssertUtils;
+import org.springframework.cache.interceptor.SimpleKeyGenerator;
+
+import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 /**
  * @Description 自定义redis key的生成器
@@ -57,14 +56,18 @@ public class CacheKeyGenerator extends SimpleKeyGenerator {
         }
 
         KiwiAssertUtils.serviceEmpty(prefix, "Class[{}], Method[{}]: CacheKeyPrefix cannot be null!", classKeyPrefix,
-            methodKeyPrefix);
+                methodKeyPrefix);
 
         Parameter[] parameters = method.getParameters();
         if (KiwiArrayUtils.isNotEmpty(parameters)) {
             SortedMap<Integer, Object> sortedMap = new TreeMap<>();
-            int i = 0;
+            int i = -1;
             for (Parameter parameter : parameters) {
-                Object param = params[i++];
+                i++;
+                if (i >= params.length || parameter == null) {
+                    continue;
+                }
+                Object param = params[i];
                 Optional.ofNullable(parameter.getAnnotation(KiwiCacheKey.class)).ifPresent(kiwiCacheKey -> {
                     if (kiwiCacheKey.nullable() || KiwiObjectUtils.isNotEmpty(param)) {
                         sortedMap.put(kiwiCacheKey.value(), param);

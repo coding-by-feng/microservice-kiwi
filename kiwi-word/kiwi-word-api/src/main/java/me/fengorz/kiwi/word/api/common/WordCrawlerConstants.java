@@ -38,6 +38,10 @@ public interface WordCrawlerConstants {
     int STATUS_DEL_PRONUNCIATION_FAIL = -4;
     /*下载单词发音文件失败*/
     int STATUS_TO_FETCH_PRONUNCIATION_FAIL = -5;
+    /*抓取单词的关联词组失败*/
+    int STATUS_FETCH_RELATED_PHRASE_FAIL = -6;
+    /*抓取词组失败*/
+    int STATUS_FETCH_PHRASE_FAIL = -7;
 
     /*待抓取*/
     int STATUS_TO_FETCH = 0;
@@ -57,8 +61,11 @@ public interface WordCrawlerConstants {
     int STATUS_DOING_FETCH_PRONUNCIATION = 30;
     /*删除单词基础数据失败, 这里失败之后爬虫还是会走后面的流程*/
     int STATUS_DEL_BASE_FAIL = 100;
-    /*单词数据抓取完毕*/
+    /*单词数据抓取完毕，待抓取其衍生的词组*/
     int STATUS_ALL_SUCCESS = 200;
+    /*单词的其他衍生词组已被记录到队列表（不考虑衍生词组是否也被完全爬虫完毕）*/
+    int STATUS_TO_FETCH_PHRASE = 201;
+    int STATUS_PERFECT_SUCCESS = 666;
 
     int WORD_MAX_FETCH_LIMITED_TIME = 100;
 
@@ -73,5 +80,13 @@ public interface WordCrawlerConstants {
 
     String PRONUNCIATION_TYPE_UK = "UK";
     String PRONUNCIATION_TYPE_US = "US";
+
+    int QUEUE_INFO_TYPE_WORD = 1;
+    int QUEUE_INFO_TYPE_PHRASE = 2;
+
+    String PHRASE_FETCH_VERBOSE_IDIOM = " idiom";
+    int PHRASE_FETCH_VERBOSE_IDIOM_LENGTH = 6;
+    String PHRASE_FETCH_VERBOSE_MEAN = "的意思";
+    int PHRASE_FETCH_VERBOSE_MEAN_LENGTH = 3;
 
 }

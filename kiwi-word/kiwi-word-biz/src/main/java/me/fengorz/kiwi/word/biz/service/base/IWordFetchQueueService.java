@@ -33,13 +33,21 @@ public interface IWordFetchQueueService extends IService<FetchQueueDO> {
 
     boolean lock(String wordName);
 
-    void flagStartFetchOnAsync(String wordName);
+    void startFetchOnAsync(String wordName);
+
+    void startFetchPhraseOnAsync(String phrase, String derivation, Integer wordId);
+
+    void startFetch(String wordName);
+
+    void startForceFetchWord(String wordName);
+
+    void startFetchPhrase(String phrase, String word, Integer wordId);
 
     void flagFetchBaseFinish(Integer queueId, Integer wordId);
 
     void flagWordQueryException(String wordName);
 
-    List<FetchQueueDO> page2List(Integer status, Integer current, Integer size, Integer isLock);
+    List<FetchQueueDO> page2List(Integer status, Integer current, Integer size, Integer isLock, Integer infoType);
 
     List<FetchQueueDO> listNotIntoCache();
 

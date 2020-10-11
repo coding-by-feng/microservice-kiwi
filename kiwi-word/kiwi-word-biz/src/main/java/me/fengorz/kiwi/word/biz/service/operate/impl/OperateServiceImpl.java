@@ -34,7 +34,8 @@ import me.fengorz.kiwi.common.sdk.util.lang.collection.KiwiCollectionUtils;
 import me.fengorz.kiwi.common.sdk.util.lang.string.KiwiStringUtils;
 import me.fengorz.kiwi.common.sdk.util.validate.KiwiAssertUtils;
 import me.fengorz.kiwi.word.api.common.WordConstants;
-import me.fengorz.kiwi.word.api.dto.queue.fetch.FetchWordReplaceDTO;
+import me.fengorz.kiwi.word.api.common.WordCrawlerConstants;
+import me.fengorz.kiwi.word.api.dto.queue.result.FetchWordReplaceDTO;
 import me.fengorz.kiwi.word.api.entity.*;
 import me.fengorz.kiwi.word.api.vo.ParaphraseExampleVO;
 import me.fengorz.kiwi.word.api.vo.WordMainVO;
@@ -51,6 +52,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -92,9 +94,9 @@ public class OperateServiceImpl implements IOperateService {
     @KiwiCacheKeyPrefix(WordConstants.CACHE_KEY_PREFIX_OPERATE.METHOD_WORD_NAME)
     @Cacheable(cacheNames = WordConstants.CACHE_NAMES, keyGenerator = CacheConstants.CACHE_KEY_GENERATOR_BEAN,
             unless = "#result == null")
-    public WordQueryVO queryWord(@KiwiCacheKey String wordName) {
+    public WordQueryVO queryWord(@KiwiCacheKey String wordName, Integer... infoType) {
         WordQueryVO vo = new WordQueryVO();
-        WordMainDO word = mainService.getOne(wordName);
+        WordMainDO word = mainService.getOne(wordName, infoType);
         // if you can't find the result after the tense is determined, insert a record into the queue to be fetched
         if (word == null) {
             Integer sourceWordId = null;
@@ -105,16 +107,27 @@ public class OperateServiceImpl implements IOperateService {
             }
             if (sourceWordId == null) {
                 // 异步爬虫抓取，插入队列表
-                fetchQueueService.flagStartFetchOnAsync(wordName);
+                fetchQueueService.startFetchOnAsync(wordName);
             } else {
-                final String name = mainService.getWordName(sourceWordId);
-                if (KiwiStringUtils.isNotBlank(name)) {
-                    return this.queryWord(name);
-                }
+                WordMainDO source = mainService.getById(sourceWordId);
+                return this.queryWord(source.getWordName(), source.getInfoType());
             }
         }
 
         KiwiAssertUtils.resourceNotNull(word, "No results for [{}]!", wordName);
+
+        // 如果是词组的话
+        if (word.getInfoType() == WordCrawlerConstants.QUEUE_INFO_TYPE_PHRASE) {
+            List<CharacterVO> characterVOList = new LinkedList<>();
+            characterVOList.add(new CharacterVO().setCharacterCode(WordConstants.PHRASE_CODE).setCharacterId(0)
+                    .setParaphraseVOList(new LinkedList<>()).setPronunciationVOList(new LinkedList<>()));
+            for (ParaphraseVO paraphraseVO : paraphraseService.listPhrase(word.getWordId())) {
+                paraphraseVO.setExampleVOList(exampleService.listExamples(paraphraseVO.getParaphraseId()));
+                characterVOList.get(0).getParaphraseVOList().add(paraphraseVO);
+            }
+            vo.setCharacterVOList(characterVOList);
+            return vo.setWordName(wordName).setWordId(word.getWordId());
+        }
 
         vo.setWordId(word.getWordId());
         vo.setWordName(word.getWordName());
@@ -202,7 +215,7 @@ public class OperateServiceImpl implements IOperateService {
             if (exampleVOList == null) {
                 continue;
             }
-            vo.setParaphraseExampleVOList(exampleVOList);
+            vo.setExampleVOList(exampleVOList);
         }
         return paraphraseVOList;
     }
@@ -241,13 +254,17 @@ public class OperateServiceImpl implements IOperateService {
                 exampleVOList.add(exampleVO);
             });
         }
-        vo.setParaphraseExampleVOList(exampleVOList);
+        vo.setExampleVOList(exampleVOList);
         vo.setWordName(mainService.getWordName(paraphrase.getWordId()));
         vo.setCodes(paraphrase.getCodes());
 
-        CharacterVO characterVO = characterService.getFromCache(paraphrase.getCharacterId());
-        vo.setWordCharacter(characterVO.getCharacterCode());
-        vo.setWordLabel(characterVO.getTag());
+        CharacterVO characterVO = characterService.get(paraphrase.getCharacterId());
+        if (characterVO != null) {
+            vo.setWordCharacter(characterVO.getCharacterCode());
+            vo.setWordLabel(characterVO.getTag());
+        } else {
+            vo.setWordCharacter(WordConstants.PHRASE_CODE);
+        }
 
         List<ParaphrasePhraseDO> phraseList = phraseService.list(Wrappers.<ParaphrasePhraseDO>lambdaQuery().eq(ParaphrasePhraseDO::getParaphraseId, paraphrase.getParaphraseId())
                 .eq(ParaphrasePhraseDO::getIsValid, CommonConstants.FLAG_YES));
@@ -255,6 +272,9 @@ public class OperateServiceImpl implements IOperateService {
             vo.setPhraseList(phraseList.stream().map(ParaphrasePhraseDO::getPhrase).collect(Collectors.toList()));
         }
 
+        if (characterVO == null) {
+            return vo.setPronunciationVOList(new LinkedList<>());
+        }
         List<PronunciationDO> pronunciationList = pronunciationService
                 .list(new QueryWrapper<>(new PronunciationDO().setCharacterId(characterVO.getCharacterId())));
 

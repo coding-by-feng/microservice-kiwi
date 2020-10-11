@@ -65,7 +65,7 @@ public class ParaphraseVO implements Serializable {
 
     private Boolean isOverlength;
 
-    private List<ParaphraseExampleVO> paraphraseExampleVOList;
+    private List<ParaphraseExampleVO> exampleVOList;
 
     private List<PronunciationVO> pronunciationVOList;
 

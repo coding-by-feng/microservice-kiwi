@@ -1,5 +1,5 @@
 import me.fengorz.kiwi.common.sdk.util.log.KiwiLogUtils;
-import me.fengorz.kiwi.word.api.dto.queue.fetch.FetchWordResultDTO;
+import me.fengorz.kiwi.word.api.dto.queue.result.FetchWordResultDTO;
 import me.fengorz.kiwi.word.api.entity.FetchQueueDO;
 import org.apache.commons.lang3.StringUtils;
 

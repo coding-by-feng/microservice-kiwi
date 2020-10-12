@@ -209,9 +209,10 @@ public class WordFetchQueueServiceImpl extends ServiceImpl<FetchQueueMapper, Fet
      * @return
      */
     @Override
-    public FetchQueueDO getOneInUnLock(String wordName) {
+    public FetchQueueDO getOneInUnLock(String wordName, Integer... infoType) {
         return this.getOne(Wrappers.<FetchQueueDO>lambdaQuery().eq(FetchQueueDO::getWordName, wordName)
-                .eq(FetchQueueDO::getIsLock, CommonConstants.FLAG_NO));
+                .eq(FetchQueueDO::getIsLock, CommonConstants.FLAG_NO)
+                .eq(FetchQueueDO::getInfoType, infoType == null || infoType.length == 0 ? WordCrawlerConstants.QUEUE_INFO_TYPE_WORD : infoType[0]));
     }
 
     @Override
@@ -227,8 +228,9 @@ public class WordFetchQueueServiceImpl extends ServiceImpl<FetchQueueMapper, Fet
      * @return
      */
     @Override
-    public FetchQueueDO getOneAnyhow(String wordName) {
-        return this.getOne(Wrappers.<FetchQueueDO>lambdaQuery().eq(FetchQueueDO::getWordName, wordName));
+    public FetchQueueDO getOneAnyhow(String wordName, Integer... infoType) {
+        return this.getOne(Wrappers.<FetchQueueDO>lambdaQuery().eq(FetchQueueDO::getWordName, wordName)
+                .eq(FetchQueueDO::getInfoType, infoType == null || infoType.length == 0 ? WordCrawlerConstants.QUEUE_INFO_TYPE_WORD : infoType[0]));
     }
 
     @Override
@@ -236,6 +238,7 @@ public class WordFetchQueueServiceImpl extends ServiceImpl<FetchQueueMapper, Fet
         return this.getOne(Wrappers.<FetchQueueDO>lambdaQuery().eq(FetchQueueDO::getQueueId, queueId));
     }
 
+    @Deprecated
     private boolean isExist(String wordName) {
         return this.getOneInUnLock(wordName) != null;
     }

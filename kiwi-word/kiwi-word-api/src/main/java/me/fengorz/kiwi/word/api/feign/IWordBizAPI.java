@@ -70,14 +70,12 @@ public interface IWordBizAPI {
     @GetMapping(WORD_FETCH_QUEUE + "/removeWord/{queueId}")
     R<List<RemovePronunciatioinMqDTO>> removeWord(@PathVariable Integer queueId);
 
+    @Deprecated
     @PostMapping(WORD_FETCH_QUEUE + "/lock")
     R<Boolean> lock(@RequestParam String wordName);
 
     @PostMapping(WORD_FETCH_QUEUE + "/updateByWordName")
     R<Boolean> updateByWordName(@RequestBody FetchQueueDO queueDO);
-
-    @PostMapping(WORD_FETCH_QUEUE + "/invalid")
-    R<Boolean> invalid(@RequestParam String wordName);
 
     @GetMapping(WORD_MAIN + "/listOverlapInUnLock")
     R<List<String>> listOverlapInUnLock();

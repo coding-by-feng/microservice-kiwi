@@ -105,12 +105,6 @@ public class WordBizAPIFallback implements IWordBizAPI {
     }
 
     @Override
-    public R<Boolean> invalid(String wordName) {
-        log.error(throwable.getCause().getMessage());
-        return R.feignCallFailed(throwable.getMessage());
-    }
-
-    @Override
     public R<Boolean> lock(String wordName) {
         log.error(throwable.getCause().getMessage());
         return R.feignCallFailed(throwable.getMessage());

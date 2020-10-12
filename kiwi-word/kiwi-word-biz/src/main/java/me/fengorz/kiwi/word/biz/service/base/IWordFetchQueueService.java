@@ -31,6 +31,7 @@ public interface IWordFetchQueueService extends IService<FetchQueueDO> {
     @Deprecated
     boolean invalid(String wordName);
 
+    @Deprecated
     boolean lock(String wordName);
 
     void startFetchOnAsync(String wordName);
@@ -51,13 +52,21 @@ public interface IWordFetchQueueService extends IService<FetchQueueDO> {
 
     List<FetchQueueDO> listNotIntoCache();
 
+    @Deprecated
     void saveDerivation(String inputWordName, String fetchWordName);
 
-    FetchQueueDO getOneInUnLock(String wordName);
+    /**
+     * 默认查单词
+     *
+     * @param wordName
+     * @param infoType
+     * @return
+     */
+    FetchQueueDO getOneInUnLock(String wordName, Integer... infoType);
 
     FetchQueueDO getOneInUnLock(Integer queueId);
 
-    FetchQueueDO getOneAnyhow(String wordName);
+    FetchQueueDO getOneAnyhow(String wordName, Integer... infoType);
 
     FetchQueueDO getOneAnyhow(Integer queueId);
 

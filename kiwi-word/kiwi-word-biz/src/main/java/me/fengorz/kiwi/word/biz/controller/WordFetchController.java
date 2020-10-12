@@ -103,12 +103,14 @@ public class WordFetchController extends BaseController {
                 new QueryWrapper<>(new FetchQueueDO().setWordName(wordFetchQueue.getWordName()))));
     }
 
+    @Deprecated
     @PostMapping("/invalid")
     // @PreAuthorize("@pms.hasPermission('queue_wordfetchqueue_del')")
     public R<Boolean> invalid(@RequestParam @NotBlank String wordName) {
         return R.auto(queueService.invalid(wordName));
     }
 
+    @Deprecated
     @PostMapping("/lock")
     // @PreAuthorize("@pms.hasPermission('queue_wordfetchqueue_del')")
     public R<Boolean> lock(@RequestParam @NotBlank String wordName) {

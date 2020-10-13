@@ -99,12 +99,7 @@ public class OperateServiceImpl implements IOperateService {
         WordMainDO word = mainService.getOne(wordName, infoType);
         // if you can't find the result after the tense is determined, insert a record into the queue to be fetched
         if (word == null) {
-            Integer sourceWordId = null;
-            List<Integer> list = mainVariantService.getWordId(wordName);
-            if (list != null) {
-                KiwiAssertUtils.isTrue(list.size() == 1, "Multiple results for [{}]!", wordName);
-                sourceWordId = list.get(0);
-            }
+            Integer sourceWordId = mainVariantService.getWordId(wordName);
             if (sourceWordId == null) {
                 // 异步爬虫抓取，插入队列表
                 fetchQueueService.startFetchOnAsync(wordName);

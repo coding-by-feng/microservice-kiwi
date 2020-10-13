@@ -59,7 +59,7 @@ public class RemovePhraseProducer extends AbstractProducer implements IProducer 
         queue.setFetchStatus(WordCrawlerConstants.STATUS_DOING_DEL_BASE);
         queue.setIsIntoCache(CommonConstants.FLAG_NO);
         if (Optional.of(bizAPI.updateQueueById(queue)).get().isSuccess()) {
-            sender.removeWord(new RemoveMqDTO().setQueueId(queue.getQueueId()));
+            sender.removePhrase(new RemoveMqDTO().setQueueId(queue.getQueueId()));
         }
     }
 

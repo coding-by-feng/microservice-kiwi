@@ -62,7 +62,7 @@ public class WordMainController extends BaseController {
 
     @GetMapping("/query/{wordName}")
     public R<WordQueryVO> queryWord(@PathVariable("wordName") String wordName, HttpServletRequest request) {
-        log.info(KiwiStringUtils.format("========>queryWord[{}],[ip={}],[time={}]", wordName, request.getRemoteAddr(), KiwiDateUtils.now()));
+        log.info(KiwiStringUtils.format("========>queryWord[{}],[time={}]", wordName, request.getRemoteAddr(), KiwiDateUtils.now()));
         return R.success(wordOperateService.queryWord(wordName));
     }
 

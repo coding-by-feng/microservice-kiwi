@@ -92,7 +92,7 @@ public interface IBizAPI {
     @PostMapping(WORD_FETCH_QUEUE + "/storePhrasesFetchResult")
     R<Boolean> storePhrasesFetchResult(@RequestBody FetchPhraseResultDTO dto);
 
-    @GetMapping("/query/{wordName}")
+    @GetMapping(WORD_MAIN + "/query/{wordName}")
     R<WordQueryVO> queryWord(@PathVariable String wordName);
 
 }

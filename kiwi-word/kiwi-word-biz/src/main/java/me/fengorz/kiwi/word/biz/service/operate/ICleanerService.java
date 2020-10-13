@@ -30,4 +30,5 @@ public interface ICleanerService {
 
     List<RemovePronunciatioinMqDTO> removeWord( Integer queueId);
 
+    boolean removePhrase(Integer queueId);
 }

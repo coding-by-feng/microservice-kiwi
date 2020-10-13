@@ -25,6 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.fastdfs.service.IDfsService;
 import me.fengorz.kiwi.common.sdk.util.lang.collection.KiwiCollectionUtils;
 import me.fengorz.kiwi.common.sdk.util.lang.string.KiwiStringUtils;
+import me.fengorz.kiwi.word.api.common.WordCrawlerConstants;
 import me.fengorz.kiwi.word.api.dto.queue.RemovePronunciatioinMqDTO;
 import me.fengorz.kiwi.word.api.dto.queue.result.FetchWordReplaceDTO;
 import me.fengorz.kiwi.word.api.entity.*;
@@ -88,10 +89,10 @@ public class CleanerService implements ICleanerService {
             String derivation = queue.getDerivation();
             List<WordMainDO> list = new LinkedList<>();
             if (KiwiStringUtils.equals(wordName, derivation)) {
-                list.addAll(mainService.list(wordName));
+                list.addAll(mainService.list(wordName, WordCrawlerConstants.QUEUE_INFO_TYPE_WORD));
             } else {
                 // 如果所查单词和单词的原型不同的话
-                list.addAll(mainService.list(derivation));
+                list.addAll(mainService.list(derivation, WordCrawlerConstants.QUEUE_INFO_TYPE_WORD));
             }
             if (KiwiCollectionUtils.isEmpty(list)) {
                 return;
@@ -107,9 +108,30 @@ public class CleanerService implements ICleanerService {
         return result;
     }
 
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public boolean removePhrase(Integer queueId) {
+        Optional.ofNullable(queueService.getOneAnyhow(queueId)).ifPresent(queue -> {
+            String wordName = queue.getWordName();
+            List<WordMainDO> list = new LinkedList<>();
+            list.addAll(mainService.list(wordName, WordCrawlerConstants.QUEUE_INFO_TYPE_PHRASE));
+            if (KiwiCollectionUtils.isEmpty(list)) {
+                return;
+            }
+            for (WordMainDO wordMainDO : list) {
+                Integer wordId = wordMainDO.getWordId();
+                this.evictAll(wordMainDO, wordName);
+                mainService.remove(Wrappers.<WordMainDO>lambdaQuery().eq(WordMainDO::getWordName, wordName).eq(WordMainDO::getInfoType, WordCrawlerConstants.QUEUE_INFO_TYPE_PHRASE));
+                variantService.delByWordId(wordId);
+                paraphraseService.delByWordId(wordId);
+            }
+        });
+        return true;
+    }
+
     private List<RemovePronunciatioinMqDTO> subRemoveWord(WordMainDO wordMainDO) {
         final String wordName = wordMainDO.getWordName();
-        mainService.remove(Wrappers.<WordMainDO>lambdaQuery().eq(WordMainDO::getWordName, wordName));
+        mainService.remove(Wrappers.<WordMainDO>lambdaQuery().eq(WordMainDO::getWordName, wordName).eq(WordMainDO::getInfoType, WordCrawlerConstants.QUEUE_INFO_TYPE_WORD));
         variantService.remove(Wrappers.<WordMainVariantDO>lambdaQuery().eq(WordMainVariantDO::getVariantName, wordName));
         operateService.cacheReplace(wordName,
                 operateService.getCacheReplace(wordName).setOldRelWordId(wordMainDO.getWordId()));

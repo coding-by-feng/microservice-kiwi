@@ -21,6 +21,7 @@ package me.fengorz.kiwi.vocabulary.crawler.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
 import lombok.extern.slf4j.Slf4j;
+import me.fengorz.kiwi.common.api.constant.CommonConstants;
 import me.fengorz.kiwi.common.sdk.util.lang.collection.KiwiCollectionUtils;
 import me.fengorz.kiwi.common.sdk.util.lang.string.KiwiStringUtils;
 import me.fengorz.kiwi.common.sdk.util.validate.KiwiAssertUtils;
@@ -99,22 +100,18 @@ public class JsoupServiceImpl implements IJsoupService {
     @Override
     public FetchWordResultDTO fetchWordInfo(FetchWordMqDTO dto)
             throws JsoupFetchResultException, JsoupFetchConnectException, JsoupFetchPronunciationException {
-        String word = dto.getWord();
-        if (word.contains("/")) {
-            word = word.replaceAll("/", "-").replaceAll(" ", "-");
-        }
-
+        final String finalWord = dto.getWord();
         FetchWordResultDTO result = null;
         try {
-            this.paraphraseSerialNumMap.put(word, 1);
-            this.exampleSerialNumMap.put(word, 1);
-            result = subFetch(WordCrawlerConstants.URL_CAMBRIDGE_FETCH_CHINESE, word);
+            this.paraphraseSerialNumMap.put(finalWord, 1);
+            this.exampleSerialNumMap.put(finalWord, 1);
+            result = subFetch(WordCrawlerConstants.URL_CAMBRIDGE_FETCH_CHINESE, finalWord);
         } catch (JsoupFetchConnectException | JsoupFetchResultException | JsoupFetchPronunciationException e) {
             log.error(e.getMessage());
-            return result = subFetch(WordCrawlerConstants.URL_CAMBRIDGE_FETCH_ENGLISH, word);
+            return result = subFetch(WordCrawlerConstants.URL_CAMBRIDGE_FETCH_ENGLISH, finalWord);
         } finally {
-            this.paraphraseSerialNumMap.remove(word);
-            this.exampleSerialNumMap.remove(word);
+            this.paraphraseSerialNumMap.remove(finalWord);
+            this.exampleSerialNumMap.remove(finalWord);
         }
         return result;
     }
@@ -122,14 +119,14 @@ public class JsoupServiceImpl implements IJsoupService {
     @Override
     public FetchPhraseRunUpResultDTO fetchPhraseRunUp(FetchPhraseRunUpMqDTO dto) throws JsoupFetchConnectException {
         String wordTmp = dto.getWord();
-        if (wordTmp.contains("/")) {
-            wordTmp = wordTmp.replaceAll("/", "-").replaceAll(" ", "-");
+        if (wordTmp.contains(CommonConstants.SYMBOL_FORWARD_SLASH)) {
+            wordTmp = wordTmp.replaceAll(CommonConstants.SYMBOL_FORWARD_SLASH, CommonConstants.SYMBOL_RAIL).replaceAll(CommonConstants.SPACING, CommonConstants.SYMBOL_RAIL);
         }
         final String word = wordTmp;
 
         Document doc;
         try {
-            doc = Jsoup.connect(WordCrawlerConstants.URL_CAMBRIDGE_FETCH_CHINESE + word).get();
+            doc = Jsoup.connect(WordCrawlerConstants.URL_CAMBRIDGE_FETCH_CHINESE + word.replaceAll(CommonConstants.SPACING, CommonConstants.SYMBOL_RAIL)).get();
         } catch (IOException e) {
             log.error(JSOUP_CONNECT_EXCEPTION, WordCrawlerConstants.URL_CAMBRIDGE_FETCH_CHINESE + word);
             throw new JsoupFetchConnectException();
@@ -177,13 +174,13 @@ public class JsoupServiceImpl implements IJsoupService {
     public FetchPhraseResultDTO fetchPhraseInfo(FetchPhraseMqDTO dto) throws JsoupFetchConnectException, JsoupFetchResultException {
         final String finalPhrase = dto.getPhrase();
         String phrase = dto.getPhrase();
-        if (phrase.contains("/")) {
-            phrase = phrase.replaceAll("/", "-").replaceAll(" ", "-");
+        if (phrase.contains(CommonConstants.SYMBOL_FORWARD_SLASH)) {
+            phrase = phrase.replaceAll(CommonConstants.SYMBOL_FORWARD_SLASH, CommonConstants.SYMBOL_RAIL).replaceAll(CommonConstants.SPACING, CommonConstants.SYMBOL_RAIL);
         }
 
         Document doc;
         try {
-            doc = Jsoup.connect(WordCrawlerConstants.URL_CAMBRIDGE_FETCH_CHINESE + phrase).get();
+            doc = Jsoup.connect(WordCrawlerConstants.URL_CAMBRIDGE_FETCH_CHINESE + phrase.replaceAll(CommonConstants.SPACING, CommonConstants.SYMBOL_RAIL)).get();
         } catch (IOException e) {
             log.error(JSOUP_CONNECT_EXCEPTION, phrase);
             throw new JsoupFetchConnectException();
@@ -227,7 +224,11 @@ public class JsoupServiceImpl implements IJsoupService {
         Optional.ofNullable(doc.getElementsByClass("pr entry-body__el")).ifPresent(elements -> {
             for (Element element : elements) {
                 Optional.ofNullable(element.getElementsByClass("headword hdb tw-bw dhw dpos-h_hw ")).ifPresent(singlePhraseElement -> {
-                    relatedWords.add(singlePhraseElement.text().trim());
+                    String word = singlePhraseElement.text().trim();
+                    if (KiwiStringUtils.equals(word, finalPhrase)) {
+                        return;
+                    }
+                    relatedWords.add(word);
                 });
             }
         });
@@ -260,10 +261,15 @@ public class JsoupServiceImpl implements IJsoupService {
 
     private FetchWordResultDTO subFetch(String url, String word)
             throws JsoupFetchConnectException, JsoupFetchResultException, JsoupFetchPronunciationException {
+        String queryWord = word;
         String jsoupWord;
+        if (queryWord.contains(CommonConstants.SYMBOL_FORWARD_SLASH)) {
+            queryWord = queryWord.replaceAll(CommonConstants.SYMBOL_FORWARD_SLASH, CommonConstants.SYMBOL_RAIL).replaceAll(CommonConstants.SPACING, CommonConstants.SYMBOL_RAIL);
+        }
+
         Document doc;
         try {
-            doc = Jsoup.connect(url + word).get();
+            doc = Jsoup.connect(url + queryWord).get();
         } catch (IOException e) {
             log.error(JSOUP_CONNECT_EXCEPTION, word);
             throw new JsoupFetchConnectException();

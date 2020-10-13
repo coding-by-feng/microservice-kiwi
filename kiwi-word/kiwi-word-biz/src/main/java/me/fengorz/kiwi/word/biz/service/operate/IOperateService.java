@@ -16,7 +16,6 @@
 
 package me.fengorz.kiwi.word.biz.service.operate;
 
-import me.fengorz.kiwi.common.api.annotation.cache.KiwiCacheKey;
 import me.fengorz.kiwi.word.api.dto.queue.result.FetchWordReplaceDTO;
 import me.fengorz.kiwi.word.api.entity.WordMainDO;
 import me.fengorz.kiwi.word.api.vo.detail.ParaphraseVO;
@@ -29,7 +28,7 @@ public interface IOperateService {
 
     /* paraphrase methods begin */
 
-    WordQueryVO queryWord(@KiwiCacheKey String wordName, Integer... intoType);
+    WordQueryVO queryWord(String wordName, Integer... intoType);
 
     ParaphraseVO findWordParaphraseVO(Integer paraphraseId);
 
@@ -38,10 +37,8 @@ public interface IOperateService {
     /* wordVariant methods begin */
 
     /**
-     * @param inputWordName
-     *            界面输入要查询的单词
-     * @param fetchWordName
-     *            实际爬虫抓取到的单词原形
+     * @param inputWordName 界面输入要查询的单词
+     * @param fetchWordName 实际爬虫抓取到的单词原形
      * @return
      */
     boolean insertVariant(String inputWordName, String fetchWordName);
@@ -50,7 +47,7 @@ public interface IOperateService {
 
     /* cache mothods begin */
 
-    void evict(@KiwiCacheKey String wordName, WordMainDO one);
+    void evict(String wordName, WordMainDO one);
 
     FetchWordReplaceDTO getCacheReplace(String wordName);
 

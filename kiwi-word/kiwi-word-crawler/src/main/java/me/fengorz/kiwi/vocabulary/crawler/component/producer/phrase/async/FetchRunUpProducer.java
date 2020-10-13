@@ -27,8 +27,7 @@ import me.fengorz.kiwi.vocabulary.crawler.component.producer.base.ISender;
 import me.fengorz.kiwi.word.api.common.WordCrawlerConstants;
 import me.fengorz.kiwi.word.api.dto.queue.FetchPhraseRunUpMqDTO;
 import me.fengorz.kiwi.word.api.entity.FetchQueueDO;
-import me.fengorz.kiwi.word.api.feign.IPhraseBizAPI;
-import me.fengorz.kiwi.word.api.feign.IWordBizAPI;
+import me.fengorz.kiwi.word.api.feign.IBizAPI;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
@@ -44,14 +43,14 @@ import java.util.List;
 @Slf4j
 public class FetchRunUpProducer extends AbstractProducer implements IProducer {
 
-    public FetchRunUpProducer(IWordBizAPI wordBizAPI, IPhraseBizAPI phraseBizAPI, ISender sender) {
-        super(wordBizAPI, phraseBizAPI, sender, WordCrawlerConstants.QUEUE_INFO_TYPE_WORD);
+    public FetchRunUpProducer(IBizAPI bizAPI, ISender sender) {
+        super(bizAPI, sender, WordCrawlerConstants.QUEUE_INFO_TYPE_WORD);
     }
 
     @Override
     protected List<FetchQueueDO> getQueueDO(Integer status) {
         synchronized (barrier) {
-            return wordBizAPI.pageQueue(status, 0, 20, infoType).getData();
+            return bizAPI.pageQueue(status, 0, 20, infoType).getData();
         }
     }
 
@@ -65,6 +64,6 @@ public class FetchRunUpProducer extends AbstractProducer implements IProducer {
     protected void execute(FetchQueueDO queue) {
         sender.fetchPhraseRunUp(new FetchPhraseRunUpMqDTO().setQueueId(queue.getQueueId()).setWord(KiwiStringUtils.isBlank(queue.getDerivation()) ? queue.getWordName() : queue.getDerivation()).setWordId(queue.getWordId()));
         queue.setFetchStatus(WordCrawlerConstants.STATUS_TO_FETCH_PHRASE);
-        wordBizAPI.updateQueueById(queue);
+        bizAPI.updateQueueById(queue);
     }
 }

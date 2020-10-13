@@ -19,9 +19,11 @@ package me.fengorz.kiwi.word.api.feign;
 import me.fengorz.kiwi.common.api.R;
 import me.fengorz.kiwi.word.api.common.WordConstants;
 import me.fengorz.kiwi.word.api.dto.queue.RemovePronunciatioinMqDTO;
+import me.fengorz.kiwi.word.api.dto.queue.result.FetchPhraseResultDTO;
+import me.fengorz.kiwi.word.api.dto.queue.result.FetchPhraseRunUpResultDTO;
 import me.fengorz.kiwi.word.api.dto.queue.result.FetchWordResultDTO;
 import me.fengorz.kiwi.word.api.entity.FetchQueueDO;
-import me.fengorz.kiwi.word.api.feign.factory.WordFetchFallbackFactory;
+import me.fengorz.kiwi.word.api.feign.factory.BizFallbackFactory;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,8 +33,8 @@ import java.util.List;
  * @Author zhanshifeng
  */
 @FeignClient(contextId = "wordBizAPI", value = WordConstants.KIWI_WORD_BIZ,
-        fallbackFactory = WordFetchFallbackFactory.class)
-public interface IWordBizAPI {
+        fallbackFactory = BizFallbackFactory.class)
+public interface IBizAPI {
 
     String WORD_FETCH_QUEUE = "/word/fetch";
     String WORD_MAIN = "/word/main";
@@ -70,6 +72,9 @@ public interface IWordBizAPI {
     @GetMapping(WORD_FETCH_QUEUE + "/removeWord/{queueId}")
     R<List<RemovePronunciatioinMqDTO>> removeWord(@PathVariable Integer queueId);
 
+    @GetMapping(WORD_FETCH_QUEUE + "/removePhrase/{queueId}")
+    R<List<RemovePronunciatioinMqDTO>> removePhrase(@PathVariable Integer queueId);
+
     @Deprecated
     @PostMapping(WORD_FETCH_QUEUE + "/lock")
     R<Boolean> lock(@RequestParam String wordName);
@@ -79,5 +84,11 @@ public interface IWordBizAPI {
 
     @GetMapping(WORD_MAIN + "/listOverlapInUnLock")
     R<List<String>> listOverlapInUnLock();
+
+    @PostMapping(WORD_FETCH_QUEUE + "/handlePhrasesFetchResult")
+    R<Boolean> handlePhrasesFetchResult(@RequestBody FetchPhraseRunUpResultDTO dto);
+
+    @PostMapping(WORD_FETCH_QUEUE + "/storePhrasesFetchResult")
+    R<Boolean> storePhrasesFetchResult(@RequestBody FetchPhraseResultDTO dto);
 
 }

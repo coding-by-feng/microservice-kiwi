@@ -56,7 +56,7 @@ public class FetchPronunciationConsumer extends AbstractConsumer<FetchPronunciat
 
     @PostConstruct
     private void init() {
-        super.threadPoolTaskExecutor = this.fetchPronunciationThreadExecutor;
+        super.taskExecutor = this.fetchPronunciationThreadExecutor;
         super.maxPoolSize = this.maxPoolSize;
         super.startWorkLog = "rabbitMQ fetch one pronunciation is 【{}】";
     }

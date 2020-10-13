@@ -23,7 +23,7 @@ import lombok.RequiredArgsConstructor;
 import me.fengorz.kiwi.common.sdk.util.lang.collection.KiwiCollectionUtils;
 import me.fengorz.kiwi.word.api.entity.FetchQueueDO;
 import me.fengorz.kiwi.word.api.exception.SchedulerException;
-import me.fengorz.kiwi.word.api.feign.IWordBizAPI;
+import me.fengorz.kiwi.word.api.feign.IBizAPI;
 
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
@@ -35,7 +35,7 @@ import java.util.concurrent.CountDownLatch;
 @RequiredArgsConstructor
 public abstract class AbstractScheduler implements IScheduler {
 
-    protected final IWordBizAPI fetchAPI;
+    protected final IBizAPI fetchAPI;
     protected final Object barrier = new Object();
     protected CountDownLatch countDownLatch;
 

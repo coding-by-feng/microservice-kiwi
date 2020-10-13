@@ -97,6 +97,8 @@ location / {
 ```
 下面增加配置：
 ```
+        
+
     location /auth {
         proxy_pass http://kiwi-microservice:9991;
     }

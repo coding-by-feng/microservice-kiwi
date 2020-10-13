@@ -93,7 +93,11 @@ public class WordBizUtils {
         if (status == WordCrawlerConstants.STATUS_ALL_SUCCESS) {
             return false;
         }
-        return status >= WordCrawlerConstants.STATUS_PARTITION ;
+        return status >= WordCrawlerConstants.STATUS_PARTITION;
+    }
+
+    public static int getOpposition(int infoType) {
+        return infoType == WordCrawlerConstants.QUEUE_INFO_TYPE_WORD ? WordCrawlerConstants.QUEUE_INFO_TYPE_PHRASE : WordCrawlerConstants.QUEUE_INFO_TYPE_WORD;
     }
 
 }

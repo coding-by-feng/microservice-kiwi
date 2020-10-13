@@ -20,9 +20,11 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.api.R;
 import me.fengorz.kiwi.word.api.dto.queue.RemovePronunciatioinMqDTO;
+import me.fengorz.kiwi.word.api.dto.queue.result.FetchPhraseResultDTO;
+import me.fengorz.kiwi.word.api.dto.queue.result.FetchPhraseRunUpResultDTO;
 import me.fengorz.kiwi.word.api.dto.queue.result.FetchWordResultDTO;
 import me.fengorz.kiwi.word.api.entity.FetchQueueDO;
-import me.fengorz.kiwi.word.api.feign.IWordBizAPI;
+import me.fengorz.kiwi.word.api.feign.IBizAPI;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -33,7 +35,7 @@ import java.util.List;
  */
 @Slf4j
 @Component
-public class WordBizAPIFallback implements IWordBizAPI {
+public class BizAPIFallback implements IBizAPI {
 
     @Setter
     private Throwable throwable;
@@ -99,6 +101,12 @@ public class WordBizAPIFallback implements IWordBizAPI {
     }
 
     @Override
+    public R<List<RemovePronunciatioinMqDTO>> removePhrase(Integer queueId) {
+        log.error(throwable.getCause().getMessage());
+        return R.feignCallFailed(throwable.getMessage());
+    }
+
+    @Override
     public R<Boolean> updateByWordName(FetchQueueDO queueDO) {
         log.error(throwable.getCause().getMessage());
         return R.feignCallFailed(throwable.getMessage());
@@ -114,4 +122,17 @@ public class WordBizAPIFallback implements IWordBizAPI {
     public R<List<String>> listOverlapInUnLock() {
         return R.feignCallFailed();
     }
+
+    @Override
+    public R<Boolean> handlePhrasesFetchResult(FetchPhraseRunUpResultDTO dto) {
+        log.error(throwable.getCause().getMessage());
+        return R.feignCallFailed(throwable.getMessage());
+    }
+
+    @Override
+    public R<Boolean> storePhrasesFetchResult(FetchPhraseResultDTO dto) {
+        log.error(throwable.getCause().getMessage());
+        return R.feignCallFailed(throwable.getMessage());
+    }
+
 }

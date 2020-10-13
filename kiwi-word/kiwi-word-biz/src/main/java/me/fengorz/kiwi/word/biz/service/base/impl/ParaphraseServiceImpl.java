@@ -27,6 +27,7 @@ import me.fengorz.kiwi.word.api.vo.detail.ParaphraseVO;
 import me.fengorz.kiwi.word.biz.mapper.ParaphraseMapper;
 import me.fengorz.kiwi.word.biz.service.base.IParaphraseService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -58,6 +59,12 @@ public class ParaphraseServiceImpl extends ServiceImpl<ParaphraseMapper, Paraphr
     @Override
     public List<ParaphraseVO> listPhrase(Integer wordId) {
         return KiwiBeanUtils.convertFrom(mapper.selectList(Wrappers.<ParaphraseDO>lambdaQuery().eq(ParaphraseDO::getWordId, wordId).eq(ParaphraseDO::getIsDel, CommonConstants.FLAG_NO)), ParaphraseVO.class);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void delByWordId(Integer wordId) {
+        mapper.delete(Wrappers.<ParaphraseDO>lambdaQuery().eq(ParaphraseDO::getWordId, wordId));
     }
 
 }

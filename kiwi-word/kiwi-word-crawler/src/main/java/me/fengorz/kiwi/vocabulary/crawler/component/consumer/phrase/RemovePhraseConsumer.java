@@ -17,7 +17,7 @@
  *
  */
 
-package me.fengorz.kiwi.vocabulary.crawler.component.consumer.word;
+package me.fengorz.kiwi.vocabulary.crawler.component.consumer.phrase;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,30 +34,30 @@ import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
 /**
-* @Author zhanshifeng
+ * @Author zhanshifeng
  * @Date 2019/10/28 4:25 PM
  */
 @Slf4j
 @Component
 @RequiredArgsConstructor
 @RabbitListener(bindings = @QueueBinding(value = @Queue(value = "${mq.config.word.remove.queue}", autoDelete = "true"),
-    exchange = @Exchange(value = "${mq.config.word.remove.exchange}"),
-    key = "${mq.config.word.remove.routing.cambridge}"))
-public class RemoveWordConsumer extends AbstractConsumer<RemoveMqDTO> implements IConsumer<RemoveMqDTO> {
+        exchange = @Exchange(value = "${mq.config.word.remove.exchange}"),
+        key = "${mq.config.word.remove.routing.cambridge}"))
+public class RemovePhraseConsumer extends AbstractConsumer<RemoveMqDTO> implements IConsumer<RemoveMqDTO> {
 
     private final IFetchService fetchService;
 
     @Resource(name = "removeWordThreadExecutor")
-    private ThreadPoolTaskExecutor removeWordThreadExecutor;
+    private ThreadPoolTaskExecutor executor;
 
     @Value("${crawler.config.max.pool.size}")
     private int maxPoolSize;
 
     @PostConstruct
     private void init() {
-        super.taskExecutor = this.removeWordThreadExecutor;
+        super.taskExecutor = this.executor;
         super.maxPoolSize = this.maxPoolSize;
-        super.startWorkLog = "rabbitMQ remove one word is 【{}】";
+        super.startWorkLog = "rabbitMQ remove one phrase is 【{}】";
     }
 
     @Override

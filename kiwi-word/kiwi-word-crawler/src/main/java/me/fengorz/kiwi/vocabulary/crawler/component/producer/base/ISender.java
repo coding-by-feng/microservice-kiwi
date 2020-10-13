@@ -32,5 +32,7 @@ public interface ISender {
 
     void removeWord(RemoveMqDTO dto);
 
+    void removePhrase(RemoveMqDTO dto);
+
     void removePronunciation(RemovePronunciatioinMqDTO dto);
 }

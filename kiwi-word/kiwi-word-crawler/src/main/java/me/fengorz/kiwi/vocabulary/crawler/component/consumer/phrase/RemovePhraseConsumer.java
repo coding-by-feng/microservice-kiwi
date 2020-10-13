@@ -40,9 +40,9 @@ import javax.annotation.Resource;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-@RabbitListener(bindings = @QueueBinding(value = @Queue(value = "${mq.config.word.remove.queue}", autoDelete = "true"),
-        exchange = @Exchange(value = "${mq.config.word.remove.exchange}"),
-        key = "${mq.config.word.remove.routing.cambridge}"))
+@RabbitListener(bindings = @QueueBinding(value = @Queue(value = "${mq.config.phrase.remove.queue}", autoDelete = "true"),
+        exchange = @Exchange(value = "${mq.config.phrase.remove.exchange}"),
+        key = "${mq.config.phrase.remove.routing.cambridge}"))
 public class RemovePhraseConsumer extends AbstractConsumer<RemoveMqDTO> implements IConsumer<RemoveMqDTO> {
 
     private final IFetchService fetchService;
@@ -68,7 +68,7 @@ public class RemovePhraseConsumer extends AbstractConsumer<RemoveMqDTO> implemen
 
     @Override
     protected void execute(RemoveMqDTO dto) {
-        fetchService.removeWord(dto);
+        fetchService.removePhrase(dto);
     }
 
     @Override

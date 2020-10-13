@@ -101,6 +101,11 @@ public class MqSender implements ISender {
     }
 
     @Override
+    public void removePhrase(RemoveMqDTO dto) {
+        this.amqpTemplate.convertAndSend(this.phraseRemoveExchange, this.phraseRemoveRoutingKey, dto);
+    }
+
+    @Override
     public void removePronunciation(RemovePronunciatioinMqDTO dto) {
         this.amqpTemplate.convertAndSend(this.pronunciationRemoveExchange, this.pronunciationRemoveRoutingKey, dto);
     }

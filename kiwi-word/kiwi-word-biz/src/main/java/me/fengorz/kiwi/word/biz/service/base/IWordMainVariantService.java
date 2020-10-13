@@ -39,7 +39,7 @@ public interface IWordMainVariantService extends IService<WordMainVariantDO> {
 
     WordMainVariantVO getVO(Integer id);
 
-    List<Integer> getWordId(String variantName);
+    Integer getWordId(String variantName);
 
     List<WordMainDO> listWordMain(String variantName, Integer queueId);
 

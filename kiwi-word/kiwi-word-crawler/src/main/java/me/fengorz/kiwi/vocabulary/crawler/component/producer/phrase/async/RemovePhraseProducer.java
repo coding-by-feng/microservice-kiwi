@@ -44,7 +44,8 @@ import java.util.Optional;
 public class RemovePhraseProducer extends AbstractProducer implements IProducer {
 
     public RemovePhraseProducer(IBizAPI bizAPI, ISender sender) {
-        super(bizAPI, sender, WordCrawlerConstants.QUEUE_INFO_TYPE_PHRASE);
+        super(bizAPI, sender);
+        this.infoType = WordCrawlerConstants.QUEUE_INFO_TYPE_PHRASE;
     }
 
     @Override

@@ -32,7 +32,6 @@ import me.fengorz.kiwi.word.biz.service.operate.IOperateService;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotBlank;
 import java.util.List;
 
@@ -61,8 +60,8 @@ public class WordMainController extends BaseController {
     }
 
     @GetMapping("/query/{wordName}")
-    public R<WordQueryVO> queryWord(@PathVariable("wordName") String wordName, HttpServletRequest request) {
-        log.info(KiwiStringUtils.format("========>queryWord[{}],[time={}]", wordName, request.getRemoteAddr(), KiwiDateUtils.now()));
+    public R<WordQueryVO> queryWord(@PathVariable("wordName") String wordName) {
+        log.info(KiwiStringUtils.format("========>queryWord[{}],[time={}]", wordName, KiwiDateUtils.now()));
         return R.success(wordOperateService.queryWord(wordName));
     }
 

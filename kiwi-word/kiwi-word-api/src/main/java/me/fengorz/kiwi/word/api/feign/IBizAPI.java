@@ -24,6 +24,7 @@ import me.fengorz.kiwi.word.api.dto.queue.result.FetchPhraseRunUpResultDTO;
 import me.fengorz.kiwi.word.api.dto.queue.result.FetchWordResultDTO;
 import me.fengorz.kiwi.word.api.entity.FetchQueueDO;
 import me.fengorz.kiwi.word.api.feign.factory.BizFallbackFactory;
+import me.fengorz.kiwi.word.api.vo.detail.WordQueryVO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 
@@ -90,5 +91,8 @@ public interface IBizAPI {
 
     @PostMapping(WORD_FETCH_QUEUE + "/storePhrasesFetchResult")
     R<Boolean> storePhrasesFetchResult(@RequestBody FetchPhraseResultDTO dto);
+
+    @GetMapping("/query/{wordName}")
+    R<WordQueryVO> queryWord(@PathVariable String wordName);
 
 }

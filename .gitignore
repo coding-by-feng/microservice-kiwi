@@ -172,3 +172,25 @@ out
 gen
 
 # Custom
+
+# JRebel
+.rebel.xml.bak
+.rebel-remote.xml.bak
+rebel.xml
+kiwi-bdf/src/test/
+kiwi-common/kiwi-common-api/src/main/resources/
+kiwi-common/kiwi-common-dfs/src/main/resources/
+kiwi-common/kiwi-common-dfs/src/test/
+kiwi-common/kiwi-common-es/src/main/resources/
+kiwi-common/kiwi-common-es/src/test/
+kiwi-config/src/main/resources/rebel-remote.xml
+kiwi-eureka/src/test/
+kiwi-finance/src/main/resources/
+kiwi-finance/src/test/
+kiwi-flow/src/test/
+kiwi-upms/kiwi-upms-api/src/test/
+kiwi-upms/kiwi-upms-biz/src/test/
+kiwi-visual/src/
+kiwi-word/kiwi-word-biz/src/main/resources/rebel-remote.xml
+kiwi-word/kiwi-word-biz/src/test/com/test/
+kiwi-word/kiwi-word-crawler/src/main/resources/rebel-remote.xml

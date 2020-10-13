@@ -25,38 +25,42 @@ import me.fengorz.kiwi.vocabulary.crawler.component.producer.base.AbstractProduc
 import me.fengorz.kiwi.vocabulary.crawler.component.producer.base.IProducer;
 import me.fengorz.kiwi.vocabulary.crawler.component.producer.base.ISender;
 import me.fengorz.kiwi.word.api.common.WordCrawlerConstants;
-import me.fengorz.kiwi.word.api.dto.queue.FetchPhraseMqDTO;
+import me.fengorz.kiwi.word.api.dto.queue.RemoveMqDTO;
 import me.fengorz.kiwi.word.api.entity.FetchQueueDO;
 import me.fengorz.kiwi.word.api.feign.IBizAPI;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
+import java.util.Optional;
+
 /**
- * 抓取词组基本信息-消息队列生产者
+ * 老旧单词数据清除--消息队列生产者
  *
  * @Author zhanshifeng
  * @Date 2019/10/30 10:33 AM
  */
 @Component
 @Slf4j
-public class FetchProducer extends AbstractProducer implements IProducer {
+public class RemovePhraseProducer extends AbstractProducer implements IProducer {
 
-    public FetchProducer(IBizAPI bizAPI, ISender sender) {
+    public RemovePhraseProducer(IBizAPI bizAPI, ISender sender) {
         super(bizAPI, sender, WordCrawlerConstants.QUEUE_INFO_TYPE_PHRASE);
     }
 
     @Override
     public void produce() {
-        super.produce(WordCrawlerConstants.STATUS_TO_FETCH);
+        super.produce(WordCrawlerConstants.STATUS_TO_DEL_BASE);
     }
 
-    @Async
     @Override
-    protected void execute(FetchQueueDO queue) {
-        sender.fetchPhrase(new FetchPhraseMqDTO().setQueueId(queue.getQueueId()).setPhrase(queue.getWordName()).setDerivation(queue.getDerivation()));
-        queue.setFetchStatus(WordCrawlerConstants.STATUS_DOING_FETCH);
+    @Async
+    public void execute(FetchQueueDO queue) {
         queue.setIsLock(CommonConstants.FLAG_YES);
-        queue.setFetchTime(queue.getFetchTime() + 1);
-        bizAPI.updateQueueById(queue);
+        queue.setFetchStatus(WordCrawlerConstants.STATUS_DOING_DEL_BASE);
+        queue.setIsIntoCache(CommonConstants.FLAG_NO);
+        if (Optional.of(bizAPI.updateQueueById(queue)).get().isSuccess()) {
+            sender.removeWord(new RemoveMqDTO().setQueueId(queue.getQueueId()));
+        }
     }
+
 }

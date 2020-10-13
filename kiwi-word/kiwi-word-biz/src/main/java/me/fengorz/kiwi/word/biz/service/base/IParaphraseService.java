@@ -39,4 +39,5 @@ public interface IParaphraseService extends IService<ParaphraseDO> {
 
     List<ParaphraseVO> listPhrase(Integer wordId);
 
+    void delByWordId(Integer wordId);
 }

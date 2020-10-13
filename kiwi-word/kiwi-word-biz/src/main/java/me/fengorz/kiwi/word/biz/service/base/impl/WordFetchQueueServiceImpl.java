@@ -53,8 +53,6 @@ public class WordFetchQueueServiceImpl extends ServiceImpl<FetchQueueMapper, Fet
 
     @Transactional(rollbackFor = Exception.class, noRollbackFor = ServiceException.class)
     private void fetch(String wordName, String derivation, Integer wordId, Integer... infoType) {
-        FetchQueueDO one = this.getOneAnyhow(wordName);
-
         // 如果没传infoType要判断是否包含空格
         int thisInfoType;
         if (infoType == null || infoType.length == 0) {
@@ -63,6 +61,8 @@ public class WordFetchQueueServiceImpl extends ServiceImpl<FetchQueueMapper, Fet
         } else {
             thisInfoType = infoType[0];
         }
+
+        FetchQueueDO one = this.getOneAnyhow(wordName, thisInfoType);
 
         if (one != null) {
             if (one.getIsLock() > 0) {

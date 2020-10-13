@@ -27,8 +27,7 @@ import me.fengorz.kiwi.vocabulary.crawler.component.producer.base.ISender;
 import me.fengorz.kiwi.word.api.common.WordCrawlerConstants;
 import me.fengorz.kiwi.word.api.dto.queue.FetchWordMqDTO;
 import me.fengorz.kiwi.word.api.entity.FetchQueueDO;
-import me.fengorz.kiwi.word.api.feign.IPhraseBizAPI;
-import me.fengorz.kiwi.word.api.feign.IWordBizAPI;
+import me.fengorz.kiwi.word.api.feign.IBizAPI;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
@@ -44,8 +43,8 @@ import java.util.Optional;
 @Slf4j
 public class FetchWordProducer extends AbstractProducer implements IProducer {
 
-    public FetchWordProducer(IWordBizAPI wordBizAPI, IPhraseBizAPI phraseBizAPI, ISender sender) {
-        super(wordBizAPI, phraseBizAPI, sender, WordCrawlerConstants.QUEUE_INFO_TYPE_WORD);
+    public FetchWordProducer(IBizAPI bizAPI, ISender sender) {
+        super(bizAPI, sender, WordCrawlerConstants.QUEUE_INFO_TYPE_WORD);
     }
 
     @Override
@@ -66,13 +65,13 @@ public class FetchWordProducer extends AbstractProducer implements IProducer {
         queue.setFetchResult(CommonConstants.EMPTY);
         if (null == queue.getWordId() || 0 == queue.getWordId()) {
             queue.setFetchStatus(WordCrawlerConstants.STATUS_DOING_FETCH);
-            if (Optional.of(wordBizAPI.updateQueueById(queue)).get().isSuccess()) {
+            if (Optional.of(bizAPI.updateQueueById(queue)).get().isSuccess()) {
                 sender.fetchWord(new FetchWordMqDTO().setWord(queue.getWordName()).setQueueId(queue.getQueueId()));
             }
         } else {
             // 删除老的数据
             queue.setFetchStatus(WordCrawlerConstants.STATUS_TO_DEL_BASE);
-            wordBizAPI.updateQueueById(queue);
+            bizAPI.updateQueueById(queue);
         }
     }
 }

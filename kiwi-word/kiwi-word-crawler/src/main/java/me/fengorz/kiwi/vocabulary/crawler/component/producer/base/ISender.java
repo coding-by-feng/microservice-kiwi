@@ -30,7 +30,7 @@ public interface ISender {
 
     void fetchPronunciation(FetchPronunciationMqDTO dto);
 
-    void removeWord(RemoveWordMqDTO dto);
+    void removeWord(RemoveMqDTO dto);
 
     void removePronunciation(RemovePronunciatioinMqDTO dto);
 }

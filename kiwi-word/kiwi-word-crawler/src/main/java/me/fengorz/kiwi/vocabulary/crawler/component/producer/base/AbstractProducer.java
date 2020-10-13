@@ -22,8 +22,7 @@ package me.fengorz.kiwi.vocabulary.crawler.component.producer.base;
 import lombok.RequiredArgsConstructor;
 import me.fengorz.kiwi.common.sdk.util.lang.collection.KiwiCollectionUtils;
 import me.fengorz.kiwi.word.api.entity.FetchQueueDO;
-import me.fengorz.kiwi.word.api.feign.IPhraseBizAPI;
-import me.fengorz.kiwi.word.api.feign.IWordBizAPI;
+import me.fengorz.kiwi.word.api.feign.IBizAPI;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -35,15 +34,14 @@ import java.util.List;
 @RequiredArgsConstructor
 public abstract class AbstractProducer implements IProducer {
 
-    protected final IWordBizAPI wordBizAPI;
-    protected final IPhraseBizAPI phraseBizAPI;
+    protected final IBizAPI bizAPI;
     protected final ISender sender;
     protected final Object barrier = new Object();
     protected final Integer infoType;
 
     protected List<FetchQueueDO> getQueueDO(Integer status) {
         synchronized (barrier) {
-            return wordBizAPI.pageQueueLockIn(status, 0, 20, infoType).getData();
+            return bizAPI.pageQueueLockIn(status, 0, 20, infoType).getData();
         }
     }
 

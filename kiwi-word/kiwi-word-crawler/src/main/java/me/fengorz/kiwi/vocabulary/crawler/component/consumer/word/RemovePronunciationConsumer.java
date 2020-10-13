@@ -57,7 +57,7 @@ public class RemovePronunciationConsumer extends AbstractConsumer<RemovePronunci
 
     @PostConstruct
     private void init() {
-        super.threadPoolTaskExecutor = this.removePronunciationThreadExecutor;
+        super.taskExecutor = this.removePronunciationThreadExecutor;
         super.maxPoolSize = this.maxPoolSize;
         super.startWorkLog = "rabbitMQ remove one pronunciation is 【{}】";
     }

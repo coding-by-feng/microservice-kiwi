@@ -25,10 +25,9 @@ import me.fengorz.kiwi.vocabulary.crawler.component.producer.base.AbstractProduc
 import me.fengorz.kiwi.vocabulary.crawler.component.producer.base.IProducer;
 import me.fengorz.kiwi.vocabulary.crawler.component.producer.base.ISender;
 import me.fengorz.kiwi.word.api.common.WordCrawlerConstants;
-import me.fengorz.kiwi.word.api.dto.queue.RemoveWordMqDTO;
+import me.fengorz.kiwi.word.api.dto.queue.RemoveMqDTO;
 import me.fengorz.kiwi.word.api.entity.FetchQueueDO;
-import me.fengorz.kiwi.word.api.feign.IPhraseBizAPI;
-import me.fengorz.kiwi.word.api.feign.IWordBizAPI;
+import me.fengorz.kiwi.word.api.feign.IBizAPI;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
@@ -44,8 +43,8 @@ import java.util.Optional;
 @Slf4j
 public class RemoveWordProducer extends AbstractProducer implements IProducer {
 
-    public RemoveWordProducer(IWordBizAPI fetchAPI, IPhraseBizAPI phraseBizAPI, ISender sender) {
-        super(fetchAPI, phraseBizAPI, sender, WordCrawlerConstants.QUEUE_INFO_TYPE_WORD);
+    public RemoveWordProducer(IBizAPI bizAPI, ISender sender) {
+        super(bizAPI, sender, WordCrawlerConstants.QUEUE_INFO_TYPE_WORD);
     }
 
     @Override
@@ -59,8 +58,8 @@ public class RemoveWordProducer extends AbstractProducer implements IProducer {
         queue.setIsLock(CommonConstants.FLAG_YES);
         queue.setFetchStatus(WordCrawlerConstants.STATUS_DOING_DEL_BASE);
         queue.setIsIntoCache(CommonConstants.FLAG_NO);
-        if (Optional.of(wordBizAPI.updateQueueById(queue)).get().isSuccess()) {
-            sender.removeWord(new RemoveWordMqDTO().setQueueId(queue.getQueueId()));
+        if (Optional.of(bizAPI.updateQueueById(queue)).get().isSuccess()) {
+            sender.removeWord(new RemoveMqDTO().setQueueId(queue.getQueueId()));
         }
     }
 

@@ -142,4 +142,9 @@ public class WordFetchController extends BaseController {
     public R<List<RemovePronunciatioinMqDTO>> removeWord(@PathVariable Integer queueId) {
         return R.success(cleanerService.removeWord(queueId));
     }
+
+    @GetMapping("/removePhrase/{queueId}")
+    public R<Boolean> removePhrase(@PathVariable Integer queueId) {
+        return R.success(cleanerService.removePhrase(queueId));
+    }
 }

@@ -30,12 +30,14 @@ public interface IFetchService {
 
     void handle(FetchPronunciationMqDTO dto);
 
-    void handle(RemoveWordMqDTO dto);
+    void removeWord(RemoveMqDTO dto);
 
     void handle(RemovePronunciatioinMqDTO dto);
 
     void retrievePhrase(FetchPhraseRunUpMqDTO dto);
 
     void handle(FetchPhraseMqDTO dto);
+
+    void removePhrase(RemoveMqDTO dto);
 
 }

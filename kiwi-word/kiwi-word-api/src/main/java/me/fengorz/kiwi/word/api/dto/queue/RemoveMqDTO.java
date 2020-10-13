@@ -1,38 +1,39 @@
 /*
  *
- * Copyright [2019~2025] [zhanshifeng]
- *
+ * Copyright [2019~2025] [codingByFeng]
+ * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
- *
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
- *
+ * 
  *
  */
 
-package me.fengorz.kiwi.word.api.feign.fallback;
+package me.fengorz.kiwi.word.api.dto.queue;
 
-import org.springframework.stereotype.Component;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
+import lombok.experimental.Accessors;
 
-import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
-import me.fengorz.kiwi.word.api.feign.IWordPronunciationAPI;
+import java.io.Serializable;
 
 /**
- * 单词例句表
- *
- * @author zhanshifeng
- * @date 2019-11-01 14:44:45
+ * @Author zhanshifeng
+ * @Date 2019/10/28 9:28 AM
  */
-@Slf4j
-@Component
-public class WordPronunciationAPIFallback implements IWordPronunciationAPI {
+@Data
+@ToString
+@Accessors(chain = true)
+@EqualsAndHashCode(callSuper = true)
+public class RemoveMqDTO extends MqDTO implements Serializable {
 
-    @Setter
-    private Throwable throwable;
+    private static final long serialVersionUID = -752676784093492634L;
 
+    private Integer queueId;
 }

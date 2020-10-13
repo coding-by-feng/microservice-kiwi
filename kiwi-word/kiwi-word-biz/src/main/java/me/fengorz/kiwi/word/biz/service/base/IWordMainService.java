@@ -44,7 +44,7 @@ public interface IWordMainService extends IService<WordMainDO> {
 
     void evictById(Integer id);
 
-    List<WordMainDO> list(String wordName);
+    List<WordMainDO> list(String wordName, Integer infoType);
 
     List<WordMainDO> listDirtyData(Integer wordId);
 

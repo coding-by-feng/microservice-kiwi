@@ -55,7 +55,7 @@ public class FetchRunUpConsumer extends AbstractConsumer<FetchPhraseRunUpMqDTO> 
 
     @PostConstruct
     private void init() {
-        super.threadPoolTaskExecutor = this.fetchWordThreadExecutor;
+        super.taskExecutor = this.fetchWordThreadExecutor;
         super.maxPoolSize = this.maxPoolSize;
         super.startWorkLog = "rabbitMQ fetch one run-up of phrase is 【{}】";
     }

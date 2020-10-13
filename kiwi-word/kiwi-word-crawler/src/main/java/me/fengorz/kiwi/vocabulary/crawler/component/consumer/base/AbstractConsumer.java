@@ -29,20 +29,20 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
-* @Author zhanshifeng
+ * @Author zhanshifeng
  * @Date 2020/7/29 4:34 PM
  */
 @Slf4j
 public abstract class AbstractConsumer<T extends MqDTO> {
 
     protected ReentrantLock lock = new ReentrantLock();
-    protected ThreadPoolTaskExecutor threadPoolTaskExecutor;
+    protected ThreadPoolTaskExecutor taskExecutor;
     protected Integer maxPoolSize;
     protected String startWorkLog;
 
     protected void work(T dto) {
 
-        Objects.requireNonNull(threadPoolTaskExecutor);
+        Objects.requireNonNull(taskExecutor);
         Objects.requireNonNull(maxPoolSize);
         Objects.requireNonNull(startWorkLog);
 
@@ -50,7 +50,7 @@ public abstract class AbstractConsumer<T extends MqDTO> {
         try {
             log.info(startWorkLog, dto);
             // 线程池如果满了的话，先睡眠一段时间，等待有空闲的现场出来
-            while (threadPoolTaskExecutor.getActiveCount() == maxPoolSize) {
+            while (taskExecutor.getActiveCount() == maxPoolSize) {
                 try {
                     TimeUnit.SECONDS.sleep(1);
                 } catch (InterruptedException e) {
@@ -62,7 +62,7 @@ public abstract class AbstractConsumer<T extends MqDTO> {
 
             while (true) {
                 try {
-                    threadPoolTaskExecutor.execute(() -> {
+                    taskExecutor.execute(() -> {
                         this.execute(dto);
                     });
                     break;

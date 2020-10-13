@@ -72,14 +72,12 @@ public class WordMainVariantServiceImpl extends ServiceImpl<WordMainVariantMappe
     }
 
     @Override
-    public List<Integer> getWordId(String variantName) {
+    public Integer getWordId(String variantName) {
         List<Integer> result = new ArrayList<>();
-        Optional.ofNullable(this.listWordMain(variantName, null)).ifPresent(list -> {
-            for (WordMainDO wordMainDO : list) {
-                result.add(wordMainDO.getWordId());
-            }
-        });
-        return result.isEmpty() ? null : result;
+        WordMainVariantDO one = wordMainVariantMapper
+                .selectOne(Wrappers.<WordMainVariantDO>lambdaQuery().eq(WordMainVariantDO::getVariantName, variantName)
+                        .eq(WordMainVariantDO::getIsValid, CommonConstants.FLAG_YES));
+        return one == null ? null : one.getWordId();
     }
 
     @Override

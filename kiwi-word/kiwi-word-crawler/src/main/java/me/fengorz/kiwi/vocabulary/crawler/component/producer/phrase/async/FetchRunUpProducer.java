@@ -44,7 +44,8 @@ import java.util.List;
 public class FetchRunUpProducer extends AbstractProducer implements IProducer {
 
     public FetchRunUpProducer(IBizAPI bizAPI, ISender sender) {
-        super(bizAPI, sender, WordCrawlerConstants.QUEUE_INFO_TYPE_WORD);
+        super(bizAPI, sender);
+        this.infoType = WordCrawlerConstants.QUEUE_INFO_TYPE_WORD;
     }
 
     @Override

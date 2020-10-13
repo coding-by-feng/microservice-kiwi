@@ -43,7 +43,8 @@ import java.util.Optional;
 public class FetchPronunciationProducer extends AbstractProducer implements IProducer {
 
     public FetchPronunciationProducer(IBizAPI bizAPI, ISender sender) {
-        super(bizAPI, sender, WordCrawlerConstants.QUEUE_INFO_TYPE_WORD);
+        super(bizAPI, sender);
+        this.infoType = WordCrawlerConstants.QUEUE_INFO_TYPE_WORD;
     }
 
     @Override

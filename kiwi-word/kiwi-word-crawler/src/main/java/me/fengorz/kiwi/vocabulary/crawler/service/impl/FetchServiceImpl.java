@@ -69,7 +69,7 @@ public class FetchServiceImpl implements IFetchService {
         final String inputWord = messageDTO.getWord();
         final Integer queueId = messageDTO.getQueueId();
         FetchQueueDO queue = new FetchQueueDO().setWordName(inputWord).setQueueId(queueId);
-
+        boolean isUpdate = false;
         try {
             StringBuilder handleLog = new StringBuilder().append(queue.getFetchResult() != null ? queue.getFetchResult() : CommonConstants.EMPTY).append(CommonConstants.SYMBOL_LF);
             FetchWordResultDTO fetchWordResultDTO = jsoupService.fetchWordInfo(messageDTO).setQueueId(queueId);
@@ -99,18 +99,24 @@ public class FetchServiceImpl implements IFetchService {
                 queue.setFetchResult(handleLog.toString());
                 queue.setIsLock(CommonConstants.FLAG_YES);
             }
+            isUpdate = true;
         } catch (JsoupFetchConnectException e) {
             handleException(queue, WordCrawlerConstants.STATUS_JSOUP_CONNECT_FAILED, e.getMessage());
+            isUpdate = true;
         } catch (Exception e) {
             handleException(queue, WordCrawlerConstants.STATUS_FETCH_FAIL, e.getMessage());
+            isUpdate = true;
         } finally {
-            bizAPI.updateQueueById(queue);
+            if (isUpdate) {
+                bizAPI.updateQueueById(queue);
+            }
         }
     }
 
     @Override
     public void handle(FetchPronunciationMqDTO dto) {
         FetchQueueDO queue = new FetchQueueDO().setQueueId(Objects.requireNonNull(dto.getQueueId()));
+        boolean isUpdate = false;
         try {
             R<Boolean> response =
                     Optional.of(bizAPI.fetchPronunciation(Objects.requireNonNull(dto.getWordId()))).get();
@@ -120,16 +126,22 @@ public class FetchServiceImpl implements IFetchService {
             } else {
                 throw new JsoupFetchPronunciationException();
             }
+            isUpdate = true;
         } catch (Exception e) {
             this.handleException(queue, WordCrawlerConstants.STATUS_TO_FETCH_PRONUNCIATION_FAIL, "fetch pronunciation error!");
+            isUpdate = true;
+        } finally {
+            if (isUpdate) {
+                bizAPI.updateQueueById(queue);
+            }
         }
-        bizAPI.updateQueueById(queue);
     }
 
 
     @Override
     public void removeWord(RemoveMqDTO dto) {
         FetchQueueDO queue = new FetchQueueDO().setQueueId(Objects.requireNonNull(dto.getQueueId()));
+        boolean isUpdate = false;
         try {
             R<List<RemovePronunciatioinMqDTO>> response =
                     Optional.of(bizAPI.removeWord(dto.getQueueId())).get();
@@ -142,26 +154,37 @@ public class FetchServiceImpl implements IFetchService {
             } else {
                 throw new WordRemoveException();
             }
+            isUpdate = true;
         } catch (Exception e) {
             this.handleException(queue, WordCrawlerConstants.STATUS_DEL_BASE_FAIL, "remove word error!");
+            isUpdate = true;
+        } finally {
+            if (isUpdate) {
+                bizAPI.updateQueueById(queue);
+            }
         }
-        bizAPI.updateQueueById(queue);
     }
 
     @Override
     public void handle(RemovePronunciatioinMqDTO dto) {
+        FetchQueueDO queue = new FetchQueueDO().setQueueId(Objects.requireNonNull(dto.getQueueId()));
+        boolean isUpdate = false;
         try {
             dfsService.deleteFile(dto.getGroupName(), dto.getVoiceFilePath());
         } catch (DfsOperateDeleteException e) {
-            FetchQueueDO queue = new FetchQueueDO().setQueueId(Objects.requireNonNull(dto.getQueueId()));
             this.handleException(queue, WordCrawlerConstants.STATUS_DEL_PRONUNCIATION_FAIL, "del pronunciation error!");
-            bizAPI.updateQueueById(queue);
+            isUpdate = true;
+        } finally {
+            if (isUpdate) {
+                bizAPI.updateQueueById(queue);
+            }
         }
     }
 
     @Override
     public void retrievePhrase(FetchPhraseRunUpMqDTO dto) {
         FetchQueueDO queue = new FetchQueueDO().setQueueId(Objects.requireNonNull(dto.getQueueId()));
+        boolean isUpdate = false;
         try {
             FetchPhraseRunUpResultDTO resultDTO = jsoupService.fetchPhraseRunUp(dto);
             if (KiwiCollectionUtils.isNotEmpty(resultDTO.getPhrases())) {
@@ -169,31 +192,41 @@ public class FetchServiceImpl implements IFetchService {
             }
             queue.setIsLock(CommonConstants.FLAG_NO);
             queue.setFetchStatus(WordCrawlerConstants.STATUS_PERFECT_SUCCESS);
+            isUpdate = true;
         } catch (JsoupFetchConnectException e) {
             this.handleException(queue, WordCrawlerConstants.STATUS_FETCH_RELATED_PHRASE_FAIL, "fetch related phrase error!");
+            isUpdate = true;
         } finally {
-            bizAPI.updateQueueById(queue);
+            if (isUpdate) {
+                bizAPI.updateQueueById(queue);
+            }
         }
     }
 
     @Override
     public void handle(FetchPhraseMqDTO dto) {
         FetchQueueDO queue = new FetchQueueDO().setQueueId(Objects.requireNonNull(dto.getQueueId()));
+        boolean isUpdate = false;
         try {
             FetchPhraseResultDTO resultDTO = jsoupService.fetchPhraseInfo(dto);
             bizAPI.storePhrasesFetchResult(resultDTO);
             queue.setIsLock(CommonConstants.FLAG_YES);
             queue.setFetchStatus(WordCrawlerConstants.STATUS_PERFECT_SUCCESS);
+            isUpdate = true;
         } catch (Exception e) {
             this.handleException(queue, WordCrawlerConstants.STATUS_FETCH_PHRASE_FAIL, "fetch phrase real info error!");
+            isUpdate = true;
         } finally {
-            bizAPI.updateQueueById(queue);
+            if (isUpdate) {
+                bizAPI.updateQueueById(queue);
+            }
         }
     }
 
     @Override
     public void removePhrase(RemoveMqDTO dto) {
         FetchQueueDO queue = new FetchQueueDO().setQueueId(Objects.requireNonNull(dto.getQueueId()));
+        boolean isUpdate = false;
         try {
             R<List<RemovePronunciatioinMqDTO>> response =
                     Optional.of(bizAPI.removePhrase(dto.getQueueId())).get();
@@ -202,13 +235,18 @@ public class FetchServiceImpl implements IFetchService {
                 queue.setFetchStatus(WordCrawlerConstants.STATUS_TO_FETCH);
                 queue.setWordId(0);
                 queue.setIsLock(CommonConstants.FLAG_YES);
+                isUpdate = true;
             } else {
                 throw new PhraseRemoveException();
             }
         } catch (Exception e) {
             this.handleException(queue, WordCrawlerConstants.STATUS_DEL_PHRASE_FAIL, "remove word error!");
+            isUpdate = true;
+        } finally {
+            if (isUpdate) {
+                bizAPI.updateQueueById(queue);
+            }
         }
-        bizAPI.updateQueueById(queue);
     }
 
     private void handleException(FetchQueueDO queue, int status, String message) {

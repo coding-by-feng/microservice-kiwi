@@ -37,7 +37,7 @@ public abstract class AbstractProducer implements IProducer {
     protected final IBizAPI bizAPI;
     protected final ISender sender;
     protected final Object barrier = new Object();
-    protected final Integer infoType;
+    protected Integer infoType;
 
     protected List<FetchQueueDO> getQueueDO(Integer status) {
         synchronized (barrier) {

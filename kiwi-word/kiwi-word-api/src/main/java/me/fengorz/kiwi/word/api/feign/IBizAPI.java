@@ -42,8 +42,8 @@ public interface IBizAPI {
     @GetMapping(WORD_FETCH_QUEUE + "/getOne/{queueId}")
     R<FetchQueueDO> getOne(@PathVariable Integer queueId);
 
-    @GetMapping(WORD_FETCH_QUEUE + "/getOneByWordName/{wordName}")
-    R<FetchQueueDO> getOneByWordName(@PathVariable String wordName);
+    @GetMapping(WORD_FETCH_QUEUE + "/getOneByWordName")
+    R<FetchQueueDO> getOneByWordName(@RequestParam String wordName);
 
     @GetMapping(WORD_FETCH_QUEUE + "/pageQueue/{status}/{current}/{size}/{infoType}")
     R<List<FetchQueueDO>> pageQueue(@PathVariable Integer status, @PathVariable Integer current,

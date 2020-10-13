@@ -19,6 +19,7 @@
 
 package me.fengorz.kiwi.vocabulary.crawler.component.scheduler;
 
+import cn.hutool.core.util.URLUtil;
 import cn.hutool.http.HttpUtil;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.api.constant.CommonConstants;
@@ -74,7 +75,9 @@ public class CacheWordScheduler extends AbstractScheduler implements IScheduler 
         String wordName = queue.getWordName();
         log.info(CACHING_WORD, wordName);
         try {
-            HttpUtil.get(WordCrawlerConstants.URL_QUERY_WORD + wordName);
+            String url = WordCrawlerConstants.URL_QUERY_WORD + URLUtil.decode(wordName);
+            HttpUtil.get(url);
+            log.info(url);
             queue.setIsIntoCache(CommonConstants.FLAG_YES);
         } catch (Exception e) {
             queue.setIsIntoCache(CommonConstants.FLAG_NO);

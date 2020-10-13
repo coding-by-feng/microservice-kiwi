@@ -74,7 +74,7 @@ public interface WordCrawlerConstants {
     String URL_CAMBRIDGE_FETCH_CHINESE = "https://dictionary.cambridge.org/zhs/词典/英语-汉语-简体/";
     String URL_CAMBRIDGE_FETCH_ENGLISH = "https://dictionary.cambridge.org/dictionary/english/";
     String URL_CAMBRIDGE_BASE = "https://dictionary.cambridge.org/";
-    String URL_QUERY_WORD = "http://kiwidict.com/#/index/vocabulary/detail?active=search&lazy=y&word=";
+    String URL_QUERY_WORD = "http://kiwidict.com/#lazy/vocabulary/detail?active=search&lazy=y&word=";
 
     String EXT_OGG = "ogg";
 

@@ -64,6 +64,11 @@ public class WordFetchQueueServiceImpl extends ServiceImpl<FetchQueueMapper, Fet
 
         FetchQueueDO one = this.getOneAnyhow(wordName, thisInfoType);
 
+        // 取反类型获取队列
+        if (one == null) {
+            one = this.getOneAnyhow(wordName, WordBizUtils.getOpposition(thisInfoType));
+        }
+
         if (one != null) {
             if (one.getIsLock() > 0) {
                 return;

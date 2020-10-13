@@ -42,7 +42,8 @@ import org.springframework.stereotype.Component;
 public class FetchProducer extends AbstractProducer implements IProducer {
 
     public FetchProducer(IBizAPI bizAPI, ISender sender) {
-        super(bizAPI, sender, WordCrawlerConstants.QUEUE_INFO_TYPE_PHRASE);
+        super(bizAPI, sender);
+        this.infoType = WordCrawlerConstants.QUEUE_INFO_TYPE_PHRASE;
     }
 
     @Override

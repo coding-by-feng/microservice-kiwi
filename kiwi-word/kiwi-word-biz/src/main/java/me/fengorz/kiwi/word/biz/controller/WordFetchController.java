@@ -61,8 +61,8 @@ public class WordFetchController extends BaseController {
         return R.success(queueService.getOneInUnLock(queueId));
     }
 
-    @GetMapping("/getOneByWordName/{wordName}")
-    public R<FetchQueueDO> getOneByWordName(@PathVariable String wordName) {
+    @GetMapping("/getOneByWordName")
+    public R<FetchQueueDO> getOneByWordName(@RequestParam String wordName) {
         return R.success(queueService.getOneInUnLock(wordName));
     }
 

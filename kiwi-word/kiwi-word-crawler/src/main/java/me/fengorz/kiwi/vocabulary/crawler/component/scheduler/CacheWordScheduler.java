@@ -19,15 +19,12 @@
 
 package me.fengorz.kiwi.vocabulary.crawler.component.scheduler;
 
-import cn.hutool.core.util.URLUtil;
-import cn.hutool.http.HttpUtil;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.api.constant.CommonConstants;
 import me.fengorz.kiwi.common.sdk.util.lang.collection.KiwiCollectionUtils;
 import me.fengorz.kiwi.vocabulary.crawler.component.scheduler.base.AbstractScheduler;
 import me.fengorz.kiwi.vocabulary.crawler.component.scheduler.base.IScheduler;
 import me.fengorz.kiwi.vocabulary.crawler.component.scheduler.base.SchedulerDTO;
-import me.fengorz.kiwi.word.api.common.WordCrawlerConstants;
 import me.fengorz.kiwi.word.api.entity.FetchQueueDO;
 import me.fengorz.kiwi.word.api.feign.IBizAPI;
 import org.springframework.stereotype.Component;
@@ -47,8 +44,8 @@ public class CacheWordScheduler extends AbstractScheduler implements IScheduler 
 
     private static final String CACHING_WORD = "caching word {}!";
 
-    public CacheWordScheduler(IBizAPI fetchAPI) {
-        super(fetchAPI);
+    public CacheWordScheduler(IBizAPI bizAPI) {
+        super(bizAPI);
     }
 
     @Override
@@ -58,7 +55,7 @@ public class CacheWordScheduler extends AbstractScheduler implements IScheduler 
 
     @Override
     public List<FetchQueueDO> getQueueDO(SchedulerDTO dto) {
-        List<FetchQueueDO> list = fetchAPI.listNotIntoCache().getData();
+        List<FetchQueueDO> list = bizAPI.listNotIntoCache().getData();
         if (!KiwiCollectionUtils.isEmpty(list)) {
             countDownLatch = new CountDownLatch(list.size());
         }
@@ -75,16 +72,17 @@ public class CacheWordScheduler extends AbstractScheduler implements IScheduler 
         String wordName = queue.getWordName();
         log.info(CACHING_WORD, wordName);
         try {
-            String url = WordCrawlerConstants.URL_QUERY_WORD + URLUtil.decode(wordName);
-            HttpUtil.get(url);
-            log.info(url);
+            // String url = WordCrawlerConstants.URL_QUERY_WORD + URLUtil.decode(wordName);
+            // HttpUtil.get(url);
+            // log.info(url);
+            bizAPI.queryWord(wordName);
             queue.setIsIntoCache(CommonConstants.FLAG_YES);
         } catch (Exception e) {
             queue.setIsIntoCache(CommonConstants.FLAG_NO);
             log.error(e.getMessage());
         } finally {
             countDownLatch.countDown();
-            fetchAPI.updateQueueById(queue);
+            bizAPI.updateQueueById(queue);
         }
     }
 

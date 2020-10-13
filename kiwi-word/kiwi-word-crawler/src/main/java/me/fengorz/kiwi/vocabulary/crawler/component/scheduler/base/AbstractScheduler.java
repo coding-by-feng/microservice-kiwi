@@ -35,7 +35,7 @@ import java.util.concurrent.CountDownLatch;
 @RequiredArgsConstructor
 public abstract class AbstractScheduler implements IScheduler {
 
-    protected final IBizAPI fetchAPI;
+    protected final IBizAPI bizAPI;
     protected final Object barrier = new Object();
     protected CountDownLatch countDownLatch;
 

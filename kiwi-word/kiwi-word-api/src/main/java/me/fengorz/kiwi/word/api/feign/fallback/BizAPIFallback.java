@@ -25,6 +25,7 @@ import me.fengorz.kiwi.word.api.dto.queue.result.FetchPhraseRunUpResultDTO;
 import me.fengorz.kiwi.word.api.dto.queue.result.FetchWordResultDTO;
 import me.fengorz.kiwi.word.api.entity.FetchQueueDO;
 import me.fengorz.kiwi.word.api.feign.IBizAPI;
+import me.fengorz.kiwi.word.api.vo.detail.WordQueryVO;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -131,6 +132,12 @@ public class BizAPIFallback implements IBizAPI {
 
     @Override
     public R<Boolean> storePhrasesFetchResult(FetchPhraseResultDTO dto) {
+        log.error(throwable.getCause().getMessage());
+        return R.feignCallFailed(throwable.getMessage());
+    }
+
+    @Override
+    public R<WordQueryVO> queryWord(String wordName) {
         log.error(throwable.getCause().getMessage());
         return R.feignCallFailed(throwable.getMessage());
     }

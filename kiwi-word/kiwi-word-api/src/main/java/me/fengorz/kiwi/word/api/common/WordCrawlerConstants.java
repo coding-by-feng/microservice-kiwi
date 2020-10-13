@@ -28,42 +28,44 @@ public interface WordCrawlerConstants {
 
     /*分割线*/
     int STATUS_PARTITION = -1;
-    /*单词查询异常*/
+    /*查询异常*/
     int STATUS_TO_QUERY_ERROR = -404;
     /*Jsoup连接失败*/
     int STATUS_JSOUP_CONNECT_FAILED = -2;
     /*爬虫抓取单词失败*/
     int STATUS_FETCH_FAIL = -3;
-    /*删除单词发音文件失败*/
+    /*删除发音文件失败*/
     int STATUS_DEL_PRONUNCIATION_FAIL = -4;
-    /*下载单词发音文件失败*/
+    /*下载发音文件失败*/
     int STATUS_TO_FETCH_PRONUNCIATION_FAIL = -5;
-    /*抓取单词的关联词组失败*/
+    /*抓取的关联词组失败*/
     int STATUS_FETCH_RELATED_PHRASE_FAIL = -6;
     /*抓取词组失败*/
     int STATUS_FETCH_PHRASE_FAIL = -7;
+    /*删除词组失败*/
+    int STATUS_DEL_PHRASE_FAIL = -8;
 
     /*待抓取*/
     int STATUS_TO_FETCH = 0;
     /*正在抓取基础数据*/
     int STATUS_DOING_FETCH = 5;
-    /*等待删除单词基础数据*/
+    /*等待删除基础数据*/
     int STATUS_TO_DEL_BASE = 1;
-    /*正在删除单词基础数据*/
+    /*正在删除基础数据*/
     int STATUS_DOING_DEL_BASE = 10;
-    /*等待删除单词发音文件*/
+    /*等待删除发音文件*/
     int STATUS_TO_DEL_PRONUNCIATION = 2;
-    /*正在删除单词发音文件*/
+    /*正在删除发音文件*/
     int STATUS_DOING_DEL_PRONUNCIATION = 20;
-    /*等待下载单词发音文件*/
+    /*等待下载发音文件*/
     int STATUS_TO_FETCH_PRONUNCIATION = 3;
-    /*正在下载单词发音文件*/
+    /*正在下载发音文件*/
     int STATUS_DOING_FETCH_PRONUNCIATION = 30;
-    /*删除单词基础数据失败, 这里失败之后爬虫还是会走后面的流程*/
+    /*删除基础数据失败, 这里失败之后爬虫还是会走后面的流程*/
     int STATUS_DEL_BASE_FAIL = 100;
-    /*单词数据抓取完毕，待抓取其衍生的词组*/
+    /*数据抓取完毕，待抓取其衍生的词组*/
     int STATUS_ALL_SUCCESS = 200;
-    /*单词的其他衍生词组已被记录到队列表（不考虑衍生词组是否也被完全爬虫完毕）*/
+    /*的其他衍生词组已被记录到队列表（不考虑衍生词组是否也被完全爬虫完毕）*/
     int STATUS_TO_FETCH_PHRASE = 201;
     int STATUS_PERFECT_SUCCESS = 666;
 

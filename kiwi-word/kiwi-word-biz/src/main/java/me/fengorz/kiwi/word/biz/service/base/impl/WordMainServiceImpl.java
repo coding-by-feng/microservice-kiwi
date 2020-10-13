@@ -117,8 +117,8 @@ public class WordMainServiceImpl extends ServiceImpl<WordMainMapper, WordMainDO>
     }
 
     @Override
-    public List<WordMainDO> list(String wordName) {
-        return this.list(Wrappers.<WordMainDO>lambdaQuery().eq(WordMainDO::getWordName, wordName));
+    public List<WordMainDO> list(String wordName, Integer infoType) {
+        return this.list(Wrappers.<WordMainDO>lambdaQuery().eq(WordMainDO::getWordName, wordName).eq(WordMainDO::getInfoType, infoType));
     }
 
     @Override

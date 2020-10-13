@@ -14,25 +14,23 @@
  *
  */
 
-package me.fengorz.kiwi.word.api.feign.fallback;
+package me.fengorz.kiwi.word.api.feign.factory;
 
+import feign.hystrix.FallbackFactory;
+import me.fengorz.kiwi.word.api.feign.IBizAPI;
+import me.fengorz.kiwi.word.api.feign.fallback.BizAPIFallback;
 import org.springframework.stereotype.Component;
 
-import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
-import me.fengorz.kiwi.word.api.feign.IWordStarListAPI;
-
 /**
- * 单词本
- *
- * @author zhanshifeng
- * @date 2019-12-08 23:26:57
+* @Author zhanshifeng
+ * @Date 2019/10/30 3:19 PM
  */
-@Slf4j
 @Component
-public class WordStarListAPIFallback implements IWordStarListAPI {
-
-    @Setter
-    private Throwable throwable;
-
+public class BizFallbackFactory implements FallbackFactory<IBizAPI> {
+    @Override
+    public IBizAPI create(Throwable throwable) {
+        BizAPIFallback remoteWordFetchServiceFallBack = new BizAPIFallback();
+        remoteWordFetchServiceFallBack.setThrowable(throwable);
+        return remoteWordFetchServiceFallBack;
+    }
 }

@@ -31,6 +31,7 @@ public interface CommonConstants {
     String SYMBOL_FORWARD_SLASH = "/";
     String SYMBOL_BACK_SLASH = "\\";
     String SYMBOL_DELIMITER_STR = "_";
+    String SYMBOL_RAIL = "-";
     String SYMBOL_LF = "\n";
     String SYMBOL_PERCENT = "%";
 

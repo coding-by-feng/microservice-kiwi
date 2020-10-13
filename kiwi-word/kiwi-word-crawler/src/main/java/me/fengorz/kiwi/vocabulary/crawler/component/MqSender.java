@@ -96,7 +96,7 @@ public class MqSender implements ISender {
     }
 
     @Override
-    public void removeWord(RemoveWordMqDTO dto) {
+    public void removeWord(RemoveMqDTO dto) {
         this.amqpTemplate.convertAndSend(this.wordRemoveExchange, this.wordRemoveRoutingKey, dto);
     }
 

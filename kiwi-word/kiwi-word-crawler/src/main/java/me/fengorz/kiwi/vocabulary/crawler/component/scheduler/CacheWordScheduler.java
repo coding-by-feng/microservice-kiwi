@@ -28,7 +28,7 @@ import me.fengorz.kiwi.vocabulary.crawler.component.scheduler.base.IScheduler;
 import me.fengorz.kiwi.vocabulary.crawler.component.scheduler.base.SchedulerDTO;
 import me.fengorz.kiwi.word.api.common.WordCrawlerConstants;
 import me.fengorz.kiwi.word.api.entity.FetchQueueDO;
-import me.fengorz.kiwi.word.api.feign.IWordBizAPI;
+import me.fengorz.kiwi.word.api.feign.IBizAPI;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -46,7 +46,7 @@ public class CacheWordScheduler extends AbstractScheduler implements IScheduler 
 
     private static final String CACHING_WORD = "caching word {}!";
 
-    public CacheWordScheduler(IWordBizAPI fetchAPI) {
+    public CacheWordScheduler(IBizAPI fetchAPI) {
         super(fetchAPI);
     }
 

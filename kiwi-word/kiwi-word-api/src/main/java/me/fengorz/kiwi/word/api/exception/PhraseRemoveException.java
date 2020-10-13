@@ -22,29 +22,29 @@ import me.fengorz.kiwi.common.api.exception.BaseException;
  * @Author zhanshifeng
  * @Date 2019/11/1 2:54 PM
  */
-public class WordRemoveException extends BaseException {
+public class PhraseRemoveException extends BaseException {
 
     private static final long serialVersionUID = 4431850064509376871L;
     private static final String ERROR = "word remove exception!";
 
-    public WordRemoveException() {
+    public PhraseRemoveException() {
         super(ERROR);
     }
 
-    public WordRemoveException(String message) {
+    public PhraseRemoveException(String message) {
         super(message);
     }
 
-    public WordRemoveException(String message, Throwable cause) {
+    public PhraseRemoveException(String message, Throwable cause) {
         super(message, cause);
     }
 
-    public WordRemoveException(Throwable cause) {
+    public PhraseRemoveException(Throwable cause) {
         super(cause);
     }
 
-    public WordRemoveException(String message, Throwable cause, boolean enableSuppression,
-                               boolean writableStackTrace) {
+    public PhraseRemoveException(String message, Throwable cause, boolean enableSuppression,
+                                 boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
     }
 }

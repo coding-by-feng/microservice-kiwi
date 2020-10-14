@@ -33,12 +33,14 @@
         order by wm.word_name
     </select>
     <select id="fuzzyQuery" resultType="me.fengorz.kiwi.word.api.dto.mapper.out.FuzzyQueryResultDTO">
-        select (ifnull(wmv.variant_name, word_name)) value
-            from word_main wm
-         left join word_main_variant wmv on wm.word_id = wmv.word_id
-        where wm.word_name like #{query}
-          and wm.is_del = 0
-        order by wm.word_name
+        select distinct value
+        from (select wm.word_name value
+              from word_main wm
+              where wm.word_name like #{query}
+              union
+              select wmv.variant_name value
+              from word_main_variant wmv
+              where wmv.variant_name like #{query}) tmp
     </select>
 
 </mapper>

@@ -19,11 +19,12 @@
 
 package me.fengorz.kiwi.vocabulary.crawler.component;
 
+import lombok.RequiredArgsConstructor;
 import me.fengorz.kiwi.vocabulary.crawler.component.producer.base.ISender;
+import me.fengorz.kiwi.vocabulary.crawler.config.properties.MqExchange;
+import me.fengorz.kiwi.vocabulary.crawler.config.properties.MqProperties;
 import me.fengorz.kiwi.word.api.dto.queue.*;
 import org.springframework.amqp.core.AmqpTemplate;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 /**
@@ -31,83 +32,52 @@ import org.springframework.stereotype.Component;
  * @Date 2019/10/28 9:20 AM
  */
 @Component
+@RequiredArgsConstructor
 public class MqSender implements ISender {
 
-    @Autowired
-    private AmqpTemplate amqpTemplate;
-
-    @Value("${mq.config.word.fetch.exchange}")
-    private String wordFetchExchange;
-
-    @Value("${mq.config.word.fetch.routing.cambridge}")
-    private String wordFetchRoutingKey;
-
-    @Value("${mq.config.word.remove.exchange}")
-    private String wordRemoveExchange;
-
-    @Value("${mq.config.word.remove.routing.cambridge}")
-    private String wordRemoveRoutingKey;
-
-    @Value("${mq.config.phrase.fetch.exchange}")
-    private String phraseFetchExchange;
-
-    @Value("${mq.config.phrase.fetch.routing.cambridge.runUp}")
-    private String phraseFetchRoutingRunUpKey;
-
-    @Value("${mq.config.phrase.fetch.routing.cambridge.real}")
-    private String phraseFetchRoutingRealKey;
-
-    @Value("${mq.config.phrase.remove.exchange}")
-    private String phraseRemoveExchange;
-
-    @Value("${mq.config.phrase.remove.routing.cambridge}")
-    private String phraseRemoveRoutingKey;
-
-    @Value("${mq.config.pronunciation.fetch.exchange}")
-    private String pronunciationFetchExchange;
-
-    @Value("${mq.config.pronunciation.fetch.routing.cambridge}")
-    private String pronunciationFetchRoutingKey;
-
-    @Value("${mq.config.pronunciation.remove.exchange}")
-    private String pronunciationRemoveExchange;
-
-    @Value("${mq.config.pronunciation.remove.routing.cambridge}")
-    private String pronunciationRemoveRoutingKey;
+    private final AmqpTemplate amqpTemplate;
+    private final MqProperties properties;
 
     @Override
     public void fetchWord(FetchWordMqDTO dto) {
-        this.amqpTemplate.convertAndSend(this.wordFetchExchange, this.wordFetchRoutingKey, dto);
+        MqExchange exchange = properties.getWordFromCambridge();
+        amqpTemplate.convertAndSend(exchange.getExchange(), exchange.getFetchRouting(), dto);
     }
 
     @Override
     public void fetchPhraseRunUp(FetchPhraseRunUpMqDTO dto) {
-        this.amqpTemplate.convertAndSend(this.phraseFetchExchange, this.phraseFetchRoutingRunUpKey, dto);
+        MqExchange exchange = properties.getPhraseRunUpFromCambridge();
+        amqpTemplate.convertAndSend(exchange.getExchange(), exchange.getFetchRouting(), dto);
     }
 
     @Override
     public void fetchPhrase(FetchPhraseMqDTO dto) {
-        this.amqpTemplate.convertAndSend(this.phraseFetchExchange, this.phraseFetchRoutingRealKey, dto);
+        MqExchange exchange = properties.getPhraseFromCambridge();
+        amqpTemplate.convertAndSend(exchange.getExchange(), exchange.getFetchRouting(), dto);
     }
 
     @Override
     public void fetchPronunciation(FetchPronunciationMqDTO dto) {
-        this.amqpTemplate.convertAndSend(this.pronunciationFetchExchange, this.pronunciationFetchRoutingKey, dto);
+        MqExchange exchange = properties.getPronunciationFromCambridge();
+        amqpTemplate.convertAndSend(exchange.getExchange(), exchange.getFetchRouting(), dto);
     }
 
     @Override
     public void removeWord(RemoveMqDTO dto) {
-        this.amqpTemplate.convertAndSend(this.wordRemoveExchange, this.wordRemoveRoutingKey, dto);
+        MqExchange exchange = properties.getPronunciationFromCambridge();
+        amqpTemplate.convertAndSend(exchange.getExchange(), exchange.getRemoveRouting(), dto);
     }
 
     @Override
     public void removePhrase(RemoveMqDTO dto) {
-        this.amqpTemplate.convertAndSend(this.phraseRemoveExchange, this.phraseRemoveRoutingKey, dto);
+        MqExchange exchange = properties.getPronunciationFromCambridge();
+        amqpTemplate.convertAndSend(exchange.getExchange(), exchange.getRemoveRouting(), dto);
     }
 
     @Override
     public void removePronunciation(RemovePronunciatioinMqDTO dto) {
-        this.amqpTemplate.convertAndSend(this.pronunciationRemoveExchange, this.pronunciationRemoveRoutingKey, dto);
+        MqExchange exchange = properties.getPhraseFromCambridge();
+        amqpTemplate.convertAndSend(exchange.getExchange(), exchange.getRemoveRouting(), dto);
     }
 
 }

@@ -40,7 +40,7 @@ public class WordDfsUtils {
     }
 
     public static String getVoiceFileName(String url) {
-        return url.substring(url.lastIndexOf("/"), url.length());
+        return url.substring(url.lastIndexOf("/"));
     }
 
 }

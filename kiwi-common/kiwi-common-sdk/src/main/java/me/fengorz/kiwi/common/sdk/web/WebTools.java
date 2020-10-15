@@ -16,24 +16,23 @@
 
 package me.fengorz.kiwi.common.sdk.web;
 
-import java.io.DataInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
-
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletResponse;
-
+import cn.hutool.core.codec.Base64;
+import cn.hutool.core.io.IoUtil;
+import cn.hutool.core.util.StrUtil;
+import lombok.extern.slf4j.Slf4j;
+import me.fengorz.kiwi.common.api.constant.SecurityConstants;
+import me.fengorz.kiwi.common.api.exception.AuthException;
 import org.apache.commons.lang3.CharEncoding;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.web.util.WebUtils;
 
-import cn.hutool.core.codec.Base64;
-import cn.hutool.core.util.StrUtil;
-import lombok.extern.slf4j.Slf4j;
-import me.fengorz.kiwi.common.api.constant.SecurityConstants;
-import me.fengorz.kiwi.common.api.exception.AuthException;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
+import java.io.DataInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 
 /**
  * @Author zhanshifeng
@@ -41,6 +40,8 @@ import me.fengorz.kiwi.common.api.exception.AuthException;
  */
 @Slf4j
 public class WebTools extends WebUtils {
+
+    private static final int IN_READ_BYTES_LENGTH = 1024;
 
     /**
      * 从request获取Authorization并解密
@@ -77,10 +78,18 @@ public class WebTools extends WebUtils {
         try {
             temps = response.getOutputStream();
             in = new DataInputStream(inputStream);
-            byte[] b = new byte[2048];
-            while ((in.read(b)) != -1) {
+            // 这个方法写入音频流时有个致命问题，如果是音频流会出现尾部有杂音，因为2048如果尾部空流在音频当还是会被当做声音处理
+            // 如果采用下面注释掉的这种写法的话
+            // byte[] b = new byte[2048];
+            // while ((in.read(b)) != -1) {
+            //     temps.write(b);
+            //     temps.flush();
+            // }
+            byte[] b = IoUtil.readBytes(in, IN_READ_BYTES_LENGTH);
+            while (b != null && b.length > 0) {
                 temps.write(b);
                 temps.flush();
+                b = IoUtil.readBytes(in, IN_READ_BYTES_LENGTH);
             }
         } catch (IOException e) {
             log.error(e.getMessage(), e);

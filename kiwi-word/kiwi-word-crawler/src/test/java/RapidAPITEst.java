@@ -20,7 +20,6 @@
 import com.squareup.okhttp.*;
 import okio.BufferedSink;
 import okio.Okio;
-import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
@@ -31,7 +30,7 @@ import java.io.IOException;
  */
 public class RapidAPITEst {
 
-    @Test
+    // @Test
     public void test() {
         OkHttpClient client = new OkHttpClient();
 

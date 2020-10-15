@@ -17,7 +17,6 @@
 package me.fengorz.kiwi.common.sdk.web;
 
 import cn.hutool.core.codec.Base64;
-import cn.hutool.core.io.IoUtil;
 import cn.hutool.core.util.StrUtil;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.api.constant.SecurityConstants;
@@ -80,18 +79,23 @@ public class WebTools extends WebUtils {
             in = new DataInputStream(inputStream);
             // 这个方法写入音频流时有个致命问题，如果是音频流会出现尾部有杂音，因为2048如果尾部空流在音频当还是会被当做声音处理
             // 如果采用下面注释掉的这种写法的话
-            // byte[] b = new byte[2048];
-            // while ((in.read(b)) != -1) {
-            //     temps.write(b);
-            //     temps.flush();
-            // }
-            byte[] b = IoUtil.readBytes(in, IN_READ_BYTES_LENGTH);
-            while (b != null && b.length > 0) {
-                temps.write(b);
+            byte[] b = new byte[IN_READ_BYTES_LENGTH];
+            int readLength = 0;
+            do {
+                readLength = in.read(b);
+                if (readLength > 0 && readLength < IN_READ_BYTES_LENGTH) {
+                    byte[] minB = new byte[readLength];
+                    System.arraycopy(b, 0, minB, 0, readLength);
+                    temps.write(minB);
+                } else if (readLength == IN_READ_BYTES_LENGTH) {
+                    temps.write(b);
+                } else {
+                    break;
+                }
                 temps.flush();
-                b = IoUtil.readBytes(in, IN_READ_BYTES_LENGTH);
-            }
-        } catch (IOException e) {
+            } while (readLength == IN_READ_BYTES_LENGTH);
+        } catch (
+                IOException e) {
             log.error(e.getMessage(), e);
         } finally {
             if (temps != null) {

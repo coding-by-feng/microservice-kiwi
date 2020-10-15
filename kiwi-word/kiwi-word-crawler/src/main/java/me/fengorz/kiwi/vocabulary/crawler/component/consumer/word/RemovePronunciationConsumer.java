@@ -41,9 +41,9 @@ import javax.annotation.Resource;
 @Component
 @RequiredArgsConstructor
 @RabbitListener(
-    bindings = @QueueBinding(value = @Queue(value = "${mq.config.pronunciation.remove.queue}", autoDelete = "true"),
-        exchange = @Exchange(value = "${mq.config.pronunciation.remove.exchange}"),
-        key = "${mq.config.pronunciation.remove.routing.cambridge}"))
+    bindings = @QueueBinding(value = @Queue(value = "${mq.config.pronunciationFromCambridge.removeQueue}", autoDelete = "true"),
+        exchange = @Exchange(value = "${mq.config.pronunciationFromCambridge.exchange}"),
+        key = "${mq.config.pronunciationFromCambridge.removeRouting}"))
 public class RemovePronunciationConsumer extends AbstractConsumer<RemovePronunciatioinMqDTO>
     implements IConsumer<RemovePronunciatioinMqDTO> {
 

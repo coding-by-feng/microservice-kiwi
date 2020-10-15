@@ -31,11 +31,11 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.ThreadPoolExecutor;
 
 /**
-* @Author zhanshifeng
+ * @Author zhanshifeng
  * @Date 2019/10/31 2:30 PM
  */
 @Configuration
-@ComponentScan("me.fengorz.kiwi.word.crawler")
+@ComponentScan("me.fengorz.kiwi.vocabulary.crawler")
 @EnableAsync
 public class AsyncConfig implements AsyncConfigurer {
 

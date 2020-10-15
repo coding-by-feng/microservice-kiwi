@@ -2,50 +2,28 @@ mq:
   config:
     fetch:
       interval: 200
-    word:
-      fetch:
-        exchange: word
-        queue: crawler
-        routing:
-          cambridge: cambridgeCrawler
-      remove:
-        exchange: word
-        queue: word.data.del
-        routing:
-          cambridge: cambridgeDel
-    phrase:
-      fetch:
-        exchange: phrase
-        queue:
-          runUp: phrase.crawler.runUp
-          real: phrase.crawler.real
-        routing:
-          cambridge:
-            runUp: cambridge.runUp
-            real: cambridge.real
-      remove:
-        exchange: phrase
-        queue: phrase.data.del
-        routing:
-          cambridge: cambridgeDel
-    pronunciation:
-      fetch:
-        exchange: pronunciation
-        queue: pronunciation.fetch
-        routing:
-          cambridge: cambridgeFetch
-      remove:
-        exchange: pronunciation
-        queue: pronunciation.remove
-        routing:
-          cambridge: cambridgeRemove
-    youdao:
-      exchange: youdao.translate
-      queue:
-        name: translateParaphrase
-      routing:
-        key: youdao
-
+    wordFromCambridge:
+      exchange: word
+      fetchQueue: word.fetch
+      fetchRouting: cambridge.fetch
+      removeQueue: word.del
+      removeRouting: cambridge.del
+    phraseRunUpFromCambridge:
+      exchange: phrase
+      fetchQueue: phrase.fetch.runUp
+      fetchRouting: cambridge.fetch.runUp
+    phraseFromCambridge:
+      exchange: phrase
+      fetchQueue: phrase.fetch.real
+      fetchRouting: cambridgefetch.real
+      removeQueue: phrase.del
+      removeRouting: cambridge.del
+    pronunciationFromCambridge:
+      exchange: pronunciation
+      fetchQueue: pronunciation.fetch
+      fetchRouting: cambridge.fetch
+      removeQueue: phrase.del
+      removeRouting: cambridge.del
 
 async:
   config:

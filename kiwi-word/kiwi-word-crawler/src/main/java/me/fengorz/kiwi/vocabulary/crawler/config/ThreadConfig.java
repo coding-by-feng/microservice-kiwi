@@ -29,11 +29,11 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 /**
-* @Author zhanshifeng
+ * @Author zhanshifeng
  * @Date 2019/10/29 4:57 PM
  */
 @Configuration
-@ComponentScan(basePackages = "me.fengorz.kiwi.word.crawler")
+@ComponentScan(basePackages = "me.fengorz.kiwi.vocabulary.crawler")
 @EnableScheduling
 @Import(DfsConfig.class)
 public class ThreadConfig {

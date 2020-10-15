@@ -40,9 +40,9 @@ import javax.annotation.Resource;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-@RabbitListener(bindings = @QueueBinding(value = @Queue(value = "${mq.config.phrase.fetch.queue.real}", autoDelete = "true"),
-        exchange = @Exchange(value = "${mq.config.phrase.fetch.exchange}"),
-        key = "${mq.config.phrase.fetch.routing.cambridge.real}"))
+@RabbitListener(bindings = @QueueBinding(value = @Queue(value = "${mq.config.phraseFromCambridge.fetchQueue}", autoDelete = "false"),
+        exchange = @Exchange(value = "${mq.config.phraseFromCambridge.exchange}"),
+        key = "${mq.config.phraseFromCambridge.fetchRouting}"))
 public class FetchConsumer extends AbstractConsumer<FetchPhraseMqDTO> implements IConsumer<FetchPhraseMqDTO> {
 
     private final IFetchService fetchService;

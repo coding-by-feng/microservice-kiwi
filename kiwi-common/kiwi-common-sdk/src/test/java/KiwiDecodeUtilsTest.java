@@ -15,7 +15,6 @@
  */
 
 import me.fengorz.kiwi.common.sdk.util.cipher.KiwiDecodeUtils;
-import org.junit.Test;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -25,7 +24,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
  */
 public class KiwiDecodeUtilsTest {
 
-    @Test
+    // @Test
     public void test() {
         System.out.println(KiwiDecodeUtils.decryptAES("qAOw8ST25fWeUm2yX52OXg==", "MyKiwiVocabulary").trim());
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();

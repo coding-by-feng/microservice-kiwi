@@ -18,7 +18,6 @@ package me.fengorz.kiwi.common.api;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.Test;
 
 /**
 * @Author zhanshifeng
@@ -26,7 +25,7 @@ import org.junit.Test;
  */
 public class RTest {
 
-    @Test
+    // @Test
     public void test() throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         System.out.println(mapper.writeValueAsString(R.success()));

@@ -6,7 +6,6 @@ import me.fengorz.kiwi.word.api.dto.queue.result.FetchPhraseRunUpResultDTO;
 import me.fengorz.kiwi.word.api.exception.JsoupFetchConnectException;
 import me.fengorz.kiwi.word.api.exception.JsoupFetchPronunciationException;
 import me.fengorz.kiwi.word.api.exception.JsoupFetchResultException;
-import org.junit.Test;
 
 /**
  * @Author zhanshifeng
@@ -14,7 +13,7 @@ import org.junit.Test;
  */
 public class FetchTest {
 
-    @Test
+    // @Test
     public void test() throws JsoupFetchResultException, JsoupFetchConnectException, JsoupFetchPronunciationException {
         IJsoupService jsoupService = new JsoupServiceImpl();
         // FetchWordResultDTO test = jsoupService.fetchWordInfo(new FetchWordMqDTO().setWord("mandatory"));

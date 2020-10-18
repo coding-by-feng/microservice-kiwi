@@ -120,8 +120,14 @@ location / {
 sudo docker exec -it kiwi-ui bash
 mv /usr/share/nginx/html/default.conf /etc/nginx/conf.d/default.conf
 exit
+
+# 验证nginx配置
+./sbin/nginx -t
+
 docker container restart `docker ps -a| grep kiwi-ui | awk '{print $1}'`
 ```
+## ssl证书免费申请、https协议配置
+[https://cloud.tencent.com/document/product/400/35244](https://cloud.tencent.com/document/product/400/35244 "")
 
 # fastdfs（season/fastdfs）
 ```

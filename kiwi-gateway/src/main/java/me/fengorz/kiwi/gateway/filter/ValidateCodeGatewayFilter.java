@@ -16,18 +16,9 @@
 
 package me.fengorz.kiwi.gateway.filter;
 
-import org.springframework.cloud.gateway.filter.GatewayFilter;
-import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.server.reactive.ServerHttpRequest;
-import org.springframework.http.server.reactive.ServerHttpResponse;
-import org.springframework.stereotype.Component;
-
+import cn.hutool.core.util.StrUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import cn.hutool.core.util.StrUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.api.R;
@@ -35,6 +26,13 @@ import me.fengorz.kiwi.common.api.constant.SecurityConstants;
 import me.fengorz.kiwi.common.api.exception.AuthException;
 import me.fengorz.kiwi.common.sdk.config.FilterIgnorePropertiesConfig;
 import me.fengorz.kiwi.common.sdk.web.WebTools;
+import org.springframework.cloud.gateway.filter.GatewayFilter;
+import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.server.reactive.ServerHttpRequest;
+import org.springframework.http.server.reactive.ServerHttpResponse;
+import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
 /**
@@ -48,7 +46,7 @@ public class ValidateCodeGatewayFilter extends AbstractGatewayFilterFactory {
 
     private final ObjectMapper objectMapper;
     private final RedisTemplate redisTemplate;
-    private final FilterIgnorePropertiesConfig filterIgnorePropertiesConfig;
+    private final FilterIgnorePropertiesConfig ignorePropertiesConfig;
 
     @Override
     public GatewayFilter apply(Object config) {
@@ -56,8 +54,9 @@ public class ValidateCodeGatewayFilter extends AbstractGatewayFilterFactory {
 
             ServerHttpRequest httpRequest = exchange.getRequest();
 
-            // 非登录请求pass
-            if (!StrUtil.containsAnyIgnoreCase(httpRequest.getURI().getPath(), SecurityConstants.URL_OAUTH_TOKEN_URL)) {
+            // 非登录请求 或者非不安全通道，不需要验证码
+            final String path = httpRequest.getURI().getPath();
+            if (!StrUtil.containsAnyIgnoreCase(path, SecurityConstants.URL_OAUTH_TOKEN_URL) && !ignorePropertiesConfig.getCodeVerifyChannels().contains(path)) {
                 return chain.filter(exchange);
             }
 
@@ -70,7 +69,7 @@ public class ValidateCodeGatewayFilter extends AbstractGatewayFilterFactory {
             try {
                 // 部分终端直接放行，不校验验证码
                 String authorization = WebTools.decodeAuthorization(httpRequest);
-                if (filterIgnorePropertiesConfig.getClients().contains(authorization)) {
+                if (ignorePropertiesConfig.getClients().contains(authorization)) {
                     return chain.filter(exchange);
                 }
 
@@ -81,7 +80,7 @@ public class ValidateCodeGatewayFilter extends AbstractGatewayFilterFactory {
 
                 try {
                     return httpResponse.writeWith(Mono.just(
-                        httpResponse.bufferFactory().wrap(objectMapper.writeValueAsBytes(R.failed(e.getMessage())))));
+                            httpResponse.bufferFactory().wrap(objectMapper.writeValueAsBytes(R.failed(e.getMessage())))));
                 } catch (JsonProcessingException ex) {
                     log.error("httpResponse 流输出异常", e);
                 }

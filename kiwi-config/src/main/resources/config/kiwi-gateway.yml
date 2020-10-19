@@ -20,6 +20,7 @@ spring:
           predicates:
             - Path=/admin/**
           filters:
+            - ValidateCodeGatewayFilter
             - name: RequestRateLimiter
               args:
                 key-resolver: '#{@remoteAddrKeyResolver}'
@@ -57,3 +58,6 @@ ignore:
   clients:
     - test
     - admin
+  codeVerifyChannels:
+    - /sys/user/oneClickRegister
+

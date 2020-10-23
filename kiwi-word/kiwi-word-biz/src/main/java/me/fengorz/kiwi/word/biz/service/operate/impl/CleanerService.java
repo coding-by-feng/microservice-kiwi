@@ -114,8 +114,7 @@ public class CleanerService implements ICleanerService {
     public boolean removePhrase(Integer queueId) {
         Optional.ofNullable(queueService.getOneAnyhow(queueId)).ifPresent(queue -> {
             String wordName = queue.getWordName();
-            List<WordMainDO> list = new LinkedList<>();
-            list.addAll(mainService.list(wordName, WordCrawlerConstants.QUEUE_INFO_TYPE_PHRASE));
+            List<WordMainDO> list = new LinkedList<>(mainService.list(wordName, WordCrawlerConstants.QUEUE_INFO_TYPE_PHRASE));
             if (KiwiCollectionUtils.isEmpty(list)) {
                 return;
             }

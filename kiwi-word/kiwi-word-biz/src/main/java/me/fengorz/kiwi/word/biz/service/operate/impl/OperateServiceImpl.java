@@ -116,10 +116,12 @@ public class OperateServiceImpl implements IOperateService {
             List<CharacterVO> characterVOList = new LinkedList<>();
             characterVOList.add(new CharacterVO().setCharacterCode(WordConstants.PHRASE_CODE).setCharacterId(0)
                     .setParaphraseVOList(new LinkedList<>()).setPronunciationVOList(new LinkedList<>()));
-            for (ParaphraseVO paraphraseVO : paraphraseService.listPhrase(word.getWordId())) {
-                paraphraseVO.setExampleVOList(exampleService.listExamples(paraphraseVO.getParaphraseId()));
-                characterVOList.get(0).getParaphraseVOList().add(paraphraseVO);
-            }
+            Optional.ofNullable(paraphraseService.listPhrase(word.getWordId())).ifPresent(paraphraseVOList -> {
+                for (ParaphraseVO paraphraseVO : paraphraseVOList) {
+                    paraphraseVO.setExampleVOList(exampleService.listExamples(paraphraseVO.getParaphraseId()));
+                    characterVOList.get(0).getParaphraseVOList().add(paraphraseVO);
+                }
+            });
             vo.setCharacterVOList(characterVOList);
             return vo.setWordName(wordName).setWordId(word.getWordId());
         }

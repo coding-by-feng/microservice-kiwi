@@ -16,12 +16,12 @@
 
 package me.fengorz.kiwi.word.api.dto.queue;
 
-import java.io.Serializable;
-
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import lombok.experimental.Accessors;
+
+import java.io.Serializable;
 
 /**
  * @Author zhanshifeng
@@ -33,7 +33,7 @@ import lombok.experimental.Accessors;
 @EqualsAndHashCode(callSuper = true)
 public class FetchWordMqDTO extends MqDTO implements Serializable {
 
-    private static final long serialVersionUID = -7241956302636316173L;
+    private static final long serialVersionUID = -6344949739855024313L;
 
     private String word;
 

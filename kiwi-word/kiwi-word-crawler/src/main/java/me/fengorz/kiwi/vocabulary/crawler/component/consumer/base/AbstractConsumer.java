@@ -55,7 +55,7 @@ public abstract class AbstractConsumer<T extends MqDTO> {
                     TimeUnit.SECONDS.sleep(1);
                 } catch (InterruptedException e) {
                     log.error("threadPoolTaskExecutor sleep error!", e);
-                    this.errorCallback(dto);
+                    this.errorCallback(dto, e);
                     return;
                 }
             }
@@ -71,7 +71,7 @@ public abstract class AbstractConsumer<T extends MqDTO> {
                         TimeUnit.SECONDS.sleep(1);
                     } catch (InterruptedException ie) {
                         log.error("threadPoolTaskExecutor sleep error!", ie);
-                        this.errorCallback(dto);
+                        this.errorCallback(dto, e);
                         return;
                     }
                 }
@@ -83,6 +83,6 @@ public abstract class AbstractConsumer<T extends MqDTO> {
 
     protected abstract void execute(T dto);
 
-    protected abstract void errorCallback(T dto);
+    protected abstract void errorCallback(T dto, Exception e);
 
 }

@@ -101,6 +101,7 @@ public class CleanerService implements ICleanerService {
             for (WordMainDO wordMainDO : list) {
                 this.evictAll(wordMainDO, wordName);
                 List<RemovePronunciatioinMqDTO> temps = this.subRemoveWord(wordMainDO);
+                variantService.remove(Wrappers.<WordMainVariantDO>lambdaQuery().eq(WordMainVariantDO::getVariantName, wordName));
                 temps.forEach(dto -> dto.setQueueId(queueId));
                 KiwiCollectionUtils.addAllIfNotContains(result, temps);
             }
@@ -132,7 +133,6 @@ public class CleanerService implements ICleanerService {
     private List<RemovePronunciatioinMqDTO> subRemoveWord(WordMainDO wordMainDO) {
         final String wordName = wordMainDO.getWordName();
         mainService.remove(Wrappers.<WordMainDO>lambdaQuery().eq(WordMainDO::getWordName, wordName).eq(WordMainDO::getInfoType, WordCrawlerConstants.QUEUE_INFO_TYPE_WORD));
-        variantService.remove(Wrappers.<WordMainVariantDO>lambdaQuery().eq(WordMainVariantDO::getVariantName, wordName));
         operateService.cacheReplace(wordName,
                 operateService.getCacheReplace(wordName).setOldRelWordId(wordMainDO.getWordId()));
         return this.removeRelatedData(wordMainDO);

@@ -74,7 +74,7 @@ public class RemovePronunciationConsumer extends AbstractConsumer<RemovePronunci
     }
 
     @Override
-    protected void errorCallback(RemovePronunciatioinMqDTO dto) {
+    protected void errorCallback(RemovePronunciatioinMqDTO dto, Exception e) {
         // TODO ZSF 增加一个抓取队列状态恢复到待抓取的接口，防止数据抓取丢失
     }
 

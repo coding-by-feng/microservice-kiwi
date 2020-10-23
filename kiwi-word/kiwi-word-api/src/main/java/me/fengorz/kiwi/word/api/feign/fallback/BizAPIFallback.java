@@ -102,7 +102,7 @@ public class BizAPIFallback implements IBizAPI {
     }
 
     @Override
-    public R<List<RemovePronunciatioinMqDTO>> removePhrase(Integer queueId) {
+    public R<Boolean> removePhrase(Integer queueId) {
         log.error(throwable.getCause().getMessage());
         return R.feignCallFailed(throwable.getMessage());
     }

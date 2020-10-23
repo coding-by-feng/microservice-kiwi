@@ -31,6 +31,8 @@ import me.fengorz.kiwi.word.api.feign.IBizAPI;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
+import java.util.Optional;
+
 /**
  * 抓取词组基本信息-消息队列生产者
  *
@@ -54,10 +56,17 @@ public class FetchProducer extends AbstractProducer implements IProducer {
     @Async
     @Override
     protected void execute(FetchQueueDO queue) {
-        sender.fetchPhrase(new FetchPhraseMqDTO().setQueueId(queue.getQueueId()).setPhrase(queue.getWordName()).setDerivation(queue.getDerivation()));
-        queue.setFetchStatus(WordCrawlerConstants.STATUS_DOING_FETCH);
         queue.setIsLock(CommonConstants.FLAG_YES);
         queue.setFetchTime(queue.getFetchTime() + 1);
-        bizAPI.updateQueueById(queue);
+        if (null == queue.getWordId() || 0 == queue.getWordId()) {
+            queue.setFetchStatus(WordCrawlerConstants.STATUS_DOING_FETCH);
+            if (Optional.of(bizAPI.updateQueueById(queue)).get().isSuccess()) {
+                sender.fetchPhrase(new FetchPhraseMqDTO().setQueueId(queue.getQueueId()).setPhrase(queue.getWordName()).setDerivation(queue.getDerivation()));
+            }
+        } else {
+            // 删除老的数据
+            queue.setFetchStatus(WordCrawlerConstants.STATUS_TO_DEL_BASE);
+            bizAPI.updateQueueById(queue);
+        }
     }
 }

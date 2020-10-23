@@ -26,6 +26,7 @@ import me.fengorz.kiwi.word.api.feign.IBizAPI;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @Author zhanshifeng
@@ -48,7 +49,7 @@ public abstract class AbstractProducer implements IProducer {
     protected void produce(Integer... status) {
         List<FetchQueueDO> list = new LinkedList<>();
         for (Integer temp : status) {
-            list.addAll(this.getQueueDO(temp));
+            Optional.ofNullable(this.getQueueDO(temp)).ifPresent(list::addAll);
         }
         if (KiwiCollectionUtils.isEmpty(list)) {
             return;

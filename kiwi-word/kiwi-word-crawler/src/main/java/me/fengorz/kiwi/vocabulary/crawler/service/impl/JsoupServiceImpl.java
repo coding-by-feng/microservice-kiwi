@@ -189,10 +189,11 @@ public class JsoupServiceImpl implements IJsoupService {
         FetchPhraseResultDTO result = new FetchPhraseResultDTO();
         List<FetchParaphraseDTO> paraphraseDTOs = new LinkedList<>();
         Set<String> relatedWords = new HashSet<>();
-        /*习语词组 begin*/
-        Elements idiomElements = doc.getElementsByClass("idiom-body didiom-body");
-        if (KiwiCollectionUtils.isNotEmpty(idiomElements)) {
-            for (Element idiomElement : idiomElements) {
+        /*词组 begin*/
+        Elements paraphraseElements = doc.getElementsByClass("idiom-body didiom-body");
+        paraphraseElements.addAll(doc.getElementsByClass("pv-body dpv-body"));
+        if (KiwiCollectionUtils.isNotEmpty(paraphraseElements)) {
+            for (Element idiomElement : paraphraseElements) {
                 Elements mainParaphrases = idiomElement.getElementsByClass(KEY_MAIN_PARAPHRASES);
                 CrawlerAssertUtils.notEmpty(mainParaphrases, FETCH_PARAPHRASE_ENGLISH_EXCEPTION, finalPhrase);
 
@@ -219,7 +220,8 @@ public class JsoupServiceImpl implements IJsoupService {
                 }
             }
         }
-        /*习语词组 end*/
+        /*词组 end*/
+
         /*动词词组、形容词词组能要当做单词去抓取 begin*/
         Optional.ofNullable(doc.getElementsByClass("pr entry-body__el")).ifPresent(elements -> {
             for (Element element : elements) {

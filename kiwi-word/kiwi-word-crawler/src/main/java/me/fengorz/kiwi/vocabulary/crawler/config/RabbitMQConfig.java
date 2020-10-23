@@ -72,31 +72,31 @@ public class RabbitMQConfig {
     @Bean
     public Binding phraseRunUp() {
         return BindingBuilder.bind(new Queue(properties.getPhraseRunUpFromCambridge().getFetchQueue()))
-                .to(wordFromCambridge()).with(properties.getWordFromCambridge().getFetchRouting());
+                .to(phraseFromCambridge()).with(properties.getPhraseRunUpFromCambridge().getFetchRouting());
     }
 
     @Bean
     public Binding phraseFetch() {
         return BindingBuilder.bind(new Queue(properties.getPhraseFromCambridge().getFetchQueue()))
-                .to(wordFromCambridge()).with(properties.getPhraseFromCambridge().getFetchRouting());
+                .to(phraseRunUpFromCambridge()).with(properties.getPhraseFromCambridge().getFetchRouting());
     }
 
     @Bean
     public Binding phraseRemove() {
         return BindingBuilder.bind(new Queue(properties.getPhraseFromCambridge().getRemoveQueue()))
-                .to(wordFromCambridge()).with(properties.getPhraseFromCambridge().getRemoveRouting());
+                .to(phraseFromCambridge()).with(properties.getPhraseFromCambridge().getRemoveRouting());
     }
 
     @Bean
     public Binding pronunciationFetch() {
         return BindingBuilder.bind(new Queue(properties.getPronunciationFromCambridge().getFetchQueue()))
-                .to(wordFromCambridge()).with(properties.getPronunciationFromCambridge().getFetchRouting());
+                .to(pronunciationFromCambridge()).with(properties.getPronunciationFromCambridge().getFetchRouting());
     }
 
     @Bean
     public Binding pronunciationRemove() {
-        return BindingBuilder.bind(new Queue(properties.getPronunciationFromCambridge().getFetchQueue()))
-                .to(wordFromCambridge()).with(properties.getPronunciationFromCambridge().getFetchRouting());
+        return BindingBuilder.bind(new Queue(properties.getPronunciationFromCambridge().getRemoveQueue()))
+                .to(pronunciationFromCambridge()).with(properties.getPronunciationFromCambridge().getRemoveRouting());
     }
 
 }

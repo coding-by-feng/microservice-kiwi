@@ -168,4 +168,3 @@ cp autoCheckService.sh autoDeployMicroservice.sh autoDeploy.sh ~
 cd ~
 chmod 777 autoCheckService.sh autoDeployMicroservice.sh autoDeploy.sh 
 ```
-

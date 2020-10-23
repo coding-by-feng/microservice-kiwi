@@ -74,7 +74,7 @@ public interface IBizAPI {
     R<List<RemovePronunciatioinMqDTO>> removeWord(@PathVariable Integer queueId);
 
     @GetMapping(WORD_FETCH_QUEUE + "/removePhrase/{queueId}")
-    R<List<RemovePronunciatioinMqDTO>> removePhrase(@PathVariable Integer queueId);
+    R<Boolean> removePhrase(@PathVariable Integer queueId);
 
     @Deprecated
     @PostMapping(WORD_FETCH_QUEUE + "/lock")

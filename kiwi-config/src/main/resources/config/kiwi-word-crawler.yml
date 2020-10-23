@@ -22,7 +22,7 @@ mq:
       exchange: pronunciation
       fetchQueue: pronunciation.fetch
       fetchRouting: cambridge.fetch
-      removeQueue: phrase.del
+      removeQueue: pronunciation.del
       removeRouting: cambridge.del
 
 async:

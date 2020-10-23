@@ -152,10 +152,11 @@ public class FetchServiceImpl implements IFetchService {
                 queue.setIsLock(CommonConstants.FLAG_YES);
                 response.getData().forEach(sender::removePronunciation);
             } else {
-                throw new WordRemoveException();
+                throw new WordRemoveException(queue.getWordName());
             }
             isUpdate = true;
         } catch (Exception e) {
+            queue.setWordId(0);
             this.handleException(queue, WordCrawlerConstants.STATUS_DEL_BASE_FAIL, "remove word error!");
             isUpdate = true;
         } finally {
@@ -240,6 +241,7 @@ public class FetchServiceImpl implements IFetchService {
                 throw new PhraseRemoveException();
             }
         } catch (Exception e) {
+            queue.setWordId(0);
             this.handleException(queue, WordCrawlerConstants.STATUS_DEL_PHRASE_FAIL, "remove word error!");
             isUpdate = true;
         } finally {

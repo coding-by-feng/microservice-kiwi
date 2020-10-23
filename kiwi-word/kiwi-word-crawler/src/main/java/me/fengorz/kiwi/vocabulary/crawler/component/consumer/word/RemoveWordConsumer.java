@@ -34,15 +34,15 @@ import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
 /**
-* @Author zhanshifeng
+ * @Author zhanshifeng
  * @Date 2019/10/28 4:25 PM
  */
 @Slf4j
 @Component
 @RequiredArgsConstructor
 @RabbitListener(bindings = @QueueBinding(value = @Queue(value = "${mq.config.wordFromCambridge.removeQueue}", autoDelete = "true"),
-    exchange = @Exchange(value = "${mq.config.wordFromCambridge.exchange}"),
-    key = "${mq.config.wordFromCambridge.removeRouting}"))
+        exchange = @Exchange(value = "${mq.config.wordFromCambridge.exchange}"),
+        key = "${mq.config.wordFromCambridge.removeRouting}"))
 public class RemoveWordConsumer extends AbstractConsumer<RemoveMqDTO> implements IConsumer<RemoveMqDTO> {
 
     private final IFetchService fetchService;
@@ -68,12 +68,16 @@ public class RemoveWordConsumer extends AbstractConsumer<RemoveMqDTO> implements
 
     @Override
     protected void execute(RemoveMqDTO dto) {
-        fetchService.removeWord(dto);
+        try {
+            fetchService.removeWord(dto);
+        } catch (Exception e) {
+            this.errorCallback(dto, e);
+        }
     }
 
     @Override
-    protected void errorCallback(RemoveMqDTO dto) {
-        // TODO ZSF 增加一个抓取队列状态恢复到待抓取的接口，防止数据抓取丢失
+    protected void errorCallback(RemoveMqDTO dto, Exception e) {
+        log.error("rabbitMQ remove word error 【{}】", e.getMessage());
     }
 
 }

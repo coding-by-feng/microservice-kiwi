@@ -34,17 +34,17 @@ import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
 /**
-* @Author zhanshifeng
+ * @Author zhanshifeng
  * @Date 2019/10/28 4:25 PM
  */
 @Slf4j
 @Component
 @RequiredArgsConstructor
 @RabbitListener(bindings = @QueueBinding(value = @Queue(value = "${mq.config.pronunciationFromCambridge.fetchQueue}", autoDelete = "true"),
-    exchange = @Exchange(value = "${mq.config.pronunciationFromCambridge.exchange}"),
-    key = "${mq.config.pronunciationFromCambridge.fetchRouting}"))
+        exchange = @Exchange(value = "${mq.config.pronunciationFromCambridge.exchange}"),
+        key = "${mq.config.pronunciationFromCambridge.fetchRouting}"))
 public class FetchPronunciationConsumer extends AbstractConsumer<FetchPronunciationMqDTO>
-    implements IConsumer<FetchPronunciationMqDTO> {
+        implements IConsumer<FetchPronunciationMqDTO> {
 
     private final IFetchService fetchService;
 
@@ -73,7 +73,6 @@ public class FetchPronunciationConsumer extends AbstractConsumer<FetchPronunciat
     }
 
     @Override
-    protected void errorCallback(FetchPronunciationMqDTO dto) {
-
+    protected void errorCallback(FetchPronunciationMqDTO dto, Exception e) {
     }
 }

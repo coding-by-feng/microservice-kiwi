@@ -72,7 +72,7 @@ public class FetchConsumer extends AbstractConsumer<FetchPhraseMqDTO> implements
     }
 
     @Override
-    protected void errorCallback(FetchPhraseMqDTO dto) {
+    protected void errorCallback(FetchPhraseMqDTO dto, Exception e) {
         // TODO ZSF 增加一个抓取队列状态恢复到待抓取的接口，防止数据抓取丢失
     }
 

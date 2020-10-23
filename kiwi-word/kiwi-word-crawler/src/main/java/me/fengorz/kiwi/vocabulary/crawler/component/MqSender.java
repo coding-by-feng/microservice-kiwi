@@ -64,19 +64,19 @@ public class MqSender implements ISender {
 
     @Override
     public void removeWord(RemoveMqDTO dto) {
-        MqExchange exchange = properties.getPronunciationFromCambridge();
+        MqExchange exchange = properties.getWordFromCambridge();
         amqpTemplate.convertAndSend(exchange.getExchange(), exchange.getRemoveRouting(), dto);
     }
 
     @Override
     public void removePhrase(RemoveMqDTO dto) {
-        MqExchange exchange = properties.getPronunciationFromCambridge();
+        MqExchange exchange = properties.getPhraseFromCambridge();
         amqpTemplate.convertAndSend(exchange.getExchange(), exchange.getRemoveRouting(), dto);
     }
 
     @Override
     public void removePronunciation(RemovePronunciatioinMqDTO dto) {
-        MqExchange exchange = properties.getPhraseFromCambridge();
+        MqExchange exchange = properties.getPronunciationFromCambridge();
         amqpTemplate.convertAndSend(exchange.getExchange(), exchange.getRemoveRouting(), dto);
     }
 

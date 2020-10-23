@@ -2,6 +2,14 @@
 
 killall autoCheckService.sh
 
+rm -rf ~/docker/kiwi/eureka/logs/*
+rm -rf ~/docker/kiwi/config/logs/*
+rm -rf ~/docker/kiwi/upms/logs/*
+rm -rf ~/docker/kiwi/auth/logs/*
+rm -rf ~/docker/kiwi/gate/logs/*
+rm -rf ~/docker/kiwi/word/logs/*
+rm -rf ~/docker/kiwi/crawler/logs/*
+
 cd ~/microservice-kiwi/
 
 git pull

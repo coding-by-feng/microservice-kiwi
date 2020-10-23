@@ -229,7 +229,7 @@ public class FetchServiceImpl implements IFetchService {
         FetchQueueDO queue = new FetchQueueDO().setQueueId(Objects.requireNonNull(dto.getQueueId()));
         boolean isUpdate = false;
         try {
-            R<List<RemovePronunciatioinMqDTO>> response =
+            R<Boolean> response =
                     Optional.of(bizAPI.removePhrase(dto.getQueueId())).get();
             if (response.isSuccess()) {
                 // 删除完老的基础数据重新开始抓取单词
@@ -242,7 +242,7 @@ public class FetchServiceImpl implements IFetchService {
             }
         } catch (Exception e) {
             queue.setWordId(0);
-            this.handleException(queue, WordCrawlerConstants.STATUS_DEL_PHRASE_FAIL, "remove word error!");
+            this.handleException(queue, WordCrawlerConstants.STATUS_DEL_PHRASE_FAIL, "remove parase error!");
             isUpdate = true;
         } finally {
             if (isUpdate) {

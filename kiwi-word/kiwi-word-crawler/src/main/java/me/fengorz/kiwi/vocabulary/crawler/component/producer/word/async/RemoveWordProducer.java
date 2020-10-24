@@ -58,7 +58,6 @@ public class RemoveWordProducer extends AbstractProducer implements IProducer {
     public void execute(FetchQueueDO queue) {
         queue.setIsLock(CommonConstants.FLAG_YES);
         queue.setFetchStatus(WordCrawlerConstants.STATUS_DOING_DEL_BASE);
-        queue.setIsIntoCache(CommonConstants.FLAG_NO);
         if (Optional.of(bizAPI.updateQueueById(queue)).get().isSuccess()) {
             sender.removeWord(new RemoveMqDTO().setQueueId(queue.getQueueId()));
         }

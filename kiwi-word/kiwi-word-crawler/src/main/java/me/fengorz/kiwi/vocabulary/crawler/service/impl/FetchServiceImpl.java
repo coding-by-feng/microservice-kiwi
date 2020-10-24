@@ -108,6 +108,7 @@ public class FetchServiceImpl implements IFetchService {
             isUpdate = true;
         } finally {
             if (isUpdate) {
+                queue.setIsIntoCache(CommonConstants.FLAG_NO);
                 bizAPI.updateQueueById(queue);
             }
         }
@@ -219,6 +220,7 @@ public class FetchServiceImpl implements IFetchService {
             isUpdate = true;
         } finally {
             if (isUpdate) {
+                queue.setIsIntoCache(CommonConstants.FLAG_NO);
                 bizAPI.updateQueueById(queue);
             }
         }

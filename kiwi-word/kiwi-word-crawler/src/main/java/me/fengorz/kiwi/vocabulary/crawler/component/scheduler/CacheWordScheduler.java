@@ -76,11 +76,10 @@ public class CacheWordScheduler extends AbstractScheduler implements IScheduler 
             // HttpUtil.get(url);
             // log.info(url);
             bizAPI.queryWord(wordName);
-            queue.setIsIntoCache(CommonConstants.FLAG_YES);
         } catch (Exception e) {
-            queue.setIsIntoCache(CommonConstants.FLAG_NO);
             log.error(e.getMessage());
         } finally {
+            queue.setIsIntoCache(CommonConstants.FLAG_YES);
             countDownLatch.countDown();
             bizAPI.updateQueueById(queue);
         }

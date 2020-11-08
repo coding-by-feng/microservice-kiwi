@@ -27,6 +27,8 @@ public class WordConstants {
 
     public static final String KIWI_WORD_BIZ = "kiwi-word-biz";
 
+    public static final String KIWI_WORD_BIZ_CRAWLER = "kiwi-word-biz-crawler";
+
     public static final String CACHE_NAMES = "kiwi";
 
     public interface CACHE_KEY_PREFIX_OPERATE {

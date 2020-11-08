@@ -1,9 +1,10 @@
 server:
-  port: 5001
+  port: ${PORT:0}
+#  port: 5001
 
 spring:
   application:
-    name: kiwi-word-biz
+    name: kiwi-word-biz-default
   profiles:
     active: dev
   cloud:
@@ -17,6 +18,7 @@ spring:
 
 eureka:
   instance:
+    instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
     prefer-ip-address: true
   client:
     service-url:

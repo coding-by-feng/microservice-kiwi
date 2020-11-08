@@ -26,7 +26,8 @@ docker rmi kiwi-config:1.0
 docker rmi kiwi-upms:1.0
 docker rmi kiwi-auth:1.0
 docker rmi kiwi-gate:1.0
-docker rmi kiwi-word:1.0
+docker rmi kiwi-word-biz:1.0
+docker rmi kiwi-word-crawler:1.0
 docker rmi kiwi-crawler:1.0
 
 echo "docker build beginning"
@@ -36,7 +37,8 @@ docker build -f ~/docker/kiwi/config/Dockerfile -t kiwi-config:1.0 ~/docker/kiwi
 docker build -f ~/docker/kiwi/upms/Dockerfile -t kiwi-upms:1.0 ~/docker/kiwi/upms/
 docker build -f ~/docker/kiwi/auth/Dockerfile -t kiwi-auth:1.0 ~/docker/kiwi/auth/
 docker build -f ~/docker/kiwi/gate/Dockerfile -t kiwi-gate:1.0 ~/docker/kiwi/gate/
-docker build -f ~/docker/kiwi/word/Dockerfile -t kiwi-word:1.0 ~/docker/kiwi/word/
+docker build -f ~/docker/kiwi/word/biz/Dockerfile -t kiwi-word-biz:1.0 ~/docker/kiwi/word/
+docker build -f ~/docker/kiwi/word/crawler/Dockerfile -t kiwi-word-crawler:1.0 ~/docker/kiwi/word/
 docker build -f ~/docker/kiwi/crawler/Dockerfile -t kiwi-crawler:1.0 ~/docker/kiwi/crawler/
 
 echo "docker-compose base beginning"

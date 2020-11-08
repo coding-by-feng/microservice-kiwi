@@ -35,8 +35,8 @@ services:
 #          memory: 200M  # 设置该容器最多只能使用 200M 的内存空间
   kiwi-word:
     image: kiwi-word:1.0
-#    ports:
-#      - '5001:5001'
+    ports:
+      - '5001:5001'
     volumes:
       - /root/docker/kiwi/word/logs:/logs
       - /root/docker/kiwi/word/tmp:/wordTmp

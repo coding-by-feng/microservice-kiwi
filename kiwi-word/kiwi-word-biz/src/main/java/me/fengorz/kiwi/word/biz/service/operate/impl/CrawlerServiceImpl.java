@@ -72,7 +72,7 @@ public class CrawlerServiceImpl implements ICrawlerService {
     private final ISeqService seqService;
     private final IOperateService operateService;
 
-    @Value("${me.fengorz.file.crawler.voice.tmpPath}")
+    @Value("${me.fengorz.file.crawler.voice.tmpPath:'/wordTmp'}")
     private String crawlerVoiceBasePath;
 
     /**

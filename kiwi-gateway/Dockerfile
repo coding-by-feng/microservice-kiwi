@@ -6,4 +6,4 @@ RUN echo "http://mirrors.aliyun.com/alpine/v3.8/main" > /etc/apk/repositories \
     && apk --no-cache add ttf-dejavu fontconfig
 ADD kiwi-gateway-1.0-SNAPSHOT.jar app.jar
 EXPOSE 9991
-ENTRYPOINT java -jar -Xmx128m -Dspring.profiles.active=prod /app.jar > /logs/gate.log
+ENTRYPOINT java -jar -Xmx128m -Dcom.sun.management.autodiscovery=true -XX:+UnlockCommercialFeatures -XX:+FlightRecorder -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=9008,suspend=n -Dspring.profiles.active=prod /app.jar > /logs/gate.log

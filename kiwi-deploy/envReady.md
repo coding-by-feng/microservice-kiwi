@@ -44,6 +44,10 @@ yum install git
 cd ~/microservice-kiwi/
 git init
 git pull https://github.com/coding-by-feng/microservice-kiwi.git/
+git remote add master https://github.com/coding-by-feng/microservice-kiwi.git
+git -c credential.helper= -c core.quotepath=false -c log.showSignature=false checkout -B master origin/master
+git config --global credential.helper store
+git pull
 ```
 
 # host

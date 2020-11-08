@@ -7,7 +7,8 @@ docker stop `docker ps -a| grep kiwi-config | awk '{print $1}' `
 docker stop `docker ps -a| grep kiwi-upms | awk '{print $1}' `
 docker stop `docker ps -a| grep kiwi-auth | awk '{print $1}' `
 docker stop `docker ps -a| grep kiwi-gate | awk '{print $1}' `
-docker stop `docker ps -a| grep kiwi-word | awk '{print $1}' `
+docker stop `docker ps -a| grep kiwi-word-biz | awk '{print $1}' `
+docker stop `docker ps -a| grep kiwi-word-biz-crawler | awk '{print $1}' `
 docker stop `docker ps -a| grep kiwi-crawler | awk '{print $1}' `
 
 echo "delete container beginning"
@@ -16,7 +17,8 @@ docker rm   `docker ps -a| grep kiwi-eureka | awk '{print $1}' `
 docker rm   `docker ps -a| grep kiwi-config | awk '{print $1}' `
 docker rm   `docker ps -a| grep kiwi-upms | awk '{print $1}' `
 docker rm   `docker ps -a| grep kiwi-auth | awk '{print $1}' `
-docker rm   `docker ps -a| grep kiwi-word | awk '{print $1}' `
+docker rm   `docker ps -a| grep kiwi-word-biz | awk '{print $1}' `
+docker rm   `docker ps -a| grep kiwi-word-biz-crawler | awk '{print $1}' `
 docker rm   `docker ps -a| grep kiwi-crawler | awk '{print $1}' `
 
 echo "delete image beginning"

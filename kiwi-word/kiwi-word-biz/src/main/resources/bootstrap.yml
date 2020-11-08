@@ -4,7 +4,7 @@ server:
 
 spring:
   application:
-    name: kiwi-word-biz-default
+    name: kiwi-word-biz
   profiles:
     active: dev
   cloud:

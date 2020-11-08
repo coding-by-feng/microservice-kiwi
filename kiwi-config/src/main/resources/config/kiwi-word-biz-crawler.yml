@@ -15,8 +15,9 @@ ignore:
     - /test/**
     - /word/main/query/**
     - /word/main/queryById/**
-    - /word/main/fuzzyQueryList/**
-    - /word/pronunciation/downloadVoice/**
+    - /word/fetch/**
+    - /word/main/variant/**
+    - /word/main/listOverlapInUnLock
   userNames:
     - admin
 

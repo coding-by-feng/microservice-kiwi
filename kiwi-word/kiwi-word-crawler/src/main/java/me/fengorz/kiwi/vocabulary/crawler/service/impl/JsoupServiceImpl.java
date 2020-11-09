@@ -255,7 +255,11 @@ public class JsoupServiceImpl implements IJsoupService {
                     if (phrase.endsWith(verbose)) {
                         phrase = phrase.substring(0, phrase.length() - verboseLength);
                     }
-                    phrases.add(phrase.trim());
+                    phrase = phrase.trim();
+                    if (KiwiStringUtils.equals(phrase, word)) {
+                        return;
+                    }
+                    phrases.add(phrase);
                 });
             }
         }

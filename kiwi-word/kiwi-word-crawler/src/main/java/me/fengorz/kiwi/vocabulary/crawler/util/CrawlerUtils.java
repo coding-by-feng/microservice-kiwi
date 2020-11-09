@@ -28,8 +28,8 @@ import me.fengorz.kiwi.word.api.dto.queue.result.FetchPhraseResultDTO;
  */
 public class CrawlerUtils {
 
-
     public static boolean is2word(FetchPhraseResultDTO resultDTO) {
         return KiwiCollectionUtils.isEmpty(resultDTO.getRelatedWords()) && KiwiCollectionUtils.isEmpty(resultDTO.getFetchParaphraseDTOList());
     }
+
 }

@@ -192,6 +192,10 @@ public class CrawlerServiceImpl implements ICrawlerService {
     @Override
     public boolean handlePhrasesFetchResult(FetchPhraseRunUpResultDTO dto) {
         for (String phrase : dto.getPhrases()) {
+            // 词组是word本身跳过
+            if (KiwiStringUtils.equals(phrase, dto.getWord())) {
+                continue;
+            }
             // 包含空格说明是词组
             if (KiwiStringUtils.containsBlank(phrase)) {
                 queueService.startFetchPhrase(phrase, dto.getWord(), dto.getWordId());

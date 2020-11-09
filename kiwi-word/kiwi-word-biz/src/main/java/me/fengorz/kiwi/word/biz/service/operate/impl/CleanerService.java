@@ -133,7 +133,7 @@ public class CleanerService implements ICleanerService {
 
     private List<RemovePronunciatioinMqDTO> subRemoveWord(WordMainDO wordMainDO) {
         final String wordName = wordMainDO.getWordName();
-        mainService.remove(Wrappers.<WordMainDO>lambdaQuery().eq(WordMainDO::getWordName, wordName).eq(WordMainDO::getInfoType, WordCrawlerConstants.QUEUE_INFO_TYPE_WORD));
+        mainService.remove(Wrappers.<WordMainDO>lambdaQuery().eq(WordMainDO::getWordName, wordName).eq(WordMainDO::getInfoType, wordMainDO.getInfoType()));
         operateService.cacheReplace(wordName,
                 operateService.getCacheReplace(wordName).setOldRelWordId(wordMainDO.getWordId()));
         return this.removeRelatedData(wordMainDO);

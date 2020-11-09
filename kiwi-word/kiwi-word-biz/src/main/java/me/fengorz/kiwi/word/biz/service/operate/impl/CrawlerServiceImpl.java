@@ -222,15 +222,16 @@ public class CrawlerServiceImpl implements ICrawlerService {
             }
         }
 
+        final List<FetchParaphraseDTO> paraphrases = dto.getFetchParaphraseDTOList();
+        if (KiwiCollectionUtils.isEmpty(paraphrases)) {
+            return false;
+        }
+
         final String phrase = dto.getPhrase();
         WordMainDO wordMain = new WordMainDO().setWordId(seqService.genIntSequence(MapperConstant.T_INS_SEQUENCE))
                 .setWordName(phrase).setInfoType(WordCrawlerConstants.QUEUE_INFO_TYPE_PHRASE);
         mainService.save(wordMain);
 
-        final List<FetchParaphraseDTO> paraphrases = dto.getFetchParaphraseDTOList();
-        if (KiwiCollectionUtils.isEmpty(paraphrases)) {
-            return false;
-        }
         for (FetchParaphraseDTO paraphrase : paraphrases) {
             ParaphraseDO paraphraseDO = new ParaphraseDO();
             KiwiBeanUtils.copyProperties(paraphrase, paraphraseDO);

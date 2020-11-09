@@ -87,13 +87,13 @@ public class CleanerService implements ICleanerService {
         Optional.ofNullable(queueService.getOneAnyhow(queueId)).ifPresent(queue -> {
             String wordName = queue.getWordName();
             String derivation = queue.getDerivation();
-            List<WordMainDO> list = new LinkedList<>();
-            if (KiwiStringUtils.equals(wordName, derivation)) {
-                list.addAll(mainService.list(wordName, WordCrawlerConstants.QUEUE_INFO_TYPE_WORD));
-            } else {
-                // 如果所查单词和单词的原型不同的话
-                list.addAll(mainService.list(derivation, WordCrawlerConstants.QUEUE_INFO_TYPE_WORD));
-            }
+            // if (KiwiStringUtils.equals(wordName, derivation)) {
+            //     list.addAll(mainService.list(wordName, WordCrawlerConstants.QUEUE_INFO_TYPE_WORD));
+            // } else {
+            //     // 如果所查单词和单词的原型不同的话
+            //     list.addAll(mainService.list(derivation, WordCrawlerConstants.QUEUE_INFO_TYPE_WORD));
+            // }
+            List<WordMainDO> list = new LinkedList<>(mainService.listDirtyData(queue.getWordId()));
             if (KiwiCollectionUtils.isEmpty(list)) {
                 return;
             }

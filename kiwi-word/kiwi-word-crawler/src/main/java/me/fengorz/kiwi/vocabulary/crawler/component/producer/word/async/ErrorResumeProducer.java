@@ -59,7 +59,7 @@ public class ErrorResumeProducer extends AbstractProducer implements IProducer {
     private void resumeDelPronunciationError() {
         List<FetchQueueDO> list;
         synchronized (barrier) {
-            list = new LinkedList<>((bizAPI.pageQueueLockIn(WordCrawlerConstants.STATUS_DEL_PRONUNCIATION_FAIL, 0, 20, WordCrawlerConstants.QUEUE_INFO_TYPE_WORD)).getData());
+            list = new LinkedList<>((bizAPI.pageQueue(WordCrawlerConstants.STATUS_DEL_PRONUNCIATION_FAIL, 0, 20, WordCrawlerConstants.QUEUE_INFO_TYPE_WORD)).getData());
         }
         if (KiwiCollectionUtils.isEmpty(list)) {
             return;

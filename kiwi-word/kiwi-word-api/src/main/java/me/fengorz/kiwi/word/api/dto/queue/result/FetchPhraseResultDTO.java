@@ -20,6 +20,7 @@ import lombok.Data;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Set;
 
@@ -30,7 +31,9 @@ import java.util.Set;
 @Data
 @ToString
 @Accessors(chain = true)
-public class FetchPhraseResultDTO {
+public class FetchPhraseResultDTO implements Serializable {
+
+    private static final long serialVersionUID = 1851084976874498481L;
 
     private String phrase;
 

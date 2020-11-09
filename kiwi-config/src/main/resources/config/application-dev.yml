@@ -4,6 +4,10 @@ jasypt:
     password: coding-by-feng #根密码
 
 spring:
+#  cloud:
+#    loadbalancer:
+#      retry:
+#        enabled: false
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
     driver-class-name: com.mysql.cj.jdbc.Driver

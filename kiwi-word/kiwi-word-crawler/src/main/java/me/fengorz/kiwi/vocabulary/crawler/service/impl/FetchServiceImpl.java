@@ -30,6 +30,7 @@ import me.fengorz.kiwi.common.sdk.util.lang.string.KiwiStringUtils;
 import me.fengorz.kiwi.vocabulary.crawler.component.producer.base.ISender;
 import me.fengorz.kiwi.vocabulary.crawler.service.IFetchService;
 import me.fengorz.kiwi.vocabulary.crawler.service.IJsoupService;
+import me.fengorz.kiwi.vocabulary.crawler.util.CrawlerUtils;
 import me.fengorz.kiwi.word.api.common.WordCrawlerConstants;
 import me.fengorz.kiwi.word.api.dto.queue.*;
 import me.fengorz.kiwi.word.api.dto.queue.result.FetchPhraseResultDTO;
@@ -211,9 +212,15 @@ public class FetchServiceImpl implements IFetchService {
         boolean isUpdate = false;
         try {
             FetchPhraseResultDTO resultDTO = jsoupService.fetchPhraseInfo(dto);
-            bizAPI.storePhrasesFetchResult(resultDTO);
+            if (CrawlerUtils.is2word(resultDTO)) {
+                queue.setInfoType(WordCrawlerConstants.QUEUE_INFO_TYPE_WORD);
+                queue.setFetchStatus(WordCrawlerConstants.STATUS_TO_FETCH);
+                queue.setFetchTime(0);
+            } else {
+                bizAPI.storePhrasesFetchResult(resultDTO);
+                queue.setFetchStatus(WordCrawlerConstants.STATUS_PERFECT_SUCCESS);
+            }
             queue.setIsLock(CommonConstants.FLAG_YES);
-            queue.setFetchStatus(WordCrawlerConstants.STATUS_PERFECT_SUCCESS);
             isUpdate = true;
         } catch (Exception e) {
             this.handleException(queue, WordCrawlerConstants.STATUS_FETCH_PHRASE_FAIL, "fetch phrase real info error!");

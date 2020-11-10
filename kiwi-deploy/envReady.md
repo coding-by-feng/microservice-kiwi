@@ -33,7 +33,7 @@ cd docker/
 mkdir kiwi ui rabbitmq
 cd kiwi
 mkdir auth config crawler eureka gate upms word
-mkdir auth/logs config/logs crawler/logs eureka/logs gate/logs upms/logs word/logs word/bizTmp word/crawlerTmp word/biz word/crawler
+mkdir auth/logs config/logs crawler/logs crawler/tmp eureka/logs gate/logs upms/logs word/logs word/bizTmp word/crawlerTmp word/biz word/crawler
 cd ../ui
 mkdir dist nginx
 ```

@@ -33,7 +33,7 @@ services:
 #      resources:
 #        limits:
 #          memory: 200M  # 设置该容器最多只能使用 200M 的内存空间
-  kiwi-word-biz:
+  kiwi-word-biz-01:
     image: kiwi-word-biz:1.0
 #    ports:
 #      - '5001:5001'
@@ -47,13 +47,41 @@ services:
 #      resources:
 #        limits:
 #          memory: 516M  # 设置该容器最多只能使用 200M 的内存空间
-  kiwi-word-biz-crawler:
+  kiwi-word-biz-02:
+    image: kiwi-word-biz:1.0
+#    ports:
+#      - '5001:5001'
+    volumes:
+      - /root/docker/kiwi/word/logs_02:/logs
+      - /root/docker/kiwi/word/bizTmp_02:/wordTmp
+    network_mode: "host"
+    depends_on:
+      - kiwi-gate
+#    deploy:
+#      resources:
+#        limits:
+#          memory: 516M  # 设置该容器最多只能使用 200M 的内存空间
+  kiwi-word-biz-crawler-01:
     image: kiwi-word-biz-crawler:1.0
 #    ports:
 #      - '5001:5001'
     volumes:
       - /root/docker/kiwi/word/logs:/logs
       - /root/docker/kiwi/word/crawlerTmp:/wordTmp
+    network_mode: "host"
+    depends_on:
+      - kiwi-gate
+#    deploy:
+#      resources:
+#        limits:
+#          memory: 516M  # 设置该容器最多只能使用 200M 的内存空间
+  kiwi-word-biz-crawler-02:
+    image: kiwi-word-biz-crawler:1.0
+#    ports:
+#      - '5001:5001'
+    volumes:
+      - /root/docker/kiwi/word/logs_02:/logs
+      - /root/docker/kiwi/word/crawlerTmp_02:/wordTmp
     network_mode: "host"
     depends_on:
       - kiwi-gate

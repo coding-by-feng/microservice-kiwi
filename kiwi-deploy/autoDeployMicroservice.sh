@@ -49,4 +49,4 @@ mv -f ~/.m2/repository/me/fengorz/kiwi-word-crawler/1.0-SNAPSHOT/kiwi-word-crawl
 echo sleep 200
 sleep 200s
 
-nohup ~/autoCheckService.sh  >~/autoCheck.log 2>&1 &
+# nohup ~/autoCheckService.sh  >~/autoCheck.log 2>&1 &

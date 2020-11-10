@@ -3,12 +3,13 @@
 runningCode='200'
 while true
 do
-        code=$(curl -I -m 10 -o /dev/null -s -w %{http_code} http://106.55.145.49:9991/wordBiz/word/main/query/test)
+        code=$(curl -I -m 10 -o /dev/null -s -w %{http_code} http://microservice-kiwi:9991/wordBiz/word/main/query/test)
         if [ $code != $runningCode ]
         then
                 time=$(date "+%Y-%m-%d %H:%M:%S")
                 echo $time Word-Biz Service is stopping, code = $code
-                docker container start `docker ps -a| grep microservice-kiwi_kiwi-word_1 | awk '{print $1}' `
+                docker container start `docker ps -a| grep microservice-kiwi_kiwi-word-biz-01_1 | awk '{print $1}' `
+                docker container start `docker ps -a| grep microservice-kiwi_kiwi-word-biz-02_1 | awk '{print $1}' `
                 time=$(date "+%Y-%m-%d %H:%M:%S")
                 echo $time Word-Biz Service has run just now, sleep
                 sleep 80s
@@ -18,7 +19,7 @@ do
                 sleep 15s
         fi
 
-        crawlerCode=$(curl -I -m 10 -o /dev/null -s -w %{http_code} http://172.16.16.9:6001/actuator/info)
+        crawlerCode=$(curl -I -m 10 -o /dev/null -s -w %{http_code} http://kiwi-crawler:6001/actuator/info)
         if [ $crawlerCode != $runningCode ]
         then
                 time=$(date "+%Y-%m-%d %H:%M:%S")
@@ -31,7 +32,7 @@ do
                 sleep 15s
         fi
 
-        gateCode=$(curl -I -m 10 -o /dev/null -s -w %{http_code} http://172.16.16.9:9001/actuator/info)
+        gateCode=$(curl -I -m 10 -o /dev/null -s -w %{http_code} http://kiwi-gate:9001/actuator/info)
         if [ $gateCode != $runningCode ]
         then
                 time=$(date "+%Y-%m-%d %H:%M:%S")
@@ -44,7 +45,7 @@ do
                 sleep 15s
         fi
 
-        authCode=$(curl -I -m 10 -o /dev/null -s -w %{http_code} http://172.16.16.9:3001/actuator/info)
+        authCode=$(curl -I -m 10 -o /dev/null -s -w %{http_code} http://kiwi-auth:3001/actuator/info)
         if [ $authCode != $runningCode ]
         then
                 time=$(date "+%Y-%m-%d %H:%M:%S")
@@ -57,7 +58,7 @@ do
                 sleep 15s
         fi
 
-        upmsCode=$(curl -I -m 10 -o /dev/null -s -w %{http_code} http://172.16.16.9:4001/actuator/info)
+        upmsCode=$(curl -I -m 10 -o /dev/null -s -w %{http_code} http://kiwi-upms:4001/actuator/info)
         if [ $upmsCode != $runningCode ]
         then
                 time=$(date "+%Y-%m-%d %H:%M:%S")

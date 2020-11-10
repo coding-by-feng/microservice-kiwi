@@ -32,7 +32,7 @@ async:
         size: 15
     max:
       pool:
-        size: 50
+        size: 30
     queue:
       capacity: 10
 
@@ -43,7 +43,7 @@ crawler:
         size: 15
     max:
       pool:
-        size: 50
+        size: 30
     queue:
       capacity: 10
 

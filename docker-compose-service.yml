@@ -95,6 +95,7 @@ services:
       - '6001:6001'
     volumes:
       - /root/docker/kiwi/crawler/logs:/logs
+      - /root/docker/kiwi/crawler/tmp:/crawlerTmp
     network_mode: "host"
 #    deploy:
 #      resources:

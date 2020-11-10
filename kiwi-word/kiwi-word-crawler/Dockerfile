@@ -1,7 +1,7 @@
 #FROM openjdk:8-jdk-alpine
 FROM blackbelt/oraclejdk8
 RUN mkdir /logs
-RUN mkdir /root/crawlerTmp
+RUN mkdir /crawlerTmp
 
 #RUN sed -i s@/archive.ubuntu.com/@/mirrors.aliyun.com/@g /etc/apt/sources.list
 #RUN sed -i 's/deb.debian.org/mirrors.ustc.edu.cn/g' /etc/apt/sources.list

@@ -93,9 +93,8 @@ public class CleanerService implements ICleanerService {
             //     // 如果所查单词和单词的原型不同的话
             //     list.addAll(mainService.list(derivation, WordCrawlerConstants.QUEUE_INFO_TYPE_WORD));
             // }
-            // TODO ZSF 后面还是要还原为listDirtyData
-            // List<WordMainDO> list = new LinkedList<>(mainService.listDirtyData(queue.getWordId()));
-            List<WordMainDO> list = new LinkedList<>(mainService.list(Wrappers.<WordMainDO>lambdaQuery().eq(WordMainDO::getWordName, wordName)));
+            List<WordMainDO> list = new LinkedList<>(mainService.listDirtyData(queue.getWordId()));
+            // List<WordMainDO> list = new LinkedList<>(mainService.list(Wrappers.<WordMainDO>lambdaQuery().eq(WordMainDO::getWordName, wordName)));
             if (KiwiCollectionUtils.isEmpty(list)) {
                 return;
             }

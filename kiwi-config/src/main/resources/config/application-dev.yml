@@ -11,9 +11,9 @@ spring:
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
     driver-class-name: com.mysql.cj.jdbc.Driver
-    username: fengorz
+    username: root
     password: fengORZ123
-    url: jdbc:mysql://rm-2ze1069p422u9507gso.mysql.rds.aliyuncs.com:3306/kiwi_db
+    url: jdbc:mysql://cdb-0bhxucw9.gz.tencentcdb.com:10069/kiwi_db
 #    username: root
 #    password: fengORZ123
 #    url: jdbc:mysql://cdb-0bhxucw9.gz.tencentcdb.com:10069/kiwi_db

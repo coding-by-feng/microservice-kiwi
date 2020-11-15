@@ -106,7 +106,7 @@ public class WordMainServiceImpl extends ServiceImpl<WordMainMapper, WordMainDO>
 
     @Override
     public boolean isExist(String wordName) {
-        return this.getOne(wordName) != null;
+        return this.getOne(Wrappers.<WordMainDO>lambdaQuery().eq(WordMainDO::getWordName, wordName)) != null;
     }
 
     @Override

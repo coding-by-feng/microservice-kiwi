@@ -6,7 +6,7 @@ spring:
   application:
     name: kiwi-word-biz-default
   profiles:
-    active: dev
+    active: dev,prod
   cloud:
     config:
       fail-fast: true

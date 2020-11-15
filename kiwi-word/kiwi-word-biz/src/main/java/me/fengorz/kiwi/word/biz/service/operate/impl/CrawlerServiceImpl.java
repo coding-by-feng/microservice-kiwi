@@ -85,6 +85,10 @@ public class CrawlerServiceImpl implements ICrawlerService {
     @Transactional(rollbackFor = Exception.class)
     public boolean storeFetchWordResult(FetchWordResultDTO dto) {
         final String wordName = dto.getWordName();
+        if (mainService.isExist(wordName)) {
+            return true;
+        }
+
         WordMainDO wordMainDO = new WordMainDO().setWordName(wordName)
                 .setWordId(seqService.genIntSequence(MapperConstant.T_INS_SEQUENCE)).setIsDel(CommonConstants.FLAG_DEL_NO);
         mainService.save(wordMainDO);

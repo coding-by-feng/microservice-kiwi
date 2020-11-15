@@ -16,7 +16,7 @@ spring:
         enabled: true
         service-id: kiwi-config
   profiles:
-    active: dev
+    active: dev,prod
 
 # 注册中心
 eureka:

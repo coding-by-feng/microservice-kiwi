@@ -205,6 +205,7 @@ public class CleanerService implements ICleanerService {
         // 这里缓存的删除要在Mysql的删除之前做
         if (KiwiStringUtils.isNotEquals(wordName, wordMainDO.getWordName())) {
             operateService.evict(wordName, wordMainDO);
+            operateService.evict(wordMainDO.getWordName(), wordMainDO);
         } else {
             operateService.evict(wordMainDO.getWordName(), wordMainDO);
         }

@@ -51,10 +51,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -387,6 +384,21 @@ public class OperateServiceImpl implements IOperateService {
             });
         });
         this.cacheEvictFetchReplace(wordName);
+    }
+
+    @Override
+    public Set<WordMainDO> collectDirtyData(Integer queueId, String wordName) {
+        Set<WordMainDO> set = new HashSet<>(mainService.list(Wrappers.<WordMainDO>lambdaQuery().eq(WordMainDO::getWordName, wordName)));
+        if (KiwiCollectionUtils.isEmpty(set)) {
+            set.addAll(mainService.listDirtyData(fetchQueueService.getOneAnyhow(queueId).getWordId()));
+            // 防止有脏数据的队列表wordId是0
+            // 如果是单词变种的情况
+            List<Integer> wordIds = mainVariantService.list(Wrappers.<WordMainVariantDO>lambdaQuery().eq(WordMainVariantDO::getVariantName, wordName)).stream().map(WordMainVariantDO::getWordId).collect(Collectors.toList());
+            if (KiwiCollectionUtils.isNotEmpty(wordIds)) {
+                set.addAll(mainService.list(Wrappers.<WordMainDO>lambdaQuery().in(WordMainDO::getWordId, wordIds)));
+            }
+        }
+        return set;
     }
 
 }

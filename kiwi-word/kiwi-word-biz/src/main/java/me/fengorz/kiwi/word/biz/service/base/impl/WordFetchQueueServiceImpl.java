@@ -74,7 +74,7 @@ public class WordFetchQueueServiceImpl extends ServiceImpl<FetchQueueMapper, Fet
                 return;
             }
             // 抓取成功的禁止再重复抓取
-            if (one.getFetchStatus() >= WordCrawlerConstants.STATUS_ALL_SUCCESS) {
+            if (one.getFetchStatus() >= WordCrawlerConstants.STATUS_ALL_SUCCESS && one.getWordId() > 0) {
                 return;
             }
             if (one.getInTime().compareTo(LocalDateTime.now().minusMinutes(1)) > 0) {

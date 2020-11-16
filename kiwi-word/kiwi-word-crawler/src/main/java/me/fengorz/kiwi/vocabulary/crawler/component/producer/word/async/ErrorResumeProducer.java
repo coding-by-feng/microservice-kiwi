@@ -31,6 +31,7 @@ import me.fengorz.kiwi.word.api.feign.IBizAPI;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -57,9 +58,10 @@ public class ErrorResumeProducer extends AbstractProducer implements IProducer {
     }
 
     private void resumeDelPronunciationError() {
-        List<FetchQueueDO> list;
+        List<FetchQueueDO> list = new ArrayList<>();
         synchronized (barrier) {
-            list = (bizAPI.pageQueue(WordCrawlerConstants.STATUS_DEL_PRONUNCIATION_FAIL, 0, 20, WordCrawlerConstants.QUEUE_INFO_TYPE_WORD)).getData();
+            list.addAll((bizAPI.pageQueue(WordCrawlerConstants.STATUS_DEL_PRONUNCIATION_FAIL, 0, 20, WordCrawlerConstants.QUEUE_INFO_TYPE_WORD)).getData());
+            list.addAll((bizAPI.pageQueue(WordCrawlerConstants.STATUS_DEL_BASE_FAIL, 0, 20, WordCrawlerConstants.QUEUE_INFO_TYPE_WORD)).getData());
         }
         if (KiwiCollectionUtils.isEmpty(list)) {
             return;

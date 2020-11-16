@@ -21,6 +21,8 @@ import me.fengorz.kiwi.word.api.entity.WordMainDO;
 import me.fengorz.kiwi.word.api.vo.detail.ParaphraseVO;
 import me.fengorz.kiwi.word.api.vo.detail.WordQueryVO;
 
+import java.util.Set;
+
 /**
  * @Author zhanshifeng
  */
@@ -56,5 +58,7 @@ public interface IOperateService {
     void fetchReplaceCallBack(String wordName);
 
     /* cache mothods end */
+
+    Set<WordMainDO> collectDirtyData(Integer queueId, String wordName);
 
 }

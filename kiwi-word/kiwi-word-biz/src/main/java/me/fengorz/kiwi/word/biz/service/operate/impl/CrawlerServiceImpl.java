@@ -85,7 +85,9 @@ public class CrawlerServiceImpl implements ICrawlerService {
     @Transactional(rollbackFor = Exception.class)
     public boolean storeFetchWordResult(FetchWordResultDTO dto) {
         final String wordName = dto.getWordName();
-        if (mainService.isExist(wordName)) {
+        WordMainDO old = mainService.getOne(Wrappers.<WordMainDO>lambdaQuery().eq(WordMainDO::getWordName, wordName));
+        if (old != null) {
+            queueService.flagFetchBaseFinish(dto.getQueueId(), old.getWordId());
             return true;
         }
 

@@ -28,6 +28,7 @@ import me.fengorz.kiwi.common.sdk.util.lang.string.KiwiStringUtils;
 import me.fengorz.kiwi.word.api.common.WordCrawlerConstants;
 import me.fengorz.kiwi.word.api.entity.FetchQueueDO;
 import me.fengorz.kiwi.word.biz.mapper.FetchQueueMapper;
+import me.fengorz.kiwi.word.biz.mapper.WordMainMapper;
 import me.fengorz.kiwi.word.biz.service.base.IWordFetchQueueService;
 import me.fengorz.kiwi.word.biz.util.WordBizUtils;
 import org.springframework.scheduling.annotation.Async;
@@ -50,6 +51,7 @@ public class WordFetchQueueServiceImpl extends ServiceImpl<FetchQueueMapper, Fet
         implements IWordFetchQueueService {
 
     private final ISeqService seqService;
+    private final WordMainMapper mainMapper;
 
     @Transactional(rollbackFor = Exception.class, noRollbackFor = ServiceException.class)
     private void fetch(String wordName, String derivation, Integer wordId, Integer... infoType) {
@@ -75,8 +77,11 @@ public class WordFetchQueueServiceImpl extends ServiceImpl<FetchQueueMapper, Fet
             }
             // 抓取成功的禁止再重复抓取
             if (one.getFetchStatus() >= WordCrawlerConstants.STATUS_ALL_SUCCESS && one.getWordId() > 0) {
-                return;
+                if (mainMapper.selectById(one.getWordId()) != null) {
+                    return;
+                }
             }
+
             if (one.getInTime().compareTo(LocalDateTime.now().minusMinutes(1)) > 0) {
                 return;
             }

@@ -13,6 +13,8 @@ docker stop `docker ps -a| grep kiwi-gate | awk '{print $1}' `
 docker stop `docker ps -a| grep kiwi-config | awk '{print $1}' `
 docker stop `docker ps -a| grep kiwi-eureka | awk '{print $1}' `
 
+systemctl restart docker
+
 rm -rf ~/docker/kiwi/eureka/logs/*
 rm -rf ~/docker/kiwi/config/logs/*
 rm -rf ~/docker/kiwi/upms/logs/*

@@ -94,9 +94,16 @@ public class CleanerService implements ICleanerService {
             //     list.addAll(mainService.list(derivation, WordCrawlerConstants.QUEUE_INFO_TYPE_WORD));
             // }
             List<WordMainDO> list = new LinkedList<>(mainService.listDirtyData(queue.getWordId()));
-            // List<WordMainDO> list = new LinkedList<>(mainService.list(Wrappers.<WordMainDO>lambdaQuery().eq(WordMainDO::getWordName, wordName)));
             if (KiwiCollectionUtils.isEmpty(list)) {
-                return;
+                // 防止有脏数据的队列表wordId是0
+                list = new LinkedList<>(mainService.list(Wrappers.<WordMainDO>lambdaQuery().eq(WordMainDO::getWordName, wordName)));
+                if (KiwiCollectionUtils.isEmpty(list)) {
+                    // 如果是单词变种的情况
+                    list = variantService.listWordMain(wordName, queueId);
+                }
+                if (KiwiCollectionUtils.isEmpty(list)) {
+                    return;
+                }
             }
 
             for (WordMainDO wordMainDO : list) {

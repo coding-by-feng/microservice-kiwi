@@ -155,6 +155,7 @@ public class WordFetchQueueServiceImpl extends ServiceImpl<FetchQueueMapper, Fet
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void flagFetchBaseFinish(Integer queueId, Integer wordId) {
         this.updateById(
                 new FetchQueueDO().setQueueId(queueId).setWordId(wordId));

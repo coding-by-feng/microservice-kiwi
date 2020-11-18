@@ -45,7 +45,7 @@ import java.util.Optional;
  * @author zhanshifeng
  * @date 2019-10-30 14:45:45
  */
-@Service()
+@Service
 @RequiredArgsConstructor
 public class WordFetchQueueServiceImpl extends ServiceImpl<FetchQueueMapper, FetchQueueDO>
         implements IWordFetchQueueService {

@@ -25,6 +25,11 @@
             <version>${kiwi-bdf.version}</version>
         </dependency>
         <!-- myself end -->
+        <dependency>
+            <groupId>me.fengorz</groupId>
+            <artifactId>kiwi-common-es</artifactId>
+            <version>${kiwi-common.version}</version>
+        </dependency>
     </dependencies>
 
     <build>

@@ -17,6 +17,9 @@
 package me.fengorz.kiwi.common.sdk.util.lang.string;
 
 import cn.hutool.core.util.StrUtil;
+import com.google.common.base.Strings;
+
+import static java.lang.Character.UnicodeBlock.*;
 
 /**
  * @Author zhanshifeng
@@ -26,5 +29,23 @@ public class KiwiStringUtils extends StrUtil {
 
     public static boolean isNotEquals(final CharSequence cs1, final CharSequence cs2) {
         return !equals(cs1, cs2);
+    }
+
+    public static boolean isContainChinese(String checkStr) {
+        if (!Strings.isNullOrEmpty(checkStr)) {
+            char[] checkChars = checkStr.toCharArray();
+            for (char checkChar : checkChars) {
+                if (checkCharContainChinese(checkChar)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private static boolean checkCharContainChinese(char checkChar) {
+        Character.UnicodeBlock ub = Character.UnicodeBlock.of(checkChar);
+        return CJK_UNIFIED_IDEOGRAPHS == ub || CJK_COMPATIBILITY_IDEOGRAPHS == ub || CJK_COMPATIBILITY_FORMS == ub ||
+                CJK_RADICALS_SUPPLEMENT == ub || CJK_UNIFIED_IDEOGRAPHS_EXTENSION_A == ub || CJK_UNIFIED_IDEOGRAPHS_EXTENSION_B == ub;
     }
 }

@@ -48,11 +48,17 @@ import me.fengorz.kiwi.word.biz.service.operate.IOperateService;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
+import org.springframework.data.elasticsearch.core.SearchHit;
+import org.springframework.data.elasticsearch.core.query.NativeSearchQuery;
+import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 
 /**
  * @Description 单词相关业务的复杂逻辑解耦
@@ -80,6 +86,9 @@ public class OperateServiceImpl implements IOperateService {
     private final IWordMainVariantService mainVariantService;
     private final IParaphrasePhraseService phraseService;
     private final IDfsService dfsService;
+    private final ElasticsearchOperations elasticsearchOperations;
+
+    private final static Object barrier = new Object();
 
     /**
      * 封装返回给前端的整个单词的数据DTO
@@ -129,7 +138,30 @@ public class OperateServiceImpl implements IOperateService {
 
         Integer wordId = word.getWordId();
         vo.setCharacterVOList(assembleWordQueryVO(wordName, wordId));
+
+        this.word2ES(vo);
         return vo;
+    }
+
+    @Override
+    public WordQueryVO queryWordByCH(String chineseParaphrase) {
+        NativeSearchQuery query = new NativeSearchQueryBuilder()
+                .withQuery(matchQuery(WordConstants.VO_PATH_MEANING_CHINESE, chineseParaphrase))
+                .build();
+        SearchHit<WordQueryVO> result = elasticsearchOperations.searchOne(query, WordQueryVO.class);
+        return result == null ? null : result.getContent();
+    }
+
+    @Override
+    public void word2ES(WordQueryVO wordQueryVO) {
+        synchronized (barrier) {
+            if (wordQueryVO == null) {
+                return;
+            }
+            if (!elasticsearchOperations.exists(wordQueryVO.getWordId().toString(), WordQueryVO.class)) {
+                elasticsearchOperations.save(wordQueryVO);
+            }
+        }
     }
 
     private List<CharacterVO> assembleWordQueryVO(String wordName, Integer wordId) throws ServiceException {

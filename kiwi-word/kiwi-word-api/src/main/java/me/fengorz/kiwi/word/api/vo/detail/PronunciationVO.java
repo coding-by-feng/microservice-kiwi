@@ -16,7 +16,9 @@
 
 package me.fengorz.kiwi.word.api.vo.detail;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 
@@ -27,8 +29,10 @@ import java.io.Serializable;
  * @Date 2019/11/26 10:01 AM
  */
 @Data
-@Accessors(chain = true)
 @ToString
+@NoArgsConstructor
+@AllArgsConstructor
+@Accessors(chain = true)
 public class PronunciationVO implements Serializable {
 
     private static final long serialVersionUID = -400966918555175133L;

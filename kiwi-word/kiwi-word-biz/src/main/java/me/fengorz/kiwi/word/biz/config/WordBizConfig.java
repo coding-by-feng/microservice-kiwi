@@ -16,20 +16,18 @@
 
 package me.fengorz.kiwi.word.biz.config;
 
+import me.fengorz.kiwi.bdf.core.config.CoreConfig;
+import me.fengorz.kiwi.common.es.config.ESConfig;
+import me.fengorz.kiwi.common.fastdfs.config.DfsConfig;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
-
-import me.fengorz.kiwi.bdf.core.config.CoreConfig;
-import me.fengorz.kiwi.common.fastdfs.config.DfsConfig;
 
 /**
  * @Author zhanshifeng
  * @Date 2019/10/30 3:45 PM
  */
 @Configuration
-// @MapperScan("me.fengorz.kiwi.word.biz.mapper")
-// @ComponentScan("me.fengorz.kiwi.word.biz")
-@Import({CoreConfig.class, DfsConfig.class})
+@Import({CoreConfig.class, DfsConfig.class, ESConfig.class})
 public class WordBizConfig {
 
 }

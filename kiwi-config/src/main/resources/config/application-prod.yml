@@ -4,10 +4,10 @@ jasypt:
     password: coding-by-feng #根密码
 
 spring:
-#  cloud:
-#    loadbalancer:
-#      retry:
-#        enabled: false
+  #  cloud:
+  #    loadbalancer:
+  #      retry:
+  #        enabled: false
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -32,6 +32,9 @@ spring:
     port: 5672
     username: guest
     password: guest
+  elasticsearch:
+    rest:
+      uris: kiwi-es:9200
   main:
     allow-bean-definition-overriding: true
 #  sleuth:
@@ -117,3 +120,9 @@ fdfs:
     width: 150
     height: 150
   tracker-list: kiwi-fastdfs:22122
+
+# 避免 Elasticsearch health check failed 异常
+management:
+  health:
+    elasticsearch:
+      enabled: false

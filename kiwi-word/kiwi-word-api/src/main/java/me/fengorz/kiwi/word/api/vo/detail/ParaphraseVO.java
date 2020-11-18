@@ -16,49 +16,63 @@
 
 package me.fengorz.kiwi.word.api.vo.detail;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 import me.fengorz.kiwi.word.api.vo.ParaphraseExampleVO;
+import org.springframework.data.elasticsearch.annotations.Field;
+import org.springframework.data.elasticsearch.annotations.FieldType;
 
 import java.io.Serializable;
 import java.util.List;
 
 /**
-* @Author zhanshifeng
+ * @Author zhanshifeng
  * @Date 2019/11/26 9:45 AM
  */
 @Data
-@Accessors(chain = true)
 @ToString
+@NoArgsConstructor
+@AllArgsConstructor
+@Accessors(chain = true)
 public class ParaphraseVO implements Serializable {
 
     private static final long serialVersionUID = 1358094160893456358L;
 
+    @Field(type = FieldType.Keyword)
     private String codes;
 
+    @Field(type = FieldType.Keyword)
     private String wordName;
 
     // TODO ZSF 这里暂时没有和DO字段名同步
+    @Field(type = FieldType.Keyword)
     private String wordCharacter;
 
     // TODO ZSF 这里暂时没有和DO字段名同步
+    @Field(type = FieldType.Keyword)
     private String wordLabel;
 
     private List<String> phraseList;
 
+    @Field(type = FieldType.Keyword)
     private Integer paraphraseId;
     /**
      * 英文释义
      */
+    @Field(type = FieldType.Text)
     private String paraphraseEnglish;
     /**
      * 英文释义翻译
      */
+    @Field(type = FieldType.Text)
     private String paraphraseEnglishTranslate;
     /**
      * 中文词义
      */
+    @Field(type = FieldType.Text, analyzer = "ik_max_word")
     private String meaningChinese;
 
     private String isCollect;

@@ -32,6 +32,10 @@ public interface IOperateService {
 
     WordQueryVO queryWord(String wordName, Integer... intoType);
 
+    WordQueryVO queryWordByCH(String chineseParaphrase);
+
+    void word2ES(WordQueryVO wordQueryVO);
+
     ParaphraseVO findWordParaphraseVO(Integer paraphraseId);
 
     /* paraphrase methods end */

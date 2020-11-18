@@ -199,7 +199,7 @@ public class WordFetchQueueServiceImpl extends ServiceImpl<FetchQueueMapper, Fet
     public List<FetchQueueDO> listNotIntoCache() {
         return Optional
                 .of(this.page(new Page<>(1, 20), Wrappers.<FetchQueueDO>lambdaQuery()
-                        .ge(FetchQueueDO::getFetchStatus, WordCrawlerConstants.STATUS_ALL_SUCCESS)
+                        .ge(FetchQueueDO::getFetchStatus, WordCrawlerConstants.STATUS_PERFECT_SUCCESS)
                         .eq(FetchQueueDO::getIsLock, CommonConstants.FLAG_NO)
                         .eq(FetchQueueDO::getIsIntoCache, CommonConstants.FLAG_NO)))
                 .get().getRecords();

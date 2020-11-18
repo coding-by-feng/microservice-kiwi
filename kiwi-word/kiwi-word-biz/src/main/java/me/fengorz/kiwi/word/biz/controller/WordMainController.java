@@ -48,8 +48,8 @@ import java.util.List;
 @Slf4j
 public class WordMainController extends BaseController {
 
-    private final IWordMainService wordMainService;
-    private final IOperateService wordOperateService;
+    private final IWordMainService mainService;
+    private final IOperateService operateService;
     private final IWordFetchQueueService queueService;
 
     @GetMapping("/removeByWordName/{wordName}")
@@ -59,30 +59,41 @@ public class WordMainController extends BaseController {
         return R.success();
     }
 
+    @GetMapping("/query/gate/{keyword}")
+    public R<WordQueryVO> queryGate(@PathVariable("keyword") String keyword) {
+        log.info(KiwiStringUtils.format("========>queryGate[{}],[time={}]", keyword, KiwiDateUtils.now()));
+        if (KiwiStringUtils.isContainChinese(keyword)) {
+            return R.success(operateService.queryWordByCH(keyword));
+        } else {
+            return this.queryWord(keyword);
+        }
+    }
+
+
     @GetMapping("/query/{wordName}")
     public R<WordQueryVO> queryWord(@PathVariable("wordName") String wordName) {
-        log.info(KiwiStringUtils.format("========>queryWord[{}],[time={}]", wordName, KiwiDateUtils.now()));
-        return R.success(wordOperateService.queryWord(wordName));
+        WordQueryVO wordQueryVO = operateService.queryWord(wordName);
+        return R.success(wordQueryVO);
     }
 
     @GetMapping("/queryById/{wordId}")
     public R<WordQueryVO> queryWord(@PathVariable Integer wordId) {
-        String wordName = wordMainService.getWordName(wordId);
+        String wordName = mainService.getWordName(wordId);
         if (KiwiStringUtils.isBlank(wordName)) {
             return R.failed();
         }
-        return R.success(wordOperateService.queryWord(wordName));
+        return R.success(operateService.queryWord(wordName));
     }
 
     @SysLog("模糊查询单词列表")
     @PostMapping("/fuzzyQueryList")
     public R<List<FuzzyQueryResultDTO>> fuzzyQueryList(@NotBlank String wordName, Page<WordMainDO> page) {
-        return R.success(wordMainService.fuzzyQueryList(page, wordName));
+        return R.success(mainService.fuzzyQueryList(page, wordName));
     }
 
     @GetMapping("/listOverlapInUnLock")
     public R<List<String>> listOverlapInUnLock() {
-        return R.success(wordMainService.listOverlapInUnLock());
+        return R.success(mainService.listOverlapInUnLock());
     }
 
 }

@@ -17,6 +17,11 @@
             <artifactId>kiwi-common-sdk</artifactId>
             <version>${kiwi-common.version}</version>
         </dependency>
+        <dependency>
+            <groupId>me.fengorz</groupId>
+            <artifactId>kiwi-common-es</artifactId>
+            <version>${kiwi-common.version}</version>
+        </dependency>
     </dependencies>
 
 </project>

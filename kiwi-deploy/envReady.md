@@ -188,21 +188,21 @@ chmod 777 autoCheckService.sh autoDeployMicroservice.sh autoDeploy.sh
 
 # elasticsearch
 ```
-docker pull docker.elastic.co/elasticsearch/elasticsearch:7.10.0
-docker run -d -p 9200:9200 -p 9300:9300 -e "discovery.type=single-node" docker.elastic.co/elasticsearch/elasticsearch:7.10.0
+docker pull docker.elastic.co/elasticsearch/elasticsearch:7.6.2
+docker run -d -p 9200:9200 -p 9300:9300 -e "discovery.type=single-node" docker.elastic.co/elasticsearch/elasticsearch:7.6.2
 curl http://localhost:9200
 ```
 ## kibana安装
 [Docker 官方](https://www.elastic.co/guide/en/kibana/current/docker.html#docker "")
 ```
-docker pull docker.elastic.co/kibana/kibana:7.10.0
-docker run -d --link romantic_bartik:elasticsearch -p 5601:5601 docker.elastic.co/kibana/kibana:7.10.0
+docker pull docker.elastic.co/kibana/kibana:7.6.2
+docker run -d --link quizzical_dewdney:elasticsearch -p 5601:5601 docker.elastic.co/kibana/kibana:7.6.2
 ```
 ## 安装ik分词器
 ```
-sudo docker exec -it romantic_bartik bash
+sudo docker exec -it quizzical_dewdney bash
 # elasticsearch的版本和ik分词器的版本需要保持一致，不然在重启的时候会失败。
-elasticsearch-plugin install https://github.com/medcl/elasticsearch-analysis-ik/releases/download/v7.10.0/elasticsearch-analysis-ik-7.10.0.zip
+elasticsearch-plugin install https://github.com/medcl/elasticsearch-analysis-ik/releases/download/v7.6.2/elasticsearch-analysis-ik-7.6.2.zip
 exit
-docker restart romantic_bartik
+docker restart quizzical_dewdney
 ```

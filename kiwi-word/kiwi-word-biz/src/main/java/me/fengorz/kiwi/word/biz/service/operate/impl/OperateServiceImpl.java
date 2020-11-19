@@ -60,7 +60,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static org.elasticsearch.index.query.QueryBuilders.termQuery;
+import static org.elasticsearch.index.query.QueryBuilders.matchPhraseQuery;
 
 /**
  * @Description 单词相关业务的复杂逻辑解耦
@@ -150,7 +150,7 @@ public class OperateServiceImpl implements IOperateService {
     @Override
     public List<WordQueryVO> queryWordByCH(String chineseParaphrase) {
         NativeSearchQuery query = new NativeSearchQueryBuilder()
-                .withQuery(termQuery(WordConstants.VO_PATH_MEANING_CHINESE, chineseParaphrase))
+                .withQuery(matchPhraseQuery(WordConstants.VO_PATH_MEANING_CHINESE, chineseParaphrase))
                 .build();
         SearchHits<WordQueryVO> result = searchOperations.search(query, WordQueryVO.class);
         if (!result.isEmpty()) {

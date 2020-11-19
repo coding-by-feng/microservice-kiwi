@@ -17,22 +17,48 @@
 package me.fengorz.kiwi.word.api.vo;
 
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import lombok.experimental.Accessors;
-import me.fengorz.kiwi.word.api.entity.ParaphraseExampleDO;
+
+import java.io.Serializable;
 
 /**
  * @Author zhanshifeng
  * @Date 2019/11/26 9:51 AM
  */
 @Data
-@EqualsAndHashCode(callSuper = true)
-@Accessors(chain = true)
 @ToString
-public class ParaphraseExampleVO extends ParaphraseExampleDO {
+@Accessors(chain = true)
+public class ParaphraseExampleVO implements Serializable {
 
     private static final long serialVersionUID = -2091961493449323929L;
+
+    private Integer exampleId;
+    /**
+     *
+     */
+    private Integer wordId;
+    /**
+     * 释义ID
+     */
+    private Integer paraphraseId;
+    /**
+     * 英文例句
+     */
+    private String exampleSentence;
+    /**
+     * 例句翻译
+     */
+    private String exampleTranslate;
+    /**
+     * 翻译语种
+     */
+    private String translateLanguage;
+    private Integer serialNumber;
+    /**
+     * 逻辑删除标记(Y--正常 N--删除)
+     */
+    private String isDel;
 
     private String isCollect;
 

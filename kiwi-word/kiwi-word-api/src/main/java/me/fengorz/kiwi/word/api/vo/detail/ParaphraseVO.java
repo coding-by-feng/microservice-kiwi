@@ -79,8 +79,10 @@ public class ParaphraseVO implements Serializable {
 
     private Boolean isOverlength;
 
+    @Field(type = FieldType.Nested)
     private List<ParaphraseExampleVO> exampleVOList;
 
+    @Field(index = false)
     private List<PronunciationVO> pronunciationVOList;
 
 }

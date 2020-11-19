@@ -16,6 +16,7 @@
 
 package me.fengorz.kiwi.word.biz.config;
 
+import me.fengorz.kiwi.bdf.cache.redis.config.CacheConfig;
 import me.fengorz.kiwi.bdf.core.config.CoreConfig;
 import me.fengorz.kiwi.common.es.config.ESConfig;
 import me.fengorz.kiwi.common.fastdfs.config.DfsConfig;
@@ -27,7 +28,7 @@ import org.springframework.context.annotation.Import;
  * @Date 2019/10/30 3:45 PM
  */
 @Configuration
-@Import({CoreConfig.class, DfsConfig.class, ESConfig.class})
+@Import({CoreConfig.class, CacheConfig.class, DfsConfig.class, ESConfig.class})
 public class WordBizConfig {
 
 }

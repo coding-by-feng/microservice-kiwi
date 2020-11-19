@@ -21,6 +21,7 @@ import me.fengorz.kiwi.word.api.entity.WordMainDO;
 import me.fengorz.kiwi.word.api.vo.detail.ParaphraseVO;
 import me.fengorz.kiwi.word.api.vo.detail.WordQueryVO;
 
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -32,9 +33,7 @@ public interface IOperateService {
 
     WordQueryVO queryWord(String wordName, Integer... intoType);
 
-    WordQueryVO queryWordByCH(String chineseParaphrase);
-
-    void word2ES(WordQueryVO wordQueryVO);
+    List<WordQueryVO> queryWordByCH(String chineseParaphrase);
 
     ParaphraseVO findWordParaphraseVO(Integer paraphraseId);
 

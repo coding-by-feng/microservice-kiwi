@@ -29,10 +29,12 @@ import me.fengorz.kiwi.word.api.vo.detail.WordQueryVO;
 import me.fengorz.kiwi.word.biz.service.base.IWordFetchQueueService;
 import me.fengorz.kiwi.word.biz.service.base.IWordMainService;
 import me.fengorz.kiwi.word.biz.service.operate.IOperateService;
+import org.springframework.data.elasticsearch.core.DocumentOperations;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotBlank;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -51,6 +53,7 @@ public class WordMainController extends BaseController {
     private final IWordMainService mainService;
     private final IOperateService operateService;
     private final IWordFetchQueueService queueService;
+    private final DocumentOperations documentOperations;
 
     @GetMapping("/removeByWordName/{wordName}")
     // @PreAuthorize("@pms.hasPermission('biz_wordmain_del')")
@@ -60,7 +63,7 @@ public class WordMainController extends BaseController {
     }
 
     @GetMapping("/query/gate/{keyword}")
-    public R<WordQueryVO> queryGate(@PathVariable("keyword") String keyword) {
+    public R<List<WordQueryVO>> queryGate(@PathVariable("keyword") String keyword) {
         log.info(KiwiStringUtils.format("========>queryGate[{}],[time={}]", keyword, KiwiDateUtils.now()));
         if (KiwiStringUtils.isContainChinese(keyword)) {
             return R.success(operateService.queryWordByCH(keyword));
@@ -71,9 +74,10 @@ public class WordMainController extends BaseController {
 
 
     @GetMapping("/query/{wordName}")
-    public R<WordQueryVO> queryWord(@PathVariable("wordName") String wordName) {
-        WordQueryVO wordQueryVO = operateService.queryWord(wordName);
-        return R.success(wordQueryVO);
+    public R<List<WordQueryVO>> queryWord(@PathVariable("wordName") String wordName) {
+        List<WordQueryVO> list = new LinkedList<>();
+        list.add(operateService.queryWord(wordName));
+        return R.success(list);
     }
 
     @GetMapping("/queryById/{wordId}")

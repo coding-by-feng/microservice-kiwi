@@ -21,6 +21,11 @@ rm -rf ~/docker/kiwi/upms/logs/*
 rm -rf ~/docker/kiwi/auth/logs/*
 rm -rf ~/docker/kiwi/gate/logs/*
 rm -rf ~/docker/kiwi/word/logs/*
+rm -rf ~/docker/kiwi/word/logs_02/*
+rm -rf ~/docker/kiwi/word/crawlerTmp/*
+rm -rf ~/docker/kiwi/word/crawlerTmp_02/*
+rm -rf ~/docker/kiwi/word/bizTmp/*
+rm -rf ~/docker/kiwi/word/bizTmp_02/*
 rm -rf ~/docker/kiwi/crawler/logs/*
 
 cd ~/microservice-kiwi/

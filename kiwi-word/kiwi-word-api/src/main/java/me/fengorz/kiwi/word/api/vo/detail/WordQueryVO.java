@@ -50,6 +50,7 @@ public class WordQueryVO implements Serializable {
     private String wordName;
     private String isCollect;
     private String isLogin;
+    @Field(type = FieldType.Nested)
     private List<CharacterVO> characterVOList;
 
 }

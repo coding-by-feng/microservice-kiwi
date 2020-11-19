@@ -141,7 +141,9 @@ public class OperateServiceImpl implements IOperateService {
 
         Integer wordId = word.getWordId();
         vo.setCharacterVOList(assembleWordQueryVO(wordName, wordId));
+        log.info("========>>>>>>>>>> start");
         documentOperations.save(vo);
+        log.info("========>>>>>>>>>> end");
         return vo;
     }
 

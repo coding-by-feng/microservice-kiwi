@@ -33,7 +33,7 @@ import java.util.List;
 /**
  * @Author zhanshifeng
  */
-@FeignClient(contextId = "wordBizAPI", value = WordConstants.KIWI_WORD_BIZ_CRAWLER,
+@FeignClient(contextId = "bizAPI", value = WordConstants.KIWI_WORD_BIZ_CRAWLER,
         fallbackFactory = BizFallbackFactory.class)
 public interface IBizAPI {
 

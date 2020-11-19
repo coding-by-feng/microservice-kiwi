@@ -44,6 +44,10 @@ public abstract class AbstractScheduler implements IScheduler {
     private static final String COUNT_DOWN_LATCH_ERROR = "countDownLatch error!";
 
     protected void schedule(SchedulerDTO dto) {
+        if (countDownLatch != null && countDownLatch.getCount() > 0) {
+            return;
+        }
+
         List<FetchQueueDO> list = getQueueDO(dto);
         if (KiwiCollectionUtils.isEmpty(list)) {
             return;

@@ -20,6 +20,8 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import java.util.List;
+
 /**
  * @Author zhanshifeng
  * @date 2020-05-24 01:40:36
@@ -31,6 +33,6 @@ public interface IQueryAPI {
     String WORD_MAIN = "/word/main";
 
     @GetMapping(WORD_MAIN + "/query/{wordName}")
-    R<WordQueryVO> queryWord(@PathVariable String wordName);
+    R<List<WordQueryVO>> queryWord(@PathVariable String wordName);
 
 }

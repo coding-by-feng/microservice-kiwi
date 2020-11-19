@@ -79,7 +79,7 @@ public class CacheWordScheduler extends AbstractScheduler implements IScheduler 
             // String url = WordCrawlerConstants.URL_QUERY_WORD + URLUtil.decode(wordName);
             // HttpUtil.get(url);
             // log.info(url);
-            bizAPI.queryWord(wordName);
+            queryAPI.queryWord(wordName);
         } catch (Exception e) {
             log.error(e.getMessage());
         } finally {

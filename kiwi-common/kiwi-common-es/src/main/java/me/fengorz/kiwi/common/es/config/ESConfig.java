@@ -26,16 +26,12 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.elasticsearch.client.ClientConfiguration;
 import org.springframework.data.elasticsearch.client.RestClients;
 import org.springframework.data.elasticsearch.config.AbstractElasticsearchConfiguration;
-import org.springframework.data.elasticsearch.repository.config.EnableElasticsearchRepositories;
 
 /**
  * @Author zhanshifeng
  * @Date 2020/11/16 8:35 PM
  */
 @Configuration
-@EnableElasticsearchRepositories(
-        basePackages = "me.fengorz.kiwi.*"
-)
 public class ESConfig extends AbstractElasticsearchConfiguration {
 
     static {

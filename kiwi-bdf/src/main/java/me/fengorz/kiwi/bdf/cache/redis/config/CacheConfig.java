@@ -16,9 +16,13 @@
 
 package me.fengorz.kiwi.bdf.cache.redis.config;
 
+import lombok.RequiredArgsConstructor;
+import me.fengorz.kiwi.bdf.cache.redis.CacheKeyGenerator;
+import me.fengorz.kiwi.common.api.constant.CacheConstants;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration;
 import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.context.annotation.AdviceMode;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -26,18 +30,14 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.JdkSerializationRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
-import lombok.RequiredArgsConstructor;
-import me.fengorz.kiwi.bdf.cache.redis.CacheKeyGenerator;
-import me.fengorz.kiwi.common.api.constant.CacheConstants;
-
 /**
  * @Description 缓存配置类
  * @Author zhanshifeng
  * @Date 2019-09-29 10:39
  */
-@EnableCaching
 @Configuration
 @RequiredArgsConstructor
+@EnableCaching(mode = AdviceMode.ASPECTJ)
 @AutoConfigureBefore(RedisAutoConfiguration.class)
 public class CacheConfig {
 

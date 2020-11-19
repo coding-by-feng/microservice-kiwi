@@ -45,7 +45,9 @@ public class CharacterVO implements Serializable {
     private String characterCode;
     @Field(type = FieldType.Keyword)
     private String tag;
+    @Field(type = FieldType.Nested)
     private List<ParaphraseVO> paraphraseVOList;
+    @Field(type = FieldType.Nested)
     private List<PronunciationVO> pronunciationVOList;
 
 }

@@ -137,7 +137,7 @@ public class BizAPIFallback implements IBizAPI {
     }
 
     @Override
-    public R<WordQueryVO> queryWord(String wordName) {
+    public R<WordQueryVO> queryWord(String keyword) {
         log.error(throwable.getCause().getMessage());
         return R.feignCallFailed(throwable.getMessage());
     }

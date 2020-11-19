@@ -417,7 +417,7 @@ public class OperateServiceImpl implements IOperateService {
     public Set<WordMainDO> collectDirtyData(Integer queueId, String wordName) {
         Set<WordMainDO> set = new HashSet<>(mainService.list(Wrappers.<WordMainDO>lambdaQuery().eq(WordMainDO::getWordName, wordName)));
         if (KiwiCollectionUtils.isEmpty(set)) {
-            set.addAll(mainService.listDirtyData(fetchQueueService.getOneAnyhow(queueId).getWordId()));
+            Optional.ofNullable(mainService.listDirtyData(fetchQueueService.getOneAnyhow(queueId).getWordId())).ifPresent(set::addAll);
             // 防止有脏数据的队列表wordId是0
             // 如果是单词变种的情况
             List<Integer> wordIds = mainVariantService.list(Wrappers.<WordMainVariantDO>lambdaQuery().eq(WordMainVariantDO::getVariantName, wordName)).stream().map(WordMainVariantDO::getWordId).collect(Collectors.toList());

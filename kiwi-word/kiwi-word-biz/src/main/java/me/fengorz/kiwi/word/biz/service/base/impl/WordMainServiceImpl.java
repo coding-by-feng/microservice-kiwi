@@ -124,6 +124,9 @@ public class WordMainServiceImpl extends ServiceImpl<WordMainMapper, WordMainDO>
     @Override
     public List<WordMainDO> listDirtyData(Integer wordId) {
         WordMainDO one = this.getById(wordId);
+        if (one == null) {
+            return null;
+        }
         return this.list(Wrappers.<WordMainDO>lambdaQuery().eq(WordMainDO::getWordName, one.getWordName()).eq(WordMainDO::getInfoType, one.getInfoType()));
     }
 

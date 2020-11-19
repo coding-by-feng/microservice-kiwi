@@ -15,6 +15,7 @@ package me.fengorz.kiwi.word.api.feign;
 import me.fengorz.kiwi.common.api.R;
 import me.fengorz.kiwi.word.api.common.WordConstants;
 import me.fengorz.kiwi.word.api.feign.factory.WordMainVariantFallBackFactory;
+import me.fengorz.kiwi.word.api.vo.detail.WordQueryVO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,13 +24,13 @@ import org.springframework.web.bind.annotation.PathVariable;
  * @Author zhanshifeng
  * @date 2020-05-24 01:40:36
  */
-@FeignClient(contextId = "wordVariantService", value = WordConstants.KIWI_WORD_BIZ_CRAWLER,
+@FeignClient(contextId = "queryAPI", value = WordConstants.KIWI_WORD_BIZ,
         fallbackFactory = WordMainVariantFallBackFactory.class)
-public interface IWordMainVariantAPI {
+public interface IQueryAPI {
 
-    String WORD_MAIN_VARIANT = "/word/main/variant";
+    String WORD_MAIN = "/word/main";
 
-    @GetMapping(WORD_MAIN_VARIANT + "/insertVariant/{inputWordName}/{fetchWordName}")
-    R<Void> insertVariant(@PathVariable String inputWordName, @PathVariable String fetchWordName);
+    @GetMapping(WORD_MAIN + "/query/{wordName}")
+    R<WordQueryVO> queryWord(@PathVariable String wordName);
 
 }

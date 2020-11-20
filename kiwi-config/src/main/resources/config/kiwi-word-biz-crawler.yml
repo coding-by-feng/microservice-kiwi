@@ -14,6 +14,7 @@ ignore:
   urls:
     - /test/**
     - /word/main/query/**
+    - /word/main/query/gate/**
     - /word/main/queryById/**
     - /word/fetch/**
     - /word/main/variant/**

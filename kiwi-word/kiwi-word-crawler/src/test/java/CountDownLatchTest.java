@@ -32,7 +32,6 @@ public class CountDownLatchTest implements Runnable {
         // latch.countDown();
     }
 
-    // @Test
     public void test() throws InterruptedException {
         ExecutorService executorService = Executors.newFixedThreadPool(10);
         // for (int i = 0; i < 1000; i++) executorService.submit(this::test);

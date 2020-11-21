@@ -64,7 +64,7 @@ public class WordMainController extends BaseController {
     }
 
     @PostMapping("/query/gate/{keyword}")
-    public R<IPage<WordQueryVO>> queryGate(@PathVariable("keyword") String keyword, Integer current, Integer size) {
+    public R<IPage<WordQueryVO>> queryGate(@PathVariable(name = "keyword", required = false) String keyword, Integer current, Integer size) {
         log.info(KiwiStringUtils.format("========>queryGate[{}],[time={}]", keyword, KiwiDateUtils.now()));
         if (KiwiStringUtils.isContainChinese(keyword)) {
             return R.success(operateService.queryWordByCh(keyword, current, size));
@@ -75,11 +75,13 @@ public class WordMainController extends BaseController {
 
 
     @GetMapping("/query/{wordName}")
-    public R<IPage<WordQueryVO>> queryWord(@PathVariable("wordName") String wordName) {
+    public R<IPage<WordQueryVO>> queryWord(@PathVariable(value = "wordName", required = false) String wordName) {
         IPage<WordQueryVO> page = new Page<>();
-        List<WordQueryVO> list = new LinkedList<>();
-        list.add(operateService.queryWord(wordName));
-        page.setRecords(list);
+        if (KiwiStringUtils.isNotBlank(wordName)) {
+            List<WordQueryVO> list = new LinkedList<>();
+            list.add(operateService.queryWord(wordName));
+            page.setRecords(list);
+        }
         return R.success(page);
     }
 

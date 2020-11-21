@@ -15,6 +15,7 @@
  */
 package me.fengorz.kiwi.word.biz.controller;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -62,11 +63,11 @@ public class WordMainController extends BaseController {
         return R.success();
     }
 
-    @GetMapping("/query/gate/{keyword}")
-    public R<List<WordQueryVO>> queryGate(@PathVariable("keyword") String keyword) {
+    @PostMapping("/query/gate/{keyword}")
+    public R<IPage<WordQueryVO>> queryGate(@PathVariable("keyword") String keyword, Integer current, Integer size) {
         log.info(KiwiStringUtils.format("========>queryGate[{}],[time={}]", keyword, KiwiDateUtils.now()));
         if (KiwiStringUtils.isContainChinese(keyword)) {
-            return R.success(operateService.queryWordByCH(keyword));
+            return R.success(operateService.queryWordByCh(keyword, current, size));
         } else {
             return this.queryWord(keyword);
         }
@@ -74,10 +75,12 @@ public class WordMainController extends BaseController {
 
 
     @GetMapping("/query/{wordName}")
-    public R<List<WordQueryVO>> queryWord(@PathVariable("wordName") String wordName) {
+    public R<IPage<WordQueryVO>> queryWord(@PathVariable("wordName") String wordName) {
+        IPage<WordQueryVO> page = new Page<>();
         List<WordQueryVO> list = new LinkedList<>();
         list.add(operateService.queryWord(wordName));
-        return R.success(list);
+        page.setRecords(list);
+        return R.success(page);
     }
 
     @GetMapping("/queryById/{wordId}")

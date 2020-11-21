@@ -16,12 +16,12 @@
 
 package me.fengorz.kiwi.word.biz.service.operate;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import me.fengorz.kiwi.word.api.dto.queue.result.FetchWordReplaceDTO;
 import me.fengorz.kiwi.word.api.entity.WordMainDO;
 import me.fengorz.kiwi.word.api.vo.detail.ParaphraseVO;
 import me.fengorz.kiwi.word.api.vo.detail.WordQueryVO;
 
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -33,7 +33,7 @@ public interface IOperateService {
 
     WordQueryVO queryWord(String wordName, Integer... intoType);
 
-    List<WordQueryVO> queryWordByCH(String chineseParaphrase);
+    IPage<WordQueryVO> queryWordByCh(String chineseParaphrase, int current, int size);
 
     ParaphraseVO findWordParaphraseVO(Integer paraphraseId);
 

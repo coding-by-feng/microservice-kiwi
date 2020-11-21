@@ -20,7 +20,9 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.api.annotation.cache.KiwiCacheKey;
@@ -48,6 +50,7 @@ import me.fengorz.kiwi.word.biz.service.operate.IOperateService;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.elasticsearch.core.DocumentOperations;
 import org.springframework.data.elasticsearch.core.SearchHit;
 import org.springframework.data.elasticsearch.core.SearchHits;
@@ -141,20 +144,43 @@ public class OperateServiceImpl implements IOperateService {
 
         Integer wordId = word.getWordId();
         vo.setCharacterVOList(assembleWordQueryVO(wordName, wordId));
-        documentOperations.save(vo);
+        this.saveVo2Es(vo);
         return vo;
     }
 
+    private void saveVo2Es(WordQueryVO vo) {
+        synchronized (barrier) {
+            List<String> list = new LinkedList<>();
+            list.add(vo.getWordId().toString());
+            NativeSearchQuery query = new NativeSearchQueryBuilder()
+                    .withIds(list)
+                    .build();
+            long count = searchOperations.count(query, WordQueryVO.class);
+            if (count == 1) {
+                return;
+            } else if (count > 1) {
+                documentOperations.delete(vo);
+            }
+            documentOperations.save(vo);
+        }
+    }
+
     @Override
-    public List<WordQueryVO> queryWordByCH(String chineseParaphrase) {
+    public IPage<WordQueryVO> queryWordByCh(String chineseParaphrase, int current, int size) {
+        IPage<WordQueryVO> page = new Page<>(current, size);
         NativeSearchQuery query = new NativeSearchQueryBuilder()
                 .withQuery(matchPhraseQuery(WordConstants.VO_PATH_MEANING_CHINESE, chineseParaphrase))
+                .withPageable(PageRequest.of(current, size))
                 .build();
         SearchHits<WordQueryVO> result = searchOperations.search(query, WordQueryVO.class);
+        long totalHits = result.getTotalHits();
+        page.setTotal(totalHits);
+        page.setPages(totalHits % size == 0 ? totalHits / size : (totalHits / size) + 1);
         if (!result.isEmpty()) {
-            return result.getSearchHits().stream().map(SearchHit::getContent).collect(Collectors.toList());
+            page.setRecords(result.getSearchHits().stream().map(SearchHit::getContent).collect(Collectors.toList()));
+            return page;
         }
-        return null;
+        return page;
     }
 
     private List<CharacterVO> assembleWordQueryVO(String wordName, Integer wordId) throws ServiceException {

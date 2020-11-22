@@ -168,10 +168,6 @@ public class OperateServiceImpl implements IOperateService {
     @Override
     public IPage<WordQueryVO> queryWordByCh(String chineseParaphrase, int current, int size) {
         IPage<WordQueryVO> page = new Page<>(current, size);
-        if (KiwiStringUtils.isBlank(chineseParaphrase)) {
-            return page;
-        }
-
         NativeSearchQuery query = new NativeSearchQueryBuilder()
                 .withQuery(matchPhraseQuery(WordConstants.VO_PATH_MEANING_CHINESE, chineseParaphrase))
                 .withPageable(PageRequest.of(current, size))

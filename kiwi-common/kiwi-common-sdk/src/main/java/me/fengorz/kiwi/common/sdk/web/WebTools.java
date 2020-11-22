@@ -115,4 +115,11 @@ public class WebTools extends WebUtils {
         }
     }
 
+    public static int deductCurrent(int current) {
+        if (current > 0) {
+            return current - 1;
+        }
+        return 0;
+    }
+
 }

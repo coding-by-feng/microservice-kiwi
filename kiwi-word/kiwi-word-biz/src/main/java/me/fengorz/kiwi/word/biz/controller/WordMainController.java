@@ -24,6 +24,7 @@ import me.fengorz.kiwi.common.api.annotation.log.SysLog;
 import me.fengorz.kiwi.common.sdk.controller.BaseController;
 import me.fengorz.kiwi.common.sdk.util.lang.string.KiwiStringUtils;
 import me.fengorz.kiwi.common.sdk.util.time.KiwiDateUtils;
+import me.fengorz.kiwi.common.sdk.web.WebTools;
 import me.fengorz.kiwi.word.api.dto.mapper.out.FuzzyQueryResultDTO;
 import me.fengorz.kiwi.word.api.entity.WordMainDO;
 import me.fengorz.kiwi.word.api.vo.detail.WordQueryVO;
@@ -67,7 +68,7 @@ public class WordMainController extends BaseController {
     public R<IPage<WordQueryVO>> queryGate(@PathVariable(name = "keyword", required = false) String keyword, Integer current, Integer size) {
         log.info(KiwiStringUtils.format("========>queryGate[{}],[time={}]", keyword, KiwiDateUtils.now()));
         if (KiwiStringUtils.isContainChinese(keyword)) {
-            return R.success(operateService.queryWordByCh(keyword, current, size));
+            return R.success(operateService.queryWordByCh(keyword, WebTools.deductCurrent(current), size));
         } else {
             return this.queryWord(keyword);
         }

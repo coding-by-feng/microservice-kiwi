@@ -167,9 +167,17 @@ public class OperateServiceImpl implements IOperateService {
 
     @Override
     public IPage<WordQueryVO> queryWordByCh(String chineseParaphrase, int current, int size) {
+        IPage<WordQueryVO> page = this.queryES(chineseParaphrase, current, size, WordConstants.VO_PATH_MEANING_CHINESE);
+        if (KiwiCollectionUtils.isEmpty(page.getRecords())) {
+            page = this.queryES(chineseParaphrase, current, size, WordConstants.VO_PATH_EXAMPLE_CHINESE);
+        }
+        return page;
+    }
+
+    private IPage<WordQueryVO> queryES(String chinese, int current, int size, String path) {
         IPage<WordQueryVO> page = new Page<>(current, size);
         NativeSearchQuery query = new NativeSearchQueryBuilder()
-                .withQuery(matchPhraseQuery(WordConstants.VO_PATH_MEANING_CHINESE, chineseParaphrase))
+                .withQuery(matchPhraseQuery(path, current))
                 .withPageable(PageRequest.of(current, size))
                 .build();
         SearchHits<WordQueryVO> result = searchOperations.search(query, WordQueryVO.class);

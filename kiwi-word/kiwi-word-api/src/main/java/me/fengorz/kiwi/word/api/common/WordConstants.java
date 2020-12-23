@@ -67,5 +67,6 @@ public class WordConstants {
     public static final int REMEMBER_ARCHIVE_TYPE_EXAMPLE = 3;
 
     public static final String VO_PATH_MEANING_CHINESE = "characterVOList.paraphraseVOList.meaningChinese";
+    public static final String VO_PATH_EXAMPLE_CHINESE = "characterVOList.paraphraseVOList.exampleVOList.exampleTranslate";
 
 }

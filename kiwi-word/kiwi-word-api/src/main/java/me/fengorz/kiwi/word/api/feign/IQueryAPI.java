@@ -12,6 +12,7 @@
  */
 package me.fengorz.kiwi.word.api.feign;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import me.fengorz.kiwi.common.api.R;
 import me.fengorz.kiwi.word.api.common.WordConstants;
 import me.fengorz.kiwi.word.api.feign.factory.WordMainVariantFallBackFactory;
@@ -19,8 +20,6 @@ import me.fengorz.kiwi.word.api.vo.detail.WordQueryVO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-
-import java.util.List;
 
 /**
  * @Author zhanshifeng
@@ -33,6 +32,6 @@ public interface IQueryAPI {
     String WORD_MAIN = "/word/main";
 
     @GetMapping(WORD_MAIN + "/query/{wordName}")
-    R<List<WordQueryVO>> queryWord(@PathVariable String wordName);
+    R<IPage<WordQueryVO>> queryWord(@PathVariable String wordName);
 
 }

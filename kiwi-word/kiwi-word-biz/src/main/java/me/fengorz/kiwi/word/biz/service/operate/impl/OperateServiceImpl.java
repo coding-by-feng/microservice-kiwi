@@ -152,6 +152,7 @@ public class OperateServiceImpl implements IOperateService {
     private void saveVo2Es(WordQueryVO vo) {
         synchronized (barrier) {
             NativeSearchQuery query = new NativeSearchQueryBuilder()
+                    // .withIds() 这个API有坑，查询不生效的，慎用！
                     .withQuery(idsQuery().addIds(vo.getWordId().toString()))
                     .build();
             long count = searchOperations.count(query, WordQueryVO.class);

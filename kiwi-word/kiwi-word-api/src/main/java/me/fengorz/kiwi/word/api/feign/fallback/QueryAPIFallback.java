@@ -13,14 +13,13 @@
 
 package me.fengorz.kiwi.word.api.feign.fallback;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.api.R;
 import me.fengorz.kiwi.word.api.feign.IQueryAPI;
 import me.fengorz.kiwi.word.api.vo.detail.WordQueryVO;
 import org.springframework.stereotype.Component;
-
-import java.util.List;
 
 /**
  * Hystrix熔断回调实现
@@ -36,7 +35,7 @@ public class QueryAPIFallback implements IQueryAPI {
     private Throwable throwable;
 
     @Override
-    public R<List<WordQueryVO>> queryWord(String wordName) {
+    public R<IPage<WordQueryVO>> queryWord(String wordName) {
         log.error(throwable.getCause().getMessage());
         return R.feignCallFailed(throwable.getMessage());
     }

@@ -13,7 +13,7 @@
 
 package me.fengorz.kiwi.word.api.feign.fallback;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.api.R;
@@ -35,7 +35,7 @@ public class QueryAPIFallback implements IQueryAPI {
     private Throwable throwable;
 
     @Override
-    public R<IPage<WordQueryVO>> queryWord(String wordName) {
+    public R<Page<WordQueryVO>> queryWord(String wordName) {
         log.error(throwable.getCause().getMessage());
         return R.feignCallFailed(throwable.getMessage());
     }

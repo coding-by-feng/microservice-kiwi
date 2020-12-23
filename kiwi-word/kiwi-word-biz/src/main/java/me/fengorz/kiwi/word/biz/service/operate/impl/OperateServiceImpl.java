@@ -63,6 +63,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static org.elasticsearch.index.query.QueryBuilders.idsQuery;
 import static org.elasticsearch.index.query.QueryBuilders.matchPhraseQuery;
 
 /**
@@ -150,10 +151,8 @@ public class OperateServiceImpl implements IOperateService {
 
     private void saveVo2Es(WordQueryVO vo) {
         synchronized (barrier) {
-            List<String> list = new LinkedList<>();
-            list.add(vo.getWordId().toString());
             NativeSearchQuery query = new NativeSearchQueryBuilder()
-                    .withIds(list)
+                    .withQuery(idsQuery().addIds(vo.getWordId().toString()))
                     .build();
             long count = searchOperations.count(query, WordQueryVO.class);
             if (count == 1) {

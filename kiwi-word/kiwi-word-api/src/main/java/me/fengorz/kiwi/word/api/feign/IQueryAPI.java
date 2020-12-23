@@ -12,7 +12,7 @@
  */
 package me.fengorz.kiwi.word.api.feign;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import me.fengorz.kiwi.common.api.R;
 import me.fengorz.kiwi.word.api.common.WordConstants;
 import me.fengorz.kiwi.word.api.feign.factory.WordMainVariantFallBackFactory;
@@ -32,6 +32,6 @@ public interface IQueryAPI {
     String WORD_MAIN = "/word/main";
 
     @GetMapping(WORD_MAIN + "/query/{wordName}")
-    R<IPage<WordQueryVO>> queryWord(@PathVariable String wordName);
+    R<Page<WordQueryVO>> queryWord(@PathVariable String wordName);
 
 }

@@ -177,7 +177,7 @@ public class OperateServiceImpl implements IOperateService {
     private IPage<WordQueryVO> queryES(String chinese, int current, int size, String path) {
         IPage<WordQueryVO> page = new Page<>(current, size);
         NativeSearchQuery query = new NativeSearchQueryBuilder()
-                .withQuery(matchPhraseQuery(path, current))
+                .withQuery(matchPhraseQuery(path, chinese))
                 .withPageable(PageRequest.of(current, size))
                 .build();
         SearchHits<WordQueryVO> result = searchOperations.search(query, WordQueryVO.class);

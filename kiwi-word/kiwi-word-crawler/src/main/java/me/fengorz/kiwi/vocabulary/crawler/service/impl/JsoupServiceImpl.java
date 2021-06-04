@@ -53,7 +53,7 @@ import java.util.*;
 @Slf4j
 public class JsoupServiceImpl implements IJsoupService {
 
-    private static final String JSOUP_CONNECT_EXCEPTION = "jsoup connect exception, the url is {}";
+    private static final String JSOUP_CONNECT_EXCEPTION = "jsoup connect exception, the word is {}";
     private static final String KEY_WORD_HEADER = "ti fs fs12 lmb-0 hw";
     private static final String KEY_WORD_NAME = "tb ttn";
     private static final String FETCH_MAIN_WORD_NAME_EXCEPTION = "The word name of {} is not found!";

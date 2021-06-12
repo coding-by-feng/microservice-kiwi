@@ -12,13 +12,13 @@ yum update
 [参考](https://www.runoob.com/docker/docker-compose.html "")
 建议本机下载包，再手动上传到服务器，不然可能会出现莫名其妙的问题
 ```
-sudo curl -L "https://github.com/docker/compose/releases/download/1.25.5/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
 ```
 
 ## 本地上传安装
 ```
 # 先下载
-sshpass -p feng@feng-9210 scp -r ~/Downloads/docker-compose-Linux-x86_64 root@119.29.200.130:/usr/local/bin
+sshpass -p fenxxx210 scp -r ~/Downloads/docker-compose-Linux-x86_64 root@119.29.200.130:/usr/local/bin
 mv docker-compose-Linux-x86_64 docker-compose
 chmod +x /usr/local/bin/docker-compose
 ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose

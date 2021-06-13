@@ -16,6 +16,7 @@ sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-
 ```
 
 ## 本地上传安装
+[docker-compose下载链接](https://github-releases.githubusercontent.com/15045751/e1ef3000-b16e-11eb-9df7-091c00bdf356?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIWNJYAX4CSVEH53A%2F20210612%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20210612T054621Z&X-Amz-Expires=300&X-Amz-Signature=4da20a27a079cd195b024bafc9f6c6200c02e47b9e45cbf862a3f00d25227ae7&X-Amz-SignedHeaders=host&actor_id=22954596&key_id=0&repo_id=15045751&response-content-disposition=attachment%3B%20filename%3Ddocker-compose-Linux-x86_64&response-content-type=application%2Foctet-stream "")
 ```
 # 先下载
 sshpass -p fenxxx210 scp -r ~/Downloads/docker-compose-Linux-x86_64 root@119.29.200.130:/usr/local/bin
@@ -44,9 +45,8 @@ yum install git
 cd ~/microservice-kiwi/
 git init
 git pull https://github.com/coding-by-feng/microservice-kiwi.git/
-git remote add master https://github.com/coding-by-feng/microservice-kiwi.git
-git -c credential.helper= -c core.quotepath=false -c log.showSignature=false checkout -B master origin/master
-git config --global credential.helper store
+git remote add origin https://github.com/coding-by-feng/microservice-kiwi.git
+git branch --set-upstream-to=origin/master master
 git pull
 ```
 
@@ -65,6 +65,9 @@ vi /etc/hosts
 your_dfs_ip                                     kiwi-fastdfs
 ```
 注意将上面your_ecs_ip替换成fastdfs所在云服务器的外网ip
+
+# mysql
+
 
 # redis
 ```
@@ -111,8 +114,6 @@ location / {
 ```
 下面增加配置：
 ```
-        
-
     location /auth {
         proxy_pass http://kiwi-microservice:9991;
     }
@@ -129,14 +130,18 @@ location / {
         proxy_pass http://kiwi-microservice:9991;
     }
 ```
+打开nginx请求日志记录：
+```
+access_log  /var/log/nginx/host.access.log  main;
+```
 保存之后覆盖原来的default.conf重启kiwi-ui容器
 ```
 sudo docker exec -it kiwi-ui bash
 mv /usr/share/nginx/html/default.conf /etc/nginx/conf.d/default.conf
-exit
-
 # 验证nginx配置
-./sbin/nginx -t
+/sbin/nginx -t
+/usr/sbin/nginx -t
+exit
 
 docker container restart `docker ps -a| grep kiwi-ui | awk '{print $1}'`
 ```
@@ -174,9 +179,10 @@ docker container restart `docker ps -a| grep storage | awk '{print $1}' `
 ```
 yum install maven
 ```
-- 先注释掉microservice-kiwi和kiwi-cloud-service的pom.xml所有子模块依赖，然后分别执行mvn clean install -Dmaven.test.skip=true
-- 再放开所有注释在microservice-kiwi和kiwi-cloud-service下mvn clean install -Dmaven.test.skip=true
-- 分别在kiwi-common、kiwi-bdf、kiwi-upms、kiwi-word执行mvn clean install -Dmaven.test.skip=true（如果报错同样需要先注释子模块依赖）
+安装之后再项目根目录执行`mvn clean install -Dmaven.test.skip=true`
+- ~~先注释掉microservice-kiwi和kiwi-cloud-service的pom.xml所有子模块依赖，然后分别执行mvn clean install -Dmaven.test.skip=true~~
+- ~~再放开所有注释在microservice-kiwi和kiwi-cloud-service下mvn clean install -Dmaven.test.skip=true~~
+- ~~分别在kiwi-common、kiwi-bdf、kiwi-upms、kiwi-word执行mvn clean install -Dmaven.test.skip=true（如果报错同样需要先注释子模块依赖）~~
 
 # 自动部署
 ```

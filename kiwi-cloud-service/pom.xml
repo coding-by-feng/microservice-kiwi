@@ -33,9 +33,12 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>../kiwi-upms</module>
+        <module>../kiwi-upms/kiwi-upms-api</module>
+        <module>../kiwi-upms/kiwi-upms-biz</module>
         <module>../kiwi-bdf</module>
-        <module>../kiwi-word</module>
+        <module>../kiwi-word/kiwi-word-api</module>
+        <module>../kiwi-word/kiwi-word-biz</module>
+        <module>../kiwi-word/kiwi-word-crawler</module>
         <module>../kiwi-auth</module>
         <module>../kiwi-flow</module>
     </modules>

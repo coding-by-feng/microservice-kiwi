@@ -13,7 +13,7 @@ docker stop $(docker ps -a| grep kiwi-gate | awk '{print $1}' )
 docker stop $(docker ps -a| grep kiwi-config | awk '{print $1}' )
 docker stop $(docker ps -a| grep kiwi-eureka | awk '{print $1}' )
 
-systemctl restart docker
+# systemctl restart docker
 
 rm -rf ~/docker/kiwi/eureka/logs/*
 rm -rf ~/docker/kiwi/config/logs/*
@@ -30,7 +30,9 @@ rm -rf ~/docker/kiwi/crawler/logs/*
 
 cd ~/microservice-kiwi/ || exit
 
-git pull
+echo "git pulling..."
+
+git pull origin master
 
 mvn clean install -Dmaven.test.skip=true
 

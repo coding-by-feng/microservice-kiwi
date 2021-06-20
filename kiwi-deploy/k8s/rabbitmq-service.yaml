@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: rabbitmq-web
+spec:
+  ports:
+  - port: 15672
+    nodePort: 31900
+  selector:
+    app: rabbitmq
+  type: NodePort
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: rabbitmq-app
+spec:
+  ports:
+  - port: 5672
+  selector:
+    app: rabbitmq

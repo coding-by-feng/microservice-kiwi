@@ -8,6 +8,16 @@ yum update
 ```
 [https://www.runoob.com/docker/centos-docker-install.html](https://www.runoob.com/docker/centos-docker-install.html "")
 
+## 创建docker配置文件
+```
+mkdir /etc/docker
+vim /etc/docker/daemon.json
+{
+        "exec-opts": ["native.cgroupdriver=systemd"],
+        "registry-mirrors": ["https://zggyaen3.mirror.aliyuncs.com"]
+}
+```
+
 # 安装docker-compose
 [参考](https://www.runoob.com/docker/docker-compose.html "")
 建议本机下载包，再手动上传到服务器，不然可能会出现莫名其妙的问题
@@ -31,7 +41,7 @@ docker-compose --version
 cd ~
 mkdir microservice-kiwi docker storage_data store_path tracker_data
 cd docker/
-mkdir kiwi ui rabbitmq
+mkdir kiwi ui rabbitmq mysql
 cd kiwi
 mkdir auth config crawler eureka gate upms word
 mkdir auth/logs config/logs crawler/logs crawler/tmp eureka/logs gate/logs upms/logs word/logs word/bizTmp word/crawlerTmp word/biz word/crawler
@@ -47,7 +57,7 @@ git init
 git pull https://github.com/coding-by-feng/microservice-kiwi.git/
 git remote add origin https://github.com/coding-by-feng/microservice-kiwi.git
 git branch --set-upstream-to=origin/master master
-git pull
+git pulld
 ```
 
 # host
@@ -67,12 +77,24 @@ your_dfs_ip                                     kiwi-fastdfs
 注意将上面your_ecs_ip替换成fastdfs所在云服务器的外网ip
 
 # mysql
-
+```
+docker pull mysql:5.7.34
+docker run -itd --name kiwi-mysql -p 3306:3306 -v /root/docker/mysql:/mysql_tmp -e MYSQL_ROOT_PASSWORD=fengORZ123 mysql:5.7.34
+sudo docker exec -it kiwi-mysql bash
+mysql -h localhost -u root -p
+create database kiwi_db;
+# 迁移Mysql的kiwi_db表
+mysqldump --host=cdb-0bhxucw9.gz.tencentcdb.com --port=10069 -uroot -pfengORZ123 -C --databases kiwi_db |mysql --host=localhost -uroot -pfengORZ123 kiwi_db
+mysql -h localhost -u root -p
+select * from star_rel_his limit 0, 100;
+exit
+exit
+```
 
 # redis
 ```
 docker pull redis:latest
-docker run -itd --name kiwi-redis -p 6379:6379 redis
+docker run -itd --name kiwi-redis -p 6379:6379 redis --requirepass "fengORZ123"
 # 测试
 docker exec -it kiwi-redis /bin/bash
 redis-cli
@@ -85,6 +107,140 @@ exit
 docker pull rabbitmq:management
 # docker run -d --hostname kiwi-rabbit --name kiwi-rabbit -p 15555:15672 rabbitmq:management
 docker run -d --hostname kiwi-rabbit -v ~/docker/rabbitmq:/tmp --name kiwi-rabbit --net=host rabbitmq:management
+```
+
+# fastdfs（season/fastdfs）
+```
+docker run -ti -d --name tracker -v ~/tracker_data:/fastdfs/tracker/data --net=host season/fastdfs tracker
+
+docker run -ti -d --name storage -v ~/storage_data:/fastdfs/storage/data -v ~/store_path:/fastdfs/store_path --net=host -e TRACKER_SERVER:192.168.1.2:22122 season/fastdfs storage
+
+sudo docker exec -it storage bash
+
+mv /etc/apt/sources.list /etc/apt/sources.list.bak && \
+    echo "deb http://mirrors.163.com/debian/ jessie main non-free contrib" >/etc/apt/sources.list && \
+    echo "deb http://mirrors.163.com/debian/ jessie-proposed-updates main non-free contrib" >>/etc/apt/sources.list && \
+    echo "deb-src http://mirrors.163.com/debian/ jessie main non-free contrib" >>/etc/apt/sources.list && \
+    echo "deb-src http://mirrors.163.com/debian/ jessie-proposed-updates main non-free contrib" >>/etc/apt/sources.list
+
+apt-get update
+apt-get install vim
+
+vi /fdfs_conf/storage.conf
+# 按?进入命令搜索模式，输入tracker_server，按回车，将后面的ip地址改成kiwi-fastdfs
+exit
+
+docker container restart `docker ps -a| grep storage | awk '{print $1}' `
+```
+
+# maven 安装
+```
+yum install maven
+```
+安装之后再项目根目录执行`mvn clean install -Dmaven.test.skip=true`
+- ~~先注释掉microservice-kiwi和kiwi-cloud-service的pom.xml所有子模块依赖，然后分别执行mvn clean install -Dmaven.test.skip=true~~
+- ~~再放开所有注释在microservice-kiwi和kiwi-cloud-service下mvn clean install -Dmaven.test.skip=true~~
+- ~~分别在kiwi-common、kiwi-bdf、kiwi-upms、kiwi-word执行mvn clean install -Dmaven.test.skip=true（如果报错同样需要先注释子模块依赖）~~
+
+## maven settings.xml
+```
+cd ~/.m2
+vi settings.xml
+```
+
+```
+<?xml version="1.0" encoding="UTF-8"?>
+<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd">
+    
+    <pluginGroups />
+    <proxies />
+    <servers />
+    
+    <localRepository>~/.m2/repository</localRepository>
+    
+    <mirrors>
+        <mirror>
+            <id>alimaven</id>
+            <mirrorOf>central</mirrorOf>
+            <name>aliyun maven</name>
+            <url>http://maven.aliyun.com/nexus/content/repositories/central/</url>
+        </mirror>
+        <mirror>
+            <id>alimaven</id>
+            <name>aliyun maven</name>
+            <url>http://maven.aliyun.com/nexus/content/groups/public/</url>
+            <mirrorOf>central</mirrorOf>
+        </mirror>
+        <mirror>
+            <id>central</id>
+            <name>Maven Repository Switchboard</name>
+            <url>http://repo1.maven.org/maven2/</url>
+            <mirrorOf>central</mirrorOf>
+        </mirror>
+        <mirror>
+            <id>repo2</id>
+            <mirrorOf>central</mirrorOf>
+            <name>Human Readable Name for this Mirror.</name>
+            <url>http://repo2.maven.org/maven2/</url>
+        </mirror>
+        <mirror>
+            <id>ibiblio</id>
+            <mirrorOf>central</mirrorOf>
+            <name>Human Readable Name for this Mirror.</name>
+            <url>http://mirrors.ibiblio.org/pub/mirrors/maven2/</url>
+        </mirror>
+        <mirror>
+            <id>jboss-public-repository-group</id>
+            <mirrorOf>central</mirrorOf>
+            <name>JBoss Public Repository Group</name>
+            <url>http://repository.jboss.org/nexus/content/groups/public</url>
+        </mirror>
+        <mirror>
+            <id>google-maven-central</id>
+            <name>Google Maven Central</name>
+            <url>https://maven-central.storage.googleapis.com
+            </url>
+            <mirrorOf>central</mirrorOf>
+        </mirror>
+        <mirror>
+            <id>maven.net.cn</id>
+            <name>oneof the central mirrors in china</name>
+            <url>http://maven.net.cn/content/groups/public/</url>
+            <mirrorOf>central</mirrorOf>
+        </mirror>
+    </mirrors>
+</settings>
+```
+
+# 自动部署
+```
+cd ~/microservice-kiwi/kiwi-deploy/
+cp autoCheckService.sh autoDeployMicroservice.sh autoDeploy.sh ~
+cd ~
+chmod 777 autoCheckService.sh autoDeployMicroservice.sh autoDeploy.sh 
+```
+
+# elasticsearch
+```
+docker pull docker.elastic.co/elasticsearch/elasticsearch:7.6.2
+docker run -d -p 9200:9200 -p 9300:9300 -e "discovery.type=single-node" docker.elastic.co/elasticsearch/elasticsearch:7.6.2
+curl http://localhost:9200
+```
+## kibana安装
+[Docker 官方](https://www.elastic.co/guide/en/kibana/current/docker.html#docker "")
+```
+docker pull docker.elastic.co/kibana/kibana:7.6.2
+docker run -d --link exciting_perlman -p 5601:5601 docker.elastic.co/kibana/kibana:7.6.2
+```
+## 安装ik分词器
+```
+sudo docker exec -it exciting_perlman bash
+# elasticsearch的版本和ik分词器的版本需要保持一致，不然在重启的时候会失败。
+elasticsearch-plugin install https://github.com/medcl/elasticsearch-analysis-ik/releases/download/v7.6.2/elasticsearch-analysis-ik-7.6.2.zip
+exit
+docker restart exciting_perlman
 ```
 
 # nginx运行前端项目
@@ -145,70 +301,14 @@ exit
 
 docker container restart `docker ps -a| grep kiwi-ui | awk '{print $1}'`
 ```
+
+## 上传Vue编译后的项目
+WebStorm执行编译命令生成静态文件。
+
+
 ## ssl证书免费申请、https协议配置
 [https://cloud.tencent.com/document/product/400/35244](https://cloud.tencent.com/document/product/400/35244 "")
 
 ## 首页加载提速
 [前端项目时因chunk-vendors过大导致首屏加载太慢的优化](https://blog.csdn.net/qq_31677507/article/details/102742196 "")
 
-# fastdfs（season/fastdfs）
-```
-docker run -ti -d --name tracker -v ~/tracker_data:/fastdfs/tracker/data --net=host season/fastdfs tracker
-
-docker run -ti -d --name storage -v ~/storage_data:/fastdfs/storage/data -v ~/store_path:/fastdfs/store_path --net=host -e TRACKER_SERVER:192.168.1.2:22122 season/fastdfs storage
-
-sudo docker exec -it storage bash
-
-mv /etc/apt/sources.list /etc/apt/sources.list.bak && \
-    echo "deb http://mirrors.163.com/debian/ jessie main non-free contrib" >/etc/apt/sources.list && \
-    echo "deb http://mirrors.163.com/debian/ jessie-proposed-updates main non-free contrib" >>/etc/apt/sources.list && \
-    echo "deb-src http://mirrors.163.com/debian/ jessie main non-free contrib" >>/etc/apt/sources.list && \
-    echo "deb-src http://mirrors.163.com/debian/ jessie-proposed-updates main non-free contrib" >>/etc/apt/sources.list
-
-apt-get update
-apt-get install vim
-
-vi /fdfs_conf/storage.conf
-# 按?进入命令搜索模式，输入tracker_server，按回车，将后面的ip地址改成kiwi-fastdfs
-exit
-
-docker container restart `docker ps -a| grep storage | awk '{print $1}' `
-```
-
-# maven 安装
-```
-yum install maven
-```
-安装之后再项目根目录执行`mvn clean install -Dmaven.test.skip=true`
-- ~~先注释掉microservice-kiwi和kiwi-cloud-service的pom.xml所有子模块依赖，然后分别执行mvn clean install -Dmaven.test.skip=true~~
-- ~~再放开所有注释在microservice-kiwi和kiwi-cloud-service下mvn clean install -Dmaven.test.skip=true~~
-- ~~分别在kiwi-common、kiwi-bdf、kiwi-upms、kiwi-word执行mvn clean install -Dmaven.test.skip=true（如果报错同样需要先注释子模块依赖）~~
-
-# 自动部署
-```
-cd ~/microservice-kiwi/kiwi-deploy/
-cp autoCheckService.sh autoDeployMicroservice.sh autoDeploy.sh ~
-cd ~
-chmod 777 autoCheckService.sh autoDeployMicroservice.sh autoDeploy.sh 
-```
-
-# elasticsearch
-```
-docker pull docker.elastic.co/elasticsearch/elasticsearch:7.6.2
-docker run -d -p 9200:9200 -p 9300:9300 -e "discovery.type=single-node" docker.elastic.co/elasticsearch/elasticsearch:7.6.2
-curl http://localhost:9200
-```
-## kibana安装
-[Docker 官方](https://www.elastic.co/guide/en/kibana/current/docker.html#docker "")
-```
-docker pull docker.elastic.co/kibana/kibana:7.6.2
-docker run -d --link quizzical_dewdney:elasticsearch -p 5601:5601 docker.elastic.co/kibana/kibana:7.6.2
-```
-## 安装ik分词器
-```
-sudo docker exec -it quizzical_dewdney bash
-# elasticsearch的版本和ik分词器的版本需要保持一致，不然在重启的时候会失败。
-elasticsearch-plugin install https://github.com/medcl/elasticsearch-analysis-ik/releases/download/v7.6.2/elasticsearch-analysis-ik-7.6.2.zip
-exit
-docker restart quizzical_dewdney
-```

@@ -19,7 +19,7 @@ echo "git pulling..."
 
 git fetch --all
 git reset --hard origin/master
-git pull
+git pull origin master
 
 mvn clean install -Dmaven.test.skip=true
 

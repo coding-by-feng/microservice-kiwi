@@ -1,23 +1,23 @@
-version: '3.8'
+version: '3'
 services:
   kiwi-eureka:
     image: kiwi-eureka:1.0
-#    ports:
-#      - '8762:8762'
+    ports:
+      - '8762:8762'
     volumes:
       - /root/docker/kiwi/eureka/logs:/logs
-    network_mode: "host"
+#    network_mode: "host"
 #    deploy:
 #      resources:
 #        limits:
 #          memory: 200M  # 设置该容器最多只能使用 200M 的内存空间
   kiwi-config:
     image: kiwi-config:1.0
-#    ports:
-#      - '7771:7771'
+    ports:
+      - '7771:7771'
     volumes:
       - /root/docker/kiwi/config/logs:/logs
-    network_mode: "host"
+#    network_mode: "host"
     depends_on:
       - kiwi-eureka
 #    deploy:

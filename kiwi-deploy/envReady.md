@@ -57,7 +57,7 @@ git init
 git pull https://github.com/coding-by-feng/microservice-kiwi.git/
 git remote add origin https://github.com/coding-by-feng/microservice-kiwi.git
 git branch --set-upstream-to=origin/master master
-git pulld
+git pull
 ```
 
 # host
@@ -158,7 +158,7 @@ vi settings.xml
     <proxies />
     <servers />
     
-    <localRepository>~/.m2/repository</localRepository>
+    <localRepository>/root/.m2/repository</localRepository>
     
     <mirrors>
         <mirror>
@@ -228,6 +228,7 @@ docker pull docker.elastic.co/elasticsearch/elasticsearch:7.6.2
 docker run -d -p 9200:9200 -p 9300:9300 -e "discovery.type=single-node" docker.elastic.co/elasticsearch/elasticsearch:7.6.2
 curl http://localhost:9200
 ```
+安装完了注意创建index，名为`kiwi_vocabulary`
 ## kibana安装
 [Docker 官方](https://www.elastic.co/guide/en/kibana/current/docker.html#docker "")
 ```

@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kompose.cmd: kompose --file docker-compose-base.yml convert
+    kompose.version: 1.7.0 (HEAD)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: kiwi-eureka
+  name: kiwi-eureka
+  namespace: kiwi-be-business
+spec:
+  ports:
+  - name: "8762"
+    port: 8762
+    targetPort: 8762
+  selector:
+    io.kompose.service: kiwi-eureka
+status:
+  loadBalancer: {}

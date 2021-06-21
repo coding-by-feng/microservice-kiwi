@@ -1,0 +1,35 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose --file docker-compose-base.yml convert
+    kompose.version: 1.7.0 (HEAD)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: kiwi-config
+  name: kiwi-config
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        io.kompose.service: kiwi-config
+    spec:
+      containers:
+      - image: kiwi-config:1.0
+        name: kiwi-config
+        ports:
+        - containerPort: 7771
+        resources: {}
+        volumeMounts:
+        - mountPath: /logs
+          name: kiwi-config-claim0
+      restartPolicy: Always
+      volumes:
+      - name: kiwi-config-claim0
+        persistentVolumeClaim:
+          claimName: kiwi-config-claim0
+status: {}

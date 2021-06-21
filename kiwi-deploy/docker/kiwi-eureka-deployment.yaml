@@ -1,0 +1,38 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose --file docker-compose-base.yml convert
+    kompose.version: 1.7.0 (HEAD)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: kiwi-eureka
+  name: kiwi-eureka
+  namespace: kiwi-be-business
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        io.kompose.service: kiwi-eureka
+    spec:
+      containers:
+      - image: kiwi-eureka:1.0
+        name: kiwi-eureka
+        ports:
+        - containerPort: 8762
+        resources: {}
+        volumeMounts:
+        - mountPath: /logs
+          name: kiwi-eureka-claim0
+      restartPolicy: Always
+      volumes:
+      - name: kiwi-eureka-claim0
+	hostPath:
+          path: /root/docker/kiwi/eureka/logs
+        persistentVolumeClaim:
+          claimName: kiwi-eureka-claim0
+status: {}

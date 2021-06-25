@@ -1,8 +1,6 @@
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  annotations:
-    kompose.cmd: kompose --file docker-compose-base.yml convert
     kompose.version: 1.7.0 (HEAD)
   creationTimestamp: null
   labels:
@@ -10,13 +8,18 @@ metadata:
   name: kiwi-config
 spec:
   replicas: 1
+  revisionHistoryLimit: 3
   strategy:
-    type: Recreate
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app: kiwi-eureka
+    matchExpressions:
+    - {key: app, operator: In, values: [kiwi-eureka] }
   template:
     metadata:
-      creationTimestamp: null
       labels:
-        io.kompose.service: kiwi-config
+        app: kiwi-config
     spec:
       containers:
       - image: kiwi-config:1.0
@@ -26,10 +29,9 @@ spec:
         resources: {}
         volumeMounts:
         - mountPath: /logs
-          name: kiwi-config-claim0
-      restartPolicy: Always
+          name: kiwi-config-claim
       volumes:
-      - name: kiwi-config-claim0
-        persistentVolumeClaim:
-          claimName: kiwi-config-claim0
+      - name: kiwi-config-claim
+        hostPath:
+          path: /root/docker/kiwi/config/logs
 status: {}

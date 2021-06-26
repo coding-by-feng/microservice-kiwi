@@ -34,7 +34,7 @@ docker build -f ~/docker/kiwi/crawler/Dockerfile -t kiwi-crawler:1.0 ~/docker/ki
 
 echo "docker-compose base beginning"
 
-docker-compose -f ~/microservice-kiwi/docker-compose-base.yml up -d
+docker-compose -f ~/microservice-kiwi/kiwi-deploy/docker/docker-compose-base.yml up -d
 
 echo "success wait 100s"
 
@@ -42,7 +42,7 @@ sleep 100s
 
 echo "docker-compose service beginning"
 
-docker-compose -f ~/microservice-kiwi/docker-compose-service.yml up -d
+docker-compose -f ~/microservice-kiwi/kiwi-deploy/docker/docker-compose-service.yml up -d
 
 docker stop `docker ps -a| grep kiwi-crawler | awk '{print $1}' `
 

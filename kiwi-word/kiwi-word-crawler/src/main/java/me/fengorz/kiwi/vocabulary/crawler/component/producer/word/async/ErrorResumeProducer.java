@@ -60,8 +60,14 @@ public class ErrorResumeProducer extends AbstractProducer implements IProducer {
     private void resumeDelPronunciationError() {
         List<FetchQueueDO> list = new ArrayList<>();
         synchronized (barrier) {
-            list.addAll((bizAPI.pageQueue(WordCrawlerConstants.STATUS_DEL_PRONUNCIATION_FAIL, 0, 20, WordCrawlerConstants.QUEUE_INFO_TYPE_WORD)).getData());
-            list.addAll((bizAPI.pageQueue(WordCrawlerConstants.STATUS_DEL_BASE_FAIL, 0, 20, WordCrawlerConstants.QUEUE_INFO_TYPE_WORD)).getData());
+            List<FetchQueueDO> delPronunciationFailList = (bizAPI.pageQueue(WordCrawlerConstants.STATUS_DEL_PRONUNCIATION_FAIL, 0, 20, WordCrawlerConstants.QUEUE_INFO_TYPE_WORD)).getData();
+            if (KiwiCollectionUtils.isNotEmpty(delPronunciationFailList)) {
+                list.addAll(delPronunciationFailList);
+            }
+            List<FetchQueueDO> delBaseFailList = (bizAPI.pageQueue(WordCrawlerConstants.STATUS_DEL_BASE_FAIL, 0, 20, WordCrawlerConstants.QUEUE_INFO_TYPE_WORD)).getData();
+            if (KiwiCollectionUtils.isNotEmpty(delBaseFailList)) {
+                list.addAll(delBaseFailList);
+            }
         }
         if (KiwiCollectionUtils.isEmpty(list)) {
             return;

@@ -1,11 +1,8 @@
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-    kompose.version: 1.7.0 (HEAD)
-  creationTimestamp: null
-  labels:
-    io.kompose.service: kiwi-config
   name: kiwi-config
+  namespace: kiwi-be-business
 spec:
   replicas: 1
   revisionHistoryLimit: 3
@@ -13,7 +10,7 @@ spec:
     type: RollingUpdate
   selector:
     matchLabels:
-      app: kiwi-eureka
+      app: kiwi-config
     matchExpressions:
     - {key: app, operator: In, values: [kiwi-eureka] }
   template:

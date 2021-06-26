@@ -8,8 +8,8 @@ do
 #        then
 #                time=$(date "+%Y-%m-%d %H:%M:%S")
 #                echo $time Word-Biz Service is stopping, code = $code
-#                docker container start `docker ps -a| grep microservice-kiwi_kiwi-word-biz-01_1 | awk '{print $1}' `
-#                docker container start `docker ps -a| grep microservice-kiwi_kiwi-word-biz-02_1 | awk '{print $1}' `
+#                docker container start `docker ps -a| grep docker_kiwi-word-biz-01_1 | awk '{print $1}' `
+#                docker container start `docker ps -a| grep docker_kiwi-word-biz-02_1 | awk '{print $1}' `
 #                time=$(date "+%Y-%m-%d %H:%M:%S")
 #                echo $time Word-Biz Service has run just now, sleep
 #                sleep 80s
@@ -23,7 +23,7 @@ do
         if [ $crawlerCode != $runningCode ]
         then
                 time=$(date "+%Y-%m-%d %H:%M:%S")
-                docker container start `docker ps -a| grep microservice-kiwi_kiwi-crawler_1 | awk '{print $1}' `
+                docker container start `docker ps -a| grep docker_kiwi-crawler_1 | awk '{print $1}' `
                 echo $time Word-Crawler Service has run just now, sleep
                 sleep 60s
         else
@@ -36,7 +36,7 @@ do
 #        if [ $gateCode != $runningCode ]
 #        then
 #                time=$(date "+%Y-%m-%d %H:%M:%S")
-#                docker container start `docker ps -a| grep microservice-kiwi_kiwi-gate_1 | awk '{print $1}' `
+#                docker container start `docker ps -a| grep docker_kiwi-gate_1 | awk '{print $1}' `
 #                echo $time Word-Gate Service has run just now, sleep
 #                sleep 60s
 #        else
@@ -49,7 +49,7 @@ do
 #        if [ $authCode != $runningCode ]
 #        then
 #                time=$(date "+%Y-%m-%d %H:%M:%S")
-#                docker container start `docker ps -a| grep microservice-kiwi_kiwi-auth_1 | awk '{print $1}' `
+#                docker container start `docker ps -a| grep docker_kiwi-auth_1 | awk '{print $1}' `
 #                echo $time Word-Auth Service has run just now, sleep
 #                sleep 60s
 #        else
@@ -62,7 +62,7 @@ do
 #        if [ $upmsCode != $runningCode ]
 #        then
 #                time=$(date "+%Y-%m-%d %H:%M:%S")
-#                docker container start `docker ps -a| grep microservice-kiwi_kiwi-upms_1 | awk '{print $1}' `
+#                docker container start `docker ps -a| grep docker_kiwi-upms_1 | awk '{print $1}' `
 #                echo $time Word-Upms Service has run just now, sleep
 #                sleep 60s
 #        else

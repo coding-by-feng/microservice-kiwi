@@ -36,6 +36,11 @@ ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
 docker-compose --version
 ```
 
+## yum安装
+```
+yum install docker-compose
+```
+
 # directory
 ```
 cd ~
@@ -56,6 +61,7 @@ cd ~/microservice-kiwi/
 git init
 git pull https://github.com/coding-by-feng/microservice-kiwi.git/
 git remote add origin https://github.com/coding-by-feng/microservice-kiwi.git
+git pull
 git branch --set-upstream-to=origin/master master
 git pull
 ```
@@ -83,9 +89,11 @@ docker run -itd --name kiwi-mysql -p 3306:3306 -v /root/docker/mysql:/mysql_tmp 
 sudo docker exec -it kiwi-mysql bash
 mysql -h localhost -u root -p
 create database kiwi_db;
+exit
 # 迁移Mysql的kiwi_db表
 mysqldump --host=cdb-0bhxucw9.gz.tencentcdb.com --port=10069 -uroot -pfengORZ123 -C --databases kiwi_db |mysql --host=localhost -uroot -pfengORZ123 kiwi_db
 mysql -h localhost -u root -p
+use kiwi_db
 select * from star_rel_his limit 0, 100;
 exit
 exit
@@ -216,16 +224,16 @@ vi settings.xml
 
 # 自动部署
 ```
-cd ~/microservice-kiwi/kiwi-deploy/
-cp autoCheckService.sh autoDeployMicroservice.sh autoDeploy.sh ~
+cd ~/microservice-kiwi/kiwi-deploy/docker
+cp autoCheckService.sh autoDeployMicroservice.sh autoDeploy.sh stopAll.sh ~
 cd ~
-chmod 777 autoCheckService.sh autoDeployMicroservice.sh autoDeploy.sh 
+chmod 777 autoCheckService.sh autoDeployMicroservice.sh autoDeploy.sh stopAll.sh
 ```
 
 # elasticsearch
 ```
 docker pull docker.elastic.co/elasticsearch/elasticsearch:7.6.2
-docker run -d -p 9200:9200 -p 9300:9300 -e "discovery.type=single-node" docker.elastic.co/elasticsearch/elasticsearch:7.6.2
+docker run -d --name kiwi-es -p 9200:9200 -p 9300:9300 -e "discovery.type=single-node" docker.elastic.co/elasticsearch/elasticsearch:7.6.2
 curl http://localhost:9200
 ```
 安装完了注意创建index，名为`kiwi_vocabulary`
@@ -233,15 +241,15 @@ curl http://localhost:9200
 [Docker 官方](https://www.elastic.co/guide/en/kibana/current/docker.html#docker "")
 ```
 docker pull docker.elastic.co/kibana/kibana:7.6.2
-docker run -d --link exciting_perlman -p 5601:5601 docker.elastic.co/kibana/kibana:7.6.2
+docker run -d --link kiwi-es -p 5601:5601 docker.elastic.co/kibana/kibana:7.6.2
 ```
 ## 安装ik分词器
 ```
-sudo docker exec -it exciting_perlman bash
+sudo docker exec -it kiwi-es bash
 # elasticsearch的版本和ik分词器的版本需要保持一致，不然在重启的时候会失败。
 elasticsearch-plugin install https://github.com/medcl/elasticsearch-analysis-ik/releases/download/v7.6.2/elasticsearch-analysis-ik-7.6.2.zip
 exit
-docker restart exciting_perlman
+docker restart kiwi-es 
 ```
 
 # nginx运行前端项目
@@ -296,7 +304,7 @@ access_log  /var/log/nginx/host.access.log  main;
 sudo docker exec -it kiwi-ui bash
 mv /usr/share/nginx/html/default.conf /etc/nginx/conf.d/default.conf
 # 验证nginx配置
-/sbin/nginx -t
+# /sbin/nginx -t
 /usr/sbin/nginx -t
 exit
 

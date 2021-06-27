@@ -97,6 +97,8 @@ services:
       - /root/docker/kiwi/crawler/logs:/logs
       - /root/docker/kiwi/crawler/tmp:/crawlerTmp
     network_mode: "host"
+    depends_on:
+      - kiwi-gate
 #    deploy:
 #      resources:
 #        limits:

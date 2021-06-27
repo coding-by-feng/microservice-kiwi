@@ -17,12 +17,6 @@ rm -rf ~/docker/kiwi/word/bizTmp/*
 rm -rf ~/docker/kiwi/word/bizTmp_02/*
 rm -rf ~/docker/kiwi/crawler/logs/*
 
-cd ~/microservice-kiwi/ || exit
-
-echo "git pulling..."
-
-git pull
-
 mvn clean install -Dmaven.test.skip=true
 
 mv -f ~/microservice-kiwi/kiwi-eureka/Dockerfile ~/docker/kiwi/eureka/
@@ -42,9 +36,9 @@ mv -f ~/.m2/repository/me/fengorz/kiwi-gateway/1.0-SNAPSHOT/kiwi-gateway-1.0-SNA
 mv -f ~/.m2/repository/me/fengorz/kiwi-word-biz/1.0-SNAPSHOT/kiwi-word-biz-1.0-SNAPSHOT.jar ~/docker/kiwi/word/
 mv -f ~/.m2/repository/me/fengorz/kiwi-word-crawler/1.0-SNAPSHOT/kiwi-word-crawler-1.0-SNAPSHOT.jar ~/docker/kiwi/crawler/
 
-~/autoDeploy.sh
+./autoDeploy.sh
 
 echo sleep 200
 sleep 200s
 
-nohup ~/autoCheckService.sh  >~/autoCheck.log 2>&1 &
+nohup ./autoCheckService.sh  >~/autoCheck.log 2>&1 &

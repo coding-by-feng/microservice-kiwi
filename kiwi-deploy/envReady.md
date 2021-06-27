@@ -225,9 +225,9 @@ vi settings.xml
 # 自动部署
 ```
 cd ~/microservice-kiwi/kiwi-deploy/docker
-cp autoCheckService.sh autoDeployMicroservice.sh autoDeploy.sh stopAll.sh ~
+cp deployKiwi.sh ~
 cd ~
-chmod 777 autoCheckService.sh autoDeployMicroservice.sh autoDeploy.sh stopAll.sh
+chmod 777 deployKiwi.sh
 ```
 
 # elasticsearch

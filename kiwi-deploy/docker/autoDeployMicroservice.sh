@@ -1,6 +1,6 @@
 #!/bin/bash
 
-~/stopAll.sh
+./stopAll.sh
 
 # systemctl restart docker
 

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-./stopAll.sh
+~/microservice-kiwi/kiwi-deploy/docker/stopAll.sh
 
 # systemctl restart docker
 
@@ -36,9 +36,9 @@ mv -f ~/.m2/repository/me/fengorz/kiwi-gateway/1.0-SNAPSHOT/kiwi-gateway-1.0-SNA
 mv -f ~/.m2/repository/me/fengorz/kiwi-word-biz/1.0-SNAPSHOT/kiwi-word-biz-1.0-SNAPSHOT.jar ~/docker/kiwi/word/
 mv -f ~/.m2/repository/me/fengorz/kiwi-word-crawler/1.0-SNAPSHOT/kiwi-word-crawler-1.0-SNAPSHOT.jar ~/docker/kiwi/crawler/
 
-./autoDeploy.sh
+~/microservice-kiwi/kiwi-deploy/docker/autoDeploy.sh
 
 echo sleep 200
 sleep 200s
 
-nohup ./autoCheckService.sh  >~/autoCheck.log 2>&1 &
+nohup ~/microservice-kiwi/kiwi-deploy/docker/autoCheckService.sh  >~/autoCheck.log 2>&1 &

@@ -73,7 +73,7 @@ public class JsoupServiceImpl implements IJsoupService {
     private static final String KEY_PARAPHRASE_ENGLISH = "def ddef_d db";
     private static final String KEY_PARAPHRASE_CODES = "gram dgram";
     private static final String FETCH_PARAPHRASE_ENGLISH_EXCEPTION = "The paraphraseEnglish of {} is not found!";
-    private static final String KEY_MEANING_CHINESE = "trans dtrans dtrans-se ";
+    private static final String KEY_MEANING_CHINESE = "trans dtrans dtrans-se  break-cj";
     private static final String FETCH_MEANING_CHINESE_EXCEPTION = "The meaningChinese of {} is not found!";
     private static final String KEY_EXAMPLE_SENTENCES = "examp dexamp";
     private static final String FETCH_EXAMPLE_SENTENCES_EXCEPTION = "The exampleSentences of {} is not found!";

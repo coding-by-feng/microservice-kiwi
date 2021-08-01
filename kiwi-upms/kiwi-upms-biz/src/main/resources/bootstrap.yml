@@ -4,6 +4,8 @@ server:
 spring:
   application:
     name: kiwi-upms
+  beaninfo:
+    ignore: false
   profiles:
     active: dev,prod
   cloud:
@@ -18,6 +20,7 @@ spring:
 eureka:
   instance:
     prefer-ip-address: true
+    instance-id: kiwi-upms
   client:
     service-url:
       defaultZone: http://codingByFeng:123456@kiwi-eureka:8762/eureka

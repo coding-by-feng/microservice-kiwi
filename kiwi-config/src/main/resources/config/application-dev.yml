@@ -17,7 +17,7 @@ spring:
     hikari:
       max-lifetime: 600000
       connection-timeout: 600000
-      maximum-pool-size: 20
+      maximum-pool-size: 15
   redis:
     host: kiwi-redis
     password: fengORZ123

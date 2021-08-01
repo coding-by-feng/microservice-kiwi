@@ -60,9 +60,9 @@ yum install git
 cd ~/microservice-kiwi/
 git init
 git pull https://github.com/coding-by-feng/microservice-kiwi.git/
-git remote add origin https://github.com/coding-by-feng/microservice-kiwi.git
-git pull
-git branch --set-upstream-to=origin/master master
+git remote add gitee https://gitee.com/fengorz/microservice-kiwi.git
+git fetch --all
+git reset --hard gitee/master
 git pull
 ```
 
@@ -79,6 +79,11 @@ vi /etc/hosts
 127.0.0.1                                       kiwi-redis
 127.0.0.1                                       kiwi-rabbitmq
 your_dfs_ip                                     kiwi-fastdfs
+
+127.0.0.1                                     kiwi-config
+127.0.0.1                                     kiwi-auth
+127.0.0.1                                     kiwi-upms
+127.0.0.1                                     kiwi-gate
 ```
 注意将上面your_ecs_ip替换成fastdfs所在云服务器的外网ip
 
@@ -130,7 +135,7 @@ mv /etc/apt/sources.list /etc/apt/sources.list.bak && \
     echo "deb http://mirrors.163.com/debian/ jessie-proposed-updates main non-free contrib" >>/etc/apt/sources.list && \
     echo "deb-src http://mirrors.163.com/debian/ jessie main non-free contrib" >>/etc/apt/sources.list && \
     echo "deb-src http://mirrors.163.com/debian/ jessie-proposed-updates main non-free contrib" >>/etc/apt/sources.list
-
+    
 apt-get update
 apt-get install vim
 

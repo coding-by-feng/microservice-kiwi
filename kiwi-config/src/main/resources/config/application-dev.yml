@@ -14,9 +14,6 @@ spring:
     username: root
     password: fengORZ123
     url: jdbc:mysql://159.75.107.124:3306/kiwi_db?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true
-    #    username: root
-    #    password: fengORZ123
-#    url: jdbc:mysql://cdb-0bhxucw9.gz.tencentcdb.com:10069/kiwi_db
     hikari:
       max-lifetime: 600000
       connection-timeout: 600000

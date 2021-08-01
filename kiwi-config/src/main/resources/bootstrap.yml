@@ -17,10 +17,11 @@ spring:
 eureka:
   instance:
     prefer-ip-address: true
-    hostname: kiwi-eureka
+    instance-id: kiwi-config
+    ip-address: kiwi-config
   client:
     service-url:
-      defaultZone: http://codingByFeng:123456@${eureka.instance.hostname}:8762/eureka
+      defaultZone: http://codingByFeng:123456@kiwi-eureka:8762/eureka
 
 # 暴露监控点
 management:

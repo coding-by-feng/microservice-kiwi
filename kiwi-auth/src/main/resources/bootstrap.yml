@@ -22,7 +22,7 @@ spring:
 eureka:
   instance:
     prefer-ip-address: true
+    instance-id: kiwi-auth
   client:
     service-url:
       defaultZone: http://codingByFeng:123456@kiwi-eureka:8762/eureka
-

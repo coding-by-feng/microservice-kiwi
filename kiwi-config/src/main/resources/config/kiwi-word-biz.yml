@@ -28,7 +28,7 @@ async:
         size: 5
     max:
       pool:
-        size: 15
+        size: 10
     queue:
       capacity: 5
 

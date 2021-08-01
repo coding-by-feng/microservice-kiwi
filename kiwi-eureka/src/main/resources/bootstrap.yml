@@ -15,15 +15,18 @@ spring:
 
 eureka:
   instance:
-    hostname: kiwi-eureka
     prefer-ip-address: true
+    instance-id: kiwi-eureka
+    ip-address: kiwi-eureka
   client:
     register-with-eureka: false
     fetch-registry: false
     service-url:
-      defaultZone: http://codingByFeng:123456@${eureka.instance.hostname}:${server.port}/eureka
+      defaultZone: http://codingByFeng:123456@${eureka.instance.ip-address}:${server.port}/eureka
   server:
-    eviction-interval-timer-in-ms: 20000
+    eviction-interval-timer-in-ms: 60000
+    peer-node-read-timeout-ms: 2000
+    enable-self-preservation: false
 
 management:
   endpoints:

@@ -1,0 +1,13 @@
+me:
+  fengorz:
+    file:
+      crawler:
+        voice:
+          tmpPath: "/wordTmp"
+      vocabulary:
+        word:
+          list:
+            path: "/wordTmp"
+
+
+

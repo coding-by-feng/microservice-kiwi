@@ -9,6 +9,11 @@ security:
 spring:
   main:
     allow-bean-definition-overriding: true
+  datasource:
+    hikari:
+      max-lifetime: 600000
+      connection-timeout: 600000
+      maximum-pool-size: 50
 
 ignore:
   urls:

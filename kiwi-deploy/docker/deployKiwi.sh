@@ -23,7 +23,7 @@ cd ~/microservice-kiwi/ || exit
 
 echo "git pulling..."
 
-git pull gitee master
+git pull
 
 chmod 777 ~/microservice-kiwi/kiwi-deploy/docker/*.sh
 

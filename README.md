@@ -90,7 +90,7 @@ your_dfs_ip                                     kiwi-fastdfs
 # mysql
 ```
 docker pull mysql:5.7.34
-docker run -itd --name kiwi-mysql -p 3306:3306 -v /root/docker/mysql:/mysql_tmp -e MYSQL_ROOT_PASSWORD=fengORZ123 mysql:5.7.34
+docker run -itd --name kiwi-mysql -p 3306:3306 -v /root/docker/mysql:/mysql_tmp -e MYSQL_ROOT_PASSWORD=fengORZ123 --net=host mysql:5.7.34
 sudo docker exec -it kiwi-mysql bash
 mysql -h localhost -u root -p
 create database kiwi_db;

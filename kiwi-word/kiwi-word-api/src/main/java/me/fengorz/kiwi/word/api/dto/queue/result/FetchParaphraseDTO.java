@@ -19,6 +19,7 @@ package me.fengorz.kiwi.word.api.dto.queue.result;
 import lombok.Data;
 import lombok.ToString;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -27,8 +28,9 @@ import java.util.List;
  */
 @Data
 @ToString
-public class FetchParaphraseDTO {
+public class FetchParaphraseDTO implements Serializable {
 
+    private static final long serialVersionUID = -9079654607482425376L;
     private Integer serialNumber;
 
     private String codes;

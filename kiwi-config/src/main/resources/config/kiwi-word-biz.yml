@@ -14,10 +14,14 @@ ignore:
   urls:
     - /test/**
     - /word/main/query/**
-    - /word/main/query/gate/**
     - /word/main/queryById/**
     - /word/main/fuzzyQueryList/**
     - /word/pronunciation/downloadVoice/**
+    - /word/main/query/**
+    - /word/fetch/**
+    - /word/main/variant/**
+    - /word/main/listOverlapInUnLock
+
   userNames:
     - admin
 

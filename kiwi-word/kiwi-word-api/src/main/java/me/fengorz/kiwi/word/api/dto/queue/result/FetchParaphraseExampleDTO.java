@@ -19,14 +19,17 @@ package me.fengorz.kiwi.word.api.dto.queue.result;
 import lombok.Data;
 import lombok.ToString;
 
+import java.io.Serializable;
+
 /**
 * @Author zhanshifeng
  * @Date 2019/10/25 9:14 AM
  */
 @Data
 @ToString
-public class FetchParaphraseExampleDTO {
+public class FetchParaphraseExampleDTO implements Serializable {
 
+    private static final long serialVersionUID = 6644567110287356026L;
     private String exampleSentence;
 
     private String exampleTranslate;

@@ -20,6 +20,8 @@ import lombok.Data;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 
+import java.io.Serializable;
+
 /**
 * @Author zhanshifeng
  * @Date 2019/11/4 2:20 PM
@@ -27,8 +29,9 @@ import lombok.experimental.Accessors;
 @Data
 @ToString
 @Accessors(chain = true)
-public class FetchWordPronunciationDTO {
+public class FetchWordPronunciationDTO implements Serializable {
 
+    private static final long serialVersionUID = -8246154466730622488L;
     private String soundmark;
     private String soundmarkType;
     private String voiceFileUrl;

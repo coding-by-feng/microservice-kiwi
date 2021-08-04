@@ -24,6 +24,8 @@ import lombok.ToString;
 import lombok.experimental.Accessors;
 import me.fengorz.kiwi.word.api.entity.WordMainDO;
 
+import java.io.Serializable;
+
 /**
 * @Author zhanshifeng
  * @Date 2019/11/2 4:13 PM
@@ -32,8 +34,9 @@ import me.fengorz.kiwi.word.api.entity.WordMainDO;
 @ToString
 @NoArgsConstructor
 @Accessors(chain = true)
-public class WordMainPageDTO {
+public class WordMainPageDTO implements Serializable {
 
+    private static final long serialVersionUID = 482725146179897504L;
     private Page page;
     private WordMainDO wordMainDO;
 

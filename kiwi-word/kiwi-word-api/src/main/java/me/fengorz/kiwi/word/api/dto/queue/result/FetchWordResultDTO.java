@@ -23,6 +23,7 @@ import lombok.experimental.Accessors;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -32,8 +33,9 @@ import java.util.List;
 @Data
 @ToString
 @Accessors(chain = true)
-public class FetchWordResultDTO {
+public class FetchWordResultDTO implements Serializable {
 
+    private static final long serialVersionUID = 6742160564554865466L;
     @NotBlank(message = "抓取不到剑桥词典对应的单词数据")
     private String wordName;
 

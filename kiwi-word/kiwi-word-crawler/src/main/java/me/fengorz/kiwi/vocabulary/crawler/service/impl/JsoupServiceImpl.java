@@ -78,7 +78,7 @@ public class JsoupServiceImpl implements IJsoupService {
     private static final String KEY_EXAMPLE_SENTENCES = "examp dexamp";
     private static final String FETCH_EXAMPLE_SENTENCES_EXCEPTION = "The exampleSentences of {} is not found!";
     private static final String KEY_SENTENCE = "eg deg";
-    private static final String KEY_SENTENCE_TRANSLATE = "trans dtrans dtrans-se hdb";
+    private static final String KEY_SENTENCE_TRANSLATE = "trans dtrans dtrans-se hdb break-cj";
     private static final String KEY_UK_PRONUNCIATIOIN = "uk dpron-i ";
     private static final String KEY_US_PRONUNCIATIOIN = "us dpron-i ";
     private static final String KEY_SOUNDMARK = "pron dpron";

@@ -20,6 +20,7 @@ import lombok.Data;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -29,8 +30,9 @@ import java.util.List;
 @Data
 @ToString
 @Accessors(chain = true)
-public class FetchWordCodeDTO {
+public class FetchWordCodeDTO implements Serializable {
 
+    private static final long serialVersionUID = 8940769679543071706L;
     private String characterCode;
     private String tag;
 

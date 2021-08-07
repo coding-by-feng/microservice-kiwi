@@ -60,11 +60,6 @@ feign:
       default:
         connectTimeout: 60000
         readTimeout: 60000
-  compression:
-    request:
-      enabled: true
-    response:
-      enabled: true
 
 # hystrix 配置
 hystrix:

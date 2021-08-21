@@ -25,12 +25,14 @@ import me.fengorz.kiwi.common.api.annotation.log.SysLog;
 import me.fengorz.kiwi.common.api.constant.MapperConstant;
 import me.fengorz.kiwi.common.sdk.controller.BaseController;
 import me.fengorz.kiwi.common.sdk.web.security.SecurityUtils;
+import me.fengorz.kiwi.word.api.common.ReviewDailyCounterTypeEnum;
 import me.fengorz.kiwi.word.api.entity.ParaphraseStarListDO;
 import me.fengorz.kiwi.word.api.vo.ParaphraseStarListVO;
 import me.fengorz.kiwi.word.api.vo.detail.ParaphraseVO;
 import me.fengorz.kiwi.word.api.vo.star.ParaphraseStarItemVO;
 import me.fengorz.kiwi.word.biz.service.base.IParaphraseService;
 import me.fengorz.kiwi.word.biz.service.base.IParaphraseStarListService;
+import me.fengorz.kiwi.word.biz.service.base.IWordReviewService;
 import me.fengorz.kiwi.word.biz.service.operate.IOperateService;
 import org.hibernate.validator.constraints.Range;
 import org.springframework.validation.annotation.Validated;
@@ -56,6 +58,7 @@ public class ParaphraseStarListController extends BaseController {
     private final IParaphraseStarListService starListService;
     private final IOperateService operateService;
     private final IParaphraseService paraphraseService;
+    private final IWordReviewService reviewService;
     private final ISeqService seqService;
 
     /**
@@ -130,7 +133,8 @@ public class ParaphraseStarListController extends BaseController {
 
     @GetMapping("/getItemDetail/{paraphraseId}")
     public R<ParaphraseVO> getItemDetail(@PathVariable Integer paraphraseId) {
-        return R.success(operateService.findWordParaphraseVO(paraphraseId));
+        reviewService.increase(ReviewDailyCounterTypeEnum.REVIEW.getType());
+        return R.success(operateService.findParaphraseVO(paraphraseId));
     }
 
     @PostMapping("/rememberOne")

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~
+  ~   Copyright [2019~2025] [codingByFeng]
+  ~
+  ~   Licensed under the Apache License, Version 2.0 (the "License");
+  ~   you may not use this file except in compliance with the License.
+  ~   You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~   Unless required by applicable law or agreed to in writing, software
+  ~   distributed under the License is distributed on an "AS IS" BASIS,
+  ~   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~   See the License for the specific language governing permissions and
+  ~   limitations under the License.
+  ~
+  ~
+  -->
+
+<plugins>
+    <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+            <source>${maven.compiler.source}</source>
+            <target>${maven.compiler.target}</target>
+            <encoding>UTF-8</encoding>
+        </configuration>
+    </plugin>
+    <!-- 不同环境的加载指定配置 -->
+    <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-resources-plugin</artifactId>
+        <executions>
+            <execution>
+                <id>copy-resources</id>
+                <phase>compile</phase>
+                <goals>
+                    <goal>copy-resources</goal>
+                </goals>
+                <configuration>
+                    　　　　　　　　　　　　　<!-- 覆盖原有文件 -->
+                    <overwrite>true</overwrite>
+                    <outputDirectory>${project.build.outputDirectory}</outputDirectory>
+                    <!-- 也可以用下面这样的方式（指定相对url的方式指定outputDirectory） -->
+                    <!-- <outputDirectory>target/classes</outputDirectory> -->
+                    <!-- 待处理的资源定义 -->
+                    <resources>
+                        <resource>
+                            <!-- 指定resources插件处理指定目录下的资源文件 -->
+                            <directory>src/main/resources/${package.environment}</directory>
+                            <filtering>false</filtering>
+                        </resource>
+                    </resources>
+                </configuration>
+                <inherited></inherited>
+            </execution>
+        </executions>
+    </plugin>
+</plugins>

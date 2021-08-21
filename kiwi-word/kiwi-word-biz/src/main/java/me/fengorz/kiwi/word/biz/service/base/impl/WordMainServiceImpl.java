@@ -72,7 +72,7 @@ public class WordMainServiceImpl extends ServiceImpl<WordMainMapper, WordMainDO>
     }
 
     @Override
-    public WordMainVO getOne(String wordName, Integer... infoType) {
+    public WordMainVO getOneAndCatch(String wordName, Integer... infoType) {
         try {
             final LambdaQueryWrapper<WordMainDO> query = Wrappers.<WordMainDO>lambdaQuery()
                     .eq(WordMainDO::getWordName, wordName).eq(WordMainDO::getIsDel, CommonConstants.FLAG_DEL_NO);

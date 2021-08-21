@@ -97,7 +97,6 @@ public class WordReviewServiceImpl implements IWordReviewService {
         return KiwiBeanUtils.convertFrom(getDO(userId, type), WordReviewDailyCounterVO.class);
     }
 
-    @Transactional(rollbackFor = Exception.class)
     private WordReviewDailyCounterDO getDO(int userId, int type) {
         LambdaQueryWrapper<WordReviewDailyCounterDO> wrapper = Wrappers.<WordReviewDailyCounterDO>lambdaQuery()
                 .eq(WordReviewDailyCounterDO::getUserId, userId)

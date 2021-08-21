@@ -18,8 +18,14 @@ package me.fengorz.kiwi.common.sdk.util.time;
 
 import org.apache.commons.lang3.time.DateFormatUtils;
 
+import java.time.format.DateTimeFormatter;
+
 /**
 * @Author zhanshifeng
  * @Date 2020/4/21 8:09 PM
  */
-public class KiwiDateFormatUtils extends DateFormatUtils {}
+public class KiwiDateFormatUtils extends DateFormatUtils {
+    public static final String DATE_FORMATTER_YYYY_MM_DD = "yyyy-MM-dd";
+
+    public static final DateTimeFormatter DATE_TIME_FORMATTER_YYYY_MM_DD = DateTimeFormatter.ofPattern(DATE_FORMATTER_YYYY_MM_DD);
+}

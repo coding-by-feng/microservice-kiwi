@@ -39,6 +39,7 @@ import me.fengorz.kiwi.word.api.common.WordConstants;
 import me.fengorz.kiwi.word.api.common.WordCrawlerConstants;
 import me.fengorz.kiwi.word.api.dto.queue.result.FetchWordReplaceDTO;
 import me.fengorz.kiwi.word.api.entity.*;
+import me.fengorz.kiwi.word.api.request.ParaphraseRequest;
 import me.fengorz.kiwi.word.api.vo.ParaphraseExampleVO;
 import me.fengorz.kiwi.word.api.vo.WordMainVO;
 import me.fengorz.kiwi.word.api.vo.detail.CharacterVO;
@@ -91,6 +92,7 @@ public class OperateServiceImpl implements IOperateService {
     private final IWordExampleStarRelService exampleStarRelService;
     private final IWordMainVariantService mainVariantService;
     private final IParaphrasePhraseService phraseService;
+    private final IWordReviewService reviewService;
     private final IDfsService dfsService;
     private final SearchOperations searchOperations;
     private final DocumentOperations documentOperations;
@@ -109,7 +111,7 @@ public class OperateServiceImpl implements IOperateService {
             unless = "#result == null")
     public WordQueryVO queryWord(@KiwiCacheKey String wordName, Integer... infoType) {
         WordQueryVO vo = new WordQueryVO();
-        WordMainDO word = mainService.getOne(wordName, infoType);
+        WordMainDO word = mainService.getOneAndCatch(wordName, infoType);
         // if you can't find the result after the tense is determined, insert a record into the queue to be fetched
         if (word == null) {
             Integer sourceWordId = mainVariantService.getWordId(wordName);
@@ -292,7 +294,7 @@ public class OperateServiceImpl implements IOperateService {
     @KiwiCacheKeyPrefix(WordConstants.CACHE_KEY_PREFIX_OPERATE.METHOD_PARAPHRASE_ID)
     @Cacheable(cacheNames = WordConstants.CACHE_NAMES, keyGenerator = CacheConstants.CACHE_KEY_GENERATOR_BEAN,
             unless = "#result == null")
-    public ParaphraseVO findWordParaphraseVO(@KiwiCacheKey Integer paraphraseId) {
+    public ParaphraseVO findParaphraseVO(@KiwiCacheKey Integer paraphraseId) {
         ParaphraseVO vo = new ParaphraseVO();
         List<ParaphraseExampleVO> exampleVOList = new ArrayList<>();
         ParaphraseDO paraphrase = paraphraseService.getById(paraphraseId);
@@ -349,6 +351,13 @@ public class OperateServiceImpl implements IOperateService {
     }
 
     @Override
+    public boolean modifyMeaningChinese(ParaphraseRequest request) {
+        evictParaphrase(request.getParaphraseId());
+        paraphraseService.modifyMeaningChinese(request);
+        return false;
+    }
+
+    @Override
     @Transactional(rollbackFor = Exception.class)
     public boolean insertVariant(String inputWordName, String fetchWordName) {
         if (KiwiStringUtils.equals(inputWordName, fetchWordName)) {
@@ -356,7 +365,7 @@ public class OperateServiceImpl implements IOperateService {
         }
 
         // 先判断变种是否存在，如果存在再插入
-        WordMainVO mainVO = mainService.getOne(fetchWordName);
+        WordMainVO mainVO = mainService.getOneAndCatch(fetchWordName);
         if (mainVO == null) {
             throw new ResourceNotFoundException("word {} 不存在！", fetchWordName);
         }
@@ -458,6 +467,16 @@ public class OperateServiceImpl implements IOperateService {
             }
         }
         return set;
+    }
+
+    @Override
+    public Integer getBreakpointReview(Integer listId) {
+        List<WordBreakpointReviewDO> list = reviewService.listBreakpointReview(listId);
+        if (KiwiCollectionUtils.isEmpty(list)) {
+            return 0;
+        } else {
+            return list.get(0).getLastPage();
+        }
     }
 
 }

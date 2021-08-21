@@ -16,10 +16,17 @@
 package me.fengorz.kiwi.word.biz.controller;
 
 import lombok.RequiredArgsConstructor;
+import me.fengorz.kiwi.common.api.R;
+import me.fengorz.kiwi.common.api.annotation.log.SysLog;
 import me.fengorz.kiwi.common.sdk.controller.BaseController;
+import me.fengorz.kiwi.word.api.request.ParaphraseRequest;
 import me.fengorz.kiwi.word.biz.service.base.IParaphraseService;
+import me.fengorz.kiwi.word.biz.service.operate.IOperateService;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.validation.Valid;
 
 /**
  * 单词释义表
@@ -32,6 +39,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/word/paraphrase")
 public class ParaphraseController extends BaseController {
 
-    private final IParaphraseService wordParaphraseService;
+    private final IParaphraseService service;
+    private final IOperateService operateService;
+
+    @SysLog("修改单词释义")
+    @PostMapping("/modifyMeaningChinese")
+    public R<Boolean> modifyMeaningChinese(@Valid ParaphraseRequest request) {
+        return R.success(operateService.modifyMeaningChinese(request));
+    }
 
 }

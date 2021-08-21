@@ -19,6 +19,7 @@ package me.fengorz.kiwi.word.biz.service.operate;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import me.fengorz.kiwi.word.api.dto.queue.result.FetchWordReplaceDTO;
 import me.fengorz.kiwi.word.api.entity.WordMainDO;
+import me.fengorz.kiwi.word.api.request.ParaphraseRequest;
 import me.fengorz.kiwi.word.api.vo.detail.ParaphraseVO;
 import me.fengorz.kiwi.word.api.vo.detail.WordQueryVO;
 
@@ -35,8 +36,9 @@ public interface IOperateService {
 
     IPage<WordQueryVO> queryWordByCh(String chineseParaphrase, int current, int size);
 
-    ParaphraseVO findWordParaphraseVO(Integer paraphraseId);
+    ParaphraseVO findParaphraseVO(Integer paraphraseId);
 
+    boolean modifyMeaningChinese(ParaphraseRequest request);
     /* paraphrase methods end */
 
     /* wordVariant methods begin */
@@ -63,5 +65,12 @@ public interface IOperateService {
     /* cache mothods end */
 
     Set<WordMainDO> collectDirtyData(Integer queueId, String wordName);
+
+    /**
+     * 获取断点记录，如果返回页数大于0，代表当前有断点数据
+     * @param listId
+     * @return
+     */
+    Integer getBreakpointReview(Integer listId);
 
 }

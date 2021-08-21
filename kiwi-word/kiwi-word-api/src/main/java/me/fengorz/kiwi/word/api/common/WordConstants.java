@@ -69,4 +69,6 @@ public class WordConstants {
     public static final String VO_PATH_MEANING_CHINESE = "characterVOList.paraphraseVOList.meaningChinese";
     public static final String VO_PATH_EXAMPLE_CHINESE = "characterVOList.paraphraseVOList.exampleVOList.exampleTranslate";
 
+    public static final int BREAKPOINT_REVIEW_TYPE_PARAPHRASE = 1;
+
 }

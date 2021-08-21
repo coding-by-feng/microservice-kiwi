@@ -39,6 +39,7 @@ public interface IBizAPI {
 
     String WORD_FETCH_QUEUE = "/word/fetch";
     String WORD_MAIN = "/word/main";
+    String WORD_REVIEW = "/word/review";
 
     @GetMapping(WORD_FETCH_QUEUE + "/getOne/{queueId}")
     R<FetchQueueDO> getOne(@PathVariable Integer queueId);
@@ -95,4 +96,6 @@ public interface IBizAPI {
     @GetMapping(WORD_MAIN + "/query/gate/{keyword}")
     R<WordQueryVO> queryWord(@PathVariable String keyword);
 
+    @GetMapping(WORD_REVIEW + "/createTheDays")
+    R<Void> createTheDays();
 }

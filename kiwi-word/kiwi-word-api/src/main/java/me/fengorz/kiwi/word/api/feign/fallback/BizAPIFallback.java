@@ -142,4 +142,10 @@ public class BizAPIFallback implements IBizAPI {
         return R.feignCallFailed(throwable.getMessage());
     }
 
+    @Override
+    public R<Void> createTheDays() {
+        log.error(throwable.getCause().getMessage());
+        return R.feignCallFailed(throwable.getMessage());
+    }
+
 }

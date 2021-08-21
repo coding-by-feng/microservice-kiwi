@@ -28,7 +28,6 @@ import me.fengorz.kiwi.word.api.common.WordCrawlerConstants;
 import me.fengorz.kiwi.word.api.entity.FetchQueueDO;
 import me.fengorz.kiwi.word.api.entity.WordMainDO;
 import me.fengorz.kiwi.word.biz.service.base.IWordFetchQueueService;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.*;
@@ -49,7 +48,7 @@ public class TestTempController extends BaseController {
 
     private final IWordFetchQueueService wordFetchQueueService;
     private final ISeqService seqService;
-    @Value("${me.fengorz.file.vocabulary.word.list.path}")
+    // @Value("${me.fengorz.file.vocabulary.word.list.path}")
     private String tmp;
 
     @GetMapping("/readTxt")

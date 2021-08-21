@@ -16,14 +16,13 @@
 
 package me.fengorz.kiwi.common.sdk.web.security;
 
-import java.util.Objects;
-
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-
 import lombok.experimental.UtilityClass;
 import me.fengorz.kiwi.common.api.entity.EnhancerUser;
 import me.fengorz.kiwi.common.api.exception.AuthException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+
+import java.util.Objects;
 
 /**
  * @Author zhanshifeng
@@ -67,6 +66,7 @@ public class SecurityUtils {
         if (currentUser != null) {
             return currentUser.getId();
         }
+        // return 1;
         throw new AuthException("登录超时");
     }
 

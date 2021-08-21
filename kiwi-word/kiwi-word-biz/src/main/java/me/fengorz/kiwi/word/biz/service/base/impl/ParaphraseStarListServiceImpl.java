@@ -26,6 +26,7 @@ import lombok.RequiredArgsConstructor;
 import me.fengorz.kiwi.common.api.constant.CommonConstants;
 import me.fengorz.kiwi.common.sdk.util.bean.KiwiBeanUtils;
 import me.fengorz.kiwi.common.sdk.web.security.SecurityUtils;
+import me.fengorz.kiwi.word.api.common.ReviewDailyCounterTypeEnum;
 import me.fengorz.kiwi.word.api.entity.ParaphraseStarListDO;
 import me.fengorz.kiwi.word.api.entity.ParaphraseStarRelDO;
 import me.fengorz.kiwi.word.api.entity.column.WordParaphraseStarListColumn;
@@ -34,6 +35,7 @@ import me.fengorz.kiwi.word.api.vo.star.ParaphraseStarItemVO;
 import me.fengorz.kiwi.word.biz.mapper.ParaphraseStarListMapper;
 import me.fengorz.kiwi.word.biz.service.base.IParaphraseStarListService;
 import me.fengorz.kiwi.word.biz.service.base.IParaphraseStarRelService;
+import me.fengorz.kiwi.word.biz.service.base.IWordReviewService;
 import me.fengorz.kiwi.word.biz.service.operate.IAsyncArchiveService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -55,6 +57,7 @@ public class ParaphraseStarListServiceImpl extends
     private final ParaphraseStarListMapper mapper;
     private final IParaphraseStarRelService relService;
     private final IAsyncArchiveService archiveService;
+    private final IWordReviewService reviewService;
 
     @Override
     public Integer countById(Integer id) {
@@ -122,6 +125,7 @@ public class ParaphraseStarListServiceImpl extends
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void rememberOne(Integer paraphraseId, Integer listId) {
+        reviewService.increase(ReviewDailyCounterTypeEnum.REMEMBER.getType());
         relService.update(
                 new ParaphraseStarRelDO().setIsRemember(CommonConstants.FLAG_DEL_YES)
                         .setRememberTime(LocalDateTime.now()),
@@ -132,6 +136,7 @@ public class ParaphraseStarListServiceImpl extends
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void keepInMind(Integer paraphraseId, Integer listId) {
+        reviewService.increase(ReviewDailyCounterTypeEnum.KEEP_IN_MIND.getType());
         relService.update(
                 new ParaphraseStarRelDO().setIsKeepInMind(CommonConstants.FLAG_DEL_YES)
                         .setKeepInMindTime(LocalDateTime.now()),

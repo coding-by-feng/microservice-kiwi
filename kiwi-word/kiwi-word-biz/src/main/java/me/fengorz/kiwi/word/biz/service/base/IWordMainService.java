@@ -34,7 +34,7 @@ import java.util.List;
  */
 public interface IWordMainService extends IService<WordMainDO> {
 
-    WordMainVO getOne(String wordName, Integer... infoType);
+    WordMainVO getOneAndCatch(String wordName, Integer... infoType);
 
     String getWordName(Integer id);
 
@@ -49,4 +49,5 @@ public interface IWordMainService extends IService<WordMainDO> {
     List<WordMainDO> listDirtyData(Integer wordId);
 
     List<String> listOverlapInUnLock();
+
 }

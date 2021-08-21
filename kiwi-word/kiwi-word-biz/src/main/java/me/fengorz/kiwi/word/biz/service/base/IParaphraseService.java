@@ -20,6 +20,7 @@ package me.fengorz.kiwi.word.biz.service.base;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import me.fengorz.kiwi.word.api.entity.ParaphraseDO;
+import me.fengorz.kiwi.word.api.request.ParaphraseRequest;
 import me.fengorz.kiwi.word.api.vo.detail.ParaphraseVO;
 
 import java.util.List;
@@ -40,4 +41,6 @@ public interface IParaphraseService extends IService<ParaphraseDO> {
     List<ParaphraseVO> listPhrase(Integer wordId);
 
     void delByWordId(Integer wordId);
+
+    boolean modifyMeaningChinese(ParaphraseRequest request);
 }

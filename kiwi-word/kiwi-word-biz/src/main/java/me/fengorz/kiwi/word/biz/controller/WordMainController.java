@@ -79,7 +79,6 @@ public class WordMainController extends BaseController {
 
     @GetMapping("/query/{wordName}")
     public R<IPage<WordQueryVO>> queryWord(@PathVariable(value = "wordName", required = false) String wordName) {
-        reviewService.createTheDays();
         IPage<WordQueryVO> page = new Page<>();
         if (KiwiStringUtils.isNotBlank(wordName)) {
             List<WordQueryVO> list = new LinkedList<>();

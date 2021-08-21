@@ -23,6 +23,7 @@ import me.fengorz.kiwi.common.api.constant.CommonConstants;
 import me.fengorz.kiwi.common.sdk.util.bean.KiwiBeanUtils;
 import me.fengorz.kiwi.word.api.dto.mapper.in.SelectEntityIsCollectDTO;
 import me.fengorz.kiwi.word.api.entity.ParaphraseDO;
+import me.fengorz.kiwi.word.api.request.ParaphraseRequest;
 import me.fengorz.kiwi.word.api.vo.detail.ParaphraseVO;
 import me.fengorz.kiwi.word.biz.mapper.ParaphraseMapper;
 import me.fengorz.kiwi.word.biz.service.base.IParaphraseService;
@@ -65,6 +66,13 @@ public class ParaphraseServiceImpl extends ServiceImpl<ParaphraseMapper, Paraphr
     @Transactional(rollbackFor = Exception.class)
     public void delByWordId(Integer wordId) {
         mapper.delete(Wrappers.<ParaphraseDO>lambdaQuery().eq(ParaphraseDO::getWordId, wordId));
+    }
+
+    @Override
+    public boolean modifyMeaningChinese(ParaphraseRequest request) {
+        ParaphraseDO paraphraseDO = new ParaphraseDO();
+        KiwiBeanUtils.copyProperties(request, paraphraseDO);
+        return mapper.updateById(paraphraseDO) > 0;
     }
 
 }

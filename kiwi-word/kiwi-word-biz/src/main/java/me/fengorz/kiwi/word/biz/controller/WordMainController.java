@@ -30,6 +30,7 @@ import me.fengorz.kiwi.word.api.entity.WordMainDO;
 import me.fengorz.kiwi.word.api.vo.detail.WordQueryVO;
 import me.fengorz.kiwi.word.biz.service.base.IWordFetchQueueService;
 import me.fengorz.kiwi.word.biz.service.base.IWordMainService;
+import me.fengorz.kiwi.word.biz.service.base.IWordReviewService;
 import me.fengorz.kiwi.word.biz.service.operate.IOperateService;
 import org.springframework.data.elasticsearch.core.DocumentOperations;
 import org.springframework.validation.annotation.Validated;
@@ -55,6 +56,7 @@ public class WordMainController extends BaseController {
     private final IWordMainService mainService;
     private final IOperateService operateService;
     private final IWordFetchQueueService queueService;
+    private final IWordReviewService reviewService;
     private final DocumentOperations documentOperations;
 
     @GetMapping("/removeByWordName/{wordName}")
@@ -77,6 +79,7 @@ public class WordMainController extends BaseController {
 
     @GetMapping("/query/{wordName}")
     public R<IPage<WordQueryVO>> queryWord(@PathVariable(value = "wordName", required = false) String wordName) {
+        reviewService.createTheDays();
         IPage<WordQueryVO> page = new Page<>();
         if (KiwiStringUtils.isNotBlank(wordName)) {
             List<WordQueryVO> list = new LinkedList<>();
@@ -105,5 +108,11 @@ public class WordMainController extends BaseController {
     public R<List<String>> listOverlapInUnLock() {
         return R.success(mainService.listOverlapInUnLock());
     }
+
+    @GetMapping("/getBreakpointReview/{listId}")
+    public R<Integer> getBreakpointReview(@PathVariable Integer listId) {
+        return R.success(operateService.getBreakpointReview(listId));
+    }
+
 
 }

@@ -32,7 +32,6 @@ import me.fengorz.kiwi.word.api.entity.WordReviewDailyCounterDO;
 import me.fengorz.kiwi.word.api.vo.WordReviewDailyCounterVO;
 import me.fengorz.kiwi.word.biz.mapper.BreakpointReviewMapper;
 import me.fengorz.kiwi.word.biz.mapper.ReviewDailyCounterMapper;
-import me.fengorz.kiwi.word.biz.service.base.IParaphraseStarListService;
 import me.fengorz.kiwi.word.biz.service.base.IWordReviewService;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -55,7 +54,6 @@ public class WordReviewServiceImpl implements IWordReviewService {
     private final BreakpointReviewMapper breakpointReviewMapper;
     private final ISeqService seqService;
     private final ReviewDailyCounterMapper reviewDailyCounterMapper;
-    private final IParaphraseStarListService paraphraseStarListService;
 
     @Override
     public List<WordBreakpointReviewDO> listBreakpointReview(Integer listId) {

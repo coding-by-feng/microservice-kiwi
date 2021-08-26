@@ -36,4 +36,11 @@ public interface IWordReviewService {
 
     WordReviewDailyCounterVO getVO(int userId, int type);
 
+    /**
+     * Record the page number currently reviewed.
+     * @param listId
+     * @param pageNumber
+     * @param type
+     */
+    void recordReviewPageNumber(int listId, Long pageNumber, int type);
 }

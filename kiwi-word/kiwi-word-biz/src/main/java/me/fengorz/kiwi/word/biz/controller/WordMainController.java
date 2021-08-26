@@ -108,10 +108,4 @@ public class WordMainController extends BaseController {
         return R.success(mainService.listOverlapInUnLock());
     }
 
-    @GetMapping("/getBreakpointReview/{listId}")
-    public R<Integer> getBreakpointReview(@PathVariable Integer listId) {
-        return R.success(operateService.getBreakpointReview(listId));
-    }
-
-
 }

@@ -26,10 +26,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
-import me.fengorz.kiwi.common.api.valid.ValidTypeInsert;
-import me.fengorz.kiwi.common.api.valid.ValidTypeUpdate;
 
-import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 /**
@@ -51,22 +48,18 @@ public class WordBreakpointReviewDO extends Model<WordBreakpointReviewDO> {
      *
      */
     @TableId
-    @ApiModelProperty("主键id，编辑时必须传")
-    @NotNull(groups = {ValidTypeUpdate.class})
     private Integer id;
 
     /**
      *
      */
     @ApiModelProperty("")
-    @NotNull(groups = {ValidTypeInsert.class})
     private Integer listId;
 
     /**
      *
      */
     @ApiModelProperty("")
-    @NotNull(groups = {ValidTypeInsert.class})
     private Integer userId;
 
     /**
@@ -79,13 +72,12 @@ public class WordBreakpointReviewDO extends Model<WordBreakpointReviewDO> {
      *
      */
     @ApiModelProperty("")
-    @NotNull(groups = {ValidTypeInsert.class})
     private Integer lastPage;
 
     /**
      *
      */
     @ApiModelProperty("")
-    private LocalDateTime createTime;
+    private LocalDateTime operateTime;
 
 }

@@ -470,7 +470,7 @@ public class OperateServiceImpl implements IOperateService {
     }
 
     @Override
-    public Integer getBreakpointReview(Integer listId) {
+    public Integer getReviewBreakpointPageNumber(Integer listId) {
         List<WordBreakpointReviewDO> list = reviewService.listBreakpointReview(listId);
         if (KiwiCollectionUtils.isEmpty(list)) {
             return 0;

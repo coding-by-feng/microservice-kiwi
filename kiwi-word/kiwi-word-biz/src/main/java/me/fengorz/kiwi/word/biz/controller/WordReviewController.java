@@ -20,6 +20,7 @@ import me.fengorz.kiwi.common.api.R;
 import me.fengorz.kiwi.common.sdk.web.security.SecurityUtils;
 import me.fengorz.kiwi.word.api.vo.WordReviewDailyCounterVO;
 import me.fengorz.kiwi.word.biz.service.base.IWordReviewService;
+import me.fengorz.kiwi.word.biz.service.operate.IOperateService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -35,6 +36,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class WordReviewController {
 
     private final IWordReviewService reviewService;
+    private final IOperateService operateService;
+
+    @GetMapping("/getReviewBreakpointPageNumber/{listId}")
+    public R<Integer> getReviewBreakpointPageNumber(@PathVariable Integer listId) {
+        return R.success(operateService.getReviewBreakpointPageNumber(listId));
+    }
 
     @GetMapping("/createTheDays")
     public R<Void> createTheDays() {

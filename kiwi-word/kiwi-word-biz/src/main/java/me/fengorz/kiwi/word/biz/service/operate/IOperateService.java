@@ -71,6 +71,6 @@ public interface IOperateService {
      * @param listId
      * @return
      */
-    Integer getBreakpointReview(Integer listId);
+    Integer getReviewBreakpointPageNumber(Integer listId);
 
 }

@@ -56,4 +56,6 @@ public interface IParaphraseStarListService extends IService<ParaphraseStarListD
     void keepInMind(Integer paraphraseId, Integer listId);
 
     void forgetOne(Integer paraphraseId, Integer listId);
+
+    List<Integer> findAllUserId();
 }

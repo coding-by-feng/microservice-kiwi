@@ -20,27 +20,26 @@
 package me.fengorz.kiwi.word.api.common;
 
 /**
+ * @Description Enumeration classes for different types of breakpoint records in review mode.
  * @Author zhanshifeng
- * @Date 2021/8/21 8:11 PM
+ * @Date 2021/8/22 7:27 PM
  */
-public enum ReviewDailyCounterTypeEnum {
+public enum ReviewBreakpointTypeEnum {
+    REMEMBER(1),
+    KEEP_IN_MIND(2);
 
     /**
      * 1：remember
      * 2：keep in mind
-     * 3：review
      */
-
-    REMEMBER(1), KEEP_IN_MIND(2), REVIEW(3);
 
     private final int type;
 
-    ReviewDailyCounterTypeEnum(int type) {
+    ReviewBreakpointTypeEnum(int type) {
         this.type = type;
     }
 
     public int getType() {
         return type;
     }
-
 }

@@ -32,8 +32,11 @@ import me.fengorz.kiwi.word.api.entity.WordReviewDailyCounterDO;
 import me.fengorz.kiwi.word.api.vo.WordReviewDailyCounterVO;
 import me.fengorz.kiwi.word.biz.mapper.BreakpointReviewMapper;
 import me.fengorz.kiwi.word.biz.mapper.ReviewDailyCounterMapper;
+import me.fengorz.kiwi.word.biz.service.base.IParaphraseStarListService;
 import me.fengorz.kiwi.word.biz.service.base.IWordReviewService;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
@@ -52,6 +55,7 @@ public class WordReviewServiceImpl implements IWordReviewService {
     private final BreakpointReviewMapper breakpointReviewMapper;
     private final ISeqService seqService;
     private final ReviewDailyCounterMapper reviewDailyCounterMapper;
+    private final IParaphraseStarListService paraphraseStarListService;
 
     @Override
     public List<WordBreakpointReviewDO> listBreakpointReview(Integer listId) {
@@ -65,7 +69,7 @@ public class WordReviewServiceImpl implements IWordReviewService {
     public void addOne(Integer listId, Integer lastPage) {
         // TODO ZSF 应用上分布式缓存锁
         WordBreakpointReviewDO reviewDO = new WordBreakpointReviewDO().setId(seqService.genIntSequence(MapperConstant.T_INS_SEQUENCE))
-                .setCreateTime(LocalDateTime.now()).setUserId(SecurityUtils.getCurrentUserId())
+                .setOperateTime(LocalDateTime.now()).setUserId(SecurityUtils.getCurrentUserId())
                 .setType(WordConstants.BREAKPOINT_REVIEW_TYPE_PARAPHRASE).setLastPage(lastPage).setListId(listId);
     }
 
@@ -84,10 +88,15 @@ public class WordReviewServiceImpl implements IWordReviewService {
         }
     }
 
+    @Async
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRES_NEW)
     public void increase(int type) {
         WordReviewDailyCounterDO counter = getDO(SecurityUtils.getCurrentUserId(), type);
+        if (counter == null) {
+            this.createTheDays();
+            counter = getDO(SecurityUtils.getCurrentUserId(), type);
+        }
         counter.setReviewCount(counter.getReviewCount() + 1);
         reviewDailyCounterMapper.updateById(counter);
     }
@@ -95,6 +104,25 @@ public class WordReviewServiceImpl implements IWordReviewService {
     @Override
     public WordReviewDailyCounterVO getVO(int userId, int type) {
         return KiwiBeanUtils.convertFrom(getDO(userId, type), WordReviewDailyCounterVO.class);
+    }
+
+    @Override
+    @Async
+    @Transactional(rollbackFor = RuntimeException.class, propagation = Propagation.REQUIRES_NEW)
+    public void recordReviewPageNumber(int listId, Long pageNumber, int type) {
+        // If the record exists, update the page number directly.
+        LambdaQueryWrapper<WordBreakpointReviewDO> queryWrapper = Wrappers.<WordBreakpointReviewDO>lambdaQuery()
+                .eq(WordBreakpointReviewDO::getUserId, SecurityUtils.getCurrentUserId())
+                .eq(WordBreakpointReviewDO::getType, type)
+                .eq(WordBreakpointReviewDO::getListId, listId);
+        WordBreakpointReviewDO breakpoint = breakpointReviewMapper.selectOne(queryWrapper);
+        if (breakpoint == null) {
+            firstRecordReviewPageNumber(listId, pageNumber, type);
+        } else {
+            breakpoint.setLastPage(pageNumber.intValue())
+                    .setOperateTime(LocalDateTime.now());
+            breakpointReviewMapper.updateById(breakpoint);
+        }
     }
 
     private WordReviewDailyCounterDO getDO(int userId, int type) {
@@ -113,6 +141,17 @@ public class WordReviewServiceImpl implements IWordReviewService {
                 .setToday(LocalDateTime.now().toLocalDate())
                 .setType(type);
         reviewDailyCounterMapper.insert(counterDO);
+    }
+
+    private void firstRecordReviewPageNumber(int listId, Long pageNumber, int type) {
+        WordBreakpointReviewDO breakpointReviewDO = new WordBreakpointReviewDO();
+        breakpointReviewDO.setId(0)
+                .setLastPage(pageNumber.intValue())
+                .setOperateTime(LocalDateTime.now())
+                .setType(type)
+                .setUserId(SecurityUtils.getCurrentUserId())
+                .setListId(listId);
+        breakpointReviewMapper.insert(breakpointReviewDO);
     }
 
 }

@@ -26,6 +26,7 @@ import lombok.RequiredArgsConstructor;
 import me.fengorz.kiwi.common.api.constant.CommonConstants;
 import me.fengorz.kiwi.common.sdk.util.bean.KiwiBeanUtils;
 import me.fengorz.kiwi.common.sdk.web.security.SecurityUtils;
+import me.fengorz.kiwi.word.api.common.ReviewBreakpointTypeEnum;
 import me.fengorz.kiwi.word.api.common.ReviewDailyCounterTypeEnum;
 import me.fengorz.kiwi.word.api.entity.ParaphraseStarListDO;
 import me.fengorz.kiwi.word.api.entity.ParaphraseStarRelDO;
@@ -93,8 +94,16 @@ public class ParaphraseStarListServiceImpl extends
         return mapper.selectItems(page, listId);
     }
 
+    /**
+     * In review mode, It needs to save the page number, and it can choose to review again at the breakpoint next time.
+     * @param page
+     * @param listId
+     * @return
+     */
     @Override
     public IPage<ParaphraseStarItemVO> selectReviewListItems(Page page, Integer listId) {
+        // When querying the list to be remembered, record the current query page number.
+        reviewService.recordReviewPageNumber(listId, page.getCurrent(), ReviewBreakpointTypeEnum.REMEMBER.getType());
         if (listId == 0) {
             return mapper.selectRecentReviewItems(page, SecurityUtils.getCurrentUserId());
         }
@@ -103,6 +112,8 @@ public class ParaphraseStarListServiceImpl extends
 
     @Override
     public IPage<ParaphraseStarItemVO> selectRememberListItems(Page page, Integer listId) {
+        // When querying the list to be kept in mind, record the current query page number.
+        reviewService.recordReviewPageNumber(listId, page.getCurrent(), ReviewBreakpointTypeEnum.KEEP_IN_MIND.getType());
         if (listId == 0) {
             return mapper.selectRecentRememberItems(page, SecurityUtils.getCurrentUserId());
         }
@@ -152,6 +163,14 @@ public class ParaphraseStarListServiceImpl extends
                         .setIsKeepInMind(CommonConstants.FLAG_DEL_NO),
                 Wrappers.<ParaphraseStarRelDO>lambdaQuery().eq(ParaphraseStarRelDO::getListId, listId)
                         .eq(ParaphraseStarRelDO::getParaphraseId, paraphraseId));
+    }
+
+    @Override
+    public List<Integer> findAllUserId() {
+        // QueryWrapper<ParaphraseStarListDO> queryWrapper = Wrappers.<ParaphraseStarListDO>query().select("DISTINCT owner");
+        // IntStream intStream = mapper.selectObjs(queryWrapper).stream().mapToInt(num -> Integer.parseInt((String) num));
+        // intStream.
+        return null;
     }
 
     @Override

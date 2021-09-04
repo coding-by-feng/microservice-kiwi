@@ -30,9 +30,9 @@ public interface IWordReviewService {
 
     void addOne(Integer listId, Integer pageNum);
 
-    void createTheDays();
+    void createTheDays(Integer userId);
 
-    void increase(int type);
+    void increase(int type, Integer userId);
 
     WordReviewDailyCounterVO getVO(int userId, int type);
 
@@ -42,5 +42,5 @@ public interface IWordReviewService {
      * @param pageNumber
      * @param type
      */
-    void recordReviewPageNumber(int listId, Long pageNumber, int type);
+    void recordReviewPageNumber(int listId, Long pageNumber, int type, Integer userId);
 }

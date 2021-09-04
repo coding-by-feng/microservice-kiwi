@@ -45,7 +45,7 @@ public class WordReviewController {
 
     @GetMapping("/createTheDays")
     public R<Void> createTheDays() {
-        reviewService.createTheDays();
+        reviewService.createTheDays(SecurityUtils.getCurrentUserId());
         return R.success();
     }
 

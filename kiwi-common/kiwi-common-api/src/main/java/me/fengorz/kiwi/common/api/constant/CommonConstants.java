@@ -117,4 +117,6 @@ public interface CommonConstants {
      * 验证码前缀
      */
     String DEFAULT_CODE_KEY = "DEFAULT_CODE_KEY_";
+
+    String ADMIN_USERNAME = "admin";
 }

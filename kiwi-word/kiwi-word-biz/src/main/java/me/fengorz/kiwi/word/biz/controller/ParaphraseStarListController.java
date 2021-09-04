@@ -114,20 +114,20 @@ public class ParaphraseStarListController extends BaseController {
     }
 
     @PostMapping("/getListItems/{size}/{current}")
-    public R<IPage<ParaphraseStarItemVO>> getListItems(@NotNull Integer listId, @PathVariable @Min(1) Integer current,
+    public R<IPage<ParaphraseStarItemVO>> getListItems(@NotNull Integer listId, @PathVariable @Min(0) Integer current,
                                                        @PathVariable @Range(min = 1, max = 100) Integer size) {
         return R.success(starListService.selectListItems(new Page(current, size), listId));
     }
 
     @PostMapping("/getReviewListItems/{size}/{current}")
     public R<IPage<ParaphraseStarItemVO>> getReviewListItems(@NotNull Integer listId,
-                                                             @PathVariable @Min(1) Integer current, @PathVariable @Range(min = 1, max = 100) Integer size) {
+                                                             @PathVariable @Min(0) Integer current, @PathVariable @Range(min = 1, max = 100) Integer size) {
         return R.success(starListService.selectReviewListItems(new Page(current, size), listId));
     }
 
     @PostMapping("/getRememberListItems/{size}/{current}")
     public R<IPage<ParaphraseStarItemVO>> getRememberListItems(@NotNull Integer listId,
-                                                               @PathVariable @Min(1) Integer current, @PathVariable @Range(min = 1, max = 100) Integer size) {
+                                                               @PathVariable @Min(0) Integer current, @PathVariable @Range(min = 1, max = 100) Integer size) {
         return R.success(starListService.selectRememberListItems(new Page(current, size), listId));
     }
 

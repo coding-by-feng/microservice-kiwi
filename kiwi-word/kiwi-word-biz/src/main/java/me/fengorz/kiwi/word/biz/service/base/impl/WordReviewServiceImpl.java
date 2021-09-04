@@ -23,6 +23,7 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import lombok.AllArgsConstructor;
 import me.fengorz.kiwi.bdf.core.service.ISeqService;
 import me.fengorz.kiwi.common.api.constant.MapperConstant;
+import me.fengorz.kiwi.common.api.exception.AuthException;
 import me.fengorz.kiwi.common.sdk.util.bean.KiwiBeanUtils;
 import me.fengorz.kiwi.common.sdk.web.security.SecurityUtils;
 import me.fengorz.kiwi.word.api.common.ReviewDailyCounterTypeEnum;
@@ -73,27 +74,29 @@ public class WordReviewServiceImpl implements IWordReviewService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void createTheDays() {
-        Integer userId = SecurityUtils.getCurrentUserId();
+    public void createTheDays(Integer userId) {
+        if (userId == null) {
+            throw new AuthException("userId cannot be null!");
+        }
         if (getDO(userId, ReviewDailyCounterTypeEnum.REVIEW.getType()) == null) {
-            createDO(ReviewDailyCounterTypeEnum.REVIEW.getType());
+            createDO(ReviewDailyCounterTypeEnum.REVIEW.getType(), userId);
         }
         if (getDO(userId, ReviewDailyCounterTypeEnum.KEEP_IN_MIND.getType()) == null) {
-            createDO(ReviewDailyCounterTypeEnum.KEEP_IN_MIND.getType());
+            createDO(ReviewDailyCounterTypeEnum.KEEP_IN_MIND.getType(), userId);
         }
         if (getDO(userId, ReviewDailyCounterTypeEnum.REMEMBER.getType()) == null) {
-            createDO(ReviewDailyCounterTypeEnum.REMEMBER.getType());
+            createDO(ReviewDailyCounterTypeEnum.REMEMBER.getType(), userId);
         }
     }
 
     @Async
     @Override
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRES_NEW)
-    public void increase(int type) {
-        WordReviewDailyCounterDO counter = getDO(SecurityUtils.getCurrentUserId(), type);
+    public void increase(int type, Integer userId) {
+        WordReviewDailyCounterDO counter = getDO(userId, type);
         if (counter == null) {
-            this.createTheDays();
-            counter = getDO(SecurityUtils.getCurrentUserId(), type);
+            this.createTheDays(userId);
+            counter = getDO(userId, type);
         }
         counter.setReviewCount(counter.getReviewCount() + 1);
         reviewDailyCounterMapper.updateById(counter);
@@ -107,15 +110,15 @@ public class WordReviewServiceImpl implements IWordReviewService {
     @Override
     @Async
     @Transactional(rollbackFor = RuntimeException.class, propagation = Propagation.REQUIRES_NEW)
-    public void recordReviewPageNumber(int listId, Long pageNumber, int type) {
+    public void recordReviewPageNumber(int listId, Long pageNumber, int type, Integer userId) {
         // If the record exists, update the page number directly.
         LambdaQueryWrapper<WordBreakpointReviewDO> queryWrapper = Wrappers.<WordBreakpointReviewDO>lambdaQuery()
-                .eq(WordBreakpointReviewDO::getUserId, SecurityUtils.getCurrentUserId())
+                .eq(WordBreakpointReviewDO::getUserId, userId)
                 .eq(WordBreakpointReviewDO::getType, type)
                 .eq(WordBreakpointReviewDO::getListId, listId);
         WordBreakpointReviewDO breakpoint = breakpointReviewMapper.selectOne(queryWrapper);
         if (breakpoint == null) {
-            firstRecordReviewPageNumber(listId, pageNumber, type);
+            firstRecordReviewPageNumber(listId, pageNumber, type, userId);
         } else {
             breakpoint.setLastPage(pageNumber.intValue())
                     .setOperateTime(LocalDateTime.now());
@@ -132,22 +135,22 @@ public class WordReviewServiceImpl implements IWordReviewService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    private void createDO(int type) {
+    private void createDO(int type, Integer userId) {
         WordReviewDailyCounterDO counterDO = new WordReviewDailyCounterDO();
-        counterDO.setId(0).setUserId(SecurityUtils.getCurrentUserId())
+        counterDO.setId(0).setUserId(userId)
                 .setReviewCount(0)
                 .setToday(LocalDateTime.now().toLocalDate())
                 .setType(type);
         reviewDailyCounterMapper.insert(counterDO);
     }
 
-    private void firstRecordReviewPageNumber(int listId, Long pageNumber, int type) {
+    private void firstRecordReviewPageNumber(int listId, Long pageNumber, int type, Integer userId) {
         WordBreakpointReviewDO breakpointReviewDO = new WordBreakpointReviewDO();
         breakpointReviewDO.setId(0)
                 .setLastPage(pageNumber.intValue())
                 .setOperateTime(LocalDateTime.now())
                 .setType(type)
-                .setUserId(SecurityUtils.getCurrentUserId())
+                .setUserId(userId)
                 .setListId(listId);
         breakpointReviewMapper.insert(breakpointReviewDO);
     }

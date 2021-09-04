@@ -103,7 +103,7 @@ public class ParaphraseStarListServiceImpl extends
     @Override
     public IPage<ParaphraseStarItemVO> selectReviewListItems(Page page, Integer listId) {
         // When querying the list to be remembered, record the current query page number.
-        reviewService.recordReviewPageNumber(listId, page.getCurrent(), ReviewBreakpointTypeEnum.REMEMBER.getType());
+        reviewService.recordReviewPageNumber(listId, page.getCurrent(), ReviewBreakpointTypeEnum.REMEMBER.getType(), SecurityUtils.getCurrentUserId());
         if (listId == 0) {
             return mapper.selectRecentReviewItems(page, SecurityUtils.getCurrentUserId());
         }
@@ -113,7 +113,7 @@ public class ParaphraseStarListServiceImpl extends
     @Override
     public IPage<ParaphraseStarItemVO> selectRememberListItems(Page page, Integer listId) {
         // When querying the list to be kept in mind, record the current query page number.
-        reviewService.recordReviewPageNumber(listId, page.getCurrent(), ReviewBreakpointTypeEnum.KEEP_IN_MIND.getType());
+        reviewService.recordReviewPageNumber(listId, page.getCurrent(), ReviewBreakpointTypeEnum.KEEP_IN_MIND.getType(), SecurityUtils.getCurrentUserId());
         if (listId == 0) {
             return mapper.selectRecentRememberItems(page, SecurityUtils.getCurrentUserId());
         }
@@ -136,7 +136,7 @@ public class ParaphraseStarListServiceImpl extends
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void rememberOne(Integer paraphraseId, Integer listId) {
-        reviewService.increase(ReviewDailyCounterTypeEnum.REMEMBER.getType());
+        reviewService.increase(ReviewDailyCounterTypeEnum.REMEMBER.getType(), SecurityUtils.getCurrentUserId());
         relService.update(
                 new ParaphraseStarRelDO().setIsRemember(CommonConstants.FLAG_DEL_YES)
                         .setRememberTime(LocalDateTime.now()),
@@ -147,7 +147,7 @@ public class ParaphraseStarListServiceImpl extends
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void keepInMind(Integer paraphraseId, Integer listId) {
-        reviewService.increase(ReviewDailyCounterTypeEnum.KEEP_IN_MIND.getType());
+        reviewService.increase(ReviewDailyCounterTypeEnum.KEEP_IN_MIND.getType(), SecurityUtils.getCurrentUserId());
         relService.update(
                 new ParaphraseStarRelDO().setIsKeepInMind(CommonConstants.FLAG_DEL_YES)
                         .setKeepInMindTime(LocalDateTime.now()),

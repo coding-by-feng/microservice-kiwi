@@ -112,7 +112,7 @@ public class ExampleStarListController extends BaseController {
     }
 
     @PostMapping("/getListItems/{size}/{current}")
-    public R<IPage<ExampleStarItemVO>> getListItems(@NotNull Integer listId, @PathVariable @Min(1) Integer current,
+    public R<IPage<ExampleStarItemVO>> getListItems(@NotNull Integer listId, @PathVariable @Min(0) Integer current,
                                                     @PathVariable @Range(min = 1, max = 100) Integer size) {
         return R.success(starListService.getListItems(new Page(current, size), listId));
     }

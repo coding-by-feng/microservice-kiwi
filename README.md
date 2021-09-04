@@ -309,6 +309,7 @@ access_log  /var/log/nginx/host.access.log  main;
 sudo docker exec -it kiwi-ui bash
 mv /usr/share/nginx/html/default.conf /etc/nginx/conf.d/default.conf
 # 验证nginx配置
+# /usr/sbin/nginx -tc /usr/share/nginx/html/default.conf
 # /sbin/nginx -t
 /usr/sbin/nginx -t
 exit

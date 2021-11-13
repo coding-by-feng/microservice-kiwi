@@ -277,10 +277,29 @@ vi docker/ui/dist/default.conf
 ```
 在
 ```
-location / {
+server {
+    listen 80;
+    server_name www.kiwidict.com;
+    rewrite ^(.*) https://$server_name$1 permanent;
+}
+
+server {
+    listen 443 ssl;
+    server_name  www.kiwidict.com;
+    ssl_certificate 1_kiwidict.com_bundle.crt;
+    ssl_certificate_key 2_kiwidict.com.key;
+    ssl_session_timeout 5m;
+    ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+    ssl_ciphers ECDHE-RSA-AES128-GCM-SHA256:HIGH:!aNULL:!MD5:!RC4:!DHE;
+    ssl_prefer_server_ciphers on;
+
+    access_log  /var/log/nginx/host.access.log  main;
+
+    location / {
         root   /usr/share/nginx/html;
         index  index.html index.htm;
     }
+}
 ```
 下面增加配置：
 ```

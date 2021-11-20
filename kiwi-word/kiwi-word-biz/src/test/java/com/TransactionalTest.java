@@ -1,4 +1,4 @@
-/*
+package com;/*
  *
  * Copyright [2019~2025] [zhanshifeng]
  *
@@ -14,14 +14,11 @@
  *
  */
 
+import com.vocabulary.enhancer.word.biz.config.TransactionalTestConfig;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
-
-import lombok.extern.slf4j.Slf4j;
-import me.fengorz.kiwi.word.biz.config.TransactionalTestConfig;
-import me.fengorz.kiwi.word.biz.test.TestService;
 
 /**
  * @Description 测试一下事务注解的一些特性
@@ -33,8 +30,8 @@ import me.fengorz.kiwi.word.biz.test.TestService;
 @Slf4j
 public class TransactionalTest {
 
-    @Autowired
-    private TestService testService;
+    // @Autowired
+    // private TestService testService;
 
     // @Test
     public void test() {

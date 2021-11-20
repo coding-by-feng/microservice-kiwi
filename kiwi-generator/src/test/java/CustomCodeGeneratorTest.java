@@ -1,11 +1,16 @@
 import me.fengorz.kiwi.generator.CustomCodeGenerator;
+import me.fengorz.kiwi.generator.config.MybatisPlusConfigurer;
 import me.fengorz.kiwi.generator.entity.GenerateAbility;
 import me.fengorz.kiwi.generator.entity.GenerateConfig;
 import me.fengorz.kiwi.generator.service.SysGeneratorService;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.List;
 import java.util.Map;
@@ -14,16 +19,16 @@ import java.util.Map;
  * @Author zhanshifeng
  * @Date 2019-09-16 16:33
  */
-// @RunWith(SpringRunner.class)
-// @SpringBootTest(classes = MybatisPlusConfigurer.class)
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = MybatisPlusConfigurer.class)
 public class CustomCodeGeneratorTest {
 
     @Autowired
     private SysGeneratorService sysGeneratorService;
 
-    // @Test
+    @Test
     public void test() throws Exception {
-        String tableName = "word_paraphrase_phrase";
+        String tableName = "word_review_daily_counter";
         GenerateConfig config = new GenerateConfig();
         // "请输入表明前缀，比如t_table_name的话输入\"t_\""
         // 每次这里编译报错都要先在pom.xml加上：
@@ -41,7 +46,7 @@ public class CustomCodeGeneratorTest {
         // 请输入@FeignClient的value属性值,不需要的话置空
         config.setServiceId(null);
         // 请生成代码的zip压缩包要存储的本地Path(比如：/Users/zhanshifeng/Documents/myDocument/temp/20200224/generator.zip)：
-        config.setZipPath("/Users/zhanshifeng/Documents/myDocument/temp/20200531/generator.zip");
+        config.setZipPath("/Users/zhanshifeng/Documents/myDocument/temp/20210819/generator.zip");
 
         GenerateAbility ability = new GenerateAbility();
         // 开启Controller自动生成

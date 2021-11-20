@@ -16,18 +16,19 @@
 
 package me.fengorz.kiwi.common.api.entity;
 
-import java.util.Collection;
-
+import lombok.Getter;
+import me.fengorz.kiwi.common.api.constant.CommonConstants;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 
-import lombok.Getter;
+import java.util.Collection;
 
 /**
  * @Author zhanshifeng
  * @Date 2019-09-25 10:41
  */
-public class EnhancerUser extends User {
+public class EnhancerUser extends User implements InitializingBean {
 
     private static final long serialVersionUID = -3345914637714509878L;
 
@@ -37,11 +38,19 @@ public class EnhancerUser extends User {
     @Getter
     private Integer deptId;
 
+    @Getter
+    private Boolean isAdmin;
+
     public EnhancerUser(Integer id, Integer deptId, String username, String password, boolean enabled,
-        boolean accountNonExpired, boolean credentialsNonExpired, boolean accountNonLocked,
-        Collection<? extends GrantedAuthority> authorities) {
+                        boolean accountNonExpired, boolean credentialsNonExpired, boolean accountNonLocked,
+                        Collection<? extends GrantedAuthority> authorities) {
         super(username, password, enabled, accountNonExpired, credentialsNonExpired, accountNonLocked, authorities);
         this.id = id;
         this.deptId = deptId;
+    }
+
+    @Override
+    public void afterPropertiesSet() {
+        this.isAdmin = CommonConstants.ADMIN_USERNAME.equals(getUsername());
     }
 }

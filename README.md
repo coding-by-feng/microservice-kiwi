@@ -346,3 +346,9 @@ WebStorm执行编译命令生成静态文件。
 ## 首页加载提速
 [前端项目时因chunk-vendors过大导致首屏加载太慢的优化](https://blog.csdn.net/qq_31677507/article/details/102742196 "")
 
+## 自我介绍英文版临时添加
+Good afternoon, My name is ZhanShiFeng, It's a great pleasure for me to have this opportunity for the interview. I hope I can make a good performance today.
+After I graduated from Guangdong Industry Technical College, entered the Ccs soft co., I was mainly responsible for the development and maintenance of OSS system of telecom operators, and then I moved to a small Internet company at the beginning of this year, I was mainly responsible for a name is diptok app development and maintenance, then joined HSBC in June this year, Currently, I am mainly responsible for the maintenance and development of HSBC wealth dashboard project.
+About my job skills, I am mainly engaged in the backend development of Java, and familiar with Java's basic knowledge. I have mastered mainstream java web frameworks, such as Spring, Spring Boot, Mybatis, and Spring Cloud distributed systems. And I have some front-end development experience.
+Above is the basic information of my personal and career experience.
+Thank you.

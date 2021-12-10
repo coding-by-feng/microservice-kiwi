@@ -282,7 +282,7 @@ public class CrawlerServiceImpl implements ICrawlerService {
         String tempVoice = crawlerVoiceBasePath + WordDfsUtils.getVoiceFileName(voiceFileUrl);
         try {
             String uploadResult =
-                    dfsService.uploadFile(FileUtil.getInputStream(tempVoice), voiceSize, WordCrawlerConstants.EXT_OGG);
+                    dfsService.uploadFile(FileUtil.getInputStream(tempVoice), voiceSize, WordCrawlerConstants.EXT_MP3);
             pronunciation.setGroupName(WordDfsUtils.getGroupName(uploadResult));
             pronunciation.setVoiceFilePath(WordDfsUtils.getUploadVoiceFilePath(uploadResult));
             pronunciationService.updateById(pronunciation);

@@ -77,6 +77,7 @@ public interface WordCrawlerConstants {
     String URL_QUERY_WORD = "http://kiwidict.com/#lazy/vocabulary/detail?active=search&lazy=y&word=";
 
     String EXT_OGG = "ogg";
+    String EXT_MP3 = "mp3";
 
     String DEFAULT_TRANSLATE_LANGUAGE = "Chinese";
 

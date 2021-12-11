@@ -5,19 +5,19 @@
     <parent>
         <artifactId>microservice-kiwi</artifactId>
         <groupId>me.fengorz</groupId>
-        <version>1.0-SNAPSHOT</version>
+        <version>1.0</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
     <artifactId>kiwi-generator</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0</version>
     <packaging>jar</packaging>
 
     <dependencies>
         <dependency>
             <groupId>me.fengorz</groupId>
             <artifactId>kiwi-common-sdk</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>${kiwi.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>

@@ -5,25 +5,26 @@
     <parent>
         <artifactId>kiwi-cloud-service</artifactId>
         <groupId>me.fengorz</groupId>
-        <version>1.0-SNAPSHOT</version>
+        <version>1.0</version>
         <!-- 不指定相对路径的话会报错，因为kiwi-word模块的绝对路径不在kiwi-cloud-service下面 -->
         <relativePath>../kiwi-cloud-service</relativePath>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
     <artifactId>kiwi-auth</artifactId>
+    <version>1.0</version>
     <packaging>jar</packaging>
 
     <dependencies>
         <dependency>
             <groupId>me.fengorz</groupId>
             <artifactId>kiwi-upms-api</artifactId>
-            <version>${kiwi-upms.version}</version>
+            <version>${kiwi.version}</version>
         </dependency>
         <dependency>
             <groupId>me.fengorz</groupId>
             <artifactId>kiwi-bdf</artifactId>
-            <version>${kiwi-bdf.version}</version>
+            <version>${kiwi.version}</version>
         </dependency>
 
         <!--spring security 、oauth、jwt依赖-->

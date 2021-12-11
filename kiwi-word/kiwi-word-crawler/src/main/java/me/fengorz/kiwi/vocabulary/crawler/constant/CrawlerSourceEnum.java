@@ -26,7 +26,8 @@ import me.fengorz.kiwi.common.api.constant.CommonConstants;
  */
 public enum CrawlerSourceEnum implements CrawlerSource {
 
-    CAMBRIDGE_CHINESE("Cambridge", "Chinese"), CAMBRIDGE_ENGLISH("Cambridge", "English"),
+    CAMBRIDGE_CHINESE("Cambridge", "Chinese")
+    , CAMBRIDGE_ENGLISH("Cambridge", "English"),
     COLLINS_CHINESE("Collins", "Chinese");
 
     private final String source;

@@ -101,14 +101,14 @@ public class JsoupServiceImpl implements IJsoupService {
     public FetchWordResultDTO fetchWordInfo(FetchWordMqDTO dto)
             throws JsoupFetchResultException, JsoupFetchConnectException, JsoupFetchPronunciationException {
         final String finalWord = dto.getWord();
-        FetchWordResultDTO result = null;
+        FetchWordResultDTO result;
         try {
             this.paraphraseSerialNumMap.put(finalWord, 1);
             this.exampleSerialNumMap.put(finalWord, 1);
-            result = subFetch(WordCrawlerConstants.URL_CAMBRIDGE_FETCH_CHINESE, finalWord);
+            result = fetch(WordCrawlerConstants.URL_CAMBRIDGE_FETCH_CHINESE, finalWord);
         } catch (JsoupFetchConnectException | JsoupFetchResultException | JsoupFetchPronunciationException e) {
             log.error(e.getMessage());
-            return result = subFetch(WordCrawlerConstants.URL_CAMBRIDGE_FETCH_ENGLISH, finalWord);
+            return fetch(WordCrawlerConstants.URL_CAMBRIDGE_FETCH_ENGLISH, finalWord);
         } finally {
             this.paraphraseSerialNumMap.remove(finalWord);
             this.exampleSerialNumMap.remove(finalWord);
@@ -265,7 +265,7 @@ public class JsoupServiceImpl implements IJsoupService {
         }
     }
 
-    private FetchWordResultDTO subFetch(String url, String word)
+    private FetchWordResultDTO fetch(String url, String word)
             throws JsoupFetchConnectException, JsoupFetchResultException, JsoupFetchPronunciationException {
         String queryWord = word;
         String jsoupWord;

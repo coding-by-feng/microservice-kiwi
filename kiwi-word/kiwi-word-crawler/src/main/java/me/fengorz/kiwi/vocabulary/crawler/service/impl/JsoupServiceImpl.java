@@ -25,6 +25,7 @@ import me.fengorz.kiwi.common.api.constant.CommonConstants;
 import me.fengorz.kiwi.common.sdk.util.lang.collection.KiwiCollectionUtils;
 import me.fengorz.kiwi.common.sdk.util.lang.string.KiwiStringUtils;
 import me.fengorz.kiwi.common.sdk.util.validate.KiwiAssertUtils;
+import me.fengorz.kiwi.vocabulary.crawler.constant.CrawlerSourceEnum;
 import me.fengorz.kiwi.vocabulary.crawler.service.IJsoupService;
 import me.fengorz.kiwi.vocabulary.crawler.util.CrawlerAssertUtils;
 import me.fengorz.kiwi.word.api.common.WordCrawlerConstants;
@@ -43,6 +44,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.function.Supplier;
 
 /**
  * @Description 爬虫抓取单词数据服务类
@@ -53,8 +55,10 @@ import java.util.*;
 @Slf4j
 public class JsoupServiceImpl implements IJsoupService {
 
-    private static final String JSOUP_CONNECT_EXCEPTION = "jsoup connect exception, the word is {}";
+    private static final String JSOUP_CONNECT_EXCEPTION = "Occurred exception in the jsoup connection, the word is {}";
+    private static final String JSOUP_FETCH_IN_CHINESE_EXCEPTION = "Occurred exception in the jsoup fetching in Chinese, the word is {}, Kiwi is trying to fetch in English.";
     private static final String KEY_WORD_HEADER = "ti fs fs12 lmb-0 hw";
+    private static final String KEY_WORD_HEADER_IN_ENGLISH = "ti fs fs12 lmb-0 hw superentry";
     private static final String KEY_WORD_NAME = "tb ttn";
     private static final String FETCH_MAIN_WORD_NAME_EXCEPTION = "The word name of {} is not found!";
     private static final String KEY_ROOT = "pr entry-body__el";
@@ -91,8 +95,10 @@ public class JsoupServiceImpl implements IJsoupService {
 
     private final Map<String, Integer> paraphraseSerialNumMap;
     private final Map<String, Integer> exampleSerialNumMap;
+    private final Map<String, CrawlerSourceEnum> crawlerSourceEnumMap;
 
     public JsoupServiceImpl() {
+        this.crawlerSourceEnumMap = Collections.synchronizedMap(new HashMap<>());
         this.paraphraseSerialNumMap = Collections.synchronizedMap(new HashMap<>());
         this.exampleSerialNumMap = Collections.synchronizedMap(new HashMap<>());
     }
@@ -105,9 +111,11 @@ public class JsoupServiceImpl implements IJsoupService {
         try {
             this.paraphraseSerialNumMap.put(finalWord, 1);
             this.exampleSerialNumMap.put(finalWord, 1);
+            this.crawlerSourceEnumMap.put(finalWord, CrawlerSourceEnum.CAMBRIDGE_CHINESE);
             result = fetch(WordCrawlerConstants.URL_CAMBRIDGE_FETCH_CHINESE, finalWord);
         } catch (JsoupFetchConnectException | JsoupFetchResultException | JsoupFetchPronunciationException e) {
-            log.error(e.getMessage());
+            log.error(JSOUP_FETCH_IN_CHINESE_EXCEPTION, finalWord);
+            this.crawlerSourceEnumMap.put(finalWord, CrawlerSourceEnum.CAMBRIDGE_ENGLISH);
             return fetch(WordCrawlerConstants.URL_CAMBRIDGE_FETCH_ENGLISH, finalWord);
         } finally {
             this.paraphraseSerialNumMap.remove(finalWord);
@@ -190,7 +198,7 @@ public class JsoupServiceImpl implements IJsoupService {
         List<FetchParaphraseDTO> paraphraseDTOs = new LinkedList<>();
         Set<String> relatedWords = new HashSet<>();
         /*词组 begin*/
-        Elements paraphraseElements = doc.getElementsByClass("idiom-body didiom-body");
+        Elements paraphraseElements = requireJsoupElements(doc, () -> "idiom-body didiom-body");
         paraphraseElements.addAll(doc.getElementsByClass("pv-body dpv-body"));
         if (KiwiCollectionUtils.isNotEmpty(paraphraseElements)) {
             for (Element idiomElement : paraphraseElements) {
@@ -288,15 +296,21 @@ public class JsoupServiceImpl implements IJsoupService {
         FetchWordResultDTO resultDTO = new FetchWordResultDTO();
 
         // fetchWordResultDTO 放入 爬虫回来的wordName，不是传进来的wordName
-        Elements wordNameHeader = doc.getElementsByClass(KEY_WORD_HEADER);
+        Elements wordNameHeader = requireJsoupElements(doc, ()->{
+            if (CrawlerSourceEnum.CAMBRIDGE_CHINESE.equals(crawlerSourceEnumMap.get(word))) {
+                return KEY_WORD_HEADER;
+            } else {
+                return KEY_WORD_HEADER_IN_ENGLISH;
+            }
+        });
         CrawlerAssertUtils.notEmpty(wordNameHeader, FETCH_MAIN_WORD_NAME_EXCEPTION, word);
-        Elements wordName = wordNameHeader.get(0).getElementsByClass(KEY_WORD_NAME);
+        Elements wordName = requireJsoupElements(wordNameHeader.get(0), () -> KEY_WORD_NAME);
         CrawlerAssertUtils.notEmpty(wordName, FETCH_MAIN_WORD_NAME_EXCEPTION, word);
         jsoupWord = wordName.get(0).text();
         KiwiAssertUtils.serviceEmpty(jsoupWord, FETCH_MAIN_WORD_NAME_EXCEPTION, word);
         resultDTO.setWordName(jsoupWord);
 
-        Elements root = doc.getElementsByClass(KEY_ROOT);
+        Elements root = requireJsoupElements(doc, () -> KEY_ROOT);
         if (root == null || root.size() == 0) {
             root = doc.getElementsByClass(KEY_ROOT_PHRASE);
         }
@@ -356,6 +370,10 @@ public class JsoupServiceImpl implements IJsoupService {
 
         resultDTO.setFetchWordCodeDTOList(codeDTOList);
         return resultDTO;
+    }
+
+    private Elements requireJsoupElements(Element element, Supplier<String> key) {
+        return element.getElementsByClass(key.get());
     }
 
     /**

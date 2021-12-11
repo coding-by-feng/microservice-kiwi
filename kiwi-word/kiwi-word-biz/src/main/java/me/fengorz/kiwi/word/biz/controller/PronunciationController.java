@@ -30,6 +30,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
 /**
@@ -47,6 +48,13 @@ public class PronunciationController extends BaseController {
     private final IPronunciationService wordPronunciationService;
     private final IDfsService dfsService;
 
+    private static final String CONTENT_TYPE = "Content-Type";
+    private static final String AUDIO_MPEG = "audio/mpeg";
+    private static final String ACCEPT_RANGES = "Accept-Ranges";
+    private static final String BYTES = "bytes";
+    private static final String CONTENT_LENGTH = "Content-Length";
+
+
     @SysLog("下载播放单词发音音频")
     @GetMapping("/downloadVoice/{pronunciationId}")
     public void downloadVoice(HttpServletResponse response, @PathVariable("pronunciationId") Integer pronunciationId) {
@@ -56,8 +64,11 @@ public class PronunciationController extends BaseController {
         }
         InputStream inputStream = null;
         try {
-            inputStream =
-                this.dfsService.downloadStream(wordPronunciation.getGroupName(), wordPronunciation.getVoiceFilePath());
+            byte[] bytes = this.dfsService.downloadFile(wordPronunciation.getGroupName(), wordPronunciation.getVoiceFilePath());
+            inputStream = new ByteArrayInputStream(bytes);
+            response.addHeader(CONTENT_TYPE, AUDIO_MPEG);
+            response.addHeader(ACCEPT_RANGES, BYTES);
+            response.addHeader(CONTENT_LENGTH, String.valueOf(bytes.length));
         } catch (DfsOperateException e) {
             log.error("downloadVoice exception, pronunciationId={}!", pronunciationId, e);
         }

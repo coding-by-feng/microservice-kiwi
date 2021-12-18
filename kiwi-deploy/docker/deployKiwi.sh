@@ -23,6 +23,9 @@ cd ~/microservice-kiwi/ || exit
 
 echo "git pulling..."
 
+git config --global user.email "1215587087@qq.com"
+git config --global user.name "coding-by-feng"
+git stash
 git pull
 
 chmod 777 ~/microservice-kiwi/kiwi-deploy/docker/*.sh

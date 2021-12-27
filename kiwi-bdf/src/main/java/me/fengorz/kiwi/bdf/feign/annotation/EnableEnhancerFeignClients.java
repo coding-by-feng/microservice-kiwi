@@ -19,7 +19,7 @@
 
 package me.fengorz.kiwi.bdf.feign.annotation;
 
-import me.fengorz.kiwi.common.api.constant.CommonConstants;
+import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 
 import java.lang.annotation.*;
@@ -49,7 +49,7 @@ public @interface EnableEnhancerFeignClients {
      *
      * @return the array of 'basePackages'.
      */
-    String[] basePackages() default {CommonConstants.BASE_PACKAGES};
+    String[] basePackages() default {GlobalConstants.BASE_PACKAGES};
 
     /**
      * Type-safe alternative to {@link #basePackages()} for specifying the packages to scan for annotated components.

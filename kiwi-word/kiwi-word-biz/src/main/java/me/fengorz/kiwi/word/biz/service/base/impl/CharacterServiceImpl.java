@@ -16,7 +16,7 @@
 package me.fengorz.kiwi.word.biz.service.base.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import me.fengorz.kiwi.common.api.annotation.cache.KiwiCacheKeyPrefix;
+import me.fengorz.kiwi.common.sdk.annotation.cache.KiwiCacheKeyPrefix;
 import me.fengorz.kiwi.common.sdk.util.bean.KiwiBeanUtils;
 import me.fengorz.kiwi.word.api.common.WordConstants;
 import me.fengorz.kiwi.word.api.entity.CharacterDO;

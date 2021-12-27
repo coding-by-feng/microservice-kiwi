@@ -18,8 +18,8 @@ package me.fengorz.kiwi.common.sdk.util.validate;
 
 import cn.hutool.core.lang.Assert;
 import cn.hutool.core.util.StrUtil;
-import me.fengorz.kiwi.common.api.exception.ResourceNotFoundException;
-import me.fengorz.kiwi.common.api.exception.ServiceException;
+import me.fengorz.kiwi.common.sdk.exception.ResourceNotFoundException;
+import me.fengorz.kiwi.common.sdk.exception.ServiceException;
 import me.fengorz.kiwi.common.sdk.util.lang.string.KiwiStringUtils;
 
 import java.util.Collection;

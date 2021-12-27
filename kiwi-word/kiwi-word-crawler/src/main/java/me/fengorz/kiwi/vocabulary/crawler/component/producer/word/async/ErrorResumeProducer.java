@@ -20,7 +20,7 @@
 package me.fengorz.kiwi.vocabulary.crawler.component.producer.word.async;
 
 import lombok.extern.slf4j.Slf4j;
-import me.fengorz.kiwi.common.api.constant.CommonConstants;
+import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
 import me.fengorz.kiwi.common.sdk.util.lang.collection.KiwiCollectionUtils;
 import me.fengorz.kiwi.vocabulary.crawler.component.producer.base.AbstractProducer;
 import me.fengorz.kiwi.vocabulary.crawler.component.producer.base.IProducer;
@@ -107,7 +107,7 @@ public class ErrorResumeProducer extends AbstractProducer implements IProducer {
     @Async
     @Override
     protected void execute(FetchQueueDO queue) {
-        queue.setIsLock(CommonConstants.FLAG_YES);
+        queue.setIsLock(GlobalConstants.FLAG_YES);
         queue.setFetchStatus(WordCrawlerConstants.STATUS_TO_FETCH);
         bizAPI.updateQueueById(queue);
     }

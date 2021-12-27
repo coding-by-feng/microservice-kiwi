@@ -14,7 +14,7 @@
  *
  */
 
-package me.fengorz.kiwi.common.api.constant;
+package me.fengorz.kiwi.common.sdk.constant;
 
 import lombok.experimental.UtilityClass;
 

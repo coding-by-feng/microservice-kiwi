@@ -17,14 +17,26 @@
  *
  */
 
-package me.fengorz.kiwi.word.biz.exception;
+package me.fengorz.kiwi.common.sdk.exception;
 
-import me.fengorz.kiwi.common.sdk.exception.BaseException;
+import lombok.NoArgsConstructor;
 
 /**
-* @Author zhanshifeng
- * @Date 2020/6/14 7:18 PM
+ * @Author zhanshifeng
+ * @Date 2019-09-10 14:48
  */
-public class WordGetOneException extends BaseException {
-    private static final long serialVersionUID = -1280800437433856325L;
+@NoArgsConstructor
+public class CheckedException extends BaseException {
+
+    public CheckedException(String message) {
+        super(message);
+    }
+
+    public CheckedException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    public CheckedException(Throwable cause) {
+        super(cause);
+    }
 }

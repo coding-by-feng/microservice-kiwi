@@ -16,24 +16,22 @@
 
 package me.fengorz.kiwi.common.fastdfs.service.impl;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.util.Set;
-
-import org.springframework.stereotype.Service;
-
 import com.github.tobato.fastdfs.domain.fdfs.MetaData;
 import com.github.tobato.fastdfs.domain.fdfs.StorePath;
 import com.github.tobato.fastdfs.domain.proto.storage.DownloadByteArray;
 import com.github.tobato.fastdfs.service.AppendFileStorageClient;
 import com.github.tobato.fastdfs.service.FastFileStorageClient;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import me.fengorz.kiwi.common.api.exception.dfs.DfsOperateDeleteException;
-import me.fengorz.kiwi.common.api.exception.dfs.DfsOperateException;
 import me.fengorz.kiwi.common.fastdfs.constant.DfsConstants;
 import me.fengorz.kiwi.common.fastdfs.service.IDfsService;
+import me.fengorz.kiwi.common.sdk.exception.dfs.DfsOperateDeleteException;
+import me.fengorz.kiwi.common.sdk.exception.dfs.DfsOperateException;
+import org.springframework.stereotype.Service;
+
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.util.Set;
 
 /**
  * @Description Dfs分布式文件服务类

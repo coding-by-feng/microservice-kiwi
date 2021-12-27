@@ -16,7 +16,7 @@
 
 package me.fengorz.kiwi.word.api.exception;
 
-import me.fengorz.kiwi.common.api.exception.BaseException;
+import me.fengorz.kiwi.common.sdk.exception.BaseException;
 
 /**
 * @Author zhanshifeng

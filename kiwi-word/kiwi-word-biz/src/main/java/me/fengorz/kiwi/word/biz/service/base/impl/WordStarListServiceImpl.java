@@ -24,7 +24,7 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.RequiredArgsConstructor;
-import me.fengorz.kiwi.common.api.constant.CommonConstants;
+import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
 import me.fengorz.kiwi.common.sdk.util.bean.KiwiBeanUtils;
 import me.fengorz.kiwi.common.sdk.util.validate.KiwiAssertUtils;
 import me.fengorz.kiwi.common.sdk.web.security.SecurityUtils;
@@ -63,13 +63,13 @@ public class WordStarListServiceImpl extends ServiceImpl<WordStarListMapper, Wor
 
     @Override
     public Integer countById(Integer id) {
-        return this.count(new QueryWrapper<>(new WordStarListDO().setId(id).setIsDel(CommonConstants.FLAG_N)));
+        return this.count(new QueryWrapper<>(new WordStarListDO().setId(id).setIsDel(GlobalConstants.FLAG_N)));
     }
 
     @Override
     public List<WordStarListVO> getCurrentUserList(Integer userId) {
         QueryWrapper<WordStarListDO> queryWrapper =
-                new QueryWrapper<>(new WordStarListDO().setOwner(userId).setIsDel(CommonConstants.FLAG_N))
+                new QueryWrapper<>(new WordStarListDO().setOwner(userId).setIsDel(GlobalConstants.FLAG_N))
                         .select(WordStarListDO.class, tableFieldInfo -> WordStarListColumn.ID.equals(tableFieldInfo.getColumn())
                                 || WordStarListColumn.LIST_NAME.equals(tableFieldInfo.getColumn()));
 

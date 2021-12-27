@@ -17,12 +17,13 @@
 package me.fengorz.kiwi.common.api.entity;
 
 import lombok.Getter;
-import me.fengorz.kiwi.common.api.constant.CommonConstants;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 
 import java.util.Collection;
+
+import static me.fengorz.kiwi.common.api.ApiContants.ADMIN_USERNAME;
 
 /**
  * @Author zhanshifeng
@@ -33,10 +34,10 @@ public class EnhancerUser extends User implements InitializingBean {
     private static final long serialVersionUID = -3345914637714509878L;
 
     @Getter
-    private Integer id;
+    private final Integer id;
 
     @Getter
-    private Integer deptId;
+    private final Integer deptId;
 
     @Getter
     private Boolean isAdmin;
@@ -51,6 +52,6 @@ public class EnhancerUser extends User implements InitializingBean {
 
     @Override
     public void afterPropertiesSet() {
-        this.isAdmin = CommonConstants.ADMIN_USERNAME.equals(getUsername());
+        this.isAdmin = ADMIN_USERNAME.equals(getUsername());
     }
 }

@@ -14,19 +14,16 @@
  *
  */
 
-package me.fengorz.kiwi.common.api.annotation.cache;
-
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+package me.fengorz.kiwi.common.sdk.constant;
 
 /**
  * @Author zhanshifeng
+ * @Date 2020/1/8 4:51 PM
  */
-@Target({ElementType.METHOD, ElementType.TYPE})
-@Retention(RetentionPolicy.RUNTIME)
-public @interface KiwiCacheKeyPrefix {
+public class MapperConstant {
 
-    String value();
+    public static final String T_INS_SEQUENCE = "t_ins_sequence";
+
+    public static final String QUERY_PARAMS = "queryParams";
+
 }

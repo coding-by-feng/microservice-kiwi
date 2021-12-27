@@ -16,13 +16,12 @@
 
 package me.fengorz.kiwi.common.fastdfs.service;
 
+import com.github.tobato.fastdfs.domain.fdfs.MetaData;
+import me.fengorz.kiwi.common.sdk.exception.dfs.DfsOperateDeleteException;
+import me.fengorz.kiwi.common.sdk.exception.dfs.DfsOperateException;
+
 import java.io.InputStream;
 import java.util.Set;
-
-import com.github.tobato.fastdfs.domain.fdfs.MetaData;
-
-import me.fengorz.kiwi.common.api.exception.dfs.DfsOperateDeleteException;
-import me.fengorz.kiwi.common.api.exception.dfs.DfsOperateException;
 
 /**
  * @author zhanshifeng

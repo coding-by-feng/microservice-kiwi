@@ -21,9 +21,9 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.RequiredArgsConstructor;
 import me.fengorz.kiwi.bdf.core.service.ISeqService;
-import me.fengorz.kiwi.common.api.constant.CommonConstants;
-import me.fengorz.kiwi.common.api.constant.MapperConstant;
-import me.fengorz.kiwi.common.api.exception.ServiceException;
+import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
+import me.fengorz.kiwi.common.sdk.constant.MapperConstant;
+import me.fengorz.kiwi.common.sdk.exception.ServiceException;
 import me.fengorz.kiwi.common.sdk.util.lang.string.KiwiStringUtils;
 import me.fengorz.kiwi.word.api.common.WordCrawlerConstants;
 import me.fengorz.kiwi.word.api.entity.FetchQueueDO;
@@ -58,7 +58,7 @@ public class WordFetchQueueServiceImpl extends ServiceImpl<FetchQueueMapper, Fet
         // 如果没传infoType要判断是否包含空格
         int thisInfoType;
         if (infoType == null || infoType.length == 0) {
-            boolean isPhrase = wordName.contains(CommonConstants.SPACING);
+            boolean isPhrase = wordName.contains(GlobalConstants.SPACING);
             thisInfoType = isPhrase ? WordCrawlerConstants.QUEUE_INFO_TYPE_PHRASE : WordCrawlerConstants.QUEUE_INFO_TYPE_WORD;
         } else {
             thisInfoType = infoType[0];
@@ -85,7 +85,7 @@ public class WordFetchQueueServiceImpl extends ServiceImpl<FetchQueueMapper, Fet
             if (one.getInTime().compareTo(LocalDateTime.now().minusMinutes(1)) > 0) {
                 return;
             }
-            this.updateById(one.setFetchStatus(WordCrawlerConstants.STATUS_TO_FETCH).setIsLock(CommonConstants.FLAG_YES).setInTime(LocalDateTime.now())
+            this.updateById(one.setFetchStatus(WordCrawlerConstants.STATUS_TO_FETCH).setIsLock(GlobalConstants.FLAG_YES).setInTime(LocalDateTime.now())
                     .setInfoType(thisInfoType));
             return;
         }
@@ -98,7 +98,7 @@ public class WordFetchQueueServiceImpl extends ServiceImpl<FetchQueueMapper, Fet
                 .setWordId(wordId)
                 .setWordName(wordName)
                 .setDerivation(KiwiStringUtils.isNotBlank(derivation) ? derivation : null)
-                .setFetchStatus(status).setFetchPriority(100).setIsLock(CommonConstants.FLAG_YES);
+                .setFetchStatus(status).setFetchPriority(100).setIsLock(GlobalConstants.FLAG_YES);
         if (infoType == null || infoType.length == 0) {
             this.save(queueDO);
         } else {
@@ -144,7 +144,7 @@ public class WordFetchQueueServiceImpl extends ServiceImpl<FetchQueueMapper, Fet
         if (!this.isExist(wordName)) {
             return false;
         }
-        return this.update(new FetchQueueDO().setIsValid(CommonConstants.FLAG_N).setIsLock(CommonConstants.FLAG_NO),
+        return this.update(new FetchQueueDO().setIsValid(GlobalConstants.FLAG_N).setIsLock(GlobalConstants.FLAG_NO),
                 new LambdaQueryWrapper<FetchQueueDO>().eq(FetchQueueDO::getWordName, wordName));
     }
 
@@ -154,9 +154,9 @@ public class WordFetchQueueServiceImpl extends ServiceImpl<FetchQueueMapper, Fet
         if (!this.isExist(wordName)) {
             return false;
         }
-        return this.update(new FetchQueueDO().setIsLock(CommonConstants.FLAG_YES),
+        return this.update(new FetchQueueDO().setIsLock(GlobalConstants.FLAG_YES),
                 Wrappers.<FetchQueueDO>lambdaUpdate().eq(FetchQueueDO::getWordName, wordName)
-                        .eq(FetchQueueDO::getIsLock, CommonConstants.FLAG_NO));
+                        .eq(FetchQueueDO::getIsLock, GlobalConstants.FLAG_NO));
     }
 
     @Override
@@ -182,7 +182,7 @@ public class WordFetchQueueServiceImpl extends ServiceImpl<FetchQueueMapper, Fet
             return;
         }
 
-        this.updateById(one.setFetchStatus(WordCrawlerConstants.STATUS_TO_QUERY_ERROR).setIsLock(CommonConstants.FLAG_NO));
+        this.updateById(one.setFetchStatus(WordCrawlerConstants.STATUS_TO_QUERY_ERROR).setIsLock(GlobalConstants.FLAG_NO));
     }
 
     @Override
@@ -200,8 +200,8 @@ public class WordFetchQueueServiceImpl extends ServiceImpl<FetchQueueMapper, Fet
         return Optional
                 .of(this.page(new Page<>(1, 20), Wrappers.<FetchQueueDO>lambdaQuery()
                         .ge(FetchQueueDO::getFetchStatus, WordCrawlerConstants.STATUS_PERFECT_SUCCESS)
-                        .eq(FetchQueueDO::getIsLock, CommonConstants.FLAG_NO)
-                        .eq(FetchQueueDO::getIsIntoCache, CommonConstants.FLAG_NO)))
+                        .eq(FetchQueueDO::getIsLock, GlobalConstants.FLAG_NO)
+                        .eq(FetchQueueDO::getIsIntoCache, GlobalConstants.FLAG_NO)))
                 .get().getRecords();
     }
 
@@ -222,14 +222,14 @@ public class WordFetchQueueServiceImpl extends ServiceImpl<FetchQueueMapper, Fet
     @Override
     public FetchQueueDO getOneInUnLock(String wordName, Integer... infoType) {
         return this.getOne(Wrappers.<FetchQueueDO>lambdaQuery().eq(FetchQueueDO::getWordName, wordName)
-                .eq(FetchQueueDO::getIsLock, CommonConstants.FLAG_NO)
+                .eq(FetchQueueDO::getIsLock, GlobalConstants.FLAG_NO)
                 .eq(FetchQueueDO::getInfoType, infoType == null || infoType.length == 0 ? WordCrawlerConstants.QUEUE_INFO_TYPE_WORD : infoType[0]));
     }
 
     @Override
     public FetchQueueDO getOneInUnLock(Integer queueId) {
         return this.getOne(Wrappers.<FetchQueueDO>lambdaQuery().eq(FetchQueueDO::getQueueId, queueId)
-                .eq(FetchQueueDO::getIsLock, CommonConstants.FLAG_NO));
+                .eq(FetchQueueDO::getIsLock, GlobalConstants.FLAG_NO));
     }
 
     /**

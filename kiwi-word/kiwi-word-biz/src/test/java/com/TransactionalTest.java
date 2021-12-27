@@ -36,7 +36,7 @@ public class TransactionalTest {
     // @Test
     public void test() {
 
-        // log.debug(EnhancedLogUtils.getClassName() + CommonConstants.DOT + EnhancedLogUtils.getMethodName());
+        // log.debug(EnhancedLogUtils.getClassName() + GlobalConstants.DOT + EnhancedLogUtils.getMethodName());
         // testService.testTransactional();
 
     }

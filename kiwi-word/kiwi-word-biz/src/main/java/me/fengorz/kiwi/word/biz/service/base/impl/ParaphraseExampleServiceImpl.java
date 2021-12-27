@@ -19,7 +19,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.RequiredArgsConstructor;
-import me.fengorz.kiwi.common.api.constant.CommonConstants;
+import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
 import me.fengorz.kiwi.common.sdk.util.bean.KiwiBeanUtils;
 import me.fengorz.kiwi.word.api.dto.mapper.in.SelectEntityIsCollectDTO;
 import me.fengorz.kiwi.word.api.entity.ParaphraseExampleDO;
@@ -50,7 +50,7 @@ public class ParaphraseExampleServiceImpl extends ServiceImpl<ParaphraseExampleM
 
     @Override
     public List<ParaphraseExampleVO> listExamples(Integer paraphraseId) {
-        return KiwiBeanUtils.convertFrom(mapper.selectList(Wrappers.<ParaphraseExampleDO>lambdaQuery().eq(ParaphraseExampleDO::getParaphraseId, paraphraseId).eq(ParaphraseExampleDO::getIsDel, CommonConstants.FLAG_NO)), ParaphraseExampleVO.class);
+        return KiwiBeanUtils.convertFrom(mapper.selectList(Wrappers.<ParaphraseExampleDO>lambdaQuery().eq(ParaphraseExampleDO::getParaphraseId, paraphraseId).eq(ParaphraseExampleDO::getIsDel, GlobalConstants.FLAG_NO)), ParaphraseExampleVO.class);
     }
 
     @Override

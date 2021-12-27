@@ -14,20 +14,19 @@
  *
  */
 
-package me.fengorz.kiwi.common.api.annotation.log;
+package me.fengorz.kiwi.common.sdk.constant;
 
-import java.lang.annotation.*;
+import lombok.experimental.UtilityClass;
 
 /**
- * 操作日志注解
- *
- * @Author zhanshifeng
+* @Author zhanshifeng
+ * @Date 2019-09-26 16:54
  */
-@Target(ElementType.METHOD)
-@Retention(RetentionPolicy.RUNTIME)
-@Documented
-public @interface SysLog {
+@UtilityClass
+public class ServiceNameConstants {
 
-    String value();
+    public final String VOCABULARY_ENHANCER_AUTH = "kiwi-auth";
+
+    public final String VOCABULARY_ENHANCER_UPMS = "kiwi-upms";
 
 }

@@ -19,15 +19,15 @@
 
 package me.fengorz.kiwi.vocabulary.crawler.constant;
 
-import me.fengorz.kiwi.common.api.constant.CommonConstants;
+import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
 
 /**
  * @author zhanshifeng
  */
 public enum CrawlerSourceEnum implements CrawlerSource {
 
-    CAMBRIDGE_CHINESE("Cambridge", "Chinese")
-    , CAMBRIDGE_ENGLISH("Cambridge", "English"),
+    CAMBRIDGE_CHINESE("Cambridge", "Chinese"),
+    CAMBRIDGE_ENGLISH("Cambridge", "English"),
     COLLINS_CHINESE("Collins", "Chinese");
 
     private final String source;
@@ -40,6 +40,6 @@ public enum CrawlerSourceEnum implements CrawlerSource {
 
     @Override
     public String get() {
-        return this.language + CommonConstants.SYMBOL_DELIMITER_STR + this.source;
+        return this.language + GlobalConstants.SYMBOL_DELIMITER_STR + this.source;
     }
 }

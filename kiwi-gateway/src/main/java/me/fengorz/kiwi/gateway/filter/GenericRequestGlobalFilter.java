@@ -16,12 +16,8 @@
 
 package me.fengorz.kiwi.gateway.filter;
 
-import static org.springframework.cloud.gateway.support.ServerWebExchangeUtils.GATEWAY_REQUEST_URL_ATTR;
-import static org.springframework.cloud.gateway.support.ServerWebExchangeUtils.addOriginalRequestUrl;
-
-import java.util.Arrays;
-import java.util.stream.Collectors;
-
+import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
+import me.fengorz.kiwi.common.sdk.constant.SecurityConstants;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
@@ -30,10 +26,13 @@ import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.server.ServerWebExchange;
-
-import me.fengorz.kiwi.common.api.constant.CommonConstants;
-import me.fengorz.kiwi.common.api.constant.SecurityConstants;
 import reactor.core.publisher.Mono;
+
+import java.util.Arrays;
+import java.util.stream.Collectors;
+
+import static org.springframework.cloud.gateway.support.ServerWebExchangeUtils.GATEWAY_REQUEST_URL_ATTR;
+import static org.springframework.cloud.gateway.support.ServerWebExchangeUtils.addOriginalRequestUrl;
 
 /**
  * @Author zhanshifeng
@@ -53,9 +52,9 @@ public class GenericRequestGlobalFilter implements GlobalFilter, Ordered {
         // 2. 重写StripPrefix
         addOriginalRequestUrl(exchange, request.getURI());
         String rawPath = request.getURI().getRawPath();
-        String newPath = CommonConstants.SYMBOL_FORWARD_SLASH
-            + Arrays.stream(StringUtils.tokenizeToStringArray(rawPath, CommonConstants.SYMBOL_FORWARD_SLASH))
-                .skip(skipUrlSlashCount).collect(Collectors.joining(CommonConstants.SYMBOL_FORWARD_SLASH));
+        String newPath = GlobalConstants.SYMBOL_FORWARD_SLASH
+            + Arrays.stream(StringUtils.tokenizeToStringArray(rawPath, GlobalConstants.SYMBOL_FORWARD_SLASH))
+                .skip(skipUrlSlashCount).collect(Collectors.joining(GlobalConstants.SYMBOL_FORWARD_SLASH));
         ServerHttpRequest newRequest = request.mutate().path(newPath).build();
         exchange.getAttributes().put(GATEWAY_REQUEST_URL_ATTR, newRequest.getURI());
 

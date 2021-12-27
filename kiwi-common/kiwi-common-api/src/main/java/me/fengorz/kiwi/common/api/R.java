@@ -23,7 +23,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.ToString;
 import lombok.experimental.Accessors;
-import me.fengorz.kiwi.common.api.constant.CommonConstants;
 
 import java.io.Serializable;
 
@@ -56,7 +55,7 @@ public class R<T> implements Serializable {
     }
 
     public static <T> R<T> auto(boolean flag) {
-        return auto(flag, CommonConstants.EMPTY);
+        return auto(flag, ApiContants.EMPTY);
     }
 
     public static <T> R<T> auto(boolean flag, String msg) {

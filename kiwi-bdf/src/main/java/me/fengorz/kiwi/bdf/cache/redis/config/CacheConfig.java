@@ -18,7 +18,7 @@ package me.fengorz.kiwi.bdf.cache.redis.config;
 
 import lombok.RequiredArgsConstructor;
 import me.fengorz.kiwi.bdf.cache.redis.CacheKeyGenerator;
-import me.fengorz.kiwi.common.api.constant.CacheConstants;
+import me.fengorz.kiwi.common.sdk.constant.CacheConstants;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration;
 import org.springframework.cache.annotation.EnableCaching;

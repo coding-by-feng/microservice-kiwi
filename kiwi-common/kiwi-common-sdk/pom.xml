@@ -39,23 +39,6 @@
             <artifactId>kiwi-common-api</artifactId>
             <version>${kiwi.version}</version>
         </dependency>
-        <dependency>
-            <groupId>me.fengorz</groupId>
-            <artifactId>kiwi-common-dfs</artifactId>
-            <version>${kiwi.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>me.fengorz</groupId>
-            <artifactId>kiwi-common-mq</artifactId>
-            <version>${kiwi.version}</version>
-        </dependency>
-<!--
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-redis</artifactId>
-            <version>${spring-data-redis.version}</version>
-        </dependency>
--->
     </dependencies>
 
 </project>

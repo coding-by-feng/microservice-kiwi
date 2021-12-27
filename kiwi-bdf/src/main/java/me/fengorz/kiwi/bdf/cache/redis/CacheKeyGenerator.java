@@ -17,9 +17,9 @@
 package me.fengorz.kiwi.bdf.cache.redis;
 
 import lombok.NoArgsConstructor;
-import me.fengorz.kiwi.common.api.annotation.cache.KiwiCacheKey;
-import me.fengorz.kiwi.common.api.annotation.cache.KiwiCacheKeyPrefix;
-import me.fengorz.kiwi.common.api.constant.CommonConstants;
+import me.fengorz.kiwi.common.sdk.annotation.cache.KiwiCacheKey;
+import me.fengorz.kiwi.common.sdk.annotation.cache.KiwiCacheKeyPrefix;
+import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
 import me.fengorz.kiwi.common.sdk.util.lang.array.KiwiArrayUtils;
 import me.fengorz.kiwi.common.sdk.util.lang.object.KiwiObjectUtils;
 import me.fengorz.kiwi.common.sdk.util.lang.string.KiwiStringUtils;
@@ -47,12 +47,12 @@ public class CacheKeyGenerator extends SimpleKeyGenerator {
 
         KiwiCacheKeyPrefix classKeyPrefix = target.getClass().getAnnotation(KiwiCacheKeyPrefix.class);
         if (Objects.nonNull(classKeyPrefix)) {
-            prefix = classKeyPrefix.value() + CommonConstants.SYMBOL_DELIMITER_STR;
+            prefix = classKeyPrefix.value() + GlobalConstants.SYMBOL_DELIMITER_STR;
         }
 
         KiwiCacheKeyPrefix methodKeyPrefix = method.getAnnotation(KiwiCacheKeyPrefix.class);
         if (Objects.nonNull(methodKeyPrefix)) {
-            prefix += methodKeyPrefix.value() + CommonConstants.SYMBOL_DELIMITER_STR;
+            prefix += methodKeyPrefix.value() + GlobalConstants.SYMBOL_DELIMITER_STR;
         }
 
         KiwiAssertUtils.serviceEmpty(prefix, "Class[{}], Method[{}]: CacheKeyPrefix cannot be null!", classKeyPrefix,
@@ -76,7 +76,7 @@ public class CacheKeyGenerator extends SimpleKeyGenerator {
             }
 
             if (!sortedMap.isEmpty()) {
-                return prefix.concat(KiwiStringUtils.join(CommonConstants.SYMBOL_DELIMITER_STR, sortedMap.values()));
+                return prefix.concat(KiwiStringUtils.join(GlobalConstants.SYMBOL_DELIMITER_STR, sortedMap.values()));
             }
         }
 

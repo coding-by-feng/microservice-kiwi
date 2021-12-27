@@ -20,7 +20,7 @@
 package me.fengorz.kiwi.vocabulary.crawler.component.producer.word.async;
 
 import lombok.extern.slf4j.Slf4j;
-import me.fengorz.kiwi.common.api.constant.CommonConstants;
+import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
 import me.fengorz.kiwi.vocabulary.crawler.component.producer.base.AbstractProducer;
 import me.fengorz.kiwi.vocabulary.crawler.component.producer.base.IProducer;
 import me.fengorz.kiwi.vocabulary.crawler.component.producer.base.ISender;
@@ -55,7 +55,7 @@ public class FetchPronunciationProducer extends AbstractProducer implements IPro
     @Async
     @Override
     protected void execute(FetchQueueDO queue) {
-        queue.setIsLock(CommonConstants.FLAG_YES);
+        queue.setIsLock(GlobalConstants.FLAG_YES);
         queue.setFetchStatus(WordCrawlerConstants.STATUS_DOING_FETCH_PRONUNCIATION);
         if (Optional.of(bizAPI.updateQueueById(queue)).get().isSuccess()) {
             sender.fetchPronunciation(

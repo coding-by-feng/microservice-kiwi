@@ -17,12 +17,13 @@
 package me.fengorz.kiwi.common.api;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import me.fengorz.kiwi.common.api.constant.CommonConstants;
 
 import java.util.function.Supplier;
 
+import static me.fengorz.kiwi.common.api.ApiContants.*;
+
 /**
-* @Author zhanshifeng
+ * @Author zhanshifeng
  * @Date 2020/5/23 1:28 PM
  */
 public interface ResultCode {
@@ -34,17 +35,17 @@ public interface ResultCode {
     /**
      * 成功
      */
-    ResultCode SUCCESS = build(() -> CommonConstants.RESULT_CODE_SUCCESS, () -> I18N_CODE_SUCCESS);
+    ResultCode SUCCESS = build(() -> RESULT_CODE_SUCCESS, () -> I18N_CODE_SUCCESS);
 
     /**
      * 失败
      */
-    ResultCode FAIL = build(() -> CommonConstants.RESULT_CODE_FAIL, () -> I18N_CODE_FAIL);
+    ResultCode FAIL = build(() -> RESULT_CODE_FAIL, () -> I18N_CODE_FAIL);
 
     ResultCode ERROR = () -> I18N_CODE_ERROR;
 
     ResultCode MICROSERVICE_INVOCATION_ERROR =
-        build(() -> CommonConstants.RESULT_CODE_INVOCATION_ERROR, () -> "common.operate.microservice.error");
+            build(() -> RESULT_CODE_INVOCATION_ERROR, () -> "common.operate.microservice.error");
 
     /**
      * 响应码
@@ -52,7 +53,7 @@ public interface ResultCode {
      * @return
      */
     default Integer getCode() {
-        return CommonConstants.RESULT_CODE_SERVICE_ERROR;
+        return RESULT_CODE_SERVICE_ERROR;
     }
 
     /**

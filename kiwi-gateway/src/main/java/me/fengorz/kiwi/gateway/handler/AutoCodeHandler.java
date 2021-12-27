@@ -19,8 +19,8 @@ package me.fengorz.kiwi.gateway.handler;
 import com.google.code.kaptcha.Producer;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import me.fengorz.kiwi.common.api.constant.CommonConstants;
-import me.fengorz.kiwi.common.api.constant.SecurityConstants;
+import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
+import me.fengorz.kiwi.common.sdk.constant.SecurityConstants;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
@@ -57,7 +57,7 @@ public class AutoCodeHandler implements HandlerFunction<ServerResponse> {
 
         // 保存验证码信息
         String randomStr = serverRequest.queryParam(SecurityConstants.KEY_RANDOM_STR).get();
-        redisTemplate.opsForValue().set(CommonConstants.DEFAULT_CODE_KEY + randomStr, text, 120, TimeUnit.SECONDS);
+        redisTemplate.opsForValue().set(GlobalConstants.DEFAULT_CODE_KEY + randomStr, text, 120, TimeUnit.SECONDS);
 
         // 转换流信息写出
         FastByteArrayOutputStream os = new FastByteArrayOutputStream();

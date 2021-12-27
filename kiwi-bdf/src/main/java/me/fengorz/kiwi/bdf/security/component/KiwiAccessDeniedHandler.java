@@ -25,7 +25,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.bdf.security.exception.KiwiDeniedException;
 import me.fengorz.kiwi.common.api.R;
-import me.fengorz.kiwi.common.api.constant.CommonConstants;
+import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.oauth2.provider.error.OAuth2AccessDeniedHandler;
 import org.springframework.stereotype.Component;
@@ -60,8 +60,8 @@ public class KiwiAccessDeniedHandler extends OAuth2AccessDeniedHandler {
     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException authException)
         throws IOException {
         log.info("授权失败，禁止访问 {}", request.getRequestURI());
-        response.setCharacterEncoding(CommonConstants.UTF8);
-        response.setContentType(CommonConstants.CONTENT_TYPE);
+        response.setCharacterEncoding(GlobalConstants.UTF8);
+        response.setContentType(GlobalConstants.CONTENT_TYPE);
         R<KiwiDeniedException> result = R.failed(new KiwiDeniedException("授权失败，禁止访问"));
         response.setStatus(HttpStatus.HTTP_FORBIDDEN);
         PrintWriter printWriter = response.getWriter();

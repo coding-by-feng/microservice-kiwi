@@ -25,7 +25,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.api.R;
 import me.fengorz.kiwi.common.api.ResultCode;
-import me.fengorz.kiwi.common.api.constant.CommonConstants;
+import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
@@ -49,8 +49,8 @@ public class ResourceAuthExceptionEntryPoint implements AuthenticationEntryPoint
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response,
         AuthenticationException authException) throws IOException {
-        response.setCharacterEncoding(CommonConstants.UTF8);
-        response.setContentType(CommonConstants.CONTENT_TYPE);
+        response.setCharacterEncoding(GlobalConstants.UTF8);
+        response.setContentType(GlobalConstants.CONTENT_TYPE);
         R<String> result = R.failed();
         result.setCode(ResultCode.build(() -> HttpStatus.HTTP_UNAUTHORIZED, null).getCode());
         if (authException != null) {

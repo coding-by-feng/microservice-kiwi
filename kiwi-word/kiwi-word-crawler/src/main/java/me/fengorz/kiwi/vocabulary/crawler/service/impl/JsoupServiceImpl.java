@@ -21,7 +21,7 @@ package me.fengorz.kiwi.vocabulary.crawler.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
 import lombok.extern.slf4j.Slf4j;
-import me.fengorz.kiwi.common.api.constant.CommonConstants;
+import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
 import me.fengorz.kiwi.common.sdk.util.lang.collection.KiwiCollectionUtils;
 import me.fengorz.kiwi.common.sdk.util.lang.string.KiwiStringUtils;
 import me.fengorz.kiwi.common.sdk.util.validate.KiwiAssertUtils;
@@ -127,14 +127,14 @@ public class JsoupServiceImpl implements IJsoupService {
     @Override
     public FetchPhraseRunUpResultDTO fetchPhraseRunUp(FetchPhraseRunUpMqDTO dto) throws JsoupFetchConnectException {
         String wordTmp = dto.getWord();
-        if (wordTmp.contains(CommonConstants.SYMBOL_FORWARD_SLASH)) {
-            wordTmp = wordTmp.replaceAll(CommonConstants.SYMBOL_FORWARD_SLASH, CommonConstants.SYMBOL_RAIL).replaceAll(CommonConstants.SPACING, CommonConstants.SYMBOL_RAIL);
+        if (wordTmp.contains(GlobalConstants.SYMBOL_FORWARD_SLASH)) {
+            wordTmp = wordTmp.replaceAll(GlobalConstants.SYMBOL_FORWARD_SLASH, GlobalConstants.SYMBOL_RAIL).replaceAll(GlobalConstants.SPACING, GlobalConstants.SYMBOL_RAIL);
         }
         final String word = wordTmp;
 
         Document doc;
         try {
-            doc = Jsoup.connect(WordCrawlerConstants.URL_CAMBRIDGE_FETCH_CHINESE + word.replaceAll(CommonConstants.SPACING, CommonConstants.SYMBOL_RAIL)).get();
+            doc = Jsoup.connect(WordCrawlerConstants.URL_CAMBRIDGE_FETCH_CHINESE + word.replaceAll(GlobalConstants.SPACING, GlobalConstants.SYMBOL_RAIL)).get();
         } catch (IOException e) {
             log.error(JSOUP_CONNECT_EXCEPTION, WordCrawlerConstants.URL_CAMBRIDGE_FETCH_CHINESE + word);
             throw new JsoupFetchConnectException();
@@ -182,13 +182,13 @@ public class JsoupServiceImpl implements IJsoupService {
     public FetchPhraseResultDTO fetchPhraseInfo(FetchPhraseMqDTO dto) throws JsoupFetchConnectException, JsoupFetchResultException {
         final String finalPhrase = dto.getPhrase();
         String phrase = dto.getPhrase();
-        if (phrase.contains(CommonConstants.SYMBOL_FORWARD_SLASH)) {
-            phrase = phrase.replaceAll(CommonConstants.SYMBOL_FORWARD_SLASH, CommonConstants.SYMBOL_RAIL).replaceAll(CommonConstants.SPACING, CommonConstants.SYMBOL_RAIL);
+        if (phrase.contains(GlobalConstants.SYMBOL_FORWARD_SLASH)) {
+            phrase = phrase.replaceAll(GlobalConstants.SYMBOL_FORWARD_SLASH, GlobalConstants.SYMBOL_RAIL).replaceAll(GlobalConstants.SPACING, GlobalConstants.SYMBOL_RAIL);
         }
 
         Document doc;
         try {
-            doc = Jsoup.connect(WordCrawlerConstants.URL_CAMBRIDGE_FETCH_CHINESE + phrase.replaceAll(CommonConstants.SPACING, CommonConstants.SYMBOL_RAIL)).get();
+            doc = Jsoup.connect(WordCrawlerConstants.URL_CAMBRIDGE_FETCH_CHINESE + phrase.replaceAll(GlobalConstants.SPACING, GlobalConstants.SYMBOL_RAIL)).get();
         } catch (IOException e) {
             log.error(JSOUP_CONNECT_EXCEPTION, phrase);
             throw new JsoupFetchConnectException();
@@ -277,8 +277,8 @@ public class JsoupServiceImpl implements IJsoupService {
             throws JsoupFetchConnectException, JsoupFetchResultException, JsoupFetchPronunciationException {
         String queryWord = word;
         String jsoupWord;
-        if (queryWord.contains(CommonConstants.SYMBOL_FORWARD_SLASH)) {
-            queryWord = queryWord.replaceAll(CommonConstants.SYMBOL_FORWARD_SLASH, CommonConstants.SYMBOL_RAIL).replaceAll(CommonConstants.SPACING, CommonConstants.SYMBOL_RAIL);
+        if (queryWord.contains(GlobalConstants.SYMBOL_FORWARD_SLASH)) {
+            queryWord = queryWord.replaceAll(GlobalConstants.SYMBOL_FORWARD_SLASH, GlobalConstants.SYMBOL_RAIL).replaceAll(GlobalConstants.SPACING, GlobalConstants.SYMBOL_RAIL);
         }
 
         Document doc;

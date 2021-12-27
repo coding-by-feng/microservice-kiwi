@@ -17,7 +17,7 @@
 package me.fengorz.kiwi.word.biz.util;
 
 import cn.hutool.core.util.StrUtil;
-import me.fengorz.kiwi.common.api.constant.CommonConstants;
+import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
 
 /**
  * @Author zhanshifeng
@@ -29,14 +29,14 @@ public class WordDfsUtils {
         if (StrUtil.isNotBlank(uploadResult)) {
             return uploadResult.substring(0, uploadResult.indexOf("/"));
         }
-        return CommonConstants.EMPTY;
+        return GlobalConstants.EMPTY;
     }
 
     public static String getUploadVoiceFilePath(String uploadResult) {
         if (StrUtil.isNotBlank(uploadResult)) {
             return uploadResult.substring(uploadResult.indexOf("/") + 1, uploadResult.length());
         }
-        return CommonConstants.EMPTY;
+        return GlobalConstants.EMPTY;
     }
 
     public static String getVoiceFileName(String url) {

@@ -24,12 +24,12 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.bdf.core.service.ISeqService;
-import me.fengorz.kiwi.common.api.constant.CommonConstants;
-import me.fengorz.kiwi.common.api.constant.MapperConstant;
-import me.fengorz.kiwi.common.api.exception.ServiceException;
-import me.fengorz.kiwi.common.api.exception.dfs.DfsOperateDeleteException;
-import me.fengorz.kiwi.common.api.exception.dfs.DfsOperateException;
 import me.fengorz.kiwi.common.fastdfs.service.IDfsService;
+import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
+import me.fengorz.kiwi.common.sdk.constant.MapperConstant;
+import me.fengorz.kiwi.common.sdk.exception.ServiceException;
+import me.fengorz.kiwi.common.sdk.exception.dfs.DfsOperateDeleteException;
+import me.fengorz.kiwi.common.sdk.exception.dfs.DfsOperateException;
 import me.fengorz.kiwi.common.sdk.util.bean.KiwiBeanUtils;
 import me.fengorz.kiwi.common.sdk.util.lang.collection.KiwiCollectionUtils;
 import me.fengorz.kiwi.common.sdk.util.lang.string.KiwiStringUtils;
@@ -92,7 +92,7 @@ public class CrawlerServiceImpl implements ICrawlerService {
         }
 
         WordMainDO wordMainDO = new WordMainDO().setWordName(wordName)
-                .setWordId(seqService.genIntSequence(MapperConstant.T_INS_SEQUENCE)).setIsDel(CommonConstants.FLAG_DEL_NO);
+                .setWordId(seqService.genIntSequence(MapperConstant.T_INS_SEQUENCE)).setIsDel(GlobalConstants.FLAG_DEL_NO);
         mainService.save(wordMainDO);
         this.subStoreFetchWordResult(dto, wordMainDO);
         queueService.flagFetchBaseFinish(dto.getQueueId(), wordMainDO.getWordId());
@@ -141,10 +141,10 @@ public class CrawlerServiceImpl implements ICrawlerService {
                             phrase.setId(seqService.genIntSequence(MapperConstant.T_INS_SEQUENCE));
                             phrase.setParaphraseId(paraphraseId);
                             phrase.setPhrase(fetchPhraseDTO.getPhrase());
-                            phrase.setIsValid(CommonConstants.FLAG_YES);
+                            phrase.setIsValid(GlobalConstants.FLAG_YES);
                             phrase.setCreateTime(LocalDateTime.now());
                             phraseService.save(phrase);
-                            paraphrase.setIsHavePhrase(CommonConstants.FLAG_YES);
+                            paraphrase.setIsHavePhrase(GlobalConstants.FLAG_YES);
                             wordParaphraseService.updateById(paraphrase);
                         }
                     }

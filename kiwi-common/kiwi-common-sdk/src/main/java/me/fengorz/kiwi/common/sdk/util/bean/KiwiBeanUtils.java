@@ -16,21 +16,19 @@
 
 package me.fengorz.kiwi.common.sdk.util.bean;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Consumer;
-
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
+import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.WordUtils;
 import org.springframework.beans.BeanUtils;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import lombok.extern.slf4j.Slf4j;
-import me.fengorz.kiwi.common.api.constant.CommonConstants;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Consumer;
 
 /**
  * @Description Bean工具类
@@ -130,11 +128,11 @@ public class KiwiBeanUtils extends BeanUtils {
      * 列名转换成Java属性名
      */
     public static String columnToBeanProperty(String columnName, String delimiter) {
-        return WordUtils.capitalizeFully(columnName, delimiter.toCharArray()).replace(delimiter, CommonConstants.EMPTY);
+        return WordUtils.capitalizeFully(columnName, delimiter.toCharArray()).replace(delimiter, GlobalConstants.EMPTY);
     }
 
     public static String defaultColumnToBeanProperty(String columnName) {
-        return columnToBeanProperty(columnName, CommonConstants.SYMBOL_DELIMITER_STR);
+        return columnToBeanProperty(columnName, GlobalConstants.SYMBOL_DELIMITER_STR);
     }
 
     public static <T, E> T convertFrom(E source, Class<T> requiredType, String... ignoreProperties) {

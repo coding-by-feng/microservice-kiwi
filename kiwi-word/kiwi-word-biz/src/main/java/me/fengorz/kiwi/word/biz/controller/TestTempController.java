@@ -21,8 +21,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.bdf.core.service.ISeqService;
 import me.fengorz.kiwi.common.api.R;
-import me.fengorz.kiwi.common.api.constant.CommonConstants;
-import me.fengorz.kiwi.common.api.constant.MapperConstant;
+import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
+import me.fengorz.kiwi.common.sdk.constant.MapperConstant;
 import me.fengorz.kiwi.common.sdk.controller.BaseController;
 import me.fengorz.kiwi.word.api.common.WordCrawlerConstants;
 import me.fengorz.kiwi.word.api.entity.FetchQueueDO;
@@ -66,7 +66,7 @@ public class TestTempController extends BaseController {
                     queue.setFetchStatus(WordCrawlerConstants.STATUS_TO_FETCH);
                     queue.setWordName(word.trim());
                     queue.setFetchPriority(100);
-                    queue.setIsLock(CommonConstants.FLAG_YES);
+                    queue.setIsLock(GlobalConstants.FLAG_YES);
                     wordFetchQueueService.updateById(queue);
                 }
             } else {
@@ -75,7 +75,7 @@ public class TestTempController extends BaseController {
                 queue.setFetchStatus(WordCrawlerConstants.STATUS_TO_FETCH);
                 queue.setWordName(word.trim());
                 queue.setFetchPriority(100);
-                queue.setIsLock(CommonConstants.FLAG_YES);
+                queue.setIsLock(GlobalConstants.FLAG_YES);
                 wordFetchQueueService.save(queue);
             }
             log.info(word + "insert success!");

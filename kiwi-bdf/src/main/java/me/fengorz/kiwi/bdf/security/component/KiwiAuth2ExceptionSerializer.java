@@ -16,14 +16,14 @@
 
 package me.fengorz.kiwi.bdf.security.component;
 
-import java.io.IOException;
-
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
-
 import me.fengorz.kiwi.bdf.security.exception.KiwiAuth2Exception;
-import me.fengorz.kiwi.common.api.constant.CommonConstants;
+
+import java.io.IOException;
+
+import static me.fengorz.kiwi.common.api.ApiContants.RESULT_CODE_SERVICE_ERROR;
 
 /**
  * <p>
@@ -41,7 +41,7 @@ public class KiwiAuth2ExceptionSerializer extends StdSerializer<KiwiAuth2Excepti
     @Override
     public void serialize(KiwiAuth2Exception value, JsonGenerator gen, SerializerProvider provider) throws IOException {
         gen.writeStartObject();
-        gen.writeObjectField("code", CommonConstants.RESULT_CODE_SERVICE_ERROR);
+        gen.writeObjectField("code", RESULT_CODE_SERVICE_ERROR);
         gen.writeStringField("msg", value.getMessage());
         gen.writeStringField("data", value.getErrorCode());
         gen.writeEndObject();

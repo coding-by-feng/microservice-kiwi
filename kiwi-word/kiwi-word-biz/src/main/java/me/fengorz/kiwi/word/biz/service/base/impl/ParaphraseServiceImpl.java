@@ -19,7 +19,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.RequiredArgsConstructor;
-import me.fengorz.kiwi.common.api.constant.CommonConstants;
+import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
 import me.fengorz.kiwi.common.sdk.util.bean.KiwiBeanUtils;
 import me.fengorz.kiwi.word.api.dto.mapper.in.SelectEntityIsCollectDTO;
 import me.fengorz.kiwi.word.api.entity.ParaphraseDO;
@@ -48,7 +48,7 @@ public class ParaphraseServiceImpl extends ServiceImpl<ParaphraseMapper, Paraphr
     @Override
     public Integer countById(Integer id) {
         return this
-                .count(new QueryWrapper<>(new ParaphraseDO().setParaphraseId(id).setIsDel(CommonConstants.FLAG_DEL_NO)));
+                .count(new QueryWrapper<>(new ParaphraseDO().setParaphraseId(id).setIsDel(GlobalConstants.FLAG_DEL_NO)));
     }
 
     @Override
@@ -59,7 +59,7 @@ public class ParaphraseServiceImpl extends ServiceImpl<ParaphraseMapper, Paraphr
 
     @Override
     public List<ParaphraseVO> listPhrase(Integer wordId) {
-        return KiwiBeanUtils.convertFrom(mapper.selectList(Wrappers.<ParaphraseDO>lambdaQuery().eq(ParaphraseDO::getWordId, wordId).eq(ParaphraseDO::getIsDel, CommonConstants.FLAG_NO)), ParaphraseVO.class);
+        return KiwiBeanUtils.convertFrom(mapper.selectList(Wrappers.<ParaphraseDO>lambdaQuery().eq(ParaphraseDO::getWordId, wordId).eq(ParaphraseDO::getIsDel, GlobalConstants.FLAG_NO)), ParaphraseVO.class);
     }
 
     @Override

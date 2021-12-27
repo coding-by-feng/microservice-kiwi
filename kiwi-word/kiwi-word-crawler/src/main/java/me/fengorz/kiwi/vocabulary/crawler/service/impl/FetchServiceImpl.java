@@ -22,9 +22,9 @@ package me.fengorz.kiwi.vocabulary.crawler.service.impl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.api.R;
-import me.fengorz.kiwi.common.api.constant.CommonConstants;
-import me.fengorz.kiwi.common.api.exception.dfs.DfsOperateDeleteException;
 import me.fengorz.kiwi.common.fastdfs.service.IDfsService;
+import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
+import me.fengorz.kiwi.common.sdk.exception.dfs.DfsOperateDeleteException;
 import me.fengorz.kiwi.common.sdk.util.lang.collection.KiwiCollectionUtils;
 import me.fengorz.kiwi.common.sdk.util.lang.string.KiwiStringUtils;
 import me.fengorz.kiwi.vocabulary.crawler.component.producer.base.ISender;
@@ -72,7 +72,7 @@ public class FetchServiceImpl implements IFetchService {
         FetchQueueDO queue = new FetchQueueDO().setWordName(inputWord).setQueueId(queueId);
         boolean isUpdate = false;
         try {
-            StringBuilder handleLog = new StringBuilder().append(queue.getFetchResult() != null ? queue.getFetchResult() : CommonConstants.EMPTY).append(CommonConstants.SYMBOL_LF);
+            StringBuilder handleLog = new StringBuilder().append(queue.getFetchResult() != null ? queue.getFetchResult() : GlobalConstants.EMPTY).append(GlobalConstants.SYMBOL_LF);
             FetchWordResultDTO fetchWordResultDTO = jsoupService.fetchWordInfo(messageDTO).setQueueId(queueId);
             final String fetchWord = fetchWordResultDTO.getWordName();
             queue.setDerivation(fetchWord);
@@ -98,7 +98,7 @@ public class FetchServiceImpl implements IFetchService {
                 // 标记单词基础信息已经抓取完毕，即将抓取发音文件
                 queue.setFetchStatus(WordCrawlerConstants.STATUS_TO_FETCH_PRONUNCIATION);
                 queue.setFetchResult(handleLog.toString());
-                queue.setIsLock(CommonConstants.FLAG_YES);
+                queue.setIsLock(GlobalConstants.FLAG_YES);
             }
             isUpdate = true;
         } catch (JsoupFetchConnectException e) {
@@ -109,7 +109,7 @@ public class FetchServiceImpl implements IFetchService {
             isUpdate = true;
         } finally {
             if (isUpdate) {
-                queue.setIsIntoCache(CommonConstants.FLAG_NO);
+                queue.setIsIntoCache(GlobalConstants.FLAG_NO);
                 bizAPI.updateQueueById(queue);
             }
         }
@@ -123,7 +123,7 @@ public class FetchServiceImpl implements IFetchService {
             R<Boolean> response =
                     Optional.of(bizAPI.fetchPronunciation(Objects.requireNonNull(dto.getWordId()))).get();
             if (response.isSuccess()) {
-                queue.setIsLock(CommonConstants.FLAG_NO);
+                queue.setIsLock(GlobalConstants.FLAG_NO);
                 queue.setFetchStatus(WordCrawlerConstants.STATUS_ALL_SUCCESS);
             } else {
                 throw new JsoupFetchPronunciationException();
@@ -151,7 +151,7 @@ public class FetchServiceImpl implements IFetchService {
                 // 删除完老的基础数据重新开始抓取单词
                 queue.setFetchStatus(WordCrawlerConstants.STATUS_TO_FETCH);
                 queue.setWordId(0);
-                queue.setIsLock(CommonConstants.FLAG_YES);
+                queue.setIsLock(GlobalConstants.FLAG_YES);
                 response.getData().forEach(sender::removePronunciation);
             } else {
                 throw new WordRemoveException(queue.getWordName());
@@ -193,7 +193,7 @@ public class FetchServiceImpl implements IFetchService {
             if (KiwiCollectionUtils.isNotEmpty(resultDTO.getPhrases())) {
                 bizAPI.handlePhrasesFetchResult(resultDTO);
             }
-            queue.setIsLock(CommonConstants.FLAG_NO);
+            queue.setIsLock(GlobalConstants.FLAG_NO);
             queue.setFetchStatus(WordCrawlerConstants.STATUS_PERFECT_SUCCESS);
             isUpdate = true;
         } catch (JsoupFetchConnectException e) {
@@ -220,14 +220,14 @@ public class FetchServiceImpl implements IFetchService {
                 bizAPI.storePhrasesFetchResult(resultDTO);
                 queue.setFetchStatus(WordCrawlerConstants.STATUS_PERFECT_SUCCESS);
             }
-            queue.setIsLock(CommonConstants.FLAG_YES);
+            queue.setIsLock(GlobalConstants.FLAG_YES);
             isUpdate = true;
         } catch (Exception e) {
             this.handleException(queue, WordCrawlerConstants.STATUS_FETCH_PHRASE_FAIL, "fetch phrase real info error!");
             isUpdate = true;
         } finally {
             if (isUpdate) {
-                queue.setIsIntoCache(CommonConstants.FLAG_NO);
+                queue.setIsIntoCache(GlobalConstants.FLAG_NO);
                 bizAPI.updateQueueById(queue);
             }
         }
@@ -244,7 +244,7 @@ public class FetchServiceImpl implements IFetchService {
                 // 删除完老的基础数据重新开始抓取单词
                 queue.setFetchStatus(WordCrawlerConstants.STATUS_TO_FETCH);
                 queue.setWordId(0);
-                queue.setIsLock(CommonConstants.FLAG_YES);
+                queue.setIsLock(GlobalConstants.FLAG_YES);
                 isUpdate = true;
             } else {
                 throw new PhraseRemoveException();
@@ -263,7 +263,7 @@ public class FetchServiceImpl implements IFetchService {
     private void handleException(FetchQueueDO queue, int status, String message) {
         queue.setFetchStatus(status);
         queue.setFetchResult(queue.getFetchResult() == null ? message : queue.getFetchResult() + message);
-        queue.setIsLock(CommonConstants.FLAG_NO);
+        queue.setIsLock(GlobalConstants.FLAG_NO);
         if (KiwiStringUtils.isNotBlank(message)) {
             log.error(message);
         }

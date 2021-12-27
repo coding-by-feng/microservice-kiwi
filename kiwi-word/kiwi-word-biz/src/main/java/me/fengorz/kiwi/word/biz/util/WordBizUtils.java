@@ -17,7 +17,7 @@
 package me.fengorz.kiwi.word.biz.util;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import me.fengorz.kiwi.common.api.constant.CommonConstants;
+import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
 import me.fengorz.kiwi.word.api.common.WordCrawlerConstants;
 import me.fengorz.kiwi.word.api.dto.mapper.in.SelectStarListItemDTO;
 import me.fengorz.kiwi.word.api.entity.*;
@@ -31,7 +31,7 @@ public class WordBizUtils {
     public static WordMainDO initWordMain(String wordName) {
         WordMainDO word = new WordMainDO();
         word.setWordName(wordName);
-        word.setIsDel(CommonConstants.FLAG_DEL_NO);
+        word.setIsDel(GlobalConstants.FLAG_DEL_NO);
         return word;
     }
 
@@ -41,7 +41,7 @@ public class WordBizUtils {
         character.setWordId(wordId);
         character.setCharacterCode(wordCode);
         character.setTag(wordLabel);
-        character.setIsDel(CommonConstants.FLAG_N);
+        character.setIsDel(GlobalConstants.FLAG_N);
         return character;
     }
 
@@ -53,7 +53,7 @@ public class WordBizUtils {
         paraphrase.setCharacterId(characterId);
         paraphrase.setCodes(codes);
         paraphrase.setMeaningChinese(meaningChinese);
-        paraphrase.setIsDel(CommonConstants.FLAG_DEL_NO);
+        paraphrase.setIsDel(GlobalConstants.FLAG_DEL_NO);
         paraphrase.setParaphraseEnglish(paraphraseEnglish);
         paraphrase.setTranslateLanguage(translateLanguage);
         return paraphrase;
@@ -76,7 +76,7 @@ public class WordBizUtils {
         PronunciationDO pronunciation = new PronunciationDO();
         pronunciation.setWordId(wordId);
         pronunciation.setCharacterId(characterId);
-        pronunciation.setIsDel(CommonConstants.FLAG_DEL_NO);
+        pronunciation.setIsDel(GlobalConstants.FLAG_DEL_NO);
         pronunciation.setSoundmark(soundmark);
         pronunciation.setSoundmarkType(soundmarkType);
         pronunciation.setVoiceFilePath(voiceUrl);

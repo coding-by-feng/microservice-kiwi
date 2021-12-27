@@ -14,42 +14,43 @@
  *
  */
 
-package me.fengorz.kiwi.common.api.exception;
+package me.fengorz.kiwi.common.sdk.exception.dfs;
 
 import me.fengorz.kiwi.common.api.ResultCode;
+import me.fengorz.kiwi.common.sdk.exception.BaseException;
 
 /**
- * @Description 操作资源不存在异常
+ * @Description Dfs文件操作异常
  * @Author zhanshifeng
- * @Date 2020/5/24 12:38 PM
+ * @Date 2019/11/7 11:38 PM
  */
-public class ResourceNotFoundException extends BaseRuntimeException {
+public class DfsOperateException extends BaseException {
 
-    public ResourceNotFoundException() {
+    public DfsOperateException() {
         super();
     }
 
-    public ResourceNotFoundException(Throwable cause) {
+    public DfsOperateException(Throwable cause) {
         super(cause);
     }
 
-    public ResourceNotFoundException(String msg, Object... args) {
+    public DfsOperateException(String msg, Object... args) {
         super(msg, args);
     }
 
-    public ResourceNotFoundException(String msg, Throwable throwable, Object... args) {
+    public DfsOperateException(String msg, Throwable throwable, Object... args) {
         super(msg, throwable, args);
     }
 
-    public ResourceNotFoundException(ResultCode resultCode, Object... args) {
+    public DfsOperateException(ResultCode resultCode, Object... args) {
         super(resultCode, args);
     }
 
-    public ResourceNotFoundException(String msg, ResultCode resultCode, Object... args) {
+    public DfsOperateException(String msg, ResultCode resultCode, Object... args) {
         super(msg, resultCode, args);
     }
 
-    public ResourceNotFoundException(String msg, ResultCode resultCode, Throwable throwable, Object... args) {
+    public DfsOperateException(String msg, ResultCode resultCode, Throwable throwable, Object... args) {
         super(msg, resultCode, throwable, args);
     }
 }

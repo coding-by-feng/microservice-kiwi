@@ -17,7 +17,7 @@ package me.fengorz.kiwi.word.biz.controller;
 
 import lombok.RequiredArgsConstructor;
 import me.fengorz.kiwi.common.api.R;
-import me.fengorz.kiwi.common.api.annotation.log.SysLog;
+import me.fengorz.kiwi.common.sdk.annotation.log.SysLog;
 import me.fengorz.kiwi.common.sdk.controller.BaseController;
 import me.fengorz.kiwi.word.api.request.ParaphraseRequest;
 import me.fengorz.kiwi.word.biz.service.base.IParaphraseService;

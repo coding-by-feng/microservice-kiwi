@@ -14,26 +14,19 @@
  *
  */
 
-package me.fengorz.kiwi.common.api.exception;
+package me.fengorz.kiwi.common.sdk.annotation.cache;
 
-import lombok.NoArgsConstructor;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
  * @Author zhanshifeng
- * @Date 2019-09-10 14:48
  */
-@NoArgsConstructor
-public class CheckedException extends BaseException {
+@Target({ElementType.METHOD, ElementType.TYPE})
+@Retention(RetentionPolicy.RUNTIME)
+public @interface KiwiCacheKeyPrefix {
 
-    public CheckedException(String message) {
-        super(message);
-    }
-
-    public CheckedException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    public CheckedException(Throwable cause) {
-        super(cause);
-    }
+    String value();
 }

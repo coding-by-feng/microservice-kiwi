@@ -14,7 +14,7 @@
  *
  */
 
-package me.fengorz.kiwi.common.api.exception.dfs;
+package me.fengorz.kiwi.common.sdk.exception.dfs;
 
 /**
  * @Description Dfs文件删除异常

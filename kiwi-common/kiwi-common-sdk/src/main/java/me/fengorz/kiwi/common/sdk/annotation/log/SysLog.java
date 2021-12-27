@@ -14,16 +14,20 @@
  *
  */
 
-package me.fengorz.kiwi.common.api.constant;
+package me.fengorz.kiwi.common.sdk.annotation.log;
+
+import java.lang.annotation.*;
 
 /**
+ * 操作日志注解
+ *
  * @Author zhanshifeng
- * @Date 2020/1/8 4:51 PM
  */
-public class MapperConstant {
+@Target(ElementType.METHOD)
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+public @interface SysLog {
 
-    public static final String T_INS_SEQUENCE = "t_ins_sequence";
-
-    public static final String QUERY_PARAMS = "queryParams";
+    String value();
 
 }

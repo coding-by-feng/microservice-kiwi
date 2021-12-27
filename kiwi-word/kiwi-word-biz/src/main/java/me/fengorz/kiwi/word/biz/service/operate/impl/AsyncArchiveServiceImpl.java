@@ -23,8 +23,8 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.bdf.core.service.ISeqService;
-import me.fengorz.kiwi.common.api.constant.CommonConstants;
-import me.fengorz.kiwi.common.api.constant.MapperConstant;
+import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
+import me.fengorz.kiwi.common.sdk.constant.MapperConstant;
 import me.fengorz.kiwi.word.api.common.WordConstants;
 import me.fengorz.kiwi.word.api.entity.StarRelHisDO;
 import me.fengorz.kiwi.word.api.entity.WordMainDO;
@@ -77,13 +77,13 @@ public class AsyncArchiveServiceImpl implements IAsyncArchiveService {
 
     private void invalidRelHis(Integer id, Integer type, Integer listId, Integer userId) {
         Optional.ofNullable(mainService.getById(id)).ifPresent(word -> {
-            relHisService.update(new StarRelHisDO().setIsDel(CommonConstants.FLAG_DEL_YES),
+            relHisService.update(new StarRelHisDO().setIsDel(GlobalConstants.FLAG_DEL_YES),
                     Wrappers.<StarRelHisDO>lambdaUpdate()
                             .eq(StarRelHisDO::getWordName, word.getWordName())
                             .eq(StarRelHisDO::getUserId, userId)
                             .eq(StarRelHisDO::getListId, listId)
                             .eq(StarRelHisDO::getType, type)
-                            .eq(StarRelHisDO::getIsDel, CommonConstants.FLAG_DEL_NO));
+                            .eq(StarRelHisDO::getIsDel, GlobalConstants.FLAG_DEL_NO));
         });
     }
 

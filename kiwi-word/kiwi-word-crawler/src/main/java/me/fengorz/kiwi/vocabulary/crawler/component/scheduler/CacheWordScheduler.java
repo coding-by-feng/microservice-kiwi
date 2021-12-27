@@ -20,7 +20,7 @@
 package me.fengorz.kiwi.vocabulary.crawler.component.scheduler;
 
 import lombok.extern.slf4j.Slf4j;
-import me.fengorz.kiwi.common.api.constant.CommonConstants;
+import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
 import me.fengorz.kiwi.common.sdk.util.lang.collection.KiwiCollectionUtils;
 import me.fengorz.kiwi.vocabulary.crawler.component.scheduler.base.AbstractScheduler;
 import me.fengorz.kiwi.vocabulary.crawler.component.scheduler.base.IScheduler;
@@ -83,7 +83,7 @@ public class CacheWordScheduler extends AbstractScheduler implements IScheduler 
         } catch (Exception e) {
             log.error(e.getMessage());
         } finally {
-            queue.setIsIntoCache(CommonConstants.FLAG_YES);
+            queue.setIsIntoCache(GlobalConstants.FLAG_YES);
             countDownLatch.countDown();
             bizAPI.updateQueueById(queue);
         }

@@ -42,6 +42,16 @@
         </dependency>
         <dependency>
             <groupId>me.fengorz</groupId>
+            <artifactId>kiwi-common-dfs</artifactId>
+            <version>${kiwi.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>me.fengorz</groupId>
+            <artifactId>kiwi-common-mq</artifactId>
+            <version>${kiwi.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>me.fengorz</groupId>
             <artifactId>kiwi-upms-api</artifactId>
             <version>${kiwi.version}</version>
         </dependency>

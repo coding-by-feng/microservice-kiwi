@@ -22,7 +22,7 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.RequiredArgsConstructor;
-import me.fengorz.kiwi.common.api.constant.CommonConstants;
+import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
 import me.fengorz.kiwi.common.sdk.util.bean.KiwiBeanUtils;
 import me.fengorz.kiwi.common.sdk.util.validate.KiwiAssertUtils;
 import me.fengorz.kiwi.common.sdk.web.security.SecurityUtils;
@@ -61,7 +61,7 @@ public class ExampleStarListServiceImpl extends ServiceImpl<ExampleStarListMappe
     @Override
     public List<ExampleStarListVO> getCurrentUserList(Integer userId) {
         QueryWrapper<ExampleStarListDO> queryWrapper =
-                new QueryWrapper<>(new ExampleStarListDO().setOwner(userId).setIsDel(CommonConstants.FLAG_N)).select(
+                new QueryWrapper<>(new ExampleStarListDO().setOwner(userId).setIsDel(GlobalConstants.FLAG_N)).select(
                         ExampleStarListDO.class,
                         tableFieldInfo -> WordParaphraseExampleListColumn.ID.equals(tableFieldInfo.getColumn())
                                 || WordParaphraseExampleListColumn.LIST_NAME.equals(tableFieldInfo.getColumn())

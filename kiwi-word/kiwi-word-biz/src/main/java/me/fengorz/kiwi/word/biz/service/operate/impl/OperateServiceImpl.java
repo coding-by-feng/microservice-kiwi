@@ -25,13 +25,13 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import me.fengorz.kiwi.common.api.annotation.cache.KiwiCacheKey;
-import me.fengorz.kiwi.common.api.annotation.cache.KiwiCacheKeyPrefix;
-import me.fengorz.kiwi.common.api.constant.CacheConstants;
-import me.fengorz.kiwi.common.api.constant.CommonConstants;
-import me.fengorz.kiwi.common.api.exception.ResourceNotFoundException;
-import me.fengorz.kiwi.common.api.exception.ServiceException;
 import me.fengorz.kiwi.common.fastdfs.service.IDfsService;
+import me.fengorz.kiwi.common.sdk.annotation.cache.KiwiCacheKey;
+import me.fengorz.kiwi.common.sdk.annotation.cache.KiwiCacheKeyPrefix;
+import me.fengorz.kiwi.common.sdk.constant.CacheConstants;
+import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
+import me.fengorz.kiwi.common.sdk.exception.ResourceNotFoundException;
+import me.fengorz.kiwi.common.sdk.exception.ServiceException;
 import me.fengorz.kiwi.common.sdk.util.lang.collection.KiwiCollectionUtils;
 import me.fengorz.kiwi.common.sdk.util.lang.string.KiwiStringUtils;
 import me.fengorz.kiwi.common.sdk.util.validate.KiwiAssertUtils;
@@ -143,7 +143,7 @@ public class OperateServiceImpl implements IOperateService {
 
         vo.setWordId(word.getWordId());
         vo.setWordName(word.getWordName());
-        vo.setIsCollect(CommonConstants.FLAG_N);
+        vo.setIsCollect(GlobalConstants.FLAG_N);
 
         Integer wordId = word.getWordId();
         vo.setCharacterVOList(assembleWordQueryVO(wordName, wordId));
@@ -254,7 +254,7 @@ public class OperateServiceImpl implements IOperateService {
                 List<ParaphrasePhraseDO> phraseDOList =
                         phraseService.list(Wrappers.<ParaphrasePhraseDO>lambdaQuery()
                                 .eq(ParaphrasePhraseDO::getParaphraseId, paraphrase.getParaphraseId())
-                                .eq(ParaphrasePhraseDO::getIsValid, CommonConstants.FLAG_YES));
+                                .eq(ParaphrasePhraseDO::getIsValid, GlobalConstants.FLAG_YES));
                 if (KiwiCollectionUtils.isNotEmpty(phraseDOList)) {
                     for (ParaphrasePhraseDO phraseDO : phraseDOList) {
                         phraseList.add(phraseDO.getPhrase());
@@ -322,7 +322,7 @@ public class OperateServiceImpl implements IOperateService {
         }
 
         List<ParaphrasePhraseDO> phraseList = phraseService.list(Wrappers.<ParaphrasePhraseDO>lambdaQuery().eq(ParaphrasePhraseDO::getParaphraseId, paraphrase.getParaphraseId())
-                .eq(ParaphrasePhraseDO::getIsValid, CommonConstants.FLAG_YES));
+                .eq(ParaphrasePhraseDO::getIsValid, GlobalConstants.FLAG_YES));
         if (KiwiCollectionUtils.isNotEmpty(phraseList)) {
             vo.setPhraseList(phraseList.stream().map(ParaphrasePhraseDO::getPhrase).collect(Collectors.toList()));
         }
@@ -389,7 +389,7 @@ public class OperateServiceImpl implements IOperateService {
     public void evict(@KiwiCacheKey String wordName, WordMainDO one) {
         List<ParaphraseDO> list = paraphraseService
                 .list(Wrappers.<ParaphraseDO>lambdaQuery().eq(ParaphraseDO::getWordId, one.getWordId())
-                        .eq(ParaphraseDO::getIsDel, CommonConstants.FLAG_DEL_NO));
+                        .eq(ParaphraseDO::getIsDel, GlobalConstants.FLAG_DEL_NO));
         if (KiwiCollectionUtils.isNotEmpty(list)) {
             for (ParaphraseDO paraphraseDO : list) {
                 this.evictParaphrase(paraphraseDO.getParaphraseId());

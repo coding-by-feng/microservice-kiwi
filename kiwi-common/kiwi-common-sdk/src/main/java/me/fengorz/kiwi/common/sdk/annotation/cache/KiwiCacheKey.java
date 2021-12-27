@@ -14,18 +14,23 @@
  *
  */
 
-package me.fengorz.kiwi.common.api.exception;
+package me.fengorz.kiwi.common.sdk.annotation.cache;
 
-import lombok.NoArgsConstructor;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
  * @Author zhanshifeng
- * @Date 2019-09-07 23:53
+ * @Date 2020/5/17 11:18 AM
  */
-@NoArgsConstructor
-public class AuthException extends BaseRuntimeException {
+@Target({ElementType.PARAMETER})
+@Retention(RetentionPolicy.RUNTIME)
+public @interface KiwiCacheKey {
 
-    public AuthException(String message) {
-        super(message);
-    }
+    int value() default 0;
+
+    boolean nullable() default true;
+
 }

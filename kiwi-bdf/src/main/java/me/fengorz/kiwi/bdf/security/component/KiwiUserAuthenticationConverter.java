@@ -16,10 +16,11 @@
 
 package me.fengorz.kiwi.bdf.security.component;
 
-import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.Map;
-
+import lombok.RequiredArgsConstructor;
+import me.fengorz.kiwi.common.api.entity.EnhancerUser;
+import me.fengorz.kiwi.common.sdk.config.FilterIgnorePropertiesConfig;
+import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
+import me.fengorz.kiwi.common.sdk.constant.SecurityConstants;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -27,11 +28,9 @@ import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.oauth2.provider.token.UserAuthenticationConverter;
 import org.springframework.util.StringUtils;
 
-import lombok.RequiredArgsConstructor;
-import me.fengorz.kiwi.common.api.constant.CommonConstants;
-import me.fengorz.kiwi.common.api.constant.SecurityConstants;
-import me.fengorz.kiwi.common.api.entity.EnhancerUser;
-import me.fengorz.kiwi.common.sdk.config.FilterIgnorePropertiesConfig;
+import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * 根据checktoken 的结果转化用户信息
@@ -85,7 +84,7 @@ public class KiwiUserAuthenticationConverter implements UserAuthenticationConver
 
         // List<String> userNames = this.filterIgnorePropertiesConfig.getUserNames();
         // if (CollUtil.contains(userNames, map.get(SecurityConstants.DETAILS_USERNAME))) {
-        // authorities = CommonConstants.EMPTY;
+        // authorities = GlobalConstants.EMPTY;
         // }
 
         if (authorities instanceof String) {
@@ -96,6 +95,6 @@ public class KiwiUserAuthenticationConverter implements UserAuthenticationConver
                 StringUtils.collectionToCommaDelimitedString((Collection<?>)authorities));
         }
         // throw new IllegalArgumentException("Authorities must be either a String or a Collection");
-        return AuthorityUtils.commaSeparatedStringToAuthorityList(CommonConstants.EMPTY);
+        return AuthorityUtils.commaSeparatedStringToAuthorityList(GlobalConstants.EMPTY);
     }
 }

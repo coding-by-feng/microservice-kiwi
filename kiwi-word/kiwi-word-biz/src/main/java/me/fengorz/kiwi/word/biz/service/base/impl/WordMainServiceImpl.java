@@ -20,11 +20,11 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.RequiredArgsConstructor;
-import me.fengorz.kiwi.common.api.annotation.cache.KiwiCacheKey;
-import me.fengorz.kiwi.common.api.annotation.cache.KiwiCacheKeyPrefix;
-import me.fengorz.kiwi.common.api.constant.CacheConstants;
-import me.fengorz.kiwi.common.api.constant.CommonConstants;
-import me.fengorz.kiwi.common.api.exception.ServiceException;
+import me.fengorz.kiwi.common.sdk.annotation.cache.KiwiCacheKey;
+import me.fengorz.kiwi.common.sdk.annotation.cache.KiwiCacheKeyPrefix;
+import me.fengorz.kiwi.common.sdk.constant.CacheConstants;
+import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
+import me.fengorz.kiwi.common.sdk.exception.ServiceException;
 import me.fengorz.kiwi.common.sdk.util.bean.KiwiBeanUtils;
 import me.fengorz.kiwi.common.sdk.util.lang.string.KiwiStringUtils;
 import me.fengorz.kiwi.word.api.common.WordConstants;
@@ -75,7 +75,7 @@ public class WordMainServiceImpl extends ServiceImpl<WordMainMapper, WordMainDO>
     public WordMainVO getOneAndCatch(String wordName, Integer... infoType) {
         try {
             final LambdaQueryWrapper<WordMainDO> query = Wrappers.<WordMainDO>lambdaQuery()
-                    .eq(WordMainDO::getWordName, wordName).eq(WordMainDO::getIsDel, CommonConstants.FLAG_DEL_NO);
+                    .eq(WordMainDO::getWordName, wordName).eq(WordMainDO::getIsDel, GlobalConstants.FLAG_DEL_NO);
             // 如果指定infoType直接指定查询，如果不指定默认查询单词
             boolean isNotSpecialize = infoType == null || infoType.length == 0;
             WordMainDO one = this.getOne(query.clone().eq(WordMainDO::getInfoType, isNotSpecialize ? WordCrawlerConstants.QUEUE_INFO_TYPE_WORD : infoType[0]));
@@ -101,7 +101,7 @@ public class WordMainServiceImpl extends ServiceImpl<WordMainMapper, WordMainDO>
 
     @Override
     public List<FuzzyQueryResultDTO> fuzzyQueryList(Page page, String wordName) {
-        return mapper.fuzzyQuery(page, wordName + CommonConstants.SYMBOL_PERCENT).getRecords();
+        return mapper.fuzzyQuery(page, wordName + GlobalConstants.SYMBOL_PERCENT).getRecords();
     }
 
     @Override

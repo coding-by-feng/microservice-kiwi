@@ -19,8 +19,8 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.api.R;
-import me.fengorz.kiwi.common.api.annotation.log.SysLog;
-import me.fengorz.kiwi.common.api.constant.CommonConstants;
+import me.fengorz.kiwi.common.sdk.annotation.log.SysLog;
+import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
 import me.fengorz.kiwi.common.sdk.controller.BaseController;
 import me.fengorz.kiwi.word.api.dto.queue.RemovePronunciatioinMqDTO;
 import me.fengorz.kiwi.word.api.dto.queue.result.FetchPhraseResultDTO;
@@ -69,13 +69,13 @@ public class WordFetchController extends BaseController {
     @GetMapping(value = "/pageQueue/{status}/{current}/{size}/{infoType}")
     public R<List<FetchQueueDO>> pageQueue(@PathVariable Integer status, @PathVariable Integer current,
                                            @PathVariable Integer size, @PathVariable Integer infoType) {
-        return R.success(queueService.page2List(status, current, size, CommonConstants.FLAG_NO, infoType));
+        return R.success(queueService.page2List(status, current, size, GlobalConstants.FLAG_NO, infoType));
     }
 
     @GetMapping(value = "/pageQueueLockIn/{status}/{current}/{size}/{infoType}")
     public R<List<FetchQueueDO>> pageQueueLockIn(@PathVariable Integer status, @PathVariable Integer current,
                                                  @PathVariable Integer size, @PathVariable Integer infoType) {
-        return R.success(queueService.page2List(status, current, size, CommonConstants.FLAG_YES, infoType));
+        return R.success(queueService.page2List(status, current, size, GlobalConstants.FLAG_YES, infoType));
     }
 
     @GetMapping(value = "/listNotIntoCache")

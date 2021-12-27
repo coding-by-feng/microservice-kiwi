@@ -18,7 +18,7 @@ package me.fengorz.kiwi.common.sdk.web.security;
 
 import lombok.experimental.UtilityClass;
 import me.fengorz.kiwi.common.api.entity.EnhancerUser;
-import me.fengorz.kiwi.common.api.exception.AuthException;
+import me.fengorz.kiwi.common.sdk.exception.AuthException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 

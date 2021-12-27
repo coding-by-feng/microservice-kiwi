@@ -16,8 +16,14 @@
 
 package me.fengorz.kiwi.bdf.exception.handler;
 
-import java.util.Objects;
-
+import com.github.tobato.fastdfs.exception.FdfsServerException;
+import lombok.extern.slf4j.Slf4j;
+import me.fengorz.kiwi.common.api.R;
+import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
+import me.fengorz.kiwi.common.sdk.exception.BaseRuntimeException;
+import me.fengorz.kiwi.common.sdk.exception.ResourceNotFoundException;
+import me.fengorz.kiwi.common.sdk.exception.ServiceException;
+import me.fengorz.kiwi.common.sdk.exception.dfs.DfsOperateDeleteException;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
@@ -26,15 +32,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import com.github.tobato.fastdfs.exception.FdfsServerException;
-
-import lombok.extern.slf4j.Slf4j;
-import me.fengorz.kiwi.common.api.R;
-import me.fengorz.kiwi.common.api.constant.CommonConstants;
-import me.fengorz.kiwi.common.api.exception.BaseRuntimeException;
-import me.fengorz.kiwi.common.api.exception.ResourceNotFoundException;
-import me.fengorz.kiwi.common.api.exception.ServiceException;
-import me.fengorz.kiwi.common.api.exception.dfs.DfsOperateDeleteException;
+import java.util.Objects;
 
 /**
  * @Description 全局的异常处理器
@@ -107,16 +105,16 @@ public class GlobalExceptionHandler {
 
     private static String getLogMessage(MethodArgumentNotValidException e) {
         FieldError fieldError = Objects.requireNonNull(e.getBindingResult().getFieldError());
-        return fieldError.getObjectName() + CommonConstants.SYMBOL_DOT + fieldError.getField()
-            + CommonConstants.SYMBOL_SQUARE_BRACKET_LEFT + fieldError.getDefaultMessage()
-            + CommonConstants.SYMBOL_SQUARE_BRACKET_RIGHT;
+        return fieldError.getObjectName() + GlobalConstants.SYMBOL_DOT + fieldError.getField()
+            + GlobalConstants.SYMBOL_SQUARE_BRACKET_LEFT + fieldError.getDefaultMessage()
+            + GlobalConstants.SYMBOL_SQUARE_BRACKET_RIGHT;
     }
 
     private static String getLogMessage(BindException e) {
         FieldError fieldError = Objects.requireNonNull(e.getBindingResult().getFieldError());
-        return fieldError.getObjectName() + CommonConstants.SYMBOL_DOT + fieldError.getField()
-            + CommonConstants.SYMBOL_SQUARE_BRACKET_LEFT + fieldError.getDefaultMessage()
-            + CommonConstants.SYMBOL_SQUARE_BRACKET_RIGHT;
+        return fieldError.getObjectName() + GlobalConstants.SYMBOL_DOT + fieldError.getField()
+            + GlobalConstants.SYMBOL_SQUARE_BRACKET_LEFT + fieldError.getDefaultMessage()
+            + GlobalConstants.SYMBOL_SQUARE_BRACKET_RIGHT;
     }
 
 }

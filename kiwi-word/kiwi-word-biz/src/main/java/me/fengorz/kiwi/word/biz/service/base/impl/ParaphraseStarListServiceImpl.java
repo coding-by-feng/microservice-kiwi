@@ -23,7 +23,7 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.RequiredArgsConstructor;
-import me.fengorz.kiwi.common.api.constant.CommonConstants;
+import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
 import me.fengorz.kiwi.common.sdk.util.bean.KiwiBeanUtils;
 import me.fengorz.kiwi.common.sdk.web.security.SecurityUtils;
 import me.fengorz.kiwi.word.api.common.ReviewBreakpointTypeEnum;
@@ -68,7 +68,7 @@ public class ParaphraseStarListServiceImpl extends
     @Override
     public List<ParaphraseStarListVO> getCurrentUserList(Integer userId) {
         QueryWrapper<ParaphraseStarListDO> queryWrapper =
-                new QueryWrapper<>(new ParaphraseStarListDO().setOwner(userId).setIsDel(CommonConstants.FLAG_N)).select(
+                new QueryWrapper<>(new ParaphraseStarListDO().setOwner(userId).setIsDel(GlobalConstants.FLAG_N)).select(
                         ParaphraseStarListDO.class,
                         tableFieldInfo -> WordParaphraseStarListColumn.ID.equals(tableFieldInfo.getColumn())
                                 || WordParaphraseStarListColumn.LIST_NAME.equals(tableFieldInfo.getColumn())
@@ -138,7 +138,7 @@ public class ParaphraseStarListServiceImpl extends
     public void rememberOne(Integer paraphraseId, Integer listId) {
         reviewService.increase(ReviewDailyCounterTypeEnum.REMEMBER.getType(), SecurityUtils.getCurrentUserId());
         relService.update(
-                new ParaphraseStarRelDO().setIsRemember(CommonConstants.FLAG_DEL_YES)
+                new ParaphraseStarRelDO().setIsRemember(GlobalConstants.FLAG_DEL_YES)
                         .setRememberTime(LocalDateTime.now()),
                 Wrappers.<ParaphraseStarRelDO>lambdaQuery().eq(ParaphraseStarRelDO::getListId, listId)
                         .eq(ParaphraseStarRelDO::getParaphraseId, paraphraseId));
@@ -149,7 +149,7 @@ public class ParaphraseStarListServiceImpl extends
     public void keepInMind(Integer paraphraseId, Integer listId) {
         reviewService.increase(ReviewDailyCounterTypeEnum.KEEP_IN_MIND.getType(), SecurityUtils.getCurrentUserId());
         relService.update(
-                new ParaphraseStarRelDO().setIsKeepInMind(CommonConstants.FLAG_DEL_YES)
+                new ParaphraseStarRelDO().setIsKeepInMind(GlobalConstants.FLAG_DEL_YES)
                         .setKeepInMindTime(LocalDateTime.now()),
                 Wrappers.<ParaphraseStarRelDO>lambdaQuery().eq(ParaphraseStarRelDO::getListId, listId)
                         .eq(ParaphraseStarRelDO::getParaphraseId, paraphraseId));
@@ -159,8 +159,8 @@ public class ParaphraseStarListServiceImpl extends
     @Transactional(rollbackFor = Exception.class)
     public void forgetOne(Integer paraphraseId, Integer listId) {
         relService.update(
-                new ParaphraseStarRelDO().setIsRemember(CommonConstants.FLAG_DEL_NO)
-                        .setIsKeepInMind(CommonConstants.FLAG_DEL_NO),
+                new ParaphraseStarRelDO().setIsRemember(GlobalConstants.FLAG_DEL_NO)
+                        .setIsKeepInMind(GlobalConstants.FLAG_DEL_NO),
                 Wrappers.<ParaphraseStarRelDO>lambdaQuery().eq(ParaphraseStarRelDO::getListId, listId)
                         .eq(ParaphraseStarRelDO::getParaphraseId, paraphraseId));
     }

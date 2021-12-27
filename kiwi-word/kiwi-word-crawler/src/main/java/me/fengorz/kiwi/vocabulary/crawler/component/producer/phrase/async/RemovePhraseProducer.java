@@ -20,7 +20,7 @@
 package me.fengorz.kiwi.vocabulary.crawler.component.producer.phrase.async;
 
 import lombok.extern.slf4j.Slf4j;
-import me.fengorz.kiwi.common.api.constant.CommonConstants;
+import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
 import me.fengorz.kiwi.vocabulary.crawler.component.producer.base.AbstractProducer;
 import me.fengorz.kiwi.vocabulary.crawler.component.producer.base.IProducer;
 import me.fengorz.kiwi.vocabulary.crawler.component.producer.base.ISender;
@@ -56,7 +56,7 @@ public class RemovePhraseProducer extends AbstractProducer implements IProducer 
     @Override
     @Async
     public void execute(FetchQueueDO queue) {
-        queue.setIsLock(CommonConstants.FLAG_YES);
+        queue.setIsLock(GlobalConstants.FLAG_YES);
         queue.setFetchStatus(WordCrawlerConstants.STATUS_DOING_DEL_BASE);
         if (Optional.of(bizAPI.updateQueueById(queue)).get().isSuccess()) {
             sender.removePhrase(new RemoveMqDTO().setQueueId(queue.getQueueId()));

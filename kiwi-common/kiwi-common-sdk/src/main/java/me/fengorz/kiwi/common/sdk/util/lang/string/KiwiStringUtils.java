@@ -17,7 +17,7 @@
 package me.fengorz.kiwi.common.sdk.util.lang.string;
 
 import cn.hutool.core.util.StrUtil;
-import com.google.common.base.Strings;
+import org.apache.commons.lang3.StringUtils;
 
 import static java.lang.Character.UnicodeBlock.*;
 
@@ -32,7 +32,7 @@ public class KiwiStringUtils extends StrUtil {
     }
 
     public static boolean isContainChinese(String checkStr) {
-        if (!Strings.isNullOrEmpty(checkStr)) {
+        if (StringUtils.isNotBlank(checkStr)) {
             char[] checkChars = checkStr.toCharArray();
             for (char checkChar : checkChars) {
                 if (checkCharContainChinese(checkChar)) {

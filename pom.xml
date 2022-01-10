@@ -54,6 +54,10 @@
         <maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
         <junit.version>4.13</junit.version>
         <mockito.version>4.1.0</mockito.version>
+        <redisson.version>3.16.7</redisson.version>
+        <baidu.aip.version>4.16.5</baidu.aip.version>
+        <commons-configuration.version>1.10</commons-configuration.version>
+        <freemarker.version>2.3.29</freemarker.version>
     </properties>
 
     <dependencies>
@@ -62,23 +66,16 @@
             <artifactId>spring-boot-starter-validation</artifactId>
         </dependency>
 
-        <!--eureka 客户端-->
         <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
+            <version>${jackson-bom.version}</version>
         </dependency>
 
-        <!--配置文件处理器-->
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-configuration-processor</artifactId>
-            <optional>true</optional>
-        </dependency>
-
-        <!--断路器依赖-->
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-netflix-hystrix</artifactId>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${jackson-bom.version}</version>
         </dependency>
 
         <!--Lombok-->

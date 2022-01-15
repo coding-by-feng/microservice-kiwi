@@ -27,20 +27,21 @@ import org.springframework.security.oauth2.provider.client.JdbcClientDetailsServ
 
 import javax.sql.DataSource;
 
-/**
- * @Author zhanshifeng
- */
+/** @Author zhanshifeng */
 public class KiwiClientDetailsService extends JdbcClientDetailsService {
 
-    public KiwiClientDetailsService(DataSource dataSource) {
-        super(dataSource);
-    }
+  public KiwiClientDetailsService(DataSource dataSource) {
+    super(dataSource);
+  }
 
-    @Override
-    @KiwiCacheKeyPrefix(CacheConstants.CLIENT_DETAILS)
-    @Cacheable(value = SecurityConstants.CLIENT_DETAILS_KEY, keyGenerator = CacheConstants.CACHE_KEY_GENERATOR_BEAN,
-        unless = "#result == null")
-    public ClientDetails loadClientByClientId(@KiwiCacheKey String clientId) throws InvalidClientException {
-        return super.loadClientByClientId(clientId);
-    }
+  @Override
+  @KiwiCacheKeyPrefix(CacheConstants.CLIENT_DETAILS)
+  @Cacheable(
+      value = SecurityConstants.CLIENT_DETAILS_KEY,
+      keyGenerator = CacheConstants.CACHE_KEY_GENERATOR_BEAN,
+      unless = "#result == null")
+  public ClientDetails loadClientByClientId(@KiwiCacheKey String clientId)
+      throws InvalidClientException {
+    return super.loadClientByClientId(clientId);
+  }
 }

@@ -24,67 +24,60 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-/**
- * @Author zhanshifeng
- * @Date 2020/6/19 4:45 PM
- */
+/** @Author zhanshifeng @Date 2020/6/19 4:45 PM */
 @Data
 @Accessors(chain = true)
 public class FetchWordReplaceDTO implements Serializable {
-    private static final long serialVersionUID = -7940740618350547699L;
+  private static final long serialVersionUID = -7940740618350547699L;
+  private Integer newRelWordId;
+  private Integer oldRelWordId;
+  private Map<Integer, Binder> paraphraseBinderMap;
+  private Map<Integer, Binder> exampleBinderMap;
+  public FetchWordReplaceDTO() {
+    this.setParaphraseBinderMap(new HashMap<>());
+    this.setExampleBinderMap(new HashMap<>());
+  }
 
-    public FetchWordReplaceDTO() {
-        this.setParaphraseBinderMap(new HashMap<>());
-        this.setExampleBinderMap(new HashMap<>());
+  public static class Binder implements Serializable {
+
+    private static final long serialVersionUID = 3541504398792790251L;
+
+    private Integer oldId;
+    private Integer newId;
+
+    public Integer getOldId() {
+      return oldId;
     }
 
-    private Integer newRelWordId;
-    private Integer oldRelWordId;
-    private Map<Integer, Binder> paraphraseBinderMap;
-    private Map<Integer, Binder> exampleBinderMap;
-
-    public static class Binder implements Serializable {
-
-        private static final long serialVersionUID = 3541504398792790251L;
-
-        private Integer oldId;
-        private Integer newId;
-
-        public Integer getOldId() {
-            return oldId;
-        }
-
-        public Binder setOldId(Integer oldId) {
-            this.oldId = oldId;
-            return this;
-        }
-
-        public Integer getNewId() {
-            return newId;
-        }
-
-        public Binder setNewId(Integer newId) {
-            this.newId = newId;
-            return this;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) {
-                return true;
-            }
-            if (o == null || getClass() != o.getClass()) {
-                return false;
-            }
-            Binder that = (Binder) o;
-            return Objects.equals(oldId, that.oldId) &&
-                    Objects.equals(newId, that.newId);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(oldId, newId);
-        }
+    public Binder setOldId(Integer oldId) {
+      this.oldId = oldId;
+      return this;
     }
 
+    public Integer getNewId() {
+      return newId;
+    }
+
+    public Binder setNewId(Integer newId) {
+      this.newId = newId;
+      return this;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
+      Binder that = (Binder) o;
+      return Objects.equals(oldId, that.oldId) && Objects.equals(newId, that.newId);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(oldId, newId);
+    }
+  }
 }

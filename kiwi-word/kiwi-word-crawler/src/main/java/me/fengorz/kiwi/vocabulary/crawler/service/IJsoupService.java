@@ -31,10 +31,13 @@ import me.fengorz.kiwi.word.api.exception.JsoupFetchResultException;
 
 public interface IJsoupService {
 
-    FetchWordResultDTO fetchWordInfo(FetchWordMqDTO dto)
-            throws JsoupFetchConnectException, JsoupFetchResultException, JsoupFetchPronunciationException;
+  FetchWordResultDTO fetchWordInfo(FetchWordMqDTO dto)
+      throws JsoupFetchConnectException, JsoupFetchResultException,
+          JsoupFetchPronunciationException;
 
-    FetchPhraseRunUpResultDTO fetchPhraseRunUp(FetchPhraseRunUpMqDTO dto) throws JsoupFetchConnectException;
+  FetchPhraseRunUpResultDTO fetchPhraseRunUp(FetchPhraseRunUpMqDTO dto)
+      throws JsoupFetchConnectException;
 
-    FetchPhraseResultDTO fetchPhraseInfo(FetchPhraseMqDTO dto) throws JsoupFetchConnectException, JsoupFetchResultException;
+  FetchPhraseResultDTO fetchPhraseInfo(FetchPhraseMqDTO dto)
+      throws JsoupFetchConnectException, JsoupFetchResultException;
 }

@@ -34,28 +34,16 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public class CharacterDO extends Model<CharacterDO> {
 
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    /**
-     * 词性ID
-     */
-    @TableId
-    private Integer characterId;
-    /**
-     *
-     */
-    private Integer wordId;
-    /**
-     * 词性
-     */
-    private String characterCode;
-    /**
-     * 词性的标签
-     */
-    private String tag;
-    /**
-     * 逻辑删除标记(Y--正常 N--删除)
-     */
-    private String isDel;
-
+  /** 词性ID */
+  @TableId private Integer characterId;
+  /** */
+  private Integer wordId;
+  /** 词性 */
+  private String characterCode;
+  /** 词性的标签 */
+  private String tag;
+  /** 逻辑删除标记(Y--正常 N--删除) */
+  private String isDel;
 }

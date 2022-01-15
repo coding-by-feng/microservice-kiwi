@@ -46,82 +46,84 @@ import java.util.List;
 @Slf4j
 public class TestTempController extends BaseController {
 
-    private final IWordFetchQueueService wordFetchQueueService;
-    private final ISeqService seqService;
-    // @Value("${me.fengorz.file.vocabulary.word.list.path}")
-    private String tmp;
+  private final IWordFetchQueueService wordFetchQueueService;
+  private final ISeqService seqService;
+  // @Value("${me.fengorz.file.vocabulary.word.list.path}")
+  private String tmp;
 
-    @GetMapping("/readTxt")
-    public R readTxt() throws Exception {
-        List<String> words = this.readWords();
-        for (String word : words) {
-            FetchQueueDO one = wordFetchQueueService
-                .getOne(new LambdaQueryWrapper<FetchQueueDO>().eq(FetchQueueDO::getWordName, word));
-            FetchQueueDO queue = null;
-            if (one != null) {
-                if (WordCrawlerConstants.STATUS_ALL_SUCCESS == one.getFetchStatus()) {
-                    continue;
-                } else {
-                    queue = one;
-                    queue.setFetchStatus(WordCrawlerConstants.STATUS_TO_FETCH);
-                    queue.setWordName(word.trim());
-                    queue.setFetchPriority(100);
-                    queue.setIsLock(GlobalConstants.FLAG_YES);
-                    wordFetchQueueService.updateById(queue);
-                }
-            } else {
-                queue = new FetchQueueDO();
-                queue.setQueueId(seqService.genIntSequence(MapperConstant.T_INS_SEQUENCE));
-                queue.setFetchStatus(WordCrawlerConstants.STATUS_TO_FETCH);
-                queue.setWordName(word.trim());
-                queue.setFetchPriority(100);
-                queue.setIsLock(GlobalConstants.FLAG_YES);
-                wordFetchQueueService.save(queue);
-            }
-            log.info(word + "insert success!");
+  @GetMapping("/readTxt")
+  public R readTxt() throws Exception {
+    List<String> words = this.readWords();
+    for (String word : words) {
+      FetchQueueDO one =
+          wordFetchQueueService.getOne(
+              new LambdaQueryWrapper<FetchQueueDO>().eq(FetchQueueDO::getWordName, word));
+      FetchQueueDO queue = null;
+      if (one != null) {
+        if (WordCrawlerConstants.STATUS_ALL_SUCCESS == one.getFetchStatus()) {
+          continue;
+        } else {
+          queue = one;
+          queue.setFetchStatus(WordCrawlerConstants.STATUS_TO_FETCH);
+          queue.setWordName(word.trim());
+          queue.setFetchPriority(100);
+          queue.setIsLock(GlobalConstants.FLAG_YES);
+          wordFetchQueueService.updateById(queue);
         }
-        return R.success();
+      } else {
+        queue = new FetchQueueDO();
+        queue.setQueueId(seqService.genIntSequence(MapperConstant.T_INS_SEQUENCE));
+        queue.setFetchStatus(WordCrawlerConstants.STATUS_TO_FETCH);
+        queue.setWordName(word.trim());
+        queue.setFetchPriority(100);
+        queue.setIsLock(GlobalConstants.FLAG_YES);
+        wordFetchQueueService.save(queue);
+      }
+      log.info(word + "insert success!");
     }
+    return R.success();
+  }
 
-    @PostMapping("/testEdit")
-    public R testEdit(@RequestBody WordMainDO wordMainDO) {
-        return R.success();
-    }
+  @PostMapping("/testEdit")
+  public R testEdit(@RequestBody WordMainDO wordMainDO) {
+    return R.success();
+  }
 
-    public List<String> readWords() {
-        log.info("=================>this.tmp=" + this.tmp);
-        List<String> wordList = new ArrayList<>();
-        FileInputStream fis = null;
-        InputStreamReader isr = null;
-        BufferedReader br = null; // 用于包装InputStreamReader,提高处理性能。因为BufferedReader有缓冲的，而InputStreamReader没有。
-        try {
-            fis = new FileInputStream(this.tmp + "/vocabulary.txt");// FileInputStream
-            // fis = new FileInputStream("/root/tmp/vocabulary.txt");// FileInputStream
-            // 从文件系统中的某个文件中获取字节
-            isr = new InputStreamReader(fis);// InputStreamReader 是字节流通向字符流的桥梁,
-            br = new BufferedReader(isr);// 从字符输入流中读取文件中的内容,封装了一个new InputStreamReader的对象
-            String line = null;
-            int i = 1;
-            while ((line = br.readLine()) != null) {
-                if (StrUtil.isBlank(line)) {
-                    continue;
-                }
-                wordList.add(line);
-            }
-        } catch (FileNotFoundException e) {
-            System.out.println("找不到指定文件");
-        } catch (IOException e) {
-            System.out.println("读取文件失败");
-        } finally {
-            try {
-                br.close();
-                isr.close();
-                fis.close();
-                // 关闭的时候最好按照先后顺序关闭最后开的先关闭所以先关s,再关n,最后关m
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+  public List<String> readWords() {
+    log.info("=================>this.tmp=" + this.tmp);
+    List<String> wordList = new ArrayList<>();
+    FileInputStream fis = null;
+    InputStreamReader isr = null;
+    BufferedReader br =
+        null; // 用于包装InputStreamReader,提高处理性能。因为BufferedReader有缓冲的，而InputStreamReader没有。
+    try {
+      fis = new FileInputStream(this.tmp + "/vocabulary.txt"); // FileInputStream
+      // fis = new FileInputStream("/root/tmp/vocabulary.txt");// FileInputStream
+      // 从文件系统中的某个文件中获取字节
+      isr = new InputStreamReader(fis); // InputStreamReader 是字节流通向字符流的桥梁,
+      br = new BufferedReader(isr); // 从字符输入流中读取文件中的内容,封装了一个new InputStreamReader的对象
+      String line = null;
+      int i = 1;
+      while ((line = br.readLine()) != null) {
+        if (StrUtil.isBlank(line)) {
+          continue;
         }
-        return wordList;
+        wordList.add(line);
+      }
+    } catch (FileNotFoundException e) {
+      System.out.println("找不到指定文件");
+    } catch (IOException e) {
+      System.out.println("读取文件失败");
+    } finally {
+      try {
+        br.close();
+        isr.close();
+        fis.close();
+        // 关闭的时候最好按照先后顺序关闭最后开的先关闭所以先关s,再关n,最后关m
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
     }
+    return wordList;
+  }
 }

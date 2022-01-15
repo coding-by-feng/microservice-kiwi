@@ -29,11 +29,7 @@ import org.springframework.data.elasticsearch.annotations.FieldType;
 import java.io.Serializable;
 import java.util.List;
 
-/**
- * @Description A view of the word query results
- * @Author zhanshifeng
- * @Date 2019/11/25 10:57 PM
- */
+/** @Description A view of the word query results @Author zhanshifeng @Date 2019/11/25 10:57 PM */
 @Data
 @ToString
 @NoArgsConstructor
@@ -42,15 +38,16 @@ import java.util.List;
 @Document(indexName = "kiwi_vocabulary")
 public class WordQueryVO implements Serializable {
 
-    private static final long serialVersionUID = 6147946943335219267L;
+  private static final long serialVersionUID = 6147946943335219267L;
 
-    @Id
-    private Integer wordId;
-    @Field(type = FieldType.Keyword)
-    private String wordName;
-    private String isCollect;
-    private String isLogin;
-    @Field(type = FieldType.Nested)
-    private List<CharacterVO> characterVOList;
+  @Id private Integer wordId;
 
+  @Field(type = FieldType.Keyword)
+  private String wordName;
+
+  private String isCollect;
+  private String isLogin;
+
+  @Field(type = FieldType.Nested)
+  private List<CharacterVO> characterVOList;
 }

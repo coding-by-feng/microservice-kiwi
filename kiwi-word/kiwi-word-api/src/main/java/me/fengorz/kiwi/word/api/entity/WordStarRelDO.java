@@ -15,14 +15,13 @@
  */
 package me.fengorz.kiwi.word.api.entity;
 
-import java.time.LocalDateTime;
-
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
-
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
+
+import java.time.LocalDateTime;
 
 /**
  * 单词本与单词的关联表
@@ -36,23 +35,16 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public class WordStarRelDO extends Model<WordStarRelDO> {
 
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    /**
-     *
-     */
-    private Integer listId;
-    /**
-     *
-     */
-    private Integer wordId;
-    /**
-     *
-     */
-    private LocalDateTime createTime;
+  /** */
+  private Integer listId;
+  /** */
+  private Integer wordId;
+  /** */
+  private LocalDateTime createTime;
 
-    private Integer isRemember;
+  private Integer isRemember;
 
-    private LocalDateTime rememberTime;
-
+  private LocalDateTime rememberTime;
 }

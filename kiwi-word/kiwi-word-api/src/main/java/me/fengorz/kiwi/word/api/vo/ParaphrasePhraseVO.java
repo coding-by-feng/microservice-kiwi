@@ -22,6 +22,5 @@ import me.fengorz.kiwi.word.api.entity.ParaphrasePhraseDO;
  */
 public class ParaphrasePhraseVO extends ParaphrasePhraseDO {
 
-    private static final long serialVersionUID = 1590934942892L;
-
+  private static final long serialVersionUID = 1590934942892L;
 }

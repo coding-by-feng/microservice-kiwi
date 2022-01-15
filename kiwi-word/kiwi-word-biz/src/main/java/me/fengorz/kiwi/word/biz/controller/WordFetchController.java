@@ -51,100 +51,109 @@ import java.util.List;
 @RequestMapping("/word/fetch")
 public class WordFetchController extends BaseController {
 
-    private final IWordFetchQueueService queueService;
-    private final IOperateService operateService;
-    private final ICrawlerService crawlerService;
-    private final ICleanerService cleanerService;
+  private final IWordFetchQueueService queueService;
+  private final IOperateService operateService;
+  private final ICrawlerService crawlerService;
+  private final ICleanerService cleanerService;
 
-    @GetMapping("/getOne/{queueId}")
-    public R<FetchQueueDO> getOne(@PathVariable Integer queueId) {
-        return R.success(queueService.getOneInUnLock(queueId));
-    }
+  @GetMapping("/getOne/{queueId}")
+  public R<FetchQueueDO> getOne(@PathVariable Integer queueId) {
+    return R.success(queueService.getOneInUnLock(queueId));
+  }
 
-    @GetMapping("/getOneByWordName")
-    public R<FetchQueueDO> getOneByWordName(@RequestParam String wordName) {
-        return R.success(queueService.getOneInUnLock(wordName));
-    }
+  @GetMapping("/getOneByWordName")
+  public R<FetchQueueDO> getOneByWordName(@RequestParam String wordName) {
+    return R.success(queueService.getOneInUnLock(wordName));
+  }
 
-    @GetMapping(value = "/pageQueue/{status}/{current}/{size}/{infoType}")
-    public R<List<FetchQueueDO>> pageQueue(@PathVariable Integer status, @PathVariable Integer current,
-                                           @PathVariable Integer size, @PathVariable Integer infoType) {
-        return R.success(queueService.page2List(status, current, size, GlobalConstants.FLAG_NO, infoType));
-    }
+  @GetMapping(value = "/pageQueue/{status}/{current}/{size}/{infoType}")
+  public R<List<FetchQueueDO>> pageQueue(
+      @PathVariable Integer status,
+      @PathVariable Integer current,
+      @PathVariable Integer size,
+      @PathVariable Integer infoType) {
+    return R.success(
+        queueService.page2List(status, current, size, GlobalConstants.FLAG_NO, infoType));
+  }
 
-    @GetMapping(value = "/pageQueueLockIn/{status}/{current}/{size}/{infoType}")
-    public R<List<FetchQueueDO>> pageQueueLockIn(@PathVariable Integer status, @PathVariable Integer current,
-                                                 @PathVariable Integer size, @PathVariable Integer infoType) {
-        return R.success(queueService.page2List(status, current, size, GlobalConstants.FLAG_YES, infoType));
-    }
+  @GetMapping(value = "/pageQueueLockIn/{status}/{current}/{size}/{infoType}")
+  public R<List<FetchQueueDO>> pageQueueLockIn(
+      @PathVariable Integer status,
+      @PathVariable Integer current,
+      @PathVariable Integer size,
+      @PathVariable Integer infoType) {
+    return R.success(
+        queueService.page2List(status, current, size, GlobalConstants.FLAG_YES, infoType));
+  }
 
-    @GetMapping(value = "/listNotIntoCache")
-    public R<List<FetchQueueDO>> listNotIntoCache() {
-        return R.success(queueService.listNotIntoCache());
-    }
+  @GetMapping(value = "/listNotIntoCache")
+  public R<List<FetchQueueDO>> listNotIntoCache() {
+    return R.success(queueService.listNotIntoCache());
+  }
 
-    /**
-     * 修改单词待抓取列表
-     *
-     * @param wordFetchQueue 单词待抓取列表
-     * @return R
-     */
-    @SysLog("修改单词待抓取列表")
-    @PostMapping("/updateById")
-    public R<Boolean> updateById(@RequestBody FetchQueueDO wordFetchQueue) {
-        return R.success(queueService.updateById(wordFetchQueue));
-    }
+  /**
+   * 修改单词待抓取列表
+   *
+   * @param wordFetchQueue 单词待抓取列表
+   * @return R
+   */
+  @SysLog("修改单词待抓取列表")
+  @PostMapping("/updateById")
+  public R<Boolean> updateById(@RequestBody FetchQueueDO wordFetchQueue) {
+    return R.success(queueService.updateById(wordFetchQueue));
+  }
 
-    @SysLog("修改单词待抓取列表")
-    @PostMapping("/updateByWordName")
-    // @PreAuthorize("@pms.hasPermission('queue_wordfetchqueue_edit')")
-    public R<Boolean> updateByWordName(@RequestBody FetchQueueDO wordFetchQueue) {
-        return R.success(queueService.update(wordFetchQueue,
-                new QueryWrapper<>(new FetchQueueDO().setWordName(wordFetchQueue.getWordName()))));
-    }
+  @SysLog("修改单词待抓取列表")
+  @PostMapping("/updateByWordName")
+  // @PreAuthorize("@pms.hasPermission('queue_wordfetchqueue_edit')")
+  public R<Boolean> updateByWordName(@RequestBody FetchQueueDO wordFetchQueue) {
+    return R.success(
+        queueService.update(
+            wordFetchQueue,
+            new QueryWrapper<>(new FetchQueueDO().setWordName(wordFetchQueue.getWordName()))));
+  }
 
-    @Deprecated
-    @PostMapping("/invalid")
-    // @PreAuthorize("@pms.hasPermission('queue_wordfetchqueue_del')")
-    public R<Boolean> invalid(@RequestParam @NotBlank String wordName) {
-        return R.auto(queueService.invalid(wordName));
-    }
+  @Deprecated
+  @PostMapping("/invalid")
+  // @PreAuthorize("@pms.hasPermission('queue_wordfetchqueue_del')")
+  public R<Boolean> invalid(@RequestParam @NotBlank String wordName) {
+    return R.auto(queueService.invalid(wordName));
+  }
 
-    @Deprecated
-    @PostMapping("/lock")
-    // @PreAuthorize("@pms.hasPermission('queue_wordfetchqueue_del')")
-    public R<Boolean> lock(@RequestParam @NotBlank String wordName) {
-        return R.auto(queueService.lock(wordName));
-    }
+  @Deprecated
+  @PostMapping("/lock")
+  // @PreAuthorize("@pms.hasPermission('queue_wordfetchqueue_del')")
+  public R<Boolean> lock(@RequestParam @NotBlank String wordName) {
+    return R.auto(queueService.lock(wordName));
+  }
 
-    @PostMapping("/storeResult")
-    public R<Boolean> storeResult(@RequestBody @Valid FetchWordResultDTO dto) {
-        return R.success(crawlerService.storeFetchWordResult(dto));
-    }
+  @PostMapping("/storeResult")
+  public R<Boolean> storeResult(@RequestBody @Valid FetchWordResultDTO dto) {
+    return R.success(crawlerService.storeFetchWordResult(dto));
+  }
 
-    @PostMapping("/handlePhrasesFetchResult")
-    public R<Boolean> handlePhrasesFetchResult(@RequestBody @Valid FetchPhraseRunUpResultDTO dto) {
-        return R.success(crawlerService.handlePhrasesFetchResult(dto));
-    }
+  @PostMapping("/handlePhrasesFetchResult")
+  public R<Boolean> handlePhrasesFetchResult(@RequestBody @Valid FetchPhraseRunUpResultDTO dto) {
+    return R.success(crawlerService.handlePhrasesFetchResult(dto));
+  }
 
-    @PostMapping("/storePhrasesFetchResult")
-    public R<Boolean> storePhrasesFetchResult(@RequestBody FetchPhraseResultDTO dto) {
-        return R.success(crawlerService.storePhrasesFetchResult(dto));
-    }
+  @PostMapping("/storePhrasesFetchResult")
+  public R<Boolean> storePhrasesFetchResult(@RequestBody FetchPhraseResultDTO dto) {
+    return R.success(crawlerService.storePhrasesFetchResult(dto));
+  }
 
+  @GetMapping("/fetchPronunciation/{wordId}")
+  public R<Boolean> fetchPronunciation(@PathVariable Integer wordId) {
+    return R.success(crawlerService.fetchPronunciation(wordId));
+  }
 
-    @GetMapping("/fetchPronunciation/{wordId}")
-    public R<Boolean> fetchPronunciation(@PathVariable Integer wordId) {
-        return R.success(crawlerService.fetchPronunciation(wordId));
-    }
+  @GetMapping("/removeWord/{queueId}")
+  public R<List<RemovePronunciatioinMqDTO>> removeWord(@PathVariable Integer queueId) {
+    return R.success(cleanerService.removeWord(queueId));
+  }
 
-    @GetMapping("/removeWord/{queueId}")
-    public R<List<RemovePronunciatioinMqDTO>> removeWord(@PathVariable Integer queueId) {
-        return R.success(cleanerService.removeWord(queueId));
-    }
-
-    @GetMapping("/removePhrase/{queueId}")
-    public R<Boolean> removePhrase(@PathVariable Integer queueId) {
-        return R.success(cleanerService.removePhrase(queueId));
-    }
+  @GetMapping("/removePhrase/{queueId}")
+  public R<Boolean> removePhrase(@PathVariable Integer queueId) {
+    return R.success(cleanerService.removePhrase(queueId));
+  }
 }

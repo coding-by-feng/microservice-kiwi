@@ -23,6 +23,6 @@ import me.fengorz.kiwi.word.api.dto.queue.MqDTO;
 
 public interface IConsumer<T extends MqDTO> {
 
-    default void consume(T dto) {};
-
+  default void consume(T dto) {}
+  ;
 }

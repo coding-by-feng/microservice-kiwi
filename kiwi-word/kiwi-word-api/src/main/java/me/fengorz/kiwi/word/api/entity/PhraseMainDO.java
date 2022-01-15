@@ -27,7 +27,6 @@ import me.fengorz.kiwi.common.api.valid.ValidTypeUpdate;
 
 import javax.validation.constraints.NotNull;
 
-
 /**
  * 词组主表
  *
@@ -41,45 +40,29 @@ import javax.validation.constraints.NotNull;
 @Accessors(chain = true)
 public class PhraseMainDO extends Model<PhraseMainDO> {
 
-    private static final long serialVersionUID = 1602331746772L;
+  private static final long serialVersionUID = 1602331746772L;
 
-    /**
-     *
-     */
-    @TableId
-    @NotNull(groups = {ValidTypeUpdate.class})
-    private Integer phraseId;
+  /** */
+  @TableId
+  @NotNull(groups = {ValidTypeUpdate.class})
+  private Integer phraseId;
 
-    /**
-     *
-     */
-    @NotNull(groups = {ValidTypeInsert.class})
-    private Integer wordId;
+  /** */
+  @NotNull(groups = {ValidTypeInsert.class})
+  private Integer wordId;
 
-    /**
-     * 英文释义
-     */
-    private String paraphraseEnglish;
+  /** 英文释义 */
+  private String paraphraseEnglish;
 
-    /**
-     * 英文释义翻译
-     */
-    private String paraphraseEnglishTranslate;
+  /** 英文释义翻译 */
+  private String paraphraseEnglishTranslate;
 
-    /**
-     * 中文词义
-     */
-    private String meaningChinese;
+  /** 中文词义 */
+  private String meaningChinese;
 
-    /**
-     * 翻译语种
-     */
-    private String translateLanguage;
+  /** 翻译语种 */
+  private String translateLanguage;
 
-    /**
-     * 逻辑删除标记
-     */
-    private Integer isDel;
-
-
+  /** 逻辑删除标记 */
+  private Integer isDel;
 }

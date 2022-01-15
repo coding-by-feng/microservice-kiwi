@@ -33,53 +33,55 @@ import java.util.Optional;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-/**
- * @Description 自定义redis key的生成器
- * @Author zhanshifeng
- * @Date 2020/5/17 11:20 AM
- */
+/** @Description 自定义redis key的生成器 @Author zhanshifeng @Date 2020/5/17 11:20 AM */
 @NoArgsConstructor
 public class CacheKeyGenerator extends SimpleKeyGenerator {
 
-    @Override
-    public Object generate(Object target, Method method, Object... params) {
-        String prefix = null;
+  @Override
+  public Object generate(Object target, Method method, Object... params) {
+    String prefix = null;
 
-        KiwiCacheKeyPrefix classKeyPrefix = target.getClass().getAnnotation(KiwiCacheKeyPrefix.class);
-        if (Objects.nonNull(classKeyPrefix)) {
-            prefix = classKeyPrefix.value() + GlobalConstants.SYMBOL_DELIMITER_STR;
-        }
-
-        KiwiCacheKeyPrefix methodKeyPrefix = method.getAnnotation(KiwiCacheKeyPrefix.class);
-        if (Objects.nonNull(methodKeyPrefix)) {
-            prefix += methodKeyPrefix.value() + GlobalConstants.SYMBOL_DELIMITER_STR;
-        }
-
-        KiwiAssertUtils.serviceEmpty(prefix, "Class[{}], Method[{}]: CacheKeyPrefix cannot be null!", classKeyPrefix,
-                methodKeyPrefix);
-
-        Parameter[] parameters = method.getParameters();
-        if (KiwiArrayUtils.isNotEmpty(parameters)) {
-            SortedMap<Integer, Object> sortedMap = new TreeMap<>();
-            int i = -1;
-            for (Parameter parameter : parameters) {
-                i++;
-                if (i >= params.length || parameter == null) {
-                    continue;
-                }
-                Object param = params[i];
-                Optional.ofNullable(parameter.getAnnotation(KiwiCacheKey.class)).ifPresent(kiwiCacheKey -> {
-                    if (kiwiCacheKey.nullable() || KiwiObjectUtils.isNotEmpty(param)) {
-                        sortedMap.put(kiwiCacheKey.value(), param);
-                    }
-                });
-            }
-
-            if (!sortedMap.isEmpty()) {
-                return prefix.concat(KiwiStringUtils.join(GlobalConstants.SYMBOL_DELIMITER_STR, sortedMap.values()));
-            }
-        }
-
-        return prefix.concat(super.generate(target, method, params).toString());
+    KiwiCacheKeyPrefix classKeyPrefix = target.getClass().getAnnotation(KiwiCacheKeyPrefix.class);
+    if (Objects.nonNull(classKeyPrefix)) {
+      prefix = classKeyPrefix.value() + GlobalConstants.SYMBOL_DELIMITER_STR;
     }
+
+    KiwiCacheKeyPrefix methodKeyPrefix = method.getAnnotation(KiwiCacheKeyPrefix.class);
+    if (Objects.nonNull(methodKeyPrefix)) {
+      prefix += methodKeyPrefix.value() + GlobalConstants.SYMBOL_DELIMITER_STR;
+    }
+
+    KiwiAssertUtils.serviceEmpty(
+        prefix,
+        "Class[{}], Method[{}]: CacheKeyPrefix cannot be null!",
+        classKeyPrefix,
+        methodKeyPrefix);
+
+    Parameter[] parameters = method.getParameters();
+    if (KiwiArrayUtils.isNotEmpty(parameters)) {
+      SortedMap<Integer, Object> sortedMap = new TreeMap<>();
+      int i = -1;
+      for (Parameter parameter : parameters) {
+        i++;
+        if (i >= params.length || parameter == null) {
+          continue;
+        }
+        Object param = params[i];
+        Optional.ofNullable(parameter.getAnnotation(KiwiCacheKey.class))
+            .ifPresent(
+                kiwiCacheKey -> {
+                  if (kiwiCacheKey.nullable() || KiwiObjectUtils.isNotEmpty(param)) {
+                    sortedMap.put(kiwiCacheKey.value(), param);
+                  }
+                });
+      }
+
+      if (!sortedMap.isEmpty()) {
+        return prefix.concat(
+            KiwiStringUtils.join(GlobalConstants.SYMBOL_DELIMITER_STR, sortedMap.values()));
+      }
+    }
+
+    return prefix.concat(super.generate(target, method, params).toString());
+  }
 }

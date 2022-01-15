@@ -40,25 +40,28 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @WebMvcTest(ParaphraseController.class)
 class ParaphraseControllerTest {
 
-    @Autowired
-    private MockMvc mockMvc;
+  @Autowired private MockMvc mockMvc;
 
-    @MockBean
-    private IParaphraseService mockService;
+  @MockBean private IParaphraseService mockService;
 
-    @Test
-    void testModifyMeaningChinese() throws Exception {
-        // Setup
-        when(mockService.modifyMeaningChinese(new ParaphraseRequest())).thenReturn(false);
+  @Test
+  void testModifyMeaningChinese() throws Exception {
+    // Setup
+    when(mockService.modifyMeaningChinese(new ParaphraseRequest())).thenReturn(false);
 
-        // Run the test
-        final MockHttpServletResponse response = mockMvc.perform(post("/word/paraphrase/modifyMeaningChinese")
-                .content("content").contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON))
-                .andReturn().getResponse();
+    // Run the test
+    final MockHttpServletResponse response =
+        mockMvc
+            .perform(
+                post("/word/paraphrase/modifyMeaningChinese")
+                    .content("content")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .accept(MediaType.APPLICATION_JSON))
+            .andReturn()
+            .getResponse();
 
-        // Verify the results
-        assertEquals(HttpStatus.OK.value(), response.getStatus());
-        assertEquals("expectedResponse", response.getContentAsString());
-    }
+    // Verify the results
+    assertEquals(HttpStatus.OK.value(), response.getStatus());
+    assertEquals("expectedResponse", response.getContentAsString());
+  }
 }

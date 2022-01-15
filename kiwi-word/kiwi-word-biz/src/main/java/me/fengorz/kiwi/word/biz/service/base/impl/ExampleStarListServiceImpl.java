@@ -46,57 +46,65 @@ import java.util.List;
  */
 @Service()
 @RequiredArgsConstructor
-public class ExampleStarListServiceImpl extends ServiceImpl<ExampleStarListMapper, ExampleStarListDO>
-        implements IExampleStarListService {
+public class ExampleStarListServiceImpl
+    extends ServiceImpl<ExampleStarListMapper, ExampleStarListDO>
+    implements IExampleStarListService {
 
-    private final ExampleStarListMapper mapper;
-    private final IWordExampleStarRelService relService;
-    private final IAsyncArchiveService archiveService;
+  private final ExampleStarListMapper mapper;
+  private final IWordExampleStarRelService relService;
+  private final IAsyncArchiveService archiveService;
 
-    @Override
-    public Integer countById(Integer id) {
-        return this.count(new QueryWrapper<>(new ExampleStarListDO().setId(id)));
+  @Override
+  public Integer countById(Integer id) {
+    return this.count(new QueryWrapper<>(new ExampleStarListDO().setId(id)));
+  }
+
+  @Override
+  public List<ExampleStarListVO> getCurrentUserList(Integer userId) {
+    QueryWrapper<ExampleStarListDO> queryWrapper =
+        new QueryWrapper<>(
+                new ExampleStarListDO().setOwner(userId).setIsDel(GlobalConstants.FLAG_N))
+            .select(
+                ExampleStarListDO.class,
+                tableFieldInfo ->
+                    WordParaphraseExampleListColumn.ID.equals(tableFieldInfo.getColumn())
+                        || WordParaphraseExampleListColumn.LIST_NAME.equals(
+                            tableFieldInfo.getColumn())
+                        || WordParaphraseExampleListColumn.REMARK.equals(
+                            tableFieldInfo.getColumn()));
+
+    return KiwiBeanUtils.convertFrom(mapper.selectList(queryWrapper), ExampleStarListVO.class);
+  }
+
+  @Override
+  public IPage<ExampleStarItemVO> getListItems(Page page, Integer listId) {
+    return this.mapper.selectListItems(page, listId);
+  }
+
+  @Override
+  @Transactional(rollbackFor = Exception.class)
+  public void putIntoStarList(Integer exampleId, Integer listId) {
+    LambdaQueryWrapper<ExampleStarRelDO> queryWrapper =
+        Wrappers.<ExampleStarRelDO>lambdaQuery()
+            .eq(ExampleStarRelDO::getListId, listId)
+            .eq(ExampleStarRelDO::getExampleId, exampleId);
+    if (relService.count(queryWrapper) > 0) {
+      return;
     }
+    relService.save(new ExampleStarRelDO().setListId(listId).setExampleId(exampleId));
+    archiveService.archiveExampleRel(exampleId, listId, SecurityUtils.getCurrentUserId());
+  }
 
-    @Override
-    public List<ExampleStarListVO> getCurrentUserList(Integer userId) {
-        QueryWrapper<ExampleStarListDO> queryWrapper =
-                new QueryWrapper<>(new ExampleStarListDO().setOwner(userId).setIsDel(GlobalConstants.FLAG_N)).select(
-                        ExampleStarListDO.class,
-                        tableFieldInfo -> WordParaphraseExampleListColumn.ID.equals(tableFieldInfo.getColumn())
-                                || WordParaphraseExampleListColumn.LIST_NAME.equals(tableFieldInfo.getColumn())
-                                || WordParaphraseExampleListColumn.REMARK.equals(tableFieldInfo.getColumn()));
-
-        return KiwiBeanUtils.convertFrom(mapper.selectList(queryWrapper),
-                ExampleStarListVO.class);
-    }
-
-    @Override
-    public IPage<ExampleStarItemVO> getListItems(Page page, Integer listId) {
-        return this.mapper.selectListItems(page, listId);
-    }
-
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public void putIntoStarList(Integer exampleId, Integer listId) {
-        LambdaQueryWrapper<ExampleStarRelDO> queryWrapper = Wrappers.<ExampleStarRelDO>lambdaQuery()
-                .eq(ExampleStarRelDO::getListId, listId).eq(ExampleStarRelDO::getExampleId, exampleId);
-        if (relService.count(queryWrapper) > 0) {
-            return;
-        }
-        relService.save(new ExampleStarRelDO().setListId(listId).setExampleId(exampleId));
-        archiveService.archiveExampleRel(exampleId, listId, SecurityUtils.getCurrentUserId());
-    }
-
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public void removeOneRel(Integer exampleId, Integer listId) {
-        LambdaQueryWrapper<ExampleStarRelDO> queryWrapper = new LambdaQueryWrapper<ExampleStarRelDO>()
-                .eq(ExampleStarRelDO::getListId, listId).eq(ExampleStarRelDO::getExampleId, exampleId);
-        int count = relService.count(queryWrapper);
-        KiwiAssertUtils.serviceNotEmpty(count, "example is not exists!");
-        relService.remove(queryWrapper);
-        archiveService.invalidArchiveExampleRel(exampleId, listId, SecurityUtils.getCurrentUserId());
-    }
-
+  @Override
+  @Transactional(rollbackFor = Exception.class)
+  public void removeOneRel(Integer exampleId, Integer listId) {
+    LambdaQueryWrapper<ExampleStarRelDO> queryWrapper =
+        new LambdaQueryWrapper<ExampleStarRelDO>()
+            .eq(ExampleStarRelDO::getListId, listId)
+            .eq(ExampleStarRelDO::getExampleId, exampleId);
+    int count = relService.count(queryWrapper);
+    KiwiAssertUtils.serviceNotEmpty(count, "example is not exists!");
+    relService.remove(queryWrapper);
+    archiveService.invalidArchiveExampleRel(exampleId, listId, SecurityUtils.getCurrentUserId());
+  }
 }

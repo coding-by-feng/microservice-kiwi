@@ -37,73 +37,67 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/sysrolemenurel")
 public class SysRoleMenuRelController extends BaseController {
 
-    private final SysRoleMenuRelService sysRoleMenuRelService;
+  private final SysRoleMenuRelService sysRoleMenuRelService;
 
-    /**
-     * 分页查询
-     *
-     * @param page
-     *            分页对象
-     * @param sysRoleMenuRel
-     *            角色菜单表
-     * @return
-     */
-    @GetMapping("/page")
-    public R getSysRoleMenuRelPage(Page page, SysRoleMenuRel sysRoleMenuRel) {
-        return R.success(sysRoleMenuRelService.page(page, Wrappers.query(sysRoleMenuRel)));
-    }
+  /**
+   * 分页查询
+   *
+   * @param page 分页对象
+   * @param sysRoleMenuRel 角色菜单表
+   * @return
+   */
+  @GetMapping("/page")
+  public R getSysRoleMenuRelPage(Page page, SysRoleMenuRel sysRoleMenuRel) {
+    return R.success(sysRoleMenuRelService.page(page, Wrappers.query(sysRoleMenuRel)));
+  }
 
-    /**
-     * 通过id查询角色菜单表
-     *
-     * @param roleId
-     *            id
-     * @return R
-     */
-    @GetMapping("/{roleId}")
-    public R getById(@PathVariable("roleId") Integer roleId) {
-        return R.success(sysRoleMenuRelService.getById(roleId));
-    }
+  /**
+   * 通过id查询角色菜单表
+   *
+   * @param roleId id
+   * @return R
+   */
+  @GetMapping("/{roleId}")
+  public R getById(@PathVariable("roleId") Integer roleId) {
+    return R.success(sysRoleMenuRelService.getById(roleId));
+  }
 
-    /**
-     * 新增角色菜单表
-     *
-     * @param sysRoleMenuRel
-     *            角色菜单表
-     * @return R
-     */
-    @SysLog("新增角色菜单表")
-    @PostMapping
-    @PreAuthorize("@pms.hasPermission('admin_sysrolemenurel_add')")
-    public R save(@RequestBody SysRoleMenuRel sysRoleMenuRel) {
-        return R.success(sysRoleMenuRelService.save(sysRoleMenuRel));
-    }
+  /**
+   * 新增角色菜单表
+   *
+   * @param sysRoleMenuRel 角色菜单表
+   * @return R
+   */
+  @SysLog("新增角色菜单表")
+  @PostMapping
+  @PreAuthorize("@pms.hasPermission('admin_sysrolemenurel_add')")
+  public R save(@RequestBody SysRoleMenuRel sysRoleMenuRel) {
+    return R.success(sysRoleMenuRelService.save(sysRoleMenuRel));
+  }
 
-    /**
-     * 修改角色菜单表
-     *
-     * @param sysRoleMenuRel
-     *            角色菜单表
-     * @return R
-     */
-    @SysLog("修改角色菜单表")
-    @PutMapping
-    @PreAuthorize("@pms.hasPermission('admin_sysrolemenurel_edit')")
-    public R updateById(@RequestBody SysRoleMenuRel sysRoleMenuRel) {
-        return R.success(sysRoleMenuRelService.updateById(sysRoleMenuRel));
-    }
+  /**
+   * 修改角色菜单表
+   *
+   * @param sysRoleMenuRel 角色菜单表
+   * @return R
+   */
+  @SysLog("修改角色菜单表")
+  @PutMapping
+  @PreAuthorize("@pms.hasPermission('admin_sysrolemenurel_edit')")
+  public R updateById(@RequestBody SysRoleMenuRel sysRoleMenuRel) {
+    return R.success(sysRoleMenuRelService.updateById(sysRoleMenuRel));
+  }
 
-    /**
-     * 通过id删除角色菜单表
-     *
-     * @param roleId
-     *            id
-     * @return R
-     */
-    @SysLog("通过id删除角色菜单表")
-    @DeleteMapping("/{roleId}")
-    @PreAuthorize("@pms.hasPermission('admin_sysrolemenurel_del')")
-    public R removeById(@PathVariable Integer roleId) {
-        return R.success(sysRoleMenuRelService.removeById(roleId));
-    }
+  /**
+   * 通过id删除角色菜单表
+   *
+   * @param roleId id
+   * @return R
+   */
+  @SysLog("通过id删除角色菜单表")
+  @DeleteMapping("/{roleId}")
+  @PreAuthorize("@pms.hasPermission('admin_sysrolemenurel_del')")
+  public R removeById(@PathVariable Integer roleId) {
+    return R.success(sysRoleMenuRelService.removeById(roleId));
+  }
 }

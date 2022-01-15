@@ -19,11 +19,8 @@
 
 package me.fengorz.kiwi.vocabulary.crawler.constant;
 
-/**
- * @author zhanshifeng
- */
+/** @author zhanshifeng */
 public interface CrawlerSource {
 
-    String get();
-
+  String get();
 }

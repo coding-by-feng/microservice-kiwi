@@ -22,33 +22,26 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 
-/**
- * @Description 抽象控制层基类
- * @Author zhanshifeng
- * @Date 2020/4/21 7:28 PM
- */
+/** @Description 抽象控制层基类 @Author zhanshifeng @Date 2020/4/21 7:28 PM */
 public abstract class BaseController {
 
-    @Autowired
-    protected MessageSource messageSource;
-    @Autowired
-    protected MessageSource propertiesMessageSource;
+  @Autowired protected MessageSource messageSource;
+  @Autowired protected MessageSource propertiesMessageSource;
 
-    /**
-     * 获取当前登录用户
-     *
-     * @return
-     */
-    protected EnhancerUser getCurrentUser() {
-        return SecurityUtils.getCurrentUser();
-    }
+  /**
+   * 获取当前登录用户
+   *
+   * @return
+   */
+  protected EnhancerUser getCurrentUser() {
+    return SecurityUtils.getCurrentUser();
+  }
 
-    protected String getMessage(String code, Object... args) {
-        return this.messageSource.getMessage(code, args, LocaleContextHolder.getLocale());
-    }
+  protected String getMessage(String code, Object... args) {
+    return this.messageSource.getMessage(code, args, LocaleContextHolder.getLocale());
+  }
 
-    protected String getMessageFromProperties(String code, Object... args) {
-        return this.propertiesMessageSource.getMessage(code, args, LocaleContextHolder.getLocale());
-    }
-
+  protected String getMessageFromProperties(String code, Object... args) {
+    return this.propertiesMessageSource.getMessage(code, args, LocaleContextHolder.getLocale());
+  }
 }

@@ -36,9 +36,9 @@
     <select id="listRolesByUserId" resultMap="sysRoleMap">
         select r.*
         from sys_role r left join sys_user_role_rel rr
-         on rr.role_id=r.role_id
+        on rr.role_id=r.role_id
         where
-         r.del_flag=0
-          and rr.user_id in (#{userId})
+        r.del_flag=0
+        and rr.user_id in (#{userId})
     </select>
 </mapper>

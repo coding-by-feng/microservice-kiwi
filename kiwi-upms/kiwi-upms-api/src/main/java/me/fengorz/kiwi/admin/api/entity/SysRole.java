@@ -15,14 +15,13 @@
  */
 package me.fengorz.kiwi.admin.api.entity;
 
-import java.time.LocalDateTime;
-
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
-
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+
+import java.time.LocalDateTime;
 
 /**
  * 系统角色表
@@ -35,36 +34,20 @@ import lombok.EqualsAndHashCode;
 @TableName("sys_role")
 public class SysRole extends Model<SysRole> {
 
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    /**
-     *
-     */
-    @TableId
-    private Integer roleId;
-    /**
-     *
-     */
-    private String roleName;
-    /**
-     *
-     */
-    private String roleCode;
-    /**
-     *
-     */
-    private String roleDesc;
-    /**
-     *
-     */
-    private LocalDateTime createTime;
-    /**
-     *
-     */
-    private LocalDateTime updateTime;
-    /**
-     * 删除标识（0-正常,1-删除）
-     */
-    private String delFlag;
-
+  /** */
+  @TableId private Integer roleId;
+  /** */
+  private String roleName;
+  /** */
+  private String roleCode;
+  /** */
+  private String roleDesc;
+  /** */
+  private LocalDateTime createTime;
+  /** */
+  private LocalDateTime updateTime;
+  /** 删除标识（0-正常,1-删除） */
+  private String delFlag;
 }

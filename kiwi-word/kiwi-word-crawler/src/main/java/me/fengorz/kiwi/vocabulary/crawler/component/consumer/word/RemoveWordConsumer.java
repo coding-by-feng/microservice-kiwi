@@ -33,51 +33,52 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
-/**
- * @Author zhanshifeng
- * @Date 2019/10/28 4:25 PM
- */
+/** @Author zhanshifeng @Date 2019/10/28 4:25 PM */
 @Slf4j
 @Component
 @RequiredArgsConstructor
-@RabbitListener(bindings = @QueueBinding(value = @Queue(value = "${mq.config.wordFromCambridge.removeQueue}", autoDelete = "true"),
-        exchange = @Exchange(value = "${mq.config.wordFromCambridge.exchange}"),
-        key = "${mq.config.wordFromCambridge.removeRouting}"))
-public class RemoveWordConsumer extends AbstractConsumer<RemoveMqDTO> implements IConsumer<RemoveMqDTO> {
+@RabbitListener(
+    bindings =
+        @QueueBinding(
+            value =
+                @Queue(value = "${mq.config.wordFromCambridge.removeQueue}", autoDelete = "true"),
+            exchange = @Exchange(value = "${mq.config.wordFromCambridge.exchange}"),
+            key = "${mq.config.wordFromCambridge.removeRouting}"))
+public class RemoveWordConsumer extends AbstractConsumer<RemoveMqDTO>
+    implements IConsumer<RemoveMqDTO> {
 
-    private final IFetchService fetchService;
+  private final IFetchService fetchService;
 
-    @Resource(name = "removeWordThreadExecutor")
-    private ThreadPoolTaskExecutor removeWordThreadExecutor;
+  @Resource(name = "removeWordThreadExecutor")
+  private ThreadPoolTaskExecutor removeWordThreadExecutor;
 
-    @Value("${crawler.config.max.pool.size}")
-    private int maxPoolSize;
+  @Value("${crawler.config.max.pool.size}")
+  private int maxPoolSize;
 
-    @PostConstruct
-    private void init() {
-        super.taskExecutor = this.removeWordThreadExecutor;
-        super.maxPoolSize = this.maxPoolSize;
-        super.startWorkLog = "rabbitMQ remove one word is 【{}】";
+  @PostConstruct
+  private void init() {
+    super.taskExecutor = this.removeWordThreadExecutor;
+    super.maxPoolSize = this.maxPoolSize;
+    super.startWorkLog = "rabbitMQ remove one word is 【{}】";
+  }
+
+  @Override
+  @RabbitHandler
+  public void consume(RemoveMqDTO dto) {
+    super.work(dto);
+  }
+
+  @Override
+  protected void execute(RemoveMqDTO dto) {
+    try {
+      fetchService.removeWord(dto);
+    } catch (Exception e) {
+      this.errorCallback(dto, e);
     }
+  }
 
-    @Override
-    @RabbitHandler
-    public void consume(RemoveMqDTO dto) {
-        super.work(dto);
-    }
-
-    @Override
-    protected void execute(RemoveMqDTO dto) {
-        try {
-            fetchService.removeWord(dto);
-        } catch (Exception e) {
-            this.errorCallback(dto, e);
-        }
-    }
-
-    @Override
-    protected void errorCallback(RemoveMqDTO dto, Exception e) {
-        log.error("rabbitMQ remove word error 【{}】", e.getMessage());
-    }
-
+  @Override
+  protected void errorCallback(RemoveMqDTO dto, Exception e) {
+    log.error("rabbitMQ remove word error 【{}】", e.getMessage());
+  }
 }

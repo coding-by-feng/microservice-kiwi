@@ -28,43 +28,38 @@ import me.fengorz.kiwi.word.api.feign.IBizAPI;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
-/**
- * @Author zhanshifeng
- * @Date 2020/7/29 2:16 PM
- */
+/** @Author zhanshifeng @Date 2020/7/29 2:16 PM */
 @RequiredArgsConstructor
 public abstract class AbstractScheduler implements IScheduler {
 
-    protected final IBizAPI bizAPI;
-    protected final Object barrier = new Object();
-    protected CountDownLatch countDownLatch;
+  private static final String COUNT_DOWN_LATCH_ERROR = "countDownLatch error!";
+  protected final IBizAPI bizAPI;
+  protected final Object barrier = new Object();
+  protected CountDownLatch countDownLatch;
 
-    protected abstract List<FetchQueueDO> getQueueDO(SchedulerDTO dto);
+  protected abstract List<FetchQueueDO> getQueueDO(SchedulerDTO dto);
 
-    private static final String COUNT_DOWN_LATCH_ERROR = "countDownLatch error!";
-
-    protected void schedule(SchedulerDTO dto) {
-        if (countDownLatch != null && countDownLatch.getCount() > 0) {
-            return;
-        }
-
-        List<FetchQueueDO> list = getQueueDO(dto);
-        if (KiwiCollectionUtils.isEmpty(list)) {
-            return;
-        }
-
-        list.forEach(this::execute);
-        if (countDownLatch == null) {
-            return;
-        }
-
-        try {
-            countDownLatch.await();
-        } catch (InterruptedException e) {
-            throw new SchedulerException(COUNT_DOWN_LATCH_ERROR);
-        }
-
+  protected void schedule(SchedulerDTO dto) {
+    if (countDownLatch != null && countDownLatch.getCount() > 0) {
+      return;
     }
 
-    protected abstract void execute(FetchQueueDO queue);
+    List<FetchQueueDO> list = getQueueDO(dto);
+    if (KiwiCollectionUtils.isEmpty(list)) {
+      return;
+    }
+
+    list.forEach(this::execute);
+    if (countDownLatch == null) {
+      return;
+    }
+
+    try {
+      countDownLatch.await();
+    } catch (InterruptedException e) {
+      throw new SchedulerException(COUNT_DOWN_LATCH_ERROR);
+    }
+  }
+
+  protected abstract void execute(FetchQueueDO queue);
 }

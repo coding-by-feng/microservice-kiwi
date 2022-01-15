@@ -39,182 +39,189 @@ import static org.junit.jupiter.api.Assertions.*;
 @ExtendWith(MockitoExtension.class)
 public class JsoupServiceImplTest {
 
-    private JsoupServiceImpl jsoupServiceImplUnderTest;
+  private JsoupServiceImpl jsoupServiceImplUnderTest;
 
-    @BeforeEach
-    void setUp() {
-        jsoupServiceImplUnderTest = new JsoupServiceImpl();
-    }
+  @BeforeEach
+  void setUp() {
+    jsoupServiceImplUnderTest = new JsoupServiceImpl();
+  }
 
-    @Test
-    void testFetchWordInfo() throws Exception {
-        // Setup
-        final FetchWordMqDTO dto = new FetchWordMqDTO();
-        dto.setWord("transactional");
-        dto.setQueueId(0);
+  @Test
+  void testFetchWordInfo() throws Exception {
+    // Setup
+    final FetchWordMqDTO dto = new FetchWordMqDTO();
+    dto.setWord("transactional");
+    dto.setQueueId(0);
 
-        final FetchWordResultDTO expectedResult = new FetchWordResultDTO();
-        expectedResult.setWordName("wordName");
-        expectedResult.setQueueId(0);
-        final FetchWordCodeDTO fetchWordCodeDTO = new FetchWordCodeDTO();
-        fetchWordCodeDTO.setCharacterCode("characterCode");
-        fetchWordCodeDTO.setTag("tag");
-        final FetchParaphraseDTO fetchParaphraseDTO = new FetchParaphraseDTO();
-        fetchParaphraseDTO.setSerialNumber(0);
-        fetchParaphraseDTO.setCodes("codes");
-        fetchParaphraseDTO.setParaphraseEnglish("paraphraseEnglish");
-        fetchParaphraseDTO.setParaphraseEnglishTranslate("paraphraseEnglishTranslate");
-        fetchParaphraseDTO.setMeaningChinese("meaningChinese");
-        fetchParaphraseDTO.setTranslateLanguage("translateLanguage");
-        final FetchParaphraseExampleDTO fetchParaphraseExampleDTO = new FetchParaphraseExampleDTO();
-        fetchParaphraseExampleDTO.setExampleSentence("exampleSentence");
-        fetchParaphraseExampleDTO.setExampleTranslate("exampleTranslate");
-        fetchParaphraseExampleDTO.setTranslateLanguage("translateLanguage");
-        fetchParaphraseExampleDTO.setSerialNumber(0);
-        fetchParaphraseDTO.setExampleDTOList(Collections.singletonList(fetchParaphraseExampleDTO));
-        final FetchPhraseDTO fetchPhraseDTO = new FetchPhraseDTO();
-        fetchPhraseDTO.setPhrase("phrase");
-        fetchParaphraseDTO.setPhraseDTOList(Collections.singletonList(fetchPhraseDTO));
-        fetchWordCodeDTO.setFetchParaphraseDTOList(Collections.singletonList(fetchParaphraseDTO));
-        final FetchWordPronunciationDTO fetchWordPronunciationDTO = new FetchWordPronunciationDTO();
-        fetchWordPronunciationDTO.setSoundmark("soundmark");
-        fetchWordPronunciationDTO.setSoundmarkType("soundmarkType");
-        fetchWordPronunciationDTO.setVoiceFileUrl("voiceFileUrl");
-        fetchWordCodeDTO.setFetchWordPronunciationDTOList(Collections.singletonList(fetchWordPronunciationDTO));
-        expectedResult.setFetchWordCodeDTOList(Collections.singletonList(fetchWordCodeDTO));
+    final FetchWordResultDTO expectedResult = new FetchWordResultDTO();
+    expectedResult.setWordName("wordName");
+    expectedResult.setQueueId(0);
+    final FetchWordCodeDTO fetchWordCodeDTO = new FetchWordCodeDTO();
+    fetchWordCodeDTO.setCharacterCode("characterCode");
+    fetchWordCodeDTO.setTag("tag");
+    final FetchParaphraseDTO fetchParaphraseDTO = new FetchParaphraseDTO();
+    fetchParaphraseDTO.setSerialNumber(0);
+    fetchParaphraseDTO.setCodes("codes");
+    fetchParaphraseDTO.setParaphraseEnglish("paraphraseEnglish");
+    fetchParaphraseDTO.setParaphraseEnglishTranslate("paraphraseEnglishTranslate");
+    fetchParaphraseDTO.setMeaningChinese("meaningChinese");
+    fetchParaphraseDTO.setTranslateLanguage("translateLanguage");
+    final FetchParaphraseExampleDTO fetchParaphraseExampleDTO = new FetchParaphraseExampleDTO();
+    fetchParaphraseExampleDTO.setExampleSentence("exampleSentence");
+    fetchParaphraseExampleDTO.setExampleTranslate("exampleTranslate");
+    fetchParaphraseExampleDTO.setTranslateLanguage("translateLanguage");
+    fetchParaphraseExampleDTO.setSerialNumber(0);
+    fetchParaphraseDTO.setExampleDTOList(Collections.singletonList(fetchParaphraseExampleDTO));
+    final FetchPhraseDTO fetchPhraseDTO = new FetchPhraseDTO();
+    fetchPhraseDTO.setPhrase("phrase");
+    fetchParaphraseDTO.setPhraseDTOList(Collections.singletonList(fetchPhraseDTO));
+    fetchWordCodeDTO.setFetchParaphraseDTOList(Collections.singletonList(fetchParaphraseDTO));
+    final FetchWordPronunciationDTO fetchWordPronunciationDTO = new FetchWordPronunciationDTO();
+    fetchWordPronunciationDTO.setSoundmark("soundmark");
+    fetchWordPronunciationDTO.setSoundmarkType("soundmarkType");
+    fetchWordPronunciationDTO.setVoiceFileUrl("voiceFileUrl");
+    fetchWordCodeDTO.setFetchWordPronunciationDTOList(
+        Collections.singletonList(fetchWordPronunciationDTO));
+    expectedResult.setFetchWordCodeDTOList(Collections.singletonList(fetchWordCodeDTO));
 
-        // Run the test
-        final FetchWordResultDTO result = jsoupServiceImplUnderTest.fetchWordInfo(dto);
+    // Run the test
+    final FetchWordResultDTO result = jsoupServiceImplUnderTest.fetchWordInfo(dto);
 
-        // Verify the results
-        assertNotEquals(expectedResult, result);
-    }
+    // Verify the results
+    assertNotEquals(expectedResult, result);
+  }
 
-    @Test
-    void testFetchWordInfo_ThrowsJsoupFetchResultException() {
-        // Setup
-        final FetchWordMqDTO dto = new FetchWordMqDTO();
-        dto.setWord("word");
-        dto.setQueueId(0);
+  @Test
+  void testFetchWordInfo_ThrowsJsoupFetchResultException() {
+    // Setup
+    final FetchWordMqDTO dto = new FetchWordMqDTO();
+    dto.setWord("word");
+    dto.setQueueId(0);
 
-        // Run the test
-        assertThrows(JsoupFetchResultException.class, () -> jsoupServiceImplUnderTest.fetchWordInfo(dto));
-    }
+    // Run the test
+    assertThrows(
+        JsoupFetchResultException.class, () -> jsoupServiceImplUnderTest.fetchWordInfo(dto));
+  }
 
-    @Test
-    void testFetchWordInfo_ThrowsJsoupFetchConnectException() {
-        // Setup
-        final FetchWordMqDTO dto = new FetchWordMqDTO();
-        dto.setWord("word");
-        dto.setQueueId(0);
+  @Test
+  void testFetchWordInfo_ThrowsJsoupFetchConnectException() {
+    // Setup
+    final FetchWordMqDTO dto = new FetchWordMqDTO();
+    dto.setWord("word");
+    dto.setQueueId(0);
 
-        // Run the test
-        assertThrows(JsoupFetchConnectException.class, () -> jsoupServiceImplUnderTest.fetchWordInfo(dto));
-    }
+    // Run the test
+    assertThrows(
+        JsoupFetchConnectException.class, () -> jsoupServiceImplUnderTest.fetchWordInfo(dto));
+  }
 
-    @Test
-    void testFetchWordInfo_ThrowsJsoupFetchPronunciationException() {
-        // Setup
-        final FetchWordMqDTO dto = new FetchWordMqDTO();
-        dto.setWord("word");
-        dto.setQueueId(0);
+  @Test
+  void testFetchWordInfo_ThrowsJsoupFetchPronunciationException() {
+    // Setup
+    final FetchWordMqDTO dto = new FetchWordMqDTO();
+    dto.setWord("word");
+    dto.setQueueId(0);
 
-        // Run the test
-        assertThrows(JsoupFetchPronunciationException.class, () -> jsoupServiceImplUnderTest.fetchWordInfo(dto));
-    }
+    // Run the test
+    assertThrows(
+        JsoupFetchPronunciationException.class, () -> jsoupServiceImplUnderTest.fetchWordInfo(dto));
+  }
 
-    @Test
-    void testFetchPhraseRunUp() throws Exception {
-        // Setup
-        final FetchPhraseRunUpMqDTO dto = new FetchPhraseRunUpMqDTO();
-        dto.setWord("word");
-        dto.setWordId(0);
-        dto.setQueueId(0);
+  @Test
+  void testFetchPhraseRunUp() throws Exception {
+    // Setup
+    final FetchPhraseRunUpMqDTO dto = new FetchPhraseRunUpMqDTO();
+    dto.setWord("word");
+    dto.setWordId(0);
+    dto.setQueueId(0);
 
-        final FetchPhraseRunUpResultDTO expectedResult = new FetchPhraseRunUpResultDTO();
-        expectedResult.setWord("word");
-        expectedResult.setWordId(0);
-        expectedResult.setRelatedWords(new HashSet<>(Collections.singletonList("value")));
-        expectedResult.setPhrases(new HashSet<>(Collections.singletonList("value")));
+    final FetchPhraseRunUpResultDTO expectedResult = new FetchPhraseRunUpResultDTO();
+    expectedResult.setWord("word");
+    expectedResult.setWordId(0);
+    expectedResult.setRelatedWords(new HashSet<>(Collections.singletonList("value")));
+    expectedResult.setPhrases(new HashSet<>(Collections.singletonList("value")));
 
-        // Run the test
-        final FetchPhraseRunUpResultDTO result = jsoupServiceImplUnderTest.fetchPhraseRunUp(dto);
+    // Run the test
+    final FetchPhraseRunUpResultDTO result = jsoupServiceImplUnderTest.fetchPhraseRunUp(dto);
 
-        // Verify the results
-        assertEquals(expectedResult, result);
-    }
+    // Verify the results
+    assertEquals(expectedResult, result);
+  }
 
-    @Test
-    void testFetchPhraseRunUp_ThrowsJsoupFetchConnectException() {
-        // Setup
-        final FetchPhraseRunUpMqDTO dto = new FetchPhraseRunUpMqDTO();
-        dto.setWord("word");
-        dto.setWordId(0);
-        dto.setQueueId(0);
+  @Test
+  void testFetchPhraseRunUp_ThrowsJsoupFetchConnectException() {
+    // Setup
+    final FetchPhraseRunUpMqDTO dto = new FetchPhraseRunUpMqDTO();
+    dto.setWord("word");
+    dto.setWordId(0);
+    dto.setQueueId(0);
 
-        // Run the test
-        assertThrows(JsoupFetchConnectException.class, () -> jsoupServiceImplUnderTest.fetchPhraseRunUp(dto));
-    }
+    // Run the test
+    assertThrows(
+        JsoupFetchConnectException.class, () -> jsoupServiceImplUnderTest.fetchPhraseRunUp(dto));
+  }
 
-    @Test
-    void testFetchPhraseInfo() throws Exception {
-        // Setup
-        final FetchPhraseMqDTO dto = new FetchPhraseMqDTO();
-        dto.setPhrase("phrase");
-        dto.setDerivation("derivation");
-        dto.setQueueId(0);
+  @Test
+  void testFetchPhraseInfo() throws Exception {
+    // Setup
+    final FetchPhraseMqDTO dto = new FetchPhraseMqDTO();
+    dto.setPhrase("phrase");
+    dto.setDerivation("derivation");
+    dto.setQueueId(0);
 
-        final FetchPhraseResultDTO expectedResult = new FetchPhraseResultDTO();
-        expectedResult.setPhrase("phrase");
-        expectedResult.setDerivation("derivation");
-        expectedResult.setQueueId(0);
-        expectedResult.setRelatedWords(new HashSet<>(Collections.singletonList("value")));
-        final FetchParaphraseDTO fetchParaphraseDTO = new FetchParaphraseDTO();
-        fetchParaphraseDTO.setSerialNumber(0);
-        fetchParaphraseDTO.setCodes("codes");
-        fetchParaphraseDTO.setParaphraseEnglish("paraphraseEnglish");
-        fetchParaphraseDTO.setParaphraseEnglishTranslate("paraphraseEnglishTranslate");
-        fetchParaphraseDTO.setMeaningChinese("meaningChinese");
-        fetchParaphraseDTO.setTranslateLanguage("translateLanguage");
-        final FetchParaphraseExampleDTO fetchParaphraseExampleDTO = new FetchParaphraseExampleDTO();
-        fetchParaphraseExampleDTO.setExampleSentence("exampleSentence");
-        fetchParaphraseExampleDTO.setExampleTranslate("exampleTranslate");
-        fetchParaphraseExampleDTO.setTranslateLanguage("translateLanguage");
-        fetchParaphraseExampleDTO.setSerialNumber(0);
-        fetchParaphraseDTO.setExampleDTOList(Collections.singletonList(fetchParaphraseExampleDTO));
-        final FetchPhraseDTO fetchPhraseDTO = new FetchPhraseDTO();
-        fetchPhraseDTO.setPhrase("phrase");
-        fetchParaphraseDTO.setPhraseDTOList(Collections.singletonList(fetchPhraseDTO));
-        expectedResult.setFetchParaphraseDTOList(Collections.singletonList(fetchParaphraseDTO));
+    final FetchPhraseResultDTO expectedResult = new FetchPhraseResultDTO();
+    expectedResult.setPhrase("phrase");
+    expectedResult.setDerivation("derivation");
+    expectedResult.setQueueId(0);
+    expectedResult.setRelatedWords(new HashSet<>(Collections.singletonList("value")));
+    final FetchParaphraseDTO fetchParaphraseDTO = new FetchParaphraseDTO();
+    fetchParaphraseDTO.setSerialNumber(0);
+    fetchParaphraseDTO.setCodes("codes");
+    fetchParaphraseDTO.setParaphraseEnglish("paraphraseEnglish");
+    fetchParaphraseDTO.setParaphraseEnglishTranslate("paraphraseEnglishTranslate");
+    fetchParaphraseDTO.setMeaningChinese("meaningChinese");
+    fetchParaphraseDTO.setTranslateLanguage("translateLanguage");
+    final FetchParaphraseExampleDTO fetchParaphraseExampleDTO = new FetchParaphraseExampleDTO();
+    fetchParaphraseExampleDTO.setExampleSentence("exampleSentence");
+    fetchParaphraseExampleDTO.setExampleTranslate("exampleTranslate");
+    fetchParaphraseExampleDTO.setTranslateLanguage("translateLanguage");
+    fetchParaphraseExampleDTO.setSerialNumber(0);
+    fetchParaphraseDTO.setExampleDTOList(Collections.singletonList(fetchParaphraseExampleDTO));
+    final FetchPhraseDTO fetchPhraseDTO = new FetchPhraseDTO();
+    fetchPhraseDTO.setPhrase("phrase");
+    fetchParaphraseDTO.setPhraseDTOList(Collections.singletonList(fetchPhraseDTO));
+    expectedResult.setFetchParaphraseDTOList(Collections.singletonList(fetchParaphraseDTO));
 
-        // Run the test
-        final FetchPhraseResultDTO result = jsoupServiceImplUnderTest.fetchPhraseInfo(dto);
+    // Run the test
+    final FetchPhraseResultDTO result = jsoupServiceImplUnderTest.fetchPhraseInfo(dto);
 
-        // Verify the results
-        assertEquals(expectedResult, result);
-    }
+    // Verify the results
+    assertEquals(expectedResult, result);
+  }
 
-    @Test
-    void testFetchPhraseInfo_ThrowsJsoupFetchConnectException() {
-        // Setup
-        final FetchPhraseMqDTO dto = new FetchPhraseMqDTO();
-        dto.setPhrase("phrase");
-        dto.setDerivation("derivation");
-        dto.setQueueId(0);
+  @Test
+  void testFetchPhraseInfo_ThrowsJsoupFetchConnectException() {
+    // Setup
+    final FetchPhraseMqDTO dto = new FetchPhraseMqDTO();
+    dto.setPhrase("phrase");
+    dto.setDerivation("derivation");
+    dto.setQueueId(0);
 
-        // Run the test
-        assertThrows(JsoupFetchConnectException.class, () -> jsoupServiceImplUnderTest.fetchPhraseInfo(dto));
-    }
+    // Run the test
+    assertThrows(
+        JsoupFetchConnectException.class, () -> jsoupServiceImplUnderTest.fetchPhraseInfo(dto));
+  }
 
-    @Test
-    void testFetchPhraseInfo_ThrowsJsoupFetchResultException() {
-        // Setup
-        final FetchPhraseMqDTO dto = new FetchPhraseMqDTO();
-        dto.setPhrase("phrase");
-        dto.setDerivation("derivation");
-        dto.setQueueId(0);
+  @Test
+  void testFetchPhraseInfo_ThrowsJsoupFetchResultException() {
+    // Setup
+    final FetchPhraseMqDTO dto = new FetchPhraseMqDTO();
+    dto.setPhrase("phrase");
+    dto.setDerivation("derivation");
+    dto.setQueueId(0);
 
-        // Run the test
-        assertThrows(JsoupFetchResultException.class, () -> jsoupServiceImplUnderTest.fetchPhraseInfo(dto));
-    }
+    // Run the test
+    assertThrows(
+        JsoupFetchResultException.class, () -> jsoupServiceImplUnderTest.fetchPhraseInfo(dto));
+  }
 }

@@ -55,98 +55,107 @@ import java.util.List;
 @Service()
 @RequiredArgsConstructor
 public class WordStarListServiceImpl extends ServiceImpl<WordStarListMapper, WordStarListDO>
-        implements IWordStarListService {
+    implements IWordStarListService {
 
-    private final WordStarListMapper wordStarListMapper;
-    private final IWordStarRelService relService;
-    private final IAsyncArchiveService archiveService;
+  private final WordStarListMapper wordStarListMapper;
+  private final IWordStarRelService relService;
+  private final IAsyncArchiveService archiveService;
 
-    @Override
-    public Integer countById(Integer id) {
-        return this.count(new QueryWrapper<>(new WordStarListDO().setId(id).setIsDel(GlobalConstants.FLAG_N)));
-    }
+  @Override
+  public Integer countById(Integer id) {
+    return this.count(
+        new QueryWrapper<>(new WordStarListDO().setId(id).setIsDel(GlobalConstants.FLAG_N)));
+  }
 
-    @Override
-    public List<WordStarListVO> getCurrentUserList(Integer userId) {
-        QueryWrapper<WordStarListDO> queryWrapper =
-                new QueryWrapper<>(new WordStarListDO().setOwner(userId).setIsDel(GlobalConstants.FLAG_N))
-                        .select(WordStarListDO.class, tableFieldInfo -> WordStarListColumn.ID.equals(tableFieldInfo.getColumn())
-                                || WordStarListColumn.LIST_NAME.equals(tableFieldInfo.getColumn()));
+  @Override
+  public List<WordStarListVO> getCurrentUserList(Integer userId) {
+    QueryWrapper<WordStarListDO> queryWrapper =
+        new QueryWrapper<>(new WordStarListDO().setOwner(userId).setIsDel(GlobalConstants.FLAG_N))
+            .select(
+                WordStarListDO.class,
+                tableFieldInfo ->
+                    WordStarListColumn.ID.equals(tableFieldInfo.getColumn())
+                        || WordStarListColumn.LIST_NAME.equals(tableFieldInfo.getColumn()));
 
-        return KiwiBeanUtils.convertFrom(wordStarListMapper.selectList(queryWrapper), WordStarListVO.class);
-    }
+    return KiwiBeanUtils.convertFrom(
+        wordStarListMapper.selectList(queryWrapper), WordStarListVO.class);
+  }
 
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public boolean updateListByUser(WordStarListDO entity, Integer id, Integer userId) {
-        UpdateWrapper<WordStarListDO> updateWrapper =
-                new UpdateWrapper<>(new WordStarListDO().setOwner(userId).setId(id));
-        return this.update(entity, updateWrapper);
-    }
+  @Override
+  @Transactional(rollbackFor = Exception.class)
+  public boolean updateListByUser(WordStarListDO entity, Integer id, Integer userId) {
+    UpdateWrapper<WordStarListDO> updateWrapper =
+        new UpdateWrapper<>(new WordStarListDO().setOwner(userId).setId(id));
+    return this.update(entity, updateWrapper);
+  }
 
-    @Override
-    public IPage<WordStarItemVO> getListItems(Page page, Integer listId) {
-        IPage iPage = wordStarListMapper.selectListItems(page, listId);
-        if (iPage.getSize() > 0) {
-            List<WordStarItemVO> voList = new ArrayList<>();
-            for (Object record : iPage.getRecords()) {
-                SelectWordStarListResultDTO resultDTO = (SelectWordStarListResultDTO) record;
-                WordStarItemVO wordStarItemVO = new WordStarItemVO();
-                wordStarItemVO.setWordName(resultDTO.getWordName());
-                wordStarItemVO.setWordId(resultDTO.getWordId());
-                String paraphrases = resultDTO.getParaphrases();
-                if (StrUtil.isNotBlank(paraphrases)) {
-                    List<WordStarItemParaphraseVO> paraphraseVOList = new ArrayList<>();
-                    String[] paraphraseArr = paraphrases.split("##");
-                    for (String paraphrase : paraphraseArr) {
-                        String[] paraphraseItem = paraphrase.split("\\|\\|");
-                        WordStarItemParaphraseVO paraphraseVO = new WordStarItemParaphraseVO();
-                        if (StrUtil.isNotBlank(paraphraseItem[0])) {
-                            paraphraseVO.setParaphraseEnglish(paraphraseItem[0]);
-                            if (paraphraseItem.length > 1) {
-                                paraphraseVO.setMeaningChinese(paraphraseItem[1]);
-                            }
-                        }
-                        paraphraseVOList.add(paraphraseVO);
-                    }
-                    wordStarItemVO.setParahpraseList(paraphraseVOList);
-                }
-                voList.add(wordStarItemVO);
+  @Override
+  public IPage<WordStarItemVO> getListItems(Page page, Integer listId) {
+    IPage iPage = wordStarListMapper.selectListItems(page, listId);
+    if (iPage.getSize() > 0) {
+      List<WordStarItemVO> voList = new ArrayList<>();
+      for (Object record : iPage.getRecords()) {
+        SelectWordStarListResultDTO resultDTO = (SelectWordStarListResultDTO) record;
+        WordStarItemVO wordStarItemVO = new WordStarItemVO();
+        wordStarItemVO.setWordName(resultDTO.getWordName());
+        wordStarItemVO.setWordId(resultDTO.getWordId());
+        String paraphrases = resultDTO.getParaphrases();
+        if (StrUtil.isNotBlank(paraphrases)) {
+          List<WordStarItemParaphraseVO> paraphraseVOList = new ArrayList<>();
+          String[] paraphraseArr = paraphrases.split("##");
+          for (String paraphrase : paraphraseArr) {
+            String[] paraphraseItem = paraphrase.split("\\|\\|");
+            WordStarItemParaphraseVO paraphraseVO = new WordStarItemParaphraseVO();
+            if (StrUtil.isNotBlank(paraphraseItem[0])) {
+              paraphraseVO.setParaphraseEnglish(paraphraseItem[0]);
+              if (paraphraseItem.length > 1) {
+                paraphraseVO.setMeaningChinese(paraphraseItem[1]);
+              }
             }
-            iPage.setRecords(voList);
+            paraphraseVOList.add(paraphraseVO);
+          }
+          wordStarItemVO.setParahpraseList(paraphraseVOList);
         }
-        return iPage;
+        voList.add(wordStarItemVO);
+      }
+      iPage.setRecords(voList);
     }
+    return iPage;
+  }
 
-    @Override
-    public boolean countWordIsCollect(Integer wordId, Integer owner) {
-        Integer count =
-                wordStarListMapper.countWordIsCollect(new CountEntityIsCollectDTO().setEntityId(wordId).setOwner(owner));
-        return count > 0;
+  @Override
+  public boolean countWordIsCollect(Integer wordId, Integer owner) {
+    Integer count =
+        wordStarListMapper.countWordIsCollect(
+            new CountEntityIsCollectDTO().setEntityId(wordId).setOwner(owner));
+    return count > 0;
+  }
+
+  @Override
+  @Transactional(rollbackFor = Exception.class)
+  public void putIntoStarList(Integer wordId, Integer listId) {
+    LambdaQueryWrapper<WordStarRelDO> queryWrapper =
+        Wrappers.<WordStarRelDO>lambdaQuery()
+            .eq(WordStarRelDO::getListId, listId)
+            .eq(WordStarRelDO::getWordId, wordId);
+    if (relService.count(queryWrapper) > 0) {
+      return;
     }
+    relService.save(new WordStarRelDO().setListId(listId).setWordId(wordId));
 
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public void putIntoStarList(Integer wordId, Integer listId) {
-        LambdaQueryWrapper<WordStarRelDO> queryWrapper = Wrappers.<WordStarRelDO>lambdaQuery()
-                .eq(WordStarRelDO::getListId, listId).eq(WordStarRelDO::getWordId, wordId);
-        if (relService.count(queryWrapper) > 0) {
-            return;
-        }
-        relService.save(new WordStarRelDO().setListId(listId).setWordId(wordId));
+    archiveService.archiveWordRel(wordId, listId, SecurityUtils.getCurrentUserId());
+  }
 
-        archiveService.archiveWordRel(wordId, listId, SecurityUtils.getCurrentUserId());
-    }
+  @Override
+  @Transactional(rollbackFor = Exception.class)
+  public void removeStarList(Integer wordId, Integer listId) {
+    LambdaQueryWrapper<WordStarRelDO> queryWrapper =
+        new LambdaQueryWrapper<WordStarRelDO>()
+            .eq(WordStarRelDO::getListId, listId)
+            .eq(WordStarRelDO::getWordId, wordId);
+    KiwiAssertUtils.serviceNotEmpty(relService.count(queryWrapper), "wordStar is not exists!");
+    relService.remove(queryWrapper);
 
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public void removeStarList(Integer wordId, Integer listId) {
-        LambdaQueryWrapper<WordStarRelDO> queryWrapper = new LambdaQueryWrapper<WordStarRelDO>()
-                .eq(WordStarRelDO::getListId, listId).eq(WordStarRelDO::getWordId, wordId);
-        KiwiAssertUtils.serviceNotEmpty(relService.count(queryWrapper), "wordStar is not exists!");
-        relService.remove(queryWrapper);
-
-        archiveService.invalidArchiveWordRel(wordId, listId, SecurityUtils.getCurrentUserId());
-    }
-
+    archiveService.invalidArchiveWordRel(wordId, listId, SecurityUtils.getCurrentUserId());
+  }
 }

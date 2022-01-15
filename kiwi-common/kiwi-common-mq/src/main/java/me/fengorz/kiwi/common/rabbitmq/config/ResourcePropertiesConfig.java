@@ -25,10 +25,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Configuration;
 
-/**
- * @Author zhanshifeng
- * @Date 2019-09-07 14:42
- */
+/** @Author zhanshifeng @Date 2019-09-07 14:42 */
 @Data
 @Configuration
 @RefreshScope
@@ -36,9 +33,8 @@ import org.springframework.context.annotation.Configuration;
 @ConfigurationProperties(prefix = "spring.rabbitmq")
 public class ResourcePropertiesConfig {
 
-    private String host;
-    private Integer port;
-    private String username;
-    private String password;
-
+  private String host;
+  private Integer port;
+  private String username;
+  private String password;
 }

@@ -16,6 +16,7 @@
 
 package me.fengorz.kiwi.auth.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -25,35 +26,36 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 
-import lombok.extern.slf4j.Slf4j;
-
-/**
- * @Author zhanshifeng
- * @Date 2019-09-20 10:24
- */
+/** @Author zhanshifeng @Date 2019-09-20 10:24 */
 @Slf4j
 @Primary
 @Order(90)
 @Configuration
 public class WebSecurityConfigurer extends WebSecurityConfigurerAdapter {
 
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        http.authorizeRequests().antMatchers("/oauth/token/**").permitAll().antMatchers("/kiwiTokenEndpoint/**")
-            .permitAll().anyRequest().authenticated()
-            // .anyRequest().permitAll()
-            .and().csrf().disable();
-    }
+  @Override
+  protected void configure(HttpSecurity http) throws Exception {
+    http.authorizeRequests()
+        .antMatchers("/oauth/token/**")
+        .permitAll()
+        .antMatchers("/kiwiTokenEndpoint/**")
+        .permitAll()
+        .anyRequest()
+        .authenticated()
+        // .anyRequest().permitAll()
+        .and()
+        .csrf()
+        .disable();
+  }
 
-    @Override
-    public void configure(WebSecurity web) throws Exception {
-        web.debug(true);
-    }
+  @Override
+  public void configure(WebSecurity web) throws Exception {
+    web.debug(true);
+  }
 
-    @Override
-    @Bean
-    public AuthenticationManager authenticationManagerBean() throws Exception {
-        return super.authenticationManagerBean();
-    }
-
+  @Override
+  @Bean
+  public AuthenticationManager authenticationManagerBean() throws Exception {
+    return super.authenticationManagerBean();
+  }
 }

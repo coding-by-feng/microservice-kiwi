@@ -22,10 +22,7 @@ import org.springframework.context.annotation.EnableMBeanExport;
 import org.springframework.context.annotation.Import;
 import org.springframework.jmx.support.RegistrationPolicy;
 
-/**
-* @Author zhanshifeng
- * @Date 2019/11/4 10:51 AM
- */
+/** @Author zhanshifeng @Date 2019/11/4 10:51 AM */
 @Configuration
 // @ComponentScan("me.fengorz.kiwi.common.fastdfs.service")
 @Import(FdfsClientConfig.class)

@@ -36,79 +36,92 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
-/**
- * 爬虫异常重启-消息队列生产者
- *
- * @Author zhanshifeng
- * @Date 2019/10/30 10:33 AM
- */
+/** 爬虫异常重启-消息队列生产者 @Author zhanshifeng @Date 2019/10/30 10:33 AM */
 @Component
 @Slf4j
 public class ErrorResumeProducer extends AbstractProducer implements IProducer {
 
-    public ErrorResumeProducer(IBizAPI bizAPI, ISender sender) {
-        super(bizAPI, sender);
-        this.infoType = WordCrawlerConstants.QUEUE_INFO_TYPE_WORD;
-    }
+  public ErrorResumeProducer(IBizAPI bizAPI, ISender sender) {
+    super(bizAPI, sender);
+    this.infoType = WordCrawlerConstants.QUEUE_INFO_TYPE_WORD;
+  }
 
-    @Override
-    public void produce() {
-        resumeDelPronunciationError();
-        resumeOverlap();
-    }
+  @Override
+  public void produce() {
+    resumeDelPronunciationError();
+    resumeOverlap();
+  }
 
-    private void resumeDelPronunciationError() {
-        List<FetchQueueDO> list = new ArrayList<>();
-        synchronized (barrier) {
-            List<FetchQueueDO> delPronunciationFailList = (bizAPI.pageQueue(WordCrawlerConstants.STATUS_DEL_PRONUNCIATION_FAIL, 0, 20, WordCrawlerConstants.QUEUE_INFO_TYPE_WORD)).getData();
-            if (KiwiCollectionUtils.isNotEmpty(delPronunciationFailList)) {
-                list.addAll(delPronunciationFailList);
-            }
-            List<FetchQueueDO> delBaseFailList = (bizAPI.pageQueue(WordCrawlerConstants.STATUS_DEL_BASE_FAIL, 0, 20, WordCrawlerConstants.QUEUE_INFO_TYPE_WORD)).getData();
-            if (KiwiCollectionUtils.isNotEmpty(delBaseFailList)) {
-                list.addAll(delBaseFailList);
-            }
-        }
-        if (KiwiCollectionUtils.isEmpty(list)) {
-            return;
-        }
-        synchronized (barrier) {
-            list.forEach(queue -> {
-                queue.setWordId(0);
-                this.execute(queue);
-            });
-        }
+  private void resumeDelPronunciationError() {
+    List<FetchQueueDO> list = new ArrayList<>();
+    synchronized (barrier) {
+      List<FetchQueueDO> delPronunciationFailList =
+          (bizAPI.pageQueue(
+                  WordCrawlerConstants.STATUS_DEL_PRONUNCIATION_FAIL,
+                  0,
+                  20,
+                  WordCrawlerConstants.QUEUE_INFO_TYPE_WORD))
+              .getData();
+      if (KiwiCollectionUtils.isNotEmpty(delPronunciationFailList)) {
+        list.addAll(delPronunciationFailList);
+      }
+      List<FetchQueueDO> delBaseFailList =
+          (bizAPI.pageQueue(
+                  WordCrawlerConstants.STATUS_DEL_BASE_FAIL,
+                  0,
+                  20,
+                  WordCrawlerConstants.QUEUE_INFO_TYPE_WORD))
+              .getData();
+      if (KiwiCollectionUtils.isNotEmpty(delBaseFailList)) {
+        list.addAll(delBaseFailList);
+      }
     }
+    if (KiwiCollectionUtils.isEmpty(list)) {
+      return;
+    }
+    synchronized (barrier) {
+      list.forEach(
+          queue -> {
+            queue.setWordId(0);
+            this.execute(queue);
+          });
+    }
+  }
 
-    private void resumeOverlap() {
-        List<FetchQueueDO> list = new LinkedList<>();
-        synchronized (barrier) {
-            Optional.ofNullable(bizAPI.listOverlapInUnLock()).ifPresent(wordNameList -> {
+  private void resumeOverlap() {
+    List<FetchQueueDO> list = new LinkedList<>();
+    synchronized (barrier) {
+      Optional.ofNullable(bizAPI.listOverlapInUnLock())
+          .ifPresent(
+              wordNameList -> {
                 List<String> wordList = wordNameList.getData();
                 if (KiwiCollectionUtils.isEmpty(wordList)) {
-                    return;
+                  return;
                 }
-                wordList.forEach(wordName -> Optional.ofNullable(bizAPI.getOneByWordName(wordName).getData()).ifPresent(list::add));
-            });
-        }
-        if (KiwiCollectionUtils.isEmpty(list)) {
-            return;
-        }
-        synchronized (barrier) {
-            list.forEach(this::execute);
-        }
+                wordList.forEach(
+                    wordName ->
+                        Optional.ofNullable(bizAPI.getOneByWordName(wordName).getData())
+                            .ifPresent(list::add));
+              });
     }
+    if (KiwiCollectionUtils.isEmpty(list)) {
+      return;
+    }
+    synchronized (barrier) {
+      list.forEach(this::execute);
+    }
+  }
 
-    /**
-     * 异步调用爬虫待抓取队列的消息发送
-     *
-     * @param queue
-     */
-    @Async
-    @Override
-    protected void execute(FetchQueueDO queue) {
-        queue.setIsLock(GlobalConstants.FLAG_YES);
-        queue.setFetchStatus(WordCrawlerConstants.STATUS_TO_FETCH);
-        bizAPI.updateQueueById(queue);
-    }
+  /**
+   * 异步调用爬虫待抓取队列的消息发送
+   *
+   * @param queue
+   */
+  @Async
+  @Override
+  protected void execute(FetchQueueDO queue) {
+    queue.setIsLock(GlobalConstants.FLAG_YES);
+    queue.setFetchStatus(WordCrawlerConstants.STATUS_TO_FETCH);
+    bizAPI.updateQueueById(queue);
+  }
 }

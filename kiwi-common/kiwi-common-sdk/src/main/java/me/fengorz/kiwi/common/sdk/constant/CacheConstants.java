@@ -18,8 +18,7 @@ package me.fengorz.kiwi.common.sdk.constant;
 
 public interface CacheConstants {
 
-    String CACHE_KEY_GENERATOR_BEAN = "cacheKeyGenerator";
+  String CACHE_KEY_GENERATOR_BEAN = "cacheKeyGenerator";
 
-    String CLIENT_DETAILS = "client_detail";
-
+  String CLIENT_DETAILS = "client_detail";
 }

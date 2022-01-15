@@ -22,17 +22,17 @@ package me.fengorz.kiwi.vocabulary.crawler.component.producer.base;
 import me.fengorz.kiwi.word.api.dto.queue.*;
 
 public interface ISender {
-    void fetchWord(FetchWordMqDTO dto);
+  void fetchWord(FetchWordMqDTO dto);
 
-    void fetchPhraseRunUp(FetchPhraseRunUpMqDTO dto);
+  void fetchPhraseRunUp(FetchPhraseRunUpMqDTO dto);
 
-    void fetchPhrase(FetchPhraseMqDTO dto);
+  void fetchPhrase(FetchPhraseMqDTO dto);
 
-    void fetchPronunciation(FetchPronunciationMqDTO dto);
+  void fetchPronunciation(FetchPronunciationMqDTO dto);
 
-    void removeWord(RemoveMqDTO dto);
+  void removeWord(RemoveMqDTO dto);
 
-    void removePhrase(RemoveMqDTO dto);
+  void removePhrase(RemoveMqDTO dto);
 
-    void removePronunciation(RemovePronunciatioinMqDTO dto);
+  void removePronunciation(RemovePronunciatioinMqDTO dto);
 }

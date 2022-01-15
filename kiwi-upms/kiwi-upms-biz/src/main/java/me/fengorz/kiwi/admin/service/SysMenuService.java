@@ -15,11 +15,10 @@
  */
 package me.fengorz.kiwi.admin.service;
 
-import java.util.List;
-
 import com.baomidou.mybatisplus.extension.service.IService;
-
 import me.fengorz.kiwi.admin.api.entity.SysMenu;
+
+import java.util.List;
 
 /**
  * 菜单权限表
@@ -29,6 +28,5 @@ import me.fengorz.kiwi.admin.api.entity.SysMenu;
  */
 public interface SysMenuService extends IService<SysMenu> {
 
-    List<SysMenu> listMenusByRoleId(Integer roleId);
-
+  List<SysMenu> listMenusByRoleId(Integer roleId);
 }

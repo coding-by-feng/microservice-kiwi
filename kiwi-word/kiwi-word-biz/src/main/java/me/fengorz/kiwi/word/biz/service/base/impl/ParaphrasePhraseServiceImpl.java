@@ -19,13 +19,10 @@ import me.fengorz.kiwi.word.biz.service.base.IParaphrasePhraseService;
 import org.springframework.stereotype.Service;
 
 /**
- * 
- *
  * @author zhanShiFeng
  * @date 2020-05-31 22:22:22
  */
 @Service()
-public class ParaphrasePhraseServiceImpl extends ServiceImpl<ParaphrasePhraseMapper, ParaphrasePhraseDO>
-    implements IParaphrasePhraseService {
-
-}
+public class ParaphrasePhraseServiceImpl
+    extends ServiceImpl<ParaphrasePhraseMapper, ParaphrasePhraseDO>
+    implements IParaphrasePhraseService {}

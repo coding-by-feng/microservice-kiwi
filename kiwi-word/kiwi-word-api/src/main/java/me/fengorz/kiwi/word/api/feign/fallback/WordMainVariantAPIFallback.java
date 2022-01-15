@@ -13,28 +13,25 @@
 
 package me.fengorz.kiwi.word.api.feign.fallback;
 
-import org.springframework.stereotype.Component;
-
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.api.R;
 import me.fengorz.kiwi.word.api.feign.IWordMainVariantAPI;
+import org.springframework.stereotype.Component;
 
 /**
- * Hystrix熔断回调实现
+ * Hystrix熔断回调实现 @Author zhanshifeng
  *
- * @Author zhanshifeng
  * @date 2020-05-24 01:40:36
  */
 @Slf4j
 @Component
 public class WordMainVariantAPIFallback implements IWordMainVariantAPI {
 
-    @Setter
-    private Throwable throwable;
+  @Setter private Throwable throwable;
 
-    @Override
-    public R<Void> insertVariant(String inputWordName, String fetchWordName) {
-        return R.feignCallFailed();
-    }
+  @Override
+  public R<Void> insertVariant(String inputWordName, String fetchWordName) {
+    return R.feignCallFailed();
+  }
 }

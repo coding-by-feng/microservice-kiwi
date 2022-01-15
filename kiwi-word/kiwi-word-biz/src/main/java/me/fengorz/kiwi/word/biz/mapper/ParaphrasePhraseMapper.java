@@ -19,6 +19,4 @@ import me.fengorz.kiwi.word.api.entity.ParaphrasePhraseDO;
  * @author zhanShiFeng
  * @date 2020-05-31 22:22:22
  */
-public interface ParaphrasePhraseMapper extends BaseMapper<ParaphrasePhraseDO> {
-
-}
+public interface ParaphrasePhraseMapper extends BaseMapper<ParaphrasePhraseDO> {}

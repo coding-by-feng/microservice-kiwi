@@ -16,7 +16,6 @@
 package me.fengorz.kiwi.admin.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-
 import me.fengorz.kiwi.admin.api.entity.SysUser;
 
 /**
@@ -25,6 +24,4 @@ import me.fengorz.kiwi.admin.api.entity.SysUser;
  * @author zhanshifeng
  * @date 2019-09-26 09:37:54
  */
-public interface SysUserMapper extends BaseMapper<SysUser> {
-
-}
+public interface SysUserMapper extends BaseMapper<SysUser> {}

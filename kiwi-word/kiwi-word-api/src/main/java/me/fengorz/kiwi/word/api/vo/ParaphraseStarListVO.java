@@ -19,11 +19,8 @@ package me.fengorz.kiwi.word.api.vo;
 import lombok.ToString;
 import me.fengorz.kiwi.word.api.entity.ParaphraseStarListDO;
 
-/**
- * @Author zhanshifeng
- * @Date 2020/5/31 1:13 PM
- */
+/** @Author zhanshifeng @Date 2020/5/31 1:13 PM */
 @ToString
 public class ParaphraseStarListVO extends ParaphraseStarListDO {
-    private static final long serialVersionUID = -2917409082834724658L;
+  private static final long serialVersionUID = -2917409082834724658L;
 }

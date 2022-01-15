@@ -25,17 +25,17 @@
 
     <select id="selectExampleAndIsCollect" resultType="me.fengorz.kiwi.word.api.vo.ParaphraseExampleVO">
         select wpe.example_id,
-               wpe.example_sentence,
-               wpe.example_translate,
-               if(temp.collect_id is null, 'N', 'Y') is_collect
+        wpe.example_sentence,
+        wpe.example_translate,
+        if(temp.collect_id is null, 'N', 'Y') is_collect
         from (select wesr.example_id collect_id
-              from word_example_star_rel wesr
-                       left join word_example_star_list wesl on wesr.list_id = wesl.id
-              where wesl.owner = #{queryParams.owner}
-                and wesl.is_del = 'N') temp
-                 right join word_paraphrase_example wpe on temp.collect_id = wpe.example_id
+        from word_example_star_rel wesr
+        left join word_example_star_list wesl on wesr.list_id = wesl.id
+        where wesl.owner = #{queryParams.owner}
+        and wesl.is_del = 'N') temp
+        right join word_paraphrase_example wpe on temp.collect_id = wpe.example_id
         where wpe.paraphrase_id = #{queryParams.entityId}
-          and wpe.is_del = 'N'
+        and wpe.is_del = 'N'
     </select>
 
 </mapper>

@@ -21,16 +21,13 @@ import me.fengorz.kiwi.word.api.feign.IBizAPI;
 import me.fengorz.kiwi.word.api.feign.fallback.BizAPIFallback;
 import org.springframework.stereotype.Component;
 
-/**
-* @Author zhanshifeng
- * @Date 2019/10/30 3:19 PM
- */
+/** @Author zhanshifeng @Date 2019/10/30 3:19 PM */
 @Component
 public class BizFallbackFactory implements FallbackFactory<IBizAPI> {
-    @Override
-    public IBizAPI create(Throwable throwable) {
-        BizAPIFallback remoteWordFetchServiceFallBack = new BizAPIFallback();
-        remoteWordFetchServiceFallBack.setThrowable(throwable);
-        return remoteWordFetchServiceFallBack;
-    }
+  @Override
+  public IBizAPI create(Throwable throwable) {
+    BizAPIFallback remoteWordFetchServiceFallBack = new BizAPIFallback();
+    remoteWordFetchServiceFallBack.setThrowable(throwable);
+    return remoteWordFetchServiceFallBack;
+  }
 }

@@ -34,37 +34,22 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public class ParaphraseExampleDO extends Model<ParaphraseExampleDO> {
 
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    /**
-     * 例句id
-     */
-    @TableId
-    private Integer exampleId;
-    /**
-     *
-     */
-    private Integer wordId;
-    /**
-     * 释义ID
-     */
-    private Integer paraphraseId;
-    /**
-     * 英文例句
-     */
-    private String exampleSentence;
-    /**
-     * 例句翻译
-     */
-    private String exampleTranslate;
-    /**
-     * 翻译语种
-     */
-    private String translateLanguage;
-    private Integer serialNumber;
-    /**
-     * 逻辑删除标记(Y--正常 N--删除)
-     */
-    private String isDel;
+  /** 例句id */
+  @TableId private Integer exampleId;
+  /** */
+  private Integer wordId;
+  /** 释义ID */
+  private Integer paraphraseId;
+  /** 英文例句 */
+  private String exampleSentence;
+  /** 例句翻译 */
+  private String exampleTranslate;
+  /** 翻译语种 */
+  private String translateLanguage;
 
+  private Integer serialNumber;
+  /** 逻辑删除标记(Y--正常 N--删除) */
+  private String isDel;
 }

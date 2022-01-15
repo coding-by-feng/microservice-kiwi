@@ -15,21 +15,19 @@
  */
 package me.fengorz.kiwi.word.biz.service.base.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-
 import lombok.RequiredArgsConstructor;
 import me.fengorz.kiwi.common.sdk.util.lang.collection.KiwiCollectionUtils;
 import me.fengorz.kiwi.word.api.entity.WordStarRelDO;
 import me.fengorz.kiwi.word.biz.mapper.WordStarRelMapper;
 import me.fengorz.kiwi.word.biz.service.base.IWordStarRelService;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 单词本与单词的关联表
@@ -42,30 +40,31 @@ import me.fengorz.kiwi.word.biz.service.base.IWordStarRelService;
 public class WordStarRelServiceImpl extends ServiceImpl<WordStarRelMapper, WordStarRelDO>
     implements IWordStarRelService {
 
-    private final WordStarRelMapper wordStarRelMapper;
+  private final WordStarRelMapper wordStarRelMapper;
 
-    @Override
-    public List<Integer> findAllWordId(Integer listId) {
-        List<WordStarRelDO> list =
-            wordStarRelMapper.selectList(new LambdaQueryWrapper<WordStarRelDO>().eq(WordStarRelDO::getListId, listId));
-        if (KiwiCollectionUtils.isNotEmpty(list)) {
-            List<Integer> result = new ArrayList<>();
-            for (WordStarRelDO relDO : list) {
-                result.add(relDO.getWordId());
-            }
-            return result;
-        }
-        return null;
+  @Override
+  public List<Integer> findAllWordId(Integer listId) {
+    List<WordStarRelDO> list =
+        wordStarRelMapper.selectList(
+            new LambdaQueryWrapper<WordStarRelDO>().eq(WordStarRelDO::getListId, listId));
+    if (KiwiCollectionUtils.isNotEmpty(list)) {
+      List<Integer> result = new ArrayList<>();
+      for (WordStarRelDO relDO : list) {
+        result.add(relDO.getWordId());
+      }
+      return result;
     }
+    return null;
+  }
 
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public void replaceFetchResult(Integer oldRelId, Integer newRelId) {
-        if (oldRelId == null || newRelId == null) {
-            return;
-        }
-        wordStarRelMapper.update(new WordStarRelDO().setWordId(newRelId),
-            Wrappers.<WordStarRelDO>lambdaUpdate().eq(WordStarRelDO::getWordId, oldRelId));
+  @Override
+  @Transactional(rollbackFor = Exception.class)
+  public void replaceFetchResult(Integer oldRelId, Integer newRelId) {
+    if (oldRelId == null || newRelId == null) {
+      return;
     }
-
+    wordStarRelMapper.update(
+        new WordStarRelDO().setWordId(newRelId),
+        Wrappers.<WordStarRelDO>lambdaUpdate().eq(WordStarRelDO::getWordId, oldRelId));
+  }
 }

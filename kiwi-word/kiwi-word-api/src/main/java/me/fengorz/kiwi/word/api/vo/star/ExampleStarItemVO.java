@@ -22,21 +22,17 @@ import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 
-/**
- * @Author zhanshifeng
- * @Date 2020/1/6 2:09 PM
- */
+/** @Author zhanshifeng @Date 2020/1/6 2:09 PM */
 @Data
 @Accessors(chain = true)
 @ToString
 public class ExampleStarItemVO implements Serializable {
 
-    private static final long serialVersionUID = 6521434364886717517L;
+  private static final long serialVersionUID = 6521434364886717517L;
 
-    private Integer wordId;
-    private String wordName;
-    private Integer exampleId;
-    private String exampleSentence;
-    private String exampleTranslate;
-
+  private Integer wordId;
+  private String wordName;
+  private Integer exampleId;
+  private String exampleSentence;
+  private String exampleTranslate;
 }

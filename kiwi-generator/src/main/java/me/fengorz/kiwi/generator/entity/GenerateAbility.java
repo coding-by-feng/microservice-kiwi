@@ -19,25 +19,21 @@ package me.fengorz.kiwi.generator.entity;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
-/**
- * @Author zhanshifeng
- * @Date 2020/2/24 12:26 PM
- */
+/** @Author zhanshifeng @Date 2020/2/24 12:26 PM */
 @Data
 @Accessors(chain = true)
 public class GenerateAbility {
 
-    private boolean entity;
-    private boolean entityColumn;
-    private boolean mapper;
-    private boolean service;
-    private boolean serviceImpl;
-    private boolean controller;
-    private boolean remoteService;
-    private boolean remoteServiceFallBackImpl;
-    private boolean remoteServiceFallBackFactory;
-    private boolean mapperXml;
-    private boolean vo;
-    private boolean dto;
-
+  private boolean entity;
+  private boolean entityColumn;
+  private boolean mapper;
+  private boolean service;
+  private boolean serviceImpl;
+  private boolean controller;
+  private boolean remoteService;
+  private boolean remoteServiceFallBackImpl;
+  private boolean remoteServiceFallBackFactory;
+  private boolean mapperXml;
+  private boolean vo;
+  private boolean dto;
 }

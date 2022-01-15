@@ -14,18 +14,15 @@
  *
  */
 
-/**
- * @Author zhanshifeng
- * @Date 2019/12/9 3:38 PM
- */
+/** @Author zhanshifeng @Date 2019/12/9 3:38 PM */
 public class SubTest extends SuperTest {
 
-    public SubTest() {
-        super();
-        System.out.println("sub");
-    }
+  public SubTest() {
+    super();
+    System.out.println("sub");
+  }
 
-    public static void main(String[] args) {
-        new SubTest();
-    }
+  public static void main(String[] args) {
+    new SubTest();
+  }
 }

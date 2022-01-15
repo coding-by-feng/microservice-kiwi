@@ -19,28 +19,24 @@ package me.fengorz.kiwi.word.biz.util;
 import cn.hutool.core.util.StrUtil;
 import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
 
-/**
- * @Author zhanshifeng
- * @Date 2019/11/4 4:51 PM
- */
+/** @Author zhanshifeng @Date 2019/11/4 4:51 PM */
 public class WordDfsUtils {
 
-    public static String getGroupName(String uploadResult) {
-        if (StrUtil.isNotBlank(uploadResult)) {
-            return uploadResult.substring(0, uploadResult.indexOf("/"));
-        }
-        return GlobalConstants.EMPTY;
+  public static String getGroupName(String uploadResult) {
+    if (StrUtil.isNotBlank(uploadResult)) {
+      return uploadResult.substring(0, uploadResult.indexOf("/"));
     }
+    return GlobalConstants.EMPTY;
+  }
 
-    public static String getUploadVoiceFilePath(String uploadResult) {
-        if (StrUtil.isNotBlank(uploadResult)) {
-            return uploadResult.substring(uploadResult.indexOf("/") + 1, uploadResult.length());
-        }
-        return GlobalConstants.EMPTY;
+  public static String getUploadVoiceFilePath(String uploadResult) {
+    if (StrUtil.isNotBlank(uploadResult)) {
+      return uploadResult.substring(uploadResult.indexOf("/") + 1, uploadResult.length());
     }
+    return GlobalConstants.EMPTY;
+  }
 
-    public static String getVoiceFileName(String url) {
-        return url.substring(url.lastIndexOf("/"));
-    }
-
+  public static String getVoiceFileName(String url) {
+    return url.substring(url.lastIndexOf("/"));
+  }
 }

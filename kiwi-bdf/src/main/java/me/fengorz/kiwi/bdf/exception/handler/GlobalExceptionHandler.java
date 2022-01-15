@@ -34,87 +34,88 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.Objects;
 
-/**
- * @Description 全局的异常处理器
- * @Author zhanshifeng
- * @Date 2019/11/26 3:28 PM
- */
+/** @Description 全局的异常处理器 @Author zhanshifeng @Date 2019/11/26 3:28 PM */
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler({Exception.class})
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public R<String> handleException(BaseRuntimeException e) {
-        log.error("global exception:{}", e.getMessage(), e);
-        return R.error(e.getMessage());
-    }
+  private static String getLogMessage(MethodArgumentNotValidException e) {
+    FieldError fieldError = Objects.requireNonNull(e.getBindingResult().getFieldError());
+    return fieldError.getObjectName()
+        + GlobalConstants.SYMBOL_DOT
+        + fieldError.getField()
+        + GlobalConstants.SYMBOL_SQUARE_BRACKET_LEFT
+        + fieldError.getDefaultMessage()
+        + GlobalConstants.SYMBOL_SQUARE_BRACKET_RIGHT;
+  }
 
-    @ExceptionHandler({BaseRuntimeException.class})
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public R<String> handleBaseRuntimeException(BaseRuntimeException e) {
-        log.error("global BaseRuntimeException:{}", e.getMessage(), e);
-        return R.error(e.getMessage());
-    }
+  private static String getLogMessage(BindException e) {
+    FieldError fieldError = Objects.requireNonNull(e.getBindingResult().getFieldError());
+    return fieldError.getObjectName()
+        + GlobalConstants.SYMBOL_DOT
+        + fieldError.getField()
+        + GlobalConstants.SYMBOL_SQUARE_BRACKET_LEFT
+        + fieldError.getDefaultMessage()
+        + GlobalConstants.SYMBOL_SQUARE_BRACKET_RIGHT;
+  }
 
-    @ExceptionHandler({ServiceException.class})
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public R<String> handleServiceRuntimeException(ServiceException e) {
-        log.error("global ServiceException:{}", e.getMessage());
-        return R.error(e.getMessage());
-    }
+  @ExceptionHandler({Exception.class})
+  @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+  public R<String> handleException(BaseRuntimeException e) {
+    log.error("global exception:{}", e.getMessage(), e);
+    return R.error(e.getMessage());
+  }
 
-    @ExceptionHandler({DfsOperateDeleteException.class})
-    @ResponseStatus(HttpStatus.CREATED)
-    public R<String> handleDfsOperateDeleteException(DfsOperateDeleteException e) {
-        log.error("global DfsOperateDeleteException:{}", e.getMessage());
-        return R.failed(e.getMessage());
-    }
+  @ExceptionHandler({BaseRuntimeException.class})
+  @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+  public R<String> handleBaseRuntimeException(BaseRuntimeException e) {
+    log.error("global BaseRuntimeException:{}", e.getMessage(), e);
+    return R.error(e.getMessage());
+  }
 
-    @ExceptionHandler({ResourceNotFoundException.class})
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public R<String> handleResourceNotFoundException(ResourceNotFoundException e) {
-        log.error("global ResourceNotFoundException:{}", e.getMessage());
-        return R.failed(e.getMessage());
-    }
+  @ExceptionHandler({ServiceException.class})
+  @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+  public R<String> handleServiceRuntimeException(ServiceException e) {
+    log.error("global ServiceException:{}", e.getMessage());
+    return R.error(e.getMessage());
+  }
 
-    @ExceptionHandler({FdfsServerException.class})
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public R<String> handleFdfsServerException(FdfsServerException e) {
-        log.error("global FdfsServerException:{}", e.getMessage());
-        return R.failed(e.getMessage());
-    }
+  @ExceptionHandler({DfsOperateDeleteException.class})
+  @ResponseStatus(HttpStatus.CREATED)
+  public R<String> handleDfsOperateDeleteException(DfsOperateDeleteException e) {
+    log.error("global DfsOperateDeleteException:{}", e.getMessage());
+    return R.failed(e.getMessage());
+  }
 
-    @ExceptionHandler({MethodArgumentNotValidException.class})
-    public R<String> handleValidException(MethodArgumentNotValidException e) {
-        // 日志记录错误信息
-        final String errorMessage = getLogMessage(e);
-        log.error(errorMessage);
-        // 将错误信息返回给前台
-        return R.failed(errorMessage);
-    }
+  @ExceptionHandler({ResourceNotFoundException.class})
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  public R<String> handleResourceNotFoundException(ResourceNotFoundException e) {
+    log.error("global ResourceNotFoundException:{}", e.getMessage());
+    return R.failed(e.getMessage());
+  }
 
-    @ExceptionHandler({BindException.class})
-    public R<String> handleValidException(BindException e) {
-        // 日志记录错误信息
-        final String errorMessage = getLogMessage(e);
-        log.error(errorMessage);
-        // 将错误信息返回给前台
-        return R.failed(errorMessage);
-    }
+  @ExceptionHandler({FdfsServerException.class})
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  public R<String> handleFdfsServerException(FdfsServerException e) {
+    log.error("global FdfsServerException:{}", e.getMessage());
+    return R.failed(e.getMessage());
+  }
 
-    private static String getLogMessage(MethodArgumentNotValidException e) {
-        FieldError fieldError = Objects.requireNonNull(e.getBindingResult().getFieldError());
-        return fieldError.getObjectName() + GlobalConstants.SYMBOL_DOT + fieldError.getField()
-            + GlobalConstants.SYMBOL_SQUARE_BRACKET_LEFT + fieldError.getDefaultMessage()
-            + GlobalConstants.SYMBOL_SQUARE_BRACKET_RIGHT;
-    }
+  @ExceptionHandler({MethodArgumentNotValidException.class})
+  public R<String> handleValidException(MethodArgumentNotValidException e) {
+    // 日志记录错误信息
+    final String errorMessage = getLogMessage(e);
+    log.error(errorMessage);
+    // 将错误信息返回给前台
+    return R.failed(errorMessage);
+  }
 
-    private static String getLogMessage(BindException e) {
-        FieldError fieldError = Objects.requireNonNull(e.getBindingResult().getFieldError());
-        return fieldError.getObjectName() + GlobalConstants.SYMBOL_DOT + fieldError.getField()
-            + GlobalConstants.SYMBOL_SQUARE_BRACKET_LEFT + fieldError.getDefaultMessage()
-            + GlobalConstants.SYMBOL_SQUARE_BRACKET_RIGHT;
-    }
-
+  @ExceptionHandler({BindException.class})
+  public R<String> handleValidException(BindException e) {
+    // 日志记录错误信息
+    final String errorMessage = getLogMessage(e);
+    log.error(errorMessage);
+    // 将错误信息返回给前台
+    return R.failed(errorMessage);
+  }
 }

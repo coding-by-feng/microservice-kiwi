@@ -33,20 +33,19 @@ import java.time.LocalDateTime;
 @Accessors(chain = true)
 public class ParaphraseStarRelDO extends Model<ParaphraseStarRelDO> {
 
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    private Integer listId;
+  private Integer listId;
 
-    private Integer paraphraseId;
+  private Integer paraphraseId;
 
-    private LocalDateTime createTime;
+  private LocalDateTime createTime;
 
-    private Integer isRemember;
+  private Integer isRemember;
 
-    private LocalDateTime rememberTime;
+  private LocalDateTime rememberTime;
 
-    private Integer isKeepInMind;
+  private Integer isKeepInMind;
 
-    private LocalDateTime keepInMindTime;
-
+  private LocalDateTime keepInMindTime;
 }

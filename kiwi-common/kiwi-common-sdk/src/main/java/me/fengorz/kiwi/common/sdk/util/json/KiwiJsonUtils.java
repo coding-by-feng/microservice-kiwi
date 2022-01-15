@@ -18,14 +18,10 @@ package me.fengorz.kiwi.common.sdk.util.json;
 
 import cn.hutool.json.JSONUtil;
 
-/**
-* @Author zhanshifeng
- * @Date 2019/10/25 11:17 AM
- */
+/** @Author zhanshifeng @Date 2019/10/25 11:17 AM */
 public final class KiwiJsonUtils {
 
-    public static String toJsonStr(Object obj) {
-        return JSONUtil.toJsonStr(obj);
-    }
-
+  public static String toJsonStr(Object obj) {
+    return JSONUtil.toJsonStr(obj);
+  }
 }

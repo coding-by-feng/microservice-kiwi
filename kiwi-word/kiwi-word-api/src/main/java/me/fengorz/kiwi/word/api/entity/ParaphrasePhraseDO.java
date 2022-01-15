@@ -38,40 +38,29 @@ import java.time.LocalDateTime;
 @Accessors(chain = true)
 public class ParaphrasePhraseDO extends Model<ParaphrasePhraseDO> {
 
-    private static final long serialVersionUID = 1590934942724L;
+  private static final long serialVersionUID = 1590934942724L;
 
-    /**
-     *
-     */
-    @TableId
-    @ApiModelProperty("主键id，编辑时必须传")
-    @NotNull(groups = {ValidTypeUpdate.class})
-    private Integer id;
+  /** */
+  @TableId
+  @ApiModelProperty("主键id，编辑时必须传")
+  @NotNull(groups = {ValidTypeUpdate.class})
+  private Integer id;
 
-    /**
-     *
-     */
-    @ApiModelProperty("")
-    @NotNull(groups = {ValidTypeInsert.class})
-    private Integer paraphraseId;
+  /** */
+  @ApiModelProperty("")
+  @NotNull(groups = {ValidTypeInsert.class})
+  private Integer paraphraseId;
 
-    /**
-     *
-     */
-    @ApiModelProperty("")
-    @NotBlank(groups = {ValidTypeInsert.class})
-    private String phrase;
+  /** */
+  @ApiModelProperty("")
+  @NotBlank(groups = {ValidTypeInsert.class})
+  private String phrase;
 
-    /**
-     *
-     */
-    @ApiModelProperty("")
-    private LocalDateTime createTime;
+  /** */
+  @ApiModelProperty("")
+  private LocalDateTime createTime;
 
-    /**
-     *
-     */
-    @ApiModelProperty("")
-    private Integer isValid;
-
+  /** */
+  @ApiModelProperty("")
+  private Integer isValid;
 }

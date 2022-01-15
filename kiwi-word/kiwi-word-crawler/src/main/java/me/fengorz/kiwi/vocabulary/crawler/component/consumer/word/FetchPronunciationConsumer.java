@@ -33,46 +33,48 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
-/**
- * @Author zhanshifeng
- * @Date 2019/10/28 4:25 PM
- */
+/** @Author zhanshifeng @Date 2019/10/28 4:25 PM */
 @Slf4j
 @Component
 @RequiredArgsConstructor
-@RabbitListener(bindings = @QueueBinding(value = @Queue(value = "${mq.config.pronunciationFromCambridge.fetchQueue}", autoDelete = "true"),
-        exchange = @Exchange(value = "${mq.config.pronunciationFromCambridge.exchange}"),
-        key = "${mq.config.pronunciationFromCambridge.fetchRouting}"))
+@RabbitListener(
+    bindings =
+        @QueueBinding(
+            value =
+                @Queue(
+                    value = "${mq.config.pronunciationFromCambridge.fetchQueue}",
+                    autoDelete = "true"),
+            exchange = @Exchange(value = "${mq.config.pronunciationFromCambridge.exchange}"),
+            key = "${mq.config.pronunciationFromCambridge.fetchRouting}"))
 public class FetchPronunciationConsumer extends AbstractConsumer<FetchPronunciationMqDTO>
-        implements IConsumer<FetchPronunciationMqDTO> {
+    implements IConsumer<FetchPronunciationMqDTO> {
 
-    private final IFetchService fetchService;
+  private final IFetchService fetchService;
 
-    @Resource(name = "fetchPronunciationThreadExecutor")
-    private ThreadPoolTaskExecutor fetchPronunciationThreadExecutor;
+  @Resource(name = "fetchPronunciationThreadExecutor")
+  private ThreadPoolTaskExecutor fetchPronunciationThreadExecutor;
 
-    @Value("${crawler.config.max.pool.size}")
-    private int maxPoolSize;
+  @Value("${crawler.config.max.pool.size}")
+  private int maxPoolSize;
 
-    @PostConstruct
-    private void init() {
-        super.taskExecutor = this.fetchPronunciationThreadExecutor;
-        super.maxPoolSize = this.maxPoolSize;
-        super.startWorkLog = "rabbitMQ fetch one pronunciation is 【{}】";
-    }
+  @PostConstruct
+  private void init() {
+    super.taskExecutor = this.fetchPronunciationThreadExecutor;
+    super.maxPoolSize = this.maxPoolSize;
+    super.startWorkLog = "rabbitMQ fetch one pronunciation is 【{}】";
+  }
 
-    @Override
-    @RabbitHandler
-    public void consume(FetchPronunciationMqDTO dto) {
-        super.work(dto);
-    }
+  @Override
+  @RabbitHandler
+  public void consume(FetchPronunciationMqDTO dto) {
+    super.work(dto);
+  }
 
-    @Override
-    protected void execute(FetchPronunciationMqDTO dto) {
-        fetchService.handle(dto);
-    }
+  @Override
+  protected void execute(FetchPronunciationMqDTO dto) {
+    fetchService.handle(dto);
+  }
 
-    @Override
-    protected void errorCallback(FetchPronunciationMqDTO dto, Exception e) {
-    }
+  @Override
+  protected void errorCallback(FetchPronunciationMqDTO dto, Exception e) {}
 }

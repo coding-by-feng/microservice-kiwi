@@ -16,14 +16,10 @@
 
 package me.fengorz.kiwi.common.sdk.constant;
 
-/**
- * @Author zhanshifeng
- * @Date 2020/1/8 4:51 PM
- */
+/** @Author zhanshifeng @Date 2020/1/8 4:51 PM */
 public class MapperConstant {
 
-    public static final String T_INS_SEQUENCE = "t_ins_sequence";
+  public static final String T_INS_SEQUENCE = "t_ins_sequence";
 
-    public static final String QUERY_PARAMS = "queryParams";
-
+  public static final String QUERY_PARAMS = "queryParams";
 }

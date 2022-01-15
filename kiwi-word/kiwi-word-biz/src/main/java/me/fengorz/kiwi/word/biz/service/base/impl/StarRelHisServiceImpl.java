@@ -21,12 +21,10 @@ import me.fengorz.kiwi.word.biz.mapper.StarRelHisMapper;
 import me.fengorz.kiwi.word.biz.service.base.IStarRelHisService;
 import org.springframework.stereotype.Service;
 
-
 /**
  * @author zhanShiFeng
  * @date 2020-09-16 16:56:42
  */
 @Service
-public class StarRelHisServiceImpl extends ServiceImpl<StarRelHisMapper, StarRelHisDO> implements IStarRelHisService {
-
-}
+public class StarRelHisServiceImpl extends ServiceImpl<StarRelHisMapper, StarRelHisDO>
+    implements IStarRelHisService {}

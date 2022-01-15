@@ -36,36 +36,20 @@ import java.time.LocalDateTime;
 @Accessors(chain = true)
 public class ParaphraseStarListDO extends Model<ParaphraseStarListDO> {
 
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    /**
-     *
-     */
-    @TableId
-    private Integer id;
-    /**
-     * 单词本名字
-     */
-    private String listName;
-    /**
-     * 单词本说明描述
-     */
-    private String remark;
-    /**
-     * 创建时间
-     */
-    private LocalDateTime createTime;
-    /**
-     * 创建人
-     */
-    private Integer owner;
-    /**
-     * 是否删除
-     */
-    private String isDel;
-    /**
-     *
-     */
-    private Integer sort;
-
+  /** */
+  @TableId private Integer id;
+  /** 单词本名字 */
+  private String listName;
+  /** 单词本说明描述 */
+  private String remark;
+  /** 创建时间 */
+  private LocalDateTime createTime;
+  /** 创建人 */
+  private Integer owner;
+  /** 是否删除 */
+  private String isDel;
+  /** */
+  private Integer sort;
 }

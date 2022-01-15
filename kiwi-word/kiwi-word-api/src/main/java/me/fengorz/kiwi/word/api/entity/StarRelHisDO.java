@@ -26,7 +26,6 @@ import lombok.experimental.Accessors;
 
 import java.time.LocalDateTime;
 
-
 /**
  * @author zhanShiFeng
  * @date 2020-09-16 16:56:42
@@ -38,52 +37,36 @@ import java.time.LocalDateTime;
 @Accessors(chain = true)
 public class StarRelHisDO extends Model<StarRelHisDO> {
 
-    private static final long serialVersionUID = 1600886602527L;
+  private static final long serialVersionUID = 1600886602527L;
 
-    /**
-     *
-     */
-    @TableId
-    @ApiModelProperty("主键id，编辑时必须传")
-    private Integer id;
+  /** */
+  @TableId
+  @ApiModelProperty("主键id，编辑时必须传")
+  private Integer id;
 
-    /**
-     *
-     */
-    @ApiModelProperty("")
-    private String wordName;
+  /** */
+  @ApiModelProperty("")
+  private String wordName;
 
-    /**
-     *
-     */
-    @ApiModelProperty("")
-    private Integer userId;
+  /** */
+  @ApiModelProperty("")
+  private Integer userId;
 
-    private Integer listId;
+  private Integer listId;
 
-    /**
-     * 收藏类型：1、单词；2、释义；3、例句。
-     */
-    @ApiModelProperty("收藏类型：1、单词；2、释义；3、例句。")
-    private Integer type;
+  /** 收藏类型：1、单词；2、释义；3、例句。 */
+  @ApiModelProperty("收藏类型：1、单词；2、释义；3、例句。")
+  private Integer type;
 
-    /**
-     *
-     */
-    @ApiModelProperty("")
-    private LocalDateTime inTime;
+  /** */
+  @ApiModelProperty("")
+  private LocalDateTime inTime;
 
-    /**
-     *
-     */
-    @ApiModelProperty("")
-    private Integer serialNum;
+  /** */
+  @ApiModelProperty("")
+  private Integer serialNum;
 
-    /**
-     * 如果收藏被删除要标记为1。
-     */
-    @ApiModelProperty("如果收藏被删除要标记为1。")
-    private Integer isDel;
-
-
+  /** 如果收藏被删除要标记为1。 */
+  @ApiModelProperty("如果收藏被删除要标记为1。")
+  private Integer isDel;
 }

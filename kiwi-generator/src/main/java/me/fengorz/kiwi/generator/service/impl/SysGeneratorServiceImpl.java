@@ -16,31 +16,27 @@
 
 package me.fengorz.kiwi.generator.service.impl;
 
-import java.util.List;
-import java.util.Map;
-
-import org.springframework.stereotype.Service;
-
 import lombok.RequiredArgsConstructor;
 import me.fengorz.kiwi.generator.mapper.SysGeneratorMapper;
 import me.fengorz.kiwi.generator.service.SysGeneratorService;
+import org.springframework.stereotype.Service;
 
-/**
- * @Author zhanshifeng
- * @Date 2019-09-16 16:51
- */
+import java.util.List;
+import java.util.Map;
+
+/** @Author zhanshifeng @Date 2019-09-16 16:51 */
 @Service
 @RequiredArgsConstructor
 public class SysGeneratorServiceImpl implements SysGeneratorService {
-    private final SysGeneratorMapper sysGeneratorMapper;
+  private final SysGeneratorMapper sysGeneratorMapper;
 
-    @Override
-    public Map<String, String> queryTable(String tableName) {
-        return sysGeneratorMapper.queryTable(tableName);
-    }
+  @Override
+  public Map<String, String> queryTable(String tableName) {
+    return sysGeneratorMapper.queryTable(tableName);
+  }
 
-    @Override
-    public List<Map<String, String>> queryColumns(String tableName) {
-        return sysGeneratorMapper.queryColumns(tableName);
-    }
+  @Override
+  public List<Map<String, String>> queryColumns(String tableName) {
+    return sysGeneratorMapper.queryColumns(tableName);
+  }
 }

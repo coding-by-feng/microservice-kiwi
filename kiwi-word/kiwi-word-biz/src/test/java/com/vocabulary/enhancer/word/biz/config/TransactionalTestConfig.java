@@ -27,52 +27,49 @@ import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.sql.DataSource;
 
-/**
- * @Author zhanshifeng
- * @Date 2019/11/25 9:55 AM
- */
+/** @Author zhanshifeng @Date 2019/11/25 9:55 AM */
 // @Configuration
 // @MapperScan("me.fengorz.kiwi.crawler.biz.mapper")
 // @ComponentScan("me.fengorz.kiwi.crawler.biz.test")
 public class TransactionalTestConfig {
-    /**
-     * 分页插件
-     *
-     * @return PaginationInterceptor
-     */
-    @Bean
-    public PaginationInterceptor paginationInterceptor() {
-        return new PaginationInterceptor();
-    }
+  /**
+   * 分页插件
+   *
+   * @return PaginationInterceptor
+   */
+  @Bean
+  public PaginationInterceptor paginationInterceptor() {
+    return new PaginationInterceptor();
+  }
 
-    @Bean
-    public DataSource dataSource() {
-        HikariDataSource dataSource = new HikariDataSource();
-        dataSource.setJdbcUrl("jdbc:mysql://47.92.107.191:3306/vocabulary_enhancer_db");
-        dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
-        dataSource.setUsername("root");
-        dataSource.setPassword("raubbhWy");
-        return dataSource;
-    }
+  @Bean
+  public DataSource dataSource() {
+    HikariDataSource dataSource = new HikariDataSource();
+    dataSource.setJdbcUrl("jdbc:mysql://47.92.107.191:3306/vocabulary_enhancer_db");
+    dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
+    dataSource.setUsername("root");
+    dataSource.setPassword("raubbhWy");
+    return dataSource;
+  }
 
-    @Bean
-    public SqlSessionFactory sqlSessionFactory() throws Exception {
-        SqlSessionFactoryBean sqlSessionFactoryBean = new SqlSessionFactoryBean();
-        sqlSessionFactoryBean.setDataSource(dataSource());
+  @Bean
+  public SqlSessionFactory sqlSessionFactory() throws Exception {
+    SqlSessionFactoryBean sqlSessionFactoryBean = new SqlSessionFactoryBean();
+    sqlSessionFactoryBean.setDataSource(dataSource());
 
-        PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
-        sqlSessionFactoryBean.setMapperLocations(resolver.getResources("classpath:/mapper/**/*.xml"));
+    PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
+    sqlSessionFactoryBean.setMapperLocations(resolver.getResources("classpath:/mapper/**/*.xml"));
 
-        // 指定扫描别名包的路径，多个bean的扫描路径，拼接以分号隔开
-        // String typeAliasesPackage = "com.wzh.demo.domain;";
-        // sqlSessionFactoryBean.setTypeAliasesPackage(typeAliasesPackage);
+    // 指定扫描别名包的路径，多个bean的扫描路径，拼接以分号隔开
+    // String typeAliasesPackage = "com.wzh.demo.domain;";
+    // sqlSessionFactoryBean.setTypeAliasesPackage(typeAliasesPackage);
 
-        return sqlSessionFactoryBean.getObject();
-    }
+    return sqlSessionFactoryBean.getObject();
+  }
 
-    // 创建事物管理器
-    @Bean
-    public PlatformTransactionManager transactionManager() {
-        return new DataSourceTransactionManager(dataSource());
-    }
+  // 创建事物管理器
+  @Bean
+  public PlatformTransactionManager transactionManager() {
+    return new DataSourceTransactionManager(dataSource());
+  }
 }

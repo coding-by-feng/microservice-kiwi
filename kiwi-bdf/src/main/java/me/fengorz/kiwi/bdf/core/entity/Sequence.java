@@ -19,26 +19,17 @@ import lombok.Data;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 
-/**
- * <p>
- * 序列实体类
- * </p>
- **/
+/** 序列实体类 */
 @Data
 @ToString
 @Accessors(chain = true)
 public class Sequence {
-    /**
-     * 整型ID
-     */
-    private Integer id;
-    /**
-     * 长整型ID
-     */
-    private Long longId;
-    private String stub;
-    /**
-     * 表名
-     */
-    private String tableName;
+  /** 整型ID */
+  private Integer id;
+  /** 长整型ID */
+  private Long longId;
+
+  private String stub;
+  /** 表名 */
+  private String tableName;
 }

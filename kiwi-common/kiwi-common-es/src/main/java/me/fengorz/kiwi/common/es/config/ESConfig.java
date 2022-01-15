@@ -27,31 +27,26 @@ import org.springframework.data.elasticsearch.client.ClientConfiguration;
 import org.springframework.data.elasticsearch.client.RestClients;
 import org.springframework.data.elasticsearch.config.AbstractElasticsearchConfiguration;
 
-/**
- * @Author zhanshifeng
- * @Date 2020/11/16 8:35 PM
- */
+/** @Author zhanshifeng @Date 2020/11/16 8:35 PM */
 @Configuration
 public class ESConfig extends AbstractElasticsearchConfiguration {
 
-    static {
-        System.setProperty("es.set.netty.runtime.available.processors", "false");
-    }
+  static {
+    System.setProperty("es.set.netty.runtime.available.processors", "false");
+  }
 
-    @Value("${spring.elasticsearch.rest.uris}")
-    private String hostAndPort;
+  @Value("${spring.elasticsearch.rest.uris}")
+  private String hostAndPort;
 
-    @Override
-    @Bean
-    public RestHighLevelClient elasticsearchClient() {
+  @Override
+  @Bean
+  public RestHighLevelClient elasticsearchClient() {
 
-        System.out.println("----------------------->>>>>>>>>>>>>>>>>>>>>" + hostAndPort);
+    System.out.println("----------------------->>>>>>>>>>>>>>>>>>>>>" + hostAndPort);
 
-        final ClientConfiguration clientConfiguration = ClientConfiguration.builder()
-                .connectedTo(hostAndPort)
-                .build();
+    final ClientConfiguration clientConfiguration =
+        ClientConfiguration.builder().connectedTo(hostAndPort).build();
 
-        return RestClients.create(clientConfiguration).rest();
-    }
-
+    return RestClients.create(clientConfiguration).rest();
+  }
 }

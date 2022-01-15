@@ -27,9 +27,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 /**
- * @Description Daily generation of review count records
- * @Author zhanshifeng
- * @Date 2021/8/19 8:54 PM
+ * @Description Daily generation of review count records @Author zhanshifeng @Date 2021/8/19 8:54 PM
  */
 @Slf4j
 @Component
@@ -37,16 +35,13 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class ReviewDailyGenerateScheduler {
 
-    private final IBizAPI api;
+  private final IBizAPI api;
 
-    /**
-     * Runs every day at 0 o'clock in the morning.
-     */
-    @Scheduled(cron = "0 0 0 */1 * ?")
-    public void generate() {
-        log.info("Daily generation of review count records starting.");
-        api.createTheDays();
-        log.info("Daily generation of review count records end.");
-    }
-
+  /** Runs every day at 0 o'clock in the morning. */
+  @Scheduled(cron = "0 0 0 */1 * ?")
+  public void generate() {
+    log.info("Daily generation of review count records starting.");
+    api.createTheDays();
+    log.info("Daily generation of review count records end.");
+  }
 }

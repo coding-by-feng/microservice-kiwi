@@ -21,15 +21,15 @@ package me.fengorz.kiwi.word.biz.service.operate;
 
 public interface IAsyncArchiveService {
 
-    void archiveWordRel(Integer wordId, Integer listId, Integer userId);
+  void archiveWordRel(Integer wordId, Integer listId, Integer userId);
 
-    void invalidArchiveWordRel(Integer wordId, Integer listId, Integer userId);
+  void invalidArchiveWordRel(Integer wordId, Integer listId, Integer userId);
 
-    void archiveParaphraseRel(Integer paraphraseId, Integer listId, Integer userId);
+  void archiveParaphraseRel(Integer paraphraseId, Integer listId, Integer userId);
 
-    void invalidArchiveParaphraseRel(Integer paraphraseId, Integer listId, Integer userId);
+  void invalidArchiveParaphraseRel(Integer paraphraseId, Integer listId, Integer userId);
 
-    void archiveExampleRel(Integer exampleId, Integer listId, Integer userId);
+  void archiveExampleRel(Integer exampleId, Integer listId, Integer userId);
 
-    void invalidArchiveExampleRel(Integer exampleId, Integer listId, Integer userId);
+  void invalidArchiveExampleRel(Integer exampleId, Integer listId, Integer userId);
 }

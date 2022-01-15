@@ -20,25 +20,22 @@ import lombok.experimental.Accessors;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
-/**
-* @Author zhanshifeng
- * @Date 2019/11/26 8:50 PM
- */
+/** @Author zhanshifeng @Date 2019/11/26 8:50 PM */
 public class JSR303Test {
 
-    public void test() {
-        this.subTest(new JSR303Bean());
-    }
+  public void test() {
+    this.subTest(new JSR303Bean());
+  }
 
-    private void subTest(JSR303Bean jsr303Bean) {
-        System.out.println("kao");
-    }
+  private void subTest(JSR303Bean jsr303Bean) {
+    System.out.println("kao");
+  }
 
-    @Data
-    @Accessors(chain = true)
-    class JSR303Bean {
-        @Min(0)
-        @NotNull
-        private Integer i;
-    }
+  @Data
+  @Accessors(chain = true)
+  class JSR303Bean {
+    @Min(0)
+    @NotNull
+    private Integer i;
+  }
 }

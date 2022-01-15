@@ -28,10 +28,7 @@ import org.springframework.data.elasticsearch.annotations.FieldType;
 import java.io.Serializable;
 import java.util.List;
 
-/**
- * @Author zhanshifeng
- * @Date 2019/11/26 9:45 AM
- */
+/** @Author zhanshifeng @Date 2019/11/26 9:45 AM */
 @Data
 @ToString
 @NoArgsConstructor
@@ -39,50 +36,43 @@ import java.util.List;
 @Accessors(chain = true)
 public class ParaphraseVO implements Serializable {
 
-    private static final long serialVersionUID = 1358094160893456358L;
+  private static final long serialVersionUID = 1358094160893456358L;
 
-    @Field(type = FieldType.Keyword)
-    private String codes;
+  @Field(type = FieldType.Keyword)
+  private String codes;
 
-    @Field(type = FieldType.Keyword)
-    private String wordName;
+  @Field(type = FieldType.Keyword)
+  private String wordName;
 
-    // TODO ZSF 这里暂时没有和DO字段名同步
-    @Field(type = FieldType.Keyword)
-    private String wordCharacter;
+  // TODO ZSF 这里暂时没有和DO字段名同步
+  @Field(type = FieldType.Keyword)
+  private String wordCharacter;
 
-    // TODO ZSF 这里暂时没有和DO字段名同步
-    @Field(type = FieldType.Keyword)
-    private String wordLabel;
+  // TODO ZSF 这里暂时没有和DO字段名同步
+  @Field(type = FieldType.Keyword)
+  private String wordLabel;
 
-    private List<String> phraseList;
+  private List<String> phraseList;
 
-    @Field(type = FieldType.Keyword)
-    private Integer paraphraseId;
-    /**
-     * 英文释义
-     */
-    @Field(type = FieldType.Text)
-    private String paraphraseEnglish;
-    /**
-     * 英文释义翻译
-     */
-    @Field(type = FieldType.Text)
-    private String paraphraseEnglishTranslate;
-    /**
-     * 中文词义
-     */
-    @Field(type = FieldType.Text, analyzer = "ik_max_word")
-    private String meaningChinese;
+  @Field(type = FieldType.Keyword)
+  private Integer paraphraseId;
+  /** 英文释义 */
+  @Field(type = FieldType.Text)
+  private String paraphraseEnglish;
+  /** 英文释义翻译 */
+  @Field(type = FieldType.Text)
+  private String paraphraseEnglishTranslate;
+  /** 中文词义 */
+  @Field(type = FieldType.Text, analyzer = "ik_max_word")
+  private String meaningChinese;
 
-    private String isCollect;
+  private String isCollect;
 
-    private Boolean isOverlength;
+  private Boolean isOverlength;
 
-    @Field(type = FieldType.Nested)
-    private List<ParaphraseExampleVO> exampleVOList;
+  @Field(type = FieldType.Nested)
+  private List<ParaphraseExampleVO> exampleVOList;
 
-    @Field(index = false)
-    private List<PronunciationVO> pronunciationVOList;
-
+  @Field(index = false)
+  private List<PronunciationVO> pronunciationVOList;
 }

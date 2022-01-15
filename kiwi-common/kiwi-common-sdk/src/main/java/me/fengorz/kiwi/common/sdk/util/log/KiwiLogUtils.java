@@ -16,34 +16,30 @@
 
 package me.fengorz.kiwi.common.sdk.util.log;
 
-/**
- * @Description 打印日志的辅助性工具
- * @Author zhanshifeng
- * @Date 2019/11/24 11:05 PM
- */
+/** @Description 打印日志的辅助性工具 @Author zhanshifeng @Date 2019/11/24 11:05 PM */
 public class KiwiLogUtils {
 
-    public static String getClassName() {
-        StackTraceElement[] stacktrace = Thread.currentThread().getStackTrace();
-        StackTraceElement e = stacktrace[2];
-        return e.getClassName();
-    }
+  public static String getClassName() {
+    StackTraceElement[] stacktrace = Thread.currentThread().getStackTrace();
+    StackTraceElement e = stacktrace[2];
+    return e.getClassName();
+  }
 
-    public static String getMethodName() {
-        StackTraceElement[] stacktrace = Thread.currentThread().getStackTrace();
-        StackTraceElement e = stacktrace[2];
-        return e.getMethodName();
-    }
+  public static String getMethodName() {
+    StackTraceElement[] stacktrace = Thread.currentThread().getStackTrace();
+    StackTraceElement e = stacktrace[2];
+    return e.getMethodName();
+  }
 
-    public static String getFileName() {
-        StackTraceElement[] stacktrace = Thread.currentThread().getStackTrace();
-        StackTraceElement e = stacktrace[2];
-        return e.getFileName();
-    }
+  public static String getFileName() {
+    StackTraceElement[] stacktrace = Thread.currentThread().getStackTrace();
+    StackTraceElement e = stacktrace[2];
+    return e.getFileName();
+  }
 
-    public static int getLineNumber() {
-        StackTraceElement[] stacktrace = Thread.currentThread().getStackTrace();
-        StackTraceElement e = stacktrace[2];
-        return e.getLineNumber();
-    }
+  public static int getLineNumber() {
+    StackTraceElement[] stacktrace = Thread.currentThread().getStackTrace();
+    StackTraceElement e = stacktrace[2];
+    return e.getLineNumber();
+  }
 }

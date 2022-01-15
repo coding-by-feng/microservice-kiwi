@@ -36,36 +36,20 @@ import java.time.LocalDateTime;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ExampleStarListDO extends Model<ExampleStarListDO> {
 
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    /**
-     *
-     */
-    @TableId
-    private Integer id;
-    /**
-     * 单词释义本名称
-     */
-    private String listName;
-    /**
-     * 描述说明
-     */
-    private String remark;
-    /**
-     * 创建时间
-     */
-    private LocalDateTime createTime;
-    /**
-     * 创建人
-     */
-    private Integer owner;
-    /**
-     * 是否删除
-     */
-    private String isDel;
-    /**
-     *
-     */
-    private Integer sort;
-
+  /** */
+  @TableId private Integer id;
+  /** 单词释义本名称 */
+  private String listName;
+  /** 描述说明 */
+  private String remark;
+  /** 创建时间 */
+  private LocalDateTime createTime;
+  /** 创建人 */
+  private Integer owner;
+  /** 是否删除 */
+  private String isDel;
+  /** */
+  private Integer sort;
 }

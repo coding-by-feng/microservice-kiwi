@@ -26,21 +26,22 @@ import java.util.List;
  */
 public interface IWordReviewService {
 
-    List<WordBreakpointReviewDO> listBreakpointReview(Integer listId);
+  List<WordBreakpointReviewDO> listBreakpointReview(Integer listId);
 
-    void addOne(Integer listId, Integer pageNum);
+  void addOne(Integer listId, Integer pageNum);
 
-    void createTheDays(Integer userId);
+  void createTheDays(Integer userId);
 
-    void increase(int type, Integer userId);
+  void increase(int type, Integer userId);
 
-    WordReviewDailyCounterVO getVO(int userId, int type);
+  WordReviewDailyCounterVO getVO(int userId, int type);
 
-    /**
-     * Record the page number currently reviewed.
-     * @param listId
-     * @param pageNumber
-     * @param type
-     */
-    void recordReviewPageNumber(int listId, Long pageNumber, int type, Integer userId);
+  /**
+   * Record the page number currently reviewed.
+   *
+   * @param listId
+   * @param pageNumber
+   * @param type
+   */
+  void recordReviewPageNumber(int listId, Long pageNumber, int type, Integer userId);
 }

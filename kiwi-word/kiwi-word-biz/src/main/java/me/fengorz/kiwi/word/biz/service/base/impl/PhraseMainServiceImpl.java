@@ -26,6 +26,5 @@ import org.springframework.stereotype.Service;
  * @date 2020-10-10 20:09:06
  */
 @Service
-public class PhraseMainServiceImpl extends ServiceImpl<PhraseMainMapper, PhraseMainDO> implements IPhraseMainService {
-
-}
+public class PhraseMainServiceImpl extends ServiceImpl<PhraseMainMapper, PhraseMainDO>
+    implements IPhraseMainService {}

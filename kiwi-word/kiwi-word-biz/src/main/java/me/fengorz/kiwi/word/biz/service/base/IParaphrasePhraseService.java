@@ -27,6 +27,4 @@ import me.fengorz.kiwi.word.api.entity.ParaphrasePhraseDO;
  * @author zhanShiFeng
  * @date 2020-05-31 22:22:22
  */
-public interface IParaphrasePhraseService extends IService<ParaphrasePhraseDO> {
-
-}
+public interface IParaphrasePhraseService extends IService<ParaphrasePhraseDO> {}

@@ -34,49 +34,28 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public class ParaphraseDO extends Model<ParaphraseDO> {
 
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    /**
-     * 释义ID
-     */
-    @TableId
-    private Integer paraphraseId;
-    /**
-     *
-     */
-    private Integer wordId;
-    /**
-     *
-     */
-    private Integer characterId;
-    private Integer serialNumber;
-    /**
-     * 词性
-     */
-    private String codes;
-    /**
-     * 英文释义
-     */
-    private String paraphraseEnglish;
-    /**
-     * 英文释义翻译
-     */
-    private String paraphraseEnglishTranslate;
-    /**
-     * 中文词义
-     */
-    private String meaningChinese;
-    /**
-     * 翻译语种
-     */
-    private String translateLanguage;
-    /**
-     * 是否拥有关联词组定义
-     */
-    private Integer isHavePhrase;
-    /**
-     * 逻辑删除标记(Y--正常 N--删除)
-     */
-    private Integer isDel;
+  /** 释义ID */
+  @TableId private Integer paraphraseId;
+  /** */
+  private Integer wordId;
+  /** */
+  private Integer characterId;
 
+  private Integer serialNumber;
+  /** 词性 */
+  private String codes;
+  /** 英文释义 */
+  private String paraphraseEnglish;
+  /** 英文释义翻译 */
+  private String paraphraseEnglishTranslate;
+  /** 中文词义 */
+  private String meaningChinese;
+  /** 翻译语种 */
+  private String translateLanguage;
+  /** 是否拥有关联词组定义 */
+  private Integer isHavePhrase;
+  /** 逻辑删除标记(Y--正常 N--删除) */
+  private Integer isDel;
 }

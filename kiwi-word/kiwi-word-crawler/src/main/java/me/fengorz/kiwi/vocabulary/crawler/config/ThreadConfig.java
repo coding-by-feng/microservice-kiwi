@@ -28,63 +28,59 @@ import org.springframework.context.annotation.Import;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
-/**
- * @Author zhanshifeng
- * @Date 2019/10/29 4:57 PM
- */
+/** @Author zhanshifeng @Date 2019/10/29 4:57 PM */
 @Configuration
 @ComponentScan(basePackages = "me.fengorz.kiwi.vocabulary.crawler")
 @EnableScheduling
 @Import(DfsConfig.class)
 public class ThreadConfig {
 
-    @Value("${crawler.config.core.pool.size}")
-    private int corePoolSize;
+  @Value("${crawler.config.core.pool.size}")
+  private int corePoolSize;
 
-    @Value("${crawler.config.max.pool.size}")
-    private int maxPoolSize;
+  @Value("${crawler.config.max.pool.size}")
+  private int maxPoolSize;
 
-    @Value("${crawler.config.queue.capacity}")
-    private int queueCapacity;
+  @Value("${crawler.config.queue.capacity}")
+  private int queueCapacity;
 
-    @Bean(name = "fetchWordThreadExecutor")
-    public ThreadPoolTaskExecutor fetchWordThreadExecutor() {
-        ThreadPoolTaskExecutor taskExecutor = new ThreadPoolTaskExecutor();
-        taskExecutor.setCorePoolSize(this.corePoolSize);
-        taskExecutor.setMaxPoolSize(this.maxPoolSize);
-        taskExecutor.setQueueCapacity(this.queueCapacity);
-        taskExecutor.initialize();
-        return taskExecutor;
-    }
+  @Bean(name = "fetchWordThreadExecutor")
+  public ThreadPoolTaskExecutor fetchWordThreadExecutor() {
+    ThreadPoolTaskExecutor taskExecutor = new ThreadPoolTaskExecutor();
+    taskExecutor.setCorePoolSize(this.corePoolSize);
+    taskExecutor.setMaxPoolSize(this.maxPoolSize);
+    taskExecutor.setQueueCapacity(this.queueCapacity);
+    taskExecutor.initialize();
+    return taskExecutor;
+  }
 
-    @Bean(name = "fetchPronunciationThreadExecutor")
-    public ThreadPoolTaskExecutor fetchPronunciationThreadExecutor() {
-        ThreadPoolTaskExecutor taskExecutor = new ThreadPoolTaskExecutor();
-        taskExecutor.setCorePoolSize(this.corePoolSize);
-        taskExecutor.setMaxPoolSize(this.maxPoolSize);
-        taskExecutor.setQueueCapacity(this.queueCapacity);
-        taskExecutor.initialize();
-        return taskExecutor;
-    }
+  @Bean(name = "fetchPronunciationThreadExecutor")
+  public ThreadPoolTaskExecutor fetchPronunciationThreadExecutor() {
+    ThreadPoolTaskExecutor taskExecutor = new ThreadPoolTaskExecutor();
+    taskExecutor.setCorePoolSize(this.corePoolSize);
+    taskExecutor.setMaxPoolSize(this.maxPoolSize);
+    taskExecutor.setQueueCapacity(this.queueCapacity);
+    taskExecutor.initialize();
+    return taskExecutor;
+  }
 
-    @Bean(name = "removeWordThreadExecutor")
-    public ThreadPoolTaskExecutor removeWordThreadExecutor() {
-        ThreadPoolTaskExecutor taskExecutor = new ThreadPoolTaskExecutor();
-        taskExecutor.setCorePoolSize(this.corePoolSize);
-        taskExecutor.setMaxPoolSize(this.maxPoolSize);
-        taskExecutor.setQueueCapacity(this.queueCapacity);
-        taskExecutor.initialize();
-        return taskExecutor;
-    }
+  @Bean(name = "removeWordThreadExecutor")
+  public ThreadPoolTaskExecutor removeWordThreadExecutor() {
+    ThreadPoolTaskExecutor taskExecutor = new ThreadPoolTaskExecutor();
+    taskExecutor.setCorePoolSize(this.corePoolSize);
+    taskExecutor.setMaxPoolSize(this.maxPoolSize);
+    taskExecutor.setQueueCapacity(this.queueCapacity);
+    taskExecutor.initialize();
+    return taskExecutor;
+  }
 
-    @Bean(name = "removePronunciationThreadExecutor")
-    public ThreadPoolTaskExecutor removePronunciationThreadExecutor() {
-        ThreadPoolTaskExecutor taskExecutor = new ThreadPoolTaskExecutor();
-        taskExecutor.setCorePoolSize(this.corePoolSize);
-        taskExecutor.setMaxPoolSize(this.maxPoolSize);
-        taskExecutor.setQueueCapacity(this.queueCapacity);
-        taskExecutor.initialize();
-        return taskExecutor;
-    }
-
+  @Bean(name = "removePronunciationThreadExecutor")
+  public ThreadPoolTaskExecutor removePronunciationThreadExecutor() {
+    ThreadPoolTaskExecutor taskExecutor = new ThreadPoolTaskExecutor();
+    taskExecutor.setCorePoolSize(this.corePoolSize);
+    taskExecutor.setMaxPoolSize(this.maxPoolSize);
+    taskExecutor.setQueueCapacity(this.queueCapacity);
+    taskExecutor.initialize();
+    return taskExecutor;
+  }
 }

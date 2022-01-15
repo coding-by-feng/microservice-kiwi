@@ -33,34 +33,28 @@ import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
-/**
- * 老旧单词数据清除--消息队列生产者
- *
- * @Author zhanshifeng
- * @Date 2019/10/30 10:33 AM
- */
+/** 老旧单词数据清除--消息队列生产者 @Author zhanshifeng @Date 2019/10/30 10:33 AM */
 @Component
 @Slf4j
 public class RemoveWordProducer extends AbstractProducer implements IProducer {
 
-    public RemoveWordProducer(IBizAPI bizAPI, ISender sender) {
-        super(bizAPI, sender);
-        this.infoType = WordCrawlerConstants.QUEUE_INFO_TYPE_WORD;
-    }
+  public RemoveWordProducer(IBizAPI bizAPI, ISender sender) {
+    super(bizAPI, sender);
+    this.infoType = WordCrawlerConstants.QUEUE_INFO_TYPE_WORD;
+  }
 
-    @Override
-    public void produce() {
-        super.produce(WordCrawlerConstants.STATUS_TO_DEL_BASE);
-    }
+  @Override
+  public void produce() {
+    super.produce(WordCrawlerConstants.STATUS_TO_DEL_BASE);
+  }
 
-    @Override
-    @Async
-    public void execute(FetchQueueDO queue) {
-        queue.setIsLock(GlobalConstants.FLAG_YES);
-        queue.setFetchStatus(WordCrawlerConstants.STATUS_DOING_DEL_BASE);
-        if (Optional.of(bizAPI.updateQueueById(queue)).get().isSuccess()) {
-            sender.removeWord(new RemoveMqDTO().setQueueId(queue.getQueueId()));
-        }
+  @Override
+  @Async
+  public void execute(FetchQueueDO queue) {
+    queue.setIsLock(GlobalConstants.FLAG_YES);
+    queue.setFetchStatus(WordCrawlerConstants.STATUS_DOING_DEL_BASE);
+    if (Optional.of(bizAPI.updateQueueById(queue)).get().isSuccess()) {
+      sender.removeWord(new RemoveMqDTO().setQueueId(queue.getQueueId()));
     }
-
+  }
 }

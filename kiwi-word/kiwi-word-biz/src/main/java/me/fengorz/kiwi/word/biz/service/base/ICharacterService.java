@@ -30,7 +30,7 @@ import me.fengorz.kiwi.word.api.vo.detail.CharacterVO;
  */
 public interface ICharacterService extends IService<CharacterDO> {
 
-    CharacterVO get(Integer characterId);
+  CharacterVO get(Integer characterId);
 
-    void evict(Integer characterId);
+  void evict(Integer characterId);
 }

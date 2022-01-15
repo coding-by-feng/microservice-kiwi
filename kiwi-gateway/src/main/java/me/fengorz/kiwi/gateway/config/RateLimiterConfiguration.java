@@ -16,13 +16,12 @@
 
 package me.fengorz.kiwi.gateway.config;
 
-import java.util.Objects;
-
 import org.springframework.cloud.gateway.filter.ratelimit.KeyResolver;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
 import reactor.core.publisher.Mono;
+
+import java.util.Objects;
 
 /**
  * @author lengleng
@@ -30,9 +29,12 @@ import reactor.core.publisher.Mono;
  */
 @Configuration
 public class RateLimiterConfiguration {
-    @Bean(value = "remoteAddrKeyResolver")
-    public KeyResolver remoteAddrKeyResolver() {
-        return exchange -> Mono
-            .just(Objects.requireNonNull(exchange.getRequest().getRemoteAddress()).getAddress().getHostAddress());
-    }
+  @Bean(value = "remoteAddrKeyResolver")
+  public KeyResolver remoteAddrKeyResolver() {
+    return exchange ->
+        Mono.just(
+            Objects.requireNonNull(exchange.getRequest().getRemoteAddress())
+                .getAddress()
+                .getHostAddress());
+  }
 }

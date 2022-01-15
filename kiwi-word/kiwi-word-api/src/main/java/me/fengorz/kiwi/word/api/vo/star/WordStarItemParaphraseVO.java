@@ -22,18 +22,14 @@ import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 
-/**
-* @Author zhanshifeng
- * @Date 2020/1/3 4:54 PM
- */
+/** @Author zhanshifeng @Date 2020/1/3 4:54 PM */
 @Data
 @Accessors(chain = true)
 @ToString
 public class WordStarItemParaphraseVO implements Serializable {
 
-    private static final long serialVersionUID = -7470552519759474739L;
+  private static final long serialVersionUID = -7470552519759474739L;
 
-    private String paraphraseEnglish;
-    private String meaningChinese;
-
+  private String paraphraseEnglish;
+  private String meaningChinese;
 }

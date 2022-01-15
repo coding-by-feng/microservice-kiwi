@@ -18,30 +18,27 @@ package me.fengorz.kiwi.word.api.exception;
 
 import me.fengorz.kiwi.common.sdk.exception.BaseRuntimeException;
 
-/**
- * @Author zhanshifeng
- * @Date 2019/11/1 2:54 PM
- */
-public class SchedulerException extends BaseRuntimeException{
+/** @Author zhanshifeng @Date 2019/11/1 2:54 PM */
+public class SchedulerException extends BaseRuntimeException {
 
-    private static final long serialVersionUID = -6069167306232582361L;
+  private static final long serialVersionUID = -6069167306232582361L;
 
-    public SchedulerException() {}
+  public SchedulerException() {}
 
-    public SchedulerException(String message) {
-        super(message);
-    }
+  public SchedulerException(String message) {
+    super(message);
+  }
 
-    public SchedulerException(String message, Throwable cause) {
-        super(message, cause);
-    }
+  public SchedulerException(String message, Throwable cause) {
+    super(message, cause);
+  }
 
-    public SchedulerException(Throwable cause) {
-        super(cause);
-    }
+  public SchedulerException(Throwable cause) {
+    super(cause);
+  }
 
-    public SchedulerException(String message, Throwable cause, boolean enableSuppression,
-                              boolean writableStackTrace) {
-        super(message, cause, enableSuppression, writableStackTrace);
-    }
+  public SchedulerException(
+      String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+    super(message, cause, enableSuppression, writableStackTrace);
+  }
 }

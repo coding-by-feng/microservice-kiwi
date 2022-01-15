@@ -16,42 +16,39 @@
 
 package me.fengorz.kiwi.common.sdk.util.validate;
 
-import java.util.Iterator;
-import java.util.Set;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
+import java.util.Iterator;
+import java.util.Set;
 
-import org.apache.commons.lang3.StringUtils;
-
-/**
- * @Description Util of Java Bean Validation
- * @Author zhanshifeng
- * @Date 2019/11/26 9:03 PM
- */
+/** @Description Util of Java Bean Validation @Author zhanshifeng @Date 2019/11/26 9:03 PM */
 public class KiwiValidateUtils {
 
-    public static String check(Object obj) {
-        if (null == obj) {
-            return "入参不能为空";
-        }
-        Set<ConstraintViolation<Object>> validResult =
-            Validation.buildDefaultValidatorFactory().getValidator().validate(obj);
-        if (null != validResult && validResult.size() > 0) {
-            StringBuilder sb = new StringBuilder();
-            for (Iterator<ConstraintViolation<Object>> iterator = validResult.iterator(); iterator.hasNext();) {
-                ConstraintViolation<Object> constraintViolation = (ConstraintViolation<Object>)iterator.next();
-                if (StringUtils.isNotBlank(constraintViolation.getMessage())) {
-                    sb.append(constraintViolation.getMessage()).append("、");
-                } else {
-                    sb.append(constraintViolation.getPropertyPath().toString()).append("不合法、");
-                }
-            }
-            if (sb.lastIndexOf("、") == sb.length() - 1) {
-                sb.delete(sb.length() - 1, sb.length());
-            }
-            return sb.toString();
-        }
-        return null;
+  public static String check(Object obj) {
+    if (null == obj) {
+      return "入参不能为空";
     }
+    Set<ConstraintViolation<Object>> validResult =
+        Validation.buildDefaultValidatorFactory().getValidator().validate(obj);
+    if (null != validResult && validResult.size() > 0) {
+      StringBuilder sb = new StringBuilder();
+      for (Iterator<ConstraintViolation<Object>> iterator = validResult.iterator();
+          iterator.hasNext(); ) {
+        ConstraintViolation<Object> constraintViolation =
+            (ConstraintViolation<Object>) iterator.next();
+        if (StringUtils.isNotBlank(constraintViolation.getMessage())) {
+          sb.append(constraintViolation.getMessage()).append("、");
+        } else {
+          sb.append(constraintViolation.getPropertyPath().toString()).append("不合法、");
+        }
+      }
+      if (sb.lastIndexOf("、") == sb.length() - 1) {
+        sb.delete(sb.length() - 1, sb.length());
+      }
+      return sb.toString();
+    }
+    return null;
+  }
 }

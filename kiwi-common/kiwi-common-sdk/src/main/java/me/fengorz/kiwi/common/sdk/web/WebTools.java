@@ -33,93 +33,88 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
-/**
- * @Author zhanshifeng
- * @Date 2019-09-07 21:11
- */
+/** @Author zhanshifeng @Date 2019-09-07 21:11 */
 @Slf4j
 public class WebTools extends WebUtils {
 
-    private static final int IN_READ_BYTES_LENGTH = 1024;
+  private static final int IN_READ_BYTES_LENGTH = 1024;
 
-    /**
-     * 从request获取Authorization并解密
-     *
-     * @param request
-     * @return
-     */
-    public static String decodeAuthorization(ServerHttpRequest request) {
-        String authorization = request.getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
+  /**
+   * 从request获取Authorization并解密
+   *
+   * @param request
+   * @return
+   */
+  public static String decodeAuthorization(ServerHttpRequest request) {
+    String authorization = request.getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
 
-        if (!StrUtil.startWith(authorization, SecurityConstants.KEY_HEADER_BASIC_)) {
-            throw new AuthException("请求头中client信息不能为空");
+    if (!StrUtil.startWith(authorization, SecurityConstants.KEY_HEADER_BASIC_)) {
+      throw new AuthException("请求头中client信息不能为空");
+    }
+
+    byte[] decoded;
+
+    try {
+      byte[] authorizationBytes = authorization.substring(6).getBytes(CharEncoding.UTF_8);
+      decoded = Base64.decode(authorizationBytes);
+    } catch (Exception e) {
+      throw new AuthException("Failed to decode basic authentication token");
+    }
+
+    return new String(decoded, StandardCharsets.UTF_8);
+  }
+
+  public static void downloadResponse(HttpServletResponse response, InputStream inputStream) {
+    if (inputStream == null) {
+      return;
+    }
+
+    ServletOutputStream temps = null;
+    DataInputStream in = null;
+    try {
+      temps = response.getOutputStream();
+      in = new DataInputStream(inputStream);
+      // 这个方法写入音频流时有个致命问题，如果是音频流会出现尾部有杂音，因为2048如果尾部空流在音频当还是会被当做声音处理
+      // 如果采用下面注释掉的这种写法的话
+      byte[] b = new byte[IN_READ_BYTES_LENGTH];
+      int readLength = 0;
+      do {
+        readLength = in.read(b);
+        if (readLength > 0 && readLength < IN_READ_BYTES_LENGTH) {
+          byte[] minB = new byte[readLength];
+          System.arraycopy(b, 0, minB, 0, readLength);
+          temps.write(minB);
+        } else if (readLength == IN_READ_BYTES_LENGTH) {
+          temps.write(b);
+        } else {
+          break;
         }
-
-        byte[] decoded;
-
+        temps.flush();
+      } while (readLength == IN_READ_BYTES_LENGTH);
+    } catch (IOException e) {
+      log.error(e.getMessage(), e);
+    } finally {
+      if (temps != null) {
         try {
-            byte[] authorizationBytes = authorization.substring(6).getBytes(CharEncoding.UTF_8);
-            decoded = Base64.decode(authorizationBytes);
-        } catch (Exception e) {
-            throw new AuthException("Failed to decode basic authentication token");
+          temps.close();
+        } catch (IOException e) {
+          log.error("temps close exception", e);
         }
-
-        return new String(decoded, StandardCharsets.UTF_8);
-    }
-
-    public static void downloadResponse(HttpServletResponse response, InputStream inputStream) {
-        if (inputStream == null) {
-            return;
-        }
-
-        ServletOutputStream temps = null;
-        DataInputStream in = null;
+      }
+      if (in != null) {
         try {
-            temps = response.getOutputStream();
-            in = new DataInputStream(inputStream);
-            // 这个方法写入音频流时有个致命问题，如果是音频流会出现尾部有杂音，因为2048如果尾部空流在音频当还是会被当做声音处理
-            // 如果采用下面注释掉的这种写法的话
-            byte[] b = new byte[IN_READ_BYTES_LENGTH];
-            int readLength = 0;
-            do {
-                readLength = in.read(b);
-                if (readLength > 0 && readLength < IN_READ_BYTES_LENGTH) {
-                    byte[] minB = new byte[readLength];
-                    System.arraycopy(b, 0, minB, 0, readLength);
-                    temps.write(minB);
-                } else if (readLength == IN_READ_BYTES_LENGTH) {
-                    temps.write(b);
-                } else {
-                    break;
-                }
-                temps.flush();
-            } while (readLength == IN_READ_BYTES_LENGTH);
-        } catch (
-                IOException e) {
-            log.error(e.getMessage(), e);
-        } finally {
-            if (temps != null) {
-                try {
-                    temps.close();
-                } catch (IOException e) {
-                    log.error("temps close exception", e);
-                }
-            }
-            if (in != null) {
-                try {
-                    in.close();
-                } catch (IOException e) {
-                    log.error("in close exception", e);
-                }
-            }
+          in.close();
+        } catch (IOException e) {
+          log.error("in close exception", e);
         }
+      }
     }
+  }
 
-    public static int deductCurrent(int current) {
-        if (current > 0) {
-            return current - 1;
-        }
-        return 0;
+  public static int deductCurrent(int current) {
+    if (current > 0) {
+      return current - 1;
     }
-
+    return 0;
+  }
 }

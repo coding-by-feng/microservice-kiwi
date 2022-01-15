@@ -40,101 +40,100 @@ import java.util.Optional;
 @RequestMapping("/sys/user")
 public class SysUserController extends BaseController {
 
-    private final SysUserService sysUserService;
+  private final SysUserService sysUserService;
 
-    @GetMapping("/oneClickRegister")
-    public R<SysUser> oneClickRegister() {
-        return R.success(sysUserService.oneClickRegister());
+  @GetMapping("/oneClickRegister")
+  public R<SysUser> oneClickRegister() {
+    return R.success(sysUserService.oneClickRegister());
+  }
+
+  @GetMapping("/current/info")
+  public R currentInfo() {
+    final SysUser[] user = {null};
+    Optional.ofNullable(this.getCurrentUser())
+        .ifPresent(
+            inspectUser -> {
+              String username = inspectUser.getUsername();
+              user[0] =
+                  sysUserService.getOne(
+                      Wrappers.<SysUser>query().lambda().eq(SysUser::getUsername, username));
+            });
+    if (Objects.isNull(user[0])) {
+      return R.failed("获取当前用户信息失败");
     }
+    return R.success(sysUserService.getUserFullInfo(user[0]));
+  }
 
-    @GetMapping("/current/info")
-    public R currentInfo() {
-        final SysUser[] user = {null};
-        Optional.ofNullable(this.getCurrentUser()).ifPresent(inspectUser -> {
-            String username = inspectUser.getUsername();
-            user[0] = sysUserService.getOne(Wrappers.<SysUser>query().lambda().eq(SysUser::getUsername, username));
-        });
-        if (Objects.isNull(user[0])) {
-            return R.failed("获取当前用户信息失败");
-        }
-        return R.success(sysUserService.getUserFullInfo(user[0]));
-
+  @GetMapping("/info/{username}")
+  public R info(@PathVariable String username) {
+    SysUser user =
+        sysUserService.getOne(
+            Wrappers.<SysUser>query().lambda().eq(SysUser::getUsername, username));
+    if (Objects.isNull(user)) {
+      return R.failed("用户信息查询不到 %s", username);
     }
+    return R.success(sysUserService.getUserFullInfo(user));
+  }
 
-    @GetMapping("/info/{username}")
-    public R info(@PathVariable String username) {
-        SysUser user = sysUserService.getOne(Wrappers.<SysUser>query().lambda().eq(SysUser::getUsername, username));
-        if (Objects.isNull(user)) {
-            return R.failed("用户信息查询不到 %s", username);
-        }
-        return R.success(sysUserService.getUserFullInfo(user));
-    }
+  /**
+   * 分页查询
+   *
+   * @param page 分页对象
+   * @param sysUser 用户表
+   * @return
+   */
+  @GetMapping("/page")
+  public R getSysUserPage(Page page, SysUser sysUser) {
+    return R.success(sysUserService.page(page, Wrappers.query(sysUser)));
+  }
 
-    /**
-     * 分页查询
-     *
-     * @param page
-     *            分页对象
-     * @param sysUser
-     *            用户表
-     * @return
-     */
-    @GetMapping("/page")
-    public R getSysUserPage(Page page, SysUser sysUser) {
-        return R.success(sysUserService.page(page, Wrappers.query(sysUser)));
-    }
+  /**
+   * 通过id查询用户表
+   *
+   * @param userId id
+   * @return R
+   */
+  @GetMapping("/{userId}")
+  public R getById(@PathVariable("userId") Integer userId) {
+    return R.success(sysUserService.getById(userId));
+  }
 
-    /**
-     * 通过id查询用户表
-     *
-     * @param userId
-     *            id
-     * @return R
-     */
-    @GetMapping("/{userId}")
-    public R getById(@PathVariable("userId") Integer userId) {
-        return R.success(sysUserService.getById(userId));
-    }
+  /**
+   * 新增用户表
+   *
+   * @param sysUser 用户表
+   * @return R
+   */
+  @SysLog("新增用户表")
+  @PostMapping
+  @PreAuthorize("@pms.hasPermission('admin_sysuser_add')")
+  public R save(@RequestBody SysUser sysUser) {
+    return R.success(sysUserService.save(sysUser));
+  }
 
-    /**
-     * 新增用户表
-     *
-     * @param sysUser
-     *            用户表
-     * @return R
-     */
-    @SysLog("新增用户表")
-    @PostMapping
-    @PreAuthorize("@pms.hasPermission('admin_sysuser_add')")
-    public R save(@RequestBody SysUser sysUser) {
-        return R.success(sysUserService.save(sysUser));
-    }
+  /**
+   * 修改用户表
+   *
+   * @param sysUser 用户表
+   * @return R
+   */
+  @SysLog("修改用户表")
+  @PutMapping
+  @PreAuthorize("@pms.hasPermission('admin_sysuser_edit')")
+  public R updateById(@RequestBody SysUser sysUser) {
+    return R.success(sysUserService.updateById(sysUser));
+  }
 
-    /**
-     * 修改用户表
-     *
-     * @param sysUser
-     *            用户表
-     * @return R
-     */
-    @SysLog("修改用户表")
-    @PutMapping
-    @PreAuthorize("@pms.hasPermission('admin_sysuser_edit')")
-    public R updateById(@RequestBody SysUser sysUser) {
-        return R.success(sysUserService.updateById(sysUser));
-    }
-
-    /**
-     * 通过id删除用户表
-     *
-     * @param userId
-     *            id
-     * @return R
-     */
-    @SysLog("通过id删除用户表")
-    @DeleteMapping("/{userId}")
-    @PreAuthorize("@pms.hasPermission('admin_sysuser_del')")
-    public R removeById(@PathVariable Integer userId) {
-        return R.success(sysUserService.removeById(userId));
-    }
+  /**
+   * 通过id删除用户表
+   *
+   * @param userId id
+   * @return R
+   */
+  @SysLog("通过id删除用户表")
+  @DeleteMapping("/{userId}")
+  @PreAuthorize("@pms.hasPermission('admin_sysuser_del')")
+  public R removeById(@PathVariable Integer userId) {
+    return R.success(sysUserService.removeById(userId));
+  }
 }

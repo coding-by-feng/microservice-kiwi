@@ -21,8 +21,7 @@ import java.util.Map;
 
 public interface SysGeneratorService {
 
-    Map<String, String> queryTable(String tableName);
+  Map<String, String> queryTable(String tableName);
 
-    List<Map<String, String>> queryColumns(String tableName);
-
+  List<Map<String, String>> queryColumns(String tableName);
 }

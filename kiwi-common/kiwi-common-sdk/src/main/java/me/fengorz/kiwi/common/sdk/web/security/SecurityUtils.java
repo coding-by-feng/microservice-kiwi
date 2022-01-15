@@ -24,50 +24,46 @@ import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.Objects;
 
-/**
- * @Author zhanshifeng
- * @Date 2019-09-26 10:19
- */
+/** @Author zhanshifeng @Date 2019-09-26 10:19 */
 @UtilityClass
 public class SecurityUtils {
 
-    public Authentication getAuthentication() {
-        return SecurityContextHolder.getContext().getAuthentication();
-    }
+  public Authentication getAuthentication() {
+    return SecurityContextHolder.getContext().getAuthentication();
+  }
 
-    public EnhancerUser getUser(Authentication authentication) {
-        Object principal = authentication.getPrincipal();
-        if (principal instanceof EnhancerUser) {
-            return (EnhancerUser)principal;
-        }
-        return null;
+  public EnhancerUser getUser(Authentication authentication) {
+    Object principal = authentication.getPrincipal();
+    if (principal instanceof EnhancerUser) {
+      return (EnhancerUser) principal;
     }
+    return null;
+  }
 
-    /**
-     * 获取当前登录的用户
-     *
-     * @return
-     */
-    public EnhancerUser getCurrentUser() {
-        Authentication authentication = getAuthentication();
-        if (Objects.isNull(authentication)) {
-            return null;
-        }
-        return getUser(authentication);
+  /**
+   * 获取当前登录的用户
+   *
+   * @return
+   */
+  public EnhancerUser getCurrentUser() {
+    Authentication authentication = getAuthentication();
+    if (Objects.isNull(authentication)) {
+      return null;
     }
+    return getUser(authentication);
+  }
 
-    /**
-     * 获取当前登录的用户ID
-     *
-     * @return
-     */
-    public Integer getCurrentUserId() {
-        EnhancerUser currentUser = getCurrentUser();
-        if (currentUser != null) {
-            return currentUser.getId();
-        }
-        // return 1;
-        throw new AuthException("登录超时");
+  /**
+   * 获取当前登录的用户ID
+   *
+   * @return
+   */
+  public Integer getCurrentUserId() {
+    EnhancerUser currentUser = getCurrentUser();
+    if (currentUser != null) {
+      return currentUser.getId();
     }
-
+    // return 1;
+    throw new AuthException("登录超时");
+  }
 }

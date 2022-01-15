@@ -38,46 +38,58 @@ import java.util.stream.Collectors;
  */
 @Service
 @RequiredArgsConstructor
-public class ParaphraseStarRelServiceImpl extends ServiceImpl<ParaphraseStarRelMapper, ParaphraseStarRelDO>
+public class ParaphraseStarRelServiceImpl
+    extends ServiceImpl<ParaphraseStarRelMapper, ParaphraseStarRelDO>
     implements IParaphraseStarRelService {
 
-    private final ParaphraseStarRelMapper paraphraseStarRelMapper;
-    private final ParaphraseMapper paraphraseMapper;
+  private final ParaphraseStarRelMapper paraphraseStarRelMapper;
+  private final ParaphraseMapper paraphraseMapper;
 
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public void replaceFetchResult(Integer oldRelId, Integer newRelId) {
-        if (oldRelId == null || newRelId == null) {
-            return;
-        }
-
-        int update = paraphraseStarRelMapper.update(new ParaphraseStarRelDO().setParaphraseId(newRelId),
-            Wrappers.<ParaphraseStarRelDO>lambdaUpdate().eq(ParaphraseStarRelDO::getParaphraseId, oldRelId));
-
-        // 更新失败的话，可能是因为单词删除的逻辑出现异常，下面做补偿处理
-        if (update < 1) {
-            ParaphraseDO paraphrase = Optional.of(paraphraseMapper.selectById(newRelId)).get();
-            LambdaQueryWrapper<ParaphraseDO> wrapper = Wrappers.<ParaphraseDO>lambdaQuery()
-                .eq(ParaphraseDO::getParaphraseEnglish, paraphrase.getParaphraseEnglish())
-                .eq(ParaphraseDO::getMeaningChinese, paraphrase.getMeaningChinese())
-                .eq(ParaphraseDO::getIsHavePhrase, paraphrase.getIsHavePhrase());
-            List<Integer> allStockId = paraphraseMapper.selectList(wrapper).stream()
-                .map(ParaphraseDO::getParaphraseId).collect(Collectors.toList());
-            update =
-                paraphraseStarRelMapper.update(new ParaphraseStarRelDO().setParaphraseId(newRelId), Wrappers
-                    .<ParaphraseStarRelDO>lambdaUpdate().in(ParaphraseStarRelDO::getParaphraseId, allStockId));
-
-            if (update < 1) {
-                List<Integer> list =
-                    paraphraseMapper.selectList(wrapper.orderByDesc(ParaphraseDO::getParaphraseId)).stream()
-                        .map(ParaphraseDO::getParaphraseId).filter(id -> !id.equals(newRelId))
-                        .collect(Collectors.toList());
-                if (KiwiCollectionUtils.isEmpty(list)) {
-                    return;
-                }
-                paraphraseStarRelMapper.update(new ParaphraseStarRelDO().setParaphraseId(newRelId), Wrappers
-                    .<ParaphraseStarRelDO>lambdaUpdate().in(ParaphraseStarRelDO::getParaphraseId, list));
-            }
-        }
+  @Override
+  @Transactional(rollbackFor = Exception.class)
+  public void replaceFetchResult(Integer oldRelId, Integer newRelId) {
+    if (oldRelId == null || newRelId == null) {
+      return;
     }
+
+    int update =
+        paraphraseStarRelMapper.update(
+            new ParaphraseStarRelDO().setParaphraseId(newRelId),
+            Wrappers.<ParaphraseStarRelDO>lambdaUpdate()
+                .eq(ParaphraseStarRelDO::getParaphraseId, oldRelId));
+
+    // 更新失败的话，可能是因为单词删除的逻辑出现异常，下面做补偿处理
+    if (update < 1) {
+      ParaphraseDO paraphrase = Optional.of(paraphraseMapper.selectById(newRelId)).get();
+      LambdaQueryWrapper<ParaphraseDO> wrapper =
+          Wrappers.<ParaphraseDO>lambdaQuery()
+              .eq(ParaphraseDO::getParaphraseEnglish, paraphrase.getParaphraseEnglish())
+              .eq(ParaphraseDO::getMeaningChinese, paraphrase.getMeaningChinese())
+              .eq(ParaphraseDO::getIsHavePhrase, paraphrase.getIsHavePhrase());
+      List<Integer> allStockId =
+          paraphraseMapper.selectList(wrapper).stream()
+              .map(ParaphraseDO::getParaphraseId)
+              .collect(Collectors.toList());
+      update =
+          paraphraseStarRelMapper.update(
+              new ParaphraseStarRelDO().setParaphraseId(newRelId),
+              Wrappers.<ParaphraseStarRelDO>lambdaUpdate()
+                  .in(ParaphraseStarRelDO::getParaphraseId, allStockId));
+
+      if (update < 1) {
+        List<Integer> list =
+            paraphraseMapper.selectList(wrapper.orderByDesc(ParaphraseDO::getParaphraseId)).stream()
+                .map(ParaphraseDO::getParaphraseId)
+                .filter(id -> !id.equals(newRelId))
+                .collect(Collectors.toList());
+        if (KiwiCollectionUtils.isEmpty(list)) {
+          return;
+        }
+        paraphraseStarRelMapper.update(
+            new ParaphraseStarRelDO().setParaphraseId(newRelId),
+            Wrappers.<ParaphraseStarRelDO>lambdaUpdate()
+                .in(ParaphraseStarRelDO::getParaphraseId, list));
+      }
+    }
+  }
 }

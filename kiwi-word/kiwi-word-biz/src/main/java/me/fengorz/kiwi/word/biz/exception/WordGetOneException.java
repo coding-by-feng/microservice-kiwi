@@ -21,10 +21,7 @@ package me.fengorz.kiwi.word.biz.exception;
 
 import me.fengorz.kiwi.common.sdk.exception.BaseException;
 
-/**
-* @Author zhanshifeng
- * @Date 2020/6/14 7:18 PM
- */
+/** @Author zhanshifeng @Date 2020/6/14 7:18 PM */
 public class WordGetOneException extends BaseException {
-    private static final long serialVersionUID = -1280800437433856325L;
+  private static final long serialVersionUID = -1280800437433856325L;
 }

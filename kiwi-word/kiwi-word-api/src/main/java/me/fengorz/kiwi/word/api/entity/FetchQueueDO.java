@@ -42,51 +42,36 @@ import java.time.LocalDateTime;
 @Accessors(chain = true)
 public class FetchQueueDO extends Model<FetchQueueDO> {
 
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    /**
-     *
-     */
-    @TableId
-    private Integer queueId;
-    /**
-     * 单词
-     */
-    private String wordName;
+  /** */
+  @TableId private Integer queueId;
+  /** 单词 */
+  private String wordName;
 
-    private Integer wordId;
+  private Integer wordId;
 
-    private String derivation;
+  private String derivation;
 
-    /**
-     * 优先级，越小越高
-     */
-    private Integer fetchPriority;
-    /**
-     * 抓取状态
-     */
-    private Integer fetchStatus;
-    /**
-     * 是否有效标记(Y--正常 N--删除)
-     */
-    private String isValid;
-    /**
-     *
-     */
-    private String fetchResult;
-    private Integer isLock;
+  /** 优先级，越小越高 */
+  private Integer fetchPriority;
+  /** 抓取状态 */
+  private Integer fetchStatus;
+  /** 是否有效标记(Y--正常 N--删除) */
+  private String isValid;
+  /** */
+  private String fetchResult;
 
-    /**
-     * 入库时间
-     */
-    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
-    @JsonSerialize(using = LocalDateTimeSerializer.class)
-    private LocalDateTime inTime;
+  private Integer isLock;
 
-    private Integer fetchTime;
+  /** 入库时间 */
+  @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+  @JsonSerialize(using = LocalDateTimeSerializer.class)
+  private LocalDateTime inTime;
 
-    private Integer isIntoCache;
+  private Integer fetchTime;
 
-    private Integer infoType;
+  private Integer isIntoCache;
 
+  private Integer infoType;
 }

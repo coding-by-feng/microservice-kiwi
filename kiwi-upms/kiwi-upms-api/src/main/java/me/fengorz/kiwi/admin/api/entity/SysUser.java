@@ -15,15 +15,14 @@
  */
 package me.fengorz.kiwi.admin.api.entity;
 
-import java.time.LocalDateTime;
-
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
-
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
+
+import java.time.LocalDateTime;
 
 /**
  * 用户表
@@ -37,60 +36,32 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public class SysUser extends Model<SysUser> {
 
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    /**
-     * 主键ID
-     */
-    @TableId
-    private Integer userId;
-    /**
-     * 用户名
-     */
-    private String username;
-    /**
-     *
-     */
-    private String password;
-    /**
-     * 随机盐
-     */
-    private String salt;
-    /**
-     * 简介
-     */
-    private String phone;
-    /**
-     * 头像
-     */
-    private String avatar;
-    /**
-     * 部门ID
-     */
-    private Integer deptId;
-    /**
-     * 创建时间
-     */
-    private LocalDateTime createTime;
-    /**
-     * 修改时间
-     */
-    private LocalDateTime updateTime;
-    /**
-     * 0-正常，9-锁定
-     */
-    private Integer lockFlag;
-    /**
-     * 0-正常，1-删除
-     */
-    private Integer delFlag;
-    /**
-     * 微信openid
-     */
-    private String wxOpenid;
-    /**
-     * QQ openid
-     */
-    private String qqOpenid;
-
+  /** 主键ID */
+  @TableId private Integer userId;
+  /** 用户名 */
+  private String username;
+  /** */
+  private String password;
+  /** 随机盐 */
+  private String salt;
+  /** 简介 */
+  private String phone;
+  /** 头像 */
+  private String avatar;
+  /** 部门ID */
+  private Integer deptId;
+  /** 创建时间 */
+  private LocalDateTime createTime;
+  /** 修改时间 */
+  private LocalDateTime updateTime;
+  /** 0-正常，9-锁定 */
+  private Integer lockFlag;
+  /** 0-正常，1-删除 */
+  private Integer delFlag;
+  /** 微信openid */
+  private String wxOpenid;
+  /** QQ openid */
+  private String qqOpenid;
 }

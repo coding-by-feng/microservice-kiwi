@@ -15,14 +15,13 @@
  */
 package me.fengorz.kiwi.admin.api.entity;
 
-import java.time.LocalDateTime;
-
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
-
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+
+import java.time.LocalDateTime;
 
 /**
  * 部门管理
@@ -35,36 +34,20 @@ import lombok.EqualsAndHashCode;
 @TableName("sys_dept")
 public class SysDept extends Model<SysDept> {
 
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    /**
-     *
-     */
-    @TableId
-    private Integer deptId;
-    /**
-     * 部门名称
-     */
-    private String deptName;
-    /**
-     * 排序
-     */
-    private Integer sort;
-    /**
-     * 创建时间
-     */
-    private LocalDateTime createTime;
-    /**
-     * 修改时间
-     */
-    private LocalDateTime updateTime;
-    /**
-     * 是否有效 N：无效(已删除) Y：正常
-     */
-    private String isValid;
-    /**
-     *
-     */
-    private Integer parentId;
-
+  /** */
+  @TableId private Integer deptId;
+  /** 部门名称 */
+  private String deptName;
+  /** 排序 */
+  private Integer sort;
+  /** 创建时间 */
+  private LocalDateTime createTime;
+  /** 修改时间 */
+  private LocalDateTime updateTime;
+  /** 是否有效 N：无效(已删除) Y：正常 */
+  private String isValid;
+  /** */
+  private Integer parentId;
 }

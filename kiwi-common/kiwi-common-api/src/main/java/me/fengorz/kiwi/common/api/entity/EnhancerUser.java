@@ -25,33 +25,41 @@ import java.util.Collection;
 
 import static me.fengorz.kiwi.common.api.ApiContants.ADMIN_USERNAME;
 
-/**
- * @Author zhanshifeng
- * @Date 2019-09-25 10:41
- */
+/** @Author zhanshifeng @Date 2019-09-25 10:41 */
 public class EnhancerUser extends User implements InitializingBean {
 
-    private static final long serialVersionUID = -3345914637714509878L;
+  private static final long serialVersionUID = -3345914637714509878L;
 
-    @Getter
-    private final Integer id;
+  @Getter private final Integer id;
 
-    @Getter
-    private final Integer deptId;
+  @Getter private final Integer deptId;
 
-    @Getter
-    private Boolean isAdmin;
+  @Getter private Boolean isAdmin;
 
-    public EnhancerUser(Integer id, Integer deptId, String username, String password, boolean enabled,
-                        boolean accountNonExpired, boolean credentialsNonExpired, boolean accountNonLocked,
-                        Collection<? extends GrantedAuthority> authorities) {
-        super(username, password, enabled, accountNonExpired, credentialsNonExpired, accountNonLocked, authorities);
-        this.id = id;
-        this.deptId = deptId;
-    }
+  public EnhancerUser(
+      Integer id,
+      Integer deptId,
+      String username,
+      String password,
+      boolean enabled,
+      boolean accountNonExpired,
+      boolean credentialsNonExpired,
+      boolean accountNonLocked,
+      Collection<? extends GrantedAuthority> authorities) {
+    super(
+        username,
+        password,
+        enabled,
+        accountNonExpired,
+        credentialsNonExpired,
+        accountNonLocked,
+        authorities);
+    this.id = id;
+    this.deptId = deptId;
+  }
 
-    @Override
-    public void afterPropertiesSet() {
-        this.isAdmin = ADMIN_USERNAME.equals(getUsername());
-    }
+  @Override
+  public void afterPropertiesSet() {
+    this.isAdmin = ADMIN_USERNAME.equals(getUsername());
+  }
 }

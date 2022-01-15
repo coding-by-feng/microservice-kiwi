@@ -21,6 +21,5 @@ package me.fengorz.kiwi.vocabulary.crawler.component.scheduler.base;
 
 public interface IScheduler {
 
-    void schedule();
-
+  void schedule();
 }

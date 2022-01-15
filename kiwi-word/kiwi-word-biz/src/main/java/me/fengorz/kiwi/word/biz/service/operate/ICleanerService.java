@@ -25,10 +25,10 @@ import java.util.List;
 
 public interface ICleanerService {
 
-    @Deprecated
-    List<RemovePronunciatioinMqDTO> removeWord(String wordName, Integer queueId);
+  @Deprecated
+  List<RemovePronunciatioinMqDTO> removeWord(String wordName, Integer queueId);
 
-    List<RemovePronunciatioinMqDTO> removeWord( Integer queueId);
+  List<RemovePronunciatioinMqDTO> removeWord(Integer queueId);
 
-    boolean removePhrase(Integer queueId);
+  boolean removePhrase(Integer queueId);
 }

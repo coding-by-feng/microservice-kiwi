@@ -16,8 +16,8 @@
 
 package me.fengorz.kiwi.generator.config;
 
-import javax.sql.DataSource;
-
+import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
+import com.zaxxer.hikari.HikariDataSource;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -30,8 +30,7 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 
-import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
-import com.zaxxer.hikari.HikariDataSource;
+import javax.sql.DataSource;
 
 /**
  * @author lengleng
@@ -42,45 +41,45 @@ import com.zaxxer.hikari.HikariDataSource;
 @ComponentScan("me.fengorz.kiwi.generator")
 public class MybatisPlusConfigurer {
 
-    /**
-     * 分页插件
-     *
-     * @return PaginationInterceptor
-     */
-    @Bean
-    public PaginationInterceptor paginationInterceptor() {
-        return new PaginationInterceptor();
-    }
+  /**
+   * 分页插件
+   *
+   * @return PaginationInterceptor
+   */
+  @Bean
+  public PaginationInterceptor paginationInterceptor() {
+    return new PaginationInterceptor();
+  }
 
-    @Bean
-    public DataSource dataSource() throws ConfigurationException {
-        PropertiesConfiguration properties = new PropertiesConfiguration("generator.properties");
-        HikariDataSource dataSource = new HikariDataSource();
-        dataSource.setJdbcUrl(properties.getString("dbUrl"));
-        dataSource.setDriverClassName(properties.getString("driverClass"));
-        dataSource.setUsername(properties.getString("dbUsername"));
-        dataSource.setPassword(properties.getString("dbPassword"));
-        return dataSource;
-    }
+  @Bean
+  public DataSource dataSource() throws ConfigurationException {
+    PropertiesConfiguration properties = new PropertiesConfiguration("generator.properties");
+    HikariDataSource dataSource = new HikariDataSource();
+    dataSource.setJdbcUrl(properties.getString("dbUrl"));
+    dataSource.setDriverClassName(properties.getString("driverClass"));
+    dataSource.setUsername(properties.getString("dbUsername"));
+    dataSource.setPassword(properties.getString("dbPassword"));
+    return dataSource;
+  }
 
-    @Bean
-    public SqlSessionFactory sqlSessionFactory() throws Exception {
-        SqlSessionFactoryBean sqlSessionFactoryBean = new SqlSessionFactoryBean();
-        sqlSessionFactoryBean.setDataSource(dataSource());
+  @Bean
+  public SqlSessionFactory sqlSessionFactory() throws Exception {
+    SqlSessionFactoryBean sqlSessionFactoryBean = new SqlSessionFactoryBean();
+    sqlSessionFactoryBean.setDataSource(dataSource());
 
-        PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
-        sqlSessionFactoryBean.setMapperLocations(resolver.getResources("classpath:/mapper/**/*.xml"));
+    PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
+    sqlSessionFactoryBean.setMapperLocations(resolver.getResources("classpath:/mapper/**/*.xml"));
 
-        // 指定扫描别名包的路径，多个bean的扫描路径，拼接以分号隔开
-        // String typeAliasesPackage = "com.wzh.demo.domain;";
-        // sqlSessionFactoryBean.setTypeAliasesPackage(typeAliasesPackage);
+    // 指定扫描别名包的路径，多个bean的扫描路径，拼接以分号隔开
+    // String typeAliasesPackage = "com.wzh.demo.domain;";
+    // sqlSessionFactoryBean.setTypeAliasesPackage(typeAliasesPackage);
 
-        return sqlSessionFactoryBean.getObject();
-    }
+    return sqlSessionFactoryBean.getObject();
+  }
 
-    // 创建事物管理器
-    @Bean
-    public PlatformTransactionManager transactionManager() throws ConfigurationException {
-        return new DataSourceTransactionManager(dataSource());
-    }
+  // 创建事物管理器
+  @Bean
+  public PlatformTransactionManager transactionManager() throws ConfigurationException {
+    return new DataSourceTransactionManager(dataSource());
+  }
 }

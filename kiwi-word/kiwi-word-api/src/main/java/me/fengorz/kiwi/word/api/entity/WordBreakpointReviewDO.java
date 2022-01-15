@@ -42,42 +42,28 @@ import java.time.LocalDateTime;
 @Accessors(chain = true)
 public class WordBreakpointReviewDO extends Model<WordBreakpointReviewDO> {
 
-    private static final long serialVersionUID = 1622962424639L;
+  private static final long serialVersionUID = 1622962424639L;
 
-    /**
-     *
-     */
-    @TableId
-    private Integer id;
+  /** */
+  @TableId private Integer id;
 
-    /**
-     *
-     */
-    @ApiModelProperty("")
-    private Integer listId;
+  /** */
+  @ApiModelProperty("")
+  private Integer listId;
 
-    /**
-     *
-     */
-    @ApiModelProperty("")
-    private Integer userId;
+  /** */
+  @ApiModelProperty("")
+  private Integer userId;
 
-    /**
-     *
-     */
-    @ApiModelProperty("")
-    private Integer type;
+  /** */
+  @ApiModelProperty("")
+  private Integer type;
 
-    /**
-     *
-     */
-    @ApiModelProperty("")
-    private Integer lastPage;
+  /** */
+  @ApiModelProperty("")
+  private Integer lastPage;
 
-    /**
-     *
-     */
-    @ApiModelProperty("")
-    private LocalDateTime operateTime;
-
+  /** */
+  @ApiModelProperty("")
+  private LocalDateTime operateTime;
 }

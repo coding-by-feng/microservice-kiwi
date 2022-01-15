@@ -24,76 +24,72 @@ import lombok.experimental.Accessors;
 import me.fengorz.kiwi.common.api.ResultCode;
 import org.apache.commons.lang3.StringUtils;
 
-/**
- * @Description 异常基类
- * @Author zhanshifeng
- * @Date 2020/4/8 4:32 PM
- */
+/** @Description 异常基类 @Author zhanshifeng @Date 2020/4/8 4:32 PM */
 @Data
 @Accessors(chain = true)
 public class BaseRuntimeException extends RuntimeException {
 
-    private static final long serialVersionUID = 6424688358439346362L;
+  private static final long serialVersionUID = 6424688358439346362L;
 
-    protected Object[] args;
-    protected ResultCode resultCode;
+  protected Object[] args;
+  protected ResultCode resultCode;
 
-    public BaseRuntimeException() {
-        super();
-        this.resultCode = ResultCode.FAIL;
+  public BaseRuntimeException() {
+    super();
+    this.resultCode = ResultCode.FAIL;
+  }
+
+  public BaseRuntimeException(Throwable cause) {
+    super(cause);
+    this.resultCode = ResultCode.FAIL;
+  }
+
+  public BaseRuntimeException(String msg, Object... args) {
+    super(msg);
+    this.args = args;
+    this.resultCode = ResultCode.FAIL;
+  }
+
+  public BaseRuntimeException(String msg, Throwable throwable, Object... args) {
+    super(msg, throwable);
+    this.args = args;
+    this.resultCode = ResultCode.FAIL;
+  }
+
+  public BaseRuntimeException(ResultCode resultCode, Object... args) {
+    super();
+    this.args = args;
+    this.resultCode = resultCode;
+  }
+
+  public BaseRuntimeException(String msg, ResultCode resultCode, Object... args) {
+    super(msg);
+    this.args = args;
+    this.resultCode = resultCode;
+  }
+
+  public BaseRuntimeException(
+      String msg, ResultCode resultCode, Throwable throwable, Object... args) {
+    super(msg, throwable);
+    this.args = args;
+    this.resultCode = resultCode;
+  }
+
+  public Object[] getArgs() {
+    return args;
+  }
+
+  public ResultCode getResultCode() {
+    return resultCode;
+  }
+
+  @Override
+  public String getMessage() {
+    if (args == null) {
+      return super.getMessage();
+    } else {
+      String message = StringUtils.defaultString(super.getMessage(), "");
+      return String.format(message, args);
     }
-
-    public BaseRuntimeException(Throwable cause) {
-        super(cause);
-        this.resultCode = ResultCode.FAIL;
-    }
-
-    public BaseRuntimeException(String msg, Object... args) {
-        super(msg);
-        this.args = args;
-        this.resultCode = ResultCode.FAIL;
-    }
-
-    public BaseRuntimeException(String msg, Throwable throwable, Object... args) {
-        super(msg, throwable);
-        this.args = args;
-        this.resultCode = ResultCode.FAIL;
-    }
-
-    public BaseRuntimeException(ResultCode resultCode, Object... args) {
-        super();
-        this.args = args;
-        this.resultCode = resultCode;
-    }
-
-    public BaseRuntimeException(String msg, ResultCode resultCode, Object... args) {
-        super(msg);
-        this.args = args;
-        this.resultCode = resultCode;
-    }
-
-    public Object[] getArgs() {
-        return args;
-    }
-
-    public BaseRuntimeException(String msg, ResultCode resultCode, Throwable throwable, Object... args) {
-        super(msg, throwable);
-        this.args = args;
-        this.resultCode = resultCode;
-    }
-
-    public ResultCode getResultCode() {
-        return resultCode;
-    }
-
-    @Override
-    public String getMessage() {
-        if (args == null) {
-            return super.getMessage();
-        } else {
-            String message = StringUtils.defaultString(super.getMessage(), "");
-            return String.format(message, args);
-        }
-    }
-
+  }
 }

@@ -27,10 +27,7 @@ import org.springframework.data.elasticsearch.annotations.FieldType;
 import java.io.Serializable;
 import java.util.List;
 
-/**
-* @Author zhanshifeng
- * @Date 2019/11/26 9:33 AM
- */
+/** @Author zhanshifeng @Date 2019/11/26 9:33 AM */
 @Data
 @ToString
 @NoArgsConstructor
@@ -38,16 +35,20 @@ import java.util.List;
 @Accessors(chain = true)
 public class CharacterVO implements Serializable {
 
-    private static final long serialVersionUID = -3201692024160094034L;
-    @Field(type = FieldType.Keyword)
-    private Integer characterId;
-    @Field(type = FieldType.Keyword)
-    private String characterCode;
-    @Field(type = FieldType.Keyword)
-    private String tag;
-    @Field(type = FieldType.Nested)
-    private List<ParaphraseVO> paraphraseVOList;
-    @Field(type = FieldType.Nested)
-    private List<PronunciationVO> pronunciationVOList;
+  private static final long serialVersionUID = -3201692024160094034L;
 
+  @Field(type = FieldType.Keyword)
+  private Integer characterId;
+
+  @Field(type = FieldType.Keyword)
+  private String characterCode;
+
+  @Field(type = FieldType.Keyword)
+  private String tag;
+
+  @Field(type = FieldType.Nested)
+  private List<ParaphraseVO> paraphraseVOList;
+
+  @Field(type = FieldType.Nested)
+  private List<PronunciationVO> pronunciationVOList;
 }

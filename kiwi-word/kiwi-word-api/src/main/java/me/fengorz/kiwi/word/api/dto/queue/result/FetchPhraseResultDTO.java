@@ -24,25 +24,21 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Set;
 
-/**
- * @Author zhanshifeng
- * @Date 2019/10/24 10:26 PM
- */
+/** @Author zhanshifeng @Date 2019/10/24 10:26 PM */
 @Data
 @ToString
 @Accessors(chain = true)
 public class FetchPhraseResultDTO implements Serializable {
 
-    private static final long serialVersionUID = 1851084976874498481L;
+  private static final long serialVersionUID = 1851084976874498481L;
 
-    private String phrase;
+  private String phrase;
 
-    private String derivation;
+  private String derivation;
 
-    private Integer queueId;
+  private Integer queueId;
 
-    private Set<String> relatedWords;
+  private Set<String> relatedWords;
 
-    private List<FetchParaphraseDTO> fetchParaphraseDTOList;
-
+  private List<FetchParaphraseDTO> fetchParaphraseDTOList;
 }

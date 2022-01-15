@@ -41,38 +41,44 @@ import java.util.List;
 @Service()
 @RequiredArgsConstructor
 public class ParaphraseServiceImpl extends ServiceImpl<ParaphraseMapper, ParaphraseDO>
-        implements IParaphraseService {
+    implements IParaphraseService {
 
-    private final ParaphraseMapper mapper;
+  private final ParaphraseMapper mapper;
 
-    @Override
-    public Integer countById(Integer id) {
-        return this
-                .count(new QueryWrapper<>(new ParaphraseDO().setParaphraseId(id).setIsDel(GlobalConstants.FLAG_DEL_NO)));
-    }
+  @Override
+  public Integer countById(Integer id) {
+    return this.count(
+        new QueryWrapper<>(
+            new ParaphraseDO().setParaphraseId(id).setIsDel(GlobalConstants.FLAG_DEL_NO)));
+  }
 
-    @Override
-    public List<ParaphraseVO> selectParaphraseAndIsCollect(Integer characterId, Integer currentUserId) {
-        return mapper.selectParaphraseAndIsCollect(
-                new SelectEntityIsCollectDTO().setEntityId(characterId).setOwner(currentUserId));
-    }
+  @Override
+  public List<ParaphraseVO> selectParaphraseAndIsCollect(
+      Integer characterId, Integer currentUserId) {
+    return mapper.selectParaphraseAndIsCollect(
+        new SelectEntityIsCollectDTO().setEntityId(characterId).setOwner(currentUserId));
+  }
 
-    @Override
-    public List<ParaphraseVO> listPhrase(Integer wordId) {
-        return KiwiBeanUtils.convertFrom(mapper.selectList(Wrappers.<ParaphraseDO>lambdaQuery().eq(ParaphraseDO::getWordId, wordId).eq(ParaphraseDO::getIsDel, GlobalConstants.FLAG_NO)), ParaphraseVO.class);
-    }
+  @Override
+  public List<ParaphraseVO> listPhrase(Integer wordId) {
+    return KiwiBeanUtils.convertFrom(
+        mapper.selectList(
+            Wrappers.<ParaphraseDO>lambdaQuery()
+                .eq(ParaphraseDO::getWordId, wordId)
+                .eq(ParaphraseDO::getIsDel, GlobalConstants.FLAG_NO)),
+        ParaphraseVO.class);
+  }
 
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public void delByWordId(Integer wordId) {
-        mapper.delete(Wrappers.<ParaphraseDO>lambdaQuery().eq(ParaphraseDO::getWordId, wordId));
-    }
+  @Override
+  @Transactional(rollbackFor = Exception.class)
+  public void delByWordId(Integer wordId) {
+    mapper.delete(Wrappers.<ParaphraseDO>lambdaQuery().eq(ParaphraseDO::getWordId, wordId));
+  }
 
-    @Override
-    public boolean modifyMeaningChinese(ParaphraseRequest request) {
-        ParaphraseDO paraphraseDO = new ParaphraseDO();
-        KiwiBeanUtils.copyProperties(request, paraphraseDO);
-        return mapper.updateById(paraphraseDO) > 0;
-    }
-
+  @Override
+  public boolean modifyMeaningChinese(ParaphraseRequest request) {
+    ParaphraseDO paraphraseDO = new ParaphraseDO();
+    KiwiBeanUtils.copyProperties(request, paraphraseDO);
+    return mapper.updateById(paraphraseDO) > 0;
+  }
 }

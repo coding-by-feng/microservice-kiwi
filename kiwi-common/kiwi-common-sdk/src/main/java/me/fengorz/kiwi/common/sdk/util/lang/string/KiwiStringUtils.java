@@ -21,31 +21,32 @@ import org.apache.commons.lang3.StringUtils;
 
 import static java.lang.Character.UnicodeBlock.*;
 
-/**
- * @Author zhanshifeng
- * @Date 2020/5/17 12:39 PM
- */
+/** @Author zhanshifeng @Date 2020/5/17 12:39 PM */
 public class KiwiStringUtils extends StrUtil {
 
-    public static boolean isNotEquals(final CharSequence cs1, final CharSequence cs2) {
-        return !equals(cs1, cs2);
-    }
+  public static boolean isNotEquals(final CharSequence cs1, final CharSequence cs2) {
+    return !equals(cs1, cs2);
+  }
 
-    public static boolean isContainChinese(String checkStr) {
-        if (StringUtils.isNotBlank(checkStr)) {
-            char[] checkChars = checkStr.toCharArray();
-            for (char checkChar : checkChars) {
-                if (checkCharContainChinese(checkChar)) {
-                    return true;
-                }
-            }
+  public static boolean isContainChinese(String checkStr) {
+    if (StringUtils.isNotBlank(checkStr)) {
+      char[] checkChars = checkStr.toCharArray();
+      for (char checkChar : checkChars) {
+        if (checkCharContainChinese(checkChar)) {
+          return true;
         }
-        return false;
+      }
     }
+    return false;
+  }
 
-    private static boolean checkCharContainChinese(char checkChar) {
-        Character.UnicodeBlock ub = Character.UnicodeBlock.of(checkChar);
-        return CJK_UNIFIED_IDEOGRAPHS == ub || CJK_COMPATIBILITY_IDEOGRAPHS == ub || CJK_COMPATIBILITY_FORMS == ub ||
-                CJK_RADICALS_SUPPLEMENT == ub || CJK_UNIFIED_IDEOGRAPHS_EXTENSION_A == ub || CJK_UNIFIED_IDEOGRAPHS_EXTENSION_B == ub;
-    }
+  private static boolean checkCharContainChinese(char checkChar) {
+    Character.UnicodeBlock ub = Character.UnicodeBlock.of(checkChar);
+    return CJK_UNIFIED_IDEOGRAPHS == ub
+        || CJK_COMPATIBILITY_IDEOGRAPHS == ub
+        || CJK_COMPATIBILITY_FORMS == ub
+        || CJK_RADICALS_SUPPLEMENT == ub
+        || CJK_UNIFIED_IDEOGRAPHS_EXTENSION_A == ub
+        || CJK_UNIFIED_IDEOGRAPHS_EXTENSION_B == ub;
+  }
 }

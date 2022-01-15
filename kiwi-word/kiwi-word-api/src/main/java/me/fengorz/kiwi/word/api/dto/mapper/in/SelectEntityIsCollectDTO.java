@@ -20,16 +20,12 @@ import lombok.Data;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 
-/**
-* @Author zhanshifeng
- * @Date 2020/1/14 3:10 PM
- */
+/** @Author zhanshifeng @Date 2020/1/14 3:10 PM */
 @Data
 @ToString
 @Accessors(chain = true)
 public class SelectEntityIsCollectDTO {
 
-    private Integer entityId;
-    private Integer owner;
-
+  private Integer entityId;
+  private Integer owner;
 }

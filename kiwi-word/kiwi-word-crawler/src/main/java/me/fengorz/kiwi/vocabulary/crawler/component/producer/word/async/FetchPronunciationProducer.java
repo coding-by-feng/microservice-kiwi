@@ -33,33 +33,31 @@ import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
-/**
- * 抓取音标和发音资源-消息队列生产者
- * @Author zhanshifeng
- * @Date 2019/10/30 10:33 AM
- */
+/** 抓取音标和发音资源-消息队列生产者 @Author zhanshifeng @Date 2019/10/30 10:33 AM */
 @Component
 @Slf4j
 public class FetchPronunciationProducer extends AbstractProducer implements IProducer {
 
-    public FetchPronunciationProducer(IBizAPI bizAPI, ISender sender) {
-        super(bizAPI, sender);
-        this.infoType = WordCrawlerConstants.QUEUE_INFO_TYPE_WORD;
-    }
+  public FetchPronunciationProducer(IBizAPI bizAPI, ISender sender) {
+    super(bizAPI, sender);
+    this.infoType = WordCrawlerConstants.QUEUE_INFO_TYPE_WORD;
+  }
 
-    @Override
-    public void produce() {
-        super.produce(WordCrawlerConstants.STATUS_TO_FETCH_PRONUNCIATION);
-    }
+  @Override
+  public void produce() {
+    super.produce(WordCrawlerConstants.STATUS_TO_FETCH_PRONUNCIATION);
+  }
 
-    @Async
-    @Override
-    protected void execute(FetchQueueDO queue) {
-        queue.setIsLock(GlobalConstants.FLAG_YES);
-        queue.setFetchStatus(WordCrawlerConstants.STATUS_DOING_FETCH_PRONUNCIATION);
-        if (Optional.of(bizAPI.updateQueueById(queue)).get().isSuccess()) {
-            sender.fetchPronunciation(
-                    new FetchPronunciationMqDTO().setWordId(queue.getWordId()).setQueueId(queue.getQueueId()));
-        }
+  @Async
+  @Override
+  protected void execute(FetchQueueDO queue) {
+    queue.setIsLock(GlobalConstants.FLAG_YES);
+    queue.setFetchStatus(WordCrawlerConstants.STATUS_DOING_FETCH_PRONUNCIATION);
+    if (Optional.of(bizAPI.updateQueueById(queue)).get().isSuccess()) {
+      sender.fetchPronunciation(
+          new FetchPronunciationMqDTO()
+              .setWordId(queue.getWordId())
+              .setQueueId(queue.getQueueId()));
     }
+  }
 }

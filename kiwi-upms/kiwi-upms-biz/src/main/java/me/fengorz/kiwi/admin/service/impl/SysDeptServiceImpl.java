@@ -15,13 +15,11 @@
  */
 package me.fengorz.kiwi.admin.service.impl;
 
-import org.springframework.stereotype.Service;
-
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-
 import me.fengorz.kiwi.admin.api.entity.SysDept;
 import me.fengorz.kiwi.admin.mapper.SysDeptMapper;
 import me.fengorz.kiwi.admin.service.SysDeptService;
+import org.springframework.stereotype.Service;
 
 /**
  * 部门管理
@@ -30,6 +28,5 @@ import me.fengorz.kiwi.admin.service.SysDeptService;
  * @date 2019-09-18 09:40:25
  */
 @Service("sysDeptService")
-public class SysDeptServiceImpl extends ServiceImpl<SysDeptMapper, SysDept> implements SysDeptService {
-
-}
+public class SysDeptServiceImpl extends ServiceImpl<SysDeptMapper, SysDept>
+    implements SysDeptService {}

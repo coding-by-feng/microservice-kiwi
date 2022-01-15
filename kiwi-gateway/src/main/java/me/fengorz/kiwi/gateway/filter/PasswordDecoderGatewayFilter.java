@@ -33,52 +33,53 @@ import reactor.core.publisher.Mono;
 import java.net.URI;
 import java.util.HashMap;
 
-/**
- * @Author zhanshifeng
- * @Date 2019-09-06 14:24
- */
+/** @Author zhanshifeng @Date 2019-09-06 14:24 */
 @Slf4j
 @Component
 public class PasswordDecoderGatewayFilter extends AbstractGatewayFilterFactory {
 
-    // 这里定义成静态变量，性能比成员变量会更高，由于@Value不支持注入静态变量，所以通过setter注入。
-    @Value("${security.encode.key:1234567812345678}")
-    private static String encodeKey;
+  // 这里定义成静态变量，性能比成员变量会更高，由于@Value不支持注入静态变量，所以通过setter注入。
+  @Value("${security.encode.key:1234567812345678}")
+  private static String encodeKey;
 
-    @Override
-    public GatewayFilter apply(Object config) {
-        return (exchange, chain) -> {
-            ServerHttpRequest httpRequest = exchange.getRequest();
+  @Override
+  public GatewayFilter apply(Object config) {
+    return (exchange, chain) -> {
+      ServerHttpRequest httpRequest = exchange.getRequest();
 
-            if (!StrUtil.containsAnyIgnoreCase(httpRequest.getURI().getPath(), SecurityConstants.URL_OAUTH_TOKEN_URL)) {
-                return chain.filter(exchange);
-            }
+      if (!StrUtil.containsAnyIgnoreCase(
+          httpRequest.getURI().getPath(), SecurityConstants.URL_OAUTH_TOKEN_URL)) {
+        return chain.filter(exchange);
+      }
 
-            URI uri = exchange.getRequest().getURI();
-            String rawQuery = uri.getRawQuery();
-            HashMap<String, String> decodeParamMap = HttpUtil.decodeParamMap(rawQuery, CharsetUtil.UTF_8);
-            String password = decodeParamMap.get(SecurityConstants.KEY_PASSWORD);
-            if (StrUtil.isNotBlank(password)) {
-                try {
-                    password = KiwiDecodeUtils.decryptAES(password, encodeKey);
-                    System.out.println(password);
-                } catch (Exception e) {
-                    log.error("密码解密失败:{}", password);
-                    return Mono.error(e);
-                }
-                decodeParamMap.put(SecurityConstants.KEY_PASSWORD, password.trim());
-            }
+      URI uri = exchange.getRequest().getURI();
+      String rawQuery = uri.getRawQuery();
+      HashMap<String, String> decodeParamMap = HttpUtil.decodeParamMap(rawQuery, CharsetUtil.UTF_8);
+      String password = decodeParamMap.get(SecurityConstants.KEY_PASSWORD);
+      if (StrUtil.isNotBlank(password)) {
+        try {
+          password = KiwiDecodeUtils.decryptAES(password, encodeKey);
+          System.out.println(password);
+        } catch (Exception e) {
+          log.error("密码解密失败:{}", password);
+          return Mono.error(e);
+        }
+        decodeParamMap.put(SecurityConstants.KEY_PASSWORD, password.trim());
+      }
 
-            URI newUri =
-                UriComponentsBuilder.fromUri(uri).replaceQuery(HttpUtil.toParams(decodeParamMap)).build(true).toUri();
+      URI newUri =
+          UriComponentsBuilder.fromUri(uri)
+              .replaceQuery(HttpUtil.toParams(decodeParamMap))
+              .build(true)
+              .toUri();
 
-            ServerHttpRequest newRequest = exchange.getRequest().mutate().uri(newUri).build();
-            return chain.filter(exchange.mutate().request(newRequest).build());
-        };
-    }
+      ServerHttpRequest newRequest = exchange.getRequest().mutate().uri(newUri).build();
+      return chain.filter(exchange.mutate().request(newRequest).build());
+    };
+  }
 
-    @Value("${security.encode.key:1234567812345678}")
-    public void setEncodeKey(String encodeKey) {
-        PasswordDecoderGatewayFilter.encodeKey = encodeKey;
-    }
+  @Value("${security.encode.key:1234567812345678}")
+  public void setEncodeKey(String encodeKey) {
+    PasswordDecoderGatewayFilter.encodeKey = encodeKey;
+  }
 }

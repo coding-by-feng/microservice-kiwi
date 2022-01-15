@@ -33,14 +33,13 @@ import java.util.List;
  */
 public interface IExampleStarListService extends IService<ExampleStarListDO> {
 
-    Integer countById(Integer id);
+  Integer countById(Integer id);
 
-    List<ExampleStarListVO> getCurrentUserList(Integer userId);
+  List<ExampleStarListVO> getCurrentUserList(Integer userId);
 
-    IPage<ExampleStarItemVO> getListItems(Page page, Integer listId);
+  IPage<ExampleStarItemVO> getListItems(Page page, Integer listId);
 
-    void removeOneRel(Integer exampleId, Integer listId);
+  void removeOneRel(Integer exampleId, Integer listId);
 
-    void putIntoStarList(Integer exampleId, Integer listId);
-
+  void putIntoStarList(Integer exampleId, Integer listId);
 }

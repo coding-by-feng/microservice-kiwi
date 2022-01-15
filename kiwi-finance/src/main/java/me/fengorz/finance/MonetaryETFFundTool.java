@@ -21,21 +21,16 @@ package me.fengorz.finance;
 
 import lombok.extern.slf4j.Slf4j;
 
-/**
-* @Author zhanshifeng
- * @Date 2020/8/3 10:08 AM
- */
+/** @Author zhanshifeng @Date 2020/8/3 10:08 AM */
 @Slf4j
 public class MonetaryETFFundTool {
 
-    private MonetaryETFFundTool() {
-    }
+  public static final MonetaryETFFundTool me = new MonetaryETFFundTool();
 
-    public static final MonetaryETFFundTool me = new MonetaryETFFundTool();
+  private MonetaryETFFundTool() {}
 
-    public void calAnotherFallPoint(String positionPrice, String anotherPrice) {
-        double result = (Double.parseDouble(anotherPrice) - Double.parseDouble(positionPrice)) / 100D;
-        log.info("calAnotherFallPoint = {}%", result);
-    }
-
+  public void calAnotherFallPoint(String positionPrice, String anotherPrice) {
+    double result = (Double.parseDouble(anotherPrice) - Double.parseDouble(positionPrice)) / 100D;
+    log.info("calAnotherFallPoint = {}%", result);
+  }
 }

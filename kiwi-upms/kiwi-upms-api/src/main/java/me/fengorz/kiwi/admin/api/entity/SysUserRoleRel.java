@@ -18,7 +18,6 @@ package me.fengorz.kiwi.admin.api.entity;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
-
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -33,16 +32,10 @@ import lombok.EqualsAndHashCode;
 @TableName("sys_user_role_rel")
 public class SysUserRoleRel extends Model<SysUserRoleRel> {
 
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    /**
-     * 用户ID
-     */
-    @TableId
-    private Integer userId;
-    /**
-     * 角色ID
-     */
-    private Integer roleId;
-
+  /** 用户ID */
+  @TableId private Integer userId;
+  /** 角色ID */
+  private Integer roleId;
 }

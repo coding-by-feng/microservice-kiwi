@@ -22,29 +22,25 @@ import lombok.ToString;
 import java.io.Serializable;
 import java.util.List;
 
-/**
-* @Author zhanshifeng
- * @Date 2019/10/25 9:05 AM
- */
+/** @Author zhanshifeng @Date 2019/10/25 9:05 AM */
 @Data
 @ToString
 public class FetchParaphraseDTO implements Serializable {
 
-    private static final long serialVersionUID = -9079654607482425376L;
-    private Integer serialNumber;
+  private static final long serialVersionUID = -9079654607482425376L;
+  private Integer serialNumber;
 
-    private String codes;
+  private String codes;
 
-    private String paraphraseEnglish;
+  private String paraphraseEnglish;
 
-    private String paraphraseEnglishTranslate;
+  private String paraphraseEnglishTranslate;
 
-    private String meaningChinese;
+  private String meaningChinese;
 
-    private String translateLanguage;
+  private String translateLanguage;
 
-    private List<FetchParaphraseExampleDTO> exampleDTOList;
+  private List<FetchParaphraseExampleDTO> exampleDTOList;
 
-    private List<FetchPhraseDTO> phraseDTOList;
-
+  private List<FetchPhraseDTO> phraseDTOList;
 }

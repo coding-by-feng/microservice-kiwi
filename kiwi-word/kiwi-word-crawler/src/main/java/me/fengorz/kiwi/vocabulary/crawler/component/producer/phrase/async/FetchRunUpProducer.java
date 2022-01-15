@@ -33,38 +33,40 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-/**
- * 抓取词组基本信息-消息队列生产者
- *
- * @Author zhanshifeng
- * @Date 2019/10/30 10:33 AM
- */
+/** 抓取词组基本信息-消息队列生产者 @Author zhanshifeng @Date 2019/10/30 10:33 AM */
 @Component
 @Slf4j
 public class FetchRunUpProducer extends AbstractProducer implements IProducer {
 
-    public FetchRunUpProducer(IBizAPI bizAPI, ISender sender) {
-        super(bizAPI, sender);
-        this.infoType = WordCrawlerConstants.QUEUE_INFO_TYPE_WORD;
-    }
+  public FetchRunUpProducer(IBizAPI bizAPI, ISender sender) {
+    super(bizAPI, sender);
+    this.infoType = WordCrawlerConstants.QUEUE_INFO_TYPE_WORD;
+  }
 
-    @Override
-    protected List<FetchQueueDO> getQueueDO(Integer status) {
-        synchronized (barrier) {
-            return bizAPI.pageQueue(status, 0, 20, infoType).getData();
-        }
+  @Override
+  protected List<FetchQueueDO> getQueueDO(Integer status) {
+    synchronized (barrier) {
+      return bizAPI.pageQueue(status, 0, 20, infoType).getData();
     }
+  }
 
-    @Override
-    public void produce() {
-        super.produce(WordCrawlerConstants.STATUS_ALL_SUCCESS);
-    }
+  @Override
+  public void produce() {
+    super.produce(WordCrawlerConstants.STATUS_ALL_SUCCESS);
+  }
 
-    @Async
-    @Override
-    protected void execute(FetchQueueDO queue) {
-        sender.fetchPhraseRunUp(new FetchPhraseRunUpMqDTO().setQueueId(queue.getQueueId()).setWord(KiwiStringUtils.isBlank(queue.getDerivation()) ? queue.getWordName() : queue.getDerivation()).setWordId(queue.getWordId()));
-        queue.setFetchStatus(WordCrawlerConstants.STATUS_TO_FETCH_PHRASE);
-        bizAPI.updateQueueById(queue);
-    }
+  @Async
+  @Override
+  protected void execute(FetchQueueDO queue) {
+    sender.fetchPhraseRunUp(
+        new FetchPhraseRunUpMqDTO()
+            .setQueueId(queue.getQueueId())
+            .setWord(
+                KiwiStringUtils.isBlank(queue.getDerivation())
+                    ? queue.getWordName()
+                    : queue.getDerivation())
+            .setWordId(queue.getWordId()));
+    queue.setFetchStatus(WordCrawlerConstants.STATUS_TO_FETCH_PHRASE);
+    bizAPI.updateQueueById(queue);
+  }
 }

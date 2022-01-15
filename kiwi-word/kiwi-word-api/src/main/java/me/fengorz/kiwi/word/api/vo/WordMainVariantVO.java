@@ -15,12 +15,11 @@ package me.fengorz.kiwi.word.api.vo;
 import me.fengorz.kiwi.word.api.entity.WordMainVariantDO;
 
 /**
- * 自动生成实体类VO
+ * 自动生成实体类VO @Author zhanshifeng
  *
- * @Author zhanshifeng
  * @date 2020-05-24 00:36:15
  */
 public class WordMainVariantVO extends WordMainVariantDO {
 
-    private static final long serialVersionUID = -7291998403484666777L;
+  private static final long serialVersionUID = -7291998403484666777L;
 }

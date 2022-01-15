@@ -23,16 +23,12 @@ import me.fengorz.kiwi.bdf.feign.annotation.EnableEnhancerFeignClients;
 import org.springframework.boot.SpringApplication;
 import org.springframework.cloud.client.SpringCloudApplication;
 
-/**
-* @Author zhanshifeng
- * @Date 2019/10/29 9:27 AM
- */
+/** @Author zhanshifeng @Date 2019/10/29 9:27 AM */
 @SpringCloudApplication
 @EnableEnhancerFeignClients
 public class WordCrawlerApplication {
 
-    public static void main(String[] args) {
-        SpringApplication.run(WordCrawlerApplication.class, args);
-    }
-
+  public static void main(String[] args) {
+    SpringApplication.run(WordCrawlerApplication.class, args);
+  }
 }

@@ -25,6 +25,4 @@ import me.fengorz.kiwi.word.api.entity.WordBreakpointReviewDO;
  * @author zhanShiFeng
  * @date 2021-06-06 14:53:44
  */
-public interface BreakpointReviewMapper extends BaseMapper<WordBreakpointReviewDO> {
-
-}
+public interface BreakpointReviewMapper extends BaseMapper<WordBreakpointReviewDO> {}

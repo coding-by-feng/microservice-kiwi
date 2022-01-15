@@ -26,8 +26,7 @@ import me.fengorz.kiwi.word.api.entity.PronunciationDO;
  */
 public interface PronunciationMapper extends BaseMapper<PronunciationDO> {
 
-    int blankPronunciationVoice(String wordName);
+  int blankPronunciationVoice(String wordName);
 
-    int deleteByWordName(String wordName);
-
+  int deleteByWordName(String wordName);
 }

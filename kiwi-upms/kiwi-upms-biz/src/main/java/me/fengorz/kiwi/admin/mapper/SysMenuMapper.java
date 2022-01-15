@@ -15,11 +15,10 @@
  */
 package me.fengorz.kiwi.admin.mapper;
 
-import java.util.List;
-
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-
 import me.fengorz.kiwi.admin.api.entity.SysMenu;
+
+import java.util.List;
 
 /**
  * 菜单权限表
@@ -29,6 +28,5 @@ import me.fengorz.kiwi.admin.api.entity.SysMenu;
  */
 public interface SysMenuMapper extends BaseMapper<SysMenu> {
 
-    List<SysMenu> listMenusByRoleId(Integer roleId);
-
+  List<SysMenu> listMenusByRoleId(Integer roleId);
 }

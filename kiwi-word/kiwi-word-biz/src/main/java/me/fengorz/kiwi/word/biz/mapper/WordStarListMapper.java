@@ -32,8 +32,7 @@ import org.apache.ibatis.annotations.Param;
  */
 public interface WordStarListMapper extends BaseMapper<WordStarListDO> {
 
-    IPage<SelectWordStarListResultDTO> selectListItems(Page<?> page, Integer listId);
+  IPage<SelectWordStarListResultDTO> selectListItems(Page<?> page, Integer listId);
 
-    Integer countWordIsCollect(@Param(MapperConstant.QUERY_PARAMS) CountEntityIsCollectDTO dto);
-
+  Integer countWordIsCollect(@Param(MapperConstant.QUERY_PARAMS) CountEntityIsCollectDTO dto);
 }

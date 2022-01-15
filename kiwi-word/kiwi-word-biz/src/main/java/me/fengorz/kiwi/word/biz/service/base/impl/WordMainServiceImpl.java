@@ -51,88 +51,108 @@ import java.util.List;
 @Service()
 @RequiredArgsConstructor
 @KiwiCacheKeyPrefix(WordConstants.CACHE_KEY_PREFIX_WORD_MAIN.CLASS)
-public class WordMainServiceImpl extends ServiceImpl<WordMainMapper, WordMainDO> implements IWordMainService {
+public class WordMainServiceImpl extends ServiceImpl<WordMainMapper, WordMainDO>
+    implements IWordMainService {
 
-    private static final String VALUE = "value";
+  private static final String VALUE = "value";
 
-    private final IWordFetchQueueService queueService;
-    private final WordMainMapper mapper;
+  private final IWordFetchQueueService queueService;
+  private final WordMainMapper mapper;
 
-    @Override
-    public boolean save(WordMainDO entity) {
-        return super.save(entity);
+  @Override
+  public boolean save(WordMainDO entity) {
+    return super.save(entity);
+  }
+
+  @Override
+  @KiwiCacheKeyPrefix(WordConstants.CACHE_KEY_PREFIX_WORD_MAIN.METHOD_ID)
+  @Cacheable(
+      cacheNames = WordConstants.CACHE_NAMES,
+      keyGenerator = CacheConstants.CACHE_KEY_GENERATOR_BEAN,
+      unless = "#result == null")
+  public WordMainDO getById(@KiwiCacheKey Serializable id) {
+    return super.getById(id);
+  }
+
+  @Override
+  public WordMainVO getOneAndCatch(String wordName, Integer... infoType) {
+    try {
+      final LambdaQueryWrapper<WordMainDO> query =
+          Wrappers.<WordMainDO>lambdaQuery()
+              .eq(WordMainDO::getWordName, wordName)
+              .eq(WordMainDO::getIsDel, GlobalConstants.FLAG_DEL_NO);
+      // 如果指定infoType直接指定查询，如果不指定默认查询单词
+      boolean isNotSpecialize = infoType == null || infoType.length == 0;
+      WordMainDO one =
+          this.getOne(
+              query
+                  .clone()
+                  .eq(
+                      WordMainDO::getInfoType,
+                      isNotSpecialize ? WordCrawlerConstants.QUEUE_INFO_TYPE_WORD : infoType[0]));
+      if (one == null && isNotSpecialize) {
+        one =
+            this.getOne(
+                query.eq(WordMainDO::getInfoType, WordCrawlerConstants.QUEUE_INFO_TYPE_PHRASE));
+      }
+      return KiwiBeanUtils.convertFrom(one, WordMainVO.class);
+    } catch (Exception e) {
+      log.error(e.getMessage());
+      queueService.flagWordQueryException(wordName);
+      throw new ServiceException(
+          KiwiStringUtils.format("wordMainService.getOne error, wordName={}", wordName));
     }
+  }
 
-    @Override
-    @KiwiCacheKeyPrefix(WordConstants.CACHE_KEY_PREFIX_WORD_MAIN.METHOD_ID)
-    @Cacheable(cacheNames = WordConstants.CACHE_NAMES, keyGenerator = CacheConstants.CACHE_KEY_GENERATOR_BEAN,
-            unless = "#result == null")
-    public WordMainDO getById(@KiwiCacheKey Serializable id) {
-        return super.getById(id);
+  @Override
+  public String getWordName(Integer id) {
+    WordMainDO word = this.getById(id);
+    if (word == null) {
+      return null;
     }
+    return word.getWordName();
+  }
 
-    @Override
-    public WordMainVO getOneAndCatch(String wordName, Integer... infoType) {
-        try {
-            final LambdaQueryWrapper<WordMainDO> query = Wrappers.<WordMainDO>lambdaQuery()
-                    .eq(WordMainDO::getWordName, wordName).eq(WordMainDO::getIsDel, GlobalConstants.FLAG_DEL_NO);
-            // 如果指定infoType直接指定查询，如果不指定默认查询单词
-            boolean isNotSpecialize = infoType == null || infoType.length == 0;
-            WordMainDO one = this.getOne(query.clone().eq(WordMainDO::getInfoType, isNotSpecialize ? WordCrawlerConstants.QUEUE_INFO_TYPE_WORD : infoType[0]));
-            if (one == null && isNotSpecialize) {
-                one = this.getOne(query.eq(WordMainDO::getInfoType, WordCrawlerConstants.QUEUE_INFO_TYPE_PHRASE));
-            }
-            return KiwiBeanUtils.convertFrom(one, WordMainVO.class);
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            queueService.flagWordQueryException(wordName);
-            throw new ServiceException(KiwiStringUtils.format("wordMainService.getOne error, wordName={}", wordName));
-        }
+  @Override
+  public List<FuzzyQueryResultDTO> fuzzyQueryList(Page page, String wordName) {
+    return mapper.fuzzyQuery(page, wordName + GlobalConstants.SYMBOL_PERCENT).getRecords();
+  }
+
+  @Override
+  public boolean isExist(String wordName) {
+    return this.getOne(Wrappers.<WordMainDO>lambdaQuery().eq(WordMainDO::getWordName, wordName))
+        != null;
+  }
+
+  @Override
+  @KiwiCacheKeyPrefix(WordConstants.CACHE_KEY_PREFIX_WORD_MAIN.METHOD_ID)
+  @CacheEvict(
+      cacheNames = WordConstants.CACHE_NAMES,
+      keyGenerator = CacheConstants.CACHE_KEY_GENERATOR_BEAN)
+  public void evictById(@KiwiCacheKey Integer id) {}
+
+  @Override
+  public List<WordMainDO> list(String wordName, Integer infoType) {
+    return this.list(
+        Wrappers.<WordMainDO>lambdaQuery()
+            .eq(WordMainDO::getWordName, wordName)
+            .eq(WordMainDO::getInfoType, infoType));
+  }
+
+  @Override
+  public List<WordMainDO> listDirtyData(Integer wordId) {
+    WordMainDO one = this.getById(wordId);
+    if (one == null) {
+      return null;
     }
+    return this.list(
+        Wrappers.<WordMainDO>lambdaQuery()
+            .eq(WordMainDO::getWordName, one.getWordName())
+            .eq(WordMainDO::getInfoType, one.getInfoType()));
+  }
 
-    @Override
-    public String getWordName(Integer id) {
-        WordMainDO word = this.getById(id);
-        if (word == null) {
-            return null;
-        }
-        return word.getWordName();
-    }
-
-    @Override
-    public List<FuzzyQueryResultDTO> fuzzyQueryList(Page page, String wordName) {
-        return mapper.fuzzyQuery(page, wordName + GlobalConstants.SYMBOL_PERCENT).getRecords();
-    }
-
-    @Override
-    public boolean isExist(String wordName) {
-        return this.getOne(Wrappers.<WordMainDO>lambdaQuery().eq(WordMainDO::getWordName, wordName)) != null;
-    }
-
-    @Override
-    @KiwiCacheKeyPrefix(WordConstants.CACHE_KEY_PREFIX_WORD_MAIN.METHOD_ID)
-    @CacheEvict(cacheNames = WordConstants.CACHE_NAMES, keyGenerator = CacheConstants.CACHE_KEY_GENERATOR_BEAN)
-    public void evictById(@KiwiCacheKey Integer id) {
-
-    }
-
-    @Override
-    public List<WordMainDO> list(String wordName, Integer infoType) {
-        return this.list(Wrappers.<WordMainDO>lambdaQuery().eq(WordMainDO::getWordName, wordName).eq(WordMainDO::getInfoType, infoType));
-    }
-
-    @Override
-    public List<WordMainDO> listDirtyData(Integer wordId) {
-        WordMainDO one = this.getById(wordId);
-        if (one == null) {
-            return null;
-        }
-        return this.list(Wrappers.<WordMainDO>lambdaQuery().eq(WordMainDO::getWordName, one.getWordName()).eq(WordMainDO::getInfoType, one.getInfoType()));
-    }
-
-    @Override
-    public List<String> listOverlapInUnLock() {
-        return mapper.selectOverlapInUnLock();
-    }
-
+  @Override
+  public List<String> listOverlapInUnLock() {
+    return mapper.selectOverlapInUnLock();
+  }
 }

@@ -22,24 +22,20 @@ import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 
-/**
-* @Author zhanshifeng
- * @Date 2020/1/6 2:09 PM
- */
+/** @Author zhanshifeng @Date 2020/1/6 2:09 PM */
 @Data
 @Accessors(chain = true)
 @ToString
 public class ParaphraseStarItemVO implements Serializable {
 
-    private static final long serialVersionUID = -8778106309698785568L;
+  private static final long serialVersionUID = -8778106309698785568L;
 
-    private Integer wordId;
-    private String wordName;
-    private Integer paraphraseId;
-    private Integer listId;
-    private String paraphraseEnglish;
-    private String meaningChinese;
-    private String characterId;
-    private String paraphraseEnglishTranslate;
-
+  private Integer wordId;
+  private String wordName;
+  private Integer paraphraseId;
+  private Integer listId;
+  private String paraphraseEnglish;
+  private String meaningChinese;
+  private String characterId;
+  private String paraphraseEnglishTranslate;
 }

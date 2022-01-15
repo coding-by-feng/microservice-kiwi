@@ -25,23 +25,17 @@ import me.fengorz.kiwi.vocabulary.crawler.component.scheduler.base.IScheduler;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-/**
- * 定时扫描对列表
- *
- * @Author zhanshifeng
- * @Date 2019/10/29 4:12 PM
- */
+/** 定时扫描对列表 @Author zhanshifeng @Date 2019/10/29 4:12 PM */
 @Component
 @Slf4j
 public class ChiefScheduler {
 
-    private static final String CACHE_WORD_SCHEDULER = "cacheWordScheduler";
-    private static final long CACHEING_WORD_INTERVAL = 1000 * 8;
+  private static final String CACHE_WORD_SCHEDULER = "cacheWordScheduler";
+  private static final long CACHEING_WORD_INTERVAL = 1000 * 8;
 
-    @Scheduled(fixedDelay = CACHEING_WORD_INTERVAL)
-    public void cachingWord() {
-        IScheduler scheduler = SpringUtils.getBean(CACHE_WORD_SCHEDULER);
-        scheduler.schedule();
-    }
-
+  @Scheduled(fixedDelay = CACHEING_WORD_INTERVAL)
+  public void cachingWord() {
+    IScheduler scheduler = SpringUtils.getBean(CACHE_WORD_SCHEDULER);
+    scheduler.schedule();
+  }
 }

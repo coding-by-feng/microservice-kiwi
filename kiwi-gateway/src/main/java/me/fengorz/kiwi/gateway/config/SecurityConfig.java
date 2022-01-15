@@ -21,17 +21,13 @@ import org.springframework.security.config.annotation.web.reactive.EnableWebFlux
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 
-/**
- * @Author zhanshifeng
- * @Date 2020/4/25 11:08 PM
- */
+/** @Author zhanshifeng @Date 2020/4/25 11:08 PM */
 @EnableWebFluxSecurity
 public class SecurityConfig {
 
-    @Bean
-    public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) {
-        // TODO: 2020/4/25 这里应该不能全部放开
-        return http.authorizeExchange().anyExchange().permitAll().and().csrf().disable().build();
-    }
-
+  @Bean
+  public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) {
+    // TODO: 2020/4/25 这里应该不能全部放开
+    return http.authorizeExchange().anyExchange().permitAll().and().csrf().disable().build();
+  }
 }

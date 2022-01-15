@@ -18,16 +18,11 @@ package me.fengorz.kiwi.common.sdk.annotation.log;
 
 import java.lang.annotation.*;
 
-/**
- * 操作日志注解
- *
- * @Author zhanshifeng
- */
+/** 操作日志注解 @Author zhanshifeng */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface SysLog {
 
-    String value();
-
+  String value();
 }

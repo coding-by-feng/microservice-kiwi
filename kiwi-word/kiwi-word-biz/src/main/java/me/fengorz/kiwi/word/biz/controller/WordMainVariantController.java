@@ -22,9 +22,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * 单词时态、单复数等的变化
+ * 单词时态、单复数等的变化 @Author zhanshifeng
  *
- * @Author zhanshifeng
  * @date 2020-05-24 01:20:49
  */
 @Validated
@@ -33,11 +32,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/word/main/variant")
 public class WordMainVariantController {
 
-    private final IOperateService wordOperateService;
+  private final IOperateService wordOperateService;
 
-    @GetMapping("/insertVariant/{inputWordName}/{fetchWordName}")
-    public R<Void> insertVariant(@PathVariable String inputWordName, @PathVariable String fetchWordName) {
-        return R.auto(wordOperateService.insertVariant(inputWordName, fetchWordName));
-    }
-
+  @GetMapping("/insertVariant/{inputWordName}/{fetchWordName}")
+  public R<Void> insertVariant(
+      @PathVariable String inputWordName, @PathVariable String fetchWordName) {
+    return R.auto(wordOperateService.insertVariant(inputWordName, fetchWordName));
+  }
 }

@@ -21,26 +21,24 @@ package me.fengorz.kiwi.common.sdk.exception;
 
 import lombok.NoArgsConstructor;
 
-/**
- * @Author zhanshifeng
- * @Date 2019/11/26 9:47 PM
- */
+/** @Author zhanshifeng @Date 2019/11/26 9:47 PM */
 @NoArgsConstructor
 public class ServiceException extends BaseRuntimeException {
 
-    public ServiceException(String message) {
-        super(message);
-    }
+  public ServiceException(String message) {
+    super(message);
+  }
 
-    public ServiceException(String message, Throwable cause) {
-        super(message, cause);
-    }
+  public ServiceException(String message, Throwable cause) {
+    super(message, cause);
+  }
 
-    public ServiceException(Throwable cause) {
-        super(cause);
-    }
+  public ServiceException(Throwable cause) {
+    super(cause);
+  }
 
-    protected ServiceException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(message, cause, enableSuppression, writableStackTrace);
-    }
+  protected ServiceException(
+      String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+    super(message, cause, enableSuppression, writableStackTrace);
+  }
 }

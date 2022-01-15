@@ -21,15 +21,11 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import me.fengorz.kiwi.word.api.entity.WordStarListDO;
 
-/**
- * @Author zhanshifeng
- * @Date 2020/5/31 12:51 PM
- */
+/** @Author zhanshifeng @Date 2020/5/31 12:51 PM */
 @ToString
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class WordStarListVO extends WordStarListDO {
 
-    private static final long serialVersionUID = -5287510069878867102L;
-
+  private static final long serialVersionUID = -5287510069878867102L;
 }

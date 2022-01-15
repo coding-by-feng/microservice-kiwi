@@ -16,40 +16,34 @@
 
 package me.fengorz.kiwi.bdf.core.service.impl;
 
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
-
 import lombok.RequiredArgsConstructor;
 import me.fengorz.kiwi.bdf.core.entity.Sequence;
 import me.fengorz.kiwi.bdf.core.mapper.SeqMapper;
 import me.fengorz.kiwi.bdf.core.service.ISeqService;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
-/**
- * @Description 序列生成服务
- * @Author zhanshifeng
- * @Date 2020/5/31 10:57 AM
- */
+/** @Description 序列生成服务 @Author zhanshifeng @Date 2020/5/31 10:57 AM */
 @Service
 @RequiredArgsConstructor
 public class SeqServiceImpl implements ISeqService {
 
-    private final SeqMapper seqMapper;
+  private final SeqMapper seqMapper;
 
-    /**
-     * 传入产生序列对应的表，产生一个整型序列ID
-     *
-     * @param seqTable
-     *            对应的表
-     * @return 新生成的序列ID
-     */
-    @Override
-    @Transactional(rollbackFor = RuntimeException.class, propagation = Propagation.REQUIRES_NEW)
-    public Integer genIntSequence(String seqTable) {
-        Sequence seq = new Sequence();
-        seq.setTableName(seqTable);
-        seqMapper.genSequence(seq);
-        seqMapper.deleteSequence(seq);
-        return seq.getId();
-    }
+  /**
+   * 传入产生序列对应的表，产生一个整型序列ID
+   *
+   * @param seqTable 对应的表
+   * @return 新生成的序列ID
+   */
+  @Override
+  @Transactional(rollbackFor = RuntimeException.class, propagation = Propagation.REQUIRES_NEW)
+  public Integer genIntSequence(String seqTable) {
+    Sequence seq = new Sequence();
+    seq.setTableName(seqTable);
+    seqMapper.genSequence(seq);
+    seqMapper.deleteSequence(seq);
+    return seq.getId();
+  }
 }

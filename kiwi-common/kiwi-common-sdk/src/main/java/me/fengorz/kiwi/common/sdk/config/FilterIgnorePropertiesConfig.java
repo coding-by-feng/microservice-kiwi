@@ -25,10 +25,7 @@ import org.springframework.context.annotation.Configuration;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @Author zhanshifeng
- * @Date 2019-09-07 14:42
- */
+/** @Author zhanshifeng @Date 2019-09-07 14:42 */
 @Data
 @Configuration
 @RefreshScope
@@ -36,12 +33,11 @@ import java.util.List;
 @ConfigurationProperties(prefix = "ignore")
 public class FilterIgnorePropertiesConfig {
 
-    private List<String> clients = new ArrayList<>();
+  private List<String> clients = new ArrayList<>();
 
-    private List<String> urls = new ArrayList<>();
+  private List<String> urls = new ArrayList<>();
 
-    private List<String> userNames = new ArrayList<>();
+  private List<String> userNames = new ArrayList<>();
 
-    private List<String> codeVerifyChannels = new ArrayList<>();
-
+  private List<String> codeVerifyChannels = new ArrayList<>();
 }

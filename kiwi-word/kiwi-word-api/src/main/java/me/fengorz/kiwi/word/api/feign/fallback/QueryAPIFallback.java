@@ -22,22 +22,19 @@ import me.fengorz.kiwi.word.api.vo.detail.WordQueryVO;
 import org.springframework.stereotype.Component;
 
 /**
- * Hystrix熔断回调实现
+ * Hystrix熔断回调实现 @Author zhanshifeng
  *
- * @Author zhanshifeng
  * @date 2020-05-24 01:40:36
  */
 @Slf4j
 @Component
 public class QueryAPIFallback implements IQueryAPI {
 
-    @Setter
-    private Throwable throwable;
+  @Setter private Throwable throwable;
 
-    @Override
-    public R<Page<WordQueryVO>> queryWord(String wordName) {
-        log.error(throwable.getCause().getMessage());
-        return R.feignCallFailed(throwable.getMessage());
-    }
-
+  @Override
+  public R<Page<WordQueryVO>> queryWord(String wordName) {
+    log.error(throwable.getCause().getMessage());
+    return R.feignCallFailed(throwable.getMessage());
+  }
 }

@@ -21,15 +21,12 @@ import me.fengorz.kiwi.bdf.security.annotation.KiwiEnhancerResourceServer;
 import org.springframework.boot.SpringApplication;
 import org.springframework.cloud.client.SpringCloudApplication;
 
-/**
-* @Author zhanshifeng
- * @Date 2019/10/30 3:02 PM
- */
+/** @Author zhanshifeng @Date 2019/10/30 3:02 PM */
 @KiwiEnhancerResourceServer
 @EnableEnhancerFeignClients
 @SpringCloudApplication
 public class WordBizApplication {
-    public static void main(String[] args) {
-        SpringApplication.run(WordBizApplication.class, args);
-    }
+  public static void main(String[] args) {
+    SpringApplication.run(WordBizApplication.class, args);
+  }
 }

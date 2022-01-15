@@ -21,19 +21,15 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.config.server.EnableConfigServer;
 
-/**
- * @Author zhanshifeng
- * @Date 2019-09-02 14:56
- */
+/** @Author zhanshifeng @Date 2019-09-02 14:56 */
 @EnableConfigServer
 @SpringBootApplication
 public class ConfigApplication {
 
-    public static void main(String[] args) {
-        SpringApplication application = new SpringApplication(ConfigApplication.class);
-        // 关闭SpringBoot的经典Banner
-        application.setBannerMode(Banner.Mode.OFF);
-        application.run(args);
-    }
-
+  public static void main(String[] args) {
+    SpringApplication application = new SpringApplication(ConfigApplication.class);
+    // 关闭SpringBoot的经典Banner
+    application.setBannerMode(Banner.Mode.OFF);
+    application.run(args);
+  }
 }

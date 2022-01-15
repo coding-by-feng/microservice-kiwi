@@ -39,105 +39,126 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
-/**
- * @Author zhanshifeng
- * @Date 2020/9/16 5:26 PM
- */
+/** @Author zhanshifeng @Date 2020/9/16 5:26 PM */
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class AsyncArchiveServiceImpl implements IAsyncArchiveService {
 
-    private final IWordMainService mainService;
-    private final IParaphraseService paraphraseService;
-    private final IParaphraseExampleService exampleService;
-    private final IStarRelHisService relHisService;
-    private final ISeqService seqService;
+  private final IWordMainService mainService;
+  private final IParaphraseService paraphraseService;
+  private final IParaphraseExampleService exampleService;
+  private final IStarRelHisService relHisService;
+  private final ISeqService seqService;
 
-    @Override
-    @Async
-    @Transactional(rollbackFor = Exception.class)
-    public void archiveWordRel(Integer wordId, Integer listId, Integer userId) {
-        Optional.ofNullable(mainService.getById(wordId)).ifPresent(word -> {
-            relHisService.save(new StarRelHisDO().setId(seqService.genIntSequence(MapperConstant.T_INS_SEQUENCE))
-                    .setListId(listId)
-                    .setWordName(word.getWordName())
-                    .setSerialNum(0)
-                    .setType(WordConstants.REMEMBER_ARCHIVE_TYPE_WORD)
-                    .setUserId(userId));
-        });
-    }
+  @Override
+  @Async
+  @Transactional(rollbackFor = Exception.class)
+  public void archiveWordRel(Integer wordId, Integer listId, Integer userId) {
+    Optional.ofNullable(mainService.getById(wordId))
+        .ifPresent(
+            word -> {
+              relHisService.save(
+                  new StarRelHisDO()
+                      .setId(seqService.genIntSequence(MapperConstant.T_INS_SEQUENCE))
+                      .setListId(listId)
+                      .setWordName(word.getWordName())
+                      .setSerialNum(0)
+                      .setType(WordConstants.REMEMBER_ARCHIVE_TYPE_WORD)
+                      .setUserId(userId));
+            });
+  }
 
-    @Override
-    @Async
-    @Transactional(rollbackFor = Exception.class)
-    public void invalidArchiveWordRel(Integer wordId, Integer listId, Integer userId) {
-        this.invalidRelHis(wordId, WordConstants.REMEMBER_ARCHIVE_TYPE_WORD, listId, userId);
-    }
+  @Override
+  @Async
+  @Transactional(rollbackFor = Exception.class)
+  public void invalidArchiveWordRel(Integer wordId, Integer listId, Integer userId) {
+    this.invalidRelHis(wordId, WordConstants.REMEMBER_ARCHIVE_TYPE_WORD, listId, userId);
+  }
 
-    private void invalidRelHis(Integer id, Integer type, Integer listId, Integer userId) {
-        Optional.ofNullable(mainService.getById(id)).ifPresent(word -> {
-            relHisService.update(new StarRelHisDO().setIsDel(GlobalConstants.FLAG_DEL_YES),
-                    Wrappers.<StarRelHisDO>lambdaUpdate()
-                            .eq(StarRelHisDO::getWordName, word.getWordName())
-                            .eq(StarRelHisDO::getUserId, userId)
-                            .eq(StarRelHisDO::getListId, listId)
-                            .eq(StarRelHisDO::getType, type)
-                            .eq(StarRelHisDO::getIsDel, GlobalConstants.FLAG_DEL_NO));
-        });
-    }
+  private void invalidRelHis(Integer id, Integer type, Integer listId, Integer userId) {
+    Optional.ofNullable(mainService.getById(id))
+        .ifPresent(
+            word -> {
+              relHisService.update(
+                  new StarRelHisDO().setIsDel(GlobalConstants.FLAG_DEL_YES),
+                  Wrappers.<StarRelHisDO>lambdaUpdate()
+                      .eq(StarRelHisDO::getWordName, word.getWordName())
+                      .eq(StarRelHisDO::getUserId, userId)
+                      .eq(StarRelHisDO::getListId, listId)
+                      .eq(StarRelHisDO::getType, type)
+                      .eq(StarRelHisDO::getIsDel, GlobalConstants.FLAG_DEL_NO));
+            });
+  }
 
-    @Async
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public void archiveParaphraseRel(Integer paraphraseId, Integer listId, Integer userId) {
-        Optional.ofNullable(paraphraseService.getById(paraphraseId)).ifPresent(paraphrase -> {
-            WordMainDO word = mainService.getById(paraphrase.getWordId());
-            if (word == null) {
+  @Async
+  @Override
+  @Transactional(rollbackFor = Exception.class)
+  public void archiveParaphraseRel(Integer paraphraseId, Integer listId, Integer userId) {
+    Optional.ofNullable(paraphraseService.getById(paraphraseId))
+        .ifPresent(
+            paraphrase -> {
+              WordMainDO word = mainService.getById(paraphrase.getWordId());
+              if (word == null) {
                 return;
-            }
-            relHisService.save(new StarRelHisDO().setId(seqService.genIntSequence(MapperConstant.T_INS_SEQUENCE))
-                    .setListId(listId)
-                    .setWordName(word.getWordName())
-                    .setSerialNum(paraphrase.getSerialNumber())
-                    .setType(WordConstants.REMEMBER_ARCHIVE_TYPE_PARAPHRASE)
-                    .setUserId(userId));
-        });
-    }
+              }
+              relHisService.save(
+                  new StarRelHisDO()
+                      .setId(seqService.genIntSequence(MapperConstant.T_INS_SEQUENCE))
+                      .setListId(listId)
+                      .setWordName(word.getWordName())
+                      .setSerialNum(paraphrase.getSerialNumber())
+                      .setType(WordConstants.REMEMBER_ARCHIVE_TYPE_PARAPHRASE)
+                      .setUserId(userId));
+            });
+  }
 
-    @Async
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public void invalidArchiveParaphraseRel(Integer paraphraseId, Integer listId, Integer userId) {
-        Optional.ofNullable(paraphraseService.getById(paraphraseId)).ifPresent(paraphrase -> {
-            this.invalidRelHis(paraphrase.getWordId(), WordConstants.REMEMBER_ARCHIVE_TYPE_PARAPHRASE, listId, userId);
-        });
-    }
+  @Async
+  @Override
+  @Transactional(rollbackFor = Exception.class)
+  public void invalidArchiveParaphraseRel(Integer paraphraseId, Integer listId, Integer userId) {
+    Optional.ofNullable(paraphraseService.getById(paraphraseId))
+        .ifPresent(
+            paraphrase -> {
+              this.invalidRelHis(
+                  paraphrase.getWordId(),
+                  WordConstants.REMEMBER_ARCHIVE_TYPE_PARAPHRASE,
+                  listId,
+                  userId);
+            });
+  }
 
-    @Override
-    @Async
-    @Transactional(rollbackFor = Exception.class)
-    public void archiveExampleRel(Integer exampleId, Integer listId, Integer userId) {
-        Optional.ofNullable(exampleService.getById(exampleId)).ifPresent(example -> {
-            WordMainDO word = mainService.getById(example.getWordId());
-            if (word == null) {
+  @Override
+  @Async
+  @Transactional(rollbackFor = Exception.class)
+  public void archiveExampleRel(Integer exampleId, Integer listId, Integer userId) {
+    Optional.ofNullable(exampleService.getById(exampleId))
+        .ifPresent(
+            example -> {
+              WordMainDO word = mainService.getById(example.getWordId());
+              if (word == null) {
                 return;
-            }
-            relHisService.save(new StarRelHisDO().setId(seqService.genIntSequence(MapperConstant.T_INS_SEQUENCE))
-                    .setListId(listId)
-                    .setWordName(word.getWordName())
-                    .setSerialNum(example.getSerialNumber())
-                    .setType(WordConstants.REMEMBER_ARCHIVE_TYPE_EXAMPLE)
-                    .setUserId(userId));
-        });
-    }
+              }
+              relHisService.save(
+                  new StarRelHisDO()
+                      .setId(seqService.genIntSequence(MapperConstant.T_INS_SEQUENCE))
+                      .setListId(listId)
+                      .setWordName(word.getWordName())
+                      .setSerialNum(example.getSerialNumber())
+                      .setType(WordConstants.REMEMBER_ARCHIVE_TYPE_EXAMPLE)
+                      .setUserId(userId));
+            });
+  }
 
-    @Override
-    @Async
-    @Transactional(rollbackFor = Exception.class)
-    public void invalidArchiveExampleRel(Integer exampleId, Integer listId, Integer userId) {
-        Optional.ofNullable(exampleService.getById(exampleId)).ifPresent(example -> {
-            this.invalidRelHis(example.getWordId(), WordConstants.REMEMBER_ARCHIVE_TYPE_EXAMPLE, listId, userId);
-        });
-    }
+  @Override
+  @Async
+  @Transactional(rollbackFor = Exception.class)
+  public void invalidArchiveExampleRel(Integer exampleId, Integer listId, Integer userId) {
+    Optional.ofNullable(exampleService.getById(exampleId))
+        .ifPresent(
+            example -> {
+              this.invalidRelHis(
+                  example.getWordId(), WordConstants.REMEMBER_ARCHIVE_TYPE_EXAMPLE, listId, userId);
+            });
+  }
 }

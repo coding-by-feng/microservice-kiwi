@@ -19,18 +19,14 @@ package me.fengorz.kiwi.generator.entity;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
-/**
- * @Author zhanshifeng
- * @Date 2020/2/24 1:32 PM
- */
+/** @Author zhanshifeng @Date 2020/2/24 1:32 PM */
 @Data
 @Accessors(chain = true)
 public class GenerateConfig {
 
-    private String tablePreName;
-    private String moduleName;
-    private String packageName;
-    private String serviceId;
-    private String zipPath;
-
+  private String tablePreName;
+  private String moduleName;
+  private String packageName;
+  private String serviceId;
+  private String zipPath;
 }

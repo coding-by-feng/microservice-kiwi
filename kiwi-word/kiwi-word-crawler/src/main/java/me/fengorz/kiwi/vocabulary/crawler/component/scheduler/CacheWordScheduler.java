@@ -34,59 +34,52 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
-/**
- * 自动将所有未入缓存的单词纳入缓存
- *
- * @Author zhanshifeng
- * @Date 2020/9/17 6:14 PM
- */
+/** 自动将所有未入缓存的单词纳入缓存 @Author zhanshifeng @Date 2020/9/17 6:14 PM */
 @Slf4j
 @Component("cacheWordScheduler")
 public class CacheWordScheduler extends AbstractScheduler implements IScheduler {
 
-    private static final String CACHING_WORD = "caching word {}!";
-    @Autowired
-    private IQueryAPI queryAPI;
+  private static final String CACHING_WORD = "caching word {}!";
+  @Autowired private IQueryAPI queryAPI;
 
-    public CacheWordScheduler(IBizAPI bizAPI) {
-        super(bizAPI);
+  public CacheWordScheduler(IBizAPI bizAPI) {
+    super(bizAPI);
+  }
+
+  @Override
+  public void schedule() {
+    super.schedule(null);
+  }
+
+  @Override
+  public List<FetchQueueDO> getQueueDO(SchedulerDTO dto) {
+    List<FetchQueueDO> list = bizAPI.listNotIntoCache().getData();
+    if (!KiwiCollectionUtils.isEmpty(list)) {
+      countDownLatch = new CountDownLatch(list.size());
     }
+    return list;
+  }
 
-    @Override
-    public void schedule() {
-        super.schedule(null);
+  /**
+   * 将单词扔进缓存
+   *
+   * @param queue
+   */
+  @Override
+  protected void execute(FetchQueueDO queue) {
+    String wordName = queue.getWordName();
+    log.info(CACHING_WORD, wordName);
+    try {
+      // String url = WordCrawlerConstants.URL_QUERY_WORD + URLUtil.decode(wordName);
+      // HttpUtil.get(url);
+      // log.info(url);
+      queryAPI.queryWord(wordName);
+    } catch (Exception e) {
+      log.error(e.getMessage());
+    } finally {
+      queue.setIsIntoCache(GlobalConstants.FLAG_YES);
+      countDownLatch.countDown();
+      bizAPI.updateQueueById(queue);
     }
-
-    @Override
-    public List<FetchQueueDO> getQueueDO(SchedulerDTO dto) {
-        List<FetchQueueDO> list = bizAPI.listNotIntoCache().getData();
-        if (!KiwiCollectionUtils.isEmpty(list)) {
-            countDownLatch = new CountDownLatch(list.size());
-        }
-        return list;
-    }
-
-    /**
-     * 将单词扔进缓存
-     *
-     * @param queue
-     */
-    @Override
-    protected void execute(FetchQueueDO queue) {
-        String wordName = queue.getWordName();
-        log.info(CACHING_WORD, wordName);
-        try {
-            // String url = WordCrawlerConstants.URL_QUERY_WORD + URLUtil.decode(wordName);
-            // HttpUtil.get(url);
-            // log.info(url);
-            queryAPI.queryWord(wordName);
-        } catch (Exception e) {
-            log.error(e.getMessage());
-        } finally {
-            queue.setIsIntoCache(GlobalConstants.FLAG_YES);
-            countDownLatch.countDown();
-            bizAPI.updateQueueById(queue);
-        }
-    }
-
+  }
 }

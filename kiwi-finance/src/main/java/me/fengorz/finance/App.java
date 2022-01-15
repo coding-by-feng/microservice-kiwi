@@ -19,14 +19,10 @@
 
 package me.fengorz.finance;
 
-/**
- * @Author zhanshifeng
- * @Date 2020/8/3 10:55 AM
- */
+/** @Author zhanshifeng @Date 2020/8/3 10:55 AM */
 public class App {
 
-    public static void main(String[] args) {
-        MonetaryETFFundTool.me.calAnotherFallPoint("99.994", "100.008");
-    }
-
+  public static void main(String[] args) {
+    MonetaryETFFundTool.me.calAnotherFallPoint("99.994", "100.008");
+  }
 }

@@ -25,15 +25,15 @@
 
     <select id="selectListItems" resultType="me.fengorz.kiwi.word.api.dto.mapper.out.SelectWordStarListResultDTO">
         select group_concat(CONCAT(wp.paraphrase_english, '||', wp.meaning_chinese) SEPARATOR '##') paraphrases,
-               temp1.word_id wordId,
-               temp1.word_name wordName
+        temp1.word_id wordId,
+        temp1.word_name wordName
         from (select wsr.list_id, wsr.word_id, wm.word_name, wsr.create_time
-              from word_star_rel wsr
-                       left join word_main wm on wsr.word_id = wm.word_id
-              where wm.is_del = 'N'
-                and wsr.list_id = #{listId}) temp1
-                 left join word_paraphrase wp
-                           on temp1.word_id = wp.word_id
+        from word_star_rel wsr
+        left join word_main wm on wsr.word_id = wm.word_id
+        where wm.is_del = 'N'
+        and wsr.list_id = #{listId}) temp1
+        left join word_paraphrase wp
+        on temp1.word_id = wp.word_id
         where wp.is_del = 'N'
         group by temp1.word_id
         order by temp1.create_time desc
@@ -42,10 +42,10 @@
     <select id="countWordIsCollect" resultType="java.lang.Integer">
         select count(1)
         from word_star_list wsl
-                 left join word_star_rel wsr on wsl.id = wsr.list_id
+        left join word_star_rel wsr on wsl.id = wsr.list_id
         where word_id = #{queryParams.entityId}
-          and wsl.owner = #{queryParams.owner}
-          and wsl.is_del = 'N';
+        and wsl.owner = #{queryParams.owner}
+        and wsl.is_del = 'N';
     </select>
 
 </mapper>

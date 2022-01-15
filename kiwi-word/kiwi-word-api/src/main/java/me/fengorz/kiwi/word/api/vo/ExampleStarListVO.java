@@ -18,10 +18,7 @@ package me.fengorz.kiwi.word.api.vo;
 
 import me.fengorz.kiwi.word.api.entity.ExampleStarListDO;
 
-/**
- * @Author zhanshifeng
- * @Date 2020/5/31 1:55 PM
- */
+/** @Author zhanshifeng @Date 2020/5/31 1:55 PM */
 public class ExampleStarListVO extends ExampleStarListDO {
-    private static final long serialVersionUID = -5943870835109880200L;
+  private static final long serialVersionUID = -5943870835109880200L;
 }

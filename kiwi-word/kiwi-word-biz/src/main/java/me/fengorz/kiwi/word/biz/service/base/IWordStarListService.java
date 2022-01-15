@@ -35,18 +35,17 @@ import java.util.List;
  */
 public interface IWordStarListService extends IService<WordStarListDO> {
 
-    Integer countById(Integer id);
+  Integer countById(Integer id);
 
-    List<WordStarListVO> getCurrentUserList(Integer userId);
+  List<WordStarListVO> getCurrentUserList(Integer userId);
 
-    boolean updateListByUser(WordStarListDO entity, Integer id, Integer userId);
+  boolean updateListByUser(WordStarListDO entity, Integer id, Integer userId);
 
-    void putIntoStarList(Integer wordId, Integer listId);
+  void putIntoStarList(Integer wordId, Integer listId);
 
-    void removeStarList(Integer wordId, Integer listId);
+  void removeStarList(Integer wordId, Integer listId);
 
-    IPage<WordStarItemVO> getListItems(Page page, Integer listId);
+  IPage<WordStarItemVO> getListItems(Page page, Integer listId);
 
-    boolean countWordIsCollect(Integer wordId, Integer owner);
-
+  boolean countWordIsCollect(Integer wordId, Integer owner);
 }

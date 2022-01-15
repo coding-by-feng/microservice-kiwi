@@ -19,26 +19,16 @@ package me.fengorz.kiwi.admin.api.dto;
 import lombok.Data;
 import me.fengorz.kiwi.admin.api.entity.SysUser;
 
-/**
- * @Description 用户的全部信息数据
- * @Author zhanshifeng
- * @Date 2019-09-26 10:52
- */
+/** @Description 用户的全部信息数据 @Author zhanshifeng @Date 2019-09-26 10:52 */
 @Data
 public class UserFullInfoDTO {
 
-    /**
-     * 基本信息
-     */
-    private SysUser sysUser;
+  /** 基本信息 */
+  private SysUser sysUser;
 
-    /**
-     * 权限标识集合
-     */
-    private String[] permissions;
+  /** 权限标识集合 */
+  private String[] permissions;
 
-    /**
-     * 角色集合
-     */
-    private Integer[] roles;
+  /** 角色集合 */
+  private Integer[] roles;
 }

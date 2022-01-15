@@ -28,46 +28,46 @@ import java.util.List;
  */
 public interface IWordFetchQueueService extends IService<FetchQueueDO> {
 
-    @Deprecated
-    boolean invalid(String wordName);
+  @Deprecated
+  boolean invalid(String wordName);
 
-    @Deprecated
-    boolean lock(String wordName);
+  @Deprecated
+  boolean lock(String wordName);
 
-    void startFetchOnAsync(String wordName);
+  void startFetchOnAsync(String wordName);
 
-    void startFetchPhraseOnAsync(String phrase, String derivation, Integer wordId);
+  void startFetchPhraseOnAsync(String phrase, String derivation, Integer wordId);
 
-    void startFetch(String wordName);
+  void startFetch(String wordName);
 
-    void startForceFetchWord(String wordName);
+  void startForceFetchWord(String wordName);
 
-    void startFetchPhrase(String phrase, String word, Integer wordId);
+  void startFetchPhrase(String phrase, String word, Integer wordId);
 
-    void flagFetchBaseFinish(Integer queueId, Integer wordId);
+  void flagFetchBaseFinish(Integer queueId, Integer wordId);
 
-    void flagWordQueryException(String wordName);
+  void flagWordQueryException(String wordName);
 
-    List<FetchQueueDO> page2List(Integer status, Integer current, Integer size, Integer isLock, Integer infoType);
+  List<FetchQueueDO> page2List(
+      Integer status, Integer current, Integer size, Integer isLock, Integer infoType);
 
-    List<FetchQueueDO> listNotIntoCache();
+  List<FetchQueueDO> listNotIntoCache();
 
-    @Deprecated
-    void saveDerivation(String inputWordName, String fetchWordName);
+  @Deprecated
+  void saveDerivation(String inputWordName, String fetchWordName);
 
-    /**
-     * 默认查单词
-     *
-     * @param wordName
-     * @param infoType
-     * @return
-     */
-    FetchQueueDO getOneInUnLock(String wordName, Integer... infoType);
+  /**
+   * 默认查单词
+   *
+   * @param wordName
+   * @param infoType
+   * @return
+   */
+  FetchQueueDO getOneInUnLock(String wordName, Integer... infoType);
 
-    FetchQueueDO getOneInUnLock(Integer queueId);
+  FetchQueueDO getOneInUnLock(Integer queueId);
 
-    FetchQueueDO getOneAnyhow(String wordName, Integer... infoType);
+  FetchQueueDO getOneAnyhow(String wordName, Integer... infoType);
 
-    FetchQueueDO getOneAnyhow(Integer queueId);
-
+  FetchQueueDO getOneAnyhow(Integer queueId);
 }

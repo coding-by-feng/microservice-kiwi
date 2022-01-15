@@ -27,6 +27,5 @@ import me.fengorz.kiwi.word.api.vo.star.ExampleStarItemVO;
  */
 public interface ExampleStarListMapper extends BaseMapper<ExampleStarListDO> {
 
-    IPage<ExampleStarItemVO> selectListItems(Page<?> page, Integer listId);
-
+  IPage<ExampleStarItemVO> selectListItems(Page<?> page, Integer listId);
 }

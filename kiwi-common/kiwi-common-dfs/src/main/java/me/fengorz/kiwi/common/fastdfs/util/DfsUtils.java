@@ -19,17 +19,13 @@ package me.fengorz.kiwi.common.fastdfs.util;
 import cn.hutool.core.util.StrUtil;
 import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
 
-/**
-* @Author zhanshifeng
- * @Date 2019/11/4 3:56 PM
- */
+/** @Author zhanshifeng @Date 2019/11/4 3:56 PM */
 public class DfsUtils {
 
-    public static String getGroupName(String fastFileId) {
-        if (StrUtil.isBlank(fastFileId)) {
-            return GlobalConstants.EMPTY;
-        }
-        return fastFileId.substring(0, fastFileId.indexOf("/"));
+  public static String getGroupName(String fastFileId) {
+    if (StrUtil.isBlank(fastFileId)) {
+      return GlobalConstants.EMPTY;
     }
-
+    return fastFileId.substring(0, fastFileId.indexOf("/"));
+  }
 }

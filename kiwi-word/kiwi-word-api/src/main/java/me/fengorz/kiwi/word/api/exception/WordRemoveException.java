@@ -18,33 +18,30 @@ package me.fengorz.kiwi.word.api.exception;
 
 import me.fengorz.kiwi.common.sdk.exception.BaseException;
 
-/**
- * @Author zhanshifeng
- * @Date 2019/11/1 2:54 PM
- */
+/** @Author zhanshifeng @Date 2019/11/1 2:54 PM */
 public class WordRemoveException extends BaseException {
 
-    private static final long serialVersionUID = 4431850064509376871L;
-    private static final String ERROR = "word remove exception!";
+  private static final long serialVersionUID = 4431850064509376871L;
+  private static final String ERROR = "word remove exception!";
 
-    public WordRemoveException() {
-        super(ERROR);
-    }
+  public WordRemoveException() {
+    super(ERROR);
+  }
 
-    public WordRemoveException(String message) {
-        super(message);
-    }
+  public WordRemoveException(String message) {
+    super(message);
+  }
 
-    public WordRemoveException(String message, Throwable cause) {
-        super(message, cause);
-    }
+  public WordRemoveException(String message, Throwable cause) {
+    super(message, cause);
+  }
 
-    public WordRemoveException(Throwable cause) {
-        super(cause);
-    }
+  public WordRemoveException(Throwable cause) {
+    super(cause);
+  }
 
-    public WordRemoveException(String message, Throwable cause, boolean enableSuppression,
-                               boolean writableStackTrace) {
-        super(message, cause, enableSuppression, writableStackTrace);
-    }
+  public WordRemoveException(
+      String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+    super(message, cause, enableSuppression, writableStackTrace);
+  }
 }

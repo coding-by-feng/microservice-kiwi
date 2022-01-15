@@ -19,6 +19,4 @@
 
 package me.fengorz.kiwi.word.biz.controller;
 
-public class WordReviewControllerTest {
-
-}
+public class WordReviewControllerTest {}

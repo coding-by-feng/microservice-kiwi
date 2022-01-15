@@ -55,110 +55,116 @@ import java.util.List;
 @Slf4j
 public class ParaphraseStarListController extends BaseController {
 
-    private final IParaphraseStarListService starListService;
-    private final IOperateService operateService;
-    private final IParaphraseService paraphraseService;
-    private final IWordReviewService reviewService;
-    private final ISeqService seqService;
+  private final IParaphraseStarListService starListService;
+  private final IOperateService operateService;
+  private final IParaphraseService paraphraseService;
+  private final IWordReviewService reviewService;
+  private final ISeqService seqService;
 
-    /**
-     * 新增单词本
-     *
-     * @param vo 单词本
-     * @return R
-     */
-    @SysLog("新增单词本")
-    @PostMapping("/save")
-    // @PreAuthorize("@pms.hasPermission('api_wordparaphrasestarlist_add')")
-    public R<Boolean> save(ParaphraseStarListVO vo) {
-        vo.setOwner(SecurityUtils.getCurrentUserId());
-        vo.setId(seqService.genIntSequence(MapperConstant.T_INS_SEQUENCE));
-        return R.success(starListService.save(vo));
-    }
+  /**
+   * 新增单词本
+   *
+   * @param vo 单词本
+   * @return R
+   */
+  @SysLog("新增单词本")
+  @PostMapping("/save")
+  // @PreAuthorize("@pms.hasPermission('api_wordparaphrasestarlist_add')")
+  public R<Boolean> save(ParaphraseStarListVO vo) {
+    vo.setOwner(SecurityUtils.getCurrentUserId());
+    vo.setId(seqService.genIntSequence(MapperConstant.T_INS_SEQUENCE));
+    return R.success(starListService.save(vo));
+  }
 
-    /**
-     * 修改单词本
-     *
-     * @param paraphraseStarListDO 单词本
-     * @return R
-     */
-    @SysLog("修改单词本")
-    @PostMapping("/updateById")
-    // @PreAuthorize("@pms.hasPermission('api_wordparaphrasestarlist_edit')")
-    public R<Boolean> updateById(ParaphraseStarListDO paraphraseStarListDO) {
-        return R.success(starListService.updateById(paraphraseStarListDO));
-    }
+  /**
+   * 修改单词本
+   *
+   * @param paraphraseStarListDO 单词本
+   * @return R
+   */
+  @SysLog("修改单词本")
+  @PostMapping("/updateById")
+  // @PreAuthorize("@pms.hasPermission('api_wordparaphrasestarlist_edit')")
+  public R<Boolean> updateById(ParaphraseStarListDO paraphraseStarListDO) {
+    return R.success(starListService.updateById(paraphraseStarListDO));
+  }
 
-    /**
-     * 通过id删除单词本
-     *
-     * @param id id
-     * @return R
-     */
-    @SysLog("通过id删除单词本")
-    @PostMapping("/delById/{id}")
-    // @PreAuthorize("@pms.hasPermission('api_wordparaphrasestarlist_del')")
-    public R<Boolean> delById(@PathVariable Integer id) {
-        return R.success(starListService.removeById(id));
-    }
+  /**
+   * 通过id删除单词本
+   *
+   * @param id id
+   * @return R
+   */
+  @SysLog("通过id删除单词本")
+  @PostMapping("/delById/{id}")
+  // @PreAuthorize("@pms.hasPermission('api_wordparaphrasestarlist_del')")
+  public R<Boolean> delById(@PathVariable Integer id) {
+    return R.success(starListService.removeById(id));
+  }
 
-    @GetMapping("/getCurrentUserList")
-    public R<List<ParaphraseStarListVO>> getCurrentUserList() {
-        return R.success(starListService.getCurrentUserList(SecurityUtils.getCurrentUserId()));
-    }
+  @GetMapping("/getCurrentUserList")
+  public R<List<ParaphraseStarListVO>> getCurrentUserList() {
+    return R.success(starListService.getCurrentUserList(SecurityUtils.getCurrentUserId()));
+  }
 
-    @PostMapping("/putIntoStarList")
-    public R<Boolean> putIntoStarList(@NotNull Integer paraphraseId, @NotNull Integer listId) {
-        starListService.putIntoStarList(paraphraseId, listId);
-        return R.success();
-    }
+  @PostMapping("/putIntoStarList")
+  public R<Boolean> putIntoStarList(@NotNull Integer paraphraseId, @NotNull Integer listId) {
+    starListService.putIntoStarList(paraphraseId, listId);
+    return R.success();
+  }
 
-    @PostMapping("/getListItems/{size}/{current}")
-    public R<IPage<ParaphraseStarItemVO>> getListItems(@NotNull Integer listId, @PathVariable @Min(0) Integer current,
-                                                       @PathVariable @Range(min = 1, max = 100) Integer size) {
-        return R.success(starListService.selectListItems(new Page(current, size), listId));
-    }
+  @PostMapping("/getListItems/{size}/{current}")
+  public R<IPage<ParaphraseStarItemVO>> getListItems(
+      @NotNull Integer listId,
+      @PathVariable @Min(0) Integer current,
+      @PathVariable @Range(min = 1, max = 100) Integer size) {
+    return R.success(starListService.selectListItems(new Page(current, size), listId));
+  }
 
-    @PostMapping("/getReviewListItems/{size}/{current}")
-    public R<IPage<ParaphraseStarItemVO>> getReviewListItems(@NotNull Integer listId,
-                                                             @PathVariable @Min(0) Integer current, @PathVariable @Range(min = 1, max = 100) Integer size) {
-        return R.success(starListService.selectReviewListItems(new Page(current, size), listId));
-    }
+  @PostMapping("/getReviewListItems/{size}/{current}")
+  public R<IPage<ParaphraseStarItemVO>> getReviewListItems(
+      @NotNull Integer listId,
+      @PathVariable @Min(0) Integer current,
+      @PathVariable @Range(min = 1, max = 100) Integer size) {
+    return R.success(starListService.selectReviewListItems(new Page(current, size), listId));
+  }
 
-    @PostMapping("/getRememberListItems/{size}/{current}")
-    public R<IPage<ParaphraseStarItemVO>> getRememberListItems(@NotNull Integer listId,
-                                                               @PathVariable @Min(0) Integer current, @PathVariable @Range(min = 1, max = 100) Integer size) {
-        return R.success(starListService.selectRememberListItems(new Page(current, size), listId));
-    }
+  @PostMapping("/getRememberListItems/{size}/{current}")
+  public R<IPage<ParaphraseStarItemVO>> getRememberListItems(
+      @NotNull Integer listId,
+      @PathVariable @Min(0) Integer current,
+      @PathVariable @Range(min = 1, max = 100) Integer size) {
+    return R.success(starListService.selectRememberListItems(new Page(current, size), listId));
+  }
 
-    @GetMapping("/getItemDetail/{paraphraseId}")
-    public R<ParaphraseVO> getItemDetail(@PathVariable Integer paraphraseId) {
-        reviewService.increase(ReviewDailyCounterTypeEnum.REVIEW.getType(), SecurityUtils.getCurrentUserId());
-        return R.success(operateService.findParaphraseVO(paraphraseId));
-    }
+  @GetMapping("/getItemDetail/{paraphraseId}")
+  public R<ParaphraseVO> getItemDetail(@PathVariable Integer paraphraseId) {
+    reviewService.increase(
+        ReviewDailyCounterTypeEnum.REVIEW.getType(), SecurityUtils.getCurrentUserId());
+    return R.success(operateService.findParaphraseVO(paraphraseId));
+  }
 
-    @PostMapping("/rememberOne")
-    public R<Void> rememberOne(@NotNull Integer paraphraseId, @NotNull Integer listId) {
-        starListService.rememberOne(paraphraseId, listId);
-        return R.success();
-    }
+  @PostMapping("/rememberOne")
+  public R<Void> rememberOne(@NotNull Integer paraphraseId, @NotNull Integer listId) {
+    starListService.rememberOne(paraphraseId, listId);
+    return R.success();
+  }
 
-    @PostMapping("/keepInMind")
-    public R<Void> keepInMind(@NotNull Integer paraphraseId, @NotNull Integer listId) {
-        starListService.keepInMind(paraphraseId, listId);
-        return R.success();
-    }
+  @PostMapping("/keepInMind")
+  public R<Void> keepInMind(@NotNull Integer paraphraseId, @NotNull Integer listId) {
+    starListService.keepInMind(paraphraseId, listId);
+    return R.success();
+  }
 
-    @PostMapping("/forgetOne")
-    public R<Void> forgetOne(@NotNull Integer paraphraseId, @NotNull Integer listId) {
-        starListService.forgetOne(paraphraseId, listId);
-        return R.success();
-    }
+  @PostMapping("/forgetOne")
+  public R<Void> forgetOne(@NotNull Integer paraphraseId, @NotNull Integer listId) {
+    starListService.forgetOne(paraphraseId, listId);
+    return R.success();
+  }
 
-    @PostMapping("/removeParaphraseStar")
-    public R<Boolean> removeParaphraseStar(@NotNull Integer paraphraseId, @NotNull Integer listId) {
-        starListService.removeParaphraseStar(paraphraseId, listId);
-        return R.success();
-    }
-
+  @PostMapping("/removeParaphraseStar")
+  public R<Boolean> removeParaphraseStar(@NotNull Integer paraphraseId, @NotNull Integer listId) {
+    starListService.removeParaphraseStar(paraphraseId, listId);
+    return R.success();
+  }
 }

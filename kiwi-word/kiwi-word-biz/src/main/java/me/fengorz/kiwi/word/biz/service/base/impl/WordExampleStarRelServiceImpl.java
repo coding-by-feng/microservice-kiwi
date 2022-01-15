@@ -32,19 +32,21 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Service
 @RequiredArgsConstructor
-public class WordExampleStarRelServiceImpl extends ServiceImpl<ExampleStarRelMapper, ExampleStarRelDO>
+public class WordExampleStarRelServiceImpl
+    extends ServiceImpl<ExampleStarRelMapper, ExampleStarRelDO>
     implements IWordExampleStarRelService {
 
-    private final ExampleStarRelMapper exampleStarRelMapper;
+  private final ExampleStarRelMapper exampleStarRelMapper;
 
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public void replaceFetchResult(Integer oldRelId, Integer newRelId) {
-        if (oldRelId == null || newRelId == null) {
-            return;
-        }
-
-        exampleStarRelMapper.update(new ExampleStarRelDO().setExampleId(newRelId),
-            Wrappers.<ExampleStarRelDO>lambdaUpdate().eq(ExampleStarRelDO::getExampleId, oldRelId));
+  @Override
+  @Transactional(rollbackFor = Exception.class)
+  public void replaceFetchResult(Integer oldRelId, Integer newRelId) {
+    if (oldRelId == null || newRelId == null) {
+      return;
     }
+
+    exampleStarRelMapper.update(
+        new ExampleStarRelDO().setExampleId(newRelId),
+        Wrappers.<ExampleStarRelDO>lambdaUpdate().eq(ExampleStarRelDO::getExampleId, oldRelId));
+  }
 }

@@ -22,6 +22,4 @@ import me.fengorz.kiwi.word.api.entity.WordReviewDailyCounterDO;
  * @author zhanShiFeng
  * @date 2021-08-19 20:42:11
  */
-public interface ReviewDailyCounterMapper extends BaseMapper<WordReviewDailyCounterDO> {
-
-}
+public interface ReviewDailyCounterMapper extends BaseMapper<WordReviewDailyCounterDO> {}

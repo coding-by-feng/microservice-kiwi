@@ -35,24 +35,22 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/word/review/")
 public class WordReviewController {
 
-    private final IWordReviewService reviewService;
-    private final IOperateService operateService;
+  private final IWordReviewService reviewService;
+  private final IOperateService operateService;
 
-    @GetMapping("/getReviewBreakpointPageNumber/{listId}")
-    public R<Integer> getReviewBreakpointPageNumber(@PathVariable Integer listId) {
-        return R.success(operateService.getReviewBreakpointPageNumber(listId));
-    }
+  @GetMapping("/getReviewBreakpointPageNumber/{listId}")
+  public R<Integer> getReviewBreakpointPageNumber(@PathVariable Integer listId) {
+    return R.success(operateService.getReviewBreakpointPageNumber(listId));
+  }
 
-    @GetMapping("/createTheDays")
-    public R<Void> createTheDays() {
-        reviewService.createTheDays(SecurityUtils.getCurrentUserId());
-        return R.success();
-    }
+  @GetMapping("/createTheDays")
+  public R<Void> createTheDays() {
+    reviewService.createTheDays(SecurityUtils.getCurrentUserId());
+    return R.success();
+  }
 
-    @GetMapping("/getVO/{type}")
-    public R<WordReviewDailyCounterVO> getVO(@PathVariable("type") Integer type) {
-        return R.success(reviewService.getVO(SecurityUtils.getCurrentUserId(), type));
-    }
-
+  @GetMapping("/getVO/{type}")
+  public R<WordReviewDailyCounterVO> getVO(@PathVariable("type") Integer type) {
+    return R.success(reviewService.getVO(SecurityUtils.getCurrentUserId(), type));
+  }
 }
-

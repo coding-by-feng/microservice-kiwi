@@ -16,7 +16,6 @@
 package me.fengorz.kiwi.admin.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-
 import me.fengorz.kiwi.admin.api.entity.SysUserRoleRel;
 
 /**
@@ -25,6 +24,4 @@ import me.fengorz.kiwi.admin.api.entity.SysUserRoleRel;
  * @author zhanshifeng
  * @date 2019-09-26 14:39:35
  */
-public interface SysUserRoleRelMapper extends BaseMapper<SysUserRoleRel> {
-
-}
+public interface SysUserRoleRelMapper extends BaseMapper<SysUserRoleRel> {}

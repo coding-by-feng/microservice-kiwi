@@ -19,16 +19,12 @@ package me.fengorz.kiwi.common.api;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-/**
-* @Author zhanshifeng
- * @Date 2020/5/23 3:31 PM
- */
+/** @Author zhanshifeng @Date 2020/5/23 3:31 PM */
 public class RTest {
 
-    // @Test
-    public void test() throws JsonProcessingException {
-        ObjectMapper mapper = new ObjectMapper();
-        System.out.println(mapper.writeValueAsString(R.success()));
-    }
-
+  // @Test
+  public void test() throws JsonProcessingException {
+    ObjectMapper mapper = new ObjectMapper();
+    System.out.println(mapper.writeValueAsString(R.success()));
+  }
 }

@@ -15,13 +15,11 @@ package me.fengorz.kiwi.word.api.dto;
 import me.fengorz.kiwi.word.api.entity.WordMainVariantDO;
 
 /**
- * 自动生成实体类DTO
+ * 自动生成实体类DTO @Author zhanshifeng
  *
- * @Author zhanshifeng
  * @date 2020-05-24 01:32:16
  */
 public class WordMainVariantDTO extends WordMainVariantDO {
 
-    private static final long serialVersionUID = 1590255137013L;
-
+  private static final long serialVersionUID = 1590255137013L;
 }

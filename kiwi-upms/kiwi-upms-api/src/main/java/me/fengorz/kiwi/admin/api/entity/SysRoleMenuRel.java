@@ -18,7 +18,6 @@ package me.fengorz.kiwi.admin.api.entity;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
-
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -33,16 +32,10 @@ import lombok.EqualsAndHashCode;
 @TableName("sys_role_menu_rel")
 public class SysRoleMenuRel extends Model<SysRoleMenuRel> {
 
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    /**
-     * 角色ID
-     */
-    @TableId
-    private Integer roleId;
-    /**
-     * 菜单ID
-     */
-    private Integer menuId;
-
+  /** 角色ID */
+  @TableId private Integer roleId;
+  /** 菜单ID */
+  private Integer menuId;
 }

@@ -21,21 +21,17 @@ import lombok.ToString;
 
 import java.io.Serializable;
 
-/**
-* @Author zhanshifeng
- * @Date 2019/10/25 9:14 AM
- */
+/** @Author zhanshifeng @Date 2019/10/25 9:14 AM */
 @Data
 @ToString
 public class FetchParaphraseExampleDTO implements Serializable {
 
-    private static final long serialVersionUID = 6644567110287356026L;
-    private String exampleSentence;
+  private static final long serialVersionUID = 6644567110287356026L;
+  private String exampleSentence;
 
-    private String exampleTranslate;
+  private String exampleTranslate;
 
-    private String translateLanguage;
+  private String translateLanguage;
 
-    private Integer serialNumber;
-
+  private Integer serialNumber;
 }

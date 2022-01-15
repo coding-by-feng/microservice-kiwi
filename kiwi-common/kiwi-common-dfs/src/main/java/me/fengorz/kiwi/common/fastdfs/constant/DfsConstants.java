@@ -16,15 +16,12 @@
 
 package me.fengorz.kiwi.common.fastdfs.constant;
 
-/**
- * @Author zhanshifeng
- * @Date 2020/5/24 11:52 AM
- */
+/** @Author zhanshifeng @Date 2020/5/24 11:52 AM */
 public class DfsConstants {
 
-    public static final String DELETE_FILE_EXCEPTION = "dfsService delete file exception!";
-    public static final String UPLOAD_FILE_EXCEPTION = "dfsService upload file exception";
-    public static final String DOWNLOAD_STREAM_FILE_EXCEPTION = "dfsService download stream of file exception";
-    public static final String DOWNLOAD_FILE_EXCEPTION = "dfsService download of file exception";
-
+  public static final String DELETE_FILE_EXCEPTION = "dfsService delete file exception!";
+  public static final String UPLOAD_FILE_EXCEPTION = "dfsService upload file exception";
+  public static final String DOWNLOAD_STREAM_FILE_EXCEPTION =
+      "dfsService download stream of file exception";
+  public static final String DOWNLOAD_FILE_EXCEPTION = "dfsService download of file exception";
 }

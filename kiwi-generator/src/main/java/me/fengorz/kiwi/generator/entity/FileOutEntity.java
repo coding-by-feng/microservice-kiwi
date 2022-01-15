@@ -16,40 +16,43 @@
 
 package me.fengorz.kiwi.generator.entity;
 
-import java.io.File;
-
 import lombok.Data;
 
-/**
- * @Author zhanshifeng
- * @Date 2019-09-12 16:50
- */
+import java.io.File;
+
+/** @Author zhanshifeng @Date 2019-09-12 16:50 */
 @Data
 public class FileOutEntity {
 
-    private String templatePath;
+  private String templatePath;
 
-    private String entityType;
+  private String entityType;
 
-    private String projectPath;
+  private String projectPath;
 
-    private String packagePrefix;
+  private String packagePrefix;
 
-    private String modulePackage;
+  private String modulePackage;
 
-    private String moduleName;
+  private String moduleName;
 
-    private String filePrefix;
+  private String filePrefix;
 
-    private String entityName;
+  private String entityName;
 
-    private String fileSuffix;
+  private String fileSuffix;
 
-    private String fileType;
+  private String fileType;
 
-    @Override
-    public String toString() {
-        return projectPath + File.pathSeparator + packagePrefix + File.pathSeparator + moduleName + File.pathSeparator
-            + entityName + fileSuffix;
-    }
+  @Override
+  public String toString() {
+    return projectPath
+        + File.pathSeparator
+        + packagePrefix
+        + File.pathSeparator
+        + moduleName
+        + File.pathSeparator
+        + entityName
+        + fileSuffix;
+  }
 }

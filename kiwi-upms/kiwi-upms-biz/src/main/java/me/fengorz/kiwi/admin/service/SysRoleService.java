@@ -15,11 +15,10 @@
  */
 package me.fengorz.kiwi.admin.service;
 
-import java.util.List;
-
 import com.baomidou.mybatisplus.extension.service.IService;
-
 import me.fengorz.kiwi.admin.api.entity.SysRole;
+
+import java.util.List;
 
 /**
  * 系统角色表
@@ -29,6 +28,5 @@ import me.fengorz.kiwi.admin.api.entity.SysRole;
  */
 public interface SysRoleService extends IService<SysRole> {
 
-    List<SysRole> listRolesByUserId(Integer userId);
-
+  List<SysRole> listRolesByUserId(Integer userId);
 }

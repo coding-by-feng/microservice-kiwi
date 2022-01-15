@@ -25,18 +25,18 @@
 
     <select id="selectParaphraseAndIsCollect" resultType="me.fengorz.kiwi.word.api.vo.detail.ParaphraseVO">
         select wp.paraphrase_id,
-               wp.paraphrase_english,
-               wp.paraphrase_english_translate,
-               wp.meaning_chinese,
-               wp.translate_language,
-               if(temp.collect_id is null, 'N', 'Y') is_collect
+        wp.paraphrase_english,
+        wp.paraphrase_english_translate,
+        wp.meaning_chinese,
+        wp.translate_language,
+        if(temp.collect_id is null, 'N', 'Y') is_collect
         from (select wpsr.paraphrase_id collect_id
-              from word_paraphrase_star_rel wpsr
-                       left join word_paraphrase_star_list wpsl on wpsr.list_id = wpsl.id
-              where wpsl.owner = #{queryParams.owner} and wpsl.is_del='N') temp
-                 right join word_paraphrase wp on temp.collect_id = wp.paraphrase_id
+        from word_paraphrase_star_rel wpsr
+        left join word_paraphrase_star_list wpsl on wpsr.list_id = wpsl.id
+        where wpsl.owner = #{queryParams.owner} and wpsl.is_del='N') temp
+        right join word_paraphrase wp on temp.collect_id = wp.paraphrase_id
         where wp.character_id = #{queryParams.entityId}
-          and wp.is_del = 'N'
+        and wp.is_del = 'N'
     </select>
 
 </mapper>

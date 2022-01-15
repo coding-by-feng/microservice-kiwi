@@ -53,59 +53,64 @@ import java.util.List;
 @Slf4j
 public class WordMainController extends BaseController {
 
-    private final IWordMainService mainService;
-    private final IOperateService operateService;
-    private final IWordFetchQueueService queueService;
-    private final IWordReviewService reviewService;
-    private final DocumentOperations documentOperations;
+  private final IWordMainService mainService;
+  private final IOperateService operateService;
+  private final IWordFetchQueueService queueService;
+  private final IWordReviewService reviewService;
+  private final DocumentOperations documentOperations;
 
-    @GetMapping("/removeByWordName/{wordName}")
-    // @PreAuthorize("@pms.hasPermission('biz_wordmain_del')")
-    public R<Boolean> removeByWordName(@PathVariable String wordName) {
-        queueService.startFetchOnAsync(wordName);
-        return R.success();
+  @GetMapping("/removeByWordName/{wordName}")
+  // @PreAuthorize("@pms.hasPermission('biz_wordmain_del')")
+  public R<Boolean> removeByWordName(@PathVariable String wordName) {
+    queueService.startFetchOnAsync(wordName);
+    return R.success();
+  }
+
+  @PostMapping("/query/gate/{keyword}")
+  public R<IPage<WordQueryVO>> queryGate(
+      @PathVariable(name = "keyword", required = false) String keyword,
+      Integer current,
+      Integer size) {
+    log.info(
+        KiwiStringUtils.format("========>queryGate[{}],[time={}]", keyword, KiwiDateUtils.now()));
+    if (KiwiStringUtils.isContainChinese(keyword)) {
+      return R.success(
+          operateService.queryWordByCh(keyword, WebTools.deductCurrent(current), size));
+    } else {
+      return this.queryWord(keyword);
     }
+  }
 
-    @PostMapping("/query/gate/{keyword}")
-    public R<IPage<WordQueryVO>> queryGate(@PathVariable(name = "keyword", required = false) String keyword, Integer current, Integer size) {
-        log.info(KiwiStringUtils.format("========>queryGate[{}],[time={}]", keyword, KiwiDateUtils.now()));
-        if (KiwiStringUtils.isContainChinese(keyword)) {
-            return R.success(operateService.queryWordByCh(keyword, WebTools.deductCurrent(current), size));
-        } else {
-            return this.queryWord(keyword);
-        }
+  @GetMapping("/query/{wordName}")
+  public R<IPage<WordQueryVO>> queryWord(
+      @PathVariable(value = "wordName", required = false) String wordName) {
+    IPage<WordQueryVO> page = new Page<>();
+    if (KiwiStringUtils.isNotBlank(wordName)) {
+      List<WordQueryVO> list = new LinkedList<>();
+      list.add(operateService.queryWord(wordName));
+      page.setRecords(list);
     }
+    return R.success(page);
+  }
 
-
-    @GetMapping("/query/{wordName}")
-    public R<IPage<WordQueryVO>> queryWord(@PathVariable(value = "wordName", required = false) String wordName) {
-        IPage<WordQueryVO> page = new Page<>();
-        if (KiwiStringUtils.isNotBlank(wordName)) {
-            List<WordQueryVO> list = new LinkedList<>();
-            list.add(operateService.queryWord(wordName));
-            page.setRecords(list);
-        }
-        return R.success(page);
+  @GetMapping("/queryById/{wordId}")
+  public R<WordQueryVO> queryWord(@PathVariable Integer wordId) {
+    String wordName = mainService.getWordName(wordId);
+    if (KiwiStringUtils.isBlank(wordName)) {
+      return R.failed();
     }
+    return R.success(operateService.queryWord(wordName));
+  }
 
-    @GetMapping("/queryById/{wordId}")
-    public R<WordQueryVO> queryWord(@PathVariable Integer wordId) {
-        String wordName = mainService.getWordName(wordId);
-        if (KiwiStringUtils.isBlank(wordName)) {
-            return R.failed();
-        }
-        return R.success(operateService.queryWord(wordName));
-    }
+  @SysLog("模糊查询单词列表")
+  @PostMapping("/fuzzyQueryList")
+  public R<List<FuzzyQueryResultDTO>> fuzzyQueryList(
+      @NotBlank String wordName, Page<WordMainDO> page) {
+    return R.success(mainService.fuzzyQueryList(page, wordName));
+  }
 
-    @SysLog("模糊查询单词列表")
-    @PostMapping("/fuzzyQueryList")
-    public R<List<FuzzyQueryResultDTO>> fuzzyQueryList(@NotBlank String wordName, Page<WordMainDO> page) {
-        return R.success(mainService.fuzzyQueryList(page, wordName));
-    }
-
-    @GetMapping("/listOverlapInUnLock")
-    public R<List<String>> listOverlapInUnLock() {
-        return R.success(mainService.listOverlapInUnLock());
-    }
-
+  @GetMapping("/listOverlapInUnLock")
+  public R<List<String>> listOverlapInUnLock() {
+    return R.success(mainService.listOverlapInUnLock());
+  }
 }

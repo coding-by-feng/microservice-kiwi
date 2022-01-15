@@ -26,7 +26,7 @@
     <select id="selectOverlapInUnLock" resultType="java.lang.String">
         select wm.word_name
         from word_main wm
-                 left join word_fetch_queue wfq on wm.word_name = wfq.word_name
+        left join word_fetch_queue wfq on wm.word_name = wfq.word_name
         where wfq.is_lock = 0
         group by wm.word_name
         having count(wm.word_name) > 1
@@ -35,12 +35,12 @@
     <select id="fuzzyQuery" resultType="me.fengorz.kiwi.word.api.dto.mapper.out.FuzzyQueryResultDTO">
         select distinct value
         from (select wm.word_name value
-              from word_main wm
-              where wm.word_name like #{query}
-              union
-              select wmv.variant_name value
-              from word_main_variant wmv
-              where wmv.variant_name like #{query}) tmp
+        from word_main wm
+        where wm.word_name like #{query}
+        union
+        select wmv.variant_name value
+        from word_main_variant wmv
+        where wmv.variant_name like #{query}) tmp
     </select>
 
 </mapper>

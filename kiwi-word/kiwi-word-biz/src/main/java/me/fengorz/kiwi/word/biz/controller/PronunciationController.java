@@ -45,34 +45,34 @@ import java.io.InputStream;
 @Slf4j
 public class PronunciationController extends BaseController {
 
-    private final IPronunciationService wordPronunciationService;
-    private final IDfsService dfsService;
+  private static final String CONTENT_TYPE = "Content-Type";
+  private static final String AUDIO_MPEG = "audio/mpeg";
+  private static final String ACCEPT_RANGES = "Accept-Ranges";
+  private static final String BYTES = "bytes";
+  private static final String CONTENT_LENGTH = "Content-Length";
+  private final IPronunciationService wordPronunciationService;
+  private final IDfsService dfsService;
 
-    private static final String CONTENT_TYPE = "Content-Type";
-    private static final String AUDIO_MPEG = "audio/mpeg";
-    private static final String ACCEPT_RANGES = "Accept-Ranges";
-    private static final String BYTES = "bytes";
-    private static final String CONTENT_LENGTH = "Content-Length";
-
-
-    @SysLog("下载播放单词发音音频")
-    @GetMapping("/downloadVoice/{pronunciationId}")
-    public void downloadVoice(HttpServletResponse response, @PathVariable("pronunciationId") Integer pronunciationId) {
-        PronunciationDO wordPronunciation = this.wordPronunciationService.getById(pronunciationId);
-        if (wordPronunciation == null) {
-            return;
-        }
-        InputStream inputStream = null;
-        try {
-            byte[] bytes = this.dfsService.downloadFile(wordPronunciation.getGroupName(), wordPronunciation.getVoiceFilePath());
-            inputStream = new ByteArrayInputStream(bytes);
-            response.addHeader(CONTENT_TYPE, AUDIO_MPEG);
-            response.addHeader(ACCEPT_RANGES, BYTES);
-            response.addHeader(CONTENT_LENGTH, String.valueOf(bytes.length));
-        } catch (DfsOperateException e) {
-            log.error("downloadVoice exception, pronunciationId={}!", pronunciationId, e);
-        }
-        WebTools.downloadResponse(response, inputStream);
+  @SysLog("下载播放单词发音音频")
+  @GetMapping("/downloadVoice/{pronunciationId}")
+  public void downloadVoice(
+      HttpServletResponse response, @PathVariable("pronunciationId") Integer pronunciationId) {
+    PronunciationDO wordPronunciation = this.wordPronunciationService.getById(pronunciationId);
+    if (wordPronunciation == null) {
+      return;
     }
-
+    InputStream inputStream = null;
+    try {
+      byte[] bytes =
+          this.dfsService.downloadFile(
+              wordPronunciation.getGroupName(), wordPronunciation.getVoiceFilePath());
+      inputStream = new ByteArrayInputStream(bytes);
+      response.addHeader(CONTENT_TYPE, AUDIO_MPEG);
+      response.addHeader(ACCEPT_RANGES, BYTES);
+      response.addHeader(CONTENT_LENGTH, String.valueOf(bytes.length));
+    } catch (DfsOperateException e) {
+      log.error("downloadVoice exception, pronunciationId={}!", pronunciationId, e);
+    }
+    WebTools.downloadResponse(response, inputStream);
+  }
 }

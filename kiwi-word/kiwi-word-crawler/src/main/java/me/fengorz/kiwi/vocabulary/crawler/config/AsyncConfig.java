@@ -30,37 +30,34 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ThreadPoolExecutor;
 
-/**
- * @Author zhanshifeng
- * @Date 2019/10/31 2:30 PM
- */
+/** @Author zhanshifeng @Date 2019/10/31 2:30 PM */
 @Configuration
 @ComponentScan("me.fengorz.kiwi.vocabulary.crawler")
 @EnableAsync
 public class AsyncConfig implements AsyncConfigurer {
 
-    @Value("${async.config.core.pool.size}")
-    private int corePoolSize;
+  @Value("${async.config.core.pool.size}")
+  private int corePoolSize;
 
-    @Value("${async.config.max.pool.size}")
-    private int maxPoolSize;
+  @Value("${async.config.max.pool.size}")
+  private int maxPoolSize;
 
-    @Value("${async.config.queue.capacity}")
-    private int queueCapacity;
+  @Value("${async.config.queue.capacity}")
+  private int queueCapacity;
 
-    @Override
-    public Executor getAsyncExecutor() {
-        ThreadPoolTaskExecutor taskExecutor = new ThreadPoolTaskExecutor();
-        taskExecutor.setCorePoolSize(this.corePoolSize);
-        taskExecutor.setMaxPoolSize(this.maxPoolSize);
-        taskExecutor.setQueueCapacity(this.queueCapacity);
-        taskExecutor.initialize();
-        taskExecutor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
-        return taskExecutor;
-    }
+  @Override
+  public Executor getAsyncExecutor() {
+    ThreadPoolTaskExecutor taskExecutor = new ThreadPoolTaskExecutor();
+    taskExecutor.setCorePoolSize(this.corePoolSize);
+    taskExecutor.setMaxPoolSize(this.maxPoolSize);
+    taskExecutor.setQueueCapacity(this.queueCapacity);
+    taskExecutor.initialize();
+    taskExecutor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
+    return taskExecutor;
+  }
 
-    @Override
-    public AsyncUncaughtExceptionHandler getAsyncUncaughtExceptionHandler() {
-        return null;
-    }
+  @Override
+  public AsyncUncaughtExceptionHandler getAsyncUncaughtExceptionHandler() {
+    return null;
+  }
 }

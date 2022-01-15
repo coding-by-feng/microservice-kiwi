@@ -32,6 +32,5 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/word/paraphrase/example")
 public class ParaphraseExampleController extends BaseController {
 
-    private final IParaphraseExampleService wordParaphraseExampleService;
-
+  private final IParaphraseExampleService wordParaphraseExampleService;
 }

@@ -34,17 +34,17 @@ import org.springframework.transaction.annotation.Transactional;
 public class PronunciationServiceImpl extends ServiceImpl<PronunciationMapper, PronunciationDO>
     implements IPronunciationService {
 
-    private final PronunciationMapper pronunciationMapper;
+  private final PronunciationMapper pronunciationMapper;
 
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public int blankPronunciationVoice(String wordName) {
-        return pronunciationMapper.blankPronunciationVoice(wordName);
-    }
+  @Override
+  @Transactional(rollbackFor = Exception.class)
+  public int blankPronunciationVoice(String wordName) {
+    return pronunciationMapper.blankPronunciationVoice(wordName);
+  }
 
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public int deleteByWordName(String wordName) {
-        return pronunciationMapper.deleteByWordName(wordName);
-    }
+  @Override
+  @Transactional(rollbackFor = Exception.class)
+  public int deleteByWordName(String wordName) {
+    return pronunciationMapper.deleteByWordName(wordName);
+  }
 }

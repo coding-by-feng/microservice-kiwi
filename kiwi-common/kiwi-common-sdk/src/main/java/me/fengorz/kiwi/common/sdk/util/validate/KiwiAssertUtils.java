@@ -24,57 +24,53 @@ import me.fengorz.kiwi.common.sdk.util.lang.string.KiwiStringUtils;
 
 import java.util.Collection;
 
-/**
- * @Description 断言工具类
- * @Author zhanshifeng
- * @Date 2019/11/26 9:38 PM
- */
+/** @Description 断言工具类 @Author zhanshifeng @Date 2019/11/26 9:38 PM */
 public class KiwiAssertUtils extends Assert {
 
-    public static <T> T serviceNotNull(T object, String errorMsgTemplate, Object... params) {
-        if (object == null) {
-            throw new ServiceException(StrUtil.format(errorMsgTemplate, params));
-        }
-        return object;
+  public static <T> T serviceNotNull(T object, String errorMsgTemplate, Object... params) {
+    if (object == null) {
+      throw new ServiceException(StrUtil.format(errorMsgTemplate, params));
+    }
+    return object;
+  }
+
+  public static <T> T resourceNotNull(T object, String errorMsgTemplate, Object... params) {
+    if (object == null) {
+      throw new ResourceNotFoundException(StrUtil.format(errorMsgTemplate, params));
+    }
+    return object;
+  }
+
+  public static <T> T serviceEmpty(T object, String errorMsgTemplate, Object... params) {
+    serviceNotNull(object, errorMsgTemplate, params);
+    if (object instanceof String && KiwiStringUtils.isBlank(object.toString())) {
+      throw new ServiceException(StrUtil.format(errorMsgTemplate, params));
     }
 
-    public static <T> T resourceNotNull(T object, String errorMsgTemplate, Object... params) {
-        if (object == null) {
-            throw new ResourceNotFoundException(StrUtil.format(errorMsgTemplate, params));
-        }
-        return object;
+    if (object instanceof Collection && !((Collection) object).isEmpty()) {
+      throw new ServiceException(StrUtil.format(errorMsgTemplate, params));
     }
-
-    public static <T> T serviceEmpty(T object, String errorMsgTemplate, Object... params) {
-        serviceNotNull(object, errorMsgTemplate, params);
-        if (object instanceof String && KiwiStringUtils.isBlank(object.toString())) {
-            throw new ServiceException(StrUtil.format(errorMsgTemplate, params));
-        }
-
-        if (object instanceof Collection && !((Collection) object).isEmpty()) {
-            throw new ServiceException(StrUtil.format(errorMsgTemplate, params));
-        }
-        if ((object instanceof Integer) && !object.equals(0)) {
-            throw new ServiceException(StrUtil.format(errorMsgTemplate, params));
-        }
-        return object;
+    if ((object instanceof Integer) && !object.equals(0)) {
+      throw new ServiceException(StrUtil.format(errorMsgTemplate, params));
     }
+    return object;
+  }
 
-    public static <T> T serviceNotEmpty(T object, String errorMsgTemplate, Object... params) {
-        serviceNotNull(object, errorMsgTemplate, params);
-        if (object instanceof Collection && ((Collection) object).isEmpty()) {
-            throw new ServiceException(StrUtil.format(errorMsgTemplate, params));
-        }
-        if ((object instanceof Integer) && ((Integer) object).equals(0)) {
-            throw new ServiceException(StrUtil.format(errorMsgTemplate, params));
-        }
-        return object;
+  public static <T> T serviceNotEmpty(T object, String errorMsgTemplate, Object... params) {
+    serviceNotNull(object, errorMsgTemplate, params);
+    if (object instanceof Collection && ((Collection) object).isEmpty()) {
+      throw new ServiceException(StrUtil.format(errorMsgTemplate, params));
     }
-
-    public static void isTrue(boolean expression, String errorMsgTemplate, Object... params) throws IllegalArgumentException {
-        if (!expression) {
-            throw new ServiceException(StrUtil.format(errorMsgTemplate, params));
-        }
+    if ((object instanceof Integer) && ((Integer) object).equals(0)) {
+      throw new ServiceException(StrUtil.format(errorMsgTemplate, params));
     }
+    return object;
+  }
 
+  public static void isTrue(boolean expression, String errorMsgTemplate, Object... params)
+      throws IllegalArgumentException {
+    if (!expression) {
+      throw new ServiceException(StrUtil.format(errorMsgTemplate, params));
+    }
+  }
 }

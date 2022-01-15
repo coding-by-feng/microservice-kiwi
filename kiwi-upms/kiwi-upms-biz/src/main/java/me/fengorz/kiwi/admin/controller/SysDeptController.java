@@ -37,73 +37,67 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/sys/dept")
 public class SysDeptController extends BaseController {
 
-    private final SysDeptService sysDeptService;
+  private final SysDeptService sysDeptService;
 
-    /**
-     * 分页查询
-     *
-     * @param page
-     *            分页对象
-     * @param sysDept
-     *            部门管理
-     * @return
-     */
-    @GetMapping("/page")
-    public R getSysDeptPage(Page page, SysDept sysDept) {
-        return R.ok(sysDeptService.page(page, Wrappers.query(sysDept)));
-    }
+  /**
+   * 分页查询
+   *
+   * @param page 分页对象
+   * @param sysDept 部门管理
+   * @return
+   */
+  @GetMapping("/page")
+  public R getSysDeptPage(Page page, SysDept sysDept) {
+    return R.ok(sysDeptService.page(page, Wrappers.query(sysDept)));
+  }
 
-    /**
-     * 通过id查询部门管理
-     *
-     * @param deptId
-     *            id
-     * @return R
-     */
-    @GetMapping("/{deptId}")
-    public R getById(@PathVariable("deptId") Integer deptId) {
-        return R.ok(sysDeptService.getById(deptId));
-    }
+  /**
+   * 通过id查询部门管理
+   *
+   * @param deptId id
+   * @return R
+   */
+  @GetMapping("/{deptId}")
+  public R getById(@PathVariable("deptId") Integer deptId) {
+    return R.ok(sysDeptService.getById(deptId));
+  }
 
-    /**
-     * 新增部门管理
-     *
-     * @param sysDept
-     *            部门管理
-     * @return R
-     */
-    @SysLog("新增部门管理")
-    @PostMapping
-    @PreAuthorize("@pms.hasPermission('admin_sysdept_add')")
-    public R save(@RequestBody SysDept sysDept) {
-        return R.ok(sysDeptService.save(sysDept));
-    }
+  /**
+   * 新增部门管理
+   *
+   * @param sysDept 部门管理
+   * @return R
+   */
+  @SysLog("新增部门管理")
+  @PostMapping
+  @PreAuthorize("@pms.hasPermission('admin_sysdept_add')")
+  public R save(@RequestBody SysDept sysDept) {
+    return R.ok(sysDeptService.save(sysDept));
+  }
 
-    /**
-     * 修改部门管理
-     *
-     * @param sysDept
-     *            部门管理
-     * @return R
-     */
-    @SysLog("修改部门管理")
-    @PutMapping
-    @PreAuthorize("@pms.hasPermission('admin_sysdept_edit')")
-    public R updateById(@RequestBody SysDept sysDept) {
-        return R.ok(sysDeptService.updateById(sysDept));
-    }
+  /**
+   * 修改部门管理
+   *
+   * @param sysDept 部门管理
+   * @return R
+   */
+  @SysLog("修改部门管理")
+  @PutMapping
+  @PreAuthorize("@pms.hasPermission('admin_sysdept_edit')")
+  public R updateById(@RequestBody SysDept sysDept) {
+    return R.ok(sysDeptService.updateById(sysDept));
+  }
 
-    /**
-     * 通过id删除部门管理
-     *
-     * @param deptId
-     *            id
-     * @return R
-     */
-    @SysLog("通过id删除部门管理")
-    @DeleteMapping("/{deptId}")
-    @PreAuthorize("@pms.hasPermission('admin_sysdept_del')")
-    public R removeById(@PathVariable Integer deptId) {
-        return R.ok(sysDeptService.removeById(deptId));
-    }
+  /**
+   * 通过id删除部门管理
+   *
+   * @param deptId id
+   * @return R
+   */
+  @SysLog("通过id删除部门管理")
+  @DeleteMapping("/{deptId}")
+  @PreAuthorize("@pms.hasPermission('admin_sysdept_del')")
+  public R removeById(@PathVariable Integer deptId) {
+    return R.ok(sysDeptService.removeById(deptId));
+  }
 }

@@ -26,7 +26,6 @@ import lombok.experimental.Accessors;
 
 import java.time.LocalDate;
 
-
 /**
  * 单词复习计数器
  *
@@ -40,38 +39,26 @@ import java.time.LocalDate;
 @Accessors(chain = true)
 public class WordReviewDailyCounterDO extends Model<WordReviewDailyCounterDO> {
 
-    private static final long serialVersionUID = -2091996395640104712L;
+  private static final long serialVersionUID = -2091996395640104712L;
 
-    /**
-     *
-     */
-    @TableId
-    @ApiModelProperty("主键id，编辑时必须传")
-    private Integer id;
+  /** */
+  @TableId
+  @ApiModelProperty("主键id，编辑时必须传")
+  private Integer id;
 
-    /**
-     * 1：remember
-     * 2：keep in mind
-     * 2：review
-     */
-    @ApiModelProperty("")
-    private Integer type;
+  /** 1：remember 2：keep in mind 2：review */
+  @ApiModelProperty("")
+  private Integer type;
 
-    /**
-     *
-     */
-    @ApiModelProperty("")
-    private Integer userId;
+  /** */
+  @ApiModelProperty("")
+  private Integer userId;
 
-    /**
-     *
-     */
-    @ApiModelProperty("")
-    private LocalDate today;
+  /** */
+  @ApiModelProperty("")
+  private LocalDate today;
 
-    /**
-     *
-     */
-    @ApiModelProperty("")
-    private Integer reviewCount;
+  /** */
+  @ApiModelProperty("")
+  private Integer reviewCount;
 }

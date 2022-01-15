@@ -20,13 +20,8 @@ import me.fengorz.kiwi.bdf.core.config.CoreConfig;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
-/**
-* @Author zhanshifeng
- * @Date 2019-09-20 09:28
- */
+/** @Author zhanshifeng @Date 2019-09-20 09:28 */
 @Configuration
 // @MapperScan("me.fengorz.kiwi.admin.mapper")
 @Import({CoreConfig.class})
-public class UpmsBizConfig {
-
-}
+public class UpmsBizConfig {}

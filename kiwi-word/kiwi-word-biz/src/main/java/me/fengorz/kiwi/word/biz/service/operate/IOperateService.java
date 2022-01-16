@@ -56,7 +56,7 @@ public interface IOperateService {
 
   FetchWordReplaceDTO getCacheReplace(String wordName);
 
-  FetchWordReplaceDTO cacheReplace(String wordName, FetchWordReplaceDTO dto);
+  void cacheReplace(String wordName, FetchWordReplaceDTO dto);
 
   void fetchReplaceCallBack(String wordName);
 

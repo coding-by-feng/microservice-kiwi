@@ -114,7 +114,7 @@ public class WordMainServiceImpl extends ServiceImpl<WordMainMapper, WordMainDO>
   }
 
   @Override
-  public List<FuzzyQueryResultDTO> fuzzyQueryList(Page page, String wordName) {
+  public List<FuzzyQueryResultDTO> fuzzyQueryList(Page<WordMainDO> page, String wordName) {
     return mapper.fuzzyQuery(page, wordName + GlobalConstants.SYMBOL_PERCENT).getRecords();
   }
 

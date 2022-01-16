@@ -60,9 +60,7 @@ public abstract class AbstractConsumer<T extends MqDTO> {
       while (true) {
         try {
           taskExecutor.execute(
-              () -> {
-                this.execute(dto);
-              });
+              () -> this.execute(dto));
           break;
         } catch (RejectedExecutionException e) {
           try {

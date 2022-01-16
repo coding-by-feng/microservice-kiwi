@@ -36,6 +36,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -94,13 +95,14 @@ public class WordFetchController extends BaseController {
   /**
    * 修改单词待抓取列表
    *
-   * @param wordFetchQueue 单词待抓取列表
+   * @param queue 单词待抓取列表
    * @return R
    */
   @SysLog("修改单词待抓取列表")
   @PostMapping("/updateById")
-  public R<Boolean> updateById(@RequestBody FetchQueueDO wordFetchQueue) {
-    return R.success(queueService.updateById(wordFetchQueue));
+  public R<Boolean> updateById(@RequestBody FetchQueueDO queue) {
+    queue.setOperateTime(LocalDateTime.now());
+    return R.success(queueService.updateById(queue));
   }
 
   @SysLog("修改单词待抓取列表")

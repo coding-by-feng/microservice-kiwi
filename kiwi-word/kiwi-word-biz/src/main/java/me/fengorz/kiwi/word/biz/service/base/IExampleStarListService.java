@@ -37,7 +37,7 @@ public interface IExampleStarListService extends IService<ExampleStarListDO> {
 
   List<ExampleStarListVO> getCurrentUserList(Integer userId);
 
-  IPage<ExampleStarItemVO> getListItems(Page page, Integer listId);
+  IPage<ExampleStarItemVO> getListItems(Page<ExampleStarListDO> page, Integer listId);
 
   void removeOneRel(Integer exampleId, Integer listId);
 

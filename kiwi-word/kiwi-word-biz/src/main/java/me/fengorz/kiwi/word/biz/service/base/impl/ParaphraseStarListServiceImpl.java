@@ -90,7 +90,7 @@ public class ParaphraseStarListServiceImpl
   }
 
   @Override
-  public IPage<ParaphraseStarItemVO> selectListItems(Page page, Integer listId) {
+  public IPage<ParaphraseStarItemVO> selectListItems(Page<ParaphraseStarListDO> page, Integer listId) {
     if (listId == 0) {
       return mapper.selectRecentItems(page, SecurityUtils.getCurrentUserId());
     }
@@ -106,7 +106,7 @@ public class ParaphraseStarListServiceImpl
    * @return
    */
   @Override
-  public IPage<ParaphraseStarItemVO> selectReviewListItems(Page page, Integer listId) {
+  public IPage<ParaphraseStarItemVO> selectReviewListItems(Page<ParaphraseStarListDO> page, Integer listId) {
     // When querying the list to be remembered, record the current query page number.
     reviewService.recordReviewPageNumber(
         listId,
@@ -120,7 +120,7 @@ public class ParaphraseStarListServiceImpl
   }
 
   @Override
-  public IPage<ParaphraseStarItemVO> selectRememberListItems(Page page, Integer listId) {
+  public IPage<ParaphraseStarItemVO> selectRememberListItems(Page<ParaphraseStarListDO> page, Integer listId) {
     // When querying the list to be kept in mind, record the current query page number.
     reviewService.recordReviewPageNumber(
         listId,
@@ -191,11 +191,6 @@ public class ParaphraseStarListServiceImpl
 
   @Override
   public List<Integer> findAllUserId() {
-    // QueryWrapper<ParaphraseStarListDO> queryWrapper =
-    // Wrappers.<ParaphraseStarListDO>query().select("DISTINCT owner");
-    // IntStream intStream = mapper.selectObjs(queryWrapper).stream().mapToInt(num ->
-    // Integer.parseInt((String) num));
-    // intStream.
     return null;
   }
 

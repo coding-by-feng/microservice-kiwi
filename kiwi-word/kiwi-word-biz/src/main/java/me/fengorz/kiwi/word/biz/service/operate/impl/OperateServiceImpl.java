@@ -288,7 +288,7 @@ public class OperateServiceImpl implements IOperateService {
   }
 
   private List<ParaphraseExampleVO> assembleExampleVOList(Integer paraphraseId) {
-    List<ParaphraseExampleVO> ExampleVOList = new ArrayList<>();
+    List<ParaphraseExampleVO> exampleVOList = new ArrayList<>();
     List<ParaphraseExampleDO> exampleDOList =
         exampleService.list(
             new QueryWrapper<>(new ParaphraseExampleDO().setParaphraseId(paraphraseId)));
@@ -298,9 +298,9 @@ public class OperateServiceImpl implements IOperateService {
     for (ParaphraseExampleDO example : exampleDOList) {
       ParaphraseExampleVO vo = new ParaphraseExampleVO();
       BeanUtil.copyProperties(example, vo);
-      ExampleVOList.add(vo);
+      exampleVOList.add(vo);
     }
-    return ExampleVOList;
+    return exampleVOList;
   }
 
   @Override
@@ -453,11 +453,9 @@ public class OperateServiceImpl implements IOperateService {
       cacheNames = WordConstants.CACHE_NAMES,
       keyGenerator = CacheConstants.CACHE_KEY_GENERATOR_BEAN,
       unless = "#result == null")
-  public FetchWordReplaceDTO cacheReplace(@KiwiCacheKey String wordName, FetchWordReplaceDTO dto) {
+  public void cacheReplace(@KiwiCacheKey String wordName, FetchWordReplaceDTO dto) {
     if (dto == null) {
-      return new FetchWordReplaceDTO();
-    } else {
-      return dto;
+        new FetchWordReplaceDTO();
     }
   }
 

@@ -94,7 +94,7 @@ public class WordBizUtils {
     return pronunciation;
   }
 
-  public static SelectStarListItemDTO assembleSelectStarListItemDTO(Page page, Integer listId) {
+  public static SelectStarListItemDTO assembleSelectStarListItemDTO(Page<?> page, Integer listId) {
     return (SelectStarListItemDTO)
         new SelectStarListItemDTO()
             .setListId(listId)

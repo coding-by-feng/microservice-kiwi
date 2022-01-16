@@ -109,7 +109,7 @@ public class WordStarListController extends BaseController {
       @NotNull Integer listId,
       @PathVariable @Min(0) Integer current,
       @PathVariable @Range(min = 1, max = 100) Integer size) {
-    return R.success(starListService.getListItems(new Page(current, size), listId));
+    return R.success(starListService.getListItems(new Page<>(current, size), listId));
   }
 
   @PostMapping("/putWordStarList")

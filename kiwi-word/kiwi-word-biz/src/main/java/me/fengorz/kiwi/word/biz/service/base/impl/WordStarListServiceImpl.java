@@ -90,16 +90,16 @@ public class WordStarListServiceImpl extends ServiceImpl<WordStarListMapper, Wor
   }
 
   @Override
-  public IPage<WordStarItemVO> getListItems(Page page, Integer listId) {
-    IPage iPage = wordStarListMapper.selectListItems(page, listId);
-    if (iPage.getSize() > 0) {
+  public IPage<WordStarItemVO> getListItems(Page<WordStarListDO> page, Integer listId) {
+    IPage<SelectWordStarListResultDTO> listItems = wordStarListMapper.selectListItems(page, listId);
+    IPage<WordStarItemVO> iPage = new Page<>();
+    if (listItems.getSize() > 0) {
       List<WordStarItemVO> voList = new ArrayList<>();
-      for (Object record : iPage.getRecords()) {
-        SelectWordStarListResultDTO resultDTO = (SelectWordStarListResultDTO) record;
+      for (SelectWordStarListResultDTO record : listItems.getRecords()) {
         WordStarItemVO wordStarItemVO = new WordStarItemVO();
-        wordStarItemVO.setWordName(resultDTO.getWordName());
-        wordStarItemVO.setWordId(resultDTO.getWordId());
-        String paraphrases = resultDTO.getParaphrases();
+        wordStarItemVO.setWordName(record.getWordName());
+        wordStarItemVO.setWordId(record.getWordId());
+        String paraphrases = record.getParaphrases();
         if (StrUtil.isNotBlank(paraphrases)) {
           List<WordStarItemParaphraseVO> paraphraseVOList = new ArrayList<>();
           String[] paraphraseArr = paraphrases.split("##");
@@ -118,7 +118,12 @@ public class WordStarListServiceImpl extends ServiceImpl<WordStarListMapper, Wor
         }
         voList.add(wordStarItemVO);
       }
+
       iPage.setRecords(voList);
+      iPage.setPages(listItems.getPages());
+      iPage.setSize(listItems.getSize());
+      iPage.setTotal(listItems.getTotal());
+      iPage.setCurrent(listItems.getCurrent());
     }
     return iPage;
   }

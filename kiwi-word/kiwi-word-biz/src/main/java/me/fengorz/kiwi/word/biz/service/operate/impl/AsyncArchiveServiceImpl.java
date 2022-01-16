@@ -57,16 +57,14 @@ public class AsyncArchiveServiceImpl implements IAsyncArchiveService {
   public void archiveWordRel(Integer wordId, Integer listId, Integer userId) {
     Optional.ofNullable(mainService.getById(wordId))
         .ifPresent(
-            word -> {
-              relHisService.save(
-                  new StarRelHisDO()
-                      .setId(seqService.genIntSequence(MapperConstant.T_INS_SEQUENCE))
-                      .setListId(listId)
-                      .setWordName(word.getWordName())
-                      .setSerialNum(0)
-                      .setType(WordConstants.REMEMBER_ARCHIVE_TYPE_WORD)
-                      .setUserId(userId));
-            });
+            word -> relHisService.save(
+                new StarRelHisDO()
+                    .setId(seqService.genIntSequence(MapperConstant.T_INS_SEQUENCE))
+                    .setListId(listId)
+                    .setWordName(word.getWordName())
+                    .setSerialNum(0)
+                    .setType(WordConstants.REMEMBER_ARCHIVE_TYPE_WORD)
+                    .setUserId(userId)));
   }
 
   @Override
@@ -79,16 +77,14 @@ public class AsyncArchiveServiceImpl implements IAsyncArchiveService {
   private void invalidRelHis(Integer id, Integer type, Integer listId, Integer userId) {
     Optional.ofNullable(mainService.getById(id))
         .ifPresent(
-            word -> {
-              relHisService.update(
-                  new StarRelHisDO().setIsDel(GlobalConstants.FLAG_DEL_YES),
-                  Wrappers.<StarRelHisDO>lambdaUpdate()
-                      .eq(StarRelHisDO::getWordName, word.getWordName())
-                      .eq(StarRelHisDO::getUserId, userId)
-                      .eq(StarRelHisDO::getListId, listId)
-                      .eq(StarRelHisDO::getType, type)
-                      .eq(StarRelHisDO::getIsDel, GlobalConstants.FLAG_DEL_NO));
-            });
+            word -> relHisService.update(
+                new StarRelHisDO().setIsDel(GlobalConstants.FLAG_DEL_YES),
+                Wrappers.<StarRelHisDO>lambdaUpdate()
+                    .eq(StarRelHisDO::getWordName, word.getWordName())
+                    .eq(StarRelHisDO::getUserId, userId)
+                    .eq(StarRelHisDO::getListId, listId)
+                    .eq(StarRelHisDO::getType, type)
+                    .eq(StarRelHisDO::getIsDel, GlobalConstants.FLAG_DEL_NO)));
   }
 
   @Async
@@ -119,13 +115,11 @@ public class AsyncArchiveServiceImpl implements IAsyncArchiveService {
   public void invalidArchiveParaphraseRel(Integer paraphraseId, Integer listId, Integer userId) {
     Optional.ofNullable(paraphraseService.getById(paraphraseId))
         .ifPresent(
-            paraphrase -> {
-              this.invalidRelHis(
-                  paraphrase.getWordId(),
-                  WordConstants.REMEMBER_ARCHIVE_TYPE_PARAPHRASE,
-                  listId,
-                  userId);
-            });
+            paraphrase -> this.invalidRelHis(
+                paraphrase.getWordId(),
+                WordConstants.REMEMBER_ARCHIVE_TYPE_PARAPHRASE,
+                listId,
+                userId));
   }
 
   @Override
@@ -156,9 +150,7 @@ public class AsyncArchiveServiceImpl implements IAsyncArchiveService {
   public void invalidArchiveExampleRel(Integer exampleId, Integer listId, Integer userId) {
     Optional.ofNullable(exampleService.getById(exampleId))
         .ifPresent(
-            example -> {
-              this.invalidRelHis(
-                  example.getWordId(), WordConstants.REMEMBER_ARCHIVE_TYPE_EXAMPLE, listId, userId);
-            });
+            example -> this.invalidRelHis(
+                example.getWordId(), WordConstants.REMEMBER_ARCHIVE_TYPE_EXAMPLE, listId, userId));
   }
 }

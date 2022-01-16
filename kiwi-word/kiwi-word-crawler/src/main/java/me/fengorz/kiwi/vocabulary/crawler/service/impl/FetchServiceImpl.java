@@ -264,7 +264,7 @@ public class FetchServiceImpl implements IFetchService {
     } catch (Exception e) {
       queue.setWordId(0);
       this.handleException(
-          queue, WordCrawlerConstants.STATUS_DEL_PHRASE_FAIL, "remove parase error!");
+          queue, WordCrawlerConstants.STATUS_DEL_PHRASE_FAIL, "remove phrase error!");
       isUpdate = true;
     } finally {
       if (isUpdate) {

@@ -45,7 +45,7 @@ public interface IWordStarListService extends IService<WordStarListDO> {
 
   void removeStarList(Integer wordId, Integer listId);
 
-  IPage<WordStarItemVO> getListItems(Page page, Integer listId);
+  IPage<WordStarItemVO> getListItems(Page<WordStarListDO> page, Integer listId);
 
   boolean countWordIsCollect(Integer wordId, Integer owner);
 }

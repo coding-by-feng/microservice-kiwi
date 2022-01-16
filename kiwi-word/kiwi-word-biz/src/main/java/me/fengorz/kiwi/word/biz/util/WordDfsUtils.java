@@ -31,7 +31,7 @@ public class WordDfsUtils {
 
   public static String getUploadVoiceFilePath(String uploadResult) {
     if (StrUtil.isNotBlank(uploadResult)) {
-      return uploadResult.substring(uploadResult.indexOf("/") + 1, uploadResult.length());
+      return uploadResult.substring(uploadResult.indexOf("/") + 1);
     }
     return GlobalConstants.EMPTY;
   }

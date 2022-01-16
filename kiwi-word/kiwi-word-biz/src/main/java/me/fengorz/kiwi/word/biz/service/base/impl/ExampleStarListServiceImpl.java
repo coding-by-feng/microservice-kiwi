@@ -77,7 +77,7 @@ public class ExampleStarListServiceImpl
   }
 
   @Override
-  public IPage<ExampleStarItemVO> getListItems(Page page, Integer listId) {
+  public IPage<ExampleStarItemVO> getListItems(Page<ExampleStarListDO> page, Integer listId) {
     return this.mapper.selectListItems(page, listId);
   }
 

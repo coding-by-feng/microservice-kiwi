@@ -116,20 +116,19 @@ public class WordMainVariantServiceImpl
 
   @Override
   @Transactional(rollbackFor = Exception.class)
-  public boolean delByWordId(Integer wordId) {
+  public void delByWordId(Integer wordId) {
     List<WordMainVariantDO> list =
         wordMainVariantMapper.selectList(
             new LambdaQueryWrapper<WordMainVariantDO>()
                 .eq(WordMainVariantDO::getWordId, wordId)
                 .eq(WordMainVariantDO::getIsValid, GlobalConstants.FLAG_DEL_YES));
     if (KiwiCollectionUtils.isEmpty(list)) {
-      return false;
+      return;
     }
 
     for (WordMainVariantDO variantDO : list) {
       wordMainVariantMapper.deleteById(variantDO.getId());
     }
-    return true;
   }
 
   @Override

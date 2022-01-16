@@ -41,11 +41,11 @@ public interface IParaphraseStarListService extends IService<ParaphraseStarListD
 
   boolean updateListByUser(ParaphraseStarListDO entity, Integer id, Integer userId);
 
-  IPage<ParaphraseStarItemVO> selectListItems(Page page, Integer listId);
+  IPage<ParaphraseStarItemVO> selectListItems(Page<ParaphraseStarListDO> page, Integer listId);
 
-  IPage<ParaphraseStarItemVO> selectReviewListItems(Page page, Integer listId);
+  IPage<ParaphraseStarItemVO> selectReviewListItems(Page<ParaphraseStarListDO> page, Integer listId);
 
-  IPage<ParaphraseStarItemVO> selectRememberListItems(Page page, Integer listId);
+  IPage<ParaphraseStarItemVO> selectRememberListItems(Page<ParaphraseStarListDO> page, Integer listId);
 
   void putIntoStarList(Integer paraphraseId, Integer listId);
 
@@ -57,5 +57,10 @@ public interface IParaphraseStarListService extends IService<ParaphraseStarListD
 
   void forgetOne(Integer paraphraseId, Integer listId);
 
+  /**
+   * TODO
+   *
+   * @return
+   */
   List<Integer> findAllUserId();
 }

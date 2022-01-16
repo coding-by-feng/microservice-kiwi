@@ -38,7 +38,7 @@ public interface IWordMainService extends IService<WordMainDO> {
 
   String getWordName(Integer id);
 
-  List<FuzzyQueryResultDTO> fuzzyQueryList(Page page, String wordName);
+  List<FuzzyQueryResultDTO> fuzzyQueryList(Page<WordMainDO> page, String wordName);
 
   boolean isExist(String wordName);
 
@@ -49,4 +49,5 @@ public interface IWordMainService extends IService<WordMainDO> {
   List<WordMainDO> listDirtyData(Integer wordId);
 
   List<String> listOverlapInUnLock();
+
 }

@@ -91,7 +91,7 @@ public class WordFetchQueueServiceImpl extends ServiceImpl<FetchQueueMapper, Fet
       this.updateById(
           one.setFetchStatus(WordCrawlerConstants.STATUS_TO_FETCH)
               .setIsLock(GlobalConstants.FLAG_YES)
-              .setInTime(LocalDateTime.now())
+              .setOperateTime(LocalDateTime.now())
               .setInfoType(thisInfoType));
       return;
     }
@@ -110,6 +110,8 @@ public class WordFetchQueueServiceImpl extends ServiceImpl<FetchQueueMapper, Fet
             .setDerivation(KiwiStringUtils.isNotBlank(derivation) ? derivation : null)
             .setFetchStatus(status)
             .setFetchPriority(100)
+            .setInTime(LocalDateTime.now())
+            .setOperateTime(LocalDateTime.now())
             .setIsLock(GlobalConstants.FLAG_YES);
     if (infoType == null || infoType.length == 0) {
       this.save(queueDO);

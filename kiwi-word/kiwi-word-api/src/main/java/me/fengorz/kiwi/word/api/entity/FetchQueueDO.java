@@ -69,6 +69,8 @@ public class FetchQueueDO extends Model<FetchQueueDO> {
   @JsonSerialize(using = LocalDateTimeSerializer.class)
   private LocalDateTime inTime;
 
+  private LocalDateTime operateTime;
+
   private Integer fetchTime;
 
   private Integer isIntoCache;

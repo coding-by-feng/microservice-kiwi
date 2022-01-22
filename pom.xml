@@ -19,9 +19,9 @@
         <module>kiwi-cloud-service</module>
         <module>kiwi-eureka</module>
         <module>kiwi-config</module>
+        <module>kiwi-gateway</module>
         <module>kiwi-common</module>
         <module>kiwi-visual</module>
-        <module>kiwi-gateway</module>
     </modules>
 
     <properties>
@@ -125,7 +125,6 @@
             <artifactId>aspectjrt</artifactId>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/org.mockito/mockito-core -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>

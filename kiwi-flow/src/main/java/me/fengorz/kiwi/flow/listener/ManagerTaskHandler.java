@@ -19,10 +19,12 @@ package me.fengorz.kiwi.flow.listener;
 import org.flowable.engine.delegate.TaskListener;
 import org.flowable.task.service.delegate.DelegateTask;
 
-/** @Author zhanshifeng @Date 2019/12/2 11:05 AM */
+/**
+ * @Author zhanshifeng @Date 2019/12/2 11:05 AM
+ */
 public class ManagerTaskHandler implements TaskListener {
-  @Override
-  public void notify(DelegateTask delegateTask) {
-    delegateTask.setAssignee("Manager");
-  }
+    @Override
+    public void notify(DelegateTask delegateTask) {
+        delegateTask.setAssignee("Manager");
+    }
 }

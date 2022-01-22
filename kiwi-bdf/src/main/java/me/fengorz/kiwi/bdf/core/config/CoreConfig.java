@@ -32,17 +32,17 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableAspectJAutoProxy
 public class CoreConfig {
 
-  @Bean
-  public PaginationInterceptor paginationInterceptor() {
-    PaginationInterceptor paginationInterceptor = new PaginationInterceptor();
-    paginationInterceptor.setCountSqlParser(new JsqlParserCountOptimize(true));
-    return paginationInterceptor;
-  }
+    @Bean
+    public PaginationInterceptor paginationInterceptor() {
+        PaginationInterceptor paginationInterceptor = new PaginationInterceptor();
+        paginationInterceptor.setCountSqlParser(new JsqlParserCountOptimize(true));
+        return paginationInterceptor;
+    }
 
-  // @Bean
-  public MybatisConfiguration mybatisConfiguration() {
-    MybatisConfiguration configuration = new MybatisConfiguration();
-    configuration.setCacheEnabled(false);
-    return configuration;
-  }
+    // @Bean
+    public MybatisConfiguration mybatisConfiguration() {
+        MybatisConfiguration configuration = new MybatisConfiguration();
+        configuration.setCacheEnabled(false);
+        return configuration;
+    }
 }

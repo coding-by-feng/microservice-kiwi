@@ -39,38 +39,52 @@ import java.time.LocalDateTime;
 @Accessors(chain = true)
 public class WordMainVariantDO extends Model<WordMainVariantDO> {
 
-  private static final long serialVersionUID = 1590251078057L;
+    private static final long serialVersionUID = 1590251078057L;
 
-  /** */
-  @TableId
-  @ApiModelProperty("主键id，编辑时必须传")
-  @NotNull(groups = {ValidTypeUpdate.class})
-  private Integer id;
+    /**
+     *
+     */
+    @TableId
+    @ApiModelProperty("主键id，编辑时必须传")
+    @NotNull(groups = {ValidTypeUpdate.class})
+    private Integer id;
 
-  /** */
-  @ApiModelProperty("")
-  @NotNull(groups = {ValidTypeInsert.class})
-  private Integer wordId;
+    /**
+     *
+     */
+    @ApiModelProperty("")
+    @NotNull(groups = {ValidTypeInsert.class})
+    private Integer wordId;
 
-  /** */
-  @ApiModelProperty("")
-  @NotBlank(groups = {ValidTypeInsert.class})
-  private String variantName;
+    /**
+     *
+     */
+    @ApiModelProperty("")
+    @NotBlank(groups = {ValidTypeInsert.class})
+    private String variantName;
 
-  /** 类别：过去式、进行时、复数等 */
-  @ApiModelProperty("类别：过去式、进行时、复数等")
-  @NotNull(groups = {ValidTypeInsert.class})
-  private Integer type;
+    /**
+     * 类别：过去式、进行时、复数等
+     */
+    @ApiModelProperty("类别：过去式、进行时、复数等")
+    @NotNull(groups = {ValidTypeInsert.class})
+    private Integer type;
 
-  /** */
-  @ApiModelProperty("")
-  private LocalDateTime createTime;
+    /**
+     *
+     */
+    @ApiModelProperty("")
+    private LocalDateTime createTime;
 
-  /** */
-  @ApiModelProperty("")
-  private Integer isValid;
+    /**
+     *
+     */
+    @ApiModelProperty("")
+    private Integer isValid;
 
-  /** */
-  @ApiModelProperty("")
-  private String remark;
+    /**
+     *
+     */
+    @ApiModelProperty("")
+    private String remark;
 }

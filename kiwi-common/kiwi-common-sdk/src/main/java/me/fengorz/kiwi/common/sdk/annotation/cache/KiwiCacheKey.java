@@ -21,12 +21,14 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-/** @Author zhanshifeng @Date 2020/5/17 11:18 AM */
+/**
+ * @Author zhanshifeng @Date 2020/5/17 11:18 AM
+ */
 @Target({ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface KiwiCacheKey {
 
-  int value() default 0;
+    int value() default 0;
 
-  boolean nullable() default true;
+    boolean nullable() default true;
 }

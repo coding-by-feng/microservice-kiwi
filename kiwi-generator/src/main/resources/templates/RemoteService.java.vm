@@ -35,7 +35,7 @@ import com.vocabulary.enhancer.common.core.util.R;
 @FeignClient(contextId = "remote${caseTableName}Service", value = "${serviceId}", fallbackFactory = Remote${caseTableName}ServiceFallbackFactory.class)
 public interface IRemote${caseTableName}Service {
 
-    String ${tableNameUpper} ='/${controllerRootPath}' ;
+    String ${tableNameUpper} ='/${controllerRootPath}';
 
     /*
      * 分页查询

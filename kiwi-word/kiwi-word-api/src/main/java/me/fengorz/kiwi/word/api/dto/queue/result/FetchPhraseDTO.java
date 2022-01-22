@@ -21,11 +21,13 @@ import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 
-/** @Author zhanshifeng @Date 2020/5/31 11:26 PM */
+/**
+ * @Author zhanshifeng @Date 2020/5/31 11:26 PM
+ */
 @Data
 @Accessors(chain = true)
 public class FetchPhraseDTO implements Serializable {
 
-  private static final long serialVersionUID = -4891714613827487020L;
-  private String phrase;
+    private static final long serialVersionUID = -4891714613827487020L;
+    private String phrase;
 }

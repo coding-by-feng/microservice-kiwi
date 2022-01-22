@@ -39,29 +39,29 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class ParaphraseExampleServiceImpl
-    extends ServiceImpl<ParaphraseExampleMapper, ParaphraseExampleDO>
-    implements IParaphraseExampleService {
+        extends ServiceImpl<ParaphraseExampleMapper, ParaphraseExampleDO>
+        implements IParaphraseExampleService {
 
-  private final ParaphraseExampleMapper mapper;
+    private final ParaphraseExampleMapper mapper;
 
-  @Override
-  public Integer countById(Integer id) {
-    return this.count(new QueryWrapper<>(new ParaphraseExampleDO().setExampleId(id)));
-  }
+    @Override
+    public Integer countById(Integer id) {
+        return this.count(new QueryWrapper<>(new ParaphraseExampleDO().setExampleId(id)));
+    }
 
-  @Override
-  public List<ParaphraseExampleVO> listExamples(Integer paraphraseId) {
-    return KiwiBeanUtils.convertFrom(
-        mapper.selectList(
-            Wrappers.<ParaphraseExampleDO>lambdaQuery()
-                .eq(ParaphraseExampleDO::getParaphraseId, paraphraseId)
-                .eq(ParaphraseExampleDO::getIsDel, GlobalConstants.FLAG_NO)),
-        ParaphraseExampleVO.class);
-  }
+    @Override
+    public List<ParaphraseExampleVO> listExamples(Integer paraphraseId) {
+        return KiwiBeanUtils.convertFrom(
+                mapper.selectList(
+                        Wrappers.<ParaphraseExampleDO>lambdaQuery()
+                                .eq(ParaphraseExampleDO::getParaphraseId, paraphraseId)
+                                .eq(ParaphraseExampleDO::getIsDel, GlobalConstants.FLAG_NO)),
+                ParaphraseExampleVO.class);
+    }
 
-  @Override
-  public List<ParaphraseExampleVO> selectExampleAndIsCollect(Integer owner, Integer paraphraseId) {
-    return this.mapper.selectExampleAndIsCollect(
-        new SelectEntityIsCollectDTO().setOwner(owner).setEntityId(paraphraseId));
-  }
+    @Override
+    public List<ParaphraseExampleVO> selectExampleAndIsCollect(Integer owner, Integer paraphraseId) {
+        return this.mapper.selectExampleAndIsCollect(
+                new SelectEntityIsCollectDTO().setOwner(owner).setEntityId(paraphraseId));
+    }
 }

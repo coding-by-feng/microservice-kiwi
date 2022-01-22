@@ -32,6 +32,6 @@ import java.util.List;
  */
 public interface ParaphraseMapper extends BaseMapper<ParaphraseDO> {
 
-  List<ParaphraseVO> selectParaphraseAndIsCollect(
-      @Param(MapperConstant.QUERY_PARAMS) SelectEntityIsCollectDTO dto);
+    List<ParaphraseVO> selectParaphraseAndIsCollect(
+            @Param(MapperConstant.QUERY_PARAMS) SelectEntityIsCollectDTO dto);
 }

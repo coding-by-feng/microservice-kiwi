@@ -42,72 +42,74 @@ import javax.sql.DataSource;
 import java.util.HashMap;
 import java.util.Map;
 
-/** @Author zhanshifeng @Date 2019-09-23 21:07 */
+/**
+ * @Author zhanshifeng @Date 2019-09-23 21:07
+ */
 @Configuration
 @RequiredArgsConstructor
 @EnableAuthorizationServer
 public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdapter {
 
-  private final DataSource dataSource;
-  private final UserDetailsService userDetailsService;
-  private final AuthenticationManager authenticationManager;
-  private final RedisConnectionFactory redisConnectionFactory;
+    private final DataSource dataSource;
+    private final UserDetailsService userDetailsService;
+    private final AuthenticationManager authenticationManager;
+    private final RedisConnectionFactory redisConnectionFactory;
 
-  @Override
-  public void configure(AuthorizationServerSecurityConfigurer configurer) throws Exception {
-    configurer.allowFormAuthenticationForClients().checkTokenAccess("permitAll()");
-  }
+    @Override
+    public void configure(AuthorizationServerSecurityConfigurer configurer) throws Exception {
+        configurer.allowFormAuthenticationForClients().checkTokenAccess("permitAll()");
+    }
 
-  @Override
-  public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
-    KiwiClientDetailsService clientDetailsService = new KiwiClientDetailsService(dataSource);
-    clientDetailsService.setSelectClientDetailsSql(SecurityConstants.DEFAULT_SELECT_STATEMENT);
-    clientDetailsService.setFindClientDetailsSql(SecurityConstants.DEFAULT_FIND_STATEMENT);
-    clients.withClientDetails(clientDetailsService);
-  }
+    @Override
+    public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
+        KiwiClientDetailsService clientDetailsService = new KiwiClientDetailsService(dataSource);
+        clientDetailsService.setSelectClientDetailsSql(SecurityConstants.DEFAULT_SELECT_STATEMENT);
+        clientDetailsService.setFindClientDetailsSql(SecurityConstants.DEFAULT_FIND_STATEMENT);
+        clients.withClientDetails(clientDetailsService);
+    }
 
-  @Override
-  public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
-    endpoints
-        .allowedTokenEndpointRequestMethods(HttpMethod.GET, HttpMethod.POST)
-        .tokenStore(tokenStore())
-        .tokenEnhancer(tokenEnhancer())
-        .userDetailsService(userDetailsService)
-        .authenticationManager(authenticationManager)
-        .reuseRefreshTokens(false)
-        // TODO zhanshifeng 这个API作用什么？
-        .exceptionTranslator(new KiwiWebResponseExceptionTranslator());
+    @Override
+    public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
+        endpoints
+                .allowedTokenEndpointRequestMethods(HttpMethod.GET, HttpMethod.POST)
+                .tokenStore(tokenStore())
+                .tokenEnhancer(tokenEnhancer())
+                .userDetailsService(userDetailsService)
+                .authenticationManager(authenticationManager)
+                .reuseRefreshTokens(false)
+                // TODO zhanshifeng 这个API作用什么？
+                .exceptionTranslator(new KiwiWebResponseExceptionTranslator());
 
-    DefaultTokenServices defaultTokenServices = new DefaultTokenServices();
-    defaultTokenServices.setTokenStore(endpoints.getTokenStore());
-    // 默认30天
-    defaultTokenServices.setAccessTokenValiditySeconds(60 * 60 * 24 * 30);
-    defaultTokenServices.setRefreshTokenValiditySeconds(60 * 60 * 24 * 30);
-    defaultTokenServices.setSupportRefreshToken(true);
-    defaultTokenServices.setClientDetailsService(endpoints.getClientDetailsService());
-    defaultTokenServices.setTokenEnhancer(endpoints.getTokenEnhancer());
+        DefaultTokenServices defaultTokenServices = new DefaultTokenServices();
+        defaultTokenServices.setTokenStore(endpoints.getTokenStore());
+        // 默认30天
+        defaultTokenServices.setAccessTokenValiditySeconds(60 * 60 * 24 * 30);
+        defaultTokenServices.setRefreshTokenValiditySeconds(60 * 60 * 24 * 30);
+        defaultTokenServices.setSupportRefreshToken(true);
+        defaultTokenServices.setClientDetailsService(endpoints.getClientDetailsService());
+        defaultTokenServices.setTokenEnhancer(endpoints.getTokenEnhancer());
 
-    endpoints.tokenServices(defaultTokenServices);
-  }
+        endpoints.tokenServices(defaultTokenServices);
+    }
 
-  @Bean
-  public TokenStore tokenStore() {
-    RedisTokenStore tokenStore = new RedisTokenStore(redisConnectionFactory);
-    tokenStore.setPrefix(SecurityConstants.PROJECT_PREFIX + SecurityConstants.OAUTH_PREFIX);
-    return tokenStore;
-  }
+    @Bean
+    public TokenStore tokenStore() {
+        RedisTokenStore tokenStore = new RedisTokenStore(redisConnectionFactory);
+        tokenStore.setPrefix(SecurityConstants.PROJECT_PREFIX + SecurityConstants.OAUTH_PREFIX);
+        return tokenStore;
+    }
 
-  @Bean
-  public TokenEnhancer tokenEnhancer() {
-    return (accessToken, authentication) -> {
-      final Map<String, Object> additionalInfo = new HashMap<>(1);
-      EnhancerUser enhancerUser = (EnhancerUser) authentication.getPrincipal();
-      additionalInfo.put(SecurityConstants.DETAILS_LICENSE, SecurityConstants.PROJECT_LICENSE);
-      additionalInfo.put(SecurityConstants.DETAILS_USER_ID, enhancerUser.getId());
-      additionalInfo.put(SecurityConstants.DETAILS_USERNAME, enhancerUser.getUsername());
-      additionalInfo.put(SecurityConstants.DETAILS_DEPT_ID, enhancerUser.getDeptId());
-      ((DefaultOAuth2AccessToken) accessToken).setAdditionalInformation(additionalInfo);
-      return accessToken;
-    };
-  }
+    @Bean
+    public TokenEnhancer tokenEnhancer() {
+        return (accessToken, authentication) -> {
+            final Map<String, Object> additionalInfo = new HashMap<>(1);
+            EnhancerUser enhancerUser = (EnhancerUser) authentication.getPrincipal();
+            additionalInfo.put(SecurityConstants.DETAILS_LICENSE, SecurityConstants.PROJECT_LICENSE);
+            additionalInfo.put(SecurityConstants.DETAILS_USER_ID, enhancerUser.getId());
+            additionalInfo.put(SecurityConstants.DETAILS_USERNAME, enhancerUser.getUsername());
+            additionalInfo.put(SecurityConstants.DETAILS_DEPT_ID, enhancerUser.getDeptId());
+            ((DefaultOAuth2AccessToken) accessToken).setAdditionalInformation(additionalInfo);
+            return accessToken;
+        };
+    }
 }

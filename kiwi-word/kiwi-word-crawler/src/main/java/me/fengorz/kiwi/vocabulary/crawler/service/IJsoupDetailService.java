@@ -26,4 +26,5 @@ package me.fengorz.kiwi.vocabulary.crawler.service;
  * 切换到Cambridge的英英模式，就不会抓取释义和例句的中文翻译。（考虑异步到有道拿释义和例句的翻译） ---
  * 切换到科林词典的英汉模式，抓取词性、释义和词性标签的html模板完全不一样要重新写抓取规则 --- 有些例句有自动附带翻译和发音，需要做差异化抽取。 --- ...
  */
-public interface IJsoupDetailService {}
+public interface IJsoupDetailService {
+}

@@ -35,51 +35,53 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Collection;
 
-/** @Description TODO @Author zhanshifeng @Date 2021/11/20 12:58 PM */
+/**
+ * @Description TODO @Author zhanshifeng @Date 2021/11/20 12:58 PM
+ */
 public class JwtLoginFilter extends AbstractAuthenticationProcessingFilter {
 
-  protected JwtLoginFilter(String defaultFilterProcessesUrl) {
-    super(defaultFilterProcessesUrl);
-  }
-
-  protected JwtLoginFilter(RequestMatcher requiresAuthenticationRequestMatcher) {
-    super(requiresAuthenticationRequestMatcher);
-  }
-
-  @Override
-  public Authentication attemptAuthentication(
-      HttpServletRequest request, HttpServletResponse response)
-      throws AuthenticationException, IOException, ServletException {
-    EnhancerUser enhancerUser =
-        new ObjectMapper().readValue(request.getInputStream(), EnhancerUser.class);
-    return getAuthenticationManager()
-        .authenticate(
-            new UsernamePasswordAuthenticationToken(
-                enhancerUser.getUsername(), enhancerUser.getPassword()));
-  }
-
-  @Override
-  protected void successfulAuthentication(
-      HttpServletRequest request,
-      HttpServletResponse response,
-      FilterChain chain,
-      Authentication authResult)
-      throws IOException, ServletException {
-    Collection<? extends GrantedAuthority> authorities = authResult.getAuthorities();
-    StringBuffer as = new StringBuffer();
-    for (GrantedAuthority authority : authorities) {
-      as.append(authority.getAuthority()).append(",");
+    protected JwtLoginFilter(String defaultFilterProcessesUrl) {
+        super(defaultFilterProcessesUrl);
     }
-    // String jwt = Jwts.builder()
-    //         .claim("authorities", as)//配置用户角色
-    //         .setSubject(authResult.getName())
-    //         .setExpiration(new Date(System.currentTimeMillis() + 10 * 60 * 1000))
-    //         .signWith(SignatureAlgorithm.HS512, "sang@123")
-    //         .compact();
-    // resp.setContentType("application/json;charset=utf-8");
-    // PrintWriter out = resp.getWriter();
-    // out.write(new ObjectMapper().writeValueAsString(jwt));
-    // out.flush();
-    // out.close();
-  }
+
+    protected JwtLoginFilter(RequestMatcher requiresAuthenticationRequestMatcher) {
+        super(requiresAuthenticationRequestMatcher);
+    }
+
+    @Override
+    public Authentication attemptAuthentication(
+            HttpServletRequest request, HttpServletResponse response)
+            throws AuthenticationException, IOException, ServletException {
+        EnhancerUser enhancerUser =
+                new ObjectMapper().readValue(request.getInputStream(), EnhancerUser.class);
+        return getAuthenticationManager()
+                .authenticate(
+                        new UsernamePasswordAuthenticationToken(
+                                enhancerUser.getUsername(), enhancerUser.getPassword()));
+    }
+
+    @Override
+    protected void successfulAuthentication(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            FilterChain chain,
+            Authentication authResult)
+            throws IOException, ServletException {
+        Collection<? extends GrantedAuthority> authorities = authResult.getAuthorities();
+        StringBuffer as = new StringBuffer();
+        for (GrantedAuthority authority : authorities) {
+            as.append(authority.getAuthority()).append(",");
+        }
+        // String jwt = Jwts.builder()
+        //         .claim("authorities", as)//配置用户角色
+        //         .setSubject(authResult.getName())
+        //         .setExpiration(new Date(System.currentTimeMillis() + 10 * 60 * 1000))
+        //         .signWith(SignatureAlgorithm.HS512, "sang@123")
+        //         .compact();
+        // resp.setContentType("application/json;charset=utf-8");
+        // PrintWriter out = resp.getWriter();
+        // out.write(new ObjectMapper().writeValueAsString(jwt));
+        // out.flush();
+        // out.close();
+    }
 }

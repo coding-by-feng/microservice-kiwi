@@ -31,10 +31,10 @@ import java.util.List;
  */
 @Service("sysMenuService")
 public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu>
-    implements SysMenuService {
+        implements SysMenuService {
 
-  @Override
-  public List<SysMenu> listMenusByRoleId(Integer roleId) {
-    return baseMapper.listMenusByRoleId(roleId);
-  }
+    @Override
+    public List<SysMenu> listMenusByRoleId(Integer roleId) {
+        return baseMapper.listMenusByRoleId(roleId);
+    }
 }

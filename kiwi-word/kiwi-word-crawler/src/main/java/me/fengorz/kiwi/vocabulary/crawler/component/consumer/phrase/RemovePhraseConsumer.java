@@ -33,48 +33,50 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
-/** @Author zhanshifeng @Date 2019/10/28 4:25 PM */
+/**
+ * @Author zhanshifeng @Date 2019/10/28 4:25 PM
+ */
 @Slf4j
 @Component
 @RequiredArgsConstructor
 @RabbitListener(
-    bindings =
+        bindings =
         @QueueBinding(
-            value =
+                value =
                 @Queue(value = "${mq.config.phraseFromCambridge.removeQueue}", autoDelete = "true"),
-            exchange = @Exchange(value = "${mq.config.phraseFromCambridge.exchange}"),
-            key = "${mq.config.phraseFromCambridge.removeRouting}"))
+                exchange = @Exchange(value = "${mq.config.phraseFromCambridge.exchange}"),
+                key = "${mq.config.phraseFromCambridge.removeRouting}"))
 public class RemovePhraseConsumer extends AbstractConsumer<RemoveMqDTO>
-    implements IConsumer<RemoveMqDTO> {
+        implements IConsumer<RemoveMqDTO> {
 
-  private final IFetchService fetchService;
+    private final IFetchService fetchService;
 
-  @Resource(name = "removeWordThreadExecutor")
-  private ThreadPoolTaskExecutor executor;
+    @Resource(name = "removeWordThreadExecutor")
+    private ThreadPoolTaskExecutor executor;
 
-  @Value("${crawler.config.max.pool.size}")
-  private int maxPoolSize;
+    @Value("${crawler.config.max.pool.size}")
+    private int maxPoolSize;
 
-  @PostConstruct
-  private void init() {
-    super.taskExecutor = this.executor;
-    super.maxPoolSize = this.maxPoolSize;
-    super.startWorkLog = "rabbitMQ remove one phrase is 【{}】";
-  }
+    @PostConstruct
+    private void init() {
+        super.taskExecutor = this.executor;
+        super.maxPoolSize = this.maxPoolSize;
+        super.startWorkLog = "rabbitMQ remove one phrase is 【{}】";
+    }
 
-  @Override
-  @RabbitHandler
-  public void consume(RemoveMqDTO dto) {
-    super.work(dto);
-  }
+    @Override
+    @RabbitHandler
+    public void consume(RemoveMqDTO dto) {
+        super.work(dto);
+    }
 
-  @Override
-  protected void execute(RemoveMqDTO dto) {
-    fetchService.removePhrase(dto);
-  }
+    @Override
+    protected void execute(RemoveMqDTO dto) {
+        fetchService.removePhrase(dto);
+    }
 
-  @Override
-  protected void errorCallback(RemoveMqDTO dto, Exception e) {
-    // TODO ZSF 增加一个抓取队列状态恢复到待抓取的接口，防止数据抓取丢失
-  }
+    @Override
+    protected void errorCallback(RemoveMqDTO dto, Exception e) {
+        // TODO ZSF 增加一个抓取队列状态恢复到待抓取的接口，防止数据抓取丢失
+    }
 }

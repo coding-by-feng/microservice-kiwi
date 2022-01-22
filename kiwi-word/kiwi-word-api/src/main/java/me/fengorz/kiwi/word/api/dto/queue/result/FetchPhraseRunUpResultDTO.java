@@ -26,18 +26,20 @@ import lombok.experimental.Accessors;
 import java.io.Serializable;
 import java.util.Set;
 
-/** @Author zhanshifeng @Date 2020/10/10 9:09 PM */
+/**
+ * @Author zhanshifeng @Date 2020/10/10 9:09 PM
+ */
 @Data
 @ToString
 @Accessors(chain = true)
 public class FetchPhraseRunUpResultDTO implements Serializable {
-  private static final long serialVersionUID = 4776809354997649846L;
+    private static final long serialVersionUID = 4776809354997649846L;
 
-  private String word;
+    private String word;
 
-  private Integer wordId;
+    private Integer wordId;
 
-  private Set<String> relatedWords;
+    private Set<String> relatedWords;
 
-  private Set<String> phrases;
+    private Set<String> phrases;
 }

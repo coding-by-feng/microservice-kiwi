@@ -26,34 +26,36 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import java.util.concurrent.Executor;
 
-/** */
+/**
+ *
+ */
 @Configuration
 @ComponentScan("me.fengorz.kiwi.word.biz")
 @EnableAsync
 public class AsyncConfig implements AsyncConfigurer {
 
-  @Value("${async.config.core.pool.size}")
-  private int corePoolSize;
+    @Value("${async.config.core.pool.size}")
+    private int corePoolSize;
 
-  @Value("${async.config.max.pool.size}")
-  private int maxPoolSize;
+    @Value("${async.config.max.pool.size}")
+    private int maxPoolSize;
 
-  @Value("${async.config.queue.capacity}")
-  private int queueCapacity;
+    @Value("${async.config.queue.capacity}")
+    private int queueCapacity;
 
-  @Override
-  public Executor getAsyncExecutor() {
-    ThreadPoolTaskExecutor taskExecutor = new ThreadPoolTaskExecutor();
-    taskExecutor.setCorePoolSize(this.corePoolSize);
-    taskExecutor.setMaxPoolSize(this.maxPoolSize);
-    taskExecutor.setQueueCapacity(this.queueCapacity);
-    taskExecutor.initialize();
-    return taskExecutor;
-  }
+    @Override
+    public Executor getAsyncExecutor() {
+        ThreadPoolTaskExecutor taskExecutor = new ThreadPoolTaskExecutor();
+        taskExecutor.setCorePoolSize(this.corePoolSize);
+        taskExecutor.setMaxPoolSize(this.maxPoolSize);
+        taskExecutor.setQueueCapacity(this.queueCapacity);
+        taskExecutor.initialize();
+        return taskExecutor;
+    }
 
-  @Override
-  public AsyncUncaughtExceptionHandler getAsyncUncaughtExceptionHandler() {
-    // TODO ZSF 要添加异常处理器
-    return null;
-  }
+    @Override
+    public AsyncUncaughtExceptionHandler getAsyncUncaughtExceptionHandler() {
+        // TODO ZSF 要添加异常处理器
+        return null;
+    }
 }

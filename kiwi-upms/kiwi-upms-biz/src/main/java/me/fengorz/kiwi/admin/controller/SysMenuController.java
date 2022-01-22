@@ -37,67 +37,67 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/sysmenu")
 public class SysMenuController extends BaseController {
 
-  private final SysMenuService sysMenuService;
+    private final SysMenuService sysMenuService;
 
-  /**
-   * 分页查询
-   *
-   * @param page 分页对象
-   * @param sysMenu 菜单权限表
-   * @return
-   */
-  @GetMapping("/page")
-  public R getSysMenuPage(Page page, SysMenu sysMenu) {
-    return R.success(sysMenuService.page(page, Wrappers.query(sysMenu)));
-  }
+    /**
+     * 分页查询
+     *
+     * @param page    分页对象
+     * @param sysMenu 菜单权限表
+     * @return
+     */
+    @GetMapping("/page")
+    public R getSysMenuPage(Page page, SysMenu sysMenu) {
+        return R.success(sysMenuService.page(page, Wrappers.query(sysMenu)));
+    }
 
-  /**
-   * 通过id查询菜单权限表
-   *
-   * @param menuId id
-   * @return R
-   */
-  @GetMapping("/{menuId}")
-  public R getById(@PathVariable("menuId") Integer menuId) {
-    return R.success(sysMenuService.getById(menuId));
-  }
+    /**
+     * 通过id查询菜单权限表
+     *
+     * @param menuId id
+     * @return R
+     */
+    @GetMapping("/{menuId}")
+    public R getById(@PathVariable("menuId") Integer menuId) {
+        return R.success(sysMenuService.getById(menuId));
+    }
 
-  /**
-   * 新增菜单权限表
-   *
-   * @param sysMenu 菜单权限表
-   * @return R
-   */
-  @SysLog("新增菜单权限表")
-  @PostMapping
-  @PreAuthorize("@pms.hasPermission('admin_sysmenu_add')")
-  public R save(@RequestBody SysMenu sysMenu) {
-    return R.success(sysMenuService.save(sysMenu));
-  }
+    /**
+     * 新增菜单权限表
+     *
+     * @param sysMenu 菜单权限表
+     * @return R
+     */
+    @SysLog("新增菜单权限表")
+    @PostMapping
+    @PreAuthorize("@pms.hasPermission('admin_sysmenu_add')")
+    public R save(@RequestBody SysMenu sysMenu) {
+        return R.success(sysMenuService.save(sysMenu));
+    }
 
-  /**
-   * 修改菜单权限表
-   *
-   * @param sysMenu 菜单权限表
-   * @return R
-   */
-  @SysLog("修改菜单权限表")
-  @PutMapping
-  @PreAuthorize("@pms.hasPermission('admin_sysmenu_edit')")
-  public R updateById(@RequestBody SysMenu sysMenu) {
-    return R.success(sysMenuService.updateById(sysMenu));
-  }
+    /**
+     * 修改菜单权限表
+     *
+     * @param sysMenu 菜单权限表
+     * @return R
+     */
+    @SysLog("修改菜单权限表")
+    @PutMapping
+    @PreAuthorize("@pms.hasPermission('admin_sysmenu_edit')")
+    public R updateById(@RequestBody SysMenu sysMenu) {
+        return R.success(sysMenuService.updateById(sysMenu));
+    }
 
-  /**
-   * 通过id删除菜单权限表
-   *
-   * @param menuId id
-   * @return R
-   */
-  @SysLog("通过id删除菜单权限表")
-  @DeleteMapping("/{menuId}")
-  @PreAuthorize("@pms.hasPermission('admin_sysmenu_del')")
-  public R removeById(@PathVariable Integer menuId) {
-    return R.success(sysMenuService.removeById(menuId));
-  }
+    /**
+     * 通过id删除菜单权限表
+     *
+     * @param menuId id
+     * @return R
+     */
+    @SysLog("通过id删除菜单权限表")
+    @DeleteMapping("/{menuId}")
+    @PreAuthorize("@pms.hasPermission('admin_sysmenu_del')")
+    public R removeById(@PathVariable Integer menuId) {
+        return R.success(sysMenuService.removeById(menuId));
+    }
 }

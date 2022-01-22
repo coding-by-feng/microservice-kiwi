@@ -34,13 +34,14 @@ import org.springframework.stereotype.Service;
 @Service()
 @KiwiCacheKeyPrefix(WordConstants.CACHE_KEY_PREFIX_CHARACTER.CLASS)
 public class CharacterServiceImpl extends ServiceImpl<CharacterMapper, CharacterDO>
-    implements ICharacterService {
+        implements ICharacterService {
 
-  @Override
-  public CharacterVO get(Integer characterId) {
-    return KiwiBeanUtils.convertFrom(this.getById(characterId), CharacterVO.class);
-  }
+    @Override
+    public CharacterVO get(Integer characterId) {
+        return KiwiBeanUtils.convertFrom(this.getById(characterId), CharacterVO.class);
+    }
 
-  @Override
-  public void evict(Integer characterId) {}
+    @Override
+    public void evict(Integer characterId) {
+    }
 }

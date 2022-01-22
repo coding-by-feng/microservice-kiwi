@@ -31,7 +31,7 @@ import java.util.List;
  */
 public interface IWordStarRelService extends IService<WordStarRelDO> {
 
-  List<Integer> findAllWordId(Integer listId);
+    List<Integer> findAllWordId(Integer listId);
 
-  void replaceFetchResult(Integer oldRelId, Integer newRelId);
+    void replaceFetchResult(Integer oldRelId, Integer newRelId);
 }

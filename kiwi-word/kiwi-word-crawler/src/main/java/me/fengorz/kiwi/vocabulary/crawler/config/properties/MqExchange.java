@@ -21,13 +21,15 @@ package me.fengorz.kiwi.vocabulary.crawler.config.properties;
 
 import lombok.Data;
 
-/** @Author zhanshifeng @Date 2020/10/15 8:33 PM */
+/**
+ * @Author zhanshifeng @Date 2020/10/15 8:33 PM
+ */
 @Data
 public class MqExchange {
 
-  private String exchange;
-  private String fetchQueue;
-  private String fetchRouting;
-  private String removeQueue;
-  private String removeRouting;
+    private String exchange;
+    private String fetchQueue;
+    private String fetchRouting;
+    private String removeQueue;
+    private String removeRouting;
 }

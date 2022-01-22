@@ -30,11 +30,12 @@ import org.springframework.stereotype.Component;
 @Component
 public class QueryAPIFallback implements IQueryAPI {
 
-  @Setter private Throwable throwable;
+    @Setter
+    private Throwable throwable;
 
-  @Override
-  public R<Page<WordQueryVO>> queryWord(String wordName) {
-    log.error(throwable.getCause().getMessage());
-    return R.feignCallFailed(throwable.getMessage());
-  }
+    @Override
+    public R<Page<WordQueryVO>> queryWord(String wordName) {
+        log.error(throwable.getCause().getMessage());
+        return R.feignCallFailed(throwable.getMessage());
+    }
 }

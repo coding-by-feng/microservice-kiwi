@@ -21,13 +21,15 @@ import me.fengorz.kiwi.admin.api.feign.IUserAPI;
 import me.fengorz.kiwi.admin.api.feign.fallback.IUserAPIFallBackImpl;
 import org.springframework.stereotype.Component;
 
-/** @Author zhanshifeng @Date 2019-09-26 17:03 */
+/**
+ * @Author zhanshifeng @Date 2019-09-26 17:03
+ */
 @Component
 public class UserAPIFallBackFactory implements FallbackFactory<IUserAPI> {
-  @Override
-  public IUserAPI create(Throwable throwable) {
-    IUserAPIFallBackImpl remoteUserServiceFallback = new IUserAPIFallBackImpl();
-    remoteUserServiceFallback.setThrowable(throwable);
-    return remoteUserServiceFallback;
-  }
+    @Override
+    public IUserAPI create(Throwable throwable) {
+        IUserAPIFallBackImpl remoteUserServiceFallback = new IUserAPIFallBackImpl();
+        remoteUserServiceFallback.setThrowable(throwable);
+        return remoteUserServiceFallback;
+    }
 }

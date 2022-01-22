@@ -33,6 +33,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/word/character")
 public class CharacterController extends BaseController {
 
-  private final ICharacterService wordCharacterService;
-  private final IOperateService wordOperateService;
+    private final ICharacterService wordCharacterService;
+    private final IOperateService wordOperateService;
 }

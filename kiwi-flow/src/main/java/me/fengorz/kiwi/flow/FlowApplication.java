@@ -24,33 +24,35 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.cloud.client.SpringCloudApplication;
 
-/** @Author zhanshifeng @Date 2019-09-02 14:56 */
+/**
+ * @Author zhanshifeng @Date 2019-09-02 14:56
+ */
 @SpringCloudApplication
 public class FlowApplication {
 
-  public static void main(String[] args) {
-    SpringApplication application = new SpringApplication(FlowApplication.class);
-    // 关闭SpringBoot的经典Banner
-    application.setBannerMode(Banner.Mode.OFF);
-    application.run(args);
-  }
+    public static void main(String[] args) {
+        SpringApplication application = new SpringApplication(FlowApplication.class);
+        // 关闭SpringBoot的经典Banner
+        application.setBannerMode(Banner.Mode.OFF);
+        application.run(args);
+    }
 
-  public CommandLineRunner init(
-      final RepositoryService repositoryService,
-      final RuntimeService runtimeService,
-      final TaskService taskService) {
+    public CommandLineRunner init(
+            final RepositoryService repositoryService,
+            final RuntimeService runtimeService,
+            final TaskService taskService) {
 
-    return new CommandLineRunner() {
-      @Override
-      public void run(String... strings) throws Exception {
-        System.out.println(
-            "-----> Number of process definitions : "
-                + repositoryService.createProcessDefinitionQuery().count());
-        System.out.println("-----> Number of tasks : " + taskService.createTaskQuery().count());
-        runtimeService.startProcessInstanceByKey("Expense");
-        System.out.println(
-            "-----> Number of tasks after process start: " + taskService.createTaskQuery().count());
-      }
-    };
-  }
+        return new CommandLineRunner() {
+            @Override
+            public void run(String... strings) throws Exception {
+                System.out.println(
+                        "-----> Number of process definitions : "
+                                + repositoryService.createProcessDefinitionQuery().count());
+                System.out.println("-----> Number of tasks : " + taskService.createTaskQuery().count());
+                runtimeService.startProcessInstanceByKey("Expense");
+                System.out.println(
+                        "-----> Number of tasks after process start: " + taskService.createTaskQuery().count());
+            }
+        };
+    }
 }

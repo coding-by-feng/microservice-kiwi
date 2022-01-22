@@ -24,31 +24,32 @@ import me.fengorz.kiwi.word.api.exception.JsoupFetchResultException;
 
 import java.util.Collection;
 
-/** @Author zhanshifeng @Date 2019/10/31 3:58 PM */
+/**
+ * @Author zhanshifeng
+ * @Date 2019/10/31 3:58 PM
+ */
 public class CrawlerAssertUtils {
 
-  public static String fetchValueNotEmpty(
-      String fetchValue, String errorMsgTemplate, Object... params)
-      throws JsoupFetchResultException {
-    if (StrUtil.isBlank(fetchValue)) {
-      throw new JsoupFetchResultException(StrUtil.format(errorMsgTemplate, params));
+    public static void fetchValueNotEmpty(
+            String fetchValue, String errorMsgTemplate, Object... params)
+            throws JsoupFetchResultException {
+        if (StrUtil.isBlank(fetchValue)) {
+            throw new JsoupFetchResultException(StrUtil.format(errorMsgTemplate, params));
+        }
     }
-    return fetchValue;
-  }
 
-  public static Collection notEmpty(
-      Collection collection, String errorMsgTemplate, Object... params)
-      throws JsoupFetchResultException {
-    if (collection == null || collection.isEmpty()) {
-      throw new JsoupFetchResultException(StrUtil.format(errorMsgTemplate, params));
+    public static void notEmpty(
+            Collection<?> collection, String errorMsgTemplate, Object... params)
+            throws JsoupFetchResultException {
+        if (collection == null || collection.isEmpty()) {
+            throw new JsoupFetchResultException(StrUtil.format(errorMsgTemplate, params));
+        }
     }
-    return collection;
-  }
 
-  public static void mustBeTrue(boolean flag, String errorMsgTemplate, Object... params)
-      throws JsoupFetchResultException {
-    if (!flag) {
-      throw new JsoupFetchResultException(StrUtil.format(errorMsgTemplate, params));
+    public static void mustBeTrue(boolean flag, String errorMsgTemplate, Object... params)
+            throws JsoupFetchResultException {
+        if (!flag) {
+            throw new JsoupFetchResultException(StrUtil.format(errorMsgTemplate, params));
+        }
     }
-  }
 }

@@ -23,23 +23,25 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import me.fengorz.kiwi.bdf.security.component.KiwiAuth2ExceptionSerializer;
 import org.springframework.http.HttpStatus;
 
-/** @Author zhanshifeng */
+/**
+ * @Author zhanshifeng
+ */
 @JsonSerialize(using = KiwiAuth2ExceptionSerializer.class)
 public class MethodNotAllowed extends KiwiAuth2Exception {
 
-  private static final long serialVersionUID = -3492800861197453836L;
+    private static final long serialVersionUID = -3492800861197453836L;
 
-  public MethodNotAllowed(String msg, Throwable t) {
-    super(msg);
-  }
+    public MethodNotAllowed(String msg, Throwable t) {
+        super(msg);
+    }
 
-  @Override
-  public String getOAuth2ErrorCode() {
-    return "method_not_allowed";
-  }
+    @Override
+    public String getOAuth2ErrorCode() {
+        return "method_not_allowed";
+    }
 
-  @Override
-  public int getHttpErrorCode() {
-    return HttpStatus.METHOD_NOT_ALLOWED.value();
-  }
+    @Override
+    public int getHttpErrorCode() {
+        return HttpStatus.METHOD_NOT_ALLOWED.value();
+    }
 }

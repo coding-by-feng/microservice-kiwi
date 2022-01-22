@@ -18,10 +18,12 @@ package me.fengorz.kiwi.common.sdk.util.lang.object;
 
 import org.springframework.util.ObjectUtils;
 
-/** @Author zhanshifeng @Date 2020/5/17 12:24 PM */
+/**
+ * @Author zhanshifeng @Date 2020/5/17 12:24 PM
+ */
 public class KiwiObjectUtils extends ObjectUtils {
 
-  public static boolean isNotEmpty(Object obj) {
-    return !isEmpty(obj);
-  }
+    public static boolean isNotEmpty(Object obj) {
+        return !isEmpty(obj);
+    }
 }

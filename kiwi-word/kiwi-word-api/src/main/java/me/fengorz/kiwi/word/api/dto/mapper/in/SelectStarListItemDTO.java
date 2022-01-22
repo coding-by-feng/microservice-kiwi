@@ -21,11 +21,13 @@ import lombok.ToString;
 import lombok.experimental.Accessors;
 import me.fengorz.kiwi.common.api.dto.PageDTO;
 
-/** @Author zhanshifeng @Date 2020/1/4 9:55 PM */
+/**
+ * @Author zhanshifeng @Date 2020/1/4 9:55 PM
+ */
 @Data
 @ToString
 @Accessors(chain = true)
 public class SelectStarListItemDTO extends PageDTO {
 
-  private Integer listId;
+    private Integer listId;
 }

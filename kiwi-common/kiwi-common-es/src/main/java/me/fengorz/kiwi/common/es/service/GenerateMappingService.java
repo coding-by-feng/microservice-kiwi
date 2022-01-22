@@ -23,12 +23,12 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
 
 public interface GenerateMappingService<T, U extends ElasticsearchRepository> {
-  /**
-   * 根据相应的ID生成对应的ES实体
-   *
-   * @param id
-   * @param idType
-   * @return
-   */
-  T generate(Integer id, IdType idType);
+    /**
+     * 根据相应的ID生成对应的ES实体
+     *
+     * @param id
+     * @param idType
+     * @return
+     */
+    T generate(Integer id, IdType idType);
 }

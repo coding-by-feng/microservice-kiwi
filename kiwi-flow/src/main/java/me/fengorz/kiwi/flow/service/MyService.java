@@ -25,21 +25,25 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-/** @Author zhanshifeng @Date 2019/12/4 3:20 PM */
+/**
+ * @Author zhanshifeng @Date 2019/12/4 3:20 PM
+ */
 @Service
 public class MyService {
 
-  @Autowired private RuntimeService runtimeService;
+    @Autowired
+    private RuntimeService runtimeService;
 
-  @Autowired private TaskService taskService;
+    @Autowired
+    private TaskService taskService;
 
-  @Transactional
-  public void startProcess() {
-    runtimeService.startProcessInstanceByKey("oneTaskProcess");
-  }
+    @Transactional
+    public void startProcess() {
+        runtimeService.startProcessInstanceByKey("oneTaskProcess");
+    }
 
-  @Transactional
-  public List<Task> getTasks(String assignee) {
-    return taskService.createTaskQuery().taskAssignee(assignee).list();
-  }
+    @Transactional
+    public List<Task> getTasks(String assignee) {
+        return taskService.createTaskQuery().taskAssignee(assignee).list();
+    }
 }

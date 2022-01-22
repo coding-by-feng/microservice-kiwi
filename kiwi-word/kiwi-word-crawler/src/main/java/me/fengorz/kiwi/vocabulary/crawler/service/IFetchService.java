@@ -21,20 +21,22 @@ package me.fengorz.kiwi.vocabulary.crawler.service;
 
 import me.fengorz.kiwi.word.api.dto.queue.*;
 
-/** @Author zhanshifeng */
+/**
+ * @Author zhanshifeng
+ */
 public interface IFetchService {
 
-  void handle(FetchWordMqDTO dto);
+    void handle(FetchWordMqDTO dto);
 
-  void handle(FetchPronunciationMqDTO dto);
+    void handle(FetchPronunciationMqDTO dto);
 
-  void removeWord(RemoveMqDTO dto);
+    void removeWord(RemoveMqDTO dto);
 
-  void handle(RemovePronunciatioinMqDTO dto);
+    void handle(RemovePronunciatioinMqDTO dto);
 
-  void retrievePhrase(FetchPhraseRunUpMqDTO dto);
+    void retrievePhrase(FetchPhraseRunUpMqDTO dto);
 
-  void handle(FetchPhraseMqDTO dto);
+    void handle(FetchPhraseMqDTO dto);
 
-  void removePhrase(RemoveMqDTO dto);
+    void removePhrase(RemoveMqDTO dto);
 }

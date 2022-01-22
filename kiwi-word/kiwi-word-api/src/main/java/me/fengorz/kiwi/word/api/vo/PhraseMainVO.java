@@ -25,5 +25,5 @@ import me.fengorz.kiwi.word.api.entity.PhraseMainDO;
  */
 public class PhraseMainVO extends PhraseMainDO {
 
-  private static final long serialVersionUID = 1602331746940L;
+    private static final long serialVersionUID = 1602331746940L;
 }

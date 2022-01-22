@@ -28,5 +28,5 @@ import me.fengorz.kiwi.word.api.entity.WordBreakpointReviewDO;
  */
 public class WordBreakpointReviewVO extends WordBreakpointReviewDO {
 
-  private static final long serialVersionUID = 1622962424807L;
+    private static final long serialVersionUID = 1622962424807L;
 }

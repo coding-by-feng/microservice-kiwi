@@ -6,7 +6,7 @@ import org.springframework.context.ApplicationContext;
 
 @Configurable
 public class UtilsBeanConfiguration {
-  public UtilsBeanConfiguration(ApplicationContext applicationContext) {
-    SpringUtils.init(applicationContext);
-  }
+    public UtilsBeanConfiguration(ApplicationContext applicationContext) {
+        SpringUtils.init(applicationContext);
+    }
 }

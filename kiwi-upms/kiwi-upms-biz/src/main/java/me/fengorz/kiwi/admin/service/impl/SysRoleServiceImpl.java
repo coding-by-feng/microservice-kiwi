@@ -31,10 +31,10 @@ import java.util.List;
  */
 @Service("sysRoleService")
 public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole>
-    implements SysRoleService {
+        implements SysRoleService {
 
-  @Override
-  public List<SysRole> listRolesByUserId(Integer userId) {
-    return baseMapper.listRolesByUserId(userId);
-  }
+    @Override
+    public List<SysRole> listRolesByUserId(Integer userId) {
+        return baseMapper.listRolesByUserId(userId);
+    }
 }

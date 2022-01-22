@@ -30,79 +30,81 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-/** @Author zhanshifeng */
+/**
+ * @Author zhanshifeng
+ */
 @FeignClient(
-    contextId = "bizAPI",
-    value = WordConstants.KIWI_WORD_BIZ,
-    fallbackFactory = BizFallbackFactory.class)
+        contextId = "bizAPI",
+        value = WordConstants.KIWI_WORD_BIZ,
+        fallbackFactory = BizFallbackFactory.class)
 public interface IBizAPI {
 
-  String WORD_FETCH_QUEUE = "/word/fetch";
-  String WORD_MAIN = "/word/main";
-  String WORD_REVIEW = "/word/review";
+    String WORD_FETCH_QUEUE = "/word/fetch";
+    String WORD_MAIN = "/word/main";
+    String WORD_REVIEW = "/word/review";
 
-  @GetMapping(WORD_FETCH_QUEUE + "/getOne/{queueId}")
-  R<FetchQueueDO> getOne(@PathVariable Integer queueId);
+    @GetMapping(WORD_FETCH_QUEUE + "/getOne/{queueId}")
+    R<FetchQueueDO> getOne(@PathVariable Integer queueId);
 
-  @GetMapping(WORD_FETCH_QUEUE + "/getOneByWordName")
-  R<FetchQueueDO> getOneByWordName(@RequestParam String wordName);
+    @GetMapping(WORD_FETCH_QUEUE + "/getOneByWordName")
+    R<FetchQueueDO> getOneByWordName(@RequestParam String wordName);
 
-  @GetMapping(WORD_FETCH_QUEUE + "/pageQueue/{status}/{current}/{size}/{infoType}")
-  R<List<FetchQueueDO>> pageQueue(
-      @PathVariable Integer status,
-      @PathVariable Integer current,
-      @PathVariable Integer size,
-      @PathVariable Integer infoType);
+    @GetMapping(WORD_FETCH_QUEUE + "/pageQueue/{status}/{current}/{size}/{infoType}")
+    R<List<FetchQueueDO>> pageQueue(
+            @PathVariable Integer status,
+            @PathVariable Integer current,
+            @PathVariable Integer size,
+            @PathVariable Integer infoType);
 
-  @GetMapping(WORD_FETCH_QUEUE + "/listNotIntoCache")
-  public R<List<FetchQueueDO>> listNotIntoCache();
+    @GetMapping(WORD_FETCH_QUEUE + "/listNotIntoCache")
+    public R<List<FetchQueueDO>> listNotIntoCache();
 
-  @GetMapping(WORD_FETCH_QUEUE + "/pageQueueLockIn/{status}/{current}/{size}/{infoType}")
-  R<List<FetchQueueDO>> pageQueueLockIn(
-      @PathVariable Integer status,
-      @PathVariable Integer current,
-      @PathVariable Integer size,
-      @PathVariable Integer infoType);
+    @GetMapping(WORD_FETCH_QUEUE + "/pageQueueLockIn/{status}/{current}/{size}/{infoType}")
+    R<List<FetchQueueDO>> pageQueueLockIn(
+            @PathVariable Integer status,
+            @PathVariable Integer current,
+            @PathVariable Integer size,
+            @PathVariable Integer infoType);
 
-  @PostMapping(WORD_FETCH_QUEUE + "/updateById")
-  R<Boolean> updateQueueById(@RequestBody FetchQueueDO queueDO);
+    @PostMapping(WORD_FETCH_QUEUE + "/updateById")
+    R<Boolean> updateQueueById(@RequestBody FetchQueueDO queueDO);
 
-  @PostMapping(WORD_FETCH_QUEUE + "/storeResult")
-  R<Void> storeResult(@RequestBody FetchWordResultDTO dto);
+    @PostMapping(WORD_FETCH_QUEUE + "/storeResult")
+    R<Void> storeResult(@RequestBody FetchWordResultDTO dto);
 
-  @GetMapping(WORD_FETCH_QUEUE + "/fetchPronunciation/{wordId}")
-  R<Boolean> fetchPronunciation(@PathVariable Integer wordId);
+    @GetMapping(WORD_FETCH_QUEUE + "/fetchPronunciation/{wordId}")
+    R<Boolean> fetchPronunciation(@PathVariable Integer wordId);
 
-  @Deprecated
-  @GetMapping(WORD_FETCH_QUEUE + "/removeWord/{wordName}/{queueId}")
-  R<List<RemovePronunciatioinMqDTO>> removeWord(
-      @PathVariable String wordName, @PathVariable Integer queueId);
+    @Deprecated
+    @GetMapping(WORD_FETCH_QUEUE + "/removeWord/{wordName}/{queueId}")
+    R<List<RemovePronunciatioinMqDTO>> removeWord(
+            @PathVariable String wordName, @PathVariable Integer queueId);
 
-  @GetMapping(WORD_FETCH_QUEUE + "/removeWord/{queueId}")
-  R<List<RemovePronunciatioinMqDTO>> removeWord(@PathVariable Integer queueId);
+    @GetMapping(WORD_FETCH_QUEUE + "/removeWord/{queueId}")
+    R<List<RemovePronunciatioinMqDTO>> removeWord(@PathVariable Integer queueId);
 
-  @GetMapping(WORD_FETCH_QUEUE + "/removePhrase/{queueId}")
-  R<Boolean> removePhrase(@PathVariable Integer queueId);
+    @GetMapping(WORD_FETCH_QUEUE + "/removePhrase/{queueId}")
+    R<Boolean> removePhrase(@PathVariable Integer queueId);
 
-  @Deprecated
-  @PostMapping(WORD_FETCH_QUEUE + "/lock")
-  R<Boolean> lock(@RequestParam String wordName);
+    @Deprecated
+    @PostMapping(WORD_FETCH_QUEUE + "/lock")
+    R<Boolean> lock(@RequestParam String wordName);
 
-  @PostMapping(WORD_FETCH_QUEUE + "/updateByWordName")
-  R<Boolean> updateByWordName(@RequestBody FetchQueueDO queueDO);
+    @PostMapping(WORD_FETCH_QUEUE + "/updateByWordName")
+    R<Boolean> updateByWordName(@RequestBody FetchQueueDO queueDO);
 
-  @GetMapping(WORD_MAIN + "/listOverlapInUnLock")
-  R<List<String>> listOverlapInUnLock();
+    @GetMapping(WORD_MAIN + "/listOverlapInUnLock")
+    R<List<String>> listOverlapInUnLock();
 
-  @PostMapping(WORD_FETCH_QUEUE + "/handlePhrasesFetchResult")
-  R<Boolean> handlePhrasesFetchResult(@RequestBody FetchPhraseRunUpResultDTO dto);
+    @PostMapping(WORD_FETCH_QUEUE + "/handlePhrasesFetchResult")
+    R<Boolean> handlePhrasesFetchResult(@RequestBody FetchPhraseRunUpResultDTO dto);
 
-  @PostMapping(WORD_FETCH_QUEUE + "/storePhrasesFetchResult")
-  R<Boolean> storePhrasesFetchResult(@RequestBody FetchPhraseResultDTO dto);
+    @PostMapping(WORD_FETCH_QUEUE + "/storePhrasesFetchResult")
+    R<Boolean> storePhrasesFetchResult(@RequestBody FetchPhraseResultDTO dto);
 
-  @GetMapping(WORD_MAIN + "/query/gate/{keyword}")
-  R<WordQueryVO> queryWord(@PathVariable String keyword);
+    @GetMapping(WORD_MAIN + "/query/gate/{keyword}")
+    R<WordQueryVO> queryWord(@PathVariable String keyword);
 
-  @GetMapping(WORD_REVIEW + "/createTheDays")
-  R<Void> createTheDays();
+    @GetMapping(WORD_REVIEW + "/createTheDays")
+    R<Void> createTheDays();
 }

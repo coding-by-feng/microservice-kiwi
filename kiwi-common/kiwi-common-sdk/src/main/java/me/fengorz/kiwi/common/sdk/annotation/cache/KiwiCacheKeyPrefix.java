@@ -21,10 +21,12 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-/** @Author zhanshifeng */
+/**
+ * @Author zhanshifeng
+ */
 @Target({ElementType.METHOD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface KiwiCacheKeyPrefix {
 
-  String value();
+    String value();
 }

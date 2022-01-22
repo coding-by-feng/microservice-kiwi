@@ -24,16 +24,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-/** @Author zhanshifeng @Date 2019-09-26 16:59 */
+/**
+ * @Author zhanshifeng @Date 2019-09-26 16:59
+ */
 @Component
 public class IUserAPIFallBackImpl implements IUserAPI {
 
-  private static final Logger logger = LoggerFactory.getLogger(IUserAPIFallBackImpl.class);
-  @Setter private Throwable throwable;
+    private static final Logger logger = LoggerFactory.getLogger(IUserAPIFallBackImpl.class);
+    @Setter
+    private Throwable throwable;
 
-  @Override
-  public R<UserFullInfoDTO> info(String username, String from) {
-    logger.error("feign 查询用户信息失败:{}", username, throwable);
-    return null;
-  }
+    @Override
+    public R<UserFullInfoDTO> info(String username, String from) {
+        logger.error("feign 查询用户信息失败:{}", username, throwable);
+        return null;
+    }
 }

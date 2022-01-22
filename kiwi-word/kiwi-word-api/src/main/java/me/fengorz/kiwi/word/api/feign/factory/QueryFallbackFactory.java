@@ -21,13 +21,15 @@ import me.fengorz.kiwi.word.api.feign.IQueryAPI;
 import me.fengorz.kiwi.word.api.feign.fallback.QueryAPIFallback;
 import org.springframework.stereotype.Component;
 
-/** @Author zhanshifeng @Date 2019/10/30 3:19 PM */
+/**
+ * @Author zhanshifeng @Date 2019/10/30 3:19 PM
+ */
 @Component
 public class QueryFallbackFactory implements FallbackFactory<IQueryAPI> {
-  @Override
-  public IQueryAPI create(Throwable throwable) {
-    QueryAPIFallback fallback = new QueryAPIFallback();
-    fallback.setThrowable(throwable);
-    return fallback;
-  }
+    @Override
+    public IQueryAPI create(Throwable throwable) {
+        QueryAPIFallback fallback = new QueryAPIFallback();
+        fallback.setThrowable(throwable);
+        return fallback;
+    }
 }

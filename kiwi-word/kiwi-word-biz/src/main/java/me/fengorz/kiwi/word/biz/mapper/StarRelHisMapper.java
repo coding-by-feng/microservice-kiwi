@@ -22,4 +22,5 @@ import me.fengorz.kiwi.word.api.entity.StarRelHisDO;
  * @author zhanShiFeng
  * @date 2020-09-16 16:56:42
  */
-public interface StarRelHisMapper extends BaseMapper<StarRelHisDO> {}
+public interface StarRelHisMapper extends BaseMapper<StarRelHisDO> {
+}

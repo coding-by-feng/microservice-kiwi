@@ -18,26 +18,29 @@ package me.fengorz.kiwi.word.api.exception;
 
 import me.fengorz.kiwi.common.sdk.exception.BaseException;
 
-/** @Author zhanshifeng @Date 2019/10/31 4:01 PM */
+/**
+ * @Author zhanshifeng @Date 2019/10/31 4:01 PM
+ */
 public class JsoupFetchPronunciationException extends BaseException {
-  private static final long serialVersionUID = 8760741479684447224L;
+    private static final long serialVersionUID = 8760741479684447224L;
 
-  public JsoupFetchPronunciationException() {}
+    public JsoupFetchPronunciationException() {
+    }
 
-  public JsoupFetchPronunciationException(String message) {
-    super(message);
-  }
+    public JsoupFetchPronunciationException(String message) {
+        super(message);
+    }
 
-  public JsoupFetchPronunciationException(String message, Throwable cause) {
-    super(message, cause);
-  }
+    public JsoupFetchPronunciationException(String message, Throwable cause) {
+        super(message, cause);
+    }
 
-  public JsoupFetchPronunciationException(Throwable cause) {
-    super(cause);
-  }
+    public JsoupFetchPronunciationException(Throwable cause) {
+        super(cause);
+    }
 
-  public JsoupFetchPronunciationException(
-      String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-    super(message, cause, enableSuppression, writableStackTrace);
-  }
+    public JsoupFetchPronunciationException(
+            String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+        super(message, cause, enableSuppression, writableStackTrace);
+    }
 }

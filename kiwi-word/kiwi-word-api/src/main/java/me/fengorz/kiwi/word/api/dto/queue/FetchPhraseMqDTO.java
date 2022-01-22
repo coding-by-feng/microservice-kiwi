@@ -26,18 +26,20 @@ import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 
-/** @Author zhanshifeng @Date 2019/10/28 9:28 AM */
+/**
+ * @Author zhanshifeng @Date 2019/10/28 9:28 AM
+ */
 @Data
 @ToString
 @Accessors(chain = true)
 @EqualsAndHashCode(callSuper = true)
 public class FetchPhraseMqDTO extends MqDTO implements Serializable {
 
-  private static final long serialVersionUID = -2677794611661903468L;
+    private static final long serialVersionUID = -2677794611661903468L;
 
-  private String phrase;
+    private String phrase;
 
-  private String derivation;
+    private String derivation;
 
-  private Integer queueId;
+    private Integer queueId;
 }

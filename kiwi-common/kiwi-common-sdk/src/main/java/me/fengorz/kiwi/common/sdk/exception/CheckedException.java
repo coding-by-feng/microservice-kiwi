@@ -21,19 +21,21 @@ package me.fengorz.kiwi.common.sdk.exception;
 
 import lombok.NoArgsConstructor;
 
-/** @Author zhanshifeng @Date 2019-09-10 14:48 */
+/**
+ * @Author zhanshifeng @Date 2019-09-10 14:48
+ */
 @NoArgsConstructor
 public class CheckedException extends BaseException {
 
-  public CheckedException(String message) {
-    super(message);
-  }
+    public CheckedException(String message) {
+        super(message);
+    }
 
-  public CheckedException(String message, Throwable cause) {
-    super(message, cause);
-  }
+    public CheckedException(String message, Throwable cause) {
+        super(message, cause);
+    }
 
-  public CheckedException(Throwable cause) {
-    super(cause);
-  }
+    public CheckedException(Throwable cause) {
+        super(cause);
+    }
 }

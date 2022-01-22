@@ -29,49 +29,57 @@ import org.springframework.security.oauth2.provider.token.UserAuthenticationConv
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.web.client.RestTemplate;
 
-/** 1. 支持remoteTokenServices 负载均衡 2. 支持 获取用户全部信息 @Author zhanshifeng */
+/**
+ * 1. 支持remoteTokenServices 负载均衡 2. 支持 获取用户全部信息 @Author zhanshifeng
+ */
 @Slf4j
 public class KiwiResourceServerConfigurerAdapter extends ResourceServerConfigurerAdapter {
-  @Autowired protected ResourceAuthExceptionEntryPoint resourceAuthExceptionEntryPoint;
-  @Autowired protected RemoteTokenServices remoteTokenServices;
-  @Autowired private FilterIgnorePropertiesConfig ignorePropertiesConfig;
-  @Autowired private AccessDeniedHandler pigAccessDeniedHandler;
-  @Autowired private RestTemplate lbRestTemplate;
-  @Autowired private FilterIgnorePropertiesConfig filterIgnorePropertiesConfig;
+    @Autowired
+    protected ResourceAuthExceptionEntryPoint resourceAuthExceptionEntryPoint;
+    @Autowired
+    protected RemoteTokenServices remoteTokenServices;
+    @Autowired
+    private FilterIgnorePropertiesConfig ignorePropertiesConfig;
+    @Autowired
+    private AccessDeniedHandler pigAccessDeniedHandler;
+    @Autowired
+    private RestTemplate lbRestTemplate;
+    @Autowired
+    private FilterIgnorePropertiesConfig filterIgnorePropertiesConfig;
 
-  /**
-   * 默认的配置，对外暴露
-   *
-   * @param httpSecurity
-   */
-  @Override
-  public void configure(HttpSecurity httpSecurity) throws Exception {
-    // 允许使用iframe 嵌套，避免swagger-ui 不被加载的问题
-    httpSecurity.headers().frameOptions().disable();
-    ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry registry =
-        httpSecurity.authorizeRequests();
-    registry
-        .antMatchers(ignorePropertiesConfig.getUrls().toArray(new String[0]))
-        .permitAll()
-        .anyRequest()
-        .authenticated()
-        .and()
-        .csrf()
-        .disable();
-  }
+    /**
+     * 默认的配置，对外暴露
+     *
+     * @param httpSecurity
+     */
+    @Override
+    public void configure(HttpSecurity httpSecurity) throws Exception {
+        // 允许使用iframe 嵌套，避免swagger-ui 不被加载的问题
+        httpSecurity.headers().frameOptions().disable();
+        ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry registry =
+                httpSecurity.authorizeRequests();
+        registry
+                .antMatchers(ignorePropertiesConfig.getUrls().toArray(new String[0]))
+                .permitAll()
+                .anyRequest()
+                .authenticated()
+                .and()
+                .csrf()
+                .disable();
+    }
 
-  @Override
-  public void configure(ResourceServerSecurityConfigurer resources) {
-    DefaultAccessTokenConverter accessTokenConverter = new DefaultAccessTokenConverter();
-    UserAuthenticationConverter userTokenConverter =
-        new KiwiUserAuthenticationConverter(this.filterIgnorePropertiesConfig);
-    accessTokenConverter.setUserTokenConverter(userTokenConverter);
+    @Override
+    public void configure(ResourceServerSecurityConfigurer resources) {
+        DefaultAccessTokenConverter accessTokenConverter = new DefaultAccessTokenConverter();
+        UserAuthenticationConverter userTokenConverter =
+                new KiwiUserAuthenticationConverter(this.filterIgnorePropertiesConfig);
+        accessTokenConverter.setUserTokenConverter(userTokenConverter);
 
-    remoteTokenServices.setRestTemplate(lbRestTemplate);
-    remoteTokenServices.setAccessTokenConverter(accessTokenConverter);
-    resources
-        .authenticationEntryPoint(resourceAuthExceptionEntryPoint)
-        .accessDeniedHandler(pigAccessDeniedHandler)
-        .tokenServices(remoteTokenServices);
-  }
+        remoteTokenServices.setRestTemplate(lbRestTemplate);
+        remoteTokenServices.setAccessTokenConverter(accessTokenConverter);
+        resources
+                .authenticationEntryPoint(resourceAuthExceptionEntryPoint)
+                .accessDeniedHandler(pigAccessDeniedHandler)
+                .tokenServices(remoteTokenServices);
+    }
 }

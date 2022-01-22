@@ -23,17 +23,16 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 /**
  * @Author zhanshifeng
- *
  * @date 2020-05-24 01:40:36
  */
 @FeignClient(
-    contextId = "queryAPI",
-    value = WordConstants.KIWI_WORD_BIZ,
-    fallbackFactory = WordMainVariantFallBackFactory.class)
+        contextId = "queryAPI",
+        value = WordConstants.KIWI_WORD_BIZ,
+        fallbackFactory = WordMainVariantFallBackFactory.class)
 public interface IQueryAPI {
 
-  String WORD_MAIN = "/word/main";
+    String WORD_MAIN = "/word/main";
 
-  @GetMapping(WORD_MAIN + "/query/{wordName}")
-  R<Page<WordQueryVO>> queryWord(@PathVariable String wordName);
+    @GetMapping(WORD_MAIN + "/query/{wordName}")
+    R<Page<WordQueryVO>> queryWord(@PathVariable String wordName);
 }

@@ -21,35 +21,37 @@ package me.fengorz.kiwi.common.sdk.exception;
 
 import me.fengorz.kiwi.common.api.ResultCode;
 
-/** @Description 操作资源不存在异常 @Author zhanshifeng @Date 2020/5/24 12:38 PM */
+/**
+ * @Description 操作资源不存在异常 @Author zhanshifeng @Date 2020/5/24 12:38 PM
+ */
 public class ResourceNotFoundException extends BaseRuntimeException {
 
-  public ResourceNotFoundException() {
-    super();
-  }
+    public ResourceNotFoundException() {
+        super();
+    }
 
-  public ResourceNotFoundException(Throwable cause) {
-    super(cause);
-  }
+    public ResourceNotFoundException(Throwable cause) {
+        super(cause);
+    }
 
-  public ResourceNotFoundException(String msg, Object... args) {
-    super(msg, args);
-  }
+    public ResourceNotFoundException(String msg, Object... args) {
+        super(msg, args);
+    }
 
-  public ResourceNotFoundException(String msg, Throwable throwable, Object... args) {
-    super(msg, throwable, args);
-  }
+    public ResourceNotFoundException(String msg, Throwable throwable, Object... args) {
+        super(msg, throwable, args);
+    }
 
-  public ResourceNotFoundException(ResultCode resultCode, Object... args) {
-    super(resultCode, args);
-  }
+    public ResourceNotFoundException(ResultCode resultCode, Object... args) {
+        super(resultCode, args);
+    }
 
-  public ResourceNotFoundException(String msg, ResultCode resultCode, Object... args) {
-    super(msg, resultCode, args);
-  }
+    public ResourceNotFoundException(String msg, ResultCode resultCode, Object... args) {
+        super(msg, resultCode, args);
+    }
 
-  public ResourceNotFoundException(
-      String msg, ResultCode resultCode, Throwable throwable, Object... args) {
-    super(msg, resultCode, throwable, args);
-  }
+    public ResourceNotFoundException(
+            String msg, ResultCode resultCode, Throwable throwable, Object... args) {
+        super(msg, resultCode, throwable, args);
+    }
 }

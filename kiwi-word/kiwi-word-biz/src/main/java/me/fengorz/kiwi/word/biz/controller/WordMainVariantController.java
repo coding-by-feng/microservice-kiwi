@@ -32,11 +32,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/word/main/variant")
 public class WordMainVariantController {
 
-  private final IOperateService wordOperateService;
+    private final IOperateService wordOperateService;
 
-  @GetMapping("/insertVariant/{inputWordName}/{fetchWordName}")
-  public R<Void> insertVariant(
-      @PathVariable String inputWordName, @PathVariable String fetchWordName) {
-    return R.auto(wordOperateService.insertVariant(inputWordName, fetchWordName));
-  }
+    @GetMapping("/insertVariant/{inputWordName}/{fetchWordName}")
+    public R<Void> insertVariant(
+            @PathVariable String inputWordName, @PathVariable String fetchWordName) {
+        return R.auto(wordOperateService.insertVariant(inputWordName, fetchWordName));
+    }
 }

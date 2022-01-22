@@ -16,5 +16,8 @@
 
 package me.fengorz.kiwi.word.api.dto.queue;
 
-/** @Author zhanshifeng @Date 2020/7/28 11:33 PM */
-public class MqDTO {}
+/**
+ * @Author zhanshifeng @Date 2020/7/28 11:33 PM
+ */
+public class MqDTO {
+}

@@ -25,50 +25,52 @@ import me.fengorz.kiwi.word.api.vo.detail.WordQueryVO;
 
 import java.util.Set;
 
-/** @Author zhanshifeng */
+/**
+ * @Author zhanshifeng
+ */
 public interface IOperateService {
 
-  /* paraphrase methods begin */
+    /* paraphrase methods begin */
 
-  WordQueryVO queryWord(String wordName, Integer... intoType);
+    WordQueryVO queryWord(String wordName, Integer... intoType);
 
-  IPage<WordQueryVO> queryWordByCh(String chineseParaphrase, int current, int size);
+    IPage<WordQueryVO> queryWordByCh(String chineseParaphrase, int current, int size);
 
-  ParaphraseVO findParaphraseVO(Integer paraphraseId);
+    ParaphraseVO findParaphraseVO(Integer paraphraseId);
 
-  boolean modifyMeaningChinese(ParaphraseRequest request);
-  /* paraphrase methods end */
+    boolean modifyMeaningChinese(ParaphraseRequest request);
+    /* paraphrase methods end */
 
-  /* wordVariant methods begin */
+    /* wordVariant methods begin */
 
-  /**
-   * @param inputWordName 界面输入要查询的单词
-   * @param fetchWordName 实际爬虫抓取到的单词原形
-   * @return
-   */
-  boolean insertVariant(String inputWordName, String fetchWordName);
+    /**
+     * @param inputWordName 界面输入要查询的单词
+     * @param fetchWordName 实际爬虫抓取到的单词原形
+     * @return
+     */
+    boolean insertVariant(String inputWordName, String fetchWordName);
 
-  /* wordVariant methods end */
+    /* wordVariant methods end */
 
-  /* cache mothods begin */
+    /* cache mothods begin */
 
-  void evict(String wordName, WordMainDO one);
+    void evict(String wordName, WordMainDO one);
 
-  FetchWordReplaceDTO getCacheReplace(String wordName);
+    FetchWordReplaceDTO getCacheReplace(String wordName);
 
-  void cacheReplace(String wordName, FetchWordReplaceDTO dto);
+    void cacheReplace(String wordName, FetchWordReplaceDTO dto);
 
-  void fetchReplaceCallBack(String wordName);
+    void fetchReplaceCallBack(String wordName);
 
-  /* cache mothods end */
+    /* cache mothods end */
 
-  Set<WordMainDO> collectDirtyData(Integer queueId, String wordName);
+    Set<WordMainDO> collectDirtyData(Integer queueId, String wordName);
 
-  /**
-   * 获取断点记录，如果返回页数大于0，代表当前有断点数据
-   *
-   * @param listId
-   * @return
-   */
-  Integer getReviewBreakpointPageNumber(Integer listId);
+    /**
+     * 获取断点记录，如果返回页数大于0，代表当前有断点数据
+     *
+     * @param listId
+     * @return
+     */
+    Integer getReviewBreakpointPageNumber(Integer listId);
 }

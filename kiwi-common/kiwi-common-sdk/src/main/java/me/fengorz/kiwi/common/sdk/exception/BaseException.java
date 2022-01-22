@@ -24,71 +24,73 @@ import lombok.experimental.Accessors;
 import me.fengorz.kiwi.common.api.ResultCode;
 import org.apache.commons.lang3.StringUtils;
 
-/** @Description 异常基类 @Author zhanshifeng @Date 2020/4/8 4:32 PM */
+/**
+ * @Description 异常基类 @Author zhanshifeng @Date 2020/4/8 4:32 PM
+ */
 @Data
 @Accessors(chain = true)
 public class BaseException extends Exception {
 
-  private static final long serialVersionUID = -8424415276392691547L;
+    private static final long serialVersionUID = -8424415276392691547L;
 
-  protected Object[] args;
-  protected ResultCode resultCode;
+    protected Object[] args;
+    protected ResultCode resultCode;
 
-  public BaseException() {
-    super();
-    this.resultCode = ResultCode.FAIL;
-  }
-
-  public BaseException(Throwable cause) {
-    super(cause);
-    this.resultCode = ResultCode.FAIL;
-  }
-
-  public BaseException(String msg, Object... args) {
-    super(msg);
-    this.args = args;
-    this.resultCode = ResultCode.FAIL;
-  }
-
-  public BaseException(String msg, Throwable throwable, Object... args) {
-    super(msg, throwable);
-    this.args = args;
-    this.resultCode = ResultCode.FAIL;
-  }
-
-  public BaseException(ResultCode resultCode, Object... args) {
-    super();
-    this.args = args;
-    this.resultCode = resultCode;
-  }
-
-  public BaseException(String msg, ResultCode resultCode, Object... args) {
-    super(msg);
-    this.args = args;
-    this.resultCode = resultCode;
-  }
-
-  public BaseException(String msg, ResultCode resultCode, Throwable throwable, Object... args) {
-    super(msg, throwable);
-    this.args = args;
-    this.resultCode = resultCode;
-  }
-
-  public Object[] getArgs() {
-    return args;
-  }
-
-  public ResultCode getResultCode() {
-    return resultCode;
-  }
-
-  @Override
-  public String getMessage() {
-    if (args == null) {
-      return super.getMessage();
-    } else {
-      String message = StringUtils.defaultString(super.getMessage(), "");
-      return String.format(message, args);
+    public BaseException() {
+        super();
+        this.resultCode = ResultCode.FAIL;
     }
-  }
+
+    public BaseException(Throwable cause) {
+        super(cause);
+        this.resultCode = ResultCode.FAIL;
+    }
+
+    public BaseException(String msg, Object... args) {
+        super(msg);
+        this.args = args;
+        this.resultCode = ResultCode.FAIL;
+    }
+
+    public BaseException(String msg, Throwable throwable, Object... args) {
+        super(msg, throwable);
+        this.args = args;
+        this.resultCode = ResultCode.FAIL;
+    }
+
+    public BaseException(ResultCode resultCode, Object... args) {
+        super();
+        this.args = args;
+        this.resultCode = resultCode;
+    }
+
+    public BaseException(String msg, ResultCode resultCode, Object... args) {
+        super(msg);
+        this.args = args;
+        this.resultCode = resultCode;
+    }
+
+    public BaseException(String msg, ResultCode resultCode, Throwable throwable, Object... args) {
+        super(msg, throwable);
+        this.args = args;
+        this.resultCode = resultCode;
+    }
+
+    public Object[] getArgs() {
+        return args;
+    }
+
+    public ResultCode getResultCode() {
+        return resultCode;
+    }
+
+    @Override
+    public String getMessage() {
+        if (args == null) {
+            return super.getMessage();
+        } else {
+            String message = StringUtils.defaultString(super.getMessage(), "");
+            return String.format(message, args);
+        }
+    }
 }

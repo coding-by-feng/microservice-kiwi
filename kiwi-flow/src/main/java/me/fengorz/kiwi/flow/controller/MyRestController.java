@@ -30,35 +30,38 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.ArrayList;
 import java.util.List;
 
-/** @Author zhanshifeng @Date 2019/12/4 3:24 PM */
+/**
+ * @Author zhanshifeng @Date 2019/12/4 3:24 PM
+ */
 @RestController
 public class MyRestController {
 
-  @Autowired private MyService myService;
+    @Autowired
+    private MyService myService;
 
-  @RequestMapping(value = "/process", method = RequestMethod.POST)
-  public void startProcessInstance() {
-    myService.startProcess();
-  }
-
-  @RequestMapping(
-      value = "/tasks",
-      method = RequestMethod.GET,
-      produces = MediaType.APPLICATION_JSON_VALUE)
-  public List<TaskRepresentation> getTasks(@RequestParam String assignee) {
-    List<Task> tasks = myService.getTasks(assignee);
-    List<TaskRepresentation> dtos = new ArrayList<TaskRepresentation>();
-    for (Task task : tasks) {
-      dtos.add(new TaskRepresentation(task.getId(), task.getName()));
+    @RequestMapping(value = "/process", method = RequestMethod.POST)
+    public void startProcessInstance() {
+        myService.startProcess();
     }
-    return dtos;
-  }
 
-  @Data
-  @AllArgsConstructor
-  static class TaskRepresentation {
+    @RequestMapping(
+            value = "/tasks",
+            method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<TaskRepresentation> getTasks(@RequestParam String assignee) {
+        List<Task> tasks = myService.getTasks(assignee);
+        List<TaskRepresentation> dtos = new ArrayList<TaskRepresentation>();
+        for (Task task : tasks) {
+            dtos.add(new TaskRepresentation(task.getId(), task.getName()));
+        }
+        return dtos;
+    }
 
-    private String id;
-    private String name;
-  }
+    @Data
+    @AllArgsConstructor
+    static class TaskRepresentation {
+
+        private String id;
+        private String name;
+    }
 }

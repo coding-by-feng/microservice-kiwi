@@ -5,4 +5,5 @@ package me.fengorz.kiwi.common.api.valid;
  *
  * @since 2020/03/19
  */
-public interface ValidTypeDefault {}
+public interface ValidTypeDefault {
+}

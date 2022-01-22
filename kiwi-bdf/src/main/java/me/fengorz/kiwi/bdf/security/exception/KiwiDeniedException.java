@@ -18,25 +18,27 @@ package me.fengorz.kiwi.bdf.security.exception;
 
 import lombok.NoArgsConstructor;
 
-/** 403 授权拒绝 @Author zhanshifeng */
+/**
+ * 403 授权拒绝 @Author zhanshifeng
+ */
 @NoArgsConstructor
 public class KiwiDeniedException extends RuntimeException {
-  private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-  public KiwiDeniedException(String message) {
-    super(message);
-  }
+    public KiwiDeniedException(String message) {
+        super(message);
+    }
 
-  public KiwiDeniedException(Throwable cause) {
-    super(cause);
-  }
+    public KiwiDeniedException(Throwable cause) {
+        super(cause);
+    }
 
-  public KiwiDeniedException(String message, Throwable cause) {
-    super(message, cause);
-  }
+    public KiwiDeniedException(String message, Throwable cause) {
+        super(message, cause);
+    }
 
-  public KiwiDeniedException(
-      String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-    super(message, cause, enableSuppression, writableStackTrace);
-  }
+    public KiwiDeniedException(
+            String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+        super(message, cause, enableSuppression, writableStackTrace);
+    }
 }

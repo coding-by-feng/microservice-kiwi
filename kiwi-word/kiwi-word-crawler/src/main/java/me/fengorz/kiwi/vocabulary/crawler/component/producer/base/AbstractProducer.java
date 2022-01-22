@@ -28,35 +28,37 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
-/** @Author zhanshifeng @Date 2020/7/29 2:16 PM */
+/**
+ * @Author zhanshifeng @Date 2020/7/29 2:16 PM
+ */
 @RequiredArgsConstructor
 public abstract class AbstractProducer implements IProducer {
 
-  protected final IBizAPI bizAPI;
-  protected final ISender sender;
-  protected final Object barrier = new Object();
-  protected Integer infoType;
+    protected final IBizAPI bizAPI;
+    protected final ISender sender;
+    protected final Object barrier = new Object();
+    protected Integer infoType;
 
-  protected List<FetchQueueDO> getQueueDO(Integer status) {
-    synchronized (barrier) {
-      return bizAPI.pageQueueLockIn(status, 0, 20, infoType).getData();
-    }
-  }
-
-  protected void produce(Integer... status) {
-    List<FetchQueueDO> list = new LinkedList<>();
-    for (Integer temp : status) {
-      Optional.ofNullable(this.getQueueDO(temp)).ifPresent(list::addAll);
-    }
-    if (KiwiCollectionUtils.isEmpty(list)) {
-      return;
+    protected List<FetchQueueDO> getQueueDO(Integer status) {
+        synchronized (barrier) {
+            return bizAPI.pageQueueLockIn(status, 0, 20, infoType).getData();
+        }
     }
 
-    // 列表里面每一批查到数据处理完之前先上锁
-    synchronized (barrier) {
-      list.forEach(this::execute);
-    }
-  }
+    protected void produce(Integer... status) {
+        List<FetchQueueDO> list = new LinkedList<>();
+        for (Integer temp : status) {
+            Optional.ofNullable(this.getQueueDO(temp)).ifPresent(list::addAll);
+        }
+        if (KiwiCollectionUtils.isEmpty(list)) {
+            return;
+        }
 
-  protected abstract void execute(FetchQueueDO queue);
+        // 列表里面每一批查到数据处理完之前先上锁
+        synchronized (barrier) {
+            list.forEach(this::execute);
+        }
+    }
+
+    protected abstract void execute(FetchQueueDO queue);
 }

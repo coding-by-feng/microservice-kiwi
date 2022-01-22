@@ -34,32 +34,59 @@ import java.time.LocalDateTime;
 @TableName("sys_menu")
 public class SysMenu extends Model<SysMenu> {
 
-  private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-  /** 菜单ID */
-  @TableId private Integer menuId;
-  /** 菜单名称 */
-  private String name;
-  /** 菜单权限标识 */
-  private String permission;
-  /** 前端URL */
-  private String path;
-  /** 父菜单ID */
-  private Integer parentId;
-  /** 图标 */
-  private String icon;
-  /** VUE页面 */
-  private String component;
-  /** 排序值 */
-  private Integer sort;
-  /** 0-开启，1- 关闭 */
-  private String keepAlive;
-  /** 菜单类型 （0菜单 1按钮） */
-  private String type;
-  /** 创建时间 */
-  private LocalDateTime createTime;
-  /** 更新时间 */
-  private LocalDateTime updateTime;
-  /** 逻辑删除标记(0--正常 1--删除) */
-  private String delFlag;
+    /**
+     * 菜单ID
+     */
+    @TableId
+    private Integer menuId;
+    /**
+     * 菜单名称
+     */
+    private String name;
+    /**
+     * 菜单权限标识
+     */
+    private String permission;
+    /**
+     * 前端URL
+     */
+    private String path;
+    /**
+     * 父菜单ID
+     */
+    private Integer parentId;
+    /**
+     * 图标
+     */
+    private String icon;
+    /**
+     * VUE页面
+     */
+    private String component;
+    /**
+     * 排序值
+     */
+    private Integer sort;
+    /**
+     * 0-开启，1- 关闭
+     */
+    private String keepAlive;
+    /**
+     * 菜单类型 （0菜单 1按钮）
+     */
+    private String type;
+    /**
+     * 创建时间
+     */
+    private LocalDateTime createTime;
+    /**
+     * 更新时间
+     */
+    private LocalDateTime updateTime;
+    /**
+     * 逻辑删除标记(0--正常 1--删除)
+     */
+    private String delFlag;
 }

@@ -25,34 +25,50 @@ import lombok.experimental.Accessors;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
-/** 业务锁 */
+/**
+ * 业务锁
+ */
 @Data
 @ToString
 @Accessors(chain = true)
 @TableName("t_sequence_lock")
 public class SequenceLock implements Serializable {
 
-  private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-  /** 锁id */
-  @TableId(value = "lock_id", type = IdType.AUTO)
-  private Long lockId;
+    /**
+     * 锁id
+     */
+    @TableId(value = "lock_id", type = IdType.AUTO)
+    private Long lockId;
 
-  /** 锁名称 */
-  private String lockName;
+    /**
+     * 锁名称
+     */
+    private String lockName;
 
-  /** 状态 : 1:未分配；2：已分配 */
-  private Integer status;
+    /**
+     * 状态 : 1:未分配；2：已分配
+     */
+    private Integer status;
 
-  /** 锁来源 */
-  private String lockSrc;
+    /**
+     * 锁来源
+     */
+    private String lockSrc;
 
-  /** 版本号 */
-  private Integer version;
+    /**
+     * 版本号
+     */
+    private Integer version;
 
-  /** 锁释放时间 */
-  private LocalDateTime releaseTime;
+    /**
+     * 锁释放时间
+     */
+    private LocalDateTime releaseTime;
 
-  /** 更新时间 */
-  private LocalDateTime lockTime;
+    /**
+     * 更新时间
+     */
+    private LocalDateTime lockTime;
 }

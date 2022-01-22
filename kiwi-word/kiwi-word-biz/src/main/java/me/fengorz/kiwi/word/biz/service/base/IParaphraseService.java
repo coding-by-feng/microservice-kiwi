@@ -33,14 +33,14 @@ import java.util.List;
  */
 public interface IParaphraseService extends IService<ParaphraseDO> {
 
-  Integer countById(Integer id);
+    Integer countById(Integer id);
 
-  @Deprecated
-  List<ParaphraseVO> selectParaphraseAndIsCollect(Integer characterId, Integer currentUserId);
+    @Deprecated
+    List<ParaphraseVO> selectParaphraseAndIsCollect(Integer characterId, Integer currentUserId);
 
-  List<ParaphraseVO> listPhrase(Integer wordId);
+    List<ParaphraseVO> listPhrase(Integer wordId);
 
-  void delByWordId(Integer wordId);
+    void delByWordId(Integer wordId);
 
-  boolean modifyMeaningChinese(ParaphraseRequest request);
+    boolean modifyMeaningChinese(ParaphraseRequest request);
 }

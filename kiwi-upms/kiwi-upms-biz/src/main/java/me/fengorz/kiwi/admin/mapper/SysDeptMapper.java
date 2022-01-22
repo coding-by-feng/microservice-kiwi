@@ -24,4 +24,5 @@ import me.fengorz.kiwi.admin.api.entity.SysDept;
  * @author zhanshifeng
  * @date 2019-09-18 09:40:25
  */
-public interface SysDeptMapper extends BaseMapper<SysDept> {}
+public interface SysDeptMapper extends BaseMapper<SysDept> {
+}

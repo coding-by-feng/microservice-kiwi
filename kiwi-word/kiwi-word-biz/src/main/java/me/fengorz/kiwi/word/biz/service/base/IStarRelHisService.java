@@ -24,4 +24,5 @@ import me.fengorz.kiwi.word.api.entity.StarRelHisDO;
  * @author zhanShiFeng
  * @date 2020-09-16 16:56:42
  */
-public interface IStarRelHisService extends IService<StarRelHisDO> {}
+public interface IStarRelHisService extends IService<StarRelHisDO> {
+}

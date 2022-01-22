@@ -26,17 +26,19 @@ import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 
-/** @Author zhanshifeng @Date 2019-09-06 15:49 */
+/**
+ * @Author zhanshifeng @Date 2019-09-06 15:49
+ */
 public class KiwiDecodeUtils {
 
-  public static String decryptAES(String data, String pass) {
-    AES aes =
-        new AES(
-            Mode.CBC,
-            Padding.NoPadding,
-            new SecretKeySpec(pass.getBytes(), SecurityConstants.KEY_ALGORITHM),
-            new IvParameterSpec(pass.getBytes()));
-    byte[] result = aes.decrypt(Base64.decode(data.getBytes(StandardCharsets.UTF_8)));
-    return new String(result, StandardCharsets.UTF_8);
-  }
+    public static String decryptAES(String data, String pass) {
+        AES aes =
+                new AES(
+                        Mode.CBC,
+                        Padding.NoPadding,
+                        new SecretKeySpec(pass.getBytes(), SecurityConstants.KEY_ALGORITHM),
+                        new IvParameterSpec(pass.getBytes()));
+        byte[] result = aes.decrypt(Base64.decode(data.getBytes(StandardCharsets.UTF_8)));
+        return new String(result, StandardCharsets.UTF_8);
+    }
 }

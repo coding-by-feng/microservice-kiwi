@@ -21,14 +21,17 @@ import org.springframework.lang.NonNull;
 
 import java.lang.reflect.Field;
 
-/** @Author zhanshifeng @Date 2020/6/11 11:05 AM */
+/**
+ * @Author zhanshifeng @Date 2020/6/11 11:05 AM
+ */
 public class QueryBuilderUtils {
 
-  public static BoolQueryBuilder build(@NonNull Object bean) {
-    Class<?> clazz = bean.getClass();
-    Field[] declaredFields = clazz.getDeclaredFields();
-    for (Field declaredField : declaredFields) {}
+    public static BoolQueryBuilder build(@NonNull Object bean) {
+        Class<?> clazz = bean.getClass();
+        Field[] declaredFields = clazz.getDeclaredFields();
+        for (Field declaredField : declaredFields) {
+        }
 
-    return null;
-  }
+        return null;
+    }
 }

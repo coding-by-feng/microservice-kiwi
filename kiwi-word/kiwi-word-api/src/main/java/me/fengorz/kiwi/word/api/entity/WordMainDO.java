@@ -37,19 +37,30 @@ import java.time.LocalDateTime;
 @Accessors(chain = true)
 public class WordMainDO extends Model<WordMainDO> {
 
-  private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-  /** 单词ID */
-  @TableId private Integer wordId;
-  /** 单词名称 */
-  @JsonProperty("value")
-  private String wordName;
+    /**
+     * 单词ID
+     */
+    @TableId
+    private Integer wordId;
+    /**
+     * 单词名称
+     */
+    @JsonProperty("value")
+    private String wordName;
 
-  private Integer infoType;
-  /** 入库时间 */
-  private LocalDateTime inTime;
-  /** 更新时间 */
-  private LocalDateTime lastUpdateTime;
-  /** 逻辑删除标记(Y--正常 N--删除) */
-  private Integer isDel;
+    private Integer infoType;
+    /**
+     * 入库时间
+     */
+    private LocalDateTime inTime;
+    /**
+     * 更新时间
+     */
+    private LocalDateTime lastUpdateTime;
+    /**
+     * 逻辑删除标记(Y--正常 N--删除)
+     */
+    private Integer isDel;
 }

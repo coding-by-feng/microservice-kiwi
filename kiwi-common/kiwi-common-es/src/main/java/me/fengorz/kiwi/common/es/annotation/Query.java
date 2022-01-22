@@ -20,20 +20,30 @@ package me.fengorz.kiwi.common.es.annotation;
 
 import java.lang.annotation.*;
 
-/** 用于查询条件的注解 */
+/**
+ * 用于查询条件的注解
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD})
 @Inherited
 public @interface Query {
-  /** 查询类型 */
-  QueryType value() default QueryType.TERM;
+    /**
+     * 查询类型
+     */
+    QueryType value() default QueryType.TERM;
 
-  /** ES字段名， 默认与实体的名字相同 */
-  String name() default "";
+    /**
+     * ES字段名， 默认与实体的名字相同
+     */
+    String name() default "";
 
-  /** 嵌套路径 */
-  String nestedPath() default "";
+    /**
+     * 嵌套路径
+     */
+    String nestedPath() default "";
 
-  /** 用于{@link QueryType.BETWEEN}指定TO字段名 */
-  String toField() default "";
+    /**
+     * 用于{@link QueryType.BETWEEN}指定TO字段名
+     */
+    String toField() default "";
 }

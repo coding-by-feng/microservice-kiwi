@@ -22,12 +22,14 @@ import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 
-/** @Author zhanshifeng @Date 2020/1/6 9:28 AM */
+/**
+ * @Author zhanshifeng @Date 2020/1/6 9:28 AM
+ */
 @Data
 @ToString
 @Accessors(chain = true)
 public class FuzzyQueryResultDTO implements Serializable {
 
-  private static final long serialVersionUID = 5991019125416639971L;
-  private String value;
+    private static final long serialVersionUID = 5991019125416639971L;
+    private String value;
 }

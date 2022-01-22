@@ -34,20 +34,20 @@ import java.util.List;
  */
 public interface IWordMainService extends IService<WordMainDO> {
 
-  WordMainVO getOneAndCatch(String wordName, Integer... infoType);
+    WordMainVO getOneAndCatch(String wordName, Integer... infoType);
 
-  String getWordName(Integer id);
+    String getWordName(Integer id);
 
-  List<FuzzyQueryResultDTO> fuzzyQueryList(Page<WordMainDO> page, String wordName);
+    List<FuzzyQueryResultDTO> fuzzyQueryList(Page<WordMainDO> page, String wordName);
 
-  boolean isExist(String wordName);
+    boolean isExist(String wordName);
 
-  void evictById(Integer id);
+    void evictById(Integer id);
 
-  List<WordMainDO> list(String wordName, Integer infoType);
+    List<WordMainDO> list(String wordName, Integer infoType);
 
-  List<WordMainDO> listDirtyData(Integer wordId);
+    List<WordMainDO> listDirtyData(Integer wordId);
 
-  List<String> listOverlapInUnLock();
+    List<String> listOverlapInUnLock();
 
 }

@@ -23,15 +23,17 @@ import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 
-/** @Author zhanshifeng @Date 2019/10/28 9:28 AM */
+/**
+ * @Author zhanshifeng @Date 2019/10/28 9:28 AM
+ */
 @Data
 @ToString
 @Accessors(chain = true)
 @EqualsAndHashCode(callSuper = true)
 public class RemovePronunciatioinMqDTO extends MqDTO implements Serializable {
 
-  private static final long serialVersionUID = -752676784093492634L;
-  private String groupName;
-  private String voiceFilePath;
-  private Integer queueId;
+    private static final long serialVersionUID = -752676784093492634L;
+    private String groupName;
+    private String voiceFilePath;
+    private Integer queueId;
 }

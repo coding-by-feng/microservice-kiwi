@@ -32,67 +32,69 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-/** 根据checktoken 的结果转化用户信息 */
+/**
+ * 根据checktoken 的结果转化用户信息
+ */
 @RequiredArgsConstructor
 public class KiwiUserAuthenticationConverter implements UserAuthenticationConverter {
-  private static final String N_A = "N/A";
+    private static final String N_A = "N/A";
 
-  private final FilterIgnorePropertiesConfig filterIgnorePropertiesConfig;
+    private final FilterIgnorePropertiesConfig filterIgnorePropertiesConfig;
 
-  /**
-   * Extract information about the user to be used in an access token (i.e. for resource servers).
-   *
-   * @param authentication an authentication representing a user
-   * @return a map of key values representing the unique information about the user
-   */
-  @Override
-  public Map<String, ?> convertUserAuthentication(Authentication authentication) {
-    Map<String, Object> response = new LinkedHashMap<>();
-    response.put(USERNAME, authentication.getName());
-    if (authentication.getAuthorities() != null && !authentication.getAuthorities().isEmpty()) {
-      response.put(AUTHORITIES, AuthorityUtils.authorityListToSet(authentication.getAuthorities()));
+    /**
+     * Extract information about the user to be used in an access token (i.e. for resource servers).
+     *
+     * @param authentication an authentication representing a user
+     * @return a map of key values representing the unique information about the user
+     */
+    @Override
+    public Map<String, ?> convertUserAuthentication(Authentication authentication) {
+        Map<String, Object> response = new LinkedHashMap<>();
+        response.put(USERNAME, authentication.getName());
+        if (authentication.getAuthorities() != null && !authentication.getAuthorities().isEmpty()) {
+            response.put(AUTHORITIES, AuthorityUtils.authorityListToSet(authentication.getAuthorities()));
+        }
+        return response;
     }
-    return response;
-  }
 
-  /**
-   * Inverse of {@link #convertUserAuthentication(Authentication)}. Extracts an Authentication from
-   * a map.
-   *
-   * @param map a map of user information
-   * @return an Authentication representing the user or null if there is none
-   */
-  @Override
-  public Authentication extractAuthentication(Map<String, ?> map) {
-    if (map.containsKey(USERNAME)) {
-      Collection<? extends GrantedAuthority> authorities = getAuthorities(map);
+    /**
+     * Inverse of {@link #convertUserAuthentication(Authentication)}. Extracts an Authentication from
+     * a map.
+     *
+     * @param map a map of user information
+     * @return an Authentication representing the user or null if there is none
+     */
+    @Override
+    public Authentication extractAuthentication(Map<String, ?> map) {
+        if (map.containsKey(USERNAME)) {
+            Collection<? extends GrantedAuthority> authorities = getAuthorities(map);
 
-      String username = (String) map.get(SecurityConstants.DETAILS_USERNAME);
-      Integer id = (Integer) map.get(SecurityConstants.DETAILS_USER_ID);
-      Integer deptId = (Integer) map.get(SecurityConstants.DETAILS_DEPT_ID);
-      EnhancerUser user =
-          new EnhancerUser(id, deptId, username, N_A, true, true, true, true, authorities);
-      return new UsernamePasswordAuthenticationToken(user, N_A, authorities);
+            String username = (String) map.get(SecurityConstants.DETAILS_USERNAME);
+            Integer id = (Integer) map.get(SecurityConstants.DETAILS_USER_ID);
+            Integer deptId = (Integer) map.get(SecurityConstants.DETAILS_DEPT_ID);
+            EnhancerUser user =
+                    new EnhancerUser(id, deptId, username, N_A, true, true, true, true, authorities);
+            return new UsernamePasswordAuthenticationToken(user, N_A, authorities);
+        }
+        return null;
     }
-    return null;
-  }
 
-  private Collection<? extends GrantedAuthority> getAuthorities(Map<String, ?> map) {
-    Object authorities = map.get(AUTHORITIES);
+    private Collection<? extends GrantedAuthority> getAuthorities(Map<String, ?> map) {
+        Object authorities = map.get(AUTHORITIES);
 
-    // List<String> userNames = this.filterIgnorePropertiesConfig.getUserNames();
-    // if (CollUtil.contains(userNames, map.get(SecurityConstants.DETAILS_USERNAME))) {
-    // authorities = GlobalConstants.EMPTY;
-    // }
+        // List<String> userNames = this.filterIgnorePropertiesConfig.getUserNames();
+        // if (CollUtil.contains(userNames, map.get(SecurityConstants.DETAILS_USERNAME))) {
+        // authorities = GlobalConstants.EMPTY;
+        // }
 
-    if (authorities instanceof String) {
-      return AuthorityUtils.commaSeparatedStringToAuthorityList((String) authorities);
+        if (authorities instanceof String) {
+            return AuthorityUtils.commaSeparatedStringToAuthorityList((String) authorities);
+        }
+        if (authorities instanceof Collection) {
+            return AuthorityUtils.commaSeparatedStringToAuthorityList(
+                    StringUtils.collectionToCommaDelimitedString((Collection<?>) authorities));
+        }
+        // throw new IllegalArgumentException("Authorities must be either a String or a Collection");
+        return AuthorityUtils.commaSeparatedStringToAuthorityList(GlobalConstants.EMPTY);
     }
-    if (authorities instanceof Collection) {
-      return AuthorityUtils.commaSeparatedStringToAuthorityList(
-          StringUtils.collectionToCommaDelimitedString((Collection<?>) authorities));
-    }
-    // throw new IllegalArgumentException("Authorities must be either a String or a Collection");
-    return AuthorityUtils.commaSeparatedStringToAuthorityList(GlobalConstants.EMPTY);
-  }
 }

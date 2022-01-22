@@ -28,10 +28,11 @@ import org.springframework.stereotype.Component;
 @Component
 public class WordMainVariantAPIFallback implements IWordMainVariantAPI {
 
-  @Setter private Throwable throwable;
+    @Setter
+    private Throwable throwable;
 
-  @Override
-  public R<Void> insertVariant(String inputWordName, String fetchWordName) {
-    return R.feignCallFailed();
-  }
+    @Override
+    public R<Void> insertVariant(String inputWordName, String fetchWordName) {
+        return R.feignCallFailed();
+    }
 }

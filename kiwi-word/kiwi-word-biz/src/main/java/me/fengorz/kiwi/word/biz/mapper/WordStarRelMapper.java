@@ -24,4 +24,5 @@ import me.fengorz.kiwi.word.api.entity.WordStarRelDO;
  * @author zhanshifeng
  * @date 2020-01-03 14:39:28
  */
-public interface WordStarRelMapper extends BaseMapper<WordStarRelDO> {}
+public interface WordStarRelMapper extends BaseMapper<WordStarRelDO> {
+}

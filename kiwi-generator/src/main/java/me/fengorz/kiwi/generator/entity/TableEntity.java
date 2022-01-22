@@ -21,21 +21,35 @@ import lombok.ToString;
 
 import java.util.List;
 
-/** @Author zhanshifeng @Date 2019-09-10 19:12 */
+/**
+ * @Author zhanshifeng @Date 2019-09-10 19:12
+ */
 @Data
 @ToString
 public class TableEntity {
 
-  /** 名称 */
-  private String tableName;
-  /** 备注 */
-  private String comments;
-  /** 主键 */
-  private ColumnEntity pk;
-  /** 列名 */
-  private List<ColumnEntity> columns;
-  /** 驼峰类型 */
-  private String caseTableName;
-  /** 普通类型 */
-  private String lowerTableName;
+    /**
+     * 名称
+     */
+    private String tableName;
+    /**
+     * 备注
+     */
+    private String comments;
+    /**
+     * 主键
+     */
+    private ColumnEntity pk;
+    /**
+     * 列名
+     */
+    private List<ColumnEntity> columns;
+    /**
+     * 驼峰类型
+     */
+    private String caseTableName;
+    /**
+     * 普通类型
+     */
+    private String lowerTableName;
 }

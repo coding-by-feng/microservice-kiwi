@@ -33,48 +33,50 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
-/** @Author zhanshifeng @Date 2019/10/28 4:25 PM */
+/**
+ * @Author zhanshifeng @Date 2019/10/28 4:25 PM
+ */
 @Slf4j
 @Component
 @RequiredArgsConstructor
 @RabbitListener(
-    bindings =
+        bindings =
         @QueueBinding(
-            value =
+                value =
                 @Queue(value = "${mq.config.phraseFromCambridge.fetchQueue}", autoDelete = "false"),
-            exchange = @Exchange(value = "${mq.config.phraseFromCambridge.exchange}"),
-            key = "${mq.config.phraseFromCambridge.fetchRouting}"))
+                exchange = @Exchange(value = "${mq.config.phraseFromCambridge.exchange}"),
+                key = "${mq.config.phraseFromCambridge.fetchRouting}"))
 public class FetchConsumer extends AbstractConsumer<FetchPhraseMqDTO>
-    implements IConsumer<FetchPhraseMqDTO> {
+        implements IConsumer<FetchPhraseMqDTO> {
 
-  private final IFetchService fetchService;
+    private final IFetchService fetchService;
 
-  @Resource(name = "fetchWordThreadExecutor")
-  private ThreadPoolTaskExecutor fetchWordThreadExecutor;
+    @Resource(name = "fetchWordThreadExecutor")
+    private ThreadPoolTaskExecutor fetchWordThreadExecutor;
 
-  @Value("${crawler.config.max.pool.size}")
-  private int maxPoolSize;
+    @Value("${crawler.config.max.pool.size}")
+    private int maxPoolSize;
 
-  @PostConstruct
-  private void init() {
-    super.taskExecutor = this.fetchWordThreadExecutor;
-    super.maxPoolSize = this.maxPoolSize;
-    super.startWorkLog = "rabbitMQ fetch one phrase is 【{}】";
-  }
+    @PostConstruct
+    private void init() {
+        super.taskExecutor = this.fetchWordThreadExecutor;
+        super.maxPoolSize = this.maxPoolSize;
+        super.startWorkLog = "rabbitMQ fetch one phrase is 【{}】";
+    }
 
-  @Override
-  @RabbitHandler
-  public void consume(FetchPhraseMqDTO dto) {
-    super.work(dto);
-  }
+    @Override
+    @RabbitHandler
+    public void consume(FetchPhraseMqDTO dto) {
+        super.work(dto);
+    }
 
-  @Override
-  protected void execute(FetchPhraseMqDTO dto) {
-    fetchService.handle(dto);
-  }
+    @Override
+    protected void execute(FetchPhraseMqDTO dto) {
+        fetchService.handle(dto);
+    }
 
-  @Override
-  protected void errorCallback(FetchPhraseMqDTO dto, Exception e) {
-    // TODO ZSF 增加一个抓取队列状态恢复到待抓取的接口，防止数据抓取丢失
-  }
+    @Override
+    protected void errorCallback(FetchPhraseMqDTO dto, Exception e) {
+        // TODO ZSF 增加一个抓取队列状态恢复到待抓取的接口，防止数据抓取丢失
+    }
 }

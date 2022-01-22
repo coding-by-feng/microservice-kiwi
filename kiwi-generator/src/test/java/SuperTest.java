@@ -14,10 +14,12 @@
  *
  */
 
-/** @Author zhanshifeng @Date 2019/12/9 3:37 PM */
+/**
+ * @Author zhanshifeng @Date 2019/12/9 3:37 PM
+ */
 public class SuperTest {
 
-  public SuperTest() {
-    System.out.println("super");
-  }
+    public SuperTest() {
+        System.out.println("super");
+    }
 }

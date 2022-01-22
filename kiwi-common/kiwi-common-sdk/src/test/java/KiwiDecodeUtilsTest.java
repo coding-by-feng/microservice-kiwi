@@ -18,14 +18,16 @@ import me.fengorz.kiwi.common.sdk.util.cipher.KiwiDecodeUtils;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-/** @Author zhanshifeng @Date 2020/6/3 12:10 AM */
+/**
+ * @Author zhanshifeng @Date 2020/6/3 12:10 AM
+ */
 public class KiwiDecodeUtilsTest {
 
-  // @Test
-  public void test() {
-    System.out.println(
-        KiwiDecodeUtils.decryptAES("qAOw8ST25fWeUm2yX52OXg==", "MyKiwiVocabulary").trim());
-    PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-    System.out.println(passwordEncoder.encode("123456"));
-  }
+    // @Test
+    public void test() {
+        System.out.println(
+                KiwiDecodeUtils.decryptAES("qAOw8ST25fWeUm2yX52OXg==", "MyKiwiVocabulary").trim());
+        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        System.out.println(passwordEncoder.encode("123456"));
+    }
 }

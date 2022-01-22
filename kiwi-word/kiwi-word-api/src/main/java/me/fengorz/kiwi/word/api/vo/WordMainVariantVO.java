@@ -21,5 +21,5 @@ import me.fengorz.kiwi.word.api.entity.WordMainVariantDO;
  */
 public class WordMainVariantVO extends WordMainVariantDO {
 
-  private static final long serialVersionUID = -7291998403484666777L;
+    private static final long serialVersionUID = -7291998403484666777L;
 }

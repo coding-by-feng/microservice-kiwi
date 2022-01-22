@@ -29,12 +29,12 @@ import java.util.Objects;
  */
 @Configuration
 public class RateLimiterConfiguration {
-  @Bean(value = "remoteAddrKeyResolver")
-  public KeyResolver remoteAddrKeyResolver() {
-    return exchange ->
-        Mono.just(
-            Objects.requireNonNull(exchange.getRequest().getRemoteAddress())
-                .getAddress()
-                .getHostAddress());
-  }
+    @Bean(value = "remoteAddrKeyResolver")
+    public KeyResolver remoteAddrKeyResolver() {
+        return exchange ->
+                Mono.just(
+                        Objects.requireNonNull(exchange.getRequest().getRemoteAddress())
+                                .getAddress()
+                                .getHostAddress());
+    }
 }

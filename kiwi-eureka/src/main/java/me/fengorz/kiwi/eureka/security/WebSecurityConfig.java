@@ -20,12 +20,14 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 
-/** @Author zhanshifeng @Date 2019-09-19 14:35 */
+/**
+ * @Author zhanshifeng @Date 2019-09-19 14:35
+ */
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-  @Override
-  protected void configure(HttpSecurity http) throws Exception {
-    http.csrf().disable();
-  }
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        http.csrf().disable();
+    }
 }

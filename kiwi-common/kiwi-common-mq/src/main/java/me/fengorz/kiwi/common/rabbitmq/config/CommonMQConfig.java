@@ -27,25 +27,27 @@ import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-/** @Author zhanshifeng @Date 2019/10/26 7:56 PM */
+/**
+ * @Author zhanshifeng @Date 2019/10/26 7:56 PM
+ */
 @Configuration
 @RequiredArgsConstructor
 public class CommonMQConfig {
 
-  private final ResourcePropertiesConfig config;
+    private final ResourcePropertiesConfig config;
 
-  @Bean
-  public MessageConverter jsonMessageConverter() {
-    return new Jackson2JsonMessageConverter();
-  }
+    @Bean
+    public MessageConverter jsonMessageConverter() {
+        return new Jackson2JsonMessageConverter();
+    }
 
-  @Bean
-  public ConnectionFactory connectionFactory() {
-    CachingConnectionFactory connectionFactory = new CachingConnectionFactory();
-    connectionFactory.setAddresses(config.getHost());
-    connectionFactory.setPort(config.getPort());
-    connectionFactory.setUsername(config.getUsername());
-    connectionFactory.setPassword(config.getPassword());
-    return connectionFactory;
-  }
+    @Bean
+    public ConnectionFactory connectionFactory() {
+        CachingConnectionFactory connectionFactory = new CachingConnectionFactory();
+        connectionFactory.setAddresses(config.getHost());
+        connectionFactory.setPort(config.getPort());
+        connectionFactory.setUsername(config.getUsername());
+        connectionFactory.setPassword(config.getPassword());
+        return connectionFactory;
+    }
 }

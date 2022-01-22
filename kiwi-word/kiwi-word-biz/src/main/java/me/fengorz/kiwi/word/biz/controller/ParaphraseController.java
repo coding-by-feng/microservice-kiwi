@@ -39,12 +39,12 @@ import javax.validation.Valid;
 @RequestMapping("/word/paraphrase")
 public class ParaphraseController extends BaseController {
 
-  private final IParaphraseService service;
-  private final IOperateService operateService;
+    private final IParaphraseService service;
+    private final IOperateService operateService;
 
-  @SysLog("修改单词释义")
-  @PostMapping("/modifyMeaningChinese")
-  public R<Boolean> modifyMeaningChinese(@Valid ParaphraseRequest request) {
-    return R.success(operateService.modifyMeaningChinese(request));
-  }
+    @SysLog("修改单词释义")
+    @PostMapping("/modifyMeaningChinese")
+    public R<Boolean> modifyMeaningChinese(@Valid ParaphraseRequest request) {
+        return R.success(operateService.modifyMeaningChinese(request));
+    }
 }

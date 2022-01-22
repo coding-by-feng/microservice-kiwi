@@ -27,23 +27,25 @@ import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
 
-/** @Author zhanshifeng */
+/**
+ * @Author zhanshifeng
+ */
 @ComponentScan("me.fengorz.kiwi.bdf.security")
 public class KiwiResourceServerAutoConfiguration {
-  @Bean
-  @Primary
-  @LoadBalanced
-  public RestTemplate lbRestTemplate() {
-    RestTemplate restTemplate = new RestTemplate();
-    restTemplate.setErrorHandler(
-        new DefaultResponseErrorHandler() {
-          @Override
-          public void handleError(ClientHttpResponse response) throws IOException {
-            if (response.getRawStatusCode() != HttpStatus.BAD_REQUEST.value()) {
-              super.handleError(response);
-            }
-          }
-        });
-    return restTemplate;
-  }
+    @Bean
+    @Primary
+    @LoadBalanced
+    public RestTemplate lbRestTemplate() {
+        RestTemplate restTemplate = new RestTemplate();
+        restTemplate.setErrorHandler(
+                new DefaultResponseErrorHandler() {
+                    @Override
+                    public void handleError(ClientHttpResponse response) throws IOException {
+                        if (response.getRawStatusCode() != HttpStatus.BAD_REQUEST.value()) {
+                            super.handleError(response);
+                        }
+                    }
+                });
+        return restTemplate;
+    }
 }

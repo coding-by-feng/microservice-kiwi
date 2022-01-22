@@ -26,20 +26,22 @@ import me.fengorz.kiwi.word.api.entity.WordMainDO;
 
 import java.io.Serializable;
 
-/** @Author zhanshifeng @Date 2019/11/2 4:13 PM */
+/**
+ * @Author zhanshifeng @Date 2019/11/2 4:13 PM
+ */
 @Data
 @ToString
 @NoArgsConstructor
 @Accessors(chain = true)
 public class WordMainPageDTO implements Serializable {
 
-  private static final long serialVersionUID = 482725146179897504L;
-  private Page page;
-  private WordMainDO wordMainDO;
+    private static final long serialVersionUID = 482725146179897504L;
+    private Page page;
+    private WordMainDO wordMainDO;
 
-  public WordMainPageDTO(
-      @JsonProperty("page") Page page, @JsonProperty("wordMainDO") WordMainDO wordMainDO) {
-    this.page = page;
-    this.wordMainDO = wordMainDO;
-  }
+    public WordMainPageDTO(
+            @JsonProperty("page") Page page, @JsonProperty("wordMainDO") WordMainDO wordMainDO) {
+        this.page = page;
+        this.wordMainDO = wordMainDO;
+    }
 }

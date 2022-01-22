@@ -35,13 +35,15 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class ReviewDailyGenerateScheduler {
 
-  private final IBizAPI api;
+    private final IBizAPI api;
 
-  /** Runs every day at 0 o'clock in the morning. */
-  @Scheduled(cron = "0 0 0 */1 * ?")
-  public void generate() {
-    log.info("Daily generation of review count records starting.");
-    api.createTheDays();
-    log.info("Daily generation of review count records end.");
-  }
+    /**
+     * Runs every day at 0 o'clock in the morning.
+     */
+    @Scheduled(cron = "0 0 0 */1 * ?")
+    public void generate() {
+        log.info("Daily generation of review count records starting.");
+        api.createTheDays();
+        log.info("Daily generation of review count records end.");
+    }
 }

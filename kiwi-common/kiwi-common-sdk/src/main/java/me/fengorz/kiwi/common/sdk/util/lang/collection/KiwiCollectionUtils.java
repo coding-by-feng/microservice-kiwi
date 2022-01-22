@@ -20,11 +20,13 @@ import cn.hutool.core.collection.CollectionUtil;
 
 import java.util.Map;
 
-/** @Description 集合工具类 @Author zhanshifeng @Date 2020/5/17 9:31 AM */
+/**
+ * @Description 集合工具类 @Author zhanshifeng @Date 2020/5/17 9:31 AM
+ */
 public class KiwiCollectionUtils extends CollectionUtil {
 
-  public static <K, V> Map<K, V> putAndReturn(Map<K, V> map, K k, V v) {
-    map.put(k, v);
-    return map;
-  }
+    public static <K, V> Map<K, V> putAndReturn(Map<K, V> map, K k, V v) {
+        map.put(k, v);
+        return map;
+    }
 }

@@ -33,39 +33,41 @@ import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
-/** 抓取词组基本信息-消息队列生产者 @Author zhanshifeng @Date 2019/10/30 10:33 AM */
+/**
+ * 抓取词组基本信息-消息队列生产者 @Author zhanshifeng @Date 2019/10/30 10:33 AM
+ */
 @Component
 @Slf4j
 public class FetchProducer extends AbstractProducer implements IProducer {
 
-  public FetchProducer(IBizAPI bizAPI, ISender sender) {
-    super(bizAPI, sender);
-    this.infoType = WordCrawlerConstants.QUEUE_INFO_TYPE_PHRASE;
-  }
-
-  @Override
-  public void produce() {
-    super.produce(WordCrawlerConstants.STATUS_TO_FETCH);
-  }
-
-  @Async
-  @Override
-  protected void execute(FetchQueueDO queue) {
-    queue.setIsLock(GlobalConstants.FLAG_YES);
-    queue.setFetchTime(queue.getFetchTime() + 1);
-    if (null == queue.getWordId() || 0 == queue.getWordId()) {
-      queue.setFetchStatus(WordCrawlerConstants.STATUS_DOING_FETCH);
-      if (Optional.of(bizAPI.updateQueueById(queue)).get().isSuccess()) {
-        sender.fetchPhrase(
-            new FetchPhraseMqDTO()
-                .setQueueId(queue.getQueueId())
-                .setPhrase(queue.getWordName())
-                .setDerivation(queue.getDerivation()));
-      }
-    } else {
-      // 删除老的数据
-      queue.setFetchStatus(WordCrawlerConstants.STATUS_TO_DEL_BASE);
-      bizAPI.updateQueueById(queue);
+    public FetchProducer(IBizAPI bizAPI, ISender sender) {
+        super(bizAPI, sender);
+        this.infoType = WordCrawlerConstants.QUEUE_INFO_TYPE_PHRASE;
     }
-  }
+
+    @Override
+    public void produce() {
+        super.produce(WordCrawlerConstants.STATUS_TO_FETCH);
+    }
+
+    @Async
+    @Override
+    protected void execute(FetchQueueDO queue) {
+        queue.setIsLock(GlobalConstants.FLAG_YES);
+        queue.setFetchTime(queue.getFetchTime() + 1);
+        if (null == queue.getWordId() || 0 == queue.getWordId()) {
+            queue.setFetchStatus(WordCrawlerConstants.STATUS_DOING_FETCH);
+            if (Optional.of(bizAPI.updateQueueById(queue)).get().isSuccess()) {
+                sender.fetchPhrase(
+                        new FetchPhraseMqDTO()
+                                .setQueueId(queue.getQueueId())
+                                .setPhrase(queue.getWordName())
+                                .setDerivation(queue.getDerivation()));
+            }
+        } else {
+            // 删除老的数据
+            queue.setFetchStatus(WordCrawlerConstants.STATUS_TO_DEL_BASE);
+            bizAPI.updateQueueById(queue);
+        }
+    }
 }

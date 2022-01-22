@@ -51,58 +51,58 @@ import java.util.stream.Collectors;
 @Service()
 @RequiredArgsConstructor
 public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser>
-    implements SysUserService {
+        implements SysUserService {
 
-  private final SysRoleService sysRoleService;
-  private final SysUserRoleRelService sysUserRoleRelService;
-  private final SysMenuService sysMenuService;
-  private final ISeqService seqService;
+    private final SysRoleService sysRoleService;
+    private final SysUserRoleRelService sysUserRoleRelService;
+    private final SysMenuService sysMenuService;
+    private final ISeqService seqService;
 
-  @Override
-  public UserFullInfoDTO getUserFullInfo(SysUser sysUser) {
-    UserFullInfoDTO userFullInfoDTO = new UserFullInfoDTO();
-    userFullInfoDTO.setSysUser(sysUser);
+    @Override
+    public UserFullInfoDTO getUserFullInfo(SysUser sysUser) {
+        UserFullInfoDTO userFullInfoDTO = new UserFullInfoDTO();
+        userFullInfoDTO.setSysUser(sysUser);
 
-    List<Integer> roleIdList =
-        sysRoleService.listRolesByUserId(sysUser.getUserId()).stream()
-            .map(SysRole::getRoleId)
-            .collect(Collectors.toList());
-    userFullInfoDTO.setRoles(ArrayUtil.toArray(roleIdList, Integer.class));
+        List<Integer> roleIdList =
+                sysRoleService.listRolesByUserId(sysUser.getUserId()).stream()
+                        .map(SysRole::getRoleId)
+                        .collect(Collectors.toList());
+        userFullInfoDTO.setRoles(ArrayUtil.toArray(roleIdList, Integer.class));
 
-    Set<String> permissionSet = new HashSet<>();
-    roleIdList.forEach(
-        roleId -> {
-          List<String> permissionList =
-              sysMenuService.listMenusByRoleId(roleId).stream()
-                  .filter(sysMenu -> StrUtil.isNotBlank(sysMenu.getPermission()))
-                  .map(SysMenu::getPermission)
-                  .collect(Collectors.toList());
-          permissionSet.addAll(permissionList);
-        });
-    userFullInfoDTO.setPermissions(ArrayUtil.toArray(permissionSet, String.class));
+        Set<String> permissionSet = new HashSet<>();
+        roleIdList.forEach(
+                roleId -> {
+                    List<String> permissionList =
+                            sysMenuService.listMenusByRoleId(roleId).stream()
+                                    .filter(sysMenu -> StrUtil.isNotBlank(sysMenu.getPermission()))
+                                    .map(SysMenu::getPermission)
+                                    .collect(Collectors.toList());
+                    permissionSet.addAll(permissionList);
+                });
+        userFullInfoDTO.setPermissions(ArrayUtil.toArray(permissionSet, String.class));
 
-    return userFullInfoDTO;
-  }
+        return userFullInfoDTO;
+    }
 
-  @Override
-  @Transactional(rollbackFor = Exception.class)
-  public SysUser oneClickRegister() {
-    SysUser sysUser = new SysUser();
-    sysUser.setUserId(seqService.genIntSequence(MapperConstant.T_INS_SEQUENCE));
-    sysUser.setUsername(this.randomUserName());
-    sysUser.setCreateTime(LocalDateTime.now());
-    sysUser.setPassword(new BCryptPasswordEncoder().encode("123456"));
-    this.save(sysUser);
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public SysUser oneClickRegister() {
+        SysUser sysUser = new SysUser();
+        sysUser.setUserId(seqService.genIntSequence(MapperConstant.T_INS_SEQUENCE));
+        sysUser.setUsername(this.randomUserName());
+        sysUser.setCreateTime(LocalDateTime.now());
+        sysUser.setPassword(new BCryptPasswordEncoder().encode("123456"));
+        this.save(sysUser);
 
-    return new SysUser().setUsername(sysUser.getUsername()).setPassword("123456");
-  }
+        return new SysUser().setUsername(sysUser.getUsername()).setPassword("123456");
+    }
 
-  private String randomUserName() {
-    String userName = null;
-    do {
-      userName = RandomUtil.randomString(5);
-    } while (this.getOne(Wrappers.<SysUser>lambdaQuery().eq(SysUser::getUsername, userName))
-        != null);
-    return userName;
-  }
+    private String randomUserName() {
+        String userName = null;
+        do {
+            userName = RandomUtil.randomString(5);
+        } while (this.getOne(Wrappers.<SysUser>lambdaQuery().eq(SysUser::getUsername, userName))
+                != null);
+        return userName;
+    }
 }

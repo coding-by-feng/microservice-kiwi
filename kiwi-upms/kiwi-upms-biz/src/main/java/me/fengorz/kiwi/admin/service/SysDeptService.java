@@ -24,4 +24,5 @@ import me.fengorz.kiwi.admin.api.entity.SysDept;
  * @author zhanshifeng
  * @date 2019-09-18 09:40:25
  */
-public interface SysDeptService extends IService<SysDept> {}
+public interface SysDeptService extends IService<SysDept> {
+}

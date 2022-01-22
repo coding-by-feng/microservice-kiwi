@@ -18,29 +18,49 @@ package me.fengorz.kiwi.generator.entity;
 
 import lombok.Data;
 
-/** @Author zhanshifeng @Date 2019-09-10 19:15 */
+/**
+ * @Author zhanshifeng @Date 2019-09-10 19:15
+ */
 @Data
 public class ColumnEntity {
-  /** 列表 */
-  private String columnName;
-  /** 大写的字段名 */
-  private String columnNameUpper;
-  /** 数据类型 */
-  private String dataType;
-  /** 备注 */
-  private String comments;
+    /**
+     * 列表
+     */
+    private String columnName;
+    /**
+     * 大写的字段名
+     */
+    private String columnNameUpper;
+    /**
+     * 数据类型
+     */
+    private String dataType;
+    /**
+     * 备注
+     */
+    private String comments;
 
-  /** 驼峰属性 */
-  private String caseAttrName;
-  /** 普通属性 */
-  private String lowerAttrName;
-  /** 属性类型 */
-  private String attrType;
-  /** 其他信息。 */
-  private String extra;
+    /**
+     * 驼峰属性
+     */
+    private String caseAttrName;
+    /**
+     * 普通属性
+     */
+    private String lowerAttrName;
+    /**
+     * 属性类型
+     */
+    private String attrType;
+    /**
+     * 其他信息。
+     */
+    private String extra;
 
-  /** 是否能为空 */
-  private String isNullable;
+    /**
+     * 是否能为空
+     */
+    private String isNullable;
 
-  private String columnDefault;
+    private String columnDefault;
 }

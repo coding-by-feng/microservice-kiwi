@@ -19,35 +19,37 @@ package me.fengorz.kiwi.common.sdk.exception.dfs;
 import me.fengorz.kiwi.common.api.ResultCode;
 import me.fengorz.kiwi.common.sdk.exception.BaseException;
 
-/** @Description Dfs文件操作异常 @Author zhanshifeng @Date 2019/11/7 11:38 PM */
+/**
+ * @Description Dfs文件操作异常 @Author zhanshifeng @Date 2019/11/7 11:38 PM
+ */
 public class DfsOperateException extends BaseException {
 
-  public DfsOperateException() {
-    super();
-  }
+    public DfsOperateException() {
+        super();
+    }
 
-  public DfsOperateException(Throwable cause) {
-    super(cause);
-  }
+    public DfsOperateException(Throwable cause) {
+        super(cause);
+    }
 
-  public DfsOperateException(String msg, Object... args) {
-    super(msg, args);
-  }
+    public DfsOperateException(String msg, Object... args) {
+        super(msg, args);
+    }
 
-  public DfsOperateException(String msg, Throwable throwable, Object... args) {
-    super(msg, throwable, args);
-  }
+    public DfsOperateException(String msg, Throwable throwable, Object... args) {
+        super(msg, throwable, args);
+    }
 
-  public DfsOperateException(ResultCode resultCode, Object... args) {
-    super(resultCode, args);
-  }
+    public DfsOperateException(ResultCode resultCode, Object... args) {
+        super(resultCode, args);
+    }
 
-  public DfsOperateException(String msg, ResultCode resultCode, Object... args) {
-    super(msg, resultCode, args);
-  }
+    public DfsOperateException(String msg, ResultCode resultCode, Object... args) {
+        super(msg, resultCode, args);
+    }
 
-  public DfsOperateException(
-      String msg, ResultCode resultCode, Throwable throwable, Object... args) {
-    super(msg, resultCode, throwable, args);
-  }
+    public DfsOperateException(
+            String msg, ResultCode resultCode, Throwable throwable, Object... args) {
+        super(msg, resultCode, throwable, args);
+    }
 }

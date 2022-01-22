@@ -26,20 +26,22 @@ import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.List;
 
-/** @Author zhanshifeng @Date 2019/10/24 10:26 PM */
+/**
+ * @Author zhanshifeng @Date 2019/10/24 10:26 PM
+ */
 @Data
 @ToString
 @Accessors(chain = true)
 public class FetchWordResultDTO implements Serializable {
 
-  private static final long serialVersionUID = 6742160564554865466L;
+    private static final long serialVersionUID = 6742160564554865466L;
 
-  @NotBlank(message = "抓取不到剑桥词典对应的单词数据")
-  private String wordName;
+    @NotBlank(message = "抓取不到剑桥词典对应的单词数据")
+    private String wordName;
 
-  @NotNull(message = "队列id不能为空")
-  private Integer queueId;
+    @NotNull(message = "队列id不能为空")
+    private Integer queueId;
 
-  @NotEmpty(message = "抓取不到单词对应的词性数据")
-  private List<FetchWordCodeDTO> fetchWordCodeDTOList;
+    @NotEmpty(message = "抓取不到单词对应的词性数据")
+    private List<FetchWordCodeDTO> fetchWordCodeDTOList;
 }

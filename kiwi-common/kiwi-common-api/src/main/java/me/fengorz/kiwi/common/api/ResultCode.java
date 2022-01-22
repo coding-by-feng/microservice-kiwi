@@ -22,52 +22,58 @@ import java.util.function.Supplier;
 
 import static me.fengorz.kiwi.common.api.ApiContants.*;
 
-/** @Author zhanshifeng @Date 2020/5/23 1:28 PM */
+/**
+ * @Author zhanshifeng @Date 2020/5/23 1:28 PM
+ */
 public interface ResultCode {
 
-  String I18N_CODE_SUCCESS = "common.operate.success";
-  String I18N_CODE_FAIL = "common.operate.fail";
-  String I18N_CODE_ERROR = "common.operate.error";
+    String I18N_CODE_SUCCESS = "common.operate.success";
+    String I18N_CODE_FAIL = "common.operate.fail";
+    String I18N_CODE_ERROR = "common.operate.error";
 
-  /** 成功 */
-  ResultCode SUCCESS = build(() -> RESULT_CODE_SUCCESS, () -> I18N_CODE_SUCCESS);
+    /**
+     * 成功
+     */
+    ResultCode SUCCESS = build(() -> RESULT_CODE_SUCCESS, () -> I18N_CODE_SUCCESS);
 
-  /** 失败 */
-  ResultCode FAIL = build(() -> RESULT_CODE_FAIL, () -> I18N_CODE_FAIL);
+    /**
+     * 失败
+     */
+    ResultCode FAIL = build(() -> RESULT_CODE_FAIL, () -> I18N_CODE_FAIL);
 
-  ResultCode ERROR = () -> I18N_CODE_ERROR;
+    ResultCode ERROR = () -> I18N_CODE_ERROR;
 
-  ResultCode MICROSERVICE_INVOCATION_ERROR =
-      build(() -> RESULT_CODE_INVOCATION_ERROR, () -> "common.operate.microservice.error");
+    ResultCode MICROSERVICE_INVOCATION_ERROR =
+            build(() -> RESULT_CODE_INVOCATION_ERROR, () -> "common.operate.microservice.error");
 
-  static ResultCode build(Supplier<Integer> code, Supplier<String> i18nCode) {
-    return new ResultCode() {
-      @Override
-      public String getI18nCode() {
-        return i18nCode.get();
-      }
+    static ResultCode build(Supplier<Integer> code, Supplier<String> i18nCode) {
+        return new ResultCode() {
+            @Override
+            public String getI18nCode() {
+                return i18nCode.get();
+            }
 
-      @Override
-      public Integer getCode() {
-        return code.get();
-      }
-    };
-  }
+            @Override
+            public Integer getCode() {
+                return code.get();
+            }
+        };
+    }
 
-  /**
-   * 响应码
-   *
-   * @return
-   */
-  default Integer getCode() {
-    return RESULT_CODE_SERVICE_ERROR;
-  }
+    /**
+     * 响应码
+     *
+     * @return
+     */
+    default Integer getCode() {
+        return RESULT_CODE_SERVICE_ERROR;
+    }
 
-  /**
-   * message国际化词条
-   *
-   * @return
-   */
-  @JsonIgnore
-  String getI18nCode();
+    /**
+     * message国际化词条
+     *
+     * @return
+     */
+    @JsonIgnore
+    String getI18nCode();
 }

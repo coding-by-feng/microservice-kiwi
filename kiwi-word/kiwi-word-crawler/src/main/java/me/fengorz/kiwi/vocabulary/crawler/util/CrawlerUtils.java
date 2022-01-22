@@ -22,11 +22,13 @@ package me.fengorz.kiwi.vocabulary.crawler.util;
 import me.fengorz.kiwi.common.sdk.util.lang.collection.KiwiCollectionUtils;
 import me.fengorz.kiwi.word.api.dto.queue.result.FetchPhraseResultDTO;
 
-/** @Author zhanshifeng @Date 2020/11/9 4:27 PM */
+/**
+ * @Author zhanshifeng @Date 2020/11/9 4:27 PM
+ */
 public class CrawlerUtils {
 
-  public static boolean is2word(FetchPhraseResultDTO resultDTO) {
-    return KiwiCollectionUtils.isEmpty(resultDTO.getRelatedWords())
-        && KiwiCollectionUtils.isEmpty(resultDTO.getFetchParaphraseDTOList());
-  }
+    public static boolean is2word(FetchPhraseResultDTO resultDTO) {
+        return KiwiCollectionUtils.isEmpty(resultDTO.getRelatedWords())
+                && KiwiCollectionUtils.isEmpty(resultDTO.getFetchParaphraseDTOList());
+    }
 }

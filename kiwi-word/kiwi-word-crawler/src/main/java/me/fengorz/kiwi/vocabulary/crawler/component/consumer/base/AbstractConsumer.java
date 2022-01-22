@@ -28,56 +28,58 @@ import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
-/** @Author zhanshifeng @Date 2020/7/29 4:34 PM */
+/**
+ * @Author zhanshifeng @Date 2020/7/29 4:34 PM
+ */
 @Slf4j
 public abstract class AbstractConsumer<T extends MqDTO> {
 
-  protected ReentrantLock lock = new ReentrantLock();
-  protected ThreadPoolTaskExecutor taskExecutor;
-  protected Integer maxPoolSize;
-  protected String startWorkLog;
+    protected ReentrantLock lock = new ReentrantLock();
+    protected ThreadPoolTaskExecutor taskExecutor;
+    protected Integer maxPoolSize;
+    protected String startWorkLog;
 
-  protected void work(T dto) {
+    protected void work(T dto) {
 
-    Objects.requireNonNull(taskExecutor);
-    Objects.requireNonNull(maxPoolSize);
-    Objects.requireNonNull(startWorkLog);
+        Objects.requireNonNull(taskExecutor);
+        Objects.requireNonNull(maxPoolSize);
+        Objects.requireNonNull(startWorkLog);
 
-    this.lock.lock();
-    try {
-      log.info(startWorkLog, dto);
-      // 线程池如果满了的话，先睡眠一段时间，等待有空闲的现场出来
-      while (taskExecutor.getActiveCount() == maxPoolSize) {
+        this.lock.lock();
         try {
-          TimeUnit.SECONDS.sleep(1);
-        } catch (InterruptedException e) {
-          log.error("threadPoolTaskExecutor sleep error!", e);
-          this.errorCallback(dto, e);
-          return;
-        }
-      }
+            log.info(startWorkLog, dto);
+            // 线程池如果满了的话，先睡眠一段时间，等待有空闲的现场出来
+            while (taskExecutor.getActiveCount() == maxPoolSize) {
+                try {
+                    TimeUnit.SECONDS.sleep(1);
+                } catch (InterruptedException e) {
+                    log.error("threadPoolTaskExecutor sleep error!", e);
+                    this.errorCallback(dto, e);
+                    return;
+                }
+            }
 
-      while (true) {
-        try {
-          taskExecutor.execute(
-              () -> this.execute(dto));
-          break;
-        } catch (RejectedExecutionException e) {
-          try {
-            TimeUnit.SECONDS.sleep(1);
-          } catch (InterruptedException ie) {
-            log.error("threadPoolTaskExecutor sleep error!", ie);
-            this.errorCallback(dto, e);
-            return;
-          }
+            while (true) {
+                try {
+                    taskExecutor.execute(
+                            () -> this.execute(dto));
+                    break;
+                } catch (RejectedExecutionException e) {
+                    try {
+                        TimeUnit.SECONDS.sleep(1);
+                    } catch (InterruptedException ie) {
+                        log.error("threadPoolTaskExecutor sleep error!", ie);
+                        this.errorCallback(dto, e);
+                        return;
+                    }
+                }
+            }
+        } finally {
+            this.lock.unlock();
         }
-      }
-    } finally {
-      this.lock.unlock();
     }
-  }
 
-  protected abstract void execute(T dto);
+    protected abstract void execute(T dto);
 
-  protected abstract void errorCallback(T dto, Exception e);
+    protected abstract void errorCallback(T dto, Exception e);
 }

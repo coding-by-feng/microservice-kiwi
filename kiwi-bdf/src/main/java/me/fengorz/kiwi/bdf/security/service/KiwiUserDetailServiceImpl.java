@@ -40,57 +40,59 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-/** @Author zhanshifeng */
+/**
+ * @Author zhanshifeng
+ */
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class KiwiUserDetailServiceImpl implements UserDetailsService {
-  private final CacheManager cacheManager;
-  private final IUserAPI iUserAPI;
+    private final CacheManager cacheManager;
+    private final IUserAPI iUserAPI;
 
-  @Override
-  public UserDetails loadUserByUsername(String username) {
-    Cache cache = cacheManager.getCache("user_details");
-    if (cache != null && cache.get(username) != null) {
-      return (EnhancerUser) cache.get(username).get();
-    }
-    R<UserFullInfoDTO> info = iUserAPI.info(username, SecurityConstants.FROM_IN);
-    UserDetails userDetails = getUserDetails(info);
-    cache.put(username, userDetails);
-    return userDetails;
-  }
-
-  private UserDetails getUserDetails(R<UserFullInfoDTO> userFullInfoDTO) {
-    if (userFullInfoDTO == null || userFullInfoDTO.getData() == null) {
-      throw new UsernameNotFoundException("用户不存在");
+    @Override
+    public UserDetails loadUserByUsername(String username) {
+        Cache cache = cacheManager.getCache("user_details");
+        if (cache != null && cache.get(username) != null) {
+            return (EnhancerUser) cache.get(username).get();
+        }
+        R<UserFullInfoDTO> info = iUserAPI.info(username, SecurityConstants.FROM_IN);
+        UserDetails userDetails = getUserDetails(info);
+        cache.put(username, userDetails);
+        return userDetails;
     }
 
-    UserFullInfoDTO info = userFullInfoDTO.getData();
+    private UserDetails getUserDetails(R<UserFullInfoDTO> userFullInfoDTO) {
+        if (userFullInfoDTO == null || userFullInfoDTO.getData() == null) {
+            throw new UsernameNotFoundException("用户不存在");
+        }
 
-    Set<String> dbAuthsSet = new HashSet<>();
-    if (ArrayUtil.isNotEmpty(info.getRoles())) {
-      Arrays.stream(info.getRoles())
-          .forEach(
-              role -> {
-                dbAuthsSet.add(SecurityConstants.ROLE + role);
-              });
+        UserFullInfoDTO info = userFullInfoDTO.getData();
 
-      dbAuthsSet.addAll(Arrays.asList(info.getPermissions()));
+        Set<String> dbAuthsSet = new HashSet<>();
+        if (ArrayUtil.isNotEmpty(info.getRoles())) {
+            Arrays.stream(info.getRoles())
+                    .forEach(
+                            role -> {
+                                dbAuthsSet.add(SecurityConstants.ROLE + role);
+                            });
+
+            dbAuthsSet.addAll(Arrays.asList(info.getPermissions()));
+        }
+
+        Collection<? extends GrantedAuthority> authorities =
+                AuthorityUtils.createAuthorityList(dbAuthsSet.toArray(new String[0]));
+        SysUser user = info.getSysUser();
+
+        return new EnhancerUser(
+                user.getUserId(),
+                user.getDeptId(),
+                user.getUsername(),
+                SecurityConstants.BCRYPT + user.getPassword(),
+                GlobalConstants.FLAG_DEL_NO == user.getDelFlag(),
+                true,
+                true,
+                true,
+                authorities);
     }
-
-    Collection<? extends GrantedAuthority> authorities =
-        AuthorityUtils.createAuthorityList(dbAuthsSet.toArray(new String[0]));
-    SysUser user = info.getSysUser();
-
-    return new EnhancerUser(
-        user.getUserId(),
-        user.getDeptId(),
-        user.getUsername(),
-        SecurityConstants.BCRYPT + user.getPassword(),
-        GlobalConstants.FLAG_DEL_NO == user.getDelFlag(),
-        true,
-        true,
-        true,
-        authorities);
-  }
 }

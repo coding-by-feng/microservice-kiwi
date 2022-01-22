@@ -31,7 +31,7 @@ import java.util.List;
  */
 public interface WordMainMapper extends BaseMapper<WordMainDO> {
 
-  List<String> selectOverlapInUnLock();
+    List<String> selectOverlapInUnLock();
 
-  IPage<FuzzyQueryResultDTO> fuzzyQuery(Page<?> page, String query);
+    IPage<FuzzyQueryResultDTO> fuzzyQuery(Page<?> page, String query);
 }

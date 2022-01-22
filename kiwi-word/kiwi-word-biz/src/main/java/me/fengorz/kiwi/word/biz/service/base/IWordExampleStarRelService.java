@@ -29,5 +29,5 @@ import me.fengorz.kiwi.word.api.entity.ExampleStarRelDO;
  */
 public interface IWordExampleStarRelService extends IService<ExampleStarRelDO> {
 
-  void replaceFetchResult(Integer oldRelId, Integer newRelId);
+    void replaceFetchResult(Integer oldRelId, Integer newRelId);
 }

@@ -25,7 +25,9 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Configuration;
 
-/** @Author zhanshifeng @Date 2020/10/15 8:37 PM */
+/**
+ * @Author zhanshifeng @Date 2020/10/15 8:37 PM
+ */
 @Data
 @Configuration
 @RefreshScope
@@ -33,8 +35,8 @@ import org.springframework.context.annotation.Configuration;
 @ConfigurationProperties(prefix = "mq.config")
 public class MqProperties {
 
-  private MqExchange wordFromCambridge;
-  private MqExchange phraseRunUpFromCambridge;
-  private MqExchange phraseFromCambridge;
-  private MqExchange pronunciationFromCambridge;
+    private MqExchange wordFromCambridge;
+    private MqExchange phraseRunUpFromCambridge;
+    private MqExchange phraseFromCambridge;
+    private MqExchange pronunciationFromCambridge;
 }

@@ -53,158 +53,158 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class ParaphraseStarListServiceImpl
-    extends ServiceImpl<ParaphraseStarListMapper, ParaphraseStarListDO>
-    implements IParaphraseStarListService {
+        extends ServiceImpl<ParaphraseStarListMapper, ParaphraseStarListDO>
+        implements IParaphraseStarListService {
 
-  private final ParaphraseStarListMapper mapper;
-  private final IParaphraseStarRelService relService;
-  private final IAsyncArchiveService archiveService;
-  private final IWordReviewService reviewService;
+    private final ParaphraseStarListMapper mapper;
+    private final IParaphraseStarRelService relService;
+    private final IAsyncArchiveService archiveService;
+    private final IWordReviewService reviewService;
 
-  @Override
-  public Integer countById(Integer id) {
-    return this.count(new QueryWrapper<>(new ParaphraseStarListDO().setId(id)));
-  }
-
-  @Override
-  public List<ParaphraseStarListVO> getCurrentUserList(Integer userId) {
-    QueryWrapper<ParaphraseStarListDO> queryWrapper =
-        new QueryWrapper<>(
-                new ParaphraseStarListDO().setOwner(userId).setIsDel(GlobalConstants.FLAG_N))
-            .select(
-                ParaphraseStarListDO.class,
-                tableFieldInfo ->
-                    WordParaphraseStarListColumn.ID.equals(tableFieldInfo.getColumn())
-                        || WordParaphraseStarListColumn.LIST_NAME.equals(tableFieldInfo.getColumn())
-                        || WordParaphraseStarListColumn.REMARK.equals(tableFieldInfo.getColumn()));
-
-    return KiwiBeanUtils.convertFrom(mapper.selectList(queryWrapper), ParaphraseStarListVO.class);
-  }
-
-  @Override
-  @Transactional(rollbackFor = Exception.class)
-  public boolean updateListByUser(ParaphraseStarListDO entity, Integer id, Integer userId) {
-    UpdateWrapper<ParaphraseStarListDO> updateWrapper =
-        new UpdateWrapper<>(new ParaphraseStarListDO().setOwner(userId).setId(id));
-    return this.update(entity, updateWrapper);
-  }
-
-  @Override
-  public IPage<ParaphraseStarItemVO> selectListItems(Page<ParaphraseStarListDO> page, Integer listId) {
-    if (listId == 0) {
-      return mapper.selectRecentItems(page, SecurityUtils.getCurrentUserId());
+    @Override
+    public Integer countById(Integer id) {
+        return this.count(new QueryWrapper<>(new ParaphraseStarListDO().setId(id)));
     }
-    return mapper.selectItems(page, listId);
-  }
 
-  /**
-   * In review mode, It needs to save the page number, and it can choose to review again at the
-   * breakpoint next time.
-   *
-   * @param page
-   * @param listId
-   * @return
-   */
-  @Override
-  public IPage<ParaphraseStarItemVO> selectReviewListItems(Page<ParaphraseStarListDO> page, Integer listId) {
-    // When querying the list to be remembered, record the current query page number.
-    reviewService.recordReviewPageNumber(
-        listId,
-        page.getCurrent(),
-        ReviewBreakpointTypeEnum.REMEMBER.getType(),
-        SecurityUtils.getCurrentUserId());
-    if (listId == 0) {
-      return mapper.selectRecentReviewItems(page, SecurityUtils.getCurrentUserId());
+    @Override
+    public List<ParaphraseStarListVO> getCurrentUserList(Integer userId) {
+        QueryWrapper<ParaphraseStarListDO> queryWrapper =
+                new QueryWrapper<>(
+                        new ParaphraseStarListDO().setOwner(userId).setIsDel(GlobalConstants.FLAG_N))
+                        .select(
+                                ParaphraseStarListDO.class,
+                                tableFieldInfo ->
+                                        WordParaphraseStarListColumn.ID.equals(tableFieldInfo.getColumn())
+                                                || WordParaphraseStarListColumn.LIST_NAME.equals(tableFieldInfo.getColumn())
+                                                || WordParaphraseStarListColumn.REMARK.equals(tableFieldInfo.getColumn()));
+
+        return KiwiBeanUtils.convertFrom(mapper.selectList(queryWrapper), ParaphraseStarListVO.class);
     }
-    return mapper.selectReviewItems(page, listId);
-  }
 
-  @Override
-  public IPage<ParaphraseStarItemVO> selectRememberListItems(Page<ParaphraseStarListDO> page, Integer listId) {
-    // When querying the list to be kept in mind, record the current query page number.
-    reviewService.recordReviewPageNumber(
-        listId,
-        page.getCurrent(),
-        ReviewBreakpointTypeEnum.KEEP_IN_MIND.getType(),
-        SecurityUtils.getCurrentUserId());
-    if (listId == 0) {
-      return mapper.selectRecentRememberItems(page, SecurityUtils.getCurrentUserId());
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public boolean updateListByUser(ParaphraseStarListDO entity, Integer id, Integer userId) {
+        UpdateWrapper<ParaphraseStarListDO> updateWrapper =
+                new UpdateWrapper<>(new ParaphraseStarListDO().setOwner(userId).setId(id));
+        return this.update(entity, updateWrapper);
     }
-    return mapper.selectRememberItems(page, listId);
-  }
 
-  @Override
-  @Transactional(rollbackFor = Exception.class)
-  public void removeParaphraseStar(Integer paraphraseId, Integer listId) {
-    LambdaQueryWrapper<ParaphraseStarRelDO> wrapper =
-        new LambdaQueryWrapper<ParaphraseStarRelDO>()
-            .eq(ParaphraseStarRelDO::getListId, listId)
-            .eq(ParaphraseStarRelDO::getParaphraseId, paraphraseId);
-    int count = relService.count(wrapper);
-    if (count < 0) {
-      return;
+    @Override
+    public IPage<ParaphraseStarItemVO> selectListItems(Page<ParaphraseStarListDO> page, Integer listId) {
+        if (listId == 0) {
+            return mapper.selectRecentItems(page, SecurityUtils.getCurrentUserId());
+        }
+        return mapper.selectItems(page, listId);
     }
-    relService.remove(wrapper);
-    archiveService.invalidArchiveParaphraseRel(
-        paraphraseId, listId, SecurityUtils.getCurrentUserId());
-  }
 
-  @Override
-  @Transactional(rollbackFor = Exception.class)
-  public void rememberOne(Integer paraphraseId, Integer listId) {
-    reviewService.increase(
-        ReviewDailyCounterTypeEnum.REMEMBER.getType(), SecurityUtils.getCurrentUserId());
-    relService.update(
-        new ParaphraseStarRelDO()
-            .setIsRemember(GlobalConstants.FLAG_DEL_YES)
-            .setRememberTime(LocalDateTime.now()),
-        Wrappers.<ParaphraseStarRelDO>lambdaQuery()
-            .eq(ParaphraseStarRelDO::getListId, listId)
-            .eq(ParaphraseStarRelDO::getParaphraseId, paraphraseId));
-  }
-
-  @Override
-  @Transactional(rollbackFor = Exception.class)
-  public void keepInMind(Integer paraphraseId, Integer listId) {
-    reviewService.increase(
-        ReviewDailyCounterTypeEnum.KEEP_IN_MIND.getType(), SecurityUtils.getCurrentUserId());
-    relService.update(
-        new ParaphraseStarRelDO()
-            .setIsKeepInMind(GlobalConstants.FLAG_DEL_YES)
-            .setKeepInMindTime(LocalDateTime.now()),
-        Wrappers.<ParaphraseStarRelDO>lambdaQuery()
-            .eq(ParaphraseStarRelDO::getListId, listId)
-            .eq(ParaphraseStarRelDO::getParaphraseId, paraphraseId));
-  }
-
-  @Override
-  @Transactional(rollbackFor = Exception.class)
-  public void forgetOne(Integer paraphraseId, Integer listId) {
-    relService.update(
-        new ParaphraseStarRelDO()
-            .setIsRemember(GlobalConstants.FLAG_DEL_NO)
-            .setIsKeepInMind(GlobalConstants.FLAG_DEL_NO),
-        Wrappers.<ParaphraseStarRelDO>lambdaQuery()
-            .eq(ParaphraseStarRelDO::getListId, listId)
-            .eq(ParaphraseStarRelDO::getParaphraseId, paraphraseId));
-  }
-
-  @Override
-  public List<Integer> findAllUserId() {
-    return null;
-  }
-
-  @Override
-  @Transactional(rollbackFor = Exception.class)
-  public void putIntoStarList(Integer paraphraseId, Integer listId) {
-    LambdaQueryWrapper<ParaphraseStarRelDO> wrapper =
-        Wrappers.<ParaphraseStarRelDO>lambdaQuery()
-            .eq(ParaphraseStarRelDO::getListId, listId)
-            .eq(ParaphraseStarRelDO::getParaphraseId, paraphraseId);
-    if (relService.count(wrapper) > 0) {
-      return;
+    /**
+     * In review mode, It needs to save the page number, and it can choose to review again at the
+     * breakpoint next time.
+     *
+     * @param page
+     * @param listId
+     * @return
+     */
+    @Override
+    public IPage<ParaphraseStarItemVO> selectReviewListItems(Page<ParaphraseStarListDO> page, Integer listId) {
+        // When querying the list to be remembered, record the current query page number.
+        reviewService.recordReviewPageNumber(
+                listId,
+                page.getCurrent(),
+                ReviewBreakpointTypeEnum.REMEMBER.getType(),
+                SecurityUtils.getCurrentUserId());
+        if (listId == 0) {
+            return mapper.selectRecentReviewItems(page, SecurityUtils.getCurrentUserId());
+        }
+        return mapper.selectReviewItems(page, listId);
     }
-    relService.save(new ParaphraseStarRelDO().setListId(listId).setParaphraseId(paraphraseId));
-    archiveService.archiveParaphraseRel(paraphraseId, listId, SecurityUtils.getCurrentUserId());
-  }
+
+    @Override
+    public IPage<ParaphraseStarItemVO> selectRememberListItems(Page<ParaphraseStarListDO> page, Integer listId) {
+        // When querying the list to be kept in mind, record the current query page number.
+        reviewService.recordReviewPageNumber(
+                listId,
+                page.getCurrent(),
+                ReviewBreakpointTypeEnum.KEEP_IN_MIND.getType(),
+                SecurityUtils.getCurrentUserId());
+        if (listId == 0) {
+            return mapper.selectRecentRememberItems(page, SecurityUtils.getCurrentUserId());
+        }
+        return mapper.selectRememberItems(page, listId);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void removeParaphraseStar(Integer paraphraseId, Integer listId) {
+        LambdaQueryWrapper<ParaphraseStarRelDO> wrapper =
+                new LambdaQueryWrapper<ParaphraseStarRelDO>()
+                        .eq(ParaphraseStarRelDO::getListId, listId)
+                        .eq(ParaphraseStarRelDO::getParaphraseId, paraphraseId);
+        int count = relService.count(wrapper);
+        if (count < 0) {
+            return;
+        }
+        relService.remove(wrapper);
+        archiveService.invalidArchiveParaphraseRel(
+                paraphraseId, listId, SecurityUtils.getCurrentUserId());
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void rememberOne(Integer paraphraseId, Integer listId) {
+        reviewService.increase(
+                ReviewDailyCounterTypeEnum.REMEMBER.getType(), SecurityUtils.getCurrentUserId());
+        relService.update(
+                new ParaphraseStarRelDO()
+                        .setIsRemember(GlobalConstants.FLAG_DEL_YES)
+                        .setRememberTime(LocalDateTime.now()),
+                Wrappers.<ParaphraseStarRelDO>lambdaQuery()
+                        .eq(ParaphraseStarRelDO::getListId, listId)
+                        .eq(ParaphraseStarRelDO::getParaphraseId, paraphraseId));
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void keepInMind(Integer paraphraseId, Integer listId) {
+        reviewService.increase(
+                ReviewDailyCounterTypeEnum.KEEP_IN_MIND.getType(), SecurityUtils.getCurrentUserId());
+        relService.update(
+                new ParaphraseStarRelDO()
+                        .setIsKeepInMind(GlobalConstants.FLAG_DEL_YES)
+                        .setKeepInMindTime(LocalDateTime.now()),
+                Wrappers.<ParaphraseStarRelDO>lambdaQuery()
+                        .eq(ParaphraseStarRelDO::getListId, listId)
+                        .eq(ParaphraseStarRelDO::getParaphraseId, paraphraseId));
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void forgetOne(Integer paraphraseId, Integer listId) {
+        relService.update(
+                new ParaphraseStarRelDO()
+                        .setIsRemember(GlobalConstants.FLAG_DEL_NO)
+                        .setIsKeepInMind(GlobalConstants.FLAG_DEL_NO),
+                Wrappers.<ParaphraseStarRelDO>lambdaQuery()
+                        .eq(ParaphraseStarRelDO::getListId, listId)
+                        .eq(ParaphraseStarRelDO::getParaphraseId, paraphraseId));
+    }
+
+    @Override
+    public List<Integer> findAllUserId() {
+        return null;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void putIntoStarList(Integer paraphraseId, Integer listId) {
+        LambdaQueryWrapper<ParaphraseStarRelDO> wrapper =
+                Wrappers.<ParaphraseStarRelDO>lambdaQuery()
+                        .eq(ParaphraseStarRelDO::getListId, listId)
+                        .eq(ParaphraseStarRelDO::getParaphraseId, paraphraseId);
+        if (relService.count(wrapper) > 0) {
+            return;
+        }
+        relService.save(new ParaphraseStarRelDO().setListId(listId).setParaphraseId(paraphraseId));
+        archiveService.archiveParaphraseRel(paraphraseId, listId, SecurityUtils.getCurrentUserId());
+    }
 }

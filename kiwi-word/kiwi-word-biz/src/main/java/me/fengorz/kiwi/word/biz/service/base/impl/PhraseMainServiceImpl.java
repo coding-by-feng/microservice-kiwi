@@ -27,4 +27,5 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class PhraseMainServiceImpl extends ServiceImpl<PhraseMainMapper, PhraseMainDO>
-    implements IPhraseMainService {}
+        implements IPhraseMainService {
+}

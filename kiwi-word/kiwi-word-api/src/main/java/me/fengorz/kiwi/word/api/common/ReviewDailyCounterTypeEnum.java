@@ -19,21 +19,25 @@
 
 package me.fengorz.kiwi.word.api.common;
 
-/** @Author zhanshifeng @Date 2021/8/21 8:11 PM */
+/**
+ * @Author zhanshifeng @Date 2021/8/21 8:11 PM
+ */
 public enum ReviewDailyCounterTypeEnum {
 
-  /** 1：remember 2：keep in mind 3：review */
-  REMEMBER(1),
-  KEEP_IN_MIND(2),
-  REVIEW(3);
+    /**
+     * 1：remember 2：keep in mind 3：review
+     */
+    REMEMBER(1),
+    KEEP_IN_MIND(2),
+    REVIEW(3);
 
-  private final int type;
+    private final int type;
 
-  ReviewDailyCounterTypeEnum(int type) {
-    this.type = type;
-  }
+    ReviewDailyCounterTypeEnum(int type) {
+        this.type = type;
+    }
 
-  public int getType() {
-    return type;
-  }
+    public int getType() {
+        return type;
+    }
 }

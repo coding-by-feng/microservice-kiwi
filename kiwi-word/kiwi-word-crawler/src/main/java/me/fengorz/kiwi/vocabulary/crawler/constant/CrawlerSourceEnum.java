@@ -21,22 +21,24 @@ package me.fengorz.kiwi.vocabulary.crawler.constant;
 
 import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
 
-/** @author zhanshifeng */
+/**
+ * @author zhanshifeng
+ */
 public enum CrawlerSourceEnum implements CrawlerSource {
-  CAMBRIDGE_CHINESE("Cambridge", "Chinese"),
-  CAMBRIDGE_ENGLISH("Cambridge", "English"),
-  COLLINS_CHINESE("Collins", "Chinese");
+    CAMBRIDGE_CHINESE("Cambridge", "Chinese"),
+    CAMBRIDGE_ENGLISH("Cambridge", "English"),
+    COLLINS_CHINESE("Collins", "Chinese");
 
-  private final String source;
-  private final String language;
+    private final String source;
+    private final String language;
 
-  CrawlerSourceEnum(String source, String language) {
-    this.source = source;
-    this.language = language;
-  }
+    CrawlerSourceEnum(String source, String language) {
+        this.source = source;
+        this.language = language;
+    }
 
-  @Override
-  public String get() {
-    return this.language + GlobalConstants.SYMBOL_DELIMITER_STR + this.source;
-  }
+    @Override
+    public String get() {
+        return this.language + GlobalConstants.SYMBOL_DELIMITER_STR + this.source;
+    }
 }

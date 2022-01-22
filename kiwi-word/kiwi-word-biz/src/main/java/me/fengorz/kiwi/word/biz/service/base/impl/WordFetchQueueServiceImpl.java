@@ -48,254 +48,254 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class WordFetchQueueServiceImpl extends ServiceImpl<FetchQueueMapper, FetchQueueDO>
-    implements IWordFetchQueueService {
+        implements IWordFetchQueueService {
 
-  private final ISeqService seqService;
-  private final WordMainMapper mainMapper;
+    private final ISeqService seqService;
+    private final WordMainMapper mainMapper;
 
-  @Transactional(rollbackFor = Exception.class, noRollbackFor = ServiceException.class)
-  private void fetch(String wordName, String derivation, Integer wordId, Integer... infoType) {
-    // 如果没传infoType要判断是否包含空格
-    int thisInfoType;
-    if (infoType == null || infoType.length == 0) {
-      boolean isPhrase = wordName.contains(GlobalConstants.SPACING);
-      thisInfoType =
-          isPhrase
-              ? WordCrawlerConstants.QUEUE_INFO_TYPE_PHRASE
-              : WordCrawlerConstants.QUEUE_INFO_TYPE_WORD;
-    } else {
-      thisInfoType = infoType[0];
-    }
-
-    FetchQueueDO one = this.getOneAnyhow(wordName, thisInfoType);
-
-    // 取反类型获取队列
-    if (one == null) {
-      one = this.getOneAnyhow(wordName, WordBizUtils.getOpposition(thisInfoType));
-    }
-
-    if (one != null) {
-      if (one.getIsLock() > 0) {
-        return;
-      }
-      // 抓取成功的禁止再重复抓取
-      if (one.getFetchStatus() >= WordCrawlerConstants.STATUS_ALL_SUCCESS && one.getWordId() > 0) {
-        if (mainMapper.selectById(one.getWordId()) != null) {
-          return;
+    @Transactional(rollbackFor = Exception.class, noRollbackFor = ServiceException.class)
+    private void fetch(String wordName, String derivation, Integer wordId, Integer... infoType) {
+        // 如果没传infoType要判断是否包含空格
+        int thisInfoType;
+        if (infoType == null || infoType.length == 0) {
+            boolean isPhrase = wordName.contains(GlobalConstants.SPACING);
+            thisInfoType =
+                    isPhrase
+                            ? WordCrawlerConstants.QUEUE_INFO_TYPE_PHRASE
+                            : WordCrawlerConstants.QUEUE_INFO_TYPE_WORD;
+        } else {
+            thisInfoType = infoType[0];
         }
-      }
 
-      if (one.getInTime().compareTo(LocalDateTime.now().minusMinutes(1)) > 0) {
-        return;
-      }
-      this.updateById(
-          one.setFetchStatus(WordCrawlerConstants.STATUS_TO_FETCH)
-              .setIsLock(GlobalConstants.FLAG_YES)
-              .setOperateTime(LocalDateTime.now())
-              .setInfoType(thisInfoType));
-      return;
+        FetchQueueDO one = this.getOneAnyhow(wordName, thisInfoType);
+
+        // 取反类型获取队列
+        if (one == null) {
+            one = this.getOneAnyhow(wordName, WordBizUtils.getOpposition(thisInfoType));
+        }
+
+        if (one != null) {
+            if (one.getIsLock() > 0) {
+                return;
+            }
+            // 抓取成功的禁止再重复抓取
+            if (one.getFetchStatus() >= WordCrawlerConstants.STATUS_ALL_SUCCESS && one.getWordId() > 0) {
+                if (mainMapper.selectById(one.getWordId()) != null) {
+                    return;
+                }
+            }
+
+            if (one.getInTime().compareTo(LocalDateTime.now().minusMinutes(1)) > 0) {
+                return;
+            }
+            this.updateById(
+                    one.setFetchStatus(WordCrawlerConstants.STATUS_TO_FETCH)
+                            .setIsLock(GlobalConstants.FLAG_YES)
+                            .setOperateTime(LocalDateTime.now())
+                            .setInfoType(thisInfoType));
+            return;
+        }
+
+        this.insertOne(
+                wordId, wordName, derivation, WordCrawlerConstants.STATUS_TO_FETCH, thisInfoType);
     }
 
-    this.insertOne(
-        wordId, wordName, derivation, WordCrawlerConstants.STATUS_TO_FETCH, thisInfoType);
-  }
-
-  private void insertOne(
-      Integer wordId, String wordName, String derivation, int status, Integer... infoType) {
-    FetchQueueDO queueDO =
-        new FetchQueueDO()
-            .setQueueId(seqService.genIntSequence(MapperConstant.T_INS_SEQUENCE))
-            .setWordId(wordId)
-            .setWordName(wordName)
-            .setDerivation(KiwiStringUtils.isNotBlank(derivation) ? derivation : null)
-            .setFetchStatus(status)
-            .setFetchPriority(100)
-            .setInTime(LocalDateTime.now())
-            .setOperateTime(LocalDateTime.now())
-            .setIsLock(GlobalConstants.FLAG_YES);
-    if (infoType == null || infoType.length == 0) {
-      this.save(queueDO);
-    } else {
-      this.save(queueDO.setInfoType(infoType[0]));
-    }
-  }
-
-  @Async
-  @Override
-  public void startFetchOnAsync(String wordName) {
-    this.fetch(wordName, null, null);
-  }
-
-  @Async
-  @Override
-  public void startFetchPhraseOnAsync(String phrase, String word, Integer wordId) {
-    this.fetch(phrase, word, wordId, WordCrawlerConstants.QUEUE_INFO_TYPE_PHRASE);
-  }
-
-  @Override
-  public void startFetch(String wordName) {
-    this.fetch(wordName, null, null);
-  }
-
-  @Override
-  public void startForceFetchWord(String wordName) {
-    this.fetch(wordName, wordName, null, WordCrawlerConstants.QUEUE_INFO_TYPE_WORD);
-  }
-
-  @Override
-  public void startFetchPhrase(String phrase, String word, Integer wordId) {
-    this.fetch(phrase, word, wordId, WordCrawlerConstants.QUEUE_INFO_TYPE_PHRASE);
-  }
-
-  @Transactional(rollbackFor = Exception.class)
-  private boolean del(String wordName) {
-    return this.remove(
-        new LambdaQueryWrapper<FetchQueueDO>().eq(FetchQueueDO::getWordName, wordName));
-  }
-
-  @Override
-  @Transactional(rollbackFor = Exception.class)
-  public boolean invalid(String wordName) {
-    if (!this.isExist(wordName)) {
-      return false;
-    }
-    return this.update(
-        new FetchQueueDO().setIsValid(GlobalConstants.FLAG_N).setIsLock(GlobalConstants.FLAG_NO),
-        new LambdaQueryWrapper<FetchQueueDO>().eq(FetchQueueDO::getWordName, wordName));
-  }
-
-  @Override
-  @Transactional(rollbackFor = Exception.class)
-  public boolean lock(String wordName) {
-    if (!this.isExist(wordName)) {
-      return false;
-    }
-    return this.update(
-        new FetchQueueDO().setIsLock(GlobalConstants.FLAG_YES),
-        Wrappers.<FetchQueueDO>lambdaUpdate()
-            .eq(FetchQueueDO::getWordName, wordName)
-            .eq(FetchQueueDO::getIsLock, GlobalConstants.FLAG_NO));
-  }
-
-  @Override
-  @Transactional(rollbackFor = Exception.class)
-  public void flagFetchBaseFinish(Integer queueId, Integer wordId) {
-    this.updateById(new FetchQueueDO().setQueueId(queueId).setWordId(wordId));
-  }
-
-  @Override
-  @Transactional(rollbackFor = Exception.class)
-  public void flagWordQueryException(String wordName) {
-
-    FetchQueueDO one = this.getOneAnyhow(wordName);
-    // 如果队列记录不存在
-    if (one == null) {
-      this.insertOne(null, wordName, wordName, WordCrawlerConstants.STATUS_TO_DEL_BASE);
-      return;
+    private void insertOne(
+            Integer wordId, String wordName, String derivation, int status, Integer... infoType) {
+        FetchQueueDO queueDO =
+                new FetchQueueDO()
+                        .setQueueId(seqService.genIntSequence(MapperConstant.T_INS_SEQUENCE))
+                        .setWordId(wordId)
+                        .setWordName(wordName)
+                        .setDerivation(KiwiStringUtils.isNotBlank(derivation) ? derivation : null)
+                        .setFetchStatus(status)
+                        .setFetchPriority(100)
+                        .setInTime(LocalDateTime.now())
+                        .setOperateTime(LocalDateTime.now())
+                        .setIsLock(GlobalConstants.FLAG_YES);
+        if (infoType == null || infoType.length == 0) {
+            this.save(queueDO);
+        } else {
+            this.save(queueDO.setInfoType(infoType[0]));
+        }
     }
 
-    // 爬虫状态进行中的不可以打断
-    if (WordBizUtils.fetchQueueIsRunning(one.getFetchStatus())) {
-      return;
+    @Async
+    @Override
+    public void startFetchOnAsync(String wordName) {
+        this.fetch(wordName, null, null);
     }
 
-    this.updateById(
-        one.setFetchStatus(WordCrawlerConstants.STATUS_TO_QUERY_ERROR)
-            .setIsLock(GlobalConstants.FLAG_NO));
-  }
+    @Async
+    @Override
+    public void startFetchPhraseOnAsync(String phrase, String word, Integer wordId) {
+        this.fetch(phrase, word, wordId, WordCrawlerConstants.QUEUE_INFO_TYPE_PHRASE);
+    }
 
-  @Override
-  public List<FetchQueueDO> page2List(
-      Integer status, Integer current, Integer size, Integer isLock, Integer infoType) {
-    return Optional.of(
-            this.page(
-                new Page<>(current, size),
+    @Override
+    public void startFetch(String wordName) {
+        this.fetch(wordName, null, null);
+    }
+
+    @Override
+    public void startForceFetchWord(String wordName) {
+        this.fetch(wordName, wordName, null, WordCrawlerConstants.QUEUE_INFO_TYPE_WORD);
+    }
+
+    @Override
+    public void startFetchPhrase(String phrase, String word, Integer wordId) {
+        this.fetch(phrase, word, wordId, WordCrawlerConstants.QUEUE_INFO_TYPE_PHRASE);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    private boolean del(String wordName) {
+        return this.remove(
+                new LambdaQueryWrapper<FetchQueueDO>().eq(FetchQueueDO::getWordName, wordName));
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public boolean invalid(String wordName) {
+        if (!this.isExist(wordName)) {
+            return false;
+        }
+        return this.update(
+                new FetchQueueDO().setIsValid(GlobalConstants.FLAG_N).setIsLock(GlobalConstants.FLAG_NO),
+                new LambdaQueryWrapper<FetchQueueDO>().eq(FetchQueueDO::getWordName, wordName));
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public boolean lock(String wordName) {
+        if (!this.isExist(wordName)) {
+            return false;
+        }
+        return this.update(
+                new FetchQueueDO().setIsLock(GlobalConstants.FLAG_YES),
+                Wrappers.<FetchQueueDO>lambdaUpdate()
+                        .eq(FetchQueueDO::getWordName, wordName)
+                        .eq(FetchQueueDO::getIsLock, GlobalConstants.FLAG_NO));
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void flagFetchBaseFinish(Integer queueId, Integer wordId) {
+        this.updateById(new FetchQueueDO().setQueueId(queueId).setWordId(wordId));
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void flagWordQueryException(String wordName) {
+
+        FetchQueueDO one = this.getOneAnyhow(wordName);
+        // 如果队列记录不存在
+        if (one == null) {
+            this.insertOne(null, wordName, wordName, WordCrawlerConstants.STATUS_TO_DEL_BASE);
+            return;
+        }
+
+        // 爬虫状态进行中的不可以打断
+        if (WordBizUtils.fetchQueueIsRunning(one.getFetchStatus())) {
+            return;
+        }
+
+        this.updateById(
+                one.setFetchStatus(WordCrawlerConstants.STATUS_TO_QUERY_ERROR)
+                        .setIsLock(GlobalConstants.FLAG_NO));
+    }
+
+    @Override
+    public List<FetchQueueDO> page2List(
+            Integer status, Integer current, Integer size, Integer isLock, Integer infoType) {
+        return Optional.of(
+                this.page(
+                        new Page<>(current, size),
+                        Wrappers.<FetchQueueDO>lambdaQuery()
+                                .eq(FetchQueueDO::getFetchStatus, status)
+                                .eq(FetchQueueDO::getIsLock, isLock)
+                                .eq(FetchQueueDO::getInfoType, infoType)
+                                .le(
+                                        FetchQueueDO::getFetchTime,
+                                        WordCrawlerConstants.WORD_MAX_FETCH_LIMITED_TIME)))
+                .get()
+                .getRecords();
+    }
+
+    @Override
+    public List<FetchQueueDO> listNotIntoCache() {
+        return Optional.of(
+                this.page(
+                        new Page<>(1, 20),
+                        Wrappers.<FetchQueueDO>lambdaQuery()
+                                .ge(FetchQueueDO::getFetchStatus, WordCrawlerConstants.STATUS_PERFECT_SUCCESS)
+                                .eq(FetchQueueDO::getIsLock, GlobalConstants.FLAG_NO)
+                                .eq(FetchQueueDO::getIsIntoCache, GlobalConstants.FLAG_NO)))
+                .get()
+                .getRecords();
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void saveDerivation(String inputWordName, String fetchWordName) {
+        Optional.ofNullable(this.getOneInUnLock(inputWordName))
+                .ifPresent(
+                        one -> {
+                            this.updateById(one.setDerivation(fetchWordName));
+                        });
+    }
+
+    /**
+     * 拿到非锁住状态的记录
+     *
+     * @param wordName
+     * @return
+     */
+    @Override
+    public FetchQueueDO getOneInUnLock(String wordName, Integer... infoType) {
+        return this.getOne(
                 Wrappers.<FetchQueueDO>lambdaQuery()
-                    .eq(FetchQueueDO::getFetchStatus, status)
-                    .eq(FetchQueueDO::getIsLock, isLock)
-                    .eq(FetchQueueDO::getInfoType, infoType)
-                    .le(
-                        FetchQueueDO::getFetchTime,
-                        WordCrawlerConstants.WORD_MAX_FETCH_LIMITED_TIME)))
-        .get()
-        .getRecords();
-  }
+                        .eq(FetchQueueDO::getWordName, wordName)
+                        .eq(FetchQueueDO::getIsLock, GlobalConstants.FLAG_NO)
+                        .eq(
+                                FetchQueueDO::getInfoType,
+                                infoType == null || infoType.length == 0
+                                        ? WordCrawlerConstants.QUEUE_INFO_TYPE_WORD
+                                        : infoType[0]));
+    }
 
-  @Override
-  public List<FetchQueueDO> listNotIntoCache() {
-    return Optional.of(
-            this.page(
-                new Page<>(1, 20),
+    @Override
+    public FetchQueueDO getOneInUnLock(Integer queueId) {
+        return this.getOne(
                 Wrappers.<FetchQueueDO>lambdaQuery()
-                    .ge(FetchQueueDO::getFetchStatus, WordCrawlerConstants.STATUS_PERFECT_SUCCESS)
-                    .eq(FetchQueueDO::getIsLock, GlobalConstants.FLAG_NO)
-                    .eq(FetchQueueDO::getIsIntoCache, GlobalConstants.FLAG_NO)))
-        .get()
-        .getRecords();
-  }
+                        .eq(FetchQueueDO::getQueueId, queueId)
+                        .eq(FetchQueueDO::getIsLock, GlobalConstants.FLAG_NO));
+    }
 
-  @Override
-  @Transactional(rollbackFor = Exception.class)
-  public void saveDerivation(String inputWordName, String fetchWordName) {
-    Optional.ofNullable(this.getOneInUnLock(inputWordName))
-        .ifPresent(
-            one -> {
-              this.updateById(one.setDerivation(fetchWordName));
-            });
-  }
+    /**
+     * 拿到记录，无论是否锁住
+     *
+     * @param wordName
+     * @return
+     */
+    @Override
+    public FetchQueueDO getOneAnyhow(String wordName, Integer... infoType) {
+        return this.getOne(
+                Wrappers.<FetchQueueDO>lambdaQuery()
+                        .eq(FetchQueueDO::getWordName, wordName)
+                        .eq(
+                                FetchQueueDO::getInfoType,
+                                infoType == null || infoType.length == 0
+                                        ? WordCrawlerConstants.QUEUE_INFO_TYPE_WORD
+                                        : infoType[0]));
+    }
 
-  /**
-   * 拿到非锁住状态的记录
-   *
-   * @param wordName
-   * @return
-   */
-  @Override
-  public FetchQueueDO getOneInUnLock(String wordName, Integer... infoType) {
-    return this.getOne(
-        Wrappers.<FetchQueueDO>lambdaQuery()
-            .eq(FetchQueueDO::getWordName, wordName)
-            .eq(FetchQueueDO::getIsLock, GlobalConstants.FLAG_NO)
-            .eq(
-                FetchQueueDO::getInfoType,
-                infoType == null || infoType.length == 0
-                    ? WordCrawlerConstants.QUEUE_INFO_TYPE_WORD
-                    : infoType[0]));
-  }
+    @Override
+    public FetchQueueDO getOneAnyhow(Integer queueId) {
+        return this.getOne(Wrappers.<FetchQueueDO>lambdaQuery().eq(FetchQueueDO::getQueueId, queueId));
+    }
 
-  @Override
-  public FetchQueueDO getOneInUnLock(Integer queueId) {
-    return this.getOne(
-        Wrappers.<FetchQueueDO>lambdaQuery()
-            .eq(FetchQueueDO::getQueueId, queueId)
-            .eq(FetchQueueDO::getIsLock, GlobalConstants.FLAG_NO));
-  }
-
-  /**
-   * 拿到记录，无论是否锁住
-   *
-   * @param wordName
-   * @return
-   */
-  @Override
-  public FetchQueueDO getOneAnyhow(String wordName, Integer... infoType) {
-    return this.getOne(
-        Wrappers.<FetchQueueDO>lambdaQuery()
-            .eq(FetchQueueDO::getWordName, wordName)
-            .eq(
-                FetchQueueDO::getInfoType,
-                infoType == null || infoType.length == 0
-                    ? WordCrawlerConstants.QUEUE_INFO_TYPE_WORD
-                    : infoType[0]));
-  }
-
-  @Override
-  public FetchQueueDO getOneAnyhow(Integer queueId) {
-    return this.getOne(Wrappers.<FetchQueueDO>lambdaQuery().eq(FetchQueueDO::getQueueId, queueId));
-  }
-
-  @Deprecated
-  private boolean isExist(String wordName) {
-    return this.getOneInUnLock(wordName) != null;
-  }
+    @Deprecated
+    private boolean isExist(String wordName) {
+        return this.getOneInUnLock(wordName) != null;
+    }
 }

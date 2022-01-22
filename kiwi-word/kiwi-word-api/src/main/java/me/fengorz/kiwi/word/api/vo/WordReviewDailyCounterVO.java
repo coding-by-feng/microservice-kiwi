@@ -25,5 +25,5 @@ import me.fengorz.kiwi.word.api.entity.WordReviewDailyCounterDO;
  */
 public class WordReviewDailyCounterVO extends WordReviewDailyCounterDO {
 
-  private static final long serialVersionUID = 1629376931644L;
+    private static final long serialVersionUID = 1629376931644L;
 }

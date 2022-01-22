@@ -49,73 +49,73 @@ import java.util.List;
 @Slf4j
 public class ExampleStarListController extends BaseController {
 
-  private final IExampleStarListService starListService;
-  private final IOperateService operateService;
-  private final ISeqService seqService;
+    private final IExampleStarListService starListService;
+    private final IOperateService operateService;
+    private final ISeqService seqService;
 
-  /**
-   * 新增
-   *
-   * @param vo
-   * @return R
-   */
-  @SysLog("新增")
-  @PostMapping("/save")
-  // @PreAuthorize("@pms.hasPermission('api_wordparaphraseexamplelist_add')")
-  public R<Boolean> save(ExampleStarListVO vo) {
-    vo.setOwner(SecurityUtils.getCurrentUserId());
-    vo.setId(seqService.genIntSequence(MapperConstant.T_INS_SEQUENCE));
-    return R.success(starListService.save(vo));
-  }
+    /**
+     * 新增
+     *
+     * @param vo
+     * @return R
+     */
+    @SysLog("新增")
+    @PostMapping("/save")
+    // @PreAuthorize("@pms.hasPermission('api_wordparaphraseexamplelist_add')")
+    public R<Boolean> save(ExampleStarListVO vo) {
+        vo.setOwner(SecurityUtils.getCurrentUserId());
+        vo.setId(seqService.genIntSequence(MapperConstant.T_INS_SEQUENCE));
+        return R.success(starListService.save(vo));
+    }
 
-  /**
-   * 修改
-   *
-   * @param exampleStarListDO
-   * @return R
-   */
-  @SysLog("修改")
-  @PostMapping("/updateById")
-  // @PreAuthorize("@pms.hasPermission('api_wordparaphraseexamplelist_edit')")
-  public R<Boolean> updateById(ExampleStarListDO exampleStarListDO) {
-    return R.success(starListService.updateById(exampleStarListDO));
-  }
+    /**
+     * 修改
+     *
+     * @param exampleStarListDO
+     * @return R
+     */
+    @SysLog("修改")
+    @PostMapping("/updateById")
+    // @PreAuthorize("@pms.hasPermission('api_wordparaphraseexamplelist_edit')")
+    public R<Boolean> updateById(ExampleStarListDO exampleStarListDO) {
+        return R.success(starListService.updateById(exampleStarListDO));
+    }
 
-  /**
-   * 通过id删除
-   *
-   * @param id id
-   * @return R
-   */
-  @SysLog("通过id删除")
-  @PostMapping("/delById/{id}")
-  // @PreAuthorize("@pms.hasPermission('api_wordparaphraseexamplelist_del')")
-  public R<Boolean> delById(@PathVariable Integer id) {
-    return R.success(starListService.removeById(id));
-  }
+    /**
+     * 通过id删除
+     *
+     * @param id id
+     * @return R
+     */
+    @SysLog("通过id删除")
+    @PostMapping("/delById/{id}")
+    // @PreAuthorize("@pms.hasPermission('api_wordparaphraseexamplelist_del')")
+    public R<Boolean> delById(@PathVariable Integer id) {
+        return R.success(starListService.removeById(id));
+    }
 
-  @GetMapping("/getCurrentUserList")
-  public R<List<ExampleStarListVO>> getCurrentUserList() {
-    return R.success(starListService.getCurrentUserList(SecurityUtils.getCurrentUserId()));
-  }
+    @GetMapping("/getCurrentUserList")
+    public R<List<ExampleStarListVO>> getCurrentUserList() {
+        return R.success(starListService.getCurrentUserList(SecurityUtils.getCurrentUserId()));
+    }
 
-  @PostMapping("/putIntoStarList")
-  public R<Boolean> putIntoStarList(@NotNull Integer exampleId, @NotNull Integer listId) {
-    starListService.putIntoStarList(exampleId, listId);
-    return R.success();
-  }
+    @PostMapping("/putIntoStarList")
+    public R<Boolean> putIntoStarList(@NotNull Integer exampleId, @NotNull Integer listId) {
+        starListService.putIntoStarList(exampleId, listId);
+        return R.success();
+    }
 
-  @PostMapping("/removeExampleStar")
-  public R<Boolean> removeExampleStar(@NotNull Integer exampleId, @NotNull Integer listId) {
-    starListService.removeOneRel(exampleId, listId);
-    return R.success();
-  }
+    @PostMapping("/removeExampleStar")
+    public R<Boolean> removeExampleStar(@NotNull Integer exampleId, @NotNull Integer listId) {
+        starListService.removeOneRel(exampleId, listId);
+        return R.success();
+    }
 
-  @PostMapping("/getListItems/{size}/{current}")
-  public R<IPage<ExampleStarItemVO>> getListItems(
-      @NotNull Integer listId,
-      @PathVariable @Min(0) Integer current,
-      @PathVariable @Range(min = 1, max = 100) Integer size) {
-    return R.success(starListService.getListItems(new Page(current, size), listId));
-  }
+    @PostMapping("/getListItems/{size}/{current}")
+    public R<IPage<ExampleStarItemVO>> getListItems(
+            @NotNull Integer listId,
+            @PathVariable @Min(0) Integer current,
+            @PathVariable @Range(min = 1, max = 100) Integer size) {
+        return R.success(starListService.getListItems(new Page(current, size), listId));
+    }
 }

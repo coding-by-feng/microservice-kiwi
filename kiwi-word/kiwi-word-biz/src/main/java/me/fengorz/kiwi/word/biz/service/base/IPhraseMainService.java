@@ -24,4 +24,5 @@ import me.fengorz.kiwi.word.api.entity.PhraseMainDO;
  * @author zhanShiFeng
  * @date 2020-10-10 20:09:06
  */
-public interface IPhraseMainService extends IService<PhraseMainDO> {}
+public interface IPhraseMainService extends IService<PhraseMainDO> {
+}

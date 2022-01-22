@@ -24,7 +24,9 @@ import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 
-/** @Author zhanshifeng @Date 2019/11/26 10:01 AM */
+/**
+ * @Author zhanshifeng @Date 2019/11/26 10:01 AM
+ */
 @Data
 @ToString
 @NoArgsConstructor
@@ -32,13 +34,17 @@ import java.io.Serializable;
 @Accessors(chain = true)
 public class PronunciationVO implements Serializable {
 
-  private static final long serialVersionUID = -400966918555175133L;
+    private static final long serialVersionUID = -400966918555175133L;
 
-  private Integer pronunciationId;
-  /** 音标 */
-  private String soundmark;
-  /** 音标类别 */
-  private String soundmarkType;
+    private Integer pronunciationId;
+    /**
+     * 音标
+     */
+    private String soundmark;
+    /**
+     * 音标类别
+     */
+    private String soundmarkType;
 
-  private String sourceUrl;
+    private String sourceUrl;
 }

@@ -25,29 +25,31 @@ import org.springframework.core.io.ResourceLoader;
 import java.text.MessageFormat;
 import java.util.Locale;
 
-/** @Description 国际化消息源配置 @Author zhanshifeng @Date 2020/4/8 4:14 PM */
+/**
+ * @Description 国际化消息源配置 @Author zhanshifeng @Date 2020/4/8 4:14 PM
+ */
 public class I18nMessageResource extends AbstractMessageSource implements ResourceLoaderAware {
-  private ResourceLoader resourceLoader;
+    private ResourceLoader resourceLoader;
 
-  @Override
-  public void setResourceLoader(ResourceLoader resourceLoader) {
-    this.resourceLoader = resourceLoader != null ? resourceLoader : new DefaultResourceLoader();
-  }
-
-  @Override
-  protected MessageFormat resolveCode(String code, Locale locale) {
-    return this.createMessageFormat(this.getText(code, locale), locale);
-  }
-
-  private String getText(String code, Locale locale) {
-    String text = null;
-    try {
-      if (this.getParentMessageSource() != null) {
-        text = this.getParentMessageSource().getMessage(code, null, locale);
-      }
-    } catch (NoSuchMessageException var8) {
-      this.logger.error("Cannot find message with code: " + code);
+    @Override
+    public void setResourceLoader(ResourceLoader resourceLoader) {
+        this.resourceLoader = resourceLoader != null ? resourceLoader : new DefaultResourceLoader();
     }
-    return text;
-  }
+
+    @Override
+    protected MessageFormat resolveCode(String code, Locale locale) {
+        return this.createMessageFormat(this.getText(code, locale), locale);
+    }
+
+    private String getText(String code, Locale locale) {
+        String text = null;
+        try {
+            if (this.getParentMessageSource() != null) {
+                text = this.getParentMessageSource().getMessage(code, null, locale);
+            }
+        } catch (NoSuchMessageException var8) {
+            this.logger.error("Cannot find message with code: " + code);
+        }
+        return text;
+    }
 }

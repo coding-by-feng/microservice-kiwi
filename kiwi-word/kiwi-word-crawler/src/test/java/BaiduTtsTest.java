@@ -27,47 +27,52 @@ import org.junit.jupiter.api.BeforeEach;
 import java.io.IOException;
 import java.util.HashMap;
 
-/** @Description TODO @Author zhanshifeng @Date 2022/1/10 10:02 PM */
+/**
+ * @Description TODO
+ * @Author zhanshifeng
+ * @Date 2022/1/10 10:02 PM
+ */
 public class BaiduTtsTest {
 
-  public static final String APP_ID = "20116041";
-  public static final String API_KEY = "lTZsmSq37OtRKj6WDpjeemip";
-  public static final String SECRET_KEY = "iQkIhGf6O93FH8Dhe446w8rB3jd2A137";
+    public static final String APP_ID = "20116041";
+    public static final String API_KEY = "lTZsmSq37OtRKj6WDpjeemip";
+    public static final String SECRET_KEY = "iQkIhGf6O93FH8Dhe446w8rB3jd2A137";
 
-  @BeforeEach
-  private void beforeEach() {}
-
-  @Test
-  public void test() {
-    // 初始化一个AipSpeech
-    AipSpeech client = new AipSpeech(APP_ID, API_KEY, SECRET_KEY);
-
-    // 可选：设置网络连接参数
-    client.setConnectionTimeoutInMillis(2000);
-    client.setSocketTimeoutInMillis(60000);
-
-    HashMap<String, Object> options = new HashMap<>();
-    options.put("spd", "5");
-    options.put("pit", "5");
-    options.put("per", "5");
-
-    TtsResponse res =
-        client.synthesis(
-            " A。R。E。F。E。R。L。a way of discovering, by questions or practical activities, what someone knows, or what someone or something can do or is like",
-            "zh",
-            1,
-            options);
-    byte[] data = res.getData();
-    JSONObject res1 = res.getResult();
-    if (data != null) {
-      try {
-        Util.writeBytesToFileSystem(data, "output.mp3");
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
+    @BeforeEach
+    private void beforeEach() {
     }
-    if (res1 != null) {
-      System.out.println(res1.toString(2));
+
+    @Test
+    public void test() {
+        // 初始化一个AipSpeech
+        AipSpeech client = new AipSpeech(APP_ID, API_KEY, SECRET_KEY);
+
+        // 可选：设置网络连接参数
+        client.setConnectionTimeoutInMillis(2000);
+        client.setSocketTimeoutInMillis(60000);
+
+        HashMap<String, Object> options = new HashMap<>();
+        options.put("spd", "5");
+        options.put("pit", "5");
+        options.put("per", "5");
+
+        TtsResponse res =
+                client.synthesis(
+                        " A。R。E。F。E。R。L。a way of discovering, by questions or practical activities, what someone knows, or what someone or something can do or is like",
+                        "zh",
+                        1,
+                        options);
+        byte[] data = res.getData();
+        JSONObject res1 = res.getResult();
+        if (data != null) {
+            try {
+                Util.writeBytesToFileSystem(data, "output.mp3");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        if (res1 != null) {
+            System.out.println(res1.toString(2));
+        }
     }
-  }
 }

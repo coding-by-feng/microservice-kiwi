@@ -30,78 +30,80 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
-/** @Author zhanshifeng @Date 2019/10/26 7:56 PM */
+/**
+ * @Author zhanshifeng @Date 2019/10/26 7:56 PM
+ */
 @Configuration
 @Import({CommonMQConfig.class})
 @RequiredArgsConstructor
 public class RabbitMQConfig {
 
-  private final MqProperties properties;
+    private final MqProperties properties;
 
-  private DirectExchange wordFromCambridge() {
-    return new DirectExchange(properties.getWordFromCambridge().getExchange());
-  }
+    private DirectExchange wordFromCambridge() {
+        return new DirectExchange(properties.getWordFromCambridge().getExchange());
+    }
 
-  private DirectExchange phraseRunUpFromCambridge() {
-    return new DirectExchange(properties.getPhraseRunUpFromCambridge().getExchange());
-  }
+    private DirectExchange phraseRunUpFromCambridge() {
+        return new DirectExchange(properties.getPhraseRunUpFromCambridge().getExchange());
+    }
 
-  private DirectExchange phraseFromCambridge() {
-    return new DirectExchange(properties.getPhraseFromCambridge().getExchange());
-  }
+    private DirectExchange phraseFromCambridge() {
+        return new DirectExchange(properties.getPhraseFromCambridge().getExchange());
+    }
 
-  private DirectExchange pronunciationFromCambridge() {
-    return new DirectExchange(properties.getPronunciationFromCambridge().getExchange());
-  }
+    private DirectExchange pronunciationFromCambridge() {
+        return new DirectExchange(properties.getPronunciationFromCambridge().getExchange());
+    }
 
-  @Bean
-  public Binding wordFetch() {
-    return BindingBuilder.bind(new Queue(properties.getWordFromCambridge().getFetchQueue()))
-        .to(wordFromCambridge())
-        .with(properties.getWordFromCambridge().getFetchRouting());
-  }
+    @Bean
+    public Binding wordFetch() {
+        return BindingBuilder.bind(new Queue(properties.getWordFromCambridge().getFetchQueue()))
+                .to(wordFromCambridge())
+                .with(properties.getWordFromCambridge().getFetchRouting());
+    }
 
-  @Bean
-  public Binding wordRemove() {
-    return BindingBuilder.bind(new Queue(properties.getWordFromCambridge().getRemoveQueue()))
-        .to(wordFromCambridge())
-        .with(properties.getWordFromCambridge().getRemoveRouting());
-  }
+    @Bean
+    public Binding wordRemove() {
+        return BindingBuilder.bind(new Queue(properties.getWordFromCambridge().getRemoveQueue()))
+                .to(wordFromCambridge())
+                .with(properties.getWordFromCambridge().getRemoveRouting());
+    }
 
-  @Bean
-  public Binding phraseRunUp() {
-    return BindingBuilder.bind(new Queue(properties.getPhraseRunUpFromCambridge().getFetchQueue()))
-        .to(phraseFromCambridge())
-        .with(properties.getPhraseRunUpFromCambridge().getFetchRouting());
-  }
+    @Bean
+    public Binding phraseRunUp() {
+        return BindingBuilder.bind(new Queue(properties.getPhraseRunUpFromCambridge().getFetchQueue()))
+                .to(phraseFromCambridge())
+                .with(properties.getPhraseRunUpFromCambridge().getFetchRouting());
+    }
 
-  @Bean
-  public Binding phraseFetch() {
-    return BindingBuilder.bind(new Queue(properties.getPhraseFromCambridge().getFetchQueue()))
-        .to(phraseRunUpFromCambridge())
-        .with(properties.getPhraseFromCambridge().getFetchRouting());
-  }
+    @Bean
+    public Binding phraseFetch() {
+        return BindingBuilder.bind(new Queue(properties.getPhraseFromCambridge().getFetchQueue()))
+                .to(phraseRunUpFromCambridge())
+                .with(properties.getPhraseFromCambridge().getFetchRouting());
+    }
 
-  @Bean
-  public Binding phraseRemove() {
-    return BindingBuilder.bind(new Queue(properties.getPhraseFromCambridge().getRemoveQueue()))
-        .to(phraseFromCambridge())
-        .with(properties.getPhraseFromCambridge().getRemoveRouting());
-  }
+    @Bean
+    public Binding phraseRemove() {
+        return BindingBuilder.bind(new Queue(properties.getPhraseFromCambridge().getRemoveQueue()))
+                .to(phraseFromCambridge())
+                .with(properties.getPhraseFromCambridge().getRemoveRouting());
+    }
 
-  @Bean
-  public Binding pronunciationFetch() {
-    return BindingBuilder.bind(
-            new Queue(properties.getPronunciationFromCambridge().getFetchQueue()))
-        .to(pronunciationFromCambridge())
-        .with(properties.getPronunciationFromCambridge().getFetchRouting());
-  }
+    @Bean
+    public Binding pronunciationFetch() {
+        return BindingBuilder.bind(
+                new Queue(properties.getPronunciationFromCambridge().getFetchQueue()))
+                .to(pronunciationFromCambridge())
+                .with(properties.getPronunciationFromCambridge().getFetchRouting());
+    }
 
-  @Bean
-  public Binding pronunciationRemove() {
-    return BindingBuilder.bind(
-            new Queue(properties.getPronunciationFromCambridge().getRemoveQueue()))
-        .to(pronunciationFromCambridge())
-        .with(properties.getPronunciationFromCambridge().getRemoveRouting());
-  }
+    @Bean
+    public Binding pronunciationRemove() {
+        return BindingBuilder.bind(
+                new Queue(properties.getPronunciationFromCambridge().getRemoveQueue()))
+                .to(pronunciationFromCambridge())
+                .with(properties.getPronunciationFromCambridge().getRemoveRouting());
+    }
 }

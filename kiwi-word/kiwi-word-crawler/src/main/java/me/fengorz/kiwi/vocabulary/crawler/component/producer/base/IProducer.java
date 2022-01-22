@@ -21,5 +21,5 @@ package me.fengorz.kiwi.vocabulary.crawler.component.producer.base;
 
 public interface IProducer {
 
-  void produce();
+    void produce();
 }

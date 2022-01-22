@@ -34,20 +34,35 @@ import java.time.LocalDateTime;
 @TableName("sys_role")
 public class SysRole extends Model<SysRole> {
 
-  private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-  /** */
-  @TableId private Integer roleId;
-  /** */
-  private String roleName;
-  /** */
-  private String roleCode;
-  /** */
-  private String roleDesc;
-  /** */
-  private LocalDateTime createTime;
-  /** */
-  private LocalDateTime updateTime;
-  /** 删除标识（0-正常,1-删除） */
-  private String delFlag;
+    /**
+     *
+     */
+    @TableId
+    private Integer roleId;
+    /**
+     *
+     */
+    private String roleName;
+    /**
+     *
+     */
+    private String roleCode;
+    /**
+     *
+     */
+    private String roleDesc;
+    /**
+     *
+     */
+    private LocalDateTime createTime;
+    /**
+     *
+     */
+    private LocalDateTime updateTime;
+    /**
+     * 删除标识（0-正常,1-删除）
+     */
+    private String delFlag;
 }

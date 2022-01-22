@@ -30,37 +30,39 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.JdkSerializationRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
-/** @Description 缓存配置类 @Author zhanshifeng @Date 2019-09-29 10:39 */
+/**
+ * @Description 缓存配置类 @Author zhanshifeng @Date 2019-09-29 10:39
+ */
 @Configuration
 @RequiredArgsConstructor
 @EnableCaching(mode = AdviceMode.ASPECTJ)
 @AutoConfigureBefore(RedisAutoConfiguration.class)
 public class CacheConfig {
 
-  private final RedisConnectionFactory factory;
+    private final RedisConnectionFactory factory;
 
-  @Bean(name = CacheConstants.CACHE_KEY_GENERATOR_BEAN)
-  public CacheKeyGenerator cacheKeyGenerator() {
-    return new CacheKeyGenerator();
-  }
+    @Bean(name = CacheConstants.CACHE_KEY_GENERATOR_BEAN)
+    public CacheKeyGenerator cacheKeyGenerator() {
+        return new CacheKeyGenerator();
+    }
 
-  @Bean
-  public RedisTemplate<String, Object> redisTemplate() {
-    RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
-    redisTemplate.setKeySerializer(new StringRedisSerializer());
-    redisTemplate.setHashKeySerializer(new StringRedisSerializer());
-    redisTemplate.setValueSerializer(new JdkSerializationRedisSerializer());
-    redisTemplate.setHashValueSerializer(new JdkSerializationRedisSerializer());
-    redisTemplate.setConnectionFactory(factory);
-    return redisTemplate;
-  }
+    @Bean
+    public RedisTemplate<String, Object> redisTemplate() {
+        RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
+        redisTemplate.setKeySerializer(new StringRedisSerializer());
+        redisTemplate.setHashKeySerializer(new StringRedisSerializer());
+        redisTemplate.setValueSerializer(new JdkSerializationRedisSerializer());
+        redisTemplate.setHashValueSerializer(new JdkSerializationRedisSerializer());
+        redisTemplate.setConnectionFactory(factory);
+        return redisTemplate;
+    }
 
-  // @Bean
-  // public CacheManager cacheManager() {
-  // // configure and return an implementation of Spring's CacheManager SPI
-  // SimpleCacheManager cacheManager = new SimpleCacheManager();
-  // cacheManager.setCaches(Arrays.asList(new ConcurrentMapCache("default")));
-  // return cacheManager;
-  // }
+    // @Bean
+    // public CacheManager cacheManager() {
+    // // configure and return an implementation of Spring's CacheManager SPI
+    // SimpleCacheManager cacheManager = new SimpleCacheManager();
+    // cacheManager.setCaches(Arrays.asList(new ConcurrentMapCache("default")));
+    // return cacheManager;
+    // }
 
 }

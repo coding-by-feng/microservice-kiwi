@@ -35,32 +35,32 @@ import java.util.List;
  */
 public interface IParaphraseStarListService extends IService<ParaphraseStarListDO> {
 
-  Integer countById(Integer id);
+    Integer countById(Integer id);
 
-  List<ParaphraseStarListVO> getCurrentUserList(Integer userId);
+    List<ParaphraseStarListVO> getCurrentUserList(Integer userId);
 
-  boolean updateListByUser(ParaphraseStarListDO entity, Integer id, Integer userId);
+    boolean updateListByUser(ParaphraseStarListDO entity, Integer id, Integer userId);
 
-  IPage<ParaphraseStarItemVO> selectListItems(Page<ParaphraseStarListDO> page, Integer listId);
+    IPage<ParaphraseStarItemVO> selectListItems(Page<ParaphraseStarListDO> page, Integer listId);
 
-  IPage<ParaphraseStarItemVO> selectReviewListItems(Page<ParaphraseStarListDO> page, Integer listId);
+    IPage<ParaphraseStarItemVO> selectReviewListItems(Page<ParaphraseStarListDO> page, Integer listId);
 
-  IPage<ParaphraseStarItemVO> selectRememberListItems(Page<ParaphraseStarListDO> page, Integer listId);
+    IPage<ParaphraseStarItemVO> selectRememberListItems(Page<ParaphraseStarListDO> page, Integer listId);
 
-  void putIntoStarList(Integer paraphraseId, Integer listId);
+    void putIntoStarList(Integer paraphraseId, Integer listId);
 
-  void removeParaphraseStar(Integer paraphraseId, Integer listId);
+    void removeParaphraseStar(Integer paraphraseId, Integer listId);
 
-  void rememberOne(Integer paraphraseId, Integer listId);
+    void rememberOne(Integer paraphraseId, Integer listId);
 
-  void keepInMind(Integer paraphraseId, Integer listId);
+    void keepInMind(Integer paraphraseId, Integer listId);
 
-  void forgetOne(Integer paraphraseId, Integer listId);
+    void forgetOne(Integer paraphraseId, Integer listId);
 
-  /**
-   * TODO
-   *
-   * @return
-   */
-  List<Integer> findAllUserId();
+    /**
+     * TODO
+     *
+     * @return
+     */
+    List<Integer> findAllUserId();
 }

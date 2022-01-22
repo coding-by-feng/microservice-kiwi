@@ -21,6 +21,9 @@ package me.fengorz.kiwi.common.sdk.exception;
 
 import lombok.NoArgsConstructor;
 
-/** @Author zhanshifeng @Date 2020/4/21 3:40 PM */
+/**
+ * @Author zhanshifeng @Date 2020/4/21 3:40 PM
+ */
 @NoArgsConstructor
-public class ControllerException extends BaseException {}
+public class ControllerException extends BaseException {
+}

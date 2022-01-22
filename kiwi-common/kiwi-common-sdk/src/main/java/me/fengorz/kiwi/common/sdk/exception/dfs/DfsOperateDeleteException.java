@@ -16,27 +16,29 @@
 
 package me.fengorz.kiwi.common.sdk.exception.dfs;
 
-/** @Description Dfs文件删除异常 @Author zhanshifeng @Date 2019/11/7 11:38 PM */
+/**
+ * @Description Dfs文件删除异常 @Author zhanshifeng @Date 2019/11/7 11:38 PM
+ */
 public class DfsOperateDeleteException extends DfsOperateException {
 
-  public DfsOperateDeleteException() {
-    super();
-  }
+    public DfsOperateDeleteException() {
+        super();
+    }
 
-  public DfsOperateDeleteException(String message) {
-    super(message);
-  }
+    public DfsOperateDeleteException(String message) {
+        super(message);
+    }
 
-  public DfsOperateDeleteException(String message, Throwable cause) {
-    super(message, cause);
-  }
+    public DfsOperateDeleteException(String message, Throwable cause) {
+        super(message, cause);
+    }
 
-  public DfsOperateDeleteException(Throwable cause) {
-    super(cause);
-  }
+    public DfsOperateDeleteException(Throwable cause) {
+        super(cause);
+    }
 
-  public DfsOperateDeleteException(
-      String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-    super(message, cause, enableSuppression, writableStackTrace);
-  }
+    public DfsOperateDeleteException(
+            String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+        super(message, cause, enableSuppression, writableStackTrace);
+    }
 }

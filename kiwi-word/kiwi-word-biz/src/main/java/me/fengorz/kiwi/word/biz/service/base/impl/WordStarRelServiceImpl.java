@@ -38,33 +38,33 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class WordStarRelServiceImpl extends ServiceImpl<WordStarRelMapper, WordStarRelDO>
-    implements IWordStarRelService {
+        implements IWordStarRelService {
 
-  private final WordStarRelMapper wordStarRelMapper;
+    private final WordStarRelMapper wordStarRelMapper;
 
-  @Override
-  public List<Integer> findAllWordId(Integer listId) {
-    List<WordStarRelDO> list =
-        wordStarRelMapper.selectList(
-            new LambdaQueryWrapper<WordStarRelDO>().eq(WordStarRelDO::getListId, listId));
-    if (KiwiCollectionUtils.isNotEmpty(list)) {
-      List<Integer> result = new ArrayList<>();
-      for (WordStarRelDO relDO : list) {
-        result.add(relDO.getWordId());
-      }
-      return result;
+    @Override
+    public List<Integer> findAllWordId(Integer listId) {
+        List<WordStarRelDO> list =
+                wordStarRelMapper.selectList(
+                        new LambdaQueryWrapper<WordStarRelDO>().eq(WordStarRelDO::getListId, listId));
+        if (KiwiCollectionUtils.isNotEmpty(list)) {
+            List<Integer> result = new ArrayList<>();
+            for (WordStarRelDO relDO : list) {
+                result.add(relDO.getWordId());
+            }
+            return result;
+        }
+        return null;
     }
-    return null;
-  }
 
-  @Override
-  @Transactional(rollbackFor = Exception.class)
-  public void replaceFetchResult(Integer oldRelId, Integer newRelId) {
-    if (oldRelId == null || newRelId == null) {
-      return;
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void replaceFetchResult(Integer oldRelId, Integer newRelId) {
+        if (oldRelId == null || newRelId == null) {
+            return;
+        }
+        wordStarRelMapper.update(
+                new WordStarRelDO().setWordId(newRelId),
+                Wrappers.<WordStarRelDO>lambdaUpdate().eq(WordStarRelDO::getWordId, oldRelId));
     }
-    wordStarRelMapper.update(
-        new WordStarRelDO().setWordId(newRelId),
-        Wrappers.<WordStarRelDO>lambdaUpdate().eq(WordStarRelDO::getWordId, oldRelId));
-  }
 }

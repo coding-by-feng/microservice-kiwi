@@ -21,13 +21,15 @@ import me.fengorz.kiwi.word.api.feign.IWordMainVariantAPI;
 import me.fengorz.kiwi.word.api.feign.fallback.WordMainVariantAPIFallback;
 import org.springframework.stereotype.Component;
 
-/** @Author zhanshifeng @Date 2019/10/30 3:19 PM */
+/**
+ * @Author zhanshifeng @Date 2019/10/30 3:19 PM
+ */
 @Component
 public class WordMainVariantFallBackFactory implements FallbackFactory<IWordMainVariantAPI> {
-  @Override
-  public IWordMainVariantAPI create(Throwable throwable) {
-    WordMainVariantAPIFallback fallback = new WordMainVariantAPIFallback();
-    fallback.setThrowable(throwable);
-    return fallback;
-  }
+    @Override
+    public IWordMainVariantAPI create(Throwable throwable) {
+        WordMainVariantAPIFallback fallback = new WordMainVariantAPIFallback();
+        fallback.setThrowable(throwable);
+        return fallback;
+    }
 }

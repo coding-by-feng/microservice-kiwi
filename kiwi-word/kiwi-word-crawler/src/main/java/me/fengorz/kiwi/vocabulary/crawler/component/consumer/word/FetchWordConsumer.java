@@ -33,48 +33,50 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
-/** @Author zhanshifeng @Date 2019/10/28 4:25 PM */
+/**
+ * @Author zhanshifeng @Date 2019/10/28 4:25 PM
+ */
 @Slf4j
 @Component
 @RequiredArgsConstructor
 @RabbitListener(
-    bindings =
+        bindings =
         @QueueBinding(
-            value =
+                value =
                 @Queue(value = "${mq.config.wordFromCambridge.fetchQueue}", autoDelete = "true"),
-            exchange = @Exchange(value = "${mq.config.wordFromCambridge.exchange}"),
-            key = "${mq.config.wordFromCambridge.fetchRouting}"))
+                exchange = @Exchange(value = "${mq.config.wordFromCambridge.exchange}"),
+                key = "${mq.config.wordFromCambridge.fetchRouting}"))
 public class FetchWordConsumer extends AbstractConsumer<FetchWordMqDTO>
-    implements IConsumer<FetchWordMqDTO> {
+        implements IConsumer<FetchWordMqDTO> {
 
-  private final IFetchService fetchService;
+    private final IFetchService fetchService;
 
-  @Resource(name = "fetchWordThreadExecutor")
-  private ThreadPoolTaskExecutor fetchWordThreadExecutor;
+    @Resource(name = "fetchWordThreadExecutor")
+    private ThreadPoolTaskExecutor fetchWordThreadExecutor;
 
-  @Value("${crawler.config.max.pool.size}")
-  private int maxPoolSize;
+    @Value("${crawler.config.max.pool.size}")
+    private int maxPoolSize;
 
-  @PostConstruct
-  private void init() {
-    super.taskExecutor = this.fetchWordThreadExecutor;
-    super.maxPoolSize = this.maxPoolSize;
-    super.startWorkLog = "rabbitMQ fetch one word is 【{}】";
-  }
+    @PostConstruct
+    private void init() {
+        super.taskExecutor = this.fetchWordThreadExecutor;
+        super.maxPoolSize = this.maxPoolSize;
+        super.startWorkLog = "rabbitMQ fetch one word is 【{}】";
+    }
 
-  @Override
-  @RabbitHandler
-  public void consume(FetchWordMqDTO dto) {
-    super.work(dto);
-  }
+    @Override
+    @RabbitHandler
+    public void consume(FetchWordMqDTO dto) {
+        super.work(dto);
+    }
 
-  @Override
-  protected void execute(FetchWordMqDTO dto) {
-    fetchService.handle(dto);
-  }
+    @Override
+    protected void execute(FetchWordMqDTO dto) {
+        fetchService.handle(dto);
+    }
 
-  @Override
-  protected void errorCallback(FetchWordMqDTO dto, Exception e) {
-    // TODO ZSF 增加一个抓取队列状态恢复到待抓取的接口，防止数据抓取丢失
-  }
+    @Override
+    protected void errorCallback(FetchWordMqDTO dto, Exception e) {
+        // TODO ZSF 增加一个抓取队列状态恢复到待抓取的接口，防止数据抓取丢失
+    }
 }

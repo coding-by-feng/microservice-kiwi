@@ -27,5 +27,5 @@ import me.fengorz.kiwi.word.api.entity.ParaphraseStarRelDO;
  */
 public interface IParaphraseStarRelService extends IService<ParaphraseStarRelDO> {
 
-  void replaceFetchResult(Integer oldRelId, Integer newRelId);
+    void replaceFetchResult(Integer oldRelId, Integer newRelId);
 }

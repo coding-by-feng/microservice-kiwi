@@ -18,26 +18,29 @@ package me.fengorz.kiwi.word.api.exception;
 
 import me.fengorz.kiwi.common.sdk.exception.BaseException;
 
-/** @Author zhanshifeng @Date 2019/10/31 4:01 PM */
+/**
+ * @Author zhanshifeng @Date 2019/10/31 4:01 PM
+ */
 public class JsoupFetchResultException extends BaseException {
-  private static final long serialVersionUID = -2672507193122171624L;
+    private static final long serialVersionUID = -2672507193122171624L;
 
-  public JsoupFetchResultException() {}
+    public JsoupFetchResultException() {
+    }
 
-  public JsoupFetchResultException(String message) {
-    super(message);
-  }
+    public JsoupFetchResultException(String message) {
+        super(message);
+    }
 
-  public JsoupFetchResultException(String message, Throwable cause) {
-    super(message, cause);
-  }
+    public JsoupFetchResultException(String message, Throwable cause) {
+        super(message, cause);
+    }
 
-  public JsoupFetchResultException(Throwable cause) {
-    super(cause);
-  }
+    public JsoupFetchResultException(Throwable cause) {
+        super(cause);
+    }
 
-  public JsoupFetchResultException(
-      String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-    super(message, cause, enableSuppression, writableStackTrace);
-  }
+    public JsoupFetchResultException(
+            String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+        super(message, cause, enableSuppression, writableStackTrace);
+    }
 }

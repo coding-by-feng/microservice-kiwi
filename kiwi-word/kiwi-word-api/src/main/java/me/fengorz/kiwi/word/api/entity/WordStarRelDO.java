@@ -35,16 +35,22 @@ import java.time.LocalDateTime;
 @Accessors(chain = true)
 public class WordStarRelDO extends Model<WordStarRelDO> {
 
-  private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-  /** */
-  private Integer listId;
-  /** */
-  private Integer wordId;
-  /** */
-  private LocalDateTime createTime;
+    /**
+     *
+     */
+    private Integer listId;
+    /**
+     *
+     */
+    private Integer wordId;
+    /**
+     *
+     */
+    private LocalDateTime createTime;
 
-  private Integer isRemember;
+    private Integer isRemember;
 
-  private LocalDateTime rememberTime;
+    private LocalDateTime rememberTime;
 }

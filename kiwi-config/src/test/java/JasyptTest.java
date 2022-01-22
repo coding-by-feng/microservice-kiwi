@@ -17,32 +17,34 @@
 import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
 import org.jasypt.encryption.pbe.config.EnvironmentPBEConfig;
 
-/** @Author zhanshifeng @Date 2019/12/31 3:17 PM */
+/**
+ * @Author zhanshifeng @Date 2019/12/31 3:17 PM
+ */
 public class JasyptTest {
 
-  // @Test
-  public void testEncrypt() {
-    StandardPBEStringEncryptor standardPBEStringEncryptor = new StandardPBEStringEncryptor();
-    EnvironmentPBEConfig config = new EnvironmentPBEConfig();
+    // @Test
+    public void testEncrypt() {
+        StandardPBEStringEncryptor standardPBEStringEncryptor = new StandardPBEStringEncryptor();
+        EnvironmentPBEConfig config = new EnvironmentPBEConfig();
 
-    config.setAlgorithm("PBEWithMD5AndDES"); // 加密的算法，这个算法是默认的
-    config.setPassword("coding-by-feng"); // 加密的密钥
-    standardPBEStringEncryptor.setConfig(config);
-    String plainText = "enhancer";
-    String encryptedText = standardPBEStringEncryptor.encrypt(plainText);
-    System.out.println(encryptedText);
-  }
+        config.setAlgorithm("PBEWithMD5AndDES"); // 加密的算法，这个算法是默认的
+        config.setPassword("coding-by-feng"); // 加密的密钥
+        standardPBEStringEncryptor.setConfig(config);
+        String plainText = "enhancer";
+        String encryptedText = standardPBEStringEncryptor.encrypt(plainText);
+        System.out.println(encryptedText);
+    }
 
-  // @Test
-  public void testDe() {
-    StandardPBEStringEncryptor standardPBEStringEncryptor = new StandardPBEStringEncryptor();
-    EnvironmentPBEConfig config = new EnvironmentPBEConfig();
+    // @Test
+    public void testDe() {
+        StandardPBEStringEncryptor standardPBEStringEncryptor = new StandardPBEStringEncryptor();
+        EnvironmentPBEConfig config = new EnvironmentPBEConfig();
 
-    config.setAlgorithm("PBEWithMD5AndDES");
-    config.setPassword("pig");
-    standardPBEStringEncryptor.setConfig(config);
-    String encryptedText = "i3cDFhs26sa2Ucrfz2hnQw==";
-    String plainText = standardPBEStringEncryptor.decrypt(encryptedText);
-    System.out.println(plainText);
-  }
+        config.setAlgorithm("PBEWithMD5AndDES");
+        config.setPassword("pig");
+        standardPBEStringEncryptor.setConfig(config);
+        String encryptedText = "i3cDFhs26sa2Ucrfz2hnQw==";
+        String plainText = standardPBEStringEncryptor.decrypt(encryptedText);
+        System.out.println(plainText);
+    }
 }

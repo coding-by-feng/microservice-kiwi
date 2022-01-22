@@ -34,21 +34,21 @@ import java.util.List;
  */
 public interface IWordMainVariantService extends IService<WordMainVariantDO> {
 
-  IPage<WordMainVariantVO> page(int current, int size, WordMainVariantDTO dto);
+    IPage<WordMainVariantVO> page(int current, int size, WordMainVariantDTO dto);
 
-  WordMainVariantVO getVO(Integer id);
+    WordMainVariantVO getVO(Integer id);
 
-  Integer getWordId(String variantName);
+    Integer getWordId(String variantName);
 
-  List<WordMainDO> listWordMain(String variantName, Integer queueId);
+    List<WordMainDO> listWordMain(String variantName, Integer queueId);
 
-  boolean saveOne(WordMainVariantDTO dto);
+    boolean saveOne(WordMainVariantDTO dto);
 
-  void delByWordId(Integer wordId);
+    void delByWordId(Integer wordId);
 
-  boolean isExist(Integer id);
+    boolean isExist(Integer id);
 
-  boolean isExist(Integer wordId, String variantName);
+    boolean isExist(Integer wordId, String variantName);
 
-  boolean insertOne(Integer wordId, String variantName);
+    boolean insertOne(Integer wordId, String variantName);
 }

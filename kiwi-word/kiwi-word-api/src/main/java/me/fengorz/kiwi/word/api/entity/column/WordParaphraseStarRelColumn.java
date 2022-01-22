@@ -21,6 +21,6 @@ package me.fengorz.kiwi.word.api.entity.column;
  */
 public class WordParaphraseStarRelColumn {
 
-  public static final String LIST_ID = "list_id";
-  public static final String PARAPHRASE_ID = "paraphrase_id";
+    public static final String LIST_ID = "list_id";
+    public static final String PARAPHRASE_ID = "paraphrase_id";
 }

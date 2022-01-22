@@ -19,11 +19,14 @@ package me.fengorz.kiwi.gateway;
 import org.springframework.boot.SpringApplication;
 import org.springframework.cloud.client.SpringCloudApplication;
 
-/** @Author zhanshifeng @Date 2019-09-19 15:22 */
+/**
+ * @Author zhanshifeng
+ * @Date 2019-09-19 15:22
+ */
 @SpringCloudApplication
 public class GatewayApplication {
 
-  public static void main(String[] args) {
-    SpringApplication.run(GatewayApplication.class, args);
-  }
+    public static void main(String[] args) {
+        SpringApplication.run(GatewayApplication.class, args);
+    }
 }

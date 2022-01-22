@@ -26,13 +26,17 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
-/** @Author zhanshifeng @Date 2021/8/7 5:28 PM */
+/**
+ * @Author zhanshifeng @Date 2021/8/7 5:28 PM
+ */
 @Data
 @Accessors(chain = true)
 public class ParaphraseRequest implements Serializable {
-  private static final long serialVersionUID = 675982931048212921L;
+    private static final long serialVersionUID = 675982931048212921L;
 
-  @NotNull private Integer paraphraseId;
+    @NotNull
+    private Integer paraphraseId;
 
-  @NotBlank private String meaningChinese;
+    @NotBlank
+    private String meaningChinese;
 }

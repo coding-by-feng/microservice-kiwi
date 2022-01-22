@@ -23,23 +23,25 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import me.fengorz.kiwi.bdf.security.component.KiwiAuth2ExceptionSerializer;
 import org.springframework.http.HttpStatus;
 
-/** @Author zhanshifeng */
+/**
+ * @Author zhanshifeng
+ */
 @JsonSerialize(using = KiwiAuth2ExceptionSerializer.class)
 public class UnauthorizedException extends KiwiAuth2Exception {
 
-  private static final long serialVersionUID = 8414305444234694934L;
+    private static final long serialVersionUID = 8414305444234694934L;
 
-  public UnauthorizedException(String msg, Throwable t) {
-    super(msg);
-  }
+    public UnauthorizedException(String msg, Throwable t) {
+        super(msg);
+    }
 
-  @Override
-  public String getOAuth2ErrorCode() {
-    return "unauthorized";
-  }
+    @Override
+    public String getOAuth2ErrorCode() {
+        return "unauthorized";
+    }
 
-  @Override
-  public int getHttpErrorCode() {
-    return HttpStatus.UNAUTHORIZED.value();
-  }
+    @Override
+    public int getHttpErrorCode() {
+        return HttpStatus.UNAUTHORIZED.value();
+    }
 }

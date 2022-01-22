@@ -21,12 +21,14 @@ import me.fengorz.kiwi.bdf.security.annotation.KiwiEnhancerResourceServer;
 import org.springframework.boot.SpringApplication;
 import org.springframework.cloud.client.SpringCloudApplication;
 
-/** @Author zhanshifeng @Date 2019-09-19 17:09 */
+/**
+ * @Author zhanshifeng @Date 2019-09-19 17:09
+ */
 @KiwiEnhancerResourceServer
 @EnableEnhancerFeignClients
 @SpringCloudApplication
 public class UpmsApplication {
-  public static void main(String[] args) {
-    SpringApplication.run(UpmsApplication.class, args);
-  }
+    public static void main(String[] args) {
+        SpringApplication.run(UpmsApplication.class, args);
+    }
 }

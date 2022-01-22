@@ -27,13 +27,13 @@ import me.fengorz.kiwi.admin.api.entity.SysUser;
  */
 public interface SysUserService extends IService<SysUser> {
 
-  /**
-   * 查询用户全部的信息，包含权限和角色信息
-   *
-   * @param sysUser
-   * @return
-   */
-  UserFullInfoDTO getUserFullInfo(SysUser sysUser);
+    /**
+     * 查询用户全部的信息，包含权限和角色信息
+     *
+     * @param sysUser
+     * @return
+     */
+    UserFullInfoDTO getUserFullInfo(SysUser sysUser);
 
-  SysUser oneClickRegister();
+    SysUser oneClickRegister();
 }

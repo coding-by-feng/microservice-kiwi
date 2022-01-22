@@ -25,15 +25,17 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestHeader;
 
-/** @Description 用户信息服务 @Author zhanshifeng @Date 2019-09-26 09:25 */
+/**
+ * @Description 用户信息服务 @Author zhanshifeng @Date 2019-09-26 09:25
+ */
 @FeignClient(
-    contextId = "remoteUserService",
-    value = "kiwi-upms",
-    fallbackFactory = UserAPIFallBackFactory.class)
+        contextId = "remoteUserService",
+        value = "kiwi-upms",
+        fallbackFactory = UserAPIFallBackFactory.class)
 public interface IUserAPI {
 
-  @GetMapping("/sys/user/info/{username}")
-  R<UserFullInfoDTO> info(
-      @PathVariable("username") String username,
-      @RequestHeader(SecurityConstants.KEY_HEADER_FROM) String from);
+    @GetMapping("/sys/user/info/{username}")
+    R<UserFullInfoDTO> info(
+            @PathVariable("username") String username,
+            @RequestHeader(SecurityConstants.KEY_HEADER_FROM) String from);
 }

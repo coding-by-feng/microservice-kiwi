@@ -24,7 +24,10 @@ import me.fengorz.kiwi.common.fastdfs.config.DfsConfig;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
-/** @Author zhanshifeng @Date 2019/10/30 3:45 PM */
+/**
+ * @Author zhanshifeng @Date 2019/10/30 3:45 PM
+ */
 @Configuration
 @Import({CoreConfig.class, DfsConfig.class})
-public class CrawlerConfig {}
+public class CrawlerConfig {
+}

@@ -21,17 +21,16 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 /**
  * @Author zhanshifeng
- *
  * @date 2020-05-24 01:40:36
  */
 @FeignClient(
-    contextId = "wordVariantService",
-    value = WordConstants.KIWI_WORD_BIZ_CRAWLER,
-    fallbackFactory = WordMainVariantFallBackFactory.class)
+        contextId = "wordVariantService",
+        value = WordConstants.KIWI_WORD_BIZ_CRAWLER,
+        fallbackFactory = WordMainVariantFallBackFactory.class)
 public interface IWordMainVariantAPI {
 
-  String WORD_MAIN_VARIANT = "/word/main/variant";
+    String WORD_MAIN_VARIANT = "/word/main/variant";
 
-  @GetMapping(WORD_MAIN_VARIANT + "/insertVariant/{inputWordName}/{fetchWordName}")
-  R<Void> insertVariant(@PathVariable String inputWordName, @PathVariable String fetchWordName);
+    @GetMapping(WORD_MAIN_VARIANT + "/insertVariant/{inputWordName}/{fetchWordName}")
+    R<Void> insertVariant(@PathVariable String inputWordName, @PathVariable String fetchWordName);
 }

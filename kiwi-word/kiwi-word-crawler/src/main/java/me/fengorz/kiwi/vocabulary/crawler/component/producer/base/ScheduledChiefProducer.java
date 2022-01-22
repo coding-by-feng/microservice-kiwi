@@ -26,15 +26,17 @@ import org.springframework.stereotype.Component;
 
 import java.util.Objects;
 
-/** 定时扫描对列表 @Author zhanshifeng @Date 2019/10/29 4:12 PM */
+/**
+ * 定时扫描对列表 @Author zhanshifeng @Date 2019/10/29 4:12 PM
+ */
 @Component
 @Slf4j
 public class ScheduledChiefProducer {
 
-  @Scheduled(fixedDelay = 2000L)
-  public void produce() {
-    for (IProducer producer : Objects.requireNonNull(SpringUtils.getBeansList(IProducer.class))) {
-      producer.produce();
+    @Scheduled(fixedDelay = 2000L)
+    public void produce() {
+        for (IProducer producer : Objects.requireNonNull(SpringUtils.getBeansList(IProducer.class))) {
+            producer.produce();
+        }
     }
-  }
 }

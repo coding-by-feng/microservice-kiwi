@@ -35,30 +35,32 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-/** 授权拒绝处理器，覆盖默认的OAuth2AccessDeniedHandler 包装失败信息到PigDeniedException @Author zhanshifeng */
+/**
+ * 授权拒绝处理器，覆盖默认的OAuth2AccessDeniedHandler 包装失败信息到PigDeniedException @Author zhanshifeng
+ */
 @Slf4j
 @Component
 @RequiredArgsConstructor
 public class KiwiAccessDeniedHandler extends OAuth2AccessDeniedHandler {
-  private final ObjectMapper objectMapper;
+    private final ObjectMapper objectMapper;
 
-  /**
-   * 授权拒绝处理，使用R包装
-   *
-   * @param request request
-   * @param response response
-   * @param authException authException
-   */
-  @Override
-  public void handle(
-      HttpServletRequest request, HttpServletResponse response, AccessDeniedException authException)
-      throws IOException {
-    log.info("授权失败，禁止访问 {}", request.getRequestURI());
-    response.setCharacterEncoding(GlobalConstants.UTF8);
-    response.setContentType(GlobalConstants.CONTENT_TYPE);
-    R<KiwiDeniedException> result = R.failed(new KiwiDeniedException("授权失败，禁止访问"));
-    response.setStatus(HttpStatus.HTTP_FORBIDDEN);
-    PrintWriter printWriter = response.getWriter();
-    printWriter.append(objectMapper.writeValueAsString(result));
-  }
+    /**
+     * 授权拒绝处理，使用R包装
+     *
+     * @param request       request
+     * @param response      response
+     * @param authException authException
+     */
+    @Override
+    public void handle(
+            HttpServletRequest request, HttpServletResponse response, AccessDeniedException authException)
+            throws IOException {
+        log.info("授权失败，禁止访问 {}", request.getRequestURI());
+        response.setCharacterEncoding(GlobalConstants.UTF8);
+        response.setContentType(GlobalConstants.CONTENT_TYPE);
+        R<KiwiDeniedException> result = R.failed(new KiwiDeniedException("授权失败，禁止访问"));
+        response.setStatus(HttpStatus.HTTP_FORBIDDEN);
+        PrintWriter printWriter = response.getWriter();
+        printWriter.append(objectMapper.writeValueAsString(result));
+    }
 }

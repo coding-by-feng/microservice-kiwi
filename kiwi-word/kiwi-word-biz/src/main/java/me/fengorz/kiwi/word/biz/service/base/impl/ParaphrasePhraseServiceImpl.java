@@ -24,5 +24,6 @@ import org.springframework.stereotype.Service;
  */
 @Service()
 public class ParaphrasePhraseServiceImpl
-    extends ServiceImpl<ParaphrasePhraseMapper, ParaphrasePhraseDO>
-    implements IParaphrasePhraseService {}
+        extends ServiceImpl<ParaphrasePhraseMapper, ParaphrasePhraseDO>
+        implements IParaphrasePhraseService {
+}

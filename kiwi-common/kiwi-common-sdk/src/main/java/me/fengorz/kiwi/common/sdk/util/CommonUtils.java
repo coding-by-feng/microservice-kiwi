@@ -22,15 +22,17 @@ package me.fengorz.kiwi.common.sdk.util;
 import lombok.experimental.UtilityClass;
 import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
 
-/** @Author zhanshifeng @Date 2020/1/14 4:48 PM */
+/**
+ * @Author zhanshifeng @Date 2020/1/14 4:48 PM
+ */
 @UtilityClass
 public class CommonUtils {
 
-  public static String translateBooleanToStr(boolean flag) {
-    if (flag) {
-      return GlobalConstants.FLAG_Y;
-    } else {
-      return GlobalConstants.FLAG_N;
+    public static String translateBooleanToStr(boolean flag) {
+        if (flag) {
+            return GlobalConstants.FLAG_Y;
+        } else {
+            return GlobalConstants.FLAG_N;
+        }
     }
-  }
 }

@@ -35,16 +35,16 @@ import org.springframework.web.reactive.function.server.RouterFunctions;
 @Configuration
 @RequiredArgsConstructor
 public class RouterFunctionConfiguration {
-  private final HystrixFallbackHandler hystrixFallbackHandler;
-  private final AutoCodeHandler autoCodeHandler;
+    private final HystrixFallbackHandler hystrixFallbackHandler;
+    private final AutoCodeHandler autoCodeHandler;
 
-  @Bean
-  public RouterFunction routerFunction() {
-    return RouterFunctions.route(
-            RequestPredicates.path("/fallback").and(RequestPredicates.accept(MediaType.TEXT_PLAIN)),
-            hystrixFallbackHandler)
-        .andRoute(
-            RequestPredicates.GET("/code").and(RequestPredicates.accept(MediaType.TEXT_PLAIN)),
-            autoCodeHandler);
-  }
+    @Bean
+    public RouterFunction routerFunction() {
+        return RouterFunctions.route(
+                RequestPredicates.path("/fallback").and(RequestPredicates.accept(MediaType.TEXT_PLAIN)),
+                hystrixFallbackHandler)
+                .andRoute(
+                        RequestPredicates.GET("/code").and(RequestPredicates.accept(MediaType.TEXT_PLAIN)),
+                        autoCodeHandler);
+    }
 }

@@ -18,7 +18,9 @@ package me.fengorz.kiwi.word.api.vo;
 
 import me.fengorz.kiwi.word.api.entity.WordMainDO;
 
-/** @Author zhanshifeng @Date 2020/5/24 12:33 PM */
+/**
+ * @Author zhanshifeng @Date 2020/5/24 12:33 PM
+ */
 public class WordMainVO extends WordMainDO {
-  private static final long serialVersionUID = -3506446384111168913L;
+    private static final long serialVersionUID = -3506446384111168913L;
 }

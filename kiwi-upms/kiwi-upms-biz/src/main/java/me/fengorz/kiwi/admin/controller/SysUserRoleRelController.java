@@ -37,67 +37,67 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/sys/user/role/rel")
 public class SysUserRoleRelController extends BaseController {
 
-  private final SysUserRoleRelService sysUserRoleRelService;
+    private final SysUserRoleRelService sysUserRoleRelService;
 
-  /**
-   * 分页查询
-   *
-   * @param page 分页对象
-   * @param sysUserRoleRel 用户角色表
-   * @return
-   */
-  @GetMapping("/page")
-  public R getSysUserRoleRelPage(Page page, SysUserRoleRel sysUserRoleRel) {
-    return R.success(sysUserRoleRelService.page(page, Wrappers.query(sysUserRoleRel)));
-  }
+    /**
+     * 分页查询
+     *
+     * @param page           分页对象
+     * @param sysUserRoleRel 用户角色表
+     * @return
+     */
+    @GetMapping("/page")
+    public R getSysUserRoleRelPage(Page page, SysUserRoleRel sysUserRoleRel) {
+        return R.success(sysUserRoleRelService.page(page, Wrappers.query(sysUserRoleRel)));
+    }
 
-  /**
-   * 通过id查询用户角色表
-   *
-   * @param userId id
-   * @return R
-   */
-  @GetMapping("/{userId}")
-  public R getById(@PathVariable("userId") Integer userId) {
-    return R.success(sysUserRoleRelService.getById(userId));
-  }
+    /**
+     * 通过id查询用户角色表
+     *
+     * @param userId id
+     * @return R
+     */
+    @GetMapping("/{userId}")
+    public R getById(@PathVariable("userId") Integer userId) {
+        return R.success(sysUserRoleRelService.getById(userId));
+    }
 
-  /**
-   * 新增用户角色表
-   *
-   * @param sysUserRoleRel 用户角色表
-   * @return R
-   */
-  @SysLog("新增用户角色表")
-  @PostMapping
-  @PreAuthorize("@pms.hasPermission('admin_sysuserrolerel_add')")
-  public R save(@RequestBody SysUserRoleRel sysUserRoleRel) {
-    return R.success(sysUserRoleRelService.save(sysUserRoleRel));
-  }
+    /**
+     * 新增用户角色表
+     *
+     * @param sysUserRoleRel 用户角色表
+     * @return R
+     */
+    @SysLog("新增用户角色表")
+    @PostMapping
+    @PreAuthorize("@pms.hasPermission('admin_sysuserrolerel_add')")
+    public R save(@RequestBody SysUserRoleRel sysUserRoleRel) {
+        return R.success(sysUserRoleRelService.save(sysUserRoleRel));
+    }
 
-  /**
-   * 修改用户角色表
-   *
-   * @param sysUserRoleRel 用户角色表
-   * @return R
-   */
-  @SysLog("修改用户角色表")
-  @PutMapping
-  @PreAuthorize("@pms.hasPermission('admin_sysuserrolerel_edit')")
-  public R updateById(@RequestBody SysUserRoleRel sysUserRoleRel) {
-    return R.success(sysUserRoleRelService.updateById(sysUserRoleRel));
-  }
+    /**
+     * 修改用户角色表
+     *
+     * @param sysUserRoleRel 用户角色表
+     * @return R
+     */
+    @SysLog("修改用户角色表")
+    @PutMapping
+    @PreAuthorize("@pms.hasPermission('admin_sysuserrolerel_edit')")
+    public R updateById(@RequestBody SysUserRoleRel sysUserRoleRel) {
+        return R.success(sysUserRoleRelService.updateById(sysUserRoleRel));
+    }
 
-  /**
-   * 通过id删除用户角色表
-   *
-   * @param userId id
-   * @return R
-   */
-  @SysLog("通过id删除用户角色表")
-  @DeleteMapping("/{userId}")
-  @PreAuthorize("@pms.hasPermission('admin_sysuserrolerel_del')")
-  public R removeById(@PathVariable Integer userId) {
-    return R.success(sysUserRoleRelService.removeById(userId));
-  }
+    /**
+     * 通过id删除用户角色表
+     *
+     * @param userId id
+     * @return R
+     */
+    @SysLog("通过id删除用户角色表")
+    @DeleteMapping("/{userId}")
+    @PreAuthorize("@pms.hasPermission('admin_sysuserrolerel_del')")
+    public R removeById(@PathVariable Integer userId) {
+        return R.success(sysUserRoleRelService.removeById(userId));
+    }
 }

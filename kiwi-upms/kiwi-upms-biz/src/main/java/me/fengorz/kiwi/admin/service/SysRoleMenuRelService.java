@@ -24,4 +24,5 @@ import me.fengorz.kiwi.admin.api.entity.SysRoleMenuRel;
  * @author zhanshifeng
  * @date 2019-09-26 16:03:15
  */
-public interface SysRoleMenuRelService extends IService<SysRoleMenuRel> {}
+public interface SysRoleMenuRelService extends IService<SysRoleMenuRel> {
+}

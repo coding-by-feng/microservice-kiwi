@@ -23,17 +23,19 @@ import me.fengorz.kiwi.common.sdk.exception.dfs.DfsOperateException;
 import java.io.InputStream;
 import java.util.Set;
 
-/** @author zhanshifeng */
+/**
+ * @author zhanshifeng
+ */
 public interface IDfsService {
 
-  String uploadFile(InputStream inputStream, long size, String extName) throws DfsOperateException;
+    String uploadFile(InputStream inputStream, long size, String extName) throws DfsOperateException;
 
-  String uploadFile(InputStream inputStream, long size, String extName, Set<MetaData> metaDataSet)
-      throws DfsOperateException;
+    String uploadFile(InputStream inputStream, long size, String extName, Set<MetaData> metaDataSet)
+            throws DfsOperateException;
 
-  void deleteFile(String groupName, String path) throws DfsOperateDeleteException;
+    void deleteFile(String groupName, String path) throws DfsOperateDeleteException;
 
-  InputStream downloadStream(String groupName, String path) throws DfsOperateException;
+    InputStream downloadStream(String groupName, String path) throws DfsOperateException;
 
-  byte[] downloadFile(String groupName, String path) throws DfsOperateException;
+    byte[] downloadFile(String groupName, String path) throws DfsOperateException;
 }

@@ -33,50 +33,52 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
-/** @Author zhanshifeng @Date 2019/10/28 4:25 PM */
+/**
+ * @Author zhanshifeng @Date 2019/10/28 4:25 PM
+ */
 @Slf4j
 @Component
 @RequiredArgsConstructor
 @RabbitListener(
-    bindings =
+        bindings =
         @QueueBinding(
-            value =
+                value =
                 @Queue(
-                    value = "${mq.config.pronunciationFromCambridge.removeQueue}",
-                    autoDelete = "true"),
-            exchange = @Exchange(value = "${mq.config.pronunciationFromCambridge.exchange}"),
-            key = "${mq.config.pronunciationFromCambridge.removeRouting}"))
+                        value = "${mq.config.pronunciationFromCambridge.removeQueue}",
+                        autoDelete = "true"),
+                exchange = @Exchange(value = "${mq.config.pronunciationFromCambridge.exchange}"),
+                key = "${mq.config.pronunciationFromCambridge.removeRouting}"))
 public class RemovePronunciationConsumer extends AbstractConsumer<RemovePronunciatioinMqDTO>
-    implements IConsumer<RemovePronunciatioinMqDTO> {
+        implements IConsumer<RemovePronunciatioinMqDTO> {
 
-  private final IFetchService fetchService;
+    private final IFetchService fetchService;
 
-  @Resource(name = "removePronunciationThreadExecutor")
-  private ThreadPoolTaskExecutor removePronunciationThreadExecutor;
+    @Resource(name = "removePronunciationThreadExecutor")
+    private ThreadPoolTaskExecutor removePronunciationThreadExecutor;
 
-  @Value("${crawler.config.max.pool.size}")
-  private int maxPoolSize;
+    @Value("${crawler.config.max.pool.size}")
+    private int maxPoolSize;
 
-  @PostConstruct
-  private void init() {
-    super.taskExecutor = this.removePronunciationThreadExecutor;
-    super.maxPoolSize = this.maxPoolSize;
-    super.startWorkLog = "rabbitMQ remove one pronunciation is 【{}】";
-  }
+    @PostConstruct
+    private void init() {
+        super.taskExecutor = this.removePronunciationThreadExecutor;
+        super.maxPoolSize = this.maxPoolSize;
+        super.startWorkLog = "rabbitMQ remove one pronunciation is 【{}】";
+    }
 
-  @Override
-  @RabbitHandler
-  public void consume(RemovePronunciatioinMqDTO dto) {
-    super.work(dto);
-  }
+    @Override
+    @RabbitHandler
+    public void consume(RemovePronunciatioinMqDTO dto) {
+        super.work(dto);
+    }
 
-  @Override
-  protected void execute(RemovePronunciatioinMqDTO dto) {
-    fetchService.handle(dto);
-  }
+    @Override
+    protected void execute(RemovePronunciatioinMqDTO dto) {
+        fetchService.handle(dto);
+    }
 
-  @Override
-  protected void errorCallback(RemovePronunciatioinMqDTO dto, Exception e) {
-    // TODO ZSF 增加一个抓取队列状态恢复到待抓取的接口，防止数据抓取丢失
-  }
+    @Override
+    protected void errorCallback(RemovePronunciatioinMqDTO dto, Exception e) {
+        // TODO ZSF 增加一个抓取队列状态恢复到待抓取的接口，防止数据抓取丢失
+    }
 }

@@ -34,24 +34,41 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public class PronunciationDO extends Model<PronunciationDO> {
 
-  private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-  /** */
-  @TableId private Integer pronunciationId;
-  /** 单词ID */
-  private Integer wordId;
-  /** 音标 */
-  private String soundmark;
-  /** 音标类别 */
-  private String soundmarkType;
-  /** 发音文件存放路径 */
-  private String voiceFilePath;
-  /** 逻辑删除标记 */
-  private Integer isDel;
-  /** 分布式文件系统存放的组名 */
-  private String groupName;
-  /** */
-  private Integer characterId;
+    /**
+     *
+     */
+    @TableId
+    private Integer pronunciationId;
+    /**
+     * 单词ID
+     */
+    private Integer wordId;
+    /**
+     * 音标
+     */
+    private String soundmark;
+    /**
+     * 音标类别
+     */
+    private String soundmarkType;
+    /**
+     * 发音文件存放路径
+     */
+    private String voiceFilePath;
+    /**
+     * 逻辑删除标记
+     */
+    private Integer isDel;
+    /**
+     * 分布式文件系统存放的组名
+     */
+    private String groupName;
+    /**
+     *
+     */
+    private Integer characterId;
 
-  private String sourceUrl;
+    private String sourceUrl;
 }

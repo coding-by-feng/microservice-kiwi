@@ -18,11 +18,13 @@ package me.fengorz.kiwi.common.sdk.constant;
 
 import lombok.experimental.UtilityClass;
 
-/** @Author zhanshifeng @Date 2019-09-26 16:54 */
+/**
+ * @Author zhanshifeng @Date 2019-09-26 16:54
+ */
 @UtilityClass
 public class ServiceNameConstants {
 
-  public final String VOCABULARY_ENHANCER_AUTH = "kiwi-auth";
+    public final String VOCABULARY_ENHANCER_AUTH = "kiwi-auth";
 
-  public final String VOCABULARY_ENHANCER_UPMS = "kiwi-upms";
+    public final String VOCABULARY_ENHANCER_UPMS = "kiwi-upms";
 }

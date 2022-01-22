@@ -47,3 +47,6 @@ crawler:
     queue:
       capacity: 10
 
+baidu:
+  tts:
+    app-id:

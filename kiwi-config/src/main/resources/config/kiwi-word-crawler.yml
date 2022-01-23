@@ -49,4 +49,6 @@ crawler:
 
 baidu:
   tts:
-    app-id:
+    app-id: 20116041
+    api-key: changeme
+    secret-key: changeme

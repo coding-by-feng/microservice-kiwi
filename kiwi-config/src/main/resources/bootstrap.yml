@@ -1,3 +1,8 @@
+jasypt:
+  encryptor:
+    password: ${KIWI_ENC_PASSWORD}
+    poolSize: 2
+
 server:
   port: 7771
 
@@ -12,7 +17,6 @@ spring:
         native:
           search-locations: classpath:/config
 
-
 # 注册中心配置
 eureka:
   instance:
@@ -21,7 +25,10 @@ eureka:
     ip-address: kiwi-config
   client:
     service-url:
-      defaultZone: http://codingByFeng:123456@kiwi-eureka:8762/eureka
+      defaultZone: http://${eureka.security.username}:${eureka.security.password}@kiwi-eureka:8762/eureka
+  security:
+    username: ENC(SKdYEg+E1hatfznKqx4LcBiqYnYDcXW7)
+    password: ENC(ceDAameujB+jXutTPYZUe7NW7P8WoRsm)
 
 # 暴露监控点
 management:
@@ -29,3 +36,4 @@ management:
     web:
       exposure:
         include: '*'
+

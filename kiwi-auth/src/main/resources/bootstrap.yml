@@ -1,11 +1,14 @@
+jasypt:
+  encryptor:
+    password: ${KIWI_ENC_PASSWORD}
+    poolSize: 2
+
 server:
   port: 3001
 
 spring:
   application:
     name: kiwi-auth
-  profiles:
-    active: dev,prod
   cloud:
     config:
       fail-fast: true
@@ -25,4 +28,7 @@ eureka:
     instance-id: kiwi-auth
   client:
     service-url:
-      defaultZone: http://codingByFeng:123456@kiwi-eureka:8762/eureka
+      defaultZone: http://${eureka.security.username}:${eureka.security.password}@kiwi-eureka:8762/eureka
+  security:
+    username: ENC(SKdYEg+E1hatfznKqx4LcBiqYnYDcXW7)
+    password: ENC(ceDAameujB+jXutTPYZUe7NW7P8WoRsm)

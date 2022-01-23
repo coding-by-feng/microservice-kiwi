@@ -2,6 +2,7 @@
 jasypt:
   encryptor:
     password: coding-by-feng #根密码
+    poolSize: 2
 
 spring:
   #  cloud:
@@ -11,8 +12,8 @@ spring:
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
     driver-class-name: com.mysql.cj.jdbc.Driver
-    username: root
-    password: fengORZ123
+    username: ENC(KH/GJ05cpFBSAV5u8IruRw==)
+    password: ENC(Dh6vV+rX9HyZgiOP83BIiQAZ1+9KOGVh)
     url: jdbc:mysql://172.17.0.2:3306/kiwi_db?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&useSSL=false&serverTimezone=Asia/Shanghai
     hikari:
       max-lifetime: 600000
@@ -20,7 +21,7 @@ spring:
       maximum-pool-size: 15
   redis:
     host: kiwi-redis
-    password: fengORZ123
+    password: ENC(uxuSI1Bl5AelC8dYvJUvMhsRbasVD4zh)
     port: 6379
   servlet:
     multipart:
@@ -30,8 +31,8 @@ spring:
   rabbitmq:
     host: kiwi-rabbitmq
     port: 5672
-    username: guest
-    password: guest
+    username: ENC(K6oRfaFZN7XSXbmJrXHiXQ==)
+    password: ENC(cvON8OapdxM7/Tq88I5JuA==)
   elasticsearch:
     rest:
       uris: kiwi-es:9200

@@ -1,10 +1,14 @@
+jasypt:
+  encryptor:
+    password: ${KIWI_ENC_PASSWORD}
+    poolSize: 2
+
 server:
   port: 9991
 
 spring:
   application:
     name: kiwi-gateway
-  # 配置中心
   cloud:
     gateway:
       enabled:
@@ -25,6 +29,8 @@ eureka:
     instance-id: kiwi-gate
   client:
     service-url:
-      defaultZone: http://codingByFeng:123456@kiwi-eureka:8762/eureka
-
+      defaultZone: http://${eureka.security.username}:${eureka.security.password}@kiwi-eureka:8762/eureka
+  security:
+    username: ENC(SKdYEg+E1hatfznKqx4LcBiqYnYDcXW7)
+    password: ENC(ceDAameujB+jXutTPYZUe7NW7P8WoRsm)
 

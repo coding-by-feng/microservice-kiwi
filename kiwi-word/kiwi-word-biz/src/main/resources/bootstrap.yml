@@ -1,3 +1,8 @@
+jasypt:
+  encryptor:
+    password: ${KIWI_ENC_PASSWORD}
+    poolSize: 2
+
 server:
   # 动态获取端口
   port: ${PORT:0}
@@ -23,4 +28,7 @@ eureka:
     prefer-ip-address: true
   client:
     service-url:
-      defaultZone: http://codingByFeng:123456@kiwi-eureka:8762/eureka
+      defaultZone: http://${eureka.security.username}:${eureka.security.password}@kiwi-eureka:8762/eureka
+  security:
+    username: ENC(SKdYEg+E1hatfznKqx4LcBiqYnYDcXW7)
+    password: ENC(ceDAameujB+jXutTPYZUe7NW7P8WoRsm)

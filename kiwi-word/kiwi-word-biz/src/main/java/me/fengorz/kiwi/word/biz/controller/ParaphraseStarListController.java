@@ -15,8 +15,18 @@
  */
 package me.fengorz.kiwi.word.biz.controller;
 
+import java.util.List;
+
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+
+import org.hibernate.validator.constraints.Range;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.bdf.core.service.ISeqService;
@@ -34,13 +44,6 @@ import me.fengorz.kiwi.word.biz.service.base.IParaphraseService;
 import me.fengorz.kiwi.word.biz.service.base.IParaphraseStarListService;
 import me.fengorz.kiwi.word.biz.service.base.IWordReviewService;
 import me.fengorz.kiwi.word.biz.service.operate.IOperateService;
-import org.hibernate.validator.constraints.Range;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
-import java.util.List;
 
 /**
  * 单词本
@@ -114,33 +117,26 @@ public class ParaphraseStarListController extends BaseController {
     }
 
     @PostMapping("/getListItems/{size}/{current}")
-    public R<IPage<ParaphraseStarItemVO>> getListItems(
-            @NotNull Integer listId,
-            @PathVariable @Min(0) Integer current,
-            @PathVariable @Range(min = 1, max = 100) Integer size) {
+    public R<IPage<ParaphraseStarItemVO>> getListItems(@NotNull Integer listId, @PathVariable @Min(0) Integer current,
+        @PathVariable @Range(min = 1, max = 100) Integer size) {
         return R.success(starListService.selectListItems(new Page<>(current, size), listId));
     }
 
     @PostMapping("/getReviewListItems/{size}/{current}")
-    public R<IPage<ParaphraseStarItemVO>> getReviewListItems(
-            @NotNull Integer listId,
-            @PathVariable @Min(0) Integer current,
-            @PathVariable @Range(min = 1, max = 100) Integer size) {
+    public R<IPage<ParaphraseStarItemVO>> getReviewListItems(@NotNull Integer listId,
+        @PathVariable @Min(0) Integer current, @PathVariable @Range(min = 1, max = 100) Integer size) {
         return R.success(starListService.selectReviewListItems(new Page<>(current, size), listId));
     }
 
     @PostMapping("/getRememberListItems/{size}/{current}")
-    public R<IPage<ParaphraseStarItemVO>> getRememberListItems(
-            @NotNull Integer listId,
-            @PathVariable @Min(0) Integer current,
-            @PathVariable @Range(min = 1, max = 100) Integer size) {
+    public R<IPage<ParaphraseStarItemVO>> getRememberListItems(@NotNull Integer listId,
+        @PathVariable @Min(0) Integer current, @PathVariable @Range(min = 1, max = 100) Integer size) {
         return R.success(starListService.selectRememberListItems(new Page<>(current, size), listId));
     }
 
     @GetMapping("/getItemDetail/{paraphraseId}")
     public R<ParaphraseVO> getItemDetail(@PathVariable Integer paraphraseId) {
-        reviewService.increase(
-                ReviewDailyCounterTypeEnum.REVIEW.getType(), SecurityUtils.getCurrentUserId());
+        reviewService.increase(ReviewDailyCounterTypeEnum.REVIEW.getType(), SecurityUtils.getCurrentUserId());
         return R.success(operateService.findParaphraseVO(paraphraseId));
     }
 

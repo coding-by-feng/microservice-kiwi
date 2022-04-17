@@ -15,14 +15,16 @@
  */
 package me.fengorz.kiwi.word.biz.mapper;
 
+import java.util.List;
+
+import org.apache.ibatis.annotations.Param;
+
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+
 import me.fengorz.kiwi.common.sdk.constant.MapperConstant;
 import me.fengorz.kiwi.word.api.dto.mapper.in.SelectEntityIsCollectDTO;
 import me.fengorz.kiwi.word.api.entity.ParaphraseDO;
 import me.fengorz.kiwi.word.api.vo.detail.ParaphraseVO;
-import org.apache.ibatis.annotations.Param;
-
-import java.util.List;
 
 /**
  * 单词释义表
@@ -32,6 +34,5 @@ import java.util.List;
  */
 public interface ParaphraseMapper extends BaseMapper<ParaphraseDO> {
 
-    List<ParaphraseVO> selectParaphraseAndIsCollect(
-            @Param(MapperConstant.QUERY_PARAMS) SelectEntityIsCollectDTO dto);
+    List<ParaphraseVO> selectParaphraseAndIsCollect(@Param(MapperConstant.QUERY_PARAMS) SelectEntityIsCollectDTO dto);
 }

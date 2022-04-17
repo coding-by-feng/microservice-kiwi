@@ -12,23 +12,23 @@
  */
 package me.fengorz.kiwi.word.api.feign;
 
+import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+
 import me.fengorz.kiwi.common.api.R;
 import me.fengorz.kiwi.word.api.common.WordConstants;
 import me.fengorz.kiwi.word.api.feign.factory.WordMainVariantFallBackFactory;
 import me.fengorz.kiwi.word.api.vo.detail.WordQueryVO;
-import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 
 /**
  * @Author zhanshifeng
  * @date 2020-05-24 01:40:36
  */
-@FeignClient(
-        contextId = "queryAPI",
-        value = WordConstants.KIWI_WORD_BIZ,
-        fallbackFactory = WordMainVariantFallBackFactory.class)
+@FeignClient(contextId = "queryAPI", value = WordConstants.KIWI_WORD_BIZ,
+    fallbackFactory = WordMainVariantFallBackFactory.class)
 public interface IQueryAPI {
 
     String WORD_MAIN = "/word/main";

@@ -3,7 +3,7 @@
  */
 public class Test {
     public static void main(String[] args) {
-        System.out.println("拼单" + (30.6 + 2.5));
-        System.out.println("不拼单" + (13.8 * 2 + 2.5 * 2));
+        System.out.println(System.getenv("KIWI_ENC_PASSWORD"));
+        System.getenv().forEach((k, v) -> System.out.println(k + "=" + v));
     }
 }

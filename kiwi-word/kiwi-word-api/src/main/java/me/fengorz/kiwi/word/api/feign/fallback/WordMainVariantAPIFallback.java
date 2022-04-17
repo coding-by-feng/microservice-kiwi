@@ -13,11 +13,12 @@
 
 package me.fengorz.kiwi.word.api.feign.fallback;
 
+import org.springframework.stereotype.Component;
+
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.api.R;
 import me.fengorz.kiwi.word.api.feign.IWordMainVariantAPI;
-import org.springframework.stereotype.Component;
 
 /**
  * Hystrix熔断回调实现 @Author zhanshifeng

@@ -15,14 +15,16 @@
  */
 package me.fengorz.kiwi.word.biz.service.base.impl;
 
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+
 import lombok.RequiredArgsConstructor;
 import me.fengorz.kiwi.word.api.entity.ExampleStarRelDO;
 import me.fengorz.kiwi.word.biz.mapper.ExampleStarRelMapper;
 import me.fengorz.kiwi.word.biz.service.base.IWordExampleStarRelService;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 释义例句本与例句关系表
@@ -32,9 +34,8 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Service
 @RequiredArgsConstructor
-public class WordExampleStarRelServiceImpl
-        extends ServiceImpl<ExampleStarRelMapper, ExampleStarRelDO>
-        implements IWordExampleStarRelService {
+public class WordExampleStarRelServiceImpl extends ServiceImpl<ExampleStarRelMapper, ExampleStarRelDO>
+    implements IWordExampleStarRelService {
 
     private final ExampleStarRelMapper exampleStarRelMapper;
 
@@ -45,8 +46,7 @@ public class WordExampleStarRelServiceImpl
             return;
         }
 
-        exampleStarRelMapper.update(
-                new ExampleStarRelDO().setExampleId(newRelId),
-                Wrappers.<ExampleStarRelDO>lambdaUpdate().eq(ExampleStarRelDO::getExampleId, oldRelId));
+        exampleStarRelMapper.update(new ExampleStarRelDO().setExampleId(newRelId),
+            Wrappers.<ExampleStarRelDO>lambdaUpdate().eq(ExampleStarRelDO::getExampleId, oldRelId));
     }
 }

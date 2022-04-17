@@ -14,17 +14,22 @@
  *
  */
 
-package me.fengorz.kiwi.vocabulary.crawler.config;
+package me.fengorz.kiwi.vocabulary.crawler.component.producer.base;
 
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
+import me.fengorz.kiwi.word.api.dto.queue.*;
 
-import me.fengorz.kiwi.bdf.core.config.CoreConfig;
-import me.fengorz.kiwi.common.fastdfs.config.DfsConfig;
+public interface MQSender {
+    void fetchWord(FetchWordMqDTO dto);
 
-/**
- * @Author zhanshifeng @Date 2019/10/30 3:45 PM
- */
-@Configuration
-@Import({CoreConfig.class, DfsConfig.class})
-public class CrawlerConfig {}
+    void fetchPhraseRunUp(FetchPhraseRunUpMqDTO dto);
+
+    void fetchPhrase(FetchPhraseMqDTO dto);
+
+    void fetchPronunciation(FetchPronunciationMqDTO dto);
+
+    void removeWord(RemoveMqDTO dto);
+
+    void removePhrase(RemoveMqDTO dto);
+
+    void removePronunciation(RemovePronunciatioinMqDTO dto);
+}

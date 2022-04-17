@@ -24,8 +24,7 @@ import me.fengorz.kiwi.common.sdk.exception.BaseException;
 public class JsoupFetchResultException extends BaseException {
     private static final long serialVersionUID = -2672507193122171624L;
 
-    public JsoupFetchResultException() {
-    }
+    public JsoupFetchResultException() {}
 
     public JsoupFetchResultException(String message) {
         super(message);
@@ -39,8 +38,8 @@ public class JsoupFetchResultException extends BaseException {
         super(cause);
     }
 
-    public JsoupFetchResultException(
-            String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+    public JsoupFetchResultException(String message, Throwable cause, boolean enableSuppression,
+        boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
     }
 }

@@ -23,7 +23,6 @@ public class DfsConstants {
 
     public static final String DELETE_FILE_EXCEPTION = "dfsService delete file exception!";
     public static final String UPLOAD_FILE_EXCEPTION = "dfsService upload file exception";
-    public static final String DOWNLOAD_STREAM_FILE_EXCEPTION =
-            "dfsService download stream of file exception";
+    public static final String DOWNLOAD_STREAM_FILE_EXCEPTION = "dfsService download stream of file exception";
     public static final String DOWNLOAD_FILE_EXCEPTION = "dfsService download of file exception";
 }

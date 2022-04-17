@@ -16,11 +16,11 @@
 
 package me.fengorz.kiwi.auth.config;
 
-import lombok.RequiredArgsConstructor;
-import me.fengorz.kiwi.bdf.security.component.KiwiWebResponseExceptionTranslator;
-import me.fengorz.kiwi.bdf.security.service.KiwiClientDetailsService;
-import me.fengorz.kiwi.common.api.entity.EnhancerUser;
-import me.fengorz.kiwi.common.sdk.constant.SecurityConstants;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.sql.DataSource;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -38,9 +38,11 @@ import org.springframework.security.oauth2.provider.token.TokenEnhancer;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.redis.RedisTokenStore;
 
-import javax.sql.DataSource;
-import java.util.HashMap;
-import java.util.Map;
+import lombok.RequiredArgsConstructor;
+import me.fengorz.kiwi.bdf.security.component.KiwiWebResponseExceptionTranslator;
+import me.fengorz.kiwi.bdf.security.service.KiwiClientDetailsService;
+import me.fengorz.kiwi.common.api.entity.EnhancerUser;
+import me.fengorz.kiwi.common.sdk.constant.SecurityConstants;
 
 /**
  * @Author zhanshifeng @Date 2019-09-23 21:07
@@ -70,15 +72,11 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 
     @Override
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
-        endpoints
-                .allowedTokenEndpointRequestMethods(HttpMethod.GET, HttpMethod.POST)
-                .tokenStore(tokenStore())
-                .tokenEnhancer(tokenEnhancer())
-                .userDetailsService(userDetailsService)
-                .authenticationManager(authenticationManager)
-                .reuseRefreshTokens(false)
-                // TODO zhanshifeng 这个API作用什么？
-                .exceptionTranslator(new KiwiWebResponseExceptionTranslator());
+        endpoints.allowedTokenEndpointRequestMethods(HttpMethod.GET, HttpMethod.POST).tokenStore(tokenStore())
+            .tokenEnhancer(tokenEnhancer()).userDetailsService(userDetailsService)
+            .authenticationManager(authenticationManager).reuseRefreshTokens(false)
+            // TODO zhanshifeng 这个API作用什么？
+            .exceptionTranslator(new KiwiWebResponseExceptionTranslator());
 
         DefaultTokenServices defaultTokenServices = new DefaultTokenServices();
         defaultTokenServices.setTokenStore(endpoints.getTokenStore());
@@ -103,12 +101,12 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
     public TokenEnhancer tokenEnhancer() {
         return (accessToken, authentication) -> {
             final Map<String, Object> additionalInfo = new HashMap<>(1);
-            EnhancerUser enhancerUser = (EnhancerUser) authentication.getPrincipal();
+            EnhancerUser enhancerUser = (EnhancerUser)authentication.getPrincipal();
             additionalInfo.put(SecurityConstants.DETAILS_LICENSE, SecurityConstants.PROJECT_LICENSE);
             additionalInfo.put(SecurityConstants.DETAILS_USER_ID, enhancerUser.getId());
             additionalInfo.put(SecurityConstants.DETAILS_USERNAME, enhancerUser.getUsername());
             additionalInfo.put(SecurityConstants.DETAILS_DEPT_ID, enhancerUser.getDeptId());
-            ((DefaultOAuth2AccessToken) accessToken).setAdditionalInformation(additionalInfo);
+            ((DefaultOAuth2AccessToken)accessToken).setAdditionalInformation(additionalInfo);
             return accessToken;
         };
     }

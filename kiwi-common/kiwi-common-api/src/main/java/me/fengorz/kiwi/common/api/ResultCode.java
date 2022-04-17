@@ -16,11 +16,11 @@
 
 package me.fengorz.kiwi.common.api;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import static me.fengorz.kiwi.common.api.ApiContants.*;
 
 import java.util.function.Supplier;
 
-import static me.fengorz.kiwi.common.api.ApiContants.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * @Author zhanshifeng @Date 2020/5/23 1:28 PM
@@ -44,7 +44,7 @@ public interface ResultCode {
     ResultCode ERROR = () -> I18N_CODE_ERROR;
 
     ResultCode MICROSERVICE_INVOCATION_ERROR =
-            build(() -> RESULT_CODE_INVOCATION_ERROR, () -> "common.operate.microservice.error");
+        build(() -> RESULT_CODE_INVOCATION_ERROR, () -> "common.operate.microservice.error");
 
     static ResultCode build(Supplier<Integer> code, Supplier<String> i18nCode) {
         return new ResultCode() {

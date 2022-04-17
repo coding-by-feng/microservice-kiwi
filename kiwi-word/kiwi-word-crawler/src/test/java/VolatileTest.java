@@ -35,17 +35,15 @@ public class VolatileTest {
         long start = System.currentTimeMillis();
         Thread[] threads = new Thread[THREADS_COUNT];
         for (int i = 0; i < THREADS_COUNT; i++) {
-            threads[i] =
-                    new Thread(
-                            new Runnable() {
-                                @Override
-                                public void run() {
-                                    for (int i = 0; i < 100000; i++) {
-                                        increase();
-                                    }
-                                    countDownLatch.countDown();
-                                }
-                            });
+            threads[i] = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    for (int i = 0; i < 100000; i++) {
+                        increase();
+                    }
+                    countDownLatch.countDown();
+                }
+            });
             threads[i].start();
         }
         countDownLatch.await();

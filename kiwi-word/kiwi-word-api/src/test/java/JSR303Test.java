@@ -14,11 +14,11 @@
  *
  */
 
-import lombok.Data;
-import lombok.experimental.Accessors;
-
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+
+import lombok.Data;
+import lombok.experimental.Accessors;
 
 /**
  * @Author zhanshifeng @Date 2019/11/26 8:50 PM

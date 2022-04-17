@@ -33,10 +33,9 @@ public class WordConstants {
     public static final int REMEMBER_ARCHIVE_TYPE_WORD = 1;
     public static final int REMEMBER_ARCHIVE_TYPE_PARAPHRASE = 2;
     public static final int REMEMBER_ARCHIVE_TYPE_EXAMPLE = 3;
-    public static final String VO_PATH_MEANING_CHINESE =
-            "characterVOList.paraphraseVOList.meaningChinese";
+    public static final String VO_PATH_MEANING_CHINESE = "characterVOList.paraphraseVOList.meaningChinese";
     public static final String VO_PATH_EXAMPLE_CHINESE =
-            "characterVOList.paraphraseVOList.exampleVOList.exampleTranslate";
+        "characterVOList.paraphraseVOList.exampleVOList.exampleTranslate";
     public static final int BREAKPOINT_REVIEW_TYPE_PARAPHRASE = 1;
 
     public interface CACHE_KEY_PREFIX_OPERATE {

@@ -1,12 +1,13 @@
-import cn.hutool.core.util.ArrayUtil;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import org.apache.commons.lang3.StringUtils;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
+
+import org.apache.commons.lang3.StringUtils;
+
+import cn.hutool.core.util.ArrayUtil;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 
 /**
  * @Author zhanshifeng @Date 2019-09-12 14:29
@@ -57,10 +58,7 @@ public class Java8StreamTest {
 
     // @Test
     public void filterTest() {
-        Stream.of(1, 2, 3, 4, 5, 4, 3, 2, 34, 4)
-                .distinct()
-                .filter(e -> e < 5)
-                .forEach(System.out::println);
+        Stream.of(1, 2, 3, 4, 5, 4, 3, 2, 34, 4).distinct().filter(e -> e < 5).forEach(System.out::println);
     }
 
     // @Test
@@ -71,21 +69,17 @@ public class Java8StreamTest {
         actionList.add(new Action("Up Hook"));
 
         Stream<Person> personStream1 =
-                Stream.of(
-                        new Person("jack", Arrays.stream(ArrayUtil.toArray(actionList, Action.class))),
-                        new Person("mark", Arrays.stream(ArrayUtil.toArray(actionList, Action.class))));
+            Stream.of(new Person("jack", Arrays.stream(ArrayUtil.toArray(actionList, Action.class))),
+                new Person("mark", Arrays.stream(ArrayUtil.toArray(actionList, Action.class))));
 
         Stream<Person> personStream2 =
-                Stream.of(
-                        new Person("jack", Arrays.stream(ArrayUtil.toArray(actionList, Action.class))),
-                        new Person("mark", Arrays.stream(ArrayUtil.toArray(actionList, Action.class))));
+            Stream.of(new Person("jack", Arrays.stream(ArrayUtil.toArray(actionList, Action.class))),
+                new Person("mark", Arrays.stream(ArrayUtil.toArray(actionList, Action.class))));
 
         Stream<Stream<Action>> streamStream =
-                personStream1.map(Person::getActionStream).filter(actionStream -> actionStream != null);
-        Stream<Action> actionStream =
-                personStream2
-                        .flatMap(Person::getActionStream)
-                        .filter(action -> StringUtils.isNotBlank(action.getActionName()));
+            personStream1.map(Person::getActionStream).filter(actionStream -> actionStream != null);
+        Stream<Action> actionStream = personStream2.flatMap(Person::getActionStream)
+            .filter(action -> StringUtils.isNotBlank(action.getActionName()));
     }
 
     /*
@@ -93,12 +87,9 @@ public class Java8StreamTest {
      */
     // @Test
     public void peekTest() {
-        Stream.of(1, 2, 3, 4)
-                .peek(
-                        integer -> {
-                            System.out.println("pre" + integer);
-                        })
-                .forEach(System.out::println);
+        Stream.of(1, 2, 3, 4).peek(integer -> {
+            System.out.println("pre" + integer);
+        }).forEach(System.out::println);
     }
 
     @Data

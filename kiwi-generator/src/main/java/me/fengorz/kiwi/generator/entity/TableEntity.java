@@ -16,10 +16,10 @@
 
 package me.fengorz.kiwi.generator.entity;
 
+import java.util.List;
+
 import lombok.Data;
 import lombok.ToString;
-
-import java.util.List;
 
 /**
  * @Author zhanshifeng @Date 2019-09-10 19:12

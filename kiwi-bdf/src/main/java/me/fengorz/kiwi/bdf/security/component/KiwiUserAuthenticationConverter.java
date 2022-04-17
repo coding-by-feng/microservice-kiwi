@@ -16,11 +16,10 @@
 
 package me.fengorz.kiwi.bdf.security.component;
 
-import lombok.RequiredArgsConstructor;
-import me.fengorz.kiwi.common.api.entity.EnhancerUser;
-import me.fengorz.kiwi.common.sdk.config.FilterIgnorePropertiesConfig;
-import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
-import me.fengorz.kiwi.common.sdk.constant.SecurityConstants;
+import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -28,9 +27,11 @@ import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.oauth2.provider.token.UserAuthenticationConverter;
 import org.springframework.util.StringUtils;
 
-import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import lombok.RequiredArgsConstructor;
+import me.fengorz.kiwi.common.api.entity.EnhancerUser;
+import me.fengorz.kiwi.common.sdk.config.FilterIgnorePropertiesConfig;
+import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
+import me.fengorz.kiwi.common.sdk.constant.SecurityConstants;
 
 /**
  * 根据checktoken 的结果转化用户信息
@@ -58,8 +59,7 @@ public class KiwiUserAuthenticationConverter implements UserAuthenticationConver
     }
 
     /**
-     * Inverse of {@link #convertUserAuthentication(Authentication)}. Extracts an Authentication from
-     * a map.
+     * Inverse of {@link #convertUserAuthentication(Authentication)}. Extracts an Authentication from a map.
      *
      * @param map a map of user information
      * @return an Authentication representing the user or null if there is none
@@ -69,11 +69,10 @@ public class KiwiUserAuthenticationConverter implements UserAuthenticationConver
         if (map.containsKey(USERNAME)) {
             Collection<? extends GrantedAuthority> authorities = getAuthorities(map);
 
-            String username = (String) map.get(SecurityConstants.DETAILS_USERNAME);
-            Integer id = (Integer) map.get(SecurityConstants.DETAILS_USER_ID);
-            Integer deptId = (Integer) map.get(SecurityConstants.DETAILS_DEPT_ID);
-            EnhancerUser user =
-                    new EnhancerUser(id, deptId, username, N_A, true, true, true, true, authorities);
+            String username = (String)map.get(SecurityConstants.DETAILS_USERNAME);
+            Integer id = (Integer)map.get(SecurityConstants.DETAILS_USER_ID);
+            Integer deptId = (Integer)map.get(SecurityConstants.DETAILS_DEPT_ID);
+            EnhancerUser user = new EnhancerUser(id, deptId, username, N_A, true, true, true, true, authorities);
             return new UsernamePasswordAuthenticationToken(user, N_A, authorities);
         }
         return null;
@@ -88,11 +87,11 @@ public class KiwiUserAuthenticationConverter implements UserAuthenticationConver
         // }
 
         if (authorities instanceof String) {
-            return AuthorityUtils.commaSeparatedStringToAuthorityList((String) authorities);
+            return AuthorityUtils.commaSeparatedStringToAuthorityList((String)authorities);
         }
         if (authorities instanceof Collection) {
             return AuthorityUtils.commaSeparatedStringToAuthorityList(
-                    StringUtils.collectionToCommaDelimitedString((Collection<?>) authorities));
+                StringUtils.collectionToCommaDelimitedString((Collection<?>)authorities));
         }
         // throw new IllegalArgumentException("Authorities must be either a String or a Collection");
         return AuthorityUtils.commaSeparatedStringToAuthorityList(GlobalConstants.EMPTY);

@@ -48,8 +48,7 @@ public class DfsOperateException extends BaseException {
         super(msg, resultCode, args);
     }
 
-    public DfsOperateException(
-            String msg, ResultCode resultCode, Throwable throwable, Object... args) {
+    public DfsOperateException(String msg, ResultCode resultCode, Throwable throwable, Object... args) {
         super(msg, resultCode, throwable, args);
     }
 }

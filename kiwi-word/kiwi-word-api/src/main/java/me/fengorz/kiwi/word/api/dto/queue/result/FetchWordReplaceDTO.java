@@ -16,13 +16,13 @@
 
 package me.fengorz.kiwi.word.api.dto.queue.result;
 
-import lombok.Data;
-import lombok.experimental.Accessors;
-
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+
+import lombok.Data;
+import lombok.experimental.Accessors;
 
 /**
  * @Author zhanshifeng @Date 2020/6/19 4:45 PM
@@ -74,7 +74,7 @@ public class FetchWordReplaceDTO implements Serializable {
             if (o == null || getClass() != o.getClass()) {
                 return false;
             }
-            Binder that = (Binder) o;
+            Binder that = (Binder)o;
             return Objects.equals(oldId, that.oldId) && Objects.equals(newId, that.newId);
         }
 

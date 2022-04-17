@@ -21,5 +21,4 @@ import org.apache.commons.lang3.ArrayUtils;
 /**
  * @Author zhanshifeng @Date 2020/5/17 12:31 PM
  */
-public class KiwiArrayUtils extends ArrayUtils {
-}
+public class KiwiArrayUtils extends ArrayUtils {}

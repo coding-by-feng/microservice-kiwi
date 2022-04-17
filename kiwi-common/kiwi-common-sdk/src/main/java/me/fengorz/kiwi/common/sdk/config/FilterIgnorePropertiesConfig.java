@@ -16,14 +16,15 @@
 
 package me.fengorz.kiwi.common.sdk.config;
 
-import lombok.Data;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Configuration;
 
-import java.util.ArrayList;
-import java.util.List;
+import lombok.Data;
 
 /**
  * @Author zhanshifeng @Date 2019-09-07 14:42

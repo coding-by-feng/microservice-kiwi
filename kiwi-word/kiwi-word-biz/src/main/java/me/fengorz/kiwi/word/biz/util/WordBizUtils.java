@@ -17,6 +17,7 @@
 package me.fengorz.kiwi.word.biz.util;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+
 import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
 import me.fengorz.kiwi.word.api.common.WordCrawlerConstants;
 import me.fengorz.kiwi.word.api.dto.mapper.in.SelectStarListItemDTO;
@@ -45,13 +46,8 @@ public class WordBizUtils {
     }
 
     @Deprecated
-    public static ParaphraseDO initParaphrase(
-            Integer characterId,
-            Integer wordId,
-            String meaningChinese,
-            String paraphraseEnglish,
-            String translateLanguage,
-            String codes) {
+    public static ParaphraseDO initParaphrase(Integer characterId, Integer wordId, String meaningChinese,
+        String paraphraseEnglish, String translateLanguage, String codes) {
         ParaphraseDO paraphrase = new ParaphraseDO();
         paraphrase.setWordId(wordId);
         paraphrase.setCharacterId(characterId);
@@ -64,12 +60,8 @@ public class WordBizUtils {
     }
 
     @Deprecated
-    public static ParaphraseExampleDO initExample(
-            Integer paraphraseId,
-            Integer wordId,
-            String exampleSentence,
-            String exampleTranslate,
-            String translateLanguage) {
+    public static ParaphraseExampleDO initExample(Integer paraphraseId, Integer wordId, String exampleSentence,
+        String exampleTranslate, String translateLanguage) {
         ParaphraseExampleDO example = new ParaphraseExampleDO();
         example.setWordId(wordId);
         example.setParaphraseId(paraphraseId);
@@ -79,12 +71,8 @@ public class WordBizUtils {
         return example;
     }
 
-    public static PronunciationDO initPronunciation(
-            Integer wordId,
-            Integer characterId,
-            String voiceUrl,
-            String soundmark,
-            String soundmarkType) {
+    public static PronunciationDO initPronunciation(Integer wordId, Integer characterId, String voiceUrl,
+        String soundmark, String soundmarkType) {
         PronunciationDO pronunciation = new PronunciationDO();
         pronunciation.setWordId(wordId);
         pronunciation.setCharacterId(characterId);
@@ -97,11 +85,8 @@ public class WordBizUtils {
     }
 
     public static SelectStarListItemDTO assembleSelectStarListItemDTO(Page<?> page, Integer listId) {
-        return (SelectStarListItemDTO)
-                new SelectStarListItemDTO()
-                        .setListId(listId)
-                        .setSize(page.getSize())
-                        .setCurrent((page.getCurrent() - 1) * page.getSize());
+        return (SelectStarListItemDTO)new SelectStarListItemDTO().setListId(listId).setSize(page.getSize())
+            .setCurrent((page.getCurrent() - 1) * page.getSize());
     }
 
     public static boolean fetchQueueIsRunning(Integer status) {
@@ -112,8 +97,7 @@ public class WordBizUtils {
     }
 
     public static int getOpposition(int infoType) {
-        return infoType == WordCrawlerConstants.QUEUE_INFO_TYPE_WORD
-                ? WordCrawlerConstants.QUEUE_INFO_TYPE_PHRASE
-                : WordCrawlerConstants.QUEUE_INFO_TYPE_WORD;
+        return infoType == WordCrawlerConstants.QUEUE_INFO_TYPE_WORD ? WordCrawlerConstants.QUEUE_INFO_TYPE_PHRASE
+            : WordCrawlerConstants.QUEUE_INFO_TYPE_WORD;
     }
 }

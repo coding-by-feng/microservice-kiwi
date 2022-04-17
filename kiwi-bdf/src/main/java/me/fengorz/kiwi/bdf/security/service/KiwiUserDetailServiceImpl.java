@@ -16,6 +16,20 @@
 
 package me.fengorz.kiwi.bdf.security.service;
 
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.AuthorityUtils;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
+
 import cn.hutool.core.util.ArrayUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,19 +40,6 @@ import me.fengorz.kiwi.common.api.R;
 import me.fengorz.kiwi.common.api.entity.EnhancerUser;
 import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
 import me.fengorz.kiwi.common.sdk.constant.SecurityConstants;
-import org.springframework.cache.Cache;
-import org.springframework.cache.CacheManager;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.AuthorityUtils;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.stereotype.Service;
-
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * @Author zhanshifeng
@@ -54,7 +55,7 @@ public class KiwiUserDetailServiceImpl implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) {
         Cache cache = cacheManager.getCache("user_details");
         if (cache != null && cache.get(username) != null) {
-            return (EnhancerUser) cache.get(username).get();
+            return (EnhancerUser)cache.get(username).get();
         }
         R<UserFullInfoDTO> info = iUserAPI.info(username, SecurityConstants.FROM_IN);
         UserDetails userDetails = getUserDetails(info);
@@ -71,28 +72,19 @@ public class KiwiUserDetailServiceImpl implements UserDetailsService {
 
         Set<String> dbAuthsSet = new HashSet<>();
         if (ArrayUtil.isNotEmpty(info.getRoles())) {
-            Arrays.stream(info.getRoles())
-                    .forEach(
-                            role -> {
-                                dbAuthsSet.add(SecurityConstants.ROLE + role);
-                            });
+            Arrays.stream(info.getRoles()).forEach(role -> {
+                dbAuthsSet.add(SecurityConstants.ROLE + role);
+            });
 
             dbAuthsSet.addAll(Arrays.asList(info.getPermissions()));
         }
 
         Collection<? extends GrantedAuthority> authorities =
-                AuthorityUtils.createAuthorityList(dbAuthsSet.toArray(new String[0]));
+            AuthorityUtils.createAuthorityList(dbAuthsSet.toArray(new String[0]));
         SysUser user = info.getSysUser();
 
-        return new EnhancerUser(
-                user.getUserId(),
-                user.getDeptId(),
-                user.getUsername(),
-                SecurityConstants.BCRYPT + user.getPassword(),
-                GlobalConstants.FLAG_DEL_NO == user.getDelFlag(),
-                true,
-                true,
-                true,
-                authorities);
+        return new EnhancerUser(user.getUserId(), user.getDeptId(), user.getUsername(),
+            SecurityConstants.BCRYPT + user.getPassword(), GlobalConstants.FLAG_DEL_NO == user.getDelFlag(), true, true,
+            true, authorities);
     }
 }

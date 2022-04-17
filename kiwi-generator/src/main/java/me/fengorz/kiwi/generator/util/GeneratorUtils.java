@@ -16,21 +16,23 @@
 
 package me.fengorz.kiwi.generator.util;
 
-import cn.hutool.core.util.StrUtil;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.commons.configuration.Configuration;
+import org.apache.commons.configuration.ConfigurationException;
+import org.apache.commons.configuration.PropertiesConfiguration;
+
 import com.baomidou.mybatisplus.generator.AutoGenerator;
 import com.baomidou.mybatisplus.generator.InjectionConfig;
 import com.baomidou.mybatisplus.generator.config.*;
 import com.baomidou.mybatisplus.generator.config.po.TableInfo;
 import com.baomidou.mybatisplus.generator.engine.FreemarkerTemplateEngine;
+
+import cn.hutool.core.util.StrUtil;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.generator.entity.FileOutEntity;
-import org.apache.commons.configuration.Configuration;
-import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.configuration.PropertiesConfiguration;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * 自定义的代码生成器 @Author zhanshifeng @Date 2019-09-10 14:14
@@ -41,13 +43,8 @@ public class GeneratorUtils {
 
     private final Configuration CONFIG = getConfig();
 
-    private final String[] TEMPLATE_ARR = {
-            "controllerJavaTemplate",
-            "entityJavaTemplate",
-            "mapperJavaTemplate",
-            "serviceJavaTemplate",
-            "serviceImplJavaTemplate"
-    };
+    private final String[] TEMPLATE_ARR = {"controllerJavaTemplate", "entityJavaTemplate", "mapperJavaTemplate",
+        "serviceJavaTemplate", "serviceImplJavaTemplate"};
 
     private final String OUTPUT_DIR = "outputDir";
     private final String AUTHOR = "author";
@@ -88,13 +85,12 @@ public class GeneratorUtils {
         // mpg.setPackageInfo(pc);
 
         // 自定义配置
-        InjectionConfig cfg =
-                new InjectionConfig() {
-                    @Override
-                    public void initMap() {
-                        // to do nothing
-                    }
-                };
+        InjectionConfig cfg = new InjectionConfig() {
+            @Override
+            public void initMap() {
+                // to do nothing
+            }
+        };
 
         // 自定义输出配置
         List<FileOutConfig> focList = new ArrayList<>();
@@ -102,17 +98,15 @@ public class GeneratorUtils {
         // List<FileOutEntity> fileOutEntitys = getFileOutEntitys(gc, pc);
 
         // 自定义配置会被优先输出
-        fileOutEntitys.forEach(
-                entity -> {
-                    focList.add(
-                            new FileOutConfig() {
-                                @Override
-                                public String outputFile(TableInfo tableInfo) {
-                                    entity.setEntityName(tableInfo.getEntityName());
-                                    return entity.toString();
-                                }
-                            });
-                });
+        fileOutEntitys.forEach(entity -> {
+            focList.add(new FileOutConfig() {
+                @Override
+                public String outputFile(TableInfo tableInfo) {
+                    entity.setEntityName(tableInfo.getEntityName());
+                    return entity.toString();
+                }
+            });
+        });
 
         // @Override
         // public String outputFile(TableInfo tableInfo) {

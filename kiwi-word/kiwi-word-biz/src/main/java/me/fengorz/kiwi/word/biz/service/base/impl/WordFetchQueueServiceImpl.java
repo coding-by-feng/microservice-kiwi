@@ -15,10 +15,19 @@
  */
 package me.fengorz.kiwi.word.biz.service.base.impl;
 
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+
 import lombok.RequiredArgsConstructor;
 import me.fengorz.kiwi.bdf.core.service.ISeqService;
 import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
@@ -31,13 +40,6 @@ import me.fengorz.kiwi.word.biz.mapper.FetchQueueMapper;
 import me.fengorz.kiwi.word.biz.mapper.WordMainMapper;
 import me.fengorz.kiwi.word.biz.service.base.IWordFetchQueueService;
 import me.fengorz.kiwi.word.biz.util.WordBizUtils;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
 
 /**
  * 单词待抓取列表
@@ -48,7 +50,7 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class WordFetchQueueServiceImpl extends ServiceImpl<FetchQueueMapper, FetchQueueDO>
-        implements IWordFetchQueueService {
+    implements IWordFetchQueueService {
 
     private final ISeqService seqService;
     private final WordMainMapper mainMapper;
@@ -60,9 +62,7 @@ public class WordFetchQueueServiceImpl extends ServiceImpl<FetchQueueMapper, Fet
         if (infoType == null || infoType.length == 0) {
             boolean isPhrase = wordName.contains(GlobalConstants.SPACING);
             thisInfoType =
-                    isPhrase
-                            ? WordCrawlerConstants.QUEUE_INFO_TYPE_PHRASE
-                            : WordCrawlerConstants.QUEUE_INFO_TYPE_WORD;
+                isPhrase ? WordCrawlerConstants.QUEUE_INFO_TYPE_PHRASE : WordCrawlerConstants.QUEUE_INFO_TYPE_WORD;
         } else {
             thisInfoType = infoType[0];
         }
@@ -88,31 +88,20 @@ public class WordFetchQueueServiceImpl extends ServiceImpl<FetchQueueMapper, Fet
             if (one.getInTime().compareTo(LocalDateTime.now().minusMinutes(1)) > 0) {
                 return;
             }
-            this.updateById(
-                    one.setFetchStatus(WordCrawlerConstants.STATUS_TO_FETCH)
-                            .setIsLock(GlobalConstants.FLAG_YES)
-                            .setOperateTime(LocalDateTime.now())
-                            .setInfoType(thisInfoType));
+            this.updateById(one.setFetchStatus(WordCrawlerConstants.STATUS_TO_FETCH).setIsLock(GlobalConstants.FLAG_YES)
+                .setOperateTime(LocalDateTime.now()).setInfoType(thisInfoType));
             return;
         }
 
-        this.insertOne(
-                wordId, wordName, derivation, WordCrawlerConstants.STATUS_TO_FETCH, thisInfoType);
+        this.insertOne(wordId, wordName, derivation, WordCrawlerConstants.STATUS_TO_FETCH, thisInfoType);
     }
 
-    private void insertOne(
-            Integer wordId, String wordName, String derivation, int status, Integer... infoType) {
+    private void insertOne(Integer wordId, String wordName, String derivation, int status, Integer... infoType) {
         FetchQueueDO queueDO =
-                new FetchQueueDO()
-                        .setQueueId(seqService.genIntSequence(MapperConstant.T_INS_SEQUENCE))
-                        .setWordId(wordId)
-                        .setWordName(wordName)
-                        .setDerivation(KiwiStringUtils.isNotBlank(derivation) ? derivation : null)
-                        .setFetchStatus(status)
-                        .setFetchPriority(100)
-                        .setInTime(LocalDateTime.now())
-                        .setOperateTime(LocalDateTime.now())
-                        .setIsLock(GlobalConstants.FLAG_YES);
+            new FetchQueueDO().setQueueId(seqService.genIntSequence(MapperConstant.T_INS_SEQUENCE)).setWordId(wordId)
+                .setWordName(wordName).setDerivation(KiwiStringUtils.isNotBlank(derivation) ? derivation : null)
+                .setFetchStatus(status).setFetchPriority(100).setInTime(LocalDateTime.now())
+                .setOperateTime(LocalDateTime.now()).setIsLock(GlobalConstants.FLAG_YES);
         if (infoType == null || infoType.length == 0) {
             this.save(queueDO);
         } else {
@@ -149,8 +138,7 @@ public class WordFetchQueueServiceImpl extends ServiceImpl<FetchQueueMapper, Fet
 
     @Transactional(rollbackFor = Exception.class)
     private boolean del(String wordName) {
-        return this.remove(
-                new LambdaQueryWrapper<FetchQueueDO>().eq(FetchQueueDO::getWordName, wordName));
+        return this.remove(new LambdaQueryWrapper<FetchQueueDO>().eq(FetchQueueDO::getWordName, wordName));
     }
 
     @Override
@@ -159,9 +147,8 @@ public class WordFetchQueueServiceImpl extends ServiceImpl<FetchQueueMapper, Fet
         if (!this.isExist(wordName)) {
             return false;
         }
-        return this.update(
-                new FetchQueueDO().setIsValid(GlobalConstants.FLAG_N).setIsLock(GlobalConstants.FLAG_NO),
-                new LambdaQueryWrapper<FetchQueueDO>().eq(FetchQueueDO::getWordName, wordName));
+        return this.update(new FetchQueueDO().setIsValid(GlobalConstants.FLAG_N).setIsLock(GlobalConstants.FLAG_NO),
+            new LambdaQueryWrapper<FetchQueueDO>().eq(FetchQueueDO::getWordName, wordName));
     }
 
     @Override
@@ -170,11 +157,8 @@ public class WordFetchQueueServiceImpl extends ServiceImpl<FetchQueueMapper, Fet
         if (!this.isExist(wordName)) {
             return false;
         }
-        return this.update(
-                new FetchQueueDO().setIsLock(GlobalConstants.FLAG_YES),
-                Wrappers.<FetchQueueDO>lambdaUpdate()
-                        .eq(FetchQueueDO::getWordName, wordName)
-                        .eq(FetchQueueDO::getIsLock, GlobalConstants.FLAG_NO));
+        return this.update(new FetchQueueDO().setIsLock(GlobalConstants.FLAG_YES), Wrappers.<FetchQueueDO>lambdaUpdate()
+            .eq(FetchQueueDO::getWordName, wordName).eq(FetchQueueDO::getIsLock, GlobalConstants.FLAG_NO));
     }
 
     @Override
@@ -186,7 +170,6 @@ public class WordFetchQueueServiceImpl extends ServiceImpl<FetchQueueMapper, Fet
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void flagWordQueryException(String wordName) {
-
         FetchQueueDO one = this.getOneAnyhow(wordName);
         // 如果队列记录不存在
         if (one == null) {
@@ -200,48 +183,36 @@ public class WordFetchQueueServiceImpl extends ServiceImpl<FetchQueueMapper, Fet
         }
 
         this.updateById(
-                one.setFetchStatus(WordCrawlerConstants.STATUS_TO_QUERY_ERROR)
-                        .setIsLock(GlobalConstants.FLAG_NO));
+            one.setFetchStatus(WordCrawlerConstants.STATUS_TO_QUERY_ERROR).setIsLock(GlobalConstants.FLAG_NO));
     }
 
     @Override
-    public List<FetchQueueDO> page2List(
-            Integer status, Integer current, Integer size, Integer isLock, Integer infoType) {
-        return Optional.of(
-                this.page(
-                        new Page<>(current, size),
-                        Wrappers.<FetchQueueDO>lambdaQuery()
-                                .eq(FetchQueueDO::getFetchStatus, status)
-                                .eq(FetchQueueDO::getIsLock, isLock)
-                                .eq(FetchQueueDO::getInfoType, infoType)
-                                .le(
-                                        FetchQueueDO::getFetchTime,
-                                        WordCrawlerConstants.WORD_MAX_FETCH_LIMITED_TIME)))
-                .get()
-                .getRecords();
+    public List<FetchQueueDO> page2List(Integer status, Integer current, Integer size, Integer isLock,
+        Integer infoType) {
+        return Optional
+            .of(this.page(new Page<>(current, size),
+                Wrappers.<FetchQueueDO>lambdaQuery().eq(FetchQueueDO::getFetchStatus, status)
+                    .eq(FetchQueueDO::getIsLock, isLock).eq(FetchQueueDO::getInfoType, infoType)
+                    .le(FetchQueueDO::getFetchTime, WordCrawlerConstants.WORD_MAX_FETCH_LIMITED_TIME)))
+            .get().getRecords();
     }
 
     @Override
     public List<FetchQueueDO> listNotIntoCache() {
-        return Optional.of(
-                this.page(
-                        new Page<>(1, 20),
-                        Wrappers.<FetchQueueDO>lambdaQuery()
-                                .ge(FetchQueueDO::getFetchStatus, WordCrawlerConstants.STATUS_PERFECT_SUCCESS)
-                                .eq(FetchQueueDO::getIsLock, GlobalConstants.FLAG_NO)
-                                .eq(FetchQueueDO::getIsIntoCache, GlobalConstants.FLAG_NO)))
-                .get()
-                .getRecords();
+        return Optional.of(this.page(new Page<>(1, 20),
+            Wrappers.<FetchQueueDO>lambdaQuery()
+                .ge(FetchQueueDO::getFetchStatus, WordCrawlerConstants.STATUS_PERFECT_SUCCESS)
+                .eq(FetchQueueDO::getIsLock, GlobalConstants.FLAG_NO)
+                .eq(FetchQueueDO::getIsIntoCache, GlobalConstants.FLAG_NO)))
+            .get().getRecords();
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void saveDerivation(String inputWordName, String fetchWordName) {
-        Optional.ofNullable(this.getOneInUnLock(inputWordName))
-                .ifPresent(
-                        one -> {
-                            this.updateById(one.setDerivation(fetchWordName));
-                        });
+        Optional.ofNullable(this.getOneInUnLock(inputWordName)).ifPresent(one -> {
+            this.updateById(one.setDerivation(fetchWordName));
+        });
     }
 
     /**
@@ -252,23 +223,15 @@ public class WordFetchQueueServiceImpl extends ServiceImpl<FetchQueueMapper, Fet
      */
     @Override
     public FetchQueueDO getOneInUnLock(String wordName, Integer... infoType) {
-        return this.getOne(
-                Wrappers.<FetchQueueDO>lambdaQuery()
-                        .eq(FetchQueueDO::getWordName, wordName)
-                        .eq(FetchQueueDO::getIsLock, GlobalConstants.FLAG_NO)
-                        .eq(
-                                FetchQueueDO::getInfoType,
-                                infoType == null || infoType.length == 0
-                                        ? WordCrawlerConstants.QUEUE_INFO_TYPE_WORD
-                                        : infoType[0]));
+        return this.getOne(Wrappers.<FetchQueueDO>lambdaQuery().eq(FetchQueueDO::getWordName, wordName)
+            .eq(FetchQueueDO::getIsLock, GlobalConstants.FLAG_NO).eq(FetchQueueDO::getInfoType,
+                infoType == null || infoType.length == 0 ? WordCrawlerConstants.QUEUE_INFO_TYPE_WORD : infoType[0]));
     }
 
     @Override
     public FetchQueueDO getOneInUnLock(Integer queueId) {
-        return this.getOne(
-                Wrappers.<FetchQueueDO>lambdaQuery()
-                        .eq(FetchQueueDO::getQueueId, queueId)
-                        .eq(FetchQueueDO::getIsLock, GlobalConstants.FLAG_NO));
+        return this.getOne(Wrappers.<FetchQueueDO>lambdaQuery().eq(FetchQueueDO::getQueueId, queueId)
+            .eq(FetchQueueDO::getIsLock, GlobalConstants.FLAG_NO));
     }
 
     /**
@@ -280,13 +243,8 @@ public class WordFetchQueueServiceImpl extends ServiceImpl<FetchQueueMapper, Fet
     @Override
     public FetchQueueDO getOneAnyhow(String wordName, Integer... infoType) {
         return this.getOne(
-                Wrappers.<FetchQueueDO>lambdaQuery()
-                        .eq(FetchQueueDO::getWordName, wordName)
-                        .eq(
-                                FetchQueueDO::getInfoType,
-                                infoType == null || infoType.length == 0
-                                        ? WordCrawlerConstants.QUEUE_INFO_TYPE_WORD
-                                        : infoType[0]));
+            Wrappers.<FetchQueueDO>lambdaQuery().eq(FetchQueueDO::getWordName, wordName).eq(FetchQueueDO::getInfoType,
+                infoType == null || infoType.length == 0 ? WordCrawlerConstants.QUEUE_INFO_TYPE_WORD : infoType[0]));
     }
 
     @Override

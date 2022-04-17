@@ -16,22 +16,23 @@
 
 package me.fengorz.kiwi.gateway.filter;
 
-import cn.hutool.core.util.CharsetUtil;
-import cn.hutool.core.util.StrUtil;
-import cn.hutool.http.HttpUtil;
-import lombok.extern.slf4j.Slf4j;
-import me.fengorz.kiwi.common.sdk.constant.SecurityConstants;
-import me.fengorz.kiwi.common.sdk.util.cipher.KiwiDecodeUtils;
+import java.net.URI;
+import java.util.HashMap;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
-import reactor.core.publisher.Mono;
 
-import java.net.URI;
-import java.util.HashMap;
+import cn.hutool.core.util.CharsetUtil;
+import cn.hutool.core.util.StrUtil;
+import cn.hutool.http.HttpUtil;
+import lombok.extern.slf4j.Slf4j;
+import me.fengorz.kiwi.common.sdk.constant.SecurityConstants;
+import me.fengorz.kiwi.common.sdk.util.cipher.KiwiDecodeUtils;
+import reactor.core.publisher.Mono;
 
 /**
  * @Author zhanshifeng @Date 2019-09-06 14:24
@@ -49,8 +50,7 @@ public class PasswordDecoderGatewayFilter extends AbstractGatewayFilterFactory {
         return (exchange, chain) -> {
             ServerHttpRequest httpRequest = exchange.getRequest();
 
-            if (!StrUtil.containsAnyIgnoreCase(
-                    httpRequest.getURI().getPath(), SecurityConstants.URL_OAUTH_TOKEN_URL)) {
+            if (!StrUtil.containsAnyIgnoreCase(httpRequest.getURI().getPath(), SecurityConstants.URL_OAUTH_TOKEN_URL)) {
                 return chain.filter(exchange);
             }
 
@@ -70,10 +70,7 @@ public class PasswordDecoderGatewayFilter extends AbstractGatewayFilterFactory {
             }
 
             URI newUri =
-                    UriComponentsBuilder.fromUri(uri)
-                            .replaceQuery(HttpUtil.toParams(decodeParamMap))
-                            .build(true)
-                            .toUri();
+                UriComponentsBuilder.fromUri(uri).replaceQuery(HttpUtil.toParams(decodeParamMap)).build(true).toUri();
 
             ServerHttpRequest newRequest = exchange.getRequest().mutate().uri(newUri).build();
             return chain.filter(exchange.mutate().request(newRequest).build());

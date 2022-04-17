@@ -16,22 +16,24 @@
 
 package me.fengorz.kiwi.common.fastdfs.service.impl;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.util.Set;
+
+import org.springframework.stereotype.Service;
+
 import com.github.tobato.fastdfs.domain.fdfs.MetaData;
 import com.github.tobato.fastdfs.domain.fdfs.StorePath;
 import com.github.tobato.fastdfs.domain.proto.storage.DownloadByteArray;
 import com.github.tobato.fastdfs.service.AppendFileStorageClient;
 import com.github.tobato.fastdfs.service.FastFileStorageClient;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.fastdfs.constant.DfsConstants;
 import me.fengorz.kiwi.common.fastdfs.service.IDfsService;
 import me.fengorz.kiwi.common.sdk.exception.dfs.DfsOperateDeleteException;
 import me.fengorz.kiwi.common.sdk.exception.dfs.DfsOperateException;
-import org.springframework.stereotype.Service;
-
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.util.Set;
 
 /**
  * @Description Dfs分布式文件服务类 @Author zhanshifeng @Date 2019/11/4 10:58 AM
@@ -52,19 +54,16 @@ public class DfsService implements IDfsService {
     private final AppendFileStorageClient appendFileStorageClient;
 
     @Override
-    public String uploadFile(InputStream inputStream, long size, String extName)
-            throws DfsOperateException {
+    public String uploadFile(InputStream inputStream, long size, String extName) throws DfsOperateException {
         return uploadFile(inputStream, size, extName, null);
     }
 
     @Override
-    public String uploadFile(
-            InputStream inputStream, long size, String extName, Set<MetaData> metaDataSet)
-            throws DfsOperateException {
+    public String uploadFile(InputStream inputStream, long size, String extName, Set<MetaData> metaDataSet)
+        throws DfsOperateException {
         try {
             log.info("uploading file size = {}，name suffix = {}", size, extName);
-            StorePath storePath =
-                    fastFileStorageClient.uploadFile(inputStream, size, extName, metaDataSet);
+            StorePath storePath = fastFileStorageClient.uploadFile(inputStream, size, extName, metaDataSet);
             log.info("upload file success，group：{}，path：{}", storePath.getGroup(), storePath.getPath());
             return storePath.getFullPath();
         } catch (Exception e) {

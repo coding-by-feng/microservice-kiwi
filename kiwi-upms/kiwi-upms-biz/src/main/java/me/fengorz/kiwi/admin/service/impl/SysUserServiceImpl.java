@@ -15,11 +15,22 @@
  */
 package me.fengorz.kiwi.admin.service.impl;
 
+import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.StrUtil;
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.RequiredArgsConstructor;
 import me.fengorz.kiwi.admin.api.dto.UserFullInfoDTO;
 import me.fengorz.kiwi.admin.api.entity.SysMenu;
@@ -32,15 +43,6 @@ import me.fengorz.kiwi.admin.service.SysUserRoleRelService;
 import me.fengorz.kiwi.admin.service.SysUserService;
 import me.fengorz.kiwi.bdf.core.service.ISeqService;
 import me.fengorz.kiwi.common.sdk.constant.MapperConstant;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * 用户表
@@ -50,8 +52,7 @@ import java.util.stream.Collectors;
  */
 @Service()
 @RequiredArgsConstructor
-public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser>
-        implements SysUserService {
+public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> implements SysUserService {
 
     private final SysRoleService sysRoleService;
     private final SysUserRoleRelService sysUserRoleRelService;
@@ -63,22 +64,17 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser>
         UserFullInfoDTO userFullInfoDTO = new UserFullInfoDTO();
         userFullInfoDTO.setSysUser(sysUser);
 
-        List<Integer> roleIdList =
-                sysRoleService.listRolesByUserId(sysUser.getUserId()).stream()
-                        .map(SysRole::getRoleId)
-                        .collect(Collectors.toList());
+        List<Integer> roleIdList = sysRoleService.listRolesByUserId(sysUser.getUserId()).stream()
+            .map(SysRole::getRoleId).collect(Collectors.toList());
         userFullInfoDTO.setRoles(ArrayUtil.toArray(roleIdList, Integer.class));
 
         Set<String> permissionSet = new HashSet<>();
-        roleIdList.forEach(
-                roleId -> {
-                    List<String> permissionList =
-                            sysMenuService.listMenusByRoleId(roleId).stream()
-                                    .filter(sysMenu -> StrUtil.isNotBlank(sysMenu.getPermission()))
-                                    .map(SysMenu::getPermission)
-                                    .collect(Collectors.toList());
-                    permissionSet.addAll(permissionList);
-                });
+        roleIdList.forEach(roleId -> {
+            List<String> permissionList = sysMenuService.listMenusByRoleId(roleId).stream()
+                .filter(sysMenu -> StrUtil.isNotBlank(sysMenu.getPermission())).map(SysMenu::getPermission)
+                .collect(Collectors.toList());
+            permissionSet.addAll(permissionList);
+        });
         userFullInfoDTO.setPermissions(ArrayUtil.toArray(permissionSet, String.class));
 
         return userFullInfoDTO;
@@ -101,8 +97,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser>
         String userName = null;
         do {
             userName = RandomUtil.randomString(5);
-        } while (this.getOne(Wrappers.<SysUser>lambdaQuery().eq(SysUser::getUsername, userName))
-                != null);
+        } while (this.getOne(Wrappers.<SysUser>lambdaQuery().eq(SysUser::getUsername, userName)) != null);
         return userName;
     }
 }

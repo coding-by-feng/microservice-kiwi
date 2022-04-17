@@ -16,13 +16,15 @@
 
 package me.fengorz.kiwi.admin;
 
-import me.fengorz.kiwi.bdf.feign.annotation.EnableEnhancerFeignClients;
-import me.fengorz.kiwi.bdf.security.annotation.KiwiEnhancerResourceServer;
 import org.springframework.boot.SpringApplication;
 import org.springframework.cloud.client.SpringCloudApplication;
 
+import me.fengorz.kiwi.bdf.feign.annotation.EnableEnhancerFeignClients;
+import me.fengorz.kiwi.bdf.security.annotation.KiwiEnhancerResourceServer;
+
 /**
- * @Author zhanshifeng @Date 2019-09-19 17:09
+ * @Author zhanshifeng
+ * @Date 2019-09-19 17:09
  */
 @KiwiEnhancerResourceServer
 @EnableEnhancerFeignClients

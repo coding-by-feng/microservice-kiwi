@@ -13,11 +13,11 @@
 package me.fengorz.kiwi.word.biz.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+
 import me.fengorz.kiwi.word.api.entity.ParaphrasePhraseDO;
 
 /**
  * @author zhanShiFeng
  * @date 2020-05-31 22:22:22
  */
-public interface ParaphrasePhraseMapper extends BaseMapper<ParaphrasePhraseDO> {
-}
+public interface ParaphrasePhraseMapper extends BaseMapper<ParaphrasePhraseDO> {}

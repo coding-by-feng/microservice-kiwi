@@ -15,11 +15,13 @@
  */
 package me.fengorz.kiwi.admin.service.impl;
 
+import org.springframework.stereotype.Service;
+
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+
 import me.fengorz.kiwi.admin.api.entity.SysUserRoleRel;
 import me.fengorz.kiwi.admin.mapper.SysUserRoleRelMapper;
 import me.fengorz.kiwi.admin.service.SysUserRoleRelService;
-import org.springframework.stereotype.Service;
 
 /**
  * 用户角色表
@@ -29,5 +31,4 @@ import org.springframework.stereotype.Service;
  */
 @Service("sysUserRoleRelService")
 public class SysUserRoleRelServiceImpl extends ServiceImpl<SysUserRoleRelMapper, SysUserRoleRel>
-        implements SysUserRoleRelService {
-}
+    implements SysUserRoleRelService {}

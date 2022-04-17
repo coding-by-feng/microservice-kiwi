@@ -16,15 +16,16 @@
 
 package me.fengorz.kiwi.word.api.dto.queue.result;
 
-import lombok.Data;
-import lombok.ToString;
-import lombok.experimental.Accessors;
+import java.io.Serializable;
+import java.util.List;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-import java.io.Serializable;
-import java.util.List;
+
+import lombok.Data;
+import lombok.ToString;
+import lombok.experimental.Accessors;
 
 /**
  * @Author zhanshifeng @Date 2019/10/24 10:26 PM

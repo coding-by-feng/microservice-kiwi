@@ -15,9 +15,14 @@
  */
 package me.fengorz.kiwi.word.biz.service.base.impl;
 
+import java.util.List;
+
+import org.springframework.stereotype.Service;
+
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+
 import lombok.RequiredArgsConstructor;
 import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
 import me.fengorz.kiwi.common.sdk.util.bean.KiwiBeanUtils;
@@ -26,9 +31,6 @@ import me.fengorz.kiwi.word.api.entity.ParaphraseExampleDO;
 import me.fengorz.kiwi.word.api.vo.ParaphraseExampleVO;
 import me.fengorz.kiwi.word.biz.mapper.ParaphraseExampleMapper;
 import me.fengorz.kiwi.word.biz.service.base.IParaphraseExampleService;
-import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 /**
  * 单词例句表
@@ -38,9 +40,8 @@ import java.util.List;
  */
 @Service
 @RequiredArgsConstructor
-public class ParaphraseExampleServiceImpl
-        extends ServiceImpl<ParaphraseExampleMapper, ParaphraseExampleDO>
-        implements IParaphraseExampleService {
+public class ParaphraseExampleServiceImpl extends ServiceImpl<ParaphraseExampleMapper, ParaphraseExampleDO>
+    implements IParaphraseExampleService {
 
     private final ParaphraseExampleMapper mapper;
 
@@ -51,17 +52,15 @@ public class ParaphraseExampleServiceImpl
 
     @Override
     public List<ParaphraseExampleVO> listExamples(Integer paraphraseId) {
-        return KiwiBeanUtils.convertFrom(
-                mapper.selectList(
-                        Wrappers.<ParaphraseExampleDO>lambdaQuery()
-                                .eq(ParaphraseExampleDO::getParaphraseId, paraphraseId)
-                                .eq(ParaphraseExampleDO::getIsDel, GlobalConstants.FLAG_NO)),
-                ParaphraseExampleVO.class);
+        return KiwiBeanUtils.convertFrom(mapper.selectList(
+            Wrappers.<ParaphraseExampleDO>lambdaQuery().eq(ParaphraseExampleDO::getParaphraseId, paraphraseId)
+                .eq(ParaphraseExampleDO::getIsDel, GlobalConstants.FLAG_NO)),
+            ParaphraseExampleVO.class);
     }
 
     @Override
     public List<ParaphraseExampleVO> selectExampleAndIsCollect(Integer owner, Integer paraphraseId) {
-        return this.mapper.selectExampleAndIsCollect(
-                new SelectEntityIsCollectDTO().setOwner(owner).setEntityId(paraphraseId));
+        return this.mapper
+            .selectExampleAndIsCollect(new SelectEntityIsCollectDTO().setOwner(owner).setEntityId(paraphraseId));
     }
 }

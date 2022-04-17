@@ -16,6 +16,15 @@
 
 package me.fengorz.kiwi.bdf.cache.redis;
 
+import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.SortedMap;
+import java.util.TreeMap;
+
+import org.springframework.cache.interceptor.SimpleKeyGenerator;
+
 import lombok.NoArgsConstructor;
 import me.fengorz.kiwi.common.sdk.annotation.cache.KiwiCacheKey;
 import me.fengorz.kiwi.common.sdk.annotation.cache.KiwiCacheKeyPrefix;
@@ -24,14 +33,6 @@ import me.fengorz.kiwi.common.sdk.util.lang.array.KiwiArrayUtils;
 import me.fengorz.kiwi.common.sdk.util.lang.object.KiwiObjectUtils;
 import me.fengorz.kiwi.common.sdk.util.lang.string.KiwiStringUtils;
 import me.fengorz.kiwi.common.sdk.util.validate.KiwiAssertUtils;
-import org.springframework.cache.interceptor.SimpleKeyGenerator;
-
-import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.SortedMap;
-import java.util.TreeMap;
 
 /**
  * @Description 自定义redis key的生成器 @Author zhanshifeng @Date 2020/5/17 11:20 AM
@@ -53,11 +54,8 @@ public class CacheKeyGenerator extends SimpleKeyGenerator {
             prefix += methodKeyPrefix.value() + GlobalConstants.SYMBOL_DELIMITER_STR;
         }
 
-        KiwiAssertUtils.serviceEmpty(
-                prefix,
-                "Class[{}], Method[{}]: CacheKeyPrefix cannot be null!",
-                classKeyPrefix,
-                methodKeyPrefix);
+        KiwiAssertUtils.serviceEmpty(prefix, "Class[{}], Method[{}]: CacheKeyPrefix cannot be null!", classKeyPrefix,
+            methodKeyPrefix);
 
         Parameter[] parameters = method.getParameters();
         if (KiwiArrayUtils.isNotEmpty(parameters)) {
@@ -69,18 +67,15 @@ public class CacheKeyGenerator extends SimpleKeyGenerator {
                     continue;
                 }
                 Object param = params[i];
-                Optional.ofNullable(parameter.getAnnotation(KiwiCacheKey.class))
-                        .ifPresent(
-                                kiwiCacheKey -> {
-                                    if (kiwiCacheKey.nullable() || KiwiObjectUtils.isNotEmpty(param)) {
-                                        sortedMap.put(kiwiCacheKey.value(), param);
-                                    }
-                                });
+                Optional.ofNullable(parameter.getAnnotation(KiwiCacheKey.class)).ifPresent(kiwiCacheKey -> {
+                    if (kiwiCacheKey.nullable() || KiwiObjectUtils.isNotEmpty(param)) {
+                        sortedMap.put(kiwiCacheKey.value(), param);
+                    }
+                });
             }
 
             if (!sortedMap.isEmpty()) {
-                return prefix.concat(
-                        KiwiStringUtils.join(GlobalConstants.SYMBOL_DELIMITER_STR, sortedMap.values()));
+                return prefix.concat(KiwiStringUtils.join(GlobalConstants.SYMBOL_DELIMITER_STR, sortedMap.values()));
             }
         }
 

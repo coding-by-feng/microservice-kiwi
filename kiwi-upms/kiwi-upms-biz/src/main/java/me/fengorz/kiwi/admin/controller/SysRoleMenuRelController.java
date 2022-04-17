@@ -15,16 +15,18 @@
  */
 package me.fengorz.kiwi.admin.controller;
 
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+
 import lombok.RequiredArgsConstructor;
 import me.fengorz.kiwi.admin.api.entity.SysRoleMenuRel;
 import me.fengorz.kiwi.admin.service.SysRoleMenuRelService;
 import me.fengorz.kiwi.common.api.R;
 import me.fengorz.kiwi.common.sdk.annotation.log.SysLog;
 import me.fengorz.kiwi.common.sdk.controller.BaseController;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
 
 /**
  * 角色菜单表
@@ -42,7 +44,7 @@ public class SysRoleMenuRelController extends BaseController {
     /**
      * 分页查询
      *
-     * @param page           分页对象
+     * @param page 分页对象
      * @param sysRoleMenuRel 角色菜单表
      * @return
      */

@@ -12,14 +12,15 @@
  */
 package me.fengorz.kiwi.word.biz.controller;
 
-import lombok.RequiredArgsConstructor;
-import me.fengorz.kiwi.common.api.R;
-import me.fengorz.kiwi.word.biz.service.operate.IOperateService;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import lombok.RequiredArgsConstructor;
+import me.fengorz.kiwi.common.api.R;
+import me.fengorz.kiwi.word.biz.service.operate.IOperateService;
 
 /**
  * 单词时态、单复数等的变化 @Author zhanshifeng
@@ -35,8 +36,7 @@ public class WordMainVariantController {
     private final IOperateService wordOperateService;
 
     @GetMapping("/insertVariant/{inputWordName}/{fetchWordName}")
-    public R<Void> insertVariant(
-            @PathVariable String inputWordName, @PathVariable String fetchWordName) {
+    public R<Void> insertVariant(@PathVariable String inputWordName, @PathVariable String fetchWordName) {
         return R.auto(wordOperateService.insertVariant(inputWordName, fetchWordName));
     }
 }

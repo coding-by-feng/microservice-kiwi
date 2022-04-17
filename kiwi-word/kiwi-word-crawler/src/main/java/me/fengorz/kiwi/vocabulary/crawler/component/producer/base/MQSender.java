@@ -14,20 +14,22 @@
  *
  */
 
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
+package me.fengorz.kiwi.vocabulary.crawler.component.producer.base;
 
-import me.fengorz.kiwi.common.sdk.util.cipher.KiwiDecodeUtils;
+import me.fengorz.kiwi.word.api.dto.queue.*;
 
-/**
- * @Author zhanshifeng @Date 2020/6/3 12:10 AM
- */
-public class KiwiDecodeUtilsTest {
+public interface MQSender {
+    void fetchWord(FetchWordMqDTO dto);
 
-    // @Test
-    public void test() {
-        System.out.println(KiwiDecodeUtils.decryptAES("qAOw8ST25fWeUm2yX52OXg==", "MyKiwiVocabulary").trim());
-        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-        System.out.println(passwordEncoder.encode("123456"));
-    }
+    void fetchPhraseRunUp(FetchPhraseRunUpMqDTO dto);
+
+    void fetchPhrase(FetchPhraseMqDTO dto);
+
+    void fetchPronunciation(FetchPronunciationMqDTO dto);
+
+    void removeWord(RemoveMqDTO dto);
+
+    void removePhrase(RemoveMqDTO dto);
+
+    void removePronunciation(RemovePronunciatioinMqDTO dto);
 }

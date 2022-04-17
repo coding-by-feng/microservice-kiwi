@@ -16,14 +16,11 @@
 
 package me.fengorz.kiwi.auth.endpoint;
 
-import cn.hutool.core.map.MapUtil;
-import cn.hutool.core.util.StrUtil;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import me.fengorz.kiwi.common.api.R;
-import me.fengorz.kiwi.common.api.entity.EnhancerUser;
-import me.fengorz.kiwi.common.sdk.constant.SecurityConstants;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.data.redis.core.ConvertingCursor;
 import org.springframework.data.redis.core.Cursor;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -41,10 +38,15 @@ import org.springframework.security.web.authentication.preauth.PreAuthenticatedA
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+
+import cn.hutool.core.map.MapUtil;
+import cn.hutool.core.util.StrUtil;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import me.fengorz.kiwi.common.api.R;
+import me.fengorz.kiwi.common.api.entity.EnhancerUser;
+import me.fengorz.kiwi.common.sdk.constant.SecurityConstants;
 
 @Slf4j
 @RestController
@@ -52,7 +54,7 @@ import java.util.Map;
 @RequestMapping("/kiwiTokenEndpoint")
 public class KiwiTokenEndpoint {
     private static final String PROJECT_OAUTH_ACCESS =
-            SecurityConstants.PROJECT_PREFIX + SecurityConstants.OAUTH_PREFIX + "access:";
+        SecurityConstants.PROJECT_PREFIX + SecurityConstants.OAUTH_PREFIX + "access:";
     private static final String CURRENT = "current";
     private static final String SIZE = "size";
     private final TokenStore tokenStore;
@@ -64,8 +66,7 @@ public class KiwiTokenEndpoint {
      * @param authHeader Authorization
      */
     @DeleteMapping("/logout")
-    public R<Boolean> logout(
-            @RequestHeader(value = HttpHeaders.AUTHORIZATION, required = false) String authHeader) {
+    public R<Boolean> logout(@RequestHeader(value = HttpHeaders.AUTHORIZATION, required = false) String authHeader) {
         if (StrUtil.isBlank(authHeader)) {
             return R.failed("退出失败，token 为空");
         }
@@ -86,11 +87,10 @@ public class KiwiTokenEndpoint {
      * 令牌管理调用
      *
      * @param token token
-     * @param from  内部调用标志
+     * @param from 内部调用标志
      */
     @DeleteMapping("/{token}")
-    public R<Boolean> removeToken(
-            @PathVariable("token") String token, @RequestHeader(required = false) String from) {
+    public R<Boolean> removeToken(@PathVariable("token") String token, @RequestHeader(required = false) String from) {
         if (StrUtil.isBlank(from)) {
             return null;
         }
@@ -101,27 +101,22 @@ public class KiwiTokenEndpoint {
      * 查询token
      *
      * @param params 分页参数
-     * @param from   标志
+     * @param from 标志
      */
     @PostMapping("/page")
-    public R getTokenPage(
-            @RequestBody Map<String, Object> params, @RequestHeader(required = false) String from) {
+    public R getTokenPage(@RequestBody Map<String, Object> params, @RequestHeader(required = false) String from) {
         if (StrUtil.isBlank(from)) {
             return null;
         }
 
         List<Map<String, String>> list = new ArrayList<>();
-        if (StringUtils.isEmpty(MapUtil.getInt(params, CURRENT))
-                || StringUtils.isEmpty(MapUtil.getInt(params, SIZE))) {
+        if (StringUtils.isEmpty(MapUtil.getInt(params, CURRENT)) || StringUtils.isEmpty(MapUtil.getInt(params, SIZE))) {
             params.put(CURRENT, 1);
             params.put(SIZE, 20);
         }
         // 根据分页参数获取对应数据
         List<String> pages =
-                findKeysForPage(
-                        PROJECT_OAUTH_ACCESS + "*",
-                        MapUtil.getInt(params, CURRENT),
-                        MapUtil.getInt(params, SIZE));
+            findKeysForPage(PROJECT_OAUTH_ACCESS + "*", MapUtil.getInt(params, CURRENT), MapUtil.getInt(params, SIZE));
 
         for (String page : pages) {
             String accessToken = StrUtil.subAfter(page, PROJECT_OAUTH_ACCESS, true);
@@ -140,19 +135,19 @@ public class KiwiTokenEndpoint {
 
             if (authentication instanceof UsernamePasswordAuthenticationToken) {
                 UsernamePasswordAuthenticationToken authenticationToken =
-                        (UsernamePasswordAuthenticationToken) authentication;
+                    (UsernamePasswordAuthenticationToken)authentication;
 
                 if (authenticationToken.getPrincipal() instanceof EnhancerUser) {
-                    EnhancerUser user = (EnhancerUser) authenticationToken.getPrincipal();
+                    EnhancerUser user = (EnhancerUser)authenticationToken.getPrincipal();
                     map.put("user_id", user.getId() + "");
                     map.put("username", user.getUsername() + "");
                 }
             } else if (authentication instanceof PreAuthenticatedAuthenticationToken) {
                 // 刷新token方式
                 PreAuthenticatedAuthenticationToken authenticationToken =
-                        (PreAuthenticatedAuthenticationToken) authentication;
+                    (PreAuthenticatedAuthenticationToken)authentication;
                 if (authenticationToken.getPrincipal() instanceof EnhancerUser) {
-                    EnhancerUser user = (EnhancerUser) authenticationToken.getPrincipal();
+                    EnhancerUser user = (EnhancerUser)authenticationToken.getPrincipal();
                     map.put("user_id", user.getId() + "");
                     map.put("username", user.getUsername() + "");
                 }
@@ -168,14 +163,9 @@ public class KiwiTokenEndpoint {
 
     private List<String> findKeysForPage(String patternKey, int pageNum, int pageSize) {
         ScanOptions options = ScanOptions.scanOptions().match(patternKey).build();
-        RedisSerializer<String> redisSerializer =
-                (RedisSerializer<String>) redisTemplate.getKeySerializer();
-        Cursor cursor =
-                (Cursor)
-                        redisTemplate.executeWithStickyConnection(
-                                redisConnection ->
-                                        new ConvertingCursor<>(
-                                                redisConnection.scan(options), redisSerializer::deserialize));
+        RedisSerializer<String> redisSerializer = (RedisSerializer<String>)redisTemplate.getKeySerializer();
+        Cursor cursor = (Cursor)redisTemplate.executeWithStickyConnection(
+            redisConnection -> new ConvertingCursor<>(redisConnection.scan(options), redisSerializer::deserialize));
         List<String> result = new ArrayList<>();
         int tmpIndex = 0;
         int startIndex = (pageNum - 1) * pageSize;

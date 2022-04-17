@@ -16,13 +16,13 @@
 
 package me.fengorz.kiwi.word.api.vo.detail;
 
+import java.io.Serializable;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.Accessors;
-
-import java.io.Serializable;
 
 /**
  * @Author zhanshifeng @Date 2019/11/26 10:01 AM

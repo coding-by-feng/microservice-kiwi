@@ -16,6 +16,11 @@
 
 package me.fengorz.kiwi.word.api.feign;
 
+import java.util.List;
+
+import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.*;
+
 import me.fengorz.kiwi.common.api.R;
 import me.fengorz.kiwi.word.api.common.WordConstants;
 import me.fengorz.kiwi.word.api.dto.queue.RemovePronunciatioinMqDTO;
@@ -25,18 +30,11 @@ import me.fengorz.kiwi.word.api.dto.queue.result.FetchWordResultDTO;
 import me.fengorz.kiwi.word.api.entity.FetchQueueDO;
 import me.fengorz.kiwi.word.api.feign.factory.BizFallbackFactory;
 import me.fengorz.kiwi.word.api.vo.detail.WordQueryVO;
-import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 /**
  * @Author zhanshifeng
  */
-@FeignClient(
-        contextId = "bizAPI",
-        value = WordConstants.KIWI_WORD_BIZ,
-        fallbackFactory = BizFallbackFactory.class)
+@FeignClient(contextId = "bizAPI", value = WordConstants.KIWI_WORD_BIZ, fallbackFactory = BizFallbackFactory.class)
 public interface IBizAPI {
 
     String WORD_FETCH_QUEUE = "/word/fetch";
@@ -50,21 +48,15 @@ public interface IBizAPI {
     R<FetchQueueDO> getOneByWordName(@RequestParam String wordName);
 
     @GetMapping(WORD_FETCH_QUEUE + "/pageQueue/{status}/{current}/{size}/{infoType}")
-    R<List<FetchQueueDO>> pageQueue(
-            @PathVariable Integer status,
-            @PathVariable Integer current,
-            @PathVariable Integer size,
-            @PathVariable Integer infoType);
+    R<List<FetchQueueDO>> pageQueue(@PathVariable Integer status, @PathVariable Integer current,
+        @PathVariable Integer size, @PathVariable Integer infoType);
 
     @GetMapping(WORD_FETCH_QUEUE + "/listNotIntoCache")
     public R<List<FetchQueueDO>> listNotIntoCache();
 
     @GetMapping(WORD_FETCH_QUEUE + "/pageQueueLockIn/{status}/{current}/{size}/{infoType}")
-    R<List<FetchQueueDO>> pageQueueLockIn(
-            @PathVariable Integer status,
-            @PathVariable Integer current,
-            @PathVariable Integer size,
-            @PathVariable Integer infoType);
+    R<List<FetchQueueDO>> pageQueueLockIn(@PathVariable Integer status, @PathVariable Integer current,
+        @PathVariable Integer size, @PathVariable Integer infoType);
 
     @PostMapping(WORD_FETCH_QUEUE + "/updateById")
     R<Boolean> updateQueueById(@RequestBody FetchQueueDO queueDO);
@@ -77,8 +69,7 @@ public interface IBizAPI {
 
     @Deprecated
     @GetMapping(WORD_FETCH_QUEUE + "/removeWord/{wordName}/{queueId}")
-    R<List<RemovePronunciatioinMqDTO>> removeWord(
-            @PathVariable String wordName, @PathVariable Integer queueId);
+    R<List<RemovePronunciatioinMqDTO>> removeWord(@PathVariable String wordName, @PathVariable Integer queueId);
 
     @GetMapping(WORD_FETCH_QUEUE + "/removeWord/{queueId}")
     R<List<RemovePronunciatioinMqDTO>> removeWord(@PathVariable Integer queueId);

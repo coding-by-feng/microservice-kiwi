@@ -42,8 +42,7 @@ public class WordRemoveException extends BaseException {
         super(cause);
     }
 
-    public WordRemoveException(
-            String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+    public WordRemoveException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
     }
 }

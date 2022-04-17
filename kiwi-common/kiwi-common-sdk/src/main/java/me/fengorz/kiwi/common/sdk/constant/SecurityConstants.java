@@ -64,15 +64,14 @@ public class SecurityConstants {
     public final String CLIENT_DETAILS_KEY = PROJECT_PREFIX + OAUTH_PREFIX + "client:details";
 
     public final String CLIENT_FIELDS =
-            "client_id, CONCAT('{noop}',client_secret) as client_secret, resource_ids, scope, "
-                    + "authorized_grant_types, web_server_redirect_uri, authorities, access_token_validity, "
-                    + "refresh_token_validity, additional_information, autoapprove";
+        "client_id, CONCAT('{noop}',client_secret) as client_secret, resource_ids, scope, "
+            + "authorized_grant_types, web_server_redirect_uri, authorities, access_token_validity, "
+            + "refresh_token_validity, additional_information, autoapprove";
 
     /**
      * JdbcClientDetailsService 查询语句
      */
-    public final String BASE_FIND_STATEMENT =
-            "select " + CLIENT_FIELDS + " from sys_oauth_client_details";
+    public final String BASE_FIND_STATEMENT = "select " + CLIENT_FIELDS + " from sys_oauth_client_details";
 
     /**
      * 默认的查询语句

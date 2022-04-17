@@ -16,6 +16,7 @@
 package me.fengorz.kiwi.word.biz.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+
 import me.fengorz.kiwi.word.api.entity.FetchQueueDO;
 
 /**
@@ -24,5 +25,4 @@ import me.fengorz.kiwi.word.api.entity.FetchQueueDO;
  * @author zhanshifeng
  * @date 2019-10-30 14:45:45
  */
-public interface FetchQueueMapper extends BaseMapper<FetchQueueDO> {
-}
+public interface FetchQueueMapper extends BaseMapper<FetchQueueDO> {}

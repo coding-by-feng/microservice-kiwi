@@ -16,13 +16,13 @@
 
 package me.fengorz.kiwi.generator.util;
 
-import me.fengorz.kiwi.generator.common.ToolConstants;
-
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
+
+import me.fengorz.kiwi.generator.common.ToolConstants;
 
 /**
  * @Author zhanshifeng @Date 2020/2/24 1:16 PM
@@ -32,13 +32,12 @@ public class ToolIOUtils {
     /**
      * 将多部分内容写到流中，自动转换为字符串
      *
-     * @param out         输出流
+     * @param out 输出流
      * @param charsetName 写出的内容的字符集
-     * @param isCloseOut  写入完毕是否关闭输出流
-     * @param contents    写入的内容，调用toString()方法，不包括不会自动换行
+     * @param isCloseOut 写入完毕是否关闭输出流
+     * @param contents 写入的内容，调用toString()方法，不包括不会自动换行
      */
-    public static void write(
-            OutputStream out, String charsetName, boolean isCloseOut, Object... contents) {
+    public static void write(OutputStream out, String charsetName, boolean isCloseOut, Object... contents) {
         try {
             write(out, Charset.forName(ToolConstants.UTF_8), isCloseOut, contents);
         } catch (IOException e) {
@@ -46,9 +45,8 @@ public class ToolIOUtils {
         }
     }
 
-    public static void write(
-            OutputStream out, Charset charset, boolean isCloseOut, Object... contents)
-            throws IOException {
+    public static void write(OutputStream out, Charset charset, boolean isCloseOut, Object... contents)
+        throws IOException {
         OutputStreamWriter osw = null;
         try {
             osw = getWriter(out, charset);

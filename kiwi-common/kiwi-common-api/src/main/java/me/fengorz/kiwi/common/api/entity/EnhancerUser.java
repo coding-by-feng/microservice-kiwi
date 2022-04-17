@@ -16,14 +16,15 @@
 
 package me.fengorz.kiwi.common.api.entity;
 
-import lombok.Getter;
+import static me.fengorz.kiwi.common.api.ApiContants.ADMIN_USERNAME;
+
+import java.util.Collection;
+
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 
-import java.util.Collection;
-
-import static me.fengorz.kiwi.common.api.ApiContants.ADMIN_USERNAME;
+import lombok.Getter;
 
 /**
  * @Author zhanshifeng @Date 2019-09-25 10:41
@@ -41,24 +42,10 @@ public class EnhancerUser extends User implements InitializingBean {
     @Getter
     private Boolean isAdmin;
 
-    public EnhancerUser(
-            Integer id,
-            Integer deptId,
-            String username,
-            String password,
-            boolean enabled,
-            boolean accountNonExpired,
-            boolean credentialsNonExpired,
-            boolean accountNonLocked,
-            Collection<? extends GrantedAuthority> authorities) {
-        super(
-                username,
-                password,
-                enabled,
-                accountNonExpired,
-                credentialsNonExpired,
-                accountNonLocked,
-                authorities);
+    public EnhancerUser(Integer id, Integer deptId, String username, String password, boolean enabled,
+        boolean accountNonExpired, boolean credentialsNonExpired, boolean accountNonLocked,
+        Collection<? extends GrantedAuthority> authorities) {
+        super(username, password, enabled, accountNonExpired, credentialsNonExpired, accountNonLocked, authorities);
         this.id = id;
         this.deptId = deptId;
     }

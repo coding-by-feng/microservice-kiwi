@@ -16,13 +16,14 @@
 
 package me.fengorz.kiwi.bdf.core.service.impl;
 
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+
 import lombok.RequiredArgsConstructor;
 import me.fengorz.kiwi.bdf.core.entity.Sequence;
 import me.fengorz.kiwi.bdf.core.mapper.SeqMapper;
 import me.fengorz.kiwi.bdf.core.service.ISeqService;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @Description 序列生成服务

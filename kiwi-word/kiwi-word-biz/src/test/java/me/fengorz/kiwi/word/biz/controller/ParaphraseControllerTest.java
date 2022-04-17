@@ -1,26 +1,25 @@
 /*
  *
- *   Copyright [2019~2025] [codingByFeng]
+ * Copyright [2019~2025] [codingByFeng]
  *
- *   Licensed under the Apache License, Version 2.0 (the "License");
- *   you may not use this file except in compliance with the License.
- *   You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *   Unless required by applicable law or agreed to in writing, software
- *   distributed under the License is distributed on an "AS IS" BASIS,
- *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *   See the License for the specific language governing permissions and
- *   limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  *
  *
  */
 
 package me.fengorz.kiwi.word.biz.controller;
 
-import me.fengorz.kiwi.word.api.request.ParaphraseRequest;
-import me.fengorz.kiwi.word.biz.service.base.IParaphraseService;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,9 +31,8 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import me.fengorz.kiwi.word.api.request.ParaphraseRequest;
+import me.fengorz.kiwi.word.biz.service.base.IParaphraseService;
 
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(ParaphraseController.class)
@@ -53,14 +51,10 @@ class ParaphraseControllerTest {
 
         // Run the test
         final MockHttpServletResponse response =
-                mockMvc
-                        .perform(
-                                post("/word/paraphrase/modifyMeaningChinese")
-                                        .content("content")
-                                        .contentType(MediaType.APPLICATION_JSON)
-                                        .accept(MediaType.APPLICATION_JSON))
-                        .andReturn()
-                        .getResponse();
+            mockMvc
+                .perform(post("/word/paraphrase/modifyMeaningChinese").content("content")
+                    .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON))
+                .andReturn().getResponse();
 
         // Verify the results
         assertEquals(HttpStatus.OK.value(), response.getStatus());

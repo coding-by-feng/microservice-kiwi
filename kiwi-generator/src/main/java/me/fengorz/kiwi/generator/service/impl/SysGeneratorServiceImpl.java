@@ -16,13 +16,14 @@
 
 package me.fengorz.kiwi.generator.service.impl;
 
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.stereotype.Service;
+
 import lombok.RequiredArgsConstructor;
 import me.fengorz.kiwi.generator.mapper.SysGeneratorMapper;
 import me.fengorz.kiwi.generator.service.SysGeneratorService;
-import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.Map;
 
 /**
  * @Author zhanshifeng @Date 2019-09-16 16:51

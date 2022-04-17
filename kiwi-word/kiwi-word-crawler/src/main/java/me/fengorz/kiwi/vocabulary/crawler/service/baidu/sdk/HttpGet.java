@@ -1,28 +1,21 @@
 /*
  *
- *   Copyright [2019~2025] [codingByFeng]
+ * Copyright [2019~2025] [codingByFeng]
  *
- *   Licensed under the Apache License, Version 2.0 (the "License");
- *   you may not use this file except in compliance with the License.
- *   You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *   Unless required by applicable law or agreed to in writing, software
- *   distributed under the License is distributed on an "AS IS" BASIS,
- *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *   See the License for the specific language governing permissions and
- *   limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  *
  *
  */
 
 package me.fengorz.kiwi.vocabulary.crawler.service.baidu.sdk;
 
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -34,42 +27,42 @@ import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.Map;
 
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
+
 class HttpGet {
     protected static final int SOCKET_TIMEOUT = 10000; // 10S
     protected static final String GET = "GET";
-    private static TrustManager myX509TrustManager =
-            new X509TrustManager() {
+    private static TrustManager myX509TrustManager = new X509TrustManager() {
 
-                @Override
-                public X509Certificate[] getAcceptedIssuers() {
-                    return null;
-                }
+        @Override
+        public X509Certificate[] getAcceptedIssuers() {
+            return null;
+        }
 
-                @Override
-                public void checkServerTrusted(X509Certificate[] chain, String authType)
-                        throws CertificateException {
-                }
+        @Override
+        public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {}
 
-                @Override
-                public void checkClientTrusted(X509Certificate[] chain, String authType)
-                        throws CertificateException {
-                }
-            };
+        @Override
+        public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {}
+    };
 
     public static String get(String host, Map<String, String> params) {
         try {
             // 设置SSLContext
             SSLContext sslcontext = SSLContext.getInstance("TLS");
-            sslcontext.init(null, new TrustManager[]{myX509TrustManager}, null);
+            sslcontext.init(null, new TrustManager[] {myX509TrustManager}, null);
 
             String sendUrl = getUrlWithQueryString(host, params);
 
             // System.out.println("URL:" + sendUrl);
 
             URL uri = new URL(sendUrl); // 创建URL对象
-            HttpURLConnection conn = (HttpURLConnection) uri.openConnection();
+            HttpURLConnection conn = (HttpURLConnection)uri.openConnection();
             if (conn instanceof HttpsURLConnection) {
-                ((HttpsURLConnection) conn).setSSLSocketFactory(sslcontext.getSocketFactory());
+                ((HttpsURLConnection)conn).setSSLSocketFactory(sslcontext.getSocketFactory());
             }
 
             conn.setConnectTimeout(SOCKET_TIMEOUT); // 设置相应超时

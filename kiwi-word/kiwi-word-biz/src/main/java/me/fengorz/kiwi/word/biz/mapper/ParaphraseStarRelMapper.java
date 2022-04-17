@@ -16,11 +16,11 @@
 package me.fengorz.kiwi.word.biz.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+
 import me.fengorz.kiwi.word.api.entity.ParaphraseStarRelDO;
 
 /**
  * @author zhanshifeng
  * @date 2020-01-03 14:44:37
  */
-public interface ParaphraseStarRelMapper extends BaseMapper<ParaphraseStarRelDO> {
-}
+public interface ParaphraseStarRelMapper extends BaseMapper<ParaphraseStarRelDO> {}

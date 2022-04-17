@@ -14,20 +14,9 @@
  *
  */
 
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
+package me.fengorz.kiwi.vocabulary.crawler.component.producer.base;
 
-import me.fengorz.kiwi.common.sdk.util.cipher.KiwiDecodeUtils;
+public interface MQProducer {
 
-/**
- * @Author zhanshifeng @Date 2020/6/3 12:10 AM
- */
-public class KiwiDecodeUtilsTest {
-
-    // @Test
-    public void test() {
-        System.out.println(KiwiDecodeUtils.decryptAES("qAOw8ST25fWeUm2yX52OXg==", "MyKiwiVocabulary").trim());
-        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-        System.out.println(passwordEncoder.encode("123456"));
-    }
+    void produce();
 }

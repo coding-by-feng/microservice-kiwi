@@ -15,19 +15,21 @@
  */
 package me.fengorz.kiwi.admin.controller;
 
+import java.util.Objects;
+import java.util.Optional;
+
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+
 import lombok.RequiredArgsConstructor;
 import me.fengorz.kiwi.admin.api.entity.SysUser;
 import me.fengorz.kiwi.admin.service.SysUserService;
 import me.fengorz.kiwi.common.api.R;
 import me.fengorz.kiwi.common.sdk.annotation.log.SysLog;
 import me.fengorz.kiwi.common.sdk.controller.BaseController;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.Objects;
-import java.util.Optional;
 
 /**
  * 用户表
@@ -50,14 +52,10 @@ public class SysUserController extends BaseController {
     @GetMapping("/current/info")
     public R currentInfo() {
         final SysUser[] user = {null};
-        Optional.ofNullable(this.getCurrentUser())
-                .ifPresent(
-                        inspectUser -> {
-                            String username = inspectUser.getUsername();
-                            user[0] =
-                                    sysUserService.getOne(
-                                            Wrappers.<SysUser>query().lambda().eq(SysUser::getUsername, username));
-                        });
+        Optional.ofNullable(this.getCurrentUser()).ifPresent(inspectUser -> {
+            String username = inspectUser.getUsername();
+            user[0] = sysUserService.getOne(Wrappers.<SysUser>query().lambda().eq(SysUser::getUsername, username));
+        });
         if (Objects.isNull(user[0])) {
             return R.failed("获取当前用户信息失败");
         }
@@ -66,9 +64,7 @@ public class SysUserController extends BaseController {
 
     @GetMapping("/info/{username}")
     public R info(@PathVariable String username) {
-        SysUser user =
-                sysUserService.getOne(
-                        Wrappers.<SysUser>query().lambda().eq(SysUser::getUsername, username));
+        SysUser user = sysUserService.getOne(Wrappers.<SysUser>query().lambda().eq(SysUser::getUsername, username));
         if (Objects.isNull(user)) {
             return R.failed("用户信息查询不到 %s", username);
         }
@@ -78,7 +74,7 @@ public class SysUserController extends BaseController {
     /**
      * 分页查询
      *
-     * @param page    分页对象
+     * @param page 分页对象
      * @param sysUser 用户表
      * @return
      */

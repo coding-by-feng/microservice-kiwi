@@ -15,13 +15,15 @@
  */
 package me.fengorz.kiwi.word.biz.service.base.impl;
 
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+
 import lombok.RequiredArgsConstructor;
 import me.fengorz.kiwi.word.api.entity.PronunciationDO;
 import me.fengorz.kiwi.word.biz.mapper.PronunciationMapper;
 import me.fengorz.kiwi.word.biz.service.base.IPronunciationService;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 单词例句表
@@ -32,7 +34,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service()
 @RequiredArgsConstructor
 public class PronunciationServiceImpl extends ServiceImpl<PronunciationMapper, PronunciationDO>
-        implements IPronunciationService {
+    implements IPronunciationService {
 
     private final PronunciationMapper pronunciationMapper;
 

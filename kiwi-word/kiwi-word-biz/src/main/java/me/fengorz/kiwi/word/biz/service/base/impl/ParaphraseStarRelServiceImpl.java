@@ -15,9 +15,17 @@
  */
 package me.fengorz.kiwi.word.biz.service.base.impl;
 
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+
 import lombok.RequiredArgsConstructor;
 import me.fengorz.kiwi.common.sdk.util.lang.collection.KiwiCollectionUtils;
 import me.fengorz.kiwi.word.api.entity.ParaphraseDO;
@@ -25,12 +33,6 @@ import me.fengorz.kiwi.word.api.entity.ParaphraseStarRelDO;
 import me.fengorz.kiwi.word.biz.mapper.ParaphraseMapper;
 import me.fengorz.kiwi.word.biz.mapper.ParaphraseStarRelMapper;
 import me.fengorz.kiwi.word.biz.service.base.IParaphraseStarRelService;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * @author zhanshifeng
@@ -38,9 +40,8 @@ import java.util.stream.Collectors;
  */
 @Service
 @RequiredArgsConstructor
-public class ParaphraseStarRelServiceImpl
-        extends ServiceImpl<ParaphraseStarRelMapper, ParaphraseStarRelDO>
-        implements IParaphraseStarRelService {
+public class ParaphraseStarRelServiceImpl extends ServiceImpl<ParaphraseStarRelMapper, ParaphraseStarRelDO>
+    implements IParaphraseStarRelService {
 
     private final ParaphraseStarRelMapper paraphraseStarRelMapper;
     private final ParaphraseMapper paraphraseMapper;
@@ -52,43 +53,30 @@ public class ParaphraseStarRelServiceImpl
             return;
         }
 
-        int update =
-                paraphraseStarRelMapper.update(
-                        new ParaphraseStarRelDO().setParaphraseId(newRelId),
-                        Wrappers.<ParaphraseStarRelDO>lambdaUpdate()
-                                .eq(ParaphraseStarRelDO::getParaphraseId, oldRelId));
+        int update = paraphraseStarRelMapper.update(new ParaphraseStarRelDO().setParaphraseId(newRelId),
+            Wrappers.<ParaphraseStarRelDO>lambdaUpdate().eq(ParaphraseStarRelDO::getParaphraseId, oldRelId));
 
         // 更新失败的话，可能是因为单词删除的逻辑出现异常，下面做补偿处理
         if (update < 1) {
             ParaphraseDO paraphrase = Optional.of(paraphraseMapper.selectById(newRelId)).get();
-            LambdaQueryWrapper<ParaphraseDO> wrapper =
-                    Wrappers.<ParaphraseDO>lambdaQuery()
-                            .eq(ParaphraseDO::getParaphraseEnglish, paraphrase.getParaphraseEnglish())
-                            .eq(ParaphraseDO::getMeaningChinese, paraphrase.getMeaningChinese())
-                            .eq(ParaphraseDO::getIsHavePhrase, paraphrase.getIsHavePhrase());
-            List<Integer> allStockId =
-                    paraphraseMapper.selectList(wrapper).stream()
-                            .map(ParaphraseDO::getParaphraseId)
-                            .collect(Collectors.toList());
-            update =
-                    paraphraseStarRelMapper.update(
-                            new ParaphraseStarRelDO().setParaphraseId(newRelId),
-                            Wrappers.<ParaphraseStarRelDO>lambdaUpdate()
-                                    .in(ParaphraseStarRelDO::getParaphraseId, allStockId));
+            LambdaQueryWrapper<ParaphraseDO> wrapper = Wrappers.<ParaphraseDO>lambdaQuery()
+                .eq(ParaphraseDO::getParaphraseEnglish, paraphrase.getParaphraseEnglish())
+                .eq(ParaphraseDO::getMeaningChinese, paraphrase.getMeaningChinese())
+                .eq(ParaphraseDO::getIsHavePhrase, paraphrase.getIsHavePhrase());
+            List<Integer> allStockId = paraphraseMapper.selectList(wrapper).stream().map(ParaphraseDO::getParaphraseId)
+                .collect(Collectors.toList());
+            update = paraphraseStarRelMapper.update(new ParaphraseStarRelDO().setParaphraseId(newRelId),
+                Wrappers.<ParaphraseStarRelDO>lambdaUpdate().in(ParaphraseStarRelDO::getParaphraseId, allStockId));
 
             if (update < 1) {
-                List<Integer> list =
-                        paraphraseMapper.selectList(wrapper.orderByDesc(ParaphraseDO::getParaphraseId)).stream()
-                                .map(ParaphraseDO::getParaphraseId)
-                                .filter(id -> !id.equals(newRelId))
-                                .collect(Collectors.toList());
+                List<Integer> list = paraphraseMapper.selectList(wrapper.orderByDesc(ParaphraseDO::getParaphraseId))
+                    .stream().map(ParaphraseDO::getParaphraseId).filter(id -> !id.equals(newRelId))
+                    .collect(Collectors.toList());
                 if (KiwiCollectionUtils.isEmpty(list)) {
                     return;
                 }
-                paraphraseStarRelMapper.update(
-                        new ParaphraseStarRelDO().setParaphraseId(newRelId),
-                        Wrappers.<ParaphraseStarRelDO>lambdaUpdate()
-                                .in(ParaphraseStarRelDO::getParaphraseId, list));
+                paraphraseStarRelMapper.update(new ParaphraseStarRelDO().setParaphraseId(newRelId),
+                    Wrappers.<ParaphraseStarRelDO>lambdaUpdate().in(ParaphraseStarRelDO::getParaphraseId, list));
             }
         }
     }

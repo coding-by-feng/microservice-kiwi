@@ -15,13 +15,15 @@
  */
 package me.fengorz.kiwi.admin.service.impl;
 
+import java.util.List;
+
+import org.springframework.stereotype.Service;
+
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+
 import me.fengorz.kiwi.admin.api.entity.SysRole;
 import me.fengorz.kiwi.admin.mapper.SysRoleMapper;
 import me.fengorz.kiwi.admin.service.SysRoleService;
-import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 /**
  * 系统角色表
@@ -30,8 +32,7 @@ import java.util.List;
  * @date 2019-09-26 14:21:47
  */
 @Service("sysRoleService")
-public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole>
-        implements SysRoleService {
+public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> implements SysRoleService {
 
     @Override
     public List<SysRole> listRolesByUserId(Integer userId) {

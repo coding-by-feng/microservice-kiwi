@@ -16,19 +16,21 @@
 
 package me.fengorz.kiwi.common.sdk.util.bean;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.extern.slf4j.Slf4j;
-import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.text.WordUtils;
-import org.springframework.beans.BeanUtils;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.text.WordUtils;
+import org.springframework.beans.BeanUtils;
+
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import lombok.extern.slf4j.Slf4j;
+import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
 
 /**
  * @Description Bean工具类 @Author zhanshifeng @Date 2019/11/2 4:46 PM
@@ -126,8 +128,7 @@ public class KiwiBeanUtils extends BeanUtils {
      * 列名转换成Java属性名
      */
     public static String columnToBeanProperty(String columnName, String delimiter) {
-        return WordUtils.capitalizeFully(columnName, delimiter.toCharArray())
-                .replace(delimiter, GlobalConstants.EMPTY);
+        return WordUtils.capitalizeFully(columnName, delimiter.toCharArray()).replace(delimiter, GlobalConstants.EMPTY);
     }
 
     public static String defaultColumnToBeanProperty(String columnName) {
@@ -147,12 +148,12 @@ public class KiwiBeanUtils extends BeanUtils {
                 var5.printStackTrace();
             }
 
-            return (T) target;
+            return (T)target;
         }
     }
 
-    public static <T, E> T convertFrom(
-            E source, Class<T> requiredType, Consumer<T> consumer, String... ignoreProperties) {
+    public static <T, E> T convertFrom(E source, Class<T> requiredType, Consumer<T> consumer,
+        String... ignoreProperties) {
         if (source == null) {
             return null;
         } else {
@@ -161,43 +162,40 @@ public class KiwiBeanUtils extends BeanUtils {
             try {
                 target = requiredType.newInstance();
                 copyProperties(source, target, ignoreProperties);
-                consumer.accept((T) target);
+                consumer.accept((T)target);
             } catch (IllegalAccessException | InstantiationException var6) {
                 var6.printStackTrace();
             }
 
-            return (T) target;
+            return (T)target;
         }
     }
 
-    public static <T, E> List<T> convertFrom(
-            List<E> sourceList, Class<T> requiredType, String... ignoreProperties) {
+    public static <T, E> List<T> convertFrom(List<E> sourceList, Class<T> requiredType, String... ignoreProperties) {
         if (sourceList == null) {
             return null;
         } else {
             List<T> targetList = new ArrayList();
             if (!sourceList.isEmpty()) {
-                sourceList.forEach(
-                        (source) -> {
-                            targetList.add(convertFrom(source, requiredType, ignoreProperties));
-                        });
+                sourceList.forEach((source) -> {
+                    targetList.add(convertFrom(source, requiredType, ignoreProperties));
+                });
             }
 
             return targetList;
         }
     }
 
-    public static <T, E> List<T> convertFrom(
-            List<E> sourceList, Class<T> requiredType, Consumer<T> consumer, String... ignoreProperties) {
+    public static <T, E> List<T> convertFrom(List<E> sourceList, Class<T> requiredType, Consumer<T> consumer,
+        String... ignoreProperties) {
         if (sourceList == null) {
             return null;
         } else {
             List<T> targetList = new ArrayList();
             if (!sourceList.isEmpty()) {
-                sourceList.forEach(
-                        (source) -> {
-                            targetList.add(convertFrom(source, requiredType, consumer, ignoreProperties));
-                        });
+                sourceList.forEach((source) -> {
+                    targetList.add(convertFrom(source, requiredType, consumer, ignoreProperties));
+                });
             }
 
             return targetList;
@@ -208,20 +206,17 @@ public class KiwiBeanUtils extends BeanUtils {
         if (sourcePage == null) {
             return null;
         } else {
-            IPage<T> page =
-                    new Page(sourcePage.getCurrent(), sourcePage.getSize(), sourcePage.getTotal());
+            IPage<T> page = new Page(sourcePage.getCurrent(), sourcePage.getSize(), sourcePage.getTotal());
             page.setRecords(convertFrom(sourcePage.getRecords(), requiredType));
             return page;
         }
     }
 
-    public static <T, E> IPage<T> convertFrom(
-            IPage<E> sourcePage, Class<T> requiredType, Consumer<T> consumer) {
+    public static <T, E> IPage<T> convertFrom(IPage<E> sourcePage, Class<T> requiredType, Consumer<T> consumer) {
         if (sourcePage == null) {
             return null;
         } else {
-            IPage<T> page =
-                    new Page(sourcePage.getCurrent(), sourcePage.getSize(), sourcePage.getTotal());
+            IPage<T> page = new Page(sourcePage.getCurrent(), sourcePage.getSize(), sourcePage.getTotal());
             page.setRecords(convertFrom(sourcePage.getRecords(), requiredType, consumer));
             return page;
         }

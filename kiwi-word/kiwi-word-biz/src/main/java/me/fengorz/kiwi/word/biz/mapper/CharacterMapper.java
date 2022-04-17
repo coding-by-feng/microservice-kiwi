@@ -16,6 +16,7 @@
 package me.fengorz.kiwi.word.biz.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+
 import me.fengorz.kiwi.word.api.entity.CharacterDO;
 
 /**
@@ -24,5 +25,4 @@ import me.fengorz.kiwi.word.api.entity.CharacterDO;
  * @author zhanshifeng
  * @date 2019-10-31 20:38:37
  */
-public interface CharacterMapper extends BaseMapper<CharacterDO> {
-}
+public interface CharacterMapper extends BaseMapper<CharacterDO> {}

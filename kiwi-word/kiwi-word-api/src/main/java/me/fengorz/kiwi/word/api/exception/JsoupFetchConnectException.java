@@ -19,7 +19,8 @@ package me.fengorz.kiwi.word.api.exception;
 import me.fengorz.kiwi.common.sdk.exception.BaseException;
 
 /**
- * @Author zhanshifeng @Date 2019/10/31 3:34 PM
+ * @Author zhanshifeng
+ * @Date 2019/10/31 3:34 PM
  */
 public class JsoupFetchConnectException extends BaseException {
 
@@ -41,8 +42,8 @@ public class JsoupFetchConnectException extends BaseException {
         super(cause);
     }
 
-    public JsoupFetchConnectException(
-            String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+    public JsoupFetchConnectException(String message, Throwable cause, boolean enableSuppression,
+        boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
     }
 }

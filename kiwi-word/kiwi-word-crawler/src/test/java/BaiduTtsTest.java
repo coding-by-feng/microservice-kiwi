@@ -1,31 +1,29 @@
 /*
  *
- *   Copyright [2019~2025] [codingByFeng]
+ * Copyright [2019~2025] [codingByFeng]
  *
- *   Licensed under the Apache License, Version 2.0 (the "License");
- *   you may not use this file except in compliance with the License.
- *   You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *   Unless required by applicable law or agreed to in writing, software
- *   distributed under the License is distributed on an "AS IS" BASIS,
- *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *   See the License for the specific language governing permissions and
- *   limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  *
  *
  */
 
-import com.baidu.aip.speech.AipSpeech;
-import com.baidu.aip.speech.TtsResponse;
-import com.baidu.aip.util.Util;
+import java.io.IOException;
+import java.util.HashMap;
+
 import org.json.JSONObject;
 import org.junit.Test;
 import org.junit.jupiter.api.BeforeEach;
 
-import java.io.IOException;
-import java.util.HashMap;
+import com.baidu.aip.speech.AipSpeech;
+import com.baidu.aip.speech.TtsResponse;
+import com.baidu.aip.util.Util;
 
 /**
  * @Description TODO
@@ -39,8 +37,7 @@ public class BaiduTtsTest {
     public static final String SECRET_KEY = "iQkIhGf6O93FH8Dhe446w8rB3jd2A137";
 
     @BeforeEach
-    private void beforeEach() {
-    }
+    private void beforeEach() {}
 
     @Test
     public void test() {
@@ -56,12 +53,9 @@ public class BaiduTtsTest {
         options.put("pit", "5");
         options.put("per", "5");
 
-        TtsResponse res =
-                client.synthesis(
-                        " A。R。E。F。E。R。L。a way of discovering, by questions or practical activities, what someone knows, or what someone or something can do or is like",
-                        "zh",
-                        1,
-                        options);
+        TtsResponse res = client.synthesis(
+            " A。R。E。F。E。R。L。a way of discovering, by questions or practical activities, what someone knows, or what someone or something can do or is like",
+            "zh", 1, options);
         byte[] data = res.getData();
         JSONObject res1 = res.getResult();
         if (data != null) {

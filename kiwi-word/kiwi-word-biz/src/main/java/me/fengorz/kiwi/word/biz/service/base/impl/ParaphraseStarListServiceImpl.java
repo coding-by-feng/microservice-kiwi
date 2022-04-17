@@ -15,6 +15,12 @@
  */
 package me.fengorz.kiwi.word.biz.service.base.impl;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
@@ -22,6 +28,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+
 import lombok.RequiredArgsConstructor;
 import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
 import me.fengorz.kiwi.common.sdk.util.bean.KiwiBeanUtils;
@@ -38,11 +45,6 @@ import me.fengorz.kiwi.word.biz.service.base.IParaphraseStarListService;
 import me.fengorz.kiwi.word.biz.service.base.IParaphraseStarRelService;
 import me.fengorz.kiwi.word.biz.service.base.IWordReviewService;
 import me.fengorz.kiwi.word.biz.service.operate.IAsyncArchiveService;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDateTime;
-import java.util.List;
 
 /**
  * 单词本
@@ -52,9 +54,8 @@ import java.util.List;
  */
 @Service
 @RequiredArgsConstructor
-public class ParaphraseStarListServiceImpl
-        extends ServiceImpl<ParaphraseStarListMapper, ParaphraseStarListDO>
-        implements IParaphraseStarListService {
+public class ParaphraseStarListServiceImpl extends ServiceImpl<ParaphraseStarListMapper, ParaphraseStarListDO>
+    implements IParaphraseStarListService {
 
     private final ParaphraseStarListMapper mapper;
     private final IParaphraseStarRelService relService;
@@ -69,14 +70,11 @@ public class ParaphraseStarListServiceImpl
     @Override
     public List<ParaphraseStarListVO> getCurrentUserList(Integer userId) {
         QueryWrapper<ParaphraseStarListDO> queryWrapper =
-                new QueryWrapper<>(
-                        new ParaphraseStarListDO().setOwner(userId).setIsDel(GlobalConstants.FLAG_N))
-                        .select(
-                                ParaphraseStarListDO.class,
-                                tableFieldInfo ->
-                                        WordParaphraseStarListColumn.ID.equals(tableFieldInfo.getColumn())
-                                                || WordParaphraseStarListColumn.LIST_NAME.equals(tableFieldInfo.getColumn())
-                                                || WordParaphraseStarListColumn.REMARK.equals(tableFieldInfo.getColumn()));
+            new QueryWrapper<>(new ParaphraseStarListDO().setOwner(userId).setIsDel(GlobalConstants.FLAG_N)).select(
+                ParaphraseStarListDO.class,
+                tableFieldInfo -> WordParaphraseStarListColumn.ID.equals(tableFieldInfo.getColumn())
+                    || WordParaphraseStarListColumn.LIST_NAME.equals(tableFieldInfo.getColumn())
+                    || WordParaphraseStarListColumn.REMARK.equals(tableFieldInfo.getColumn()));
 
         return KiwiBeanUtils.convertFrom(mapper.selectList(queryWrapper), ParaphraseStarListVO.class);
     }
@@ -85,7 +83,7 @@ public class ParaphraseStarListServiceImpl
     @Transactional(rollbackFor = Exception.class)
     public boolean updateListByUser(ParaphraseStarListDO entity, Integer id, Integer userId) {
         UpdateWrapper<ParaphraseStarListDO> updateWrapper =
-                new UpdateWrapper<>(new ParaphraseStarListDO().setOwner(userId).setId(id));
+            new UpdateWrapper<>(new ParaphraseStarListDO().setOwner(userId).setId(id));
         return this.update(entity, updateWrapper);
     }
 
@@ -98,8 +96,7 @@ public class ParaphraseStarListServiceImpl
     }
 
     /**
-     * In review mode, It needs to save the page number, and it can choose to review again at the
-     * breakpoint next time.
+     * In review mode, It needs to save the page number, and it can choose to review again at the breakpoint next time.
      *
      * @param page
      * @param listId
@@ -108,11 +105,8 @@ public class ParaphraseStarListServiceImpl
     @Override
     public IPage<ParaphraseStarItemVO> selectReviewListItems(Page<ParaphraseStarListDO> page, Integer listId) {
         // When querying the list to be remembered, record the current query page number.
-        reviewService.recordReviewPageNumber(
-                listId,
-                page.getCurrent(),
-                ReviewBreakpointTypeEnum.REMEMBER.getType(),
-                SecurityUtils.getCurrentUserId());
+        reviewService.recordReviewPageNumber(listId, page.getCurrent(), ReviewBreakpointTypeEnum.REMEMBER.getType(),
+            SecurityUtils.getCurrentUserId());
         if (listId == 0) {
             return mapper.selectRecentReviewItems(page, SecurityUtils.getCurrentUserId());
         }
@@ -122,11 +116,8 @@ public class ParaphraseStarListServiceImpl
     @Override
     public IPage<ParaphraseStarItemVO> selectRememberListItems(Page<ParaphraseStarListDO> page, Integer listId) {
         // When querying the list to be kept in mind, record the current query page number.
-        reviewService.recordReviewPageNumber(
-                listId,
-                page.getCurrent(),
-                ReviewBreakpointTypeEnum.KEEP_IN_MIND.getType(),
-                SecurityUtils.getCurrentUserId());
+        reviewService.recordReviewPageNumber(listId, page.getCurrent(), ReviewBreakpointTypeEnum.KEEP_IN_MIND.getType(),
+            SecurityUtils.getCurrentUserId());
         if (listId == 0) {
             return mapper.selectRecentRememberItems(page, SecurityUtils.getCurrentUserId());
         }
@@ -136,57 +127,45 @@ public class ParaphraseStarListServiceImpl
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void removeParaphraseStar(Integer paraphraseId, Integer listId) {
-        LambdaQueryWrapper<ParaphraseStarRelDO> wrapper =
-                new LambdaQueryWrapper<ParaphraseStarRelDO>()
-                        .eq(ParaphraseStarRelDO::getListId, listId)
-                        .eq(ParaphraseStarRelDO::getParaphraseId, paraphraseId);
+        LambdaQueryWrapper<ParaphraseStarRelDO> wrapper = new LambdaQueryWrapper<ParaphraseStarRelDO>()
+            .eq(ParaphraseStarRelDO::getListId, listId).eq(ParaphraseStarRelDO::getParaphraseId, paraphraseId);
         int count = relService.count(wrapper);
         if (count < 0) {
             return;
         }
         relService.remove(wrapper);
-        archiveService.invalidArchiveParaphraseRel(
-                paraphraseId, listId, SecurityUtils.getCurrentUserId());
+        archiveService.invalidArchiveParaphraseRel(paraphraseId, listId, SecurityUtils.getCurrentUserId());
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void rememberOne(Integer paraphraseId, Integer listId) {
-        reviewService.increase(
-                ReviewDailyCounterTypeEnum.REMEMBER.getType(), SecurityUtils.getCurrentUserId());
+        reviewService.increase(ReviewDailyCounterTypeEnum.REMEMBER.getType(), SecurityUtils.getCurrentUserId());
         relService.update(
-                new ParaphraseStarRelDO()
-                        .setIsRemember(GlobalConstants.FLAG_DEL_YES)
-                        .setRememberTime(LocalDateTime.now()),
-                Wrappers.<ParaphraseStarRelDO>lambdaQuery()
-                        .eq(ParaphraseStarRelDO::getListId, listId)
-                        .eq(ParaphraseStarRelDO::getParaphraseId, paraphraseId));
+            new ParaphraseStarRelDO().setIsRemember(GlobalConstants.FLAG_DEL_YES).setRememberTime(LocalDateTime.now()),
+            Wrappers.<ParaphraseStarRelDO>lambdaQuery().eq(ParaphraseStarRelDO::getListId, listId)
+                .eq(ParaphraseStarRelDO::getParaphraseId, paraphraseId));
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void keepInMind(Integer paraphraseId, Integer listId) {
-        reviewService.increase(
-                ReviewDailyCounterTypeEnum.KEEP_IN_MIND.getType(), SecurityUtils.getCurrentUserId());
+        reviewService.increase(ReviewDailyCounterTypeEnum.KEEP_IN_MIND.getType(), SecurityUtils.getCurrentUserId());
         relService.update(
-                new ParaphraseStarRelDO()
-                        .setIsKeepInMind(GlobalConstants.FLAG_DEL_YES)
-                        .setKeepInMindTime(LocalDateTime.now()),
-                Wrappers.<ParaphraseStarRelDO>lambdaQuery()
-                        .eq(ParaphraseStarRelDO::getListId, listId)
-                        .eq(ParaphraseStarRelDO::getParaphraseId, paraphraseId));
+            new ParaphraseStarRelDO().setIsKeepInMind(GlobalConstants.FLAG_DEL_YES)
+                .setKeepInMindTime(LocalDateTime.now()),
+            Wrappers.<ParaphraseStarRelDO>lambdaQuery().eq(ParaphraseStarRelDO::getListId, listId)
+                .eq(ParaphraseStarRelDO::getParaphraseId, paraphraseId));
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void forgetOne(Integer paraphraseId, Integer listId) {
         relService.update(
-                new ParaphraseStarRelDO()
-                        .setIsRemember(GlobalConstants.FLAG_DEL_NO)
-                        .setIsKeepInMind(GlobalConstants.FLAG_DEL_NO),
-                Wrappers.<ParaphraseStarRelDO>lambdaQuery()
-                        .eq(ParaphraseStarRelDO::getListId, listId)
-                        .eq(ParaphraseStarRelDO::getParaphraseId, paraphraseId));
+            new ParaphraseStarRelDO().setIsRemember(GlobalConstants.FLAG_DEL_NO)
+                .setIsKeepInMind(GlobalConstants.FLAG_DEL_NO),
+            Wrappers.<ParaphraseStarRelDO>lambdaQuery().eq(ParaphraseStarRelDO::getListId, listId)
+                .eq(ParaphraseStarRelDO::getParaphraseId, paraphraseId));
     }
 
     @Override
@@ -197,10 +176,8 @@ public class ParaphraseStarListServiceImpl
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void putIntoStarList(Integer paraphraseId, Integer listId) {
-        LambdaQueryWrapper<ParaphraseStarRelDO> wrapper =
-                Wrappers.<ParaphraseStarRelDO>lambdaQuery()
-                        .eq(ParaphraseStarRelDO::getListId, listId)
-                        .eq(ParaphraseStarRelDO::getParaphraseId, paraphraseId);
+        LambdaQueryWrapper<ParaphraseStarRelDO> wrapper = Wrappers.<ParaphraseStarRelDO>lambdaQuery()
+            .eq(ParaphraseStarRelDO::getListId, listId).eq(ParaphraseStarRelDO::getParaphraseId, paraphraseId);
         if (relService.count(wrapper) > 0) {
             return;
         }

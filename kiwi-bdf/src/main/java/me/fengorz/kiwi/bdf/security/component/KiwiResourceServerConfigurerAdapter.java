@@ -16,8 +16,6 @@
 
 package me.fengorz.kiwi.bdf.security.component;
 
-import lombok.extern.slf4j.Slf4j;
-import me.fengorz.kiwi.common.sdk.config.FilterIgnorePropertiesConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.ExpressionUrlAuthorizationConfigurer;
@@ -28,6 +26,9 @@ import org.springframework.security.oauth2.provider.token.RemoteTokenServices;
 import org.springframework.security.oauth2.provider.token.UserAuthenticationConverter;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.web.client.RestTemplate;
+
+import lombok.extern.slf4j.Slf4j;
+import me.fengorz.kiwi.common.sdk.config.FilterIgnorePropertiesConfig;
 
 /**
  * 1. 支持remoteTokenServices 负载均衡 2. 支持 获取用户全部信息 @Author zhanshifeng
@@ -57,29 +58,21 @@ public class KiwiResourceServerConfigurerAdapter extends ResourceServerConfigure
         // 允许使用iframe 嵌套，避免swagger-ui 不被加载的问题
         httpSecurity.headers().frameOptions().disable();
         ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry registry =
-                httpSecurity.authorizeRequests();
-        registry
-                .antMatchers(ignorePropertiesConfig.getUrls().toArray(new String[0]))
-                .permitAll()
-                .anyRequest()
-                .authenticated()
-                .and()
-                .csrf()
-                .disable();
+            httpSecurity.authorizeRequests();
+        registry.antMatchers(ignorePropertiesConfig.getUrls().toArray(new String[0])).permitAll().anyRequest()
+            .authenticated().and().csrf().disable();
     }
 
     @Override
     public void configure(ResourceServerSecurityConfigurer resources) {
         DefaultAccessTokenConverter accessTokenConverter = new DefaultAccessTokenConverter();
         UserAuthenticationConverter userTokenConverter =
-                new KiwiUserAuthenticationConverter(this.filterIgnorePropertiesConfig);
+            new KiwiUserAuthenticationConverter(this.filterIgnorePropertiesConfig);
         accessTokenConverter.setUserTokenConverter(userTokenConverter);
 
         remoteTokenServices.setRestTemplate(lbRestTemplate);
         remoteTokenServices.setAccessTokenConverter(accessTokenConverter);
-        resources
-                .authenticationEntryPoint(resourceAuthExceptionEntryPoint)
-                .accessDeniedHandler(pigAccessDeniedHandler)
-                .tokenServices(remoteTokenServices);
+        resources.authenticationEntryPoint(resourceAuthExceptionEntryPoint).accessDeniedHandler(pigAccessDeniedHandler)
+            .tokenServices(remoteTokenServices);
     }
 }

@@ -1,8 +1,8 @@
-import me.fengorz.kiwi.vocabulary.crawler.component.MqSender;
-
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
+import me.fengorz.kiwi.vocabulary.crawler.component.MqMQSender;
 
 /**
  * @Author zhanshifeng @Date 2019/10/29 3:19 PM
@@ -15,7 +15,7 @@ public class CountDownLatchTest implements Runnable {
     private static final CountDownLatchTest test = new CountDownLatchTest();
     private Long id;
     // @Autowired
-    private MqSender mqSender;
+    private MqMQSender mqSender;
 
     // @PostConstruct
     public void init() {

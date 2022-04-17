@@ -16,11 +16,12 @@
 
 package me.fengorz.kiwi.common.sdk.controller;
 
-import me.fengorz.kiwi.common.api.entity.EnhancerUser;
-import me.fengorz.kiwi.common.sdk.web.security.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
+
+import me.fengorz.kiwi.common.api.entity.EnhancerUser;
+import me.fengorz.kiwi.common.sdk.web.security.SecurityUtils;
 
 /**
  * @Description 抽象控制层基类 @Author zhanshifeng @Date 2020/4/21 7:28 PM

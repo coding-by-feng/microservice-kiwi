@@ -16,9 +16,9 @@
 
 package me.fengorz.kiwi.common.sdk.util.lang.collection;
 
-import cn.hutool.core.collection.CollectionUtil;
-
 import java.util.Map;
+
+import cn.hutool.core.collection.CollectionUtil;
 
 /**
  * @Description 集合工具类 @Author zhanshifeng @Date 2020/5/17 9:31 AM

@@ -16,6 +16,10 @@
 
 package me.fengorz.kiwi.word.api.feign.fallback;
 
+import java.util.List;
+
+import org.springframework.stereotype.Component;
+
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.api.R;
@@ -26,9 +30,6 @@ import me.fengorz.kiwi.word.api.dto.queue.result.FetchWordResultDTO;
 import me.fengorz.kiwi.word.api.entity.FetchQueueDO;
 import me.fengorz.kiwi.word.api.feign.IBizAPI;
 import me.fengorz.kiwi.word.api.vo.detail.WordQueryVO;
-import org.springframework.stereotype.Component;
-
-import java.util.List;
 
 /**
  * @Author zhanshifeng @Date 2019/10/30 3:20 PM
@@ -53,8 +54,7 @@ public class BizAPIFallback implements IBizAPI {
     }
 
     @Override
-    public R<List<FetchQueueDO>> pageQueue(
-            Integer status, Integer current, Integer size, Integer infoType) {
+    public R<List<FetchQueueDO>> pageQueue(Integer status, Integer current, Integer size, Integer infoType) {
         log.error(throwable.getCause().getMessage());
         return R.feignCallFailed(throwable.getMessage());
     }
@@ -66,8 +66,7 @@ public class BizAPIFallback implements IBizAPI {
     }
 
     @Override
-    public R<List<FetchQueueDO>> pageQueueLockIn(
-            Integer status, Integer current, Integer size, Integer infoType) {
+    public R<List<FetchQueueDO>> pageQueueLockIn(Integer status, Integer current, Integer size, Integer infoType) {
         log.error(throwable.getCause().getMessage());
         return R.feignCallFailed(throwable.getMessage());
     }

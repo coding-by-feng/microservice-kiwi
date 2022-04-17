@@ -16,9 +16,9 @@
 
 package me.fengorz.kiwi.flow.controller;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import me.fengorz.kiwi.flow.service.MyService;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.flowable.task.api.Task;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -27,8 +27,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
-import java.util.List;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import me.fengorz.kiwi.flow.service.MyService;
 
 /**
  * @Author zhanshifeng @Date 2019/12/4 3:24 PM
@@ -44,10 +45,7 @@ public class MyRestController {
         myService.startProcess();
     }
 
-    @RequestMapping(
-            value = "/tasks",
-            method = RequestMethod.GET,
-            produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/tasks", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public List<TaskRepresentation> getTasks(@RequestParam String assignee) {
         List<Task> tasks = myService.getTasks(assignee);
         List<TaskRepresentation> dtos = new ArrayList<TaskRepresentation>();

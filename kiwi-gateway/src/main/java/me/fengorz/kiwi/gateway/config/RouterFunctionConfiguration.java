@@ -16,16 +16,17 @@
 
 package me.fengorz.kiwi.gateway.config;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import me.fengorz.kiwi.gateway.handler.AutoCodeHandler;
-import me.fengorz.kiwi.gateway.handler.HystrixFallbackHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
 import org.springframework.web.reactive.function.server.RequestPredicates;
 import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.RouterFunctions;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import me.fengorz.kiwi.gateway.handler.AutoCodeHandler;
+import me.fengorz.kiwi.gateway.handler.HystrixFallbackHandler;
 
 /**
  * @author lengleng
@@ -40,11 +41,10 @@ public class RouterFunctionConfiguration {
 
     @Bean
     public RouterFunction routerFunction() {
-        return RouterFunctions.route(
-                RequestPredicates.path("/fallback").and(RequestPredicates.accept(MediaType.TEXT_PLAIN)),
+        return RouterFunctions
+            .route(RequestPredicates.path("/fallback").and(RequestPredicates.accept(MediaType.TEXT_PLAIN)),
                 hystrixFallbackHandler)
-                .andRoute(
-                        RequestPredicates.GET("/code").and(RequestPredicates.accept(MediaType.TEXT_PLAIN)),
-                        autoCodeHandler);
+            .andRoute(RequestPredicates.GET("/code").and(RequestPredicates.accept(MediaType.TEXT_PLAIN)),
+                autoCodeHandler);
     }
 }

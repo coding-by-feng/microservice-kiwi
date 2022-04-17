@@ -37,8 +37,7 @@ public class KiwiDeniedException extends RuntimeException {
         super(message, cause);
     }
 
-    public KiwiDeniedException(
-            String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+    public KiwiDeniedException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
     }
 }

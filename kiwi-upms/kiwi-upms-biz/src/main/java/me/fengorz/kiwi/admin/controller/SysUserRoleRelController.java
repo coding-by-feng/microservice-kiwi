@@ -15,16 +15,18 @@
  */
 package me.fengorz.kiwi.admin.controller;
 
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+
 import lombok.RequiredArgsConstructor;
 import me.fengorz.kiwi.admin.api.entity.SysUserRoleRel;
 import me.fengorz.kiwi.admin.service.SysUserRoleRelService;
 import me.fengorz.kiwi.common.api.R;
 import me.fengorz.kiwi.common.sdk.annotation.log.SysLog;
 import me.fengorz.kiwi.common.sdk.controller.BaseController;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
 
 /**
  * 用户角色表
@@ -42,7 +44,7 @@ public class SysUserRoleRelController extends BaseController {
     /**
      * 分页查询
      *
-     * @param page           分页对象
+     * @param page 分页对象
      * @param sysUserRoleRel 用户角色表
      * @return
      */

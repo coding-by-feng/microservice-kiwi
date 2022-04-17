@@ -37,8 +37,8 @@ public class DfsOperateDeleteException extends DfsOperateException {
         super(cause);
     }
 
-    public DfsOperateDeleteException(
-            String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+    public DfsOperateDeleteException(String message, Throwable cause, boolean enableSuppression,
+        boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
     }
 }

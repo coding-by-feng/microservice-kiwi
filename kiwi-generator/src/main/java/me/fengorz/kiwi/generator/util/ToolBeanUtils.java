@@ -16,9 +16,10 @@
 
 package me.fengorz.kiwi.generator.util;
 
-import com.baomidou.mybatisplus.core.toolkit.Constants;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.WordUtils;
+
+import com.baomidou.mybatisplus.core.toolkit.Constants;
 
 /**
  * @Author zhanshifeng
@@ -26,8 +27,7 @@ import org.apache.commons.lang3.text.WordUtils;
 public class ToolBeanUtils {
 
     public static String columnToBeanProperty(String columnName, String delimiter) {
-        return WordUtils.capitalizeFully(columnName, delimiter.toCharArray())
-                .replace(delimiter, Constants.EMPTY);
+        return WordUtils.capitalizeFully(columnName, delimiter.toCharArray()).replace(delimiter, Constants.EMPTY);
     }
 
     public static String defaultColumnToBeanProperty(String columnName) {

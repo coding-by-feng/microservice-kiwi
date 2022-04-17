@@ -14,17 +14,9 @@
  *
  */
 
-package me.fengorz.kiwi.vocabulary.crawler.config;
+package me.fengorz.kiwi.vocabulary.crawler.component.producer.base;
 
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
+public interface MQProducer {
 
-import me.fengorz.kiwi.bdf.core.config.CoreConfig;
-import me.fengorz.kiwi.common.fastdfs.config.DfsConfig;
-
-/**
- * @Author zhanshifeng @Date 2019/10/30 3:45 PM
- */
-@Configuration
-@Import({CoreConfig.class, DfsConfig.class})
-public class CrawlerConfig {}
+    void produce();
+}

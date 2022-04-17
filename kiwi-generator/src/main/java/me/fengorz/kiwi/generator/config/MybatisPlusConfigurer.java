@@ -16,8 +16,8 @@
 
 package me.fengorz.kiwi.generator.config;
 
-import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
-import com.zaxxer.hikari.HikariDataSource;
+import javax.sql.DataSource;
+
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -30,7 +30,8 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 
-import javax.sql.DataSource;
+import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
+import com.zaxxer.hikari.HikariDataSource;
 
 /**
  * @author lengleng

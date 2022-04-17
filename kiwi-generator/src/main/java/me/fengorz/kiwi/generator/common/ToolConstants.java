@@ -26,7 +26,6 @@ public class ToolConstants {
 
     public static final String UTF_8 = "UTF-8";
     public static final String DEFAULT_BACK_END_PROJECT = "auto-generate";
-    public static Map<String, String> DATA_TYPE_MAP = initDataTypeMap();
 
     private static Map<String, String> initDataTypeMap() {
         if (DATA_TYPE_MAP == null) {
@@ -54,4 +53,7 @@ public class ToolConstants {
         }
         return DATA_TYPE_MAP;
     }
+
+    public static Map<String, String> DATA_TYPE_MAP = initDataTypeMap();
+
 }

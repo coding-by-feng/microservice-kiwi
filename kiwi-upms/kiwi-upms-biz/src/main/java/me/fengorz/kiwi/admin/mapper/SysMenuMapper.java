@@ -15,10 +15,11 @@
  */
 package me.fengorz.kiwi.admin.mapper;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import me.fengorz.kiwi.admin.api.entity.SysMenu;
-
 import java.util.List;
+
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+
+import me.fengorz.kiwi.admin.api.entity.SysMenu;
 
 /**
  * 菜单权限表

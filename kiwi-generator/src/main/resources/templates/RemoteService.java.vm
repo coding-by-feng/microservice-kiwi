@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 package ${package}import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.*;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.vocabulary.enhancer.common.core.util.R;
@@ -35,7 +34,7 @@ import com.vocabulary.enhancer.common.core.util.R;
 @FeignClient(contextId = "remote${caseTableName}Service", value = "${serviceId}", fallbackFactory = Remote${caseTableName}ServiceFallbackFactory.class)
 public interface IRemote${caseTableName}Service {
 
-    String ${tableNameUpper} ='/${controllerRootPath}';
+    String ${tableNameUpper} ='/${controllerRootPath}' ;
 
     /*
      * 分页查询

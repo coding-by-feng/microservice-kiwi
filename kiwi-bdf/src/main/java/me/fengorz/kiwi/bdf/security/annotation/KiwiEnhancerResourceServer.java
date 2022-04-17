@@ -16,13 +16,14 @@
 
 package me.fengorz.kiwi.bdf.security.annotation;
 
-import me.fengorz.kiwi.bdf.security.component.KiwiResourceServerAutoConfiguration;
-import me.fengorz.kiwi.bdf.security.component.KiwiSecurityBeanDefinitionRegistrar;
+import java.lang.annotation.*;
+
 import org.springframework.context.annotation.Import;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 
-import java.lang.annotation.*;
+import me.fengorz.kiwi.bdf.security.component.KiwiResourceServerAutoConfiguration;
+import me.fengorz.kiwi.bdf.security.component.KiwiSecurityBeanDefinitionRegistrar;
 
 /**
  * 资源服务注解 @Author zhanshifeng
@@ -34,5 +35,4 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 @Import({KiwiResourceServerAutoConfiguration.class, KiwiSecurityBeanDefinitionRegistrar.class})
-public @interface KiwiEnhancerResourceServer {
-}
+public @interface KiwiEnhancerResourceServer {}

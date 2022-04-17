@@ -16,8 +16,12 @@
 
 package me.fengorz.kiwi.gateway.filter;
 
-import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
-import me.fengorz.kiwi.common.sdk.constant.SecurityConstants;
+import static org.springframework.cloud.gateway.support.ServerWebExchangeUtils.GATEWAY_REQUEST_URL_ATTR;
+import static org.springframework.cloud.gateway.support.ServerWebExchangeUtils.addOriginalRequestUrl;
+
+import java.util.Arrays;
+import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
@@ -26,13 +30,10 @@ import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.server.ServerWebExchange;
+
+import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
+import me.fengorz.kiwi.common.sdk.constant.SecurityConstants;
 import reactor.core.publisher.Mono;
-
-import java.util.Arrays;
-import java.util.stream.Collectors;
-
-import static org.springframework.cloud.gateway.support.ServerWebExchangeUtils.GATEWAY_REQUEST_URL_ATTR;
-import static org.springframework.cloud.gateway.support.ServerWebExchangeUtils.addOriginalRequestUrl;
 
 /**
  * @Author zhanshifeng @Date 2019-09-06 14:54
@@ -45,23 +46,15 @@ public class GenericRequestGlobalFilter implements GlobalFilter, Ordered {
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         // 1. 清洗请求头中from 参数
-        ServerHttpRequest request =
-                exchange
-                        .getRequest()
-                        .mutate()
-                        .headers(httpHeaders -> httpHeaders.remove(SecurityConstants.KEY_HEADER_FROM))
-                        .build();
+        ServerHttpRequest request = exchange.getRequest().mutate()
+            .headers(httpHeaders -> httpHeaders.remove(SecurityConstants.KEY_HEADER_FROM)).build();
 
         // 2. 重写StripPrefix
         addOriginalRequestUrl(exchange, request.getURI());
         String rawPath = request.getURI().getRawPath();
-        String newPath =
-                GlobalConstants.SYMBOL_FORWARD_SLASH
-                        + Arrays.stream(
-                        StringUtils.tokenizeToStringArray(
-                                rawPath, GlobalConstants.SYMBOL_FORWARD_SLASH))
-                        .skip(skipUrlSlashCount)
-                        .collect(Collectors.joining(GlobalConstants.SYMBOL_FORWARD_SLASH));
+        String newPath = GlobalConstants.SYMBOL_FORWARD_SLASH
+            + Arrays.stream(StringUtils.tokenizeToStringArray(rawPath, GlobalConstants.SYMBOL_FORWARD_SLASH))
+                .skip(skipUrlSlashCount).collect(Collectors.joining(GlobalConstants.SYMBOL_FORWARD_SLASH));
         ServerHttpRequest newRequest = request.mutate().path(newPath).build();
         exchange.getAttributes().put(GATEWAY_REQUEST_URL_ATTR, newRequest.getURI());
 

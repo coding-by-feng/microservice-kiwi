@@ -12,21 +12,20 @@
  */
 package me.fengorz.kiwi.word.api.feign;
 
-import me.fengorz.kiwi.common.api.R;
-import me.fengorz.kiwi.word.api.common.WordConstants;
-import me.fengorz.kiwi.word.api.feign.factory.WordMainVariantFallBackFactory;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+
+import me.fengorz.kiwi.common.api.R;
+import me.fengorz.kiwi.word.api.common.WordConstants;
+import me.fengorz.kiwi.word.api.feign.factory.WordMainVariantFallBackFactory;
 
 /**
  * @Author zhanshifeng
  * @date 2020-05-24 01:40:36
  */
-@FeignClient(
-        contextId = "wordVariantService",
-        value = WordConstants.KIWI_WORD_BIZ_CRAWLER,
-        fallbackFactory = WordMainVariantFallBackFactory.class)
+@FeignClient(contextId = "wordVariantService", value = WordConstants.KIWI_WORD_BIZ_CRAWLER,
+    fallbackFactory = WordMainVariantFallBackFactory.class)
 public interface IWordMainVariantAPI {
 
     String WORD_MAIN_VARIANT = "/word/main/variant";

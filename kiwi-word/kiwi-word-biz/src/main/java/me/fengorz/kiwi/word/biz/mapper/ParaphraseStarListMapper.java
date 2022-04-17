@@ -18,6 +18,7 @@ package me.fengorz.kiwi.word.biz.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+
 import me.fengorz.kiwi.word.api.entity.ParaphraseStarListDO;
 import me.fengorz.kiwi.word.api.vo.star.ParaphraseStarItemVO;
 

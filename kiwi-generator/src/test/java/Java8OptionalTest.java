@@ -1,12 +1,13 @@
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import org.junit.Assert;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.util.Optional;
+
+import org.junit.Assert;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
 
 /**
  * @Author zhanshifeng @Date 2019-09-11 10:32
@@ -109,12 +110,9 @@ public class Java8OptionalTest {
      */
     // @Test
     public void mapTest() {
-        Optional.ofNullable("33")
-                .map(o -> "3")
-                .ifPresent(
-                        e -> {
-                            System.out.println(e);
-                        });
+        Optional.ofNullable("33").map(o -> "3").ifPresent(e -> {
+            System.out.println(e);
+        });
     }
 
     /*
@@ -126,13 +124,10 @@ public class Java8OptionalTest {
         String inputPassword = "123456";
 
         User user = new User(); // 代表从数据库查出User对象
-        Optional.ofNullable(user)
-                .filter(u -> username.equals(u.getUsername()))
-                .filter(u -> inputPassword.equals(u.getPassword()))
-                .ifPresent(
-                        u -> {
-                            System.out.println(u.getUsername() + "登录成功");
-                        });
+        Optional.ofNullable(user).filter(u -> username.equals(u.getUsername()))
+            .filter(u -> inputPassword.equals(u.getPassword())).ifPresent(u -> {
+                System.out.println(u.getUsername() + "登录成功");
+            });
     }
 
     /*
@@ -156,11 +151,7 @@ public class Java8OptionalTest {
      * 判断美女的颜值是否达标，同时也不能满分，满分
      */
     private boolean isStandard(Peri peri) {
-        return Optional.ofNullable(peri)
-                .map(Peri::getFaceScore)
-                .filter(s -> s > 70)
-                .filter(s -> s < 100)
-                .isPresent();
+        return Optional.ofNullable(peri).map(Peri::getFaceScore).filter(s -> s > 70).filter(s -> s < 100).isPresent();
     }
 
     private String getNewValue() {
@@ -170,8 +161,7 @@ public class Java8OptionalTest {
 
     @Retention(RetentionPolicy.RUNTIME)
     @Target({ElementType.TYPE_USE, ElementType.TYPE_PARAMETER})
-    public @interface NonEmpty {
-    }
+    public @interface NonEmpty {}
 
     @Data
     @AllArgsConstructor

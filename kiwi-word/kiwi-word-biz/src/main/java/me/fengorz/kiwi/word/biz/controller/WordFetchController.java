@@ -15,7 +15,17 @@
  */
 package me.fengorz.kiwi.word.biz.controller;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
+
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.api.R;
@@ -31,13 +41,6 @@ import me.fengorz.kiwi.word.biz.service.base.IWordFetchQueueService;
 import me.fengorz.kiwi.word.biz.service.operate.ICleanerService;
 import me.fengorz.kiwi.word.biz.service.operate.ICrawlerService;
 import me.fengorz.kiwi.word.biz.service.operate.IOperateService;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
-import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
-import java.time.LocalDateTime;
-import java.util.List;
 
 /**
  * 单词待抓取列表
@@ -68,23 +71,15 @@ public class WordFetchController extends BaseController {
     }
 
     @GetMapping(value = "/pageQueue/{status}/{current}/{size}/{infoType}")
-    public R<List<FetchQueueDO>> pageQueue(
-            @PathVariable Integer status,
-            @PathVariable Integer current,
-            @PathVariable Integer size,
-            @PathVariable Integer infoType) {
-        return R.success(
-                queueService.page2List(status, current, size, GlobalConstants.FLAG_NO, infoType));
+    public R<List<FetchQueueDO>> pageQueue(@PathVariable Integer status, @PathVariable Integer current,
+        @PathVariable Integer size, @PathVariable Integer infoType) {
+        return R.success(queueService.page2List(status, current, size, GlobalConstants.FLAG_NO, infoType));
     }
 
     @GetMapping(value = "/pageQueueLockIn/{status}/{current}/{size}/{infoType}")
-    public R<List<FetchQueueDO>> pageQueueLockIn(
-            @PathVariable Integer status,
-            @PathVariable Integer current,
-            @PathVariable Integer size,
-            @PathVariable Integer infoType) {
-        return R.success(
-                queueService.page2List(status, current, size, GlobalConstants.FLAG_YES, infoType));
+    public R<List<FetchQueueDO>> pageQueueLockIn(@PathVariable Integer status, @PathVariable Integer current,
+        @PathVariable Integer size, @PathVariable Integer infoType) {
+        return R.success(queueService.page2List(status, current, size, GlobalConstants.FLAG_YES, infoType));
     }
 
     @GetMapping(value = "/listNotIntoCache")
@@ -109,10 +104,8 @@ public class WordFetchController extends BaseController {
     @PostMapping("/updateByWordName")
     // @PreAuthorize("@pms.hasPermission('queue_wordfetchqueue_edit')")
     public R<Boolean> updateByWordName(@RequestBody FetchQueueDO wordFetchQueue) {
-        return R.success(
-                queueService.update(
-                        wordFetchQueue,
-                        new QueryWrapper<>(new FetchQueueDO().setWordName(wordFetchQueue.getWordName()))));
+        return R.success(queueService.update(wordFetchQueue,
+            new QueryWrapper<>(new FetchQueueDO().setWordName(wordFetchQueue.getWordName()))));
     }
 
     @Deprecated

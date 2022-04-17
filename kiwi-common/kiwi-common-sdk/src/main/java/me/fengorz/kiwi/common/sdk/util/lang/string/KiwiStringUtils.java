@@ -16,10 +16,11 @@
 
 package me.fengorz.kiwi.common.sdk.util.lang.string;
 
-import cn.hutool.core.util.StrUtil;
+import static java.lang.Character.UnicodeBlock.*;
+
 import org.apache.commons.lang3.StringUtils;
 
-import static java.lang.Character.UnicodeBlock.*;
+import cn.hutool.core.util.StrUtil;
 
 /**
  * @Author zhanshifeng @Date 2020/5/17 12:39 PM
@@ -44,11 +45,8 @@ public class KiwiStringUtils extends StrUtil {
 
     private static boolean checkCharContainChinese(char checkChar) {
         Character.UnicodeBlock ub = Character.UnicodeBlock.of(checkChar);
-        return CJK_UNIFIED_IDEOGRAPHS == ub
-                || CJK_COMPATIBILITY_IDEOGRAPHS == ub
-                || CJK_COMPATIBILITY_FORMS == ub
-                || CJK_RADICALS_SUPPLEMENT == ub
-                || CJK_UNIFIED_IDEOGRAPHS_EXTENSION_A == ub
-                || CJK_UNIFIED_IDEOGRAPHS_EXTENSION_B == ub;
+        return CJK_UNIFIED_IDEOGRAPHS == ub || CJK_COMPATIBILITY_IDEOGRAPHS == ub || CJK_COMPATIBILITY_FORMS == ub
+            || CJK_RADICALS_SUPPLEMENT == ub || CJK_UNIFIED_IDEOGRAPHS_EXTENSION_A == ub
+            || CJK_UNIFIED_IDEOGRAPHS_EXTENSION_B == ub;
     }
 }

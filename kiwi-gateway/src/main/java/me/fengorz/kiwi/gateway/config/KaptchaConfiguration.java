@@ -16,12 +16,13 @@
 
 package me.fengorz.kiwi.gateway.config;
 
-import com.google.code.kaptcha.impl.DefaultKaptcha;
-import com.google.code.kaptcha.util.Config;
+import java.util.Properties;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.util.Properties;
+import com.google.code.kaptcha.impl.DefaultKaptcha;
+import com.google.code.kaptcha.util.Config;
 
 /**
  * @Author zhanshifeng

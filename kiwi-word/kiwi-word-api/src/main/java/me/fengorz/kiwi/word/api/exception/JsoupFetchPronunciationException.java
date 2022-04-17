@@ -24,8 +24,7 @@ import me.fengorz.kiwi.common.sdk.exception.BaseException;
 public class JsoupFetchPronunciationException extends BaseException {
     private static final long serialVersionUID = 8760741479684447224L;
 
-    public JsoupFetchPronunciationException() {
-    }
+    public JsoupFetchPronunciationException() {}
 
     public JsoupFetchPronunciationException(String message) {
         super(message);
@@ -39,8 +38,8 @@ public class JsoupFetchPronunciationException extends BaseException {
         super(cause);
     }
 
-    public JsoupFetchPronunciationException(
-            String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+    public JsoupFetchPronunciationException(String message, Throwable cause, boolean enableSuppression,
+        boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
     }
 }

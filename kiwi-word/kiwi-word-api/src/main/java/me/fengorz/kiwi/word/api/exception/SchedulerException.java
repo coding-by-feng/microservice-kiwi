@@ -25,8 +25,7 @@ public class SchedulerException extends BaseRuntimeException {
 
     private static final long serialVersionUID = -6069167306232582361L;
 
-    public SchedulerException() {
-    }
+    public SchedulerException() {}
 
     public SchedulerException(String message) {
         super(message);
@@ -40,8 +39,7 @@ public class SchedulerException extends BaseRuntimeException {
         super(cause);
     }
 
-    public SchedulerException(
-            String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+    public SchedulerException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
     }
 }

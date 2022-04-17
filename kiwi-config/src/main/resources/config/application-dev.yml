@@ -18,7 +18,7 @@ spring:
     hikari:
       max-lifetime: 600000
       connection-timeout: 600000
-      maximum-pool-size: 15
+      maximum-pool-size: 100
   redis:
     host: kiwi-redis
     password: ENC(HoKhohl8MlDnTVC9MaFPjvTMZY5N61Mf)
@@ -116,7 +116,6 @@ fdfs:
   thumb-image:
     width: 150
     height: 150
-  #  tracker-list: 106.55.145.49:22122
   tracker-list: kiwi-fastdfs:22122
 
 # 避免 Elasticsearch health check failed 异常

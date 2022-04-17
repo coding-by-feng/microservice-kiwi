@@ -16,12 +16,13 @@
 
 package me.fengorz.kiwi.common.fastdfs.service;
 
-import com.github.tobato.fastdfs.domain.fdfs.MetaData;
-import me.fengorz.kiwi.common.sdk.exception.dfs.DfsOperateDeleteException;
-import me.fengorz.kiwi.common.sdk.exception.dfs.DfsOperateException;
-
 import java.io.InputStream;
 import java.util.Set;
+
+import com.github.tobato.fastdfs.domain.fdfs.MetaData;
+
+import me.fengorz.kiwi.common.sdk.exception.dfs.DfsOperateDeleteException;
+import me.fengorz.kiwi.common.sdk.exception.dfs.DfsOperateException;
 
 /**
  * @author zhanshifeng
@@ -31,7 +32,7 @@ public interface IDfsService {
     String uploadFile(InputStream inputStream, long size, String extName) throws DfsOperateException;
 
     String uploadFile(InputStream inputStream, long size, String extName, Set<MetaData> metaDataSet)
-            throws DfsOperateException;
+        throws DfsOperateException;
 
     void deleteFile(String groupName, String path) throws DfsOperateDeleteException;
 

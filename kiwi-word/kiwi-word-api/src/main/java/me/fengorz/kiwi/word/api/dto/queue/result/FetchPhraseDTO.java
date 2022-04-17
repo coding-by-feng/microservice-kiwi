@@ -16,10 +16,10 @@
 
 package me.fengorz.kiwi.word.api.dto.queue.result;
 
+import java.io.Serializable;
+
 import lombok.Data;
 import lombok.experimental.Accessors;
-
-import java.io.Serializable;
 
 /**
  * @Author zhanshifeng @Date 2020/5/31 11:26 PM

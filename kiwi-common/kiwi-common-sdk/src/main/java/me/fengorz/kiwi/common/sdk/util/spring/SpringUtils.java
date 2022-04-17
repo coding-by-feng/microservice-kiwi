@@ -1,14 +1,15 @@
 package me.fengorz.kiwi.common.sdk.util.spring;
 
-import me.fengorz.kiwi.common.sdk.util.lang.collection.KiwiCollectionUtils;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.aop.framework.AopContext;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContext;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import me.fengorz.kiwi.common.sdk.util.lang.collection.KiwiCollectionUtils;
 
 /**
  * spring工具类 方便在非spring管理环境中获取bean
@@ -36,7 +37,7 @@ public class SpringUtils {
      */
     @SuppressWarnings("unchecked")
     public static <T> T getBean(String name) throws BeansException {
-        return (T) applicationContext.getBean(name);
+        return (T)applicationContext.getBean(name);
     }
 
     /***
@@ -79,8 +80,7 @@ public class SpringUtils {
     }
 
     /**
-     * 判断以给定名字注册的bean定义是一个singleton还是一个prototype。
-     * 如果与给定名字相应的bean定义没有被找到，将会抛出一个异常（NoSuchBeanDefinitionException）
+     * 判断以给定名字注册的bean定义是一个singleton还是一个prototype。 如果与给定名字相应的bean定义没有被找到，将会抛出一个异常（NoSuchBeanDefinitionException）
      *
      * @param name
      * @return boolean
@@ -122,6 +122,6 @@ public class SpringUtils {
      */
     @SuppressWarnings("unchecked")
     public static <T> T getAopProxy(T invoker) {
-        return (T) AopContext.currentProxy();
+        return (T)AopContext.currentProxy();
     }
 }

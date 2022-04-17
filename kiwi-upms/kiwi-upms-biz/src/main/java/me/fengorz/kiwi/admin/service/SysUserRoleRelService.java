@@ -16,6 +16,7 @@
 package me.fengorz.kiwi.admin.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+
 import me.fengorz.kiwi.admin.api.entity.SysUserRoleRel;
 
 /**
@@ -24,5 +25,4 @@ import me.fengorz.kiwi.admin.api.entity.SysUserRoleRel;
  * @author zhanshifeng
  * @date 2019-09-26 14:39:35
  */
-public interface SysUserRoleRelService extends IService<SysUserRoleRel> {
-}
+public interface SysUserRoleRelService extends IService<SysUserRoleRel> {}

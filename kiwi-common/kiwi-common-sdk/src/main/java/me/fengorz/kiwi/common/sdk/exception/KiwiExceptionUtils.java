@@ -21,5 +21,4 @@ import cn.hutool.core.exceptions.ExceptionUtil;
 /**
  * @Author zhanshifeng @Date 2019/11/26 4:32 PM
  */
-public class KiwiExceptionUtils extends ExceptionUtil {
-}
+public class KiwiExceptionUtils extends ExceptionUtil {}

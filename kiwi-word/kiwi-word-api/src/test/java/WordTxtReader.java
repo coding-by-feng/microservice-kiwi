@@ -24,8 +24,7 @@ public class WordTxtReader {
     public void readWords() {
         FileInputStream fis = null;
         InputStreamReader isr = null;
-        BufferedReader br =
-                null; // 用于包装InputStreamReader,提高处理性能。因为BufferedReader有缓冲的，而InputStreamReader没有。
+        BufferedReader br = null; // 用于包装InputStreamReader,提高处理性能。因为BufferedReader有缓冲的，而InputStreamReader没有。
         try {
             fis = new FileInputStream("/Users/zhanshifeng/Downloads/雅思词汇表.txt"); // FileInputStream
             // 从文件系统中的某个文件中获取字节

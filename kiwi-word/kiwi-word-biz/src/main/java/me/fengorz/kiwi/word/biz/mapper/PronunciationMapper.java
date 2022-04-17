@@ -16,6 +16,7 @@
 package me.fengorz.kiwi.word.biz.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+
 import me.fengorz.kiwi.word.api.entity.PronunciationDO;
 
 /**

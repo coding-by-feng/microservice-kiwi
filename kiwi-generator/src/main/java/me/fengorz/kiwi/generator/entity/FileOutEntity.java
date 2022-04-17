@@ -16,9 +16,9 @@
 
 package me.fengorz.kiwi.generator.entity;
 
-import lombok.Data;
-
 import java.io.File;
+
+import lombok.Data;
 
 /**
  * @Author zhanshifeng @Date 2019-09-12 16:50
@@ -48,13 +48,7 @@ public class FileOutEntity {
 
     @Override
     public String toString() {
-        return projectPath
-                + File.pathSeparator
-                + packagePrefix
-                + File.pathSeparator
-                + moduleName
-                + File.pathSeparator
-                + entityName
-                + fileSuffix;
+        return projectPath + File.pathSeparator + packagePrefix + File.pathSeparator + moduleName + File.pathSeparator
+            + entityName + fileSuffix;
     }
 }

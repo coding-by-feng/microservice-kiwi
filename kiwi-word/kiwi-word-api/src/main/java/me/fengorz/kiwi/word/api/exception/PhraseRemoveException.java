@@ -42,8 +42,8 @@ public class PhraseRemoveException extends BaseException {
         super(cause);
     }
 
-    public PhraseRemoveException(
-            String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+    public PhraseRemoveException(String message, Throwable cause, boolean enableSuppression,
+        boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
     }
 }

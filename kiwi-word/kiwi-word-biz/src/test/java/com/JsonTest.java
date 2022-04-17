@@ -5,6 +5,5 @@ package com;
  */
 public class JsonTest {
 
-    public void test() {
-    }
+    public void test() {}
 }

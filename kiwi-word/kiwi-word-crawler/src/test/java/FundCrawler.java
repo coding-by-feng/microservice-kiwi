@@ -14,14 +14,15 @@
  *
  */
 
-import lombok.Data;
+import java.io.File;
+import java.util.*;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import java.io.File;
-import java.util.*;
+import lombok.Data;
 
 /**
  * @Author zhanshifeng @Date 2020/4/22 6:16 PM
@@ -79,8 +80,7 @@ public class FundCrawler {
             // isYear5;
             // boolean isGreat = isMonth1 && isMonth3 && isMonth6 && isYear1 && isYear2 && isYear3 &&
             // isYear5;
-            boolean isGreat =
-                    isWeek1 && isMonth1 && isMonth3 && isMonth6 && isYear1 && isYear2 && isYear3;
+            boolean isGreat = isWeek1 && isMonth1 && isMonth3 && isMonth6 && isYear1 && isYear2 && isYear3;
             // boolean isGreat = isMonth1 && isMonth3 && isMonth6 && isYear1 && isYear2 && isYear3;
             if (isGreat) {
                 this.greatCodeSet.add(fund);
@@ -131,9 +131,11 @@ public class FundCrawler {
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            Fund fund = (Fund) o;
+            if (this == o)
+                return true;
+            if (o == null || getClass() != o.getClass())
+                return false;
+            Fund fund = (Fund)o;
             return code.equals(fund.code);
         }
 

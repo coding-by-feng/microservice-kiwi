@@ -16,7 +16,20 @@
 
 package me.fengorz.kiwi.generator;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.StringWriter;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.velocity.Template;
+import org.apache.velocity.VelocityContext;
+import org.apache.velocity.app.Velocity;
+
 import com.baomidou.mybatisplus.core.toolkit.Constants;
+
 import me.fengorz.kiwi.common.sdk.util.time.KiwiDateFormatUtils;
 import me.fengorz.kiwi.common.sdk.util.time.KiwiDateUtils;
 import me.fengorz.kiwi.generator.common.ToolConstants;
@@ -26,18 +39,6 @@ import me.fengorz.kiwi.generator.entity.GenerateConfig;
 import me.fengorz.kiwi.generator.entity.TableEntity;
 import me.fengorz.kiwi.generator.util.ToolBeanUtils;
 import me.fengorz.kiwi.generator.util.ToolIOUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.velocity.Template;
-import org.apache.velocity.VelocityContext;
-import org.apache.velocity.app.Velocity;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.StringWriter;
-import java.util.*;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
 
 /**
  * @Author zhanshifeng @Date 2019-09-16 16:33
@@ -52,20 +53,14 @@ public class CustomCodeGenerator {
     private static final String SERVICE_IMPL_JAVA_VM = "ServiceImpl.java.vm";
     private static final String CONTROLLER_JAVA_VM = "Controller.java.vm";
     private static final String REMOTE_SERVICE_JAVA_VM = "RemoteService.java.vm";
-    private static final String REMOTE_SERVICE_FALLBACK_IMPL_JAVA_VM =
-            "RemoteServiceFallBackImpl.java.vm";
-    private static final String REMOTE_SERVICE_FALLBACK_FACTORY_JAVA_VM =
-            "RemoteServiceFallBackFactory.java.vm";
+    private static final String REMOTE_SERVICE_FALLBACK_IMPL_JAVA_VM = "RemoteServiceFallBackImpl.java.vm";
+    private static final String REMOTE_SERVICE_FALLBACK_FACTORY_JAVA_VM = "RemoteServiceFallBackFactory.java.vm";
     private static final String MAPPER_XML_VM = "Mapper.xml.vm";
     private static final String VO_JAVA_VM = "VO.java.vm";
     private static final String DTO_JAVA_VM = "DTO.java.vm";
 
-    public static void generatorCode(
-            GenerateAbility generateAbility,
-            GenerateConfig generateConfig,
-            Map<String, String> table,
-            List<Map<String, String>> columns)
-            throws Exception {
+    public static void generatorCode(GenerateAbility generateAbility, GenerateConfig generateConfig,
+        Map<String, String> table, List<Map<String, String>> columns) throws Exception {
         boolean hasBigDecimal = false;
         // 表信息
         TableEntity tableEntity = new TableEntity();
@@ -73,8 +68,7 @@ public class CustomCodeGenerator {
         tableEntity.setComments(table.get("tableComment"));
         // 表名转换成Java类名
         String className =
-                ToolBeanUtils.firstUpperCamelCase(
-                        tableEntity.getTableName(), generateConfig.getTablePreName());
+            ToolBeanUtils.firstUpperCamelCase(tableEntity.getTableName(), generateConfig.getTablePreName());
         tableEntity.setCaseTableName(className);
         tableEntity.setLowerTableName(StringUtils.uncapitalize(className));
 
@@ -117,9 +111,7 @@ public class CustomCodeGenerator {
 
         // 设置velocity资源加载器
         Properties prop = new Properties();
-        prop.put(
-                "file.resource.loader.class",
-                "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
+        prop.put("file.resource.loader.class", "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
         Velocity.init(prop);
         // 封装模板数据
         Map<String, Object> map = new HashMap<>(16);
@@ -157,13 +149,8 @@ public class CustomCodeGenerator {
 
             try {
                 // 添加到zip
-                String fileName =
-                        getFileName(
-                                generateAbility,
-                                template,
-                                tableEntity.getCaseTableName(),
-                                map.get("package").toString(),
-                                map.get("moduleName").toString());
+                String fileName = getFileName(generateAbility, template, tableEntity.getCaseTableName(),
+                    map.get("package").toString(), map.get("moduleName").toString());
                 if (StringUtils.isBlank(fileName)) {
                     continue;
                 }
@@ -200,24 +187,12 @@ public class CustomCodeGenerator {
         return tableName.replaceAll(Constants.UNDERSCORE, Constants.SLASH);
     }
 
-    private static String getFileName(
-            GenerateAbility generateAbility,
-            String template,
-            String className,
-            String packageName,
-            String moduleName) {
-        String packagePath =
-                ToolConstants.DEFAULT_BACK_END_PROJECT
-                        + File.separator
-                        + "src"
-                        + File.separator
-                        + "main"
-                        + File.separator
-                        + "java"
-                        + File.separator;
+    private static String getFileName(GenerateAbility generateAbility, String template, String className,
+        String packageName, String moduleName) {
+        String packagePath = ToolConstants.DEFAULT_BACK_END_PROJECT + File.separator + "src" + File.separator + "main"
+            + File.separator + "java" + File.separator;
         if (StringUtils.isNotBlank(packageName)) {
-            packagePath +=
-                    packageName.replace(".", File.separator) + File.separator + moduleName + File.separator;
+            packagePath += packageName.replace(".", File.separator) + File.separator + moduleName + File.separator;
         }
 
         if (generateAbility.isEntity()) {
@@ -240,13 +215,7 @@ public class CustomCodeGenerator {
 
         if (generateAbility.isEntityColumn()) {
             if (template.contains(TEMPLATES + ENTITY_COLUMN_JAVA_VM)) {
-                return packagePath
-                        + "entity"
-                        + File.separator
-                        + "column"
-                        + File.separator
-                        + className
-                        + "Column.java";
+                return packagePath + "entity" + File.separator + "column" + File.separator + className + "Column.java";
             }
         }
 
@@ -264,13 +233,8 @@ public class CustomCodeGenerator {
 
         if (generateAbility.isServiceImpl()) {
             if (template.contains(TEMPLATES + SERVICE_IMPL_JAVA_VM)) {
-                return packagePath
-                        + "service"
-                        + File.separator
-                        + "impl"
-                        + File.separator
-                        + className
-                        + "ServiceImpl.java";
+                return packagePath + "service" + File.separator + "impl" + File.separator + className
+                    + "ServiceImpl.java";
             }
         }
 
@@ -288,44 +252,23 @@ public class CustomCodeGenerator {
 
         if (generateAbility.isRemoteServiceFallBackImpl()) {
             if (template.contains(TEMPLATES + REMOTE_SERVICE_FALLBACK_IMPL_JAVA_VM)) {
-                return packagePath
-                        + "feign"
-                        + File.separator
-                        + "fallback"
-                        + File.separator
-                        + "Remote"
-                        + className
-                        + "ServiceFallbackImpl.java";
+                return packagePath + "feign" + File.separator + "fallback" + File.separator + "Remote" + className
+                    + "ServiceFallbackImpl.java";
             }
         }
 
         if (generateAbility.isRemoteServiceFallBackFactory()) {
             if (template.contains(TEMPLATES + REMOTE_SERVICE_FALLBACK_FACTORY_JAVA_VM)) {
-                return packagePath
-                        + "feign"
-                        + File.separator
-                        + "factory"
-                        + File.separator
-                        + "Remote"
-                        + className
-                        + "ServiceFallbackFactory.java";
+                return packagePath + "feign" + File.separator + "factory" + File.separator + "Remote" + className
+                    + "ServiceFallbackFactory.java";
             }
         }
 
         if (generateAbility.isMapperXml()) {
             if (template.contains(TEMPLATES + MAPPER_XML_VM)) {
-                return ToolConstants.DEFAULT_BACK_END_PROJECT
-                        + File.separator
-                        + "src"
-                        + File.separator
-                        + "main"
-                        + File.separator
-                        + "resources"
-                        + File.separator
-                        + "mapper"
-                        + File.separator
-                        + className
-                        + "Mapper.xml";
+                return ToolConstants.DEFAULT_BACK_END_PROJECT + File.separator + "src" + File.separator + "main"
+                    + File.separator + "resources" + File.separator + "mapper" + File.separator + className
+                    + "Mapper.xml";
             }
         }
 

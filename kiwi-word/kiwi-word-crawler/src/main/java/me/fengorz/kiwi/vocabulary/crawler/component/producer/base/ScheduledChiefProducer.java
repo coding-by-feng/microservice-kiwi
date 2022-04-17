@@ -19,15 +19,19 @@
 
 package me.fengorz.kiwi.vocabulary.crawler.component.producer.base;
 
-import lombok.extern.slf4j.Slf4j;
-import me.fengorz.kiwi.common.sdk.util.spring.SpringUtils;
+import java.util.Objects;
+
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import java.util.Objects;
+import lombok.extern.slf4j.Slf4j;
+import me.fengorz.kiwi.common.sdk.util.spring.SpringUtils;
 
 /**
- * 定时扫描对列表 @Author zhanshifeng @Date 2019/10/29 4:12 PM
+ * 定时扫描对列表
+ *
+ * @Author zhanshifeng
+ * @Date 2019/10/29 4:12 PM
  */
 @Component
 @Slf4j
@@ -35,7 +39,7 @@ public class ScheduledChiefProducer {
 
     @Scheduled(fixedDelay = 2000L)
     public void produce() {
-        for (IProducer producer : Objects.requireNonNull(SpringUtils.getBeansList(IProducer.class))) {
+        for (MQProducer producer : Objects.requireNonNull(SpringUtils.getBeansList(MQProducer.class))) {
             producer.produce();
         }
     }

@@ -12,11 +12,20 @@
  */
 package me.fengorz.kiwi.word.biz.service.base.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+
 import lombok.RequiredArgsConstructor;
 import me.fengorz.kiwi.bdf.core.service.ISeqService;
 import me.fengorz.kiwi.common.sdk.annotation.cache.KiwiCacheKeyPrefix;
@@ -33,13 +42,6 @@ import me.fengorz.kiwi.word.biz.mapper.WordMainVariantMapper;
 import me.fengorz.kiwi.word.biz.service.base.IWordFetchQueueService;
 import me.fengorz.kiwi.word.biz.service.base.IWordMainService;
 import me.fengorz.kiwi.word.biz.service.base.IWordMainVariantService;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * 单词时态、单复数等的变化 @Author zhanshifeng
@@ -49,9 +51,8 @@ import java.util.concurrent.atomic.AtomicReference;
 @Service()
 @RequiredArgsConstructor
 @KiwiCacheKeyPrefix(WordConstants.CACHE_KEY_PREFIX_WORD_VARIANT.CLASS)
-public class WordMainVariantServiceImpl
-        extends ServiceImpl<WordMainVariantMapper, WordMainVariantDO>
-        implements IWordMainVariantService {
+public class WordMainVariantServiceImpl extends ServiceImpl<WordMainVariantMapper, WordMainVariantDO>
+    implements IWordMainVariantService {
 
     private final WordMainVariantMapper wordMainVariantMapper;
     private final IWordFetchQueueService wordFetchQueueService;
@@ -61,7 +62,7 @@ public class WordMainVariantServiceImpl
     @Override
     public IPage<WordMainVariantVO> page(int current, int size, WordMainVariantDTO dto) {
         IPage<WordMainVariantDO> page =
-                wordMainVariantMapper.selectPage(new Page<>(current, size), Wrappers.query(dto));
+            wordMainVariantMapper.selectPage(new Page<>(current, size), Wrappers.query(dto));
         return KiwiBeanUtils.convertFrom(page, WordMainVariantVO.class, vo -> {
         });
     }
@@ -74,28 +75,24 @@ public class WordMainVariantServiceImpl
     @Override
     public Integer getWordId(String variantName) {
         List<Integer> result = new ArrayList<>();
-        WordMainVariantDO one =
-                wordMainVariantMapper.selectOne(
-                        Wrappers.<WordMainVariantDO>lambdaQuery()
-                                .eq(WordMainVariantDO::getVariantName, variantName)
-                                .eq(WordMainVariantDO::getIsValid, GlobalConstants.FLAG_YES));
+        WordMainVariantDO one = wordMainVariantMapper
+            .selectOne(Wrappers.<WordMainVariantDO>lambdaQuery().eq(WordMainVariantDO::getVariantName, variantName)
+                .eq(WordMainVariantDO::getIsValid, GlobalConstants.FLAG_YES));
         return one == null ? null : one.getWordId();
     }
 
     @Override
     public List<WordMainDO> listWordMain(String variantName, Integer queueId) {
-        WordMainVariantDO one =
-                wordMainVariantMapper.selectOne(
-                        Wrappers.<WordMainVariantDO>lambdaQuery()
-                                .eq(WordMainVariantDO::getVariantName, variantName)
-                                .eq(WordMainVariantDO::getIsValid, GlobalConstants.FLAG_YES));
+        WordMainVariantDO one = wordMainVariantMapper
+            .selectOne(Wrappers.<WordMainVariantDO>lambdaQuery().eq(WordMainVariantDO::getVariantName, variantName)
+                .eq(WordMainVariantDO::getIsValid, GlobalConstants.FLAG_YES));
         AtomicReference<List<WordMainDO>> result = new AtomicReference<>();
         if (one == null) {
             if (queueId == null) {
                 return null;
             }
             Optional.ofNullable(wordFetchQueueService.getById(queueId))
-                    .ifPresent(queue -> result.set(wordMainService.listDirtyData(queue.getWordId())));
+                .ifPresent(queue -> result.set(wordMainService.listDirtyData(queue.getWordId())));
             return result.get();
         }
         return wordMainService.listDirtyData(one.getWordId());
@@ -118,11 +115,8 @@ public class WordMainVariantServiceImpl
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void delByWordId(Integer wordId) {
-        List<WordMainVariantDO> list =
-                wordMainVariantMapper.selectList(
-                        new LambdaQueryWrapper<WordMainVariantDO>()
-                                .eq(WordMainVariantDO::getWordId, wordId)
-                                .eq(WordMainVariantDO::getIsValid, GlobalConstants.FLAG_DEL_YES));
+        List<WordMainVariantDO> list = wordMainVariantMapper.selectList(new LambdaQueryWrapper<WordMainVariantDO>()
+            .eq(WordMainVariantDO::getWordId, wordId).eq(WordMainVariantDO::getIsValid, GlobalConstants.FLAG_DEL_YES));
         if (KiwiCollectionUtils.isEmpty(list)) {
             return;
         }
@@ -139,12 +133,9 @@ public class WordMainVariantServiceImpl
 
     @Override
     public boolean isExist(Integer wordId, String variantName) {
-        Integer count =
-                wordMainVariantMapper.selectCount(
-                        Wrappers.<WordMainVariantDO>lambdaQuery()
-                                .eq(WordMainVariantDO::getWordId, wordId)
-                                .eq(WordMainVariantDO::getVariantName, variantName)
-                                .eq(WordMainVariantDO::getIsValid, GlobalConstants.FLAG_DEL_YES));
+        Integer count = wordMainVariantMapper.selectCount(Wrappers.<WordMainVariantDO>lambdaQuery()
+            .eq(WordMainVariantDO::getWordId, wordId).eq(WordMainVariantDO::getVariantName, variantName)
+            .eq(WordMainVariantDO::getIsValid, GlobalConstants.FLAG_DEL_YES));
         return count > 0;
     }
 
@@ -157,12 +148,9 @@ public class WordMainVariantServiceImpl
     @Transactional(rollbackFor = Exception.class)
     private boolean insertOne(Integer wordId, String variantName, Integer type) {
         WordMainVariantDO entity =
-                new WordMainVariantDO()
-                        .setId(seqService.genIntSequence(MapperConstant.T_INS_SEQUENCE))
-                        .setWordId(wordId)
-                        .setVariantName(variantName)
-                        .setType(WordConstants.VARIANT_TYPE_UNKNOWN)
-                        .setIsValid(GlobalConstants.FLAG_DEL_YES);
+            new WordMainVariantDO().setId(seqService.genIntSequence(MapperConstant.T_INS_SEQUENCE)).setWordId(wordId)
+                .setVariantName(variantName).setType(WordConstants.VARIANT_TYPE_UNKNOWN)
+                .setIsValid(GlobalConstants.FLAG_DEL_YES);
         return this.save(entity);
     }
 }

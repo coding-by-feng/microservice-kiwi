@@ -12,18 +12,18 @@
  */
 package me.fengorz.kiwi.word.biz.service.base.impl;
 
+import org.springframework.stereotype.Service;
+
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+
 import me.fengorz.kiwi.word.api.entity.ParaphrasePhraseDO;
 import me.fengorz.kiwi.word.biz.mapper.ParaphrasePhraseMapper;
 import me.fengorz.kiwi.word.biz.service.base.IParaphrasePhraseService;
-import org.springframework.stereotype.Service;
 
 /**
  * @author zhanShiFeng
  * @date 2020-05-31 22:22:22
  */
 @Service()
-public class ParaphrasePhraseServiceImpl
-        extends ServiceImpl<ParaphrasePhraseMapper, ParaphrasePhraseDO>
-        implements IParaphrasePhraseService {
-}
+public class ParaphrasePhraseServiceImpl extends ServiceImpl<ParaphrasePhraseMapper, ParaphrasePhraseDO>
+    implements IParaphrasePhraseService {}

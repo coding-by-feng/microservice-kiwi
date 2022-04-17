@@ -16,13 +16,14 @@
 
 package me.fengorz.kiwi.common.sdk.web.security;
 
-import lombok.experimental.UtilityClass;
-import me.fengorz.kiwi.common.api.entity.EnhancerUser;
-import me.fengorz.kiwi.common.sdk.exception.AuthException;
+import java.util.Objects;
+
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-import java.util.Objects;
+import lombok.experimental.UtilityClass;
+import me.fengorz.kiwi.common.api.entity.EnhancerUser;
+import me.fengorz.kiwi.common.sdk.exception.AuthException;
 
 /**
  * @Author zhanshifeng @Date 2019-09-26 10:19
@@ -37,7 +38,7 @@ public class SecurityUtils {
     public EnhancerUser getUser(Authentication authentication) {
         Object principal = authentication.getPrincipal();
         if (principal instanceof EnhancerUser) {
-            return (EnhancerUser) principal;
+            return (EnhancerUser)principal;
         }
         return null;
     }

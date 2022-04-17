@@ -1,7 +1,8 @@
-import lombok.extern.slf4j.Slf4j;
-import me.fengorz.kiwi.vocabulary.crawler.component.MqSender;
-import me.fengorz.kiwi.vocabulary.crawler.component.producer.base.ScheduledChiefProducer;
 import org.springframework.boot.SpringApplication;
+
+import lombok.extern.slf4j.Slf4j;
+import me.fengorz.kiwi.vocabulary.crawler.component.MqMQSender;
+import me.fengorz.kiwi.vocabulary.crawler.component.producer.base.ScheduledChiefProducer;
 
 /**
  * @Author zhanshifeng @Date 2019/10/28 10:21 AM
@@ -12,7 +13,7 @@ import org.springframework.boot.SpringApplication;
 public class QueueTest {
 
     // @Autowired
-    private MqSender mqSender;
+    private MqMQSender mqSender;
 
     // @Autowired
     private ScheduledChiefProducer scheduledChiefProducer;

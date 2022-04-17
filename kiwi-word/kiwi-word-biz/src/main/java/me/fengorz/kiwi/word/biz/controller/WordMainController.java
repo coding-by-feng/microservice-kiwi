@@ -15,8 +15,18 @@
  */
 package me.fengorz.kiwi.word.biz.controller;
 
+import java.util.LinkedList;
+import java.util.List;
+
+import javax.validation.constraints.NotBlank;
+
+import org.springframework.data.elasticsearch.core.DocumentOperations;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.api.R;
@@ -32,13 +42,6 @@ import me.fengorz.kiwi.word.biz.service.base.IWordFetchQueueService;
 import me.fengorz.kiwi.word.biz.service.base.IWordMainService;
 import me.fengorz.kiwi.word.biz.service.base.IWordReviewService;
 import me.fengorz.kiwi.word.biz.service.operate.IOperateService;
-import org.springframework.data.elasticsearch.core.DocumentOperations;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
-import javax.validation.constraints.NotBlank;
-import java.util.LinkedList;
-import java.util.List;
 
 /**
  * 单词主表
@@ -67,23 +70,18 @@ public class WordMainController extends BaseController {
     }
 
     @PostMapping("/query/gate/{keyword}")
-    public R<IPage<WordQueryVO>> queryGate(
-            @PathVariable(name = "keyword", required = false) String keyword,
-            Integer current,
-            Integer size) {
-        log.info(
-                KiwiStringUtils.format("========>queryGate[{}],[time={}]", keyword, KiwiDateUtils.now()));
+    public R<IPage<WordQueryVO>> queryGate(@PathVariable(name = "keyword", required = false) String keyword,
+        Integer current, Integer size) {
+        log.info(KiwiStringUtils.format("========>queryGate[{}],[time={}]", keyword, KiwiDateUtils.now()));
         if (KiwiStringUtils.isContainChinese(keyword)) {
-            return R.success(
-                    operateService.queryWordByCh(keyword, WebTools.deductCurrent(current), size));
+            return R.success(operateService.queryWordByCh(keyword, WebTools.deductCurrent(current), size));
         } else {
             return this.queryWord(keyword);
         }
     }
 
     @GetMapping("/query/{wordName}")
-    public R<IPage<WordQueryVO>> queryWord(
-            @PathVariable(value = "wordName", required = false) String wordName) {
+    public R<IPage<WordQueryVO>> queryWord(@PathVariable(value = "wordName", required = false) String wordName) {
         IPage<WordQueryVO> page = new Page<>();
         if (KiwiStringUtils.isNotBlank(wordName)) {
             List<WordQueryVO> list = new LinkedList<>();
@@ -104,8 +102,7 @@ public class WordMainController extends BaseController {
 
     @SysLog("模糊查询单词列表")
     @PostMapping("/fuzzyQueryList")
-    public R<List<FuzzyQueryResultDTO>> fuzzyQueryList(
-            @NotBlank String wordName, Page<WordMainDO> page) {
+    public R<List<FuzzyQueryResultDTO>> fuzzyQueryList(@NotBlank String wordName, Page<WordMainDO> page) {
         return R.success(mainService.fuzzyQueryList(page, wordName));
     }
 

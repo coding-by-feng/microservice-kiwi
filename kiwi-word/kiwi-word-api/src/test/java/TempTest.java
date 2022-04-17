@@ -1,14 +1,16 @@
-import me.fengorz.kiwi.common.sdk.util.log.KiwiLogUtils;
-import me.fengorz.kiwi.word.api.dto.queue.result.FetchWordResultDTO;
-import me.fengorz.kiwi.word.api.entity.FetchQueueDO;
-import org.apache.commons.lang3.StringUtils;
+import java.util.List;
+import java.util.Set;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
-import java.util.List;
-import java.util.Set;
+
+import org.apache.commons.lang3.StringUtils;
+
+import me.fengorz.kiwi.common.sdk.util.log.KiwiLogUtils;
+import me.fengorz.kiwi.word.api.dto.queue.result.FetchWordResultDTO;
+import me.fengorz.kiwi.word.api.entity.FetchQueueDO;
 
 /**
  * @Author zhanshifeng @Date 2019/11/6 9:01 PM

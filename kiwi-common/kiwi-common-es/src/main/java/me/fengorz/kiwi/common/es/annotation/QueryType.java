@@ -7,13 +7,5 @@ public enum QueryType {
     /**
      * ES
      */
-    TERM,
-    MATCH,
-    WILDCARD,
-    PREFIX,
-    BETWEEN,
-    LT,
-    LTE,
-    GT,
-    GTE;
+    TERM, MATCH, WILDCARD, PREFIX, BETWEEN, LT, LTE, GT, GTE;
 }

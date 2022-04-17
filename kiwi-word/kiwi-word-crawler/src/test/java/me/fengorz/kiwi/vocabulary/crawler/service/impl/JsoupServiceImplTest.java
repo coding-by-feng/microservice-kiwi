@@ -1,23 +1,30 @@
 /*
  *
- *   Copyright [2019~2025] [codingByFeng]
+ * Copyright [2019~2025] [codingByFeng]
  *
- *   Licensed under the Apache License, Version 2.0 (the "License");
- *   you may not use this file except in compliance with the License.
- *   You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *   Unless required by applicable law or agreed to in writing, software
- *   distributed under the License is distributed on an "AS IS" BASIS,
- *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *   See the License for the specific language governing permissions and
- *   limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  *
  *
  */
 
 package me.fengorz.kiwi.vocabulary.crawler.service.impl;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+import java.util.Collections;
+import java.util.HashSet;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import me.fengorz.kiwi.word.api.dto.queue.FetchPhraseMqDTO;
 import me.fengorz.kiwi.word.api.dto.queue.FetchPhraseRunUpMqDTO;
@@ -26,15 +33,6 @@ import me.fengorz.kiwi.word.api.dto.queue.result.*;
 import me.fengorz.kiwi.word.api.exception.JsoupFetchConnectException;
 import me.fengorz.kiwi.word.api.exception.JsoupFetchPronunciationException;
 import me.fengorz.kiwi.word.api.exception.JsoupFetchResultException;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.util.Collections;
-import java.util.HashSet;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
 public class JsoupServiceImplTest {
@@ -80,8 +78,7 @@ public class JsoupServiceImplTest {
         fetchWordPronunciationDTO.setSoundmark("soundmark");
         fetchWordPronunciationDTO.setSoundmarkType("soundmarkType");
         fetchWordPronunciationDTO.setVoiceFileUrl("voiceFileUrl");
-        fetchWordCodeDTO.setFetchWordPronunciationDTOList(
-                Collections.singletonList(fetchWordPronunciationDTO));
+        fetchWordCodeDTO.setFetchWordPronunciationDTOList(Collections.singletonList(fetchWordPronunciationDTO));
         expectedResult.setFetchWordCodeDTOList(Collections.singletonList(fetchWordCodeDTO));
 
         // Run the test
@@ -99,8 +96,7 @@ public class JsoupServiceImplTest {
         dto.setQueueId(0);
 
         // Run the test
-        assertThrows(
-                JsoupFetchResultException.class, () -> jsoupServiceImplUnderTest.fetchWordInfo(dto));
+        assertThrows(JsoupFetchResultException.class, () -> jsoupServiceImplUnderTest.fetchWordInfo(dto));
     }
 
     @Test
@@ -111,8 +107,7 @@ public class JsoupServiceImplTest {
         dto.setQueueId(0);
 
         // Run the test
-        assertThrows(
-                JsoupFetchConnectException.class, () -> jsoupServiceImplUnderTest.fetchWordInfo(dto));
+        assertThrows(JsoupFetchConnectException.class, () -> jsoupServiceImplUnderTest.fetchWordInfo(dto));
     }
 
     @Test
@@ -123,8 +118,7 @@ public class JsoupServiceImplTest {
         dto.setQueueId(0);
 
         // Run the test
-        assertThrows(
-                JsoupFetchPronunciationException.class, () -> jsoupServiceImplUnderTest.fetchWordInfo(dto));
+        assertThrows(JsoupFetchPronunciationException.class, () -> jsoupServiceImplUnderTest.fetchWordInfo(dto));
     }
 
     @Test
@@ -157,8 +151,7 @@ public class JsoupServiceImplTest {
         dto.setQueueId(0);
 
         // Run the test
-        assertThrows(
-                JsoupFetchConnectException.class, () -> jsoupServiceImplUnderTest.fetchPhraseRunUp(dto));
+        assertThrows(JsoupFetchConnectException.class, () -> jsoupServiceImplUnderTest.fetchPhraseRunUp(dto));
     }
 
     @Test
@@ -208,8 +201,7 @@ public class JsoupServiceImplTest {
         dto.setQueueId(0);
 
         // Run the test
-        assertThrows(
-                JsoupFetchConnectException.class, () -> jsoupServiceImplUnderTest.fetchPhraseInfo(dto));
+        assertThrows(JsoupFetchConnectException.class, () -> jsoupServiceImplUnderTest.fetchPhraseInfo(dto));
     }
 
     @Test
@@ -221,7 +213,6 @@ public class JsoupServiceImplTest {
         dto.setQueueId(0);
 
         // Run the test
-        assertThrows(
-                JsoupFetchResultException.class, () -> jsoupServiceImplUnderTest.fetchPhraseInfo(dto));
+        assertThrows(JsoupFetchResultException.class, () -> jsoupServiceImplUnderTest.fetchPhraseInfo(dto));
     }
 }

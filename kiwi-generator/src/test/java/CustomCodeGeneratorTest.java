@@ -1,8 +1,6 @@
-import me.fengorz.kiwi.generator.CustomCodeGenerator;
-import me.fengorz.kiwi.generator.config.MybatisPlusConfigurer;
-import me.fengorz.kiwi.generator.entity.GenerateAbility;
-import me.fengorz.kiwi.generator.entity.GenerateConfig;
-import me.fengorz.kiwi.generator.service.SysGeneratorService;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
@@ -12,8 +10,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.util.List;
-import java.util.Map;
+import me.fengorz.kiwi.generator.CustomCodeGenerator;
+import me.fengorz.kiwi.generator.config.MybatisPlusConfigurer;
+import me.fengorz.kiwi.generator.entity.GenerateAbility;
+import me.fengorz.kiwi.generator.entity.GenerateConfig;
+import me.fengorz.kiwi.generator.service.SysGeneratorService;
 
 /**
  * @Author zhanshifeng @Date 2019-09-16 16:33
@@ -32,8 +33,8 @@ public class CustomCodeGeneratorTest {
         // "请输入表明前缀，比如t_table_name的话输入\"t_\""
         // 每次这里编译报错都要先在pom.xml加上：
         /**
-         * <plugin> <groupId>org.springframework.boot</groupId>
-         * <artifactId>spring-boot-maven-plugin</artifactId> </plugin>
+         * <plugin> <groupId>org.springframework.boot</groupId> <artifactId>spring-boot-maven-plugin</artifactId>
+         * </plugin>
          */
         // 然后再删掉就可以，为什么？
         config.setTablePreName("");

@@ -16,9 +16,6 @@
 
 package me.fengorz.kiwi.bdf.cache.redis.config;
 
-import lombok.RequiredArgsConstructor;
-import me.fengorz.kiwi.bdf.cache.redis.CacheKeyGenerator;
-import me.fengorz.kiwi.common.sdk.constant.CacheConstants;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration;
 import org.springframework.cache.annotation.EnableCaching;
@@ -30,8 +27,14 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.JdkSerializationRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
+import lombok.RequiredArgsConstructor;
+import me.fengorz.kiwi.bdf.cache.redis.CacheKeyGenerator;
+import me.fengorz.kiwi.common.sdk.constant.CacheConstants;
+
 /**
- * @Description 缓存配置类 @Author zhanshifeng @Date 2019-09-29 10:39
+ * @Description 缓存配置类
+ * @Author zhanshifeng
+ * @Date 2019-09-29 10:39
  */
 @Configuration
 @RequiredArgsConstructor

@@ -16,13 +16,14 @@
 
 package me.fengorz.kiwi.admin.api.feign.fallback;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
+
 import lombok.Setter;
 import me.fengorz.kiwi.admin.api.dto.UserFullInfoDTO;
 import me.fengorz.kiwi.admin.api.feign.IUserAPI;
 import me.fengorz.kiwi.common.api.R;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
 
 /**
  * @Author zhanshifeng @Date 2019-09-26 16:59

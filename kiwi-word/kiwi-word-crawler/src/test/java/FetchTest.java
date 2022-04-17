@@ -13,14 +13,11 @@ import me.fengorz.kiwi.word.api.exception.JsoupFetchResultException;
 public class FetchTest {
 
     // @Test
-    public void test()
-            throws JsoupFetchResultException, JsoupFetchConnectException,
-            JsoupFetchPronunciationException {
+    public void test() throws JsoupFetchResultException, JsoupFetchConnectException, JsoupFetchPronunciationException {
         IJsoupService jsoupService = new JsoupServiceImpl();
         // FetchWordResultDTO test = jsoupService.fetchWordInfo(new
         // FetchWordMqDTO().setWord("mandatory"));
-        FetchPhraseRunUpResultDTO test =
-                jsoupService.fetchPhraseRunUp(new FetchPhraseRunUpMqDTO().setWord("start"));
+        FetchPhraseRunUpResultDTO test = jsoupService.fetchPhraseRunUp(new FetchPhraseRunUpMqDTO().setWord("start"));
         System.out.println(KiwiJsonUtils.toJsonStr(test));
     }
 

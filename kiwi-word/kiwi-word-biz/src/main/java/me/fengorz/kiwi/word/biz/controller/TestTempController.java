@@ -15,8 +15,15 @@
  */
 package me.fengorz.kiwi.word.biz.controller;
 
-import cn.hutool.core.util.StrUtil;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.web.bind.annotation.*;
+
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+
+import cn.hutool.core.util.StrUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.bdf.core.service.ISeqService;
@@ -28,11 +35,6 @@ import me.fengorz.kiwi.word.api.common.WordCrawlerConstants;
 import me.fengorz.kiwi.word.api.entity.FetchQueueDO;
 import me.fengorz.kiwi.word.api.entity.WordMainDO;
 import me.fengorz.kiwi.word.biz.service.base.IWordFetchQueueService;
-import org.springframework.web.bind.annotation.*;
-
-import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * 单词主表
@@ -55,9 +57,8 @@ public class TestTempController extends BaseController {
     public R readTxt() throws Exception {
         List<String> words = this.readWords();
         for (String word : words) {
-            FetchQueueDO one =
-                    wordFetchQueueService.getOne(
-                            new LambdaQueryWrapper<FetchQueueDO>().eq(FetchQueueDO::getWordName, word));
+            FetchQueueDO one = wordFetchQueueService
+                .getOne(new LambdaQueryWrapper<FetchQueueDO>().eq(FetchQueueDO::getWordName, word));
             FetchQueueDO queue = null;
             if (one != null) {
                 if (WordCrawlerConstants.STATUS_ALL_SUCCESS == one.getFetchStatus()) {
@@ -94,8 +95,7 @@ public class TestTempController extends BaseController {
         List<String> wordList = new ArrayList<>();
         FileInputStream fis = null;
         InputStreamReader isr = null;
-        BufferedReader br =
-                null; // 用于包装InputStreamReader,提高处理性能。因为BufferedReader有缓冲的，而InputStreamReader没有。
+        BufferedReader br = null; // 用于包装InputStreamReader,提高处理性能。因为BufferedReader有缓冲的，而InputStreamReader没有。
         try {
             fis = new FileInputStream(this.tmp + "/vocabulary.txt"); // FileInputStream
             // fis = new FileInputStream("/root/tmp/vocabulary.txt");// FileInputStream

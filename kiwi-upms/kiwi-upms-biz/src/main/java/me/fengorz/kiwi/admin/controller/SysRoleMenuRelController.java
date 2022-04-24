@@ -25,7 +25,7 @@ import lombok.RequiredArgsConstructor;
 import me.fengorz.kiwi.admin.api.entity.SysRoleMenuRel;
 import me.fengorz.kiwi.admin.service.SysRoleMenuRelService;
 import me.fengorz.kiwi.common.api.R;
-import me.fengorz.kiwi.common.sdk.annotation.log.SysLog;
+import me.fengorz.kiwi.common.sdk.annotation.log.LogMarker;
 import me.fengorz.kiwi.common.sdk.controller.BaseController;
 
 /**
@@ -70,7 +70,7 @@ public class SysRoleMenuRelController extends BaseController {
      * @param sysRoleMenuRel 角色菜单表
      * @return R
      */
-    @SysLog("新增角色菜单表")
+    @LogMarker("新增角色菜单表")
     @PostMapping
     @PreAuthorize("@pms.hasPermission('admin_sysrolemenurel_add')")
     public R save(@RequestBody SysRoleMenuRel sysRoleMenuRel) {
@@ -83,7 +83,7 @@ public class SysRoleMenuRelController extends BaseController {
      * @param sysRoleMenuRel 角色菜单表
      * @return R
      */
-    @SysLog("修改角色菜单表")
+    @LogMarker("修改角色菜单表")
     @PutMapping
     @PreAuthorize("@pms.hasPermission('admin_sysrolemenurel_edit')")
     public R updateById(@RequestBody SysRoleMenuRel sysRoleMenuRel) {
@@ -96,7 +96,7 @@ public class SysRoleMenuRelController extends BaseController {
      * @param roleId id
      * @return R
      */
-    @SysLog("通过id删除角色菜单表")
+    @LogMarker("通过id删除角色菜单表")
     @DeleteMapping("/{roleId}")
     @PreAuthorize("@pms.hasPermission('admin_sysrolemenurel_del')")
     public R removeById(@PathVariable Integer roleId) {

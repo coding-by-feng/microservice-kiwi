@@ -20,9 +20,9 @@ import java.util.List;
 
 import org.springframework.stereotype.Component;
 
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.api.R;
+import me.fengorz.kiwi.common.sdk.annotation.log.LogMarker;
 import me.fengorz.kiwi.word.api.dto.queue.RemovePronunciatioinMqDTO;
 import me.fengorz.kiwi.word.api.dto.queue.result.FetchPhraseResultDTO;
 import me.fengorz.kiwi.word.api.dto.queue.result.FetchPhraseRunUpResultDTO;
@@ -36,115 +36,138 @@ import me.fengorz.kiwi.word.api.vo.detail.WordQueryVO;
  */
 @Slf4j
 @Component
-public class BizAPIFallback implements IBizAPI {
-
-    @Setter
-    private Throwable throwable;
+public class BizAPIFallback extends AbstractFallback implements IBizAPI {
 
     @Override
+    @LogMarker(isPrintParameter = true)
     public R<FetchQueueDO> getOne(Integer queueId) {
         log.error(throwable.getCause().getMessage());
         return R.feignCallFailed(throwable.getMessage());
     }
 
     @Override
+    @LogMarker(isPrintParameter = true)
     public R<FetchQueueDO> getOneByWordName(String wordName) {
         log.error(throwable.getCause().getMessage());
         return R.feignCallFailed(throwable.getMessage());
     }
 
     @Override
+    @LogMarker(isPrintParameter = true)
+    public R<FetchQueueDO> getAnyOne(String wordName) {
+        log.error(throwable.getCause().getMessage());
+        return R.feignCallFailed(throwable.getMessage());
+    }
+
+    @Override
+    @LogMarker(isPrintParameter = true)
     public R<List<FetchQueueDO>> pageQueue(Integer status, Integer current, Integer size, Integer infoType) {
         log.error(throwable.getCause().getMessage());
         return R.feignCallFailed(throwable.getMessage());
     }
 
     @Override
+    @LogMarker(isPrintParameter = true)
     public R<List<FetchQueueDO>> listNotIntoCache() {
         log.error(throwable.getCause().getMessage());
         return R.feignCallFailed(throwable.getMessage());
     }
 
     @Override
+    @LogMarker(isPrintParameter = true)
     public R<List<FetchQueueDO>> pageQueueLockIn(Integer status, Integer current, Integer size, Integer infoType) {
         log.error(throwable.getCause().getMessage());
         return R.feignCallFailed(throwable.getMessage());
     }
 
     @Override
+    @LogMarker(isPrintParameter = true)
     public R<Boolean> updateQueueById(FetchQueueDO queueDO) {
         log.error(throwable.getCause().getMessage());
         return R.feignCallFailed(throwable.getMessage());
     }
 
     @Override
+    @LogMarker(isPrintParameter = true)
     public R<Void> storeResult(FetchWordResultDTO dto) {
         log.error(throwable.getCause().getMessage());
         return R.feignCallFailed(throwable.getMessage());
     }
 
     @Override
+    @LogMarker(isPrintParameter = true)
     public R<Boolean> fetchPronunciation(Integer wordId) {
         log.error(throwable.getCause().getMessage());
         return R.feignCallFailed(throwable.getMessage());
     }
 
     @Override
+    @LogMarker(isPrintParameter = true)
     public R<List<RemovePronunciatioinMqDTO>> removeWord(String wordName, Integer queueId) {
         log.error(throwable.getCause().getMessage());
         return R.feignCallFailed(throwable.getMessage());
     }
 
     @Override
+    @LogMarker(isPrintParameter = true)
     public R<List<RemovePronunciatioinMqDTO>> removeWord(Integer queueId) {
         log.error(throwable.getCause().getMessage());
         return R.feignCallFailed(throwable.getMessage());
     }
 
     @Override
+    @LogMarker(isPrintParameter = true)
     public R<Boolean> removePhrase(Integer queueId) {
         log.error(throwable.getCause().getMessage());
         return R.feignCallFailed(throwable.getMessage());
     }
 
     @Override
+    @LogMarker(isPrintParameter = true)
     public R<Boolean> updateByWordName(FetchQueueDO queueDO) {
         log.error(throwable.getCause().getMessage());
         return R.feignCallFailed(throwable.getMessage());
     }
 
     @Override
+    @LogMarker(isPrintParameter = true)
     public R<Boolean> lock(String wordName) {
         log.error(throwable.getCause().getMessage());
         return R.feignCallFailed(throwable.getMessage());
     }
 
     @Override
-    public R<List<String>> listOverlapInUnLock() {
+    @LogMarker(isPrintParameter = true)
+    public R<List<String>> listOverlapAnyway() {
+        log.error(throwable.getCause().getMessage());
         return R.feignCallFailed();
     }
 
     @Override
-    public R<Boolean> handlePhrasesFetchResult(FetchPhraseRunUpResultDTO dto) {
+    @LogMarker(isPrintParameter = true)
+    public void handlePhrasesFetchResult(FetchPhraseRunUpResultDTO dto) {
         log.error(throwable.getCause().getMessage());
+        R.feignCallFailed(throwable.getMessage());
+    }
+
+    @Override
+    @LogMarker(isPrintParameter = true)
+    public void storePhrasesFetchResult(FetchPhraseResultDTO dto) {
+        log.error(throwable.getCause().getMessage());
+        R.feignCallFailed(throwable.getMessage());
+    }
+
+    @Override
+    @LogMarker(isPrintParameter = true)
+    public R<WordQueryVO> queryWord(String wordName) {
+        log.error("{} : {}", wordName, throwable.getCause().getMessage());
         return R.feignCallFailed(throwable.getMessage());
     }
 
     @Override
-    public R<Boolean> storePhrasesFetchResult(FetchPhraseResultDTO dto) {
+    @LogMarker(isPrintParameter = true)
+    public void createTheDays() {
         log.error(throwable.getCause().getMessage());
-        return R.feignCallFailed(throwable.getMessage());
-    }
-
-    @Override
-    public R<WordQueryVO> queryWord(String keyword) {
-        log.error(throwable.getCause().getMessage());
-        return R.feignCallFailed(throwable.getMessage());
-    }
-
-    @Override
-    public R<Void> createTheDays() {
-        log.error(throwable.getCause().getMessage());
-        return R.feignCallFailed(throwable.getMessage());
+        R.feignCallFailed(throwable.getMessage());
     }
 }

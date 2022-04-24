@@ -16,8 +16,8 @@ spring:
     password: ENC(zF1rDpn+u8RZX5OTor7BpHzprZyrH+3P)
     url: jdbc:mysql://${db.ip}:3306/kiwi_db?useUnicode=true&characterEncoding=UTF-8&useSSL=false&autoReconnect=true&serverTimezone=Asia/Shanghai
     hikari:
-      max-lifetime: 600000
-      connection-timeout: 600000
+      max-lifetime: 60000
+      connection-timeout: 60000
       maximum-pool-size: 100
   redis:
     host: kiwi-redis

@@ -1,7 +1,7 @@
 # 加解密根密码
 jasypt:
   encryptor:
-    password: coding-by-feng #根密码
+    password: ${KIWI_ENC_PASSWORD} #根密码
     poolSize: 2
 
 spring:

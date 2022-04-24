@@ -1,5 +1,6 @@
 #FROM openjdk:8-jdk-alpine
 FROM blackbelt/oraclejdk8
+ENV KIWI_ENC_PASSWORD=changeme
 
 # RUN apk add --no-cache tini
 # Tini is now available at /sbin/tini

@@ -20,7 +20,7 @@ ignore:
     - /word/main/query/**
     - /word/fetch/**
     - /word/main/variant/**
-    - /word/main/listOverlapInUnLock
+    - /word/main/listOverlapAnyway
     - /word/review/createTheDays
   userNames:
     - admin

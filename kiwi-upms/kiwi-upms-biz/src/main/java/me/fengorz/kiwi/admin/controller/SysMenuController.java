@@ -25,7 +25,7 @@ import lombok.RequiredArgsConstructor;
 import me.fengorz.kiwi.admin.api.entity.SysMenu;
 import me.fengorz.kiwi.admin.service.SysMenuService;
 import me.fengorz.kiwi.common.api.R;
-import me.fengorz.kiwi.common.sdk.annotation.log.SysLog;
+import me.fengorz.kiwi.common.sdk.annotation.log.LogMarker;
 import me.fengorz.kiwi.common.sdk.controller.BaseController;
 
 /**
@@ -70,10 +70,9 @@ public class SysMenuController extends BaseController {
      * @param sysMenu 菜单权限表
      * @return R
      */
-    @SysLog("新增菜单权限表")
     @PostMapping
     @PreAuthorize("@pms.hasPermission('admin_sysmenu_add')")
-    public R save(@RequestBody SysMenu sysMenu) {
+    public R<Boolean> save(@RequestBody SysMenu sysMenu) {
         return R.success(sysMenuService.save(sysMenu));
     }
 
@@ -83,10 +82,9 @@ public class SysMenuController extends BaseController {
      * @param sysMenu 菜单权限表
      * @return R
      */
-    @SysLog("修改菜单权限表")
     @PutMapping
-    @PreAuthorize("@pms.hasPermission('admin_sysmenu_edit')")
-    public R updateById(@RequestBody SysMenu sysMenu) {
+    // @PreAuthorize("@pms.hasPermission('admin_sysmenu_edit')")
+    public R<Boolean> updateById(@RequestBody SysMenu sysMenu) {
         return R.success(sysMenuService.updateById(sysMenu));
     }
 
@@ -96,7 +94,7 @@ public class SysMenuController extends BaseController {
      * @param menuId id
      * @return R
      */
-    @SysLog("通过id删除菜单权限表")
+    @LogMarker("通过id删除菜单权限表")
     @DeleteMapping("/{menuId}")
     @PreAuthorize("@pms.hasPermission('admin_sysmenu_del')")
     public R removeById(@PathVariable Integer menuId) {

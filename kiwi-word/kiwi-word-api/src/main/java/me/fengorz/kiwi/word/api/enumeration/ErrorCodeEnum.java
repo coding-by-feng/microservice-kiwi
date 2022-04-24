@@ -1,6 +1,6 @@
 /*
  *
- * Copyright [2019~2025] [zhanshifeng]
+ * Copyright [2019~2025] [codingByFeng]
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -14,17 +14,30 @@
  *
  */
 
-package me.fengorz.kiwi.common.sdk.annotation.log;
+package me.fengorz.kiwi.word.api.enumeration;
 
-import java.lang.annotation.*;
+import lombok.AllArgsConstructor;
+import me.fengorz.kiwi.common.api.ResultCode;
 
 /**
- * 操作日志注解 @Author zhanshifeng
+ * @Description 定义所有异常的Error Code
+ * @Author zhanshifeng
+ * @Date 2022/4/17 14:37
  */
-@Target(ElementType.METHOD)
-@Retention(RetentionPolicy.RUNTIME)
-@Documented
-public @interface SysLog {
+@AllArgsConstructor
+public enum ErrorCodeEnum implements ResultCode {
 
-    String value();
+    QUERY_WORD_GET_ONE_FAILED(101);
+
+    private final Integer code;
+
+    @Override
+    public Integer getCode() {
+        return this.code;
+    }
+
+    @Override
+    public String getI18nCode() {
+        return null;
+    }
 }

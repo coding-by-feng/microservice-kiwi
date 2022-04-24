@@ -28,7 +28,7 @@ import lombok.RequiredArgsConstructor;
 import me.fengorz.kiwi.admin.api.entity.SysUser;
 import me.fengorz.kiwi.admin.service.SysUserService;
 import me.fengorz.kiwi.common.api.R;
-import me.fengorz.kiwi.common.sdk.annotation.log.SysLog;
+import me.fengorz.kiwi.common.sdk.annotation.log.LogMarker;
 import me.fengorz.kiwi.common.sdk.controller.BaseController;
 
 /**
@@ -100,7 +100,7 @@ public class SysUserController extends BaseController {
      * @param sysUser 用户表
      * @return R
      */
-    @SysLog("新增用户表")
+    @LogMarker("新增用户表")
     @PostMapping
     @PreAuthorize("@pms.hasPermission('admin_sysuser_add')")
     public R save(@RequestBody SysUser sysUser) {
@@ -113,7 +113,7 @@ public class SysUserController extends BaseController {
      * @param sysUser 用户表
      * @return R
      */
-    @SysLog("修改用户表")
+    @LogMarker("修改用户表")
     @PutMapping
     @PreAuthorize("@pms.hasPermission('admin_sysuser_edit')")
     public R updateById(@RequestBody SysUser sysUser) {
@@ -126,7 +126,7 @@ public class SysUserController extends BaseController {
      * @param userId id
      * @return R
      */
-    @SysLog("通过id删除用户表")
+    @LogMarker("通过id删除用户表")
     @DeleteMapping("/{userId}")
     @PreAuthorize("@pms.hasPermission('admin_sysuser_del')")
     public R removeById(@PathVariable Integer userId) {

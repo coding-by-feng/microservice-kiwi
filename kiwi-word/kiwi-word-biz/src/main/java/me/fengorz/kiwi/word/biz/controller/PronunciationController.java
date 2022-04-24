@@ -28,7 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.fastdfs.service.IDfsService;
-import me.fengorz.kiwi.common.sdk.annotation.log.SysLog;
+import me.fengorz.kiwi.common.sdk.annotation.log.LogMarker;
 import me.fengorz.kiwi.common.sdk.controller.BaseController;
 import me.fengorz.kiwi.common.sdk.exception.dfs.DfsOperateException;
 import me.fengorz.kiwi.common.sdk.web.WebTools;
@@ -55,7 +55,7 @@ public class PronunciationController extends BaseController {
     private final IPronunciationService wordPronunciationService;
     private final IDfsService dfsService;
 
-    @SysLog("下载播放单词发音音频")
+    @LogMarker("下载播放单词发音音频")
     @GetMapping("/downloadVoice/{pronunciationId}")
     public void downloadVoice(HttpServletResponse response, @PathVariable("pronunciationId") Integer pronunciationId) {
         PronunciationDO wordPronunciation = this.wordPronunciationService.getById(pronunciationId);

@@ -47,6 +47,9 @@ public interface IBizAPI {
     @GetMapping(WORD_FETCH_QUEUE + "/getOneByWordName")
     R<FetchQueueDO> getOneByWordName(@RequestParam String wordName);
 
+    @GetMapping(WORD_FETCH_QUEUE + "/getAnyOne")
+    R<FetchQueueDO> getAnyOne(@RequestParam String wordName);
+
     @GetMapping(WORD_FETCH_QUEUE + "/pageQueue/{status}/{current}/{size}/{infoType}")
     R<List<FetchQueueDO>> pageQueue(@PathVariable Integer status, @PathVariable Integer current,
         @PathVariable Integer size, @PathVariable Integer infoType);
@@ -84,18 +87,18 @@ public interface IBizAPI {
     @PostMapping(WORD_FETCH_QUEUE + "/updateByWordName")
     R<Boolean> updateByWordName(@RequestBody FetchQueueDO queueDO);
 
-    @GetMapping(WORD_MAIN + "/listOverlapInUnLock")
-    R<List<String>> listOverlapInUnLock();
+    @GetMapping(WORD_MAIN + "/listOverlapAnyway")
+    R<List<String>> listOverlapAnyway();
 
     @PostMapping(WORD_FETCH_QUEUE + "/handlePhrasesFetchResult")
-    R<Boolean> handlePhrasesFetchResult(@RequestBody FetchPhraseRunUpResultDTO dto);
+    void handlePhrasesFetchResult(@RequestBody FetchPhraseRunUpResultDTO dto);
 
     @PostMapping(WORD_FETCH_QUEUE + "/storePhrasesFetchResult")
-    R<Boolean> storePhrasesFetchResult(@RequestBody FetchPhraseResultDTO dto);
+    void storePhrasesFetchResult(@RequestBody FetchPhraseResultDTO dto);
 
-    @GetMapping(WORD_MAIN + "/query/gate/{keyword}")
-    R<WordQueryVO> queryWord(@PathVariable String keyword);
+    @GetMapping(WORD_MAIN + "/query/{wordName}")
+    R<WordQueryVO> queryWord(@PathVariable String wordName);
 
     @GetMapping(WORD_REVIEW + "/createTheDays")
-    R<Void> createTheDays();
+    void createTheDays();
 }

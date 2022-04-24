@@ -53,8 +53,8 @@ public class RemovePhraseProducer extends AbstractProducer implements MQProducer
     public void execute(FetchQueueDO queue) {
         queue.setIsLock(GlobalConstants.FLAG_YES);
         queue.setFetchStatus(WordCrawlerConstants.STATUS_DOING_DEL_BASE);
-        if (Optional.of(bizAPI.updateQueueById(queue)).get().isSuccess()) {
-            MQSender.removePhrase(new RemoveMqDTO().setQueueId(queue.getQueueId()));
+        if (Optional.of(bizApi.updateQueueById(queue)).get().isSuccess()) {
+            mqSender.removePhrase(new RemoveMqDTO().setQueueId(queue.getQueueId()));
         }
     }
 }

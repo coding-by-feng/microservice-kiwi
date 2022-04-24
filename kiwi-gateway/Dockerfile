@@ -1,4 +1,5 @@
 FROM openjdk:8-jdk-alpine
+ENV KIWI_ENC_PASSWORD=coding-by-feng
 RUN mkdir /logs
 RUN echo "http://mirrors.aliyun.com/alpine/v3.8/main" > /etc/apk/repositories \
     && echo "http://mirrors.aliyun.com/alpine/v3.8/community" >> /etc/apk/repositories \

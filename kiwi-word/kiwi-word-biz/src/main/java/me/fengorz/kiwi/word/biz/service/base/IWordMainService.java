@@ -46,6 +46,6 @@ public interface IWordMainService extends IService<WordMainDO> {
 
     List<WordMainDO> listDirtyData(Integer wordId);
 
-    List<String> listOverlapInUnLock();
+    List<String> listOverlapAnyway();
 
 }

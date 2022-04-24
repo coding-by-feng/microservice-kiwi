@@ -36,6 +36,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.bdf.core.service.ISeqService;
 import me.fengorz.kiwi.common.fastdfs.service.IDfsService;
+import me.fengorz.kiwi.common.sdk.annotation.log.LogMarker;
 import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
 import me.fengorz.kiwi.common.sdk.constant.MapperConstant;
 import me.fengorz.kiwi.common.sdk.exception.ServiceException;
@@ -83,6 +84,7 @@ public class CrawlerServiceImpl implements ICrawlerService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
+    @LogMarker(isPrintParameter = true, isPrintExecutionTime = true, isPrintReturnValue = true)
     public boolean storeFetchWordResult(FetchWordResultDTO dto) {
         final String wordName = dto.getWordName();
         WordMainDO old = mainService.getOneAndCatch(wordName);

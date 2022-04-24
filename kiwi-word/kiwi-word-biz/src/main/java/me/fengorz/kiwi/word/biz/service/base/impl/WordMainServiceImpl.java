@@ -15,32 +15,36 @@
  */
 package me.fengorz.kiwi.word.biz.service.base.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import lombok.RequiredArgsConstructor;
-import me.fengorz.kiwi.common.sdk.annotation.cache.KiwiCacheKey;
-import me.fengorz.kiwi.common.sdk.annotation.cache.KiwiCacheKeyPrefix;
-import me.fengorz.kiwi.common.sdk.constant.CacheConstants;
-import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
-import me.fengorz.kiwi.common.sdk.exception.ServiceException;
-import me.fengorz.kiwi.common.sdk.util.bean.KiwiBeanUtils;
-import me.fengorz.kiwi.common.sdk.util.lang.string.KiwiStringUtils;
-import me.fengorz.kiwi.word.api.common.WordConstants;
-import me.fengorz.kiwi.word.api.common.WordCrawlerConstants;
-import me.fengorz.kiwi.word.api.dto.mapper.out.FuzzyQueryResultDTO;
-import me.fengorz.kiwi.word.api.entity.WordMainDO;
-import me.fengorz.kiwi.word.api.vo.WordMainVO;
-import me.fengorz.kiwi.word.biz.mapper.WordMainMapper;
-import me.fengorz.kiwi.word.biz.service.base.IWordFetchQueueService;
-import me.fengorz.kiwi.word.biz.service.base.IWordMainService;
+import java.io.Serializable;
+import java.util.List;
+
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
-import java.io.Serializable;
-import java.util.List;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import me.fengorz.kiwi.common.sdk.annotation.cache.KiwiCacheKey;
+import me.fengorz.kiwi.common.sdk.annotation.cache.KiwiCacheKeyPrefix;
+import me.fengorz.kiwi.common.sdk.annotation.log.LogMarker;
+import me.fengorz.kiwi.common.sdk.constant.CacheConstants;
+import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
+import me.fengorz.kiwi.common.sdk.exception.ServiceException;
+import me.fengorz.kiwi.common.sdk.util.bean.KiwiBeanUtils;
+import me.fengorz.kiwi.word.api.common.WordConstants;
+import me.fengorz.kiwi.word.api.common.WordCrawlerConstants;
+import me.fengorz.kiwi.word.api.dto.mapper.out.FuzzyQueryResultDTO;
+import me.fengorz.kiwi.word.api.entity.WordMainDO;
+import me.fengorz.kiwi.word.api.enumeration.ErrorCodeEnum;
+import me.fengorz.kiwi.word.api.vo.WordMainVO;
+import me.fengorz.kiwi.word.biz.mapper.WordMainMapper;
+import me.fengorz.kiwi.word.biz.service.base.IWordFetchQueueService;
+import me.fengorz.kiwi.word.biz.service.base.IWordMainService;
 
 /**
  * 单词主表
@@ -48,11 +52,11 @@ import java.util.List;
  * @author zhanshifeng
  * @date 2019-10-31 20:32:07
  */
-@Service()
+@Slf4j
+@Service
 @RequiredArgsConstructor
 @KiwiCacheKeyPrefix(WordConstants.CACHE_KEY_PREFIX_WORD_MAIN.CLASS)
-public class WordMainServiceImpl extends ServiceImpl<WordMainMapper, WordMainDO>
-        implements IWordMainService {
+public class WordMainServiceImpl extends ServiceImpl<WordMainMapper, WordMainDO> implements IWordMainService {
 
     private static final String VALUE = "value";
 
@@ -66,10 +70,8 @@ public class WordMainServiceImpl extends ServiceImpl<WordMainMapper, WordMainDO>
 
     @Override
     @KiwiCacheKeyPrefix(WordConstants.CACHE_KEY_PREFIX_WORD_MAIN.METHOD_ID)
-    @Cacheable(
-            cacheNames = WordConstants.CACHE_NAMES,
-            keyGenerator = CacheConstants.CACHE_KEY_GENERATOR_BEAN,
-            unless = "#result == null")
+    @Cacheable(cacheNames = WordConstants.CACHE_NAMES, keyGenerator = CacheConstants.CACHE_KEY_GENERATOR_BEAN,
+        unless = "#result == null")
     public WordMainDO getById(@KiwiCacheKey Serializable id) {
         return super.getById(id);
     }
@@ -77,30 +79,21 @@ public class WordMainServiceImpl extends ServiceImpl<WordMainMapper, WordMainDO>
     @Override
     public WordMainVO getOneAndCatch(String wordName, Integer... infoType) {
         try {
-            final LambdaQueryWrapper<WordMainDO> query =
-                    Wrappers.<WordMainDO>lambdaQuery()
-                            .eq(WordMainDO::getWordName, wordName)
-                            .eq(WordMainDO::getIsDel, GlobalConstants.FLAG_DEL_NO);
+            final LambdaQueryWrapper<WordMainDO> query = Wrappers.<WordMainDO>lambdaQuery()
+                .eq(WordMainDO::getWordName, wordName).eq(WordMainDO::getIsDel, GlobalConstants.FLAG_DEL_NO);
             // 如果指定infoType直接指定查询，如果不指定默认查询单词
             boolean isNotSpecialize = infoType == null || infoType.length == 0;
-            WordMainDO one =
-                    this.getOne(
-                            query
-                                    .clone()
-                                    .eq(
-                                            WordMainDO::getInfoType,
-                                            isNotSpecialize ? WordCrawlerConstants.QUEUE_INFO_TYPE_WORD : infoType[0]));
+            WordMainDO one = this.getOne(query.clone().eq(WordMainDO::getInfoType,
+                isNotSpecialize ? WordCrawlerConstants.QUEUE_INFO_TYPE_WORD : infoType[0]));
             if (one == null && isNotSpecialize) {
-                one =
-                        this.getOne(
-                                query.eq(WordMainDO::getInfoType, WordCrawlerConstants.QUEUE_INFO_TYPE_PHRASE));
+                one = this.getOne(query.eq(WordMainDO::getInfoType, WordCrawlerConstants.QUEUE_INFO_TYPE_PHRASE));
             }
             return KiwiBeanUtils.convertFrom(one, WordMainVO.class);
         } catch (Exception e) {
-            log.error(e.getMessage());
+            log.error(e.getMessage(), e);
             queueService.flagWordQueryException(wordName);
-            throw new ServiceException(
-                    KiwiStringUtils.format("wordMainService.getOne error, wordName={}", wordName));
+            throw new ServiceException("wordMainService.getOne error, wordName={}",
+                    ErrorCodeEnum.QUERY_WORD_GET_ONE_FAILED, wordName);
         }
     }
 
@@ -120,24 +113,18 @@ public class WordMainServiceImpl extends ServiceImpl<WordMainMapper, WordMainDO>
 
     @Override
     public boolean isExist(String wordName) {
-        return this.getOne(Wrappers.<WordMainDO>lambdaQuery().eq(WordMainDO::getWordName, wordName))
-                != null;
+        return this.getOne(Wrappers.<WordMainDO>lambdaQuery().eq(WordMainDO::getWordName, wordName)) != null;
     }
 
     @Override
     @KiwiCacheKeyPrefix(WordConstants.CACHE_KEY_PREFIX_WORD_MAIN.METHOD_ID)
-    @CacheEvict(
-            cacheNames = WordConstants.CACHE_NAMES,
-            keyGenerator = CacheConstants.CACHE_KEY_GENERATOR_BEAN)
-    public void evictById(@KiwiCacheKey Integer id) {
-    }
+    @CacheEvict(cacheNames = WordConstants.CACHE_NAMES, keyGenerator = CacheConstants.CACHE_KEY_GENERATOR_BEAN)
+    public void evictById(@KiwiCacheKey Integer id) {}
 
     @Override
     public List<WordMainDO> list(String wordName, Integer infoType) {
-        return this.list(
-                Wrappers.<WordMainDO>lambdaQuery()
-                        .eq(WordMainDO::getWordName, wordName)
-                        .eq(WordMainDO::getInfoType, infoType));
+        return this.list(Wrappers.<WordMainDO>lambdaQuery().eq(WordMainDO::getWordName, wordName)
+            .eq(WordMainDO::getInfoType, infoType));
     }
 
     @Override
@@ -146,14 +133,15 @@ public class WordMainServiceImpl extends ServiceImpl<WordMainMapper, WordMainDO>
         if (one == null) {
             return null;
         }
-        return this.list(
-                Wrappers.<WordMainDO>lambdaQuery()
-                        .eq(WordMainDO::getWordName, one.getWordName())
-                        .eq(WordMainDO::getInfoType, one.getInfoType()));
+        return this.list(Wrappers.<WordMainDO>lambdaQuery().eq(WordMainDO::getWordName, one.getWordName())
+            .eq(WordMainDO::getInfoType, one.getInfoType()));
     }
 
     @Override
-    public List<String> listOverlapInUnLock() {
-        return mapper.selectOverlapInUnLock();
+    @LogMarker
+    public List<String> listOverlapAnyway() {
+        List<String> result = mapper.selectOverlapAnyway();
+        log.info("listOverlapAnyway result size is {}", result.size());
+        return result;
     }
 }

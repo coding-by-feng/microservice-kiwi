@@ -45,9 +45,7 @@ public class FetchRunUpProducer extends AbstractProducer implements MQProducer {
 
     @Override
     protected List<FetchQueueDO> getQueueDO(Integer status) {
-        synchronized (barrier) {
-            return bizAPI.pageQueue(status, 0, 20, infoType).getData();
-        }
+        return bizApi.pageQueue(status, 0, 20, infoType).getData();
     }
 
     @Override
@@ -58,10 +56,10 @@ public class FetchRunUpProducer extends AbstractProducer implements MQProducer {
     @Async
     @Override
     protected void execute(FetchQueueDO queue) {
-        MQSender.fetchPhraseRunUp(new FetchPhraseRunUpMqDTO().setQueueId(queue.getQueueId())
+        mqSender.fetchPhraseRunUp(new FetchPhraseRunUpMqDTO().setQueueId(queue.getQueueId())
             .setWord(KiwiStringUtils.isBlank(queue.getDerivation()) ? queue.getWordName() : queue.getDerivation())
             .setWordId(queue.getWordId()));
         queue.setFetchStatus(WordCrawlerConstants.STATUS_TO_FETCH_PHRASE);
-        bizAPI.updateQueueById(queue);
+        bizApi.updateQueueById(queue);
     }
 }

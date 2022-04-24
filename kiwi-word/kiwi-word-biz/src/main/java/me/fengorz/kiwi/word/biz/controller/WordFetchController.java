@@ -29,7 +29,6 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.api.R;
-import me.fengorz.kiwi.common.sdk.annotation.log.SysLog;
 import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
 import me.fengorz.kiwi.common.sdk.controller.BaseController;
 import me.fengorz.kiwi.word.api.dto.queue.RemovePronunciatioinMqDTO;
@@ -70,6 +69,11 @@ public class WordFetchController extends BaseController {
         return R.success(queueService.getOneInUnLock(wordName));
     }
 
+    @GetMapping("/getAnyOne")
+    public R<FetchQueueDO> getAnyOne(@RequestParam String wordName) {
+        return R.success(queueService.getAnyOne(wordName));
+    }
+
     @GetMapping(value = "/pageQueue/{status}/{current}/{size}/{infoType}")
     public R<List<FetchQueueDO>> pageQueue(@PathVariable Integer status, @PathVariable Integer current,
         @PathVariable Integer size, @PathVariable Integer infoType) {
@@ -93,14 +97,12 @@ public class WordFetchController extends BaseController {
      * @param queue 单词待抓取列表
      * @return R
      */
-    @SysLog("修改单词待抓取列表")
     @PostMapping("/updateById")
     public R<Boolean> updateById(@RequestBody FetchQueueDO queue) {
         queue.setOperateTime(LocalDateTime.now());
         return R.success(queueService.updateById(queue));
     }
 
-    @SysLog("修改单词待抓取列表")
     @PostMapping("/updateByWordName")
     // @PreAuthorize("@pms.hasPermission('queue_wordfetchqueue_edit')")
     public R<Boolean> updateByWordName(@RequestBody FetchQueueDO wordFetchQueue) {

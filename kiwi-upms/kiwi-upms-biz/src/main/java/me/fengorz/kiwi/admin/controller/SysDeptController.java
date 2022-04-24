@@ -25,7 +25,6 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.RequiredArgsConstructor;
 import me.fengorz.kiwi.admin.api.entity.SysDept;
 import me.fengorz.kiwi.admin.service.SysDeptService;
-import me.fengorz.kiwi.common.sdk.annotation.log.SysLog;
 import me.fengorz.kiwi.common.sdk.controller.BaseController;
 
 /**
@@ -70,7 +69,6 @@ public class SysDeptController extends BaseController {
      * @param sysDept 部门管理
      * @return R
      */
-    @SysLog("新增部门管理")
     @PostMapping
     @PreAuthorize("@pms.hasPermission('admin_sysdept_add')")
     public R save(@RequestBody SysDept sysDept) {
@@ -83,7 +81,6 @@ public class SysDeptController extends BaseController {
      * @param sysDept 部门管理
      * @return R
      */
-    @SysLog("修改部门管理")
     @PutMapping
     @PreAuthorize("@pms.hasPermission('admin_sysdept_edit')")
     public R updateById(@RequestBody SysDept sysDept) {
@@ -96,7 +93,6 @@ public class SysDeptController extends BaseController {
      * @param deptId id
      * @return R
      */
-    @SysLog("通过id删除部门管理")
     @DeleteMapping("/{deptId}")
     @PreAuthorize("@pms.hasPermission('admin_sysdept_del')")
     public R removeById(@PathVariable Integer deptId) {

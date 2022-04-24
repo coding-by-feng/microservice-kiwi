@@ -30,7 +30,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.api.R;
-import me.fengorz.kiwi.common.sdk.annotation.log.SysLog;
+import me.fengorz.kiwi.common.sdk.annotation.log.LogMarker;
 import me.fengorz.kiwi.common.sdk.controller.BaseController;
 import me.fengorz.kiwi.common.sdk.util.lang.string.KiwiStringUtils;
 import me.fengorz.kiwi.common.sdk.util.time.KiwiDateUtils;
@@ -81,7 +81,7 @@ public class WordMainController extends BaseController {
     }
 
     @GetMapping("/query/{wordName}")
-    public R<IPage<WordQueryVO>> queryWord(@PathVariable(value = "wordName", required = false) String wordName) {
+    public R<IPage<WordQueryVO>> queryWord(@PathVariable(value = "wordName") String wordName) {
         IPage<WordQueryVO> page = new Page<>();
         if (KiwiStringUtils.isNotBlank(wordName)) {
             List<WordQueryVO> list = new LinkedList<>();
@@ -100,14 +100,14 @@ public class WordMainController extends BaseController {
         return R.success(operateService.queryWord(wordName));
     }
 
-    @SysLog("模糊查询单词列表")
+    @LogMarker("模糊查询单词列表")
     @PostMapping("/fuzzyQueryList")
     public R<List<FuzzyQueryResultDTO>> fuzzyQueryList(@NotBlank String wordName, Page<WordMainDO> page) {
         return R.success(mainService.fuzzyQueryList(page, wordName));
     }
 
-    @GetMapping("/listOverlapInUnLock")
-    public R<List<String>> listOverlapInUnLock() {
-        return R.success(mainService.listOverlapInUnLock());
+    @GetMapping("/listOverlapAnyway")
+    public R<List<String>> listOverlapAnyway() {
+        return R.success(mainService.listOverlapAnyway());
     }
 }

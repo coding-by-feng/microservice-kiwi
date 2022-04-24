@@ -32,7 +32,7 @@ import me.fengorz.kiwi.word.api.entity.WordMainDO;
  */
 public interface WordMainMapper extends BaseMapper<WordMainDO> {
 
-    List<String> selectOverlapInUnLock();
+    List<String> selectOverlapAnyway();
 
     IPage<FuzzyQueryResultDTO> fuzzyQuery(Page<?> page, String query);
 }

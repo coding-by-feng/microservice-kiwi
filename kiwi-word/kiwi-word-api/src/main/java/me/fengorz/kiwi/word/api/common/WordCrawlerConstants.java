@@ -67,7 +67,7 @@ public interface WordCrawlerConstants {
     int STATUS_TO_FETCH_PHRASE = 201;
     int STATUS_PERFECT_SUCCESS = 666;
 
-    int WORD_MAX_FETCH_LIMITED_TIME = 100;
+    int WORD_MAX_FETCH_LIMITED_TIME = 20;
 
     String URL_CAMBRIDGE_FETCH_CHINESE = "https://dictionary.cambridge.org/zhs/词典/英语-汉语-简体/";
     String URL_CAMBRIDGE_FETCH_ENGLISH = "https://dictionary.cambridge.org/dictionary/english/";

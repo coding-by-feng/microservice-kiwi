@@ -25,7 +25,7 @@ import lombok.RequiredArgsConstructor;
 import me.fengorz.kiwi.admin.api.entity.SysRole;
 import me.fengorz.kiwi.admin.service.SysRoleService;
 import me.fengorz.kiwi.common.api.R;
-import me.fengorz.kiwi.common.sdk.annotation.log.SysLog;
+import me.fengorz.kiwi.common.sdk.annotation.log.LogMarker;
 import me.fengorz.kiwi.common.sdk.controller.BaseController;
 
 /**
@@ -70,7 +70,7 @@ public class SysRoleController extends BaseController {
      * @param sysRole 系统角色表
      * @return R
      */
-    @SysLog("新增系统角色表")
+    @LogMarker("新增系统角色表")
     @PostMapping
     @PreAuthorize("@pms.hasPermission('admin_sysrole_add')")
     public R save(@RequestBody SysRole sysRole) {
@@ -83,7 +83,7 @@ public class SysRoleController extends BaseController {
      * @param sysRole 系统角色表
      * @return R
      */
-    @SysLog("修改系统角色表")
+    @LogMarker("修改系统角色表")
     @PutMapping
     @PreAuthorize("@pms.hasPermission('admin_sysrole_edit')")
     public R updateById(@RequestBody SysRole sysRole) {
@@ -96,7 +96,7 @@ public class SysRoleController extends BaseController {
      * @param roleId id
      * @return R
      */
-    @SysLog("通过id删除系统角色表")
+    @LogMarker("通过id删除系统角色表")
     @DeleteMapping("/{roleId}")
     @PreAuthorize("@pms.hasPermission('admin_sysrole_del')")
     public R removeById(@PathVariable Integer roleId) {

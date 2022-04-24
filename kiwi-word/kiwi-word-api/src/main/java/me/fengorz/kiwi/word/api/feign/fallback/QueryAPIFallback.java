@@ -17,7 +17,6 @@ import org.springframework.stereotype.Component;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.api.R;
 import me.fengorz.kiwi.word.api.feign.IQueryAPI;
@@ -30,10 +29,7 @@ import me.fengorz.kiwi.word.api.vo.detail.WordQueryVO;
  */
 @Slf4j
 @Component
-public class QueryAPIFallback implements IQueryAPI {
-
-    @Setter
-    private Throwable throwable;
+public class QueryAPIFallback extends AbstractFallback implements IQueryAPI {
 
     @Override
     public R<Page<WordQueryVO>> queryWord(String wordName) {

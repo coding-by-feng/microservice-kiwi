@@ -58,16 +58,19 @@ public class FetchWordProducer extends AbstractProducer implements MQProducer {
     protected void execute(FetchQueueDO queue) {
         queue.setIsLock(GlobalConstants.FLAG_YES);
         queue.setFetchTime(queue.getFetchTime() + 1);
+        if (isCleanUp(queue)) {
+            return;
+        }
         queue.setFetchResult(GlobalConstants.EMPTY);
         if (null == queue.getWordId() || 0 == queue.getWordId()) {
             queue.setFetchStatus(WordCrawlerConstants.STATUS_DOING_FETCH);
-            if (Optional.of(bizAPI.updateQueueById(queue)).get().isSuccess()) {
-                MQSender.fetchWord(new FetchWordMqDTO().setWord(queue.getWordName()).setQueueId(queue.getQueueId()));
+            if (Optional.of(bizApi.updateQueueById(queue)).get().isSuccess()) {
+                mqSender.fetchWord(new FetchWordMqDTO().setWord(queue.getWordName()).setQueueId(queue.getQueueId()));
             }
         } else {
             // 删除老的数据
             queue.setFetchStatus(WordCrawlerConstants.STATUS_TO_DEL_BASE);
-            bizAPI.updateQueueById(queue);
+            bizApi.updateQueueById(queue);
         }
     }
 }

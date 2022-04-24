@@ -25,7 +25,7 @@ import lombok.RequiredArgsConstructor;
 import me.fengorz.kiwi.admin.api.entity.SysUserRoleRel;
 import me.fengorz.kiwi.admin.service.SysUserRoleRelService;
 import me.fengorz.kiwi.common.api.R;
-import me.fengorz.kiwi.common.sdk.annotation.log.SysLog;
+import me.fengorz.kiwi.common.sdk.annotation.log.LogMarker;
 import me.fengorz.kiwi.common.sdk.controller.BaseController;
 
 /**
@@ -70,7 +70,7 @@ public class SysUserRoleRelController extends BaseController {
      * @param sysUserRoleRel 用户角色表
      * @return R
      */
-    @SysLog("新增用户角色表")
+    @LogMarker("新增用户角色表")
     @PostMapping
     @PreAuthorize("@pms.hasPermission('admin_sysuserrolerel_add')")
     public R save(@RequestBody SysUserRoleRel sysUserRoleRel) {
@@ -83,7 +83,7 @@ public class SysUserRoleRelController extends BaseController {
      * @param sysUserRoleRel 用户角色表
      * @return R
      */
-    @SysLog("修改用户角色表")
+    @LogMarker("修改用户角色表")
     @PutMapping
     @PreAuthorize("@pms.hasPermission('admin_sysuserrolerel_edit')")
     public R updateById(@RequestBody SysUserRoleRel sysUserRoleRel) {
@@ -96,7 +96,6 @@ public class SysUserRoleRelController extends BaseController {
      * @param userId id
      * @return R
      */
-    @SysLog("通过id删除用户角色表")
     @DeleteMapping("/{userId}")
     @PreAuthorize("@pms.hasPermission('admin_sysuserrolerel_del')")
     public R removeById(@PathVariable Integer userId) {

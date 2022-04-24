@@ -31,7 +31,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.bdf.core.service.ISeqService;
 import me.fengorz.kiwi.common.api.R;
-import me.fengorz.kiwi.common.sdk.annotation.log.SysLog;
+import me.fengorz.kiwi.common.sdk.annotation.log.LogMarker;
 import me.fengorz.kiwi.common.sdk.constant.MapperConstant;
 import me.fengorz.kiwi.common.sdk.controller.BaseController;
 import me.fengorz.kiwi.common.sdk.exception.ServiceException;
@@ -67,7 +67,6 @@ public class WordStarListController extends BaseController {
      * @param vo 单词本
      * @return R
      */
-    @SysLog("新增单词本")
     @PostMapping("/save")
     // @PreAuthorize("@pms.hasPermission('api_wordstarlist_add')")
     public R<Boolean> save(WordStarListVO vo) {
@@ -82,7 +81,7 @@ public class WordStarListController extends BaseController {
      * @param wordStarListDO 单词本
      * @return R
      */
-    @SysLog("修改单词本")
+    @LogMarker("修改单词本")
     @PostMapping("/updateById")
     // @PreAuthorize("@pms.hasPermission('api_wordstarlist_edit')")
     public R<Boolean> updateById(WordStarListDO wordStarListDO) {
@@ -95,7 +94,7 @@ public class WordStarListController extends BaseController {
      * @param id id
      * @return R
      */
-    @SysLog("通过id删除单词本")
+    @LogMarker("通过id删除单词本")
     @PostMapping("/del/{id}")
     // @PreAuthorize("@pms.hasPermission('api_wordstarlist_del')")
     public R<Boolean> del(@PathVariable Integer id) {

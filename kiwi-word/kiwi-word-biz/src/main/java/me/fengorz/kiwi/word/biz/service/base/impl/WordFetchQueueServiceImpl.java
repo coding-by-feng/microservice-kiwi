@@ -29,7 +29,9 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.bdf.core.service.ISeqService;
+import me.fengorz.kiwi.common.sdk.annotation.log.LogMarker;
 import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
 import me.fengorz.kiwi.common.sdk.constant.MapperConstant;
 import me.fengorz.kiwi.common.sdk.exception.ServiceException;
@@ -47,6 +49,7 @@ import me.fengorz.kiwi.word.biz.util.WordBizUtils;
  * @author zhanshifeng
  * @date 2019-10-30 14:45:45
  */
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class WordFetchQueueServiceImpl extends ServiceImpl<FetchQueueMapper, FetchQueueDO>
@@ -111,6 +114,7 @@ public class WordFetchQueueServiceImpl extends ServiceImpl<FetchQueueMapper, Fet
 
     @Async
     @Override
+    @LogMarker(isPrintParameter = true, isPrintExecutionTime = true)
     public void startFetchOnAsync(String wordName) {
         this.fetch(wordName, null, null);
     }
@@ -144,7 +148,7 @@ public class WordFetchQueueServiceImpl extends ServiceImpl<FetchQueueMapper, Fet
     @Override
     @Transactional(rollbackFor = Exception.class)
     public boolean invalid(String wordName) {
-        if (!this.isExist(wordName)) {
+        if (this.isExist(wordName)) {
             return false;
         }
         return this.update(new FetchQueueDO().setIsValid(GlobalConstants.FLAG_N).setIsLock(GlobalConstants.FLAG_NO),
@@ -154,7 +158,7 @@ public class WordFetchQueueServiceImpl extends ServiceImpl<FetchQueueMapper, Fet
     @Override
     @Transactional(rollbackFor = Exception.class)
     public boolean lock(String wordName) {
-        if (!this.isExist(wordName)) {
+        if (this.isExist(wordName)) {
             return false;
         }
         return this.update(new FetchQueueDO().setIsLock(GlobalConstants.FLAG_YES), Wrappers.<FetchQueueDO>lambdaUpdate()
@@ -173,15 +177,18 @@ public class WordFetchQueueServiceImpl extends ServiceImpl<FetchQueueMapper, Fet
         FetchQueueDO one = this.getOneAnyhow(wordName);
         // 如果队列记录不存在
         if (one == null) {
+            log.info("The word {} has not been fetched and is about to be fetched.", wordName);
             this.insertOne(null, wordName, wordName, WordCrawlerConstants.STATUS_TO_DEL_BASE);
             return;
         }
 
         // 爬虫状态进行中的不可以打断
         if (WordBizUtils.fetchQueueIsRunning(one.getFetchStatus())) {
+            log.info("The word {} queue is locked and cannot change the queue state.", wordName);
             return;
         }
 
+        log.info("Update the status of the word {} to query error!", wordName);
         this.updateById(
             one.setFetchStatus(WordCrawlerConstants.STATUS_TO_QUERY_ERROR).setIsLock(GlobalConstants.FLAG_NO));
     }
@@ -222,6 +229,7 @@ public class WordFetchQueueServiceImpl extends ServiceImpl<FetchQueueMapper, Fet
      * @return
      */
     @Override
+    @LogMarker(isPrintReturnValue = true)
     public FetchQueueDO getOneInUnLock(String wordName, Integer... infoType) {
         return this.getOne(Wrappers.<FetchQueueDO>lambdaQuery().eq(FetchQueueDO::getWordName, wordName)
             .eq(FetchQueueDO::getIsLock, GlobalConstants.FLAG_NO).eq(FetchQueueDO::getInfoType,
@@ -248,12 +256,18 @@ public class WordFetchQueueServiceImpl extends ServiceImpl<FetchQueueMapper, Fet
     }
 
     @Override
+    @LogMarker(isPrintReturnValue = true, isPrintParameter = true, isPrintExecutionTime = true)
+    public FetchQueueDO getAnyOne(String wordName) {
+        return this.getOne(Wrappers.<FetchQueueDO>lambdaQuery().eq(FetchQueueDO::getWordName, wordName));
+    }
+
+    @Override
     public FetchQueueDO getOneAnyhow(Integer queueId) {
         return this.getOne(Wrappers.<FetchQueueDO>lambdaQuery().eq(FetchQueueDO::getQueueId, queueId));
     }
 
     @Deprecated
     private boolean isExist(String wordName) {
-        return this.getOneInUnLock(wordName) != null;
+        return this.getOneInUnLock(wordName) == null;
     }
 }

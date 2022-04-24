@@ -16,7 +16,11 @@
 
 package me.fengorz.kiwi.vocabulary.crawler.component.producer.base;
 
+import java.util.concurrent.Semaphore;
+
 public interface MQProducer {
 
     void produce();
+
+    Semaphore getBarrier();
 }

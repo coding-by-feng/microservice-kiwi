@@ -1,30 +1,28 @@
 /*
  *
- *   Copyright [2019~2025] [codingByFeng]
+ * Copyright [2019~2025] [codingByFeng]
  *
- *   Licensed under the Apache License, Version 2.0 (the "License");
- *   you may not use this file except in compliance with the License.
- *   You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *   Unless required by applicable law or agreed to in writing, software
- *   distributed under the License is distributed on an "AS IS" BASIS,
- *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *   See the License for the specific language governing permissions and
- *   limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  *
  *
  */
 
 package me.fengorz.kiwi.common.api;
 
+import java.io.Serializable;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.Data;
 import lombok.ToString;
 import lombok.experimental.Accessors;
-
-import java.io.Serializable;
 
 /**
  * 响应体
@@ -106,6 +104,10 @@ public class R<T> implements Serializable {
 
     public static <T> R<T> error(T data, String msg) {
         return restResult(data, ResultCode.ERROR, msg);
+    }
+
+    public static <T> R<T> error(ResultCode resultCode) {
+        return restResult(null, resultCode, null);
     }
 
     private static <T> R<T> restResult(T data, ResultCode resultCode, String msg) {

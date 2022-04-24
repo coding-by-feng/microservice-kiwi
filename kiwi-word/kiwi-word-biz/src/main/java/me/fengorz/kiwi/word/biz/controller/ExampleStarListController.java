@@ -31,7 +31,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.bdf.core.service.ISeqService;
 import me.fengorz.kiwi.common.api.R;
-import me.fengorz.kiwi.common.sdk.annotation.log.SysLog;
+import me.fengorz.kiwi.common.sdk.annotation.log.LogMarker;
 import me.fengorz.kiwi.common.sdk.constant.MapperConstant;
 import me.fengorz.kiwi.common.sdk.controller.BaseController;
 import me.fengorz.kiwi.common.sdk.web.security.SecurityUtils;
@@ -62,7 +62,6 @@ public class ExampleStarListController extends BaseController {
      * @param vo
      * @return R
      */
-    @SysLog("新增")
     @PostMapping("/save")
     // @PreAuthorize("@pms.hasPermission('api_wordparaphraseexamplelist_add')")
     public R<Boolean> save(ExampleStarListVO vo) {
@@ -77,7 +76,7 @@ public class ExampleStarListController extends BaseController {
      * @param exampleStarListDO
      * @return R
      */
-    @SysLog("修改")
+    @LogMarker("修改")
     @PostMapping("/updateById")
     // @PreAuthorize("@pms.hasPermission('api_wordparaphraseexamplelist_edit')")
     public R<Boolean> updateById(ExampleStarListDO exampleStarListDO) {
@@ -90,7 +89,7 @@ public class ExampleStarListController extends BaseController {
      * @param id id
      * @return R
      */
-    @SysLog("通过id删除")
+    @LogMarker("通过id删除")
     @PostMapping("/delById/{id}")
     // @PreAuthorize("@pms.hasPermission('api_wordparaphraseexamplelist_del')")
     public R<Boolean> delById(@PathVariable Integer id) {

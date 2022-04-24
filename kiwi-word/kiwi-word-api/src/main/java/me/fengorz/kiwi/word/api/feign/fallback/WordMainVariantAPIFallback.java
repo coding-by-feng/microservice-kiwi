@@ -15,9 +15,9 @@ package me.fengorz.kiwi.word.api.feign.fallback;
 
 import org.springframework.stereotype.Component;
 
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.api.R;
+import me.fengorz.kiwi.common.sdk.annotation.log.LogMarker;
 import me.fengorz.kiwi.word.api.feign.IWordMainVariantAPI;
 
 /**
@@ -27,12 +27,10 @@ import me.fengorz.kiwi.word.api.feign.IWordMainVariantAPI;
  */
 @Slf4j
 @Component
-public class WordMainVariantAPIFallback implements IWordMainVariantAPI {
-
-    @Setter
-    private Throwable throwable;
+public class WordMainVariantAPIFallback extends AbstractFallback implements IWordMainVariantAPI {
 
     @Override
+    @LogMarker(isPrintParameter = true)
     public R<Void> insertVariant(String inputWordName, String fetchWordName) {
         return R.feignCallFailed();
     }

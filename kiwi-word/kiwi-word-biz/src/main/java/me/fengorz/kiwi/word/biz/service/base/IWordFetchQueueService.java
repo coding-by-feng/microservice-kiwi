@@ -69,5 +69,12 @@ public interface IWordFetchQueueService extends IService<FetchQueueDO> {
 
     FetchQueueDO getOneAnyhow(String wordName, Integer... infoType);
 
+    /**
+     * 不管infoType是什么，return一个回来
+     * @param wordName
+     * @return
+     */
+    FetchQueueDO getAnyOne(String wordName);
+
     FetchQueueDO getOneAnyhow(Integer queueId);
 }

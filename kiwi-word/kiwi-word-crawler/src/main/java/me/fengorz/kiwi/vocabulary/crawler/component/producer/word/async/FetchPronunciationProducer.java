@@ -38,8 +38,8 @@ import me.fengorz.kiwi.word.api.feign.IBizAPI;
 @Slf4j
 public class FetchPronunciationProducer extends AbstractProducer implements MQProducer {
 
-    public FetchPronunciationProducer(IBizAPI bizAPI, MQSender MQSender) {
-        super(bizAPI, MQSender);
+    public FetchPronunciationProducer(IBizAPI bizApi, MQSender mqSender) {
+        super(bizApi, mqSender);
         this.infoType = WordCrawlerConstants.QUEUE_INFO_TYPE_WORD;
     }
 
@@ -50,11 +50,11 @@ public class FetchPronunciationProducer extends AbstractProducer implements MQPr
 
     @Async
     @Override
-    protected void execute(FetchQueueDO queue) {
+    public void execute(FetchQueueDO queue) {
         queue.setIsLock(GlobalConstants.FLAG_YES);
         queue.setFetchStatus(WordCrawlerConstants.STATUS_DOING_FETCH_PRONUNCIATION);
-        if (Optional.of(bizAPI.updateQueueById(queue)).get().isSuccess()) {
-            MQSender.fetchPronunciation(
+        if (Optional.of(bizApi.updateQueueById(queue)).get().isSuccess()) {
+            mqSender.fetchPronunciation(
                 new FetchPronunciationMqDTO().setWordId(queue.getWordId()).setQueueId(queue.getQueueId()));
         }
     }

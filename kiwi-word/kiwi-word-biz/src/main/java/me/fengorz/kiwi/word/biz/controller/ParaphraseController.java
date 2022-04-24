@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
 import me.fengorz.kiwi.common.api.R;
-import me.fengorz.kiwi.common.sdk.annotation.log.SysLog;
+import me.fengorz.kiwi.common.sdk.annotation.log.LogMarker;
 import me.fengorz.kiwi.common.sdk.controller.BaseController;
 import me.fengorz.kiwi.word.api.request.ParaphraseRequest;
 import me.fengorz.kiwi.word.biz.service.base.IParaphraseService;
@@ -43,7 +43,7 @@ public class ParaphraseController extends BaseController {
     private final IParaphraseService service;
     private final IOperateService operateService;
 
-    @SysLog("修改单词释义")
+    @LogMarker("修改单词释义")
     @PostMapping("/modifyMeaningChinese")
     public R<Boolean> modifyMeaningChinese(@Valid ParaphraseRequest request) {
         return R.success(operateService.modifyMeaningChinese(request));

@@ -14,21 +14,40 @@
  *
  */
 
-package me.fengorz.kiwi.word.biz.config;
+package me.fengorz.kiwi.common.sdk.annotation.log;
 
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
-
-import me.fengorz.kiwi.bdf.cache.redis.config.CacheConfig;
-import me.fengorz.kiwi.bdf.core.config.CoreConfig;
-import me.fengorz.kiwi.bdf.core.config.LogAspectConfig;
-import me.fengorz.kiwi.common.es.config.ESConfig;
-import me.fengorz.kiwi.common.fastdfs.config.DfsConfig;
+import java.lang.annotation.*;
 
 /**
+ * 操作日志注解
+ * 
  * @Author zhanshifeng
- * @Date 2019/10/30 3:45 PM
  */
-@Configuration
-@Import({CoreConfig.class, CacheConfig.class, DfsConfig.class, ESConfig.class, LogAspectConfig.class})
-public class WordBizConfig {}
+@Target(ElementType.METHOD)
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+public @interface LogMarker {
+
+    String value() default "";
+
+    /**
+     * 是否打印方法参数
+     *
+     * @return
+     */
+    boolean isPrintParameter() default false;
+
+    /**
+     * 是否打印返回结果
+     * 
+     * @return
+     */
+    boolean isPrintReturnValue() default false;
+
+    /**
+     * 是否打印方法执行时间
+     * @return
+     */
+    boolean isPrintExecutionTime() default false;
+
+}

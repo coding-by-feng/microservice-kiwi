@@ -31,7 +31,7 @@ import me.fengorz.kiwi.common.sdk.config.UtilsBeanConfiguration;
 @ComponentScan("me.fengorz.kiwi.**.service")
 @EnableTransactionManagement(mode = AdviceMode.ASPECTJ)
 @Import({UtilsBeanConfiguration.class})
-@EnableAspectJAutoProxy
+@EnableAspectJAutoProxy(proxyTargetClass = true, exposeProxy = true)
 public class CoreConfig {
 
     @Bean

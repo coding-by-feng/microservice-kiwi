@@ -1,4 +1,5 @@
 FROM openjdk:8-jdk-alpine
+ENV KIWI_ENC_PASSWORD=coding-by-feng
 RUN mkdir /logs
 ADD kiwi-auth-1.0.jar app.jar
 EXPOSE 3001

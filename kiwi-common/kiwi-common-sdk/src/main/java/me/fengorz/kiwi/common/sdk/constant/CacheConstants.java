@@ -20,5 +20,7 @@ public interface CacheConstants {
 
     String CACHE_KEY_GENERATOR_BEAN = "cacheKeyGenerator";
 
+    String CACHE_MANAGER_WORD = "cacheManagerWord";
+
     String CLIENT_DETAILS = "client_detail";
 }

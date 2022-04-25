@@ -1,3 +1,4 @@
+# 数据源
 spring:
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
@@ -8,18 +9,14 @@ spring:
     hikari:
       max-lifetime: 60000
       connection-timeout: 60000
-      maximum-pool-size: 100
+      maximum-pool-size: 10
+  main:
+    allow-bean-definition-overriding: true
 
-me:
-  fengorz:
-    file:
-      crawler:
-        voice:
-          tmpPath: "/wordTmp"
-      vocabulary:
-        word:
-          list:
-            path: "/wordTmp"
-
-
-
+# 直接放行URL
+ignore:
+  urls:
+    - /actuator/**
+    - /sys/user/info/*
+    - /log/**
+    - /sys/user/oneClickRegister

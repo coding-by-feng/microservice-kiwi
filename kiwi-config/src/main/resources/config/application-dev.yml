@@ -5,20 +5,6 @@ jasypt:
     poolSize: 2
 
 spring:
-  #  cloud:
-  #    loadbalancer:
-  #      retry:
-  #        enabled: false
-  datasource:
-    type: com.zaxxer.hikari.HikariDataSource
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    username: ENC(2PE/BMMoNPbRCEaIyGfcSw==)
-    password: ENC(zF1rDpn+u8RZX5OTor7BpHzprZyrH+3P)
-    url: jdbc:mysql://${db.ip}:3306/kiwi_db?useUnicode=true&characterEncoding=UTF-8&useSSL=false&autoReconnect=true&serverTimezone=Asia/Shanghai
-    hikari:
-      max-lifetime: 60000
-      connection-timeout: 60000
-      maximum-pool-size: 100
   redis:
     host: kiwi-redis
     password: ENC(HoKhohl8MlDnTVC9MaFPjvTMZY5N61Mf)

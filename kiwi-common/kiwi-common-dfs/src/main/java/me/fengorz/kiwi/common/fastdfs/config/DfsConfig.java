@@ -16,6 +16,7 @@
 
 package me.fengorz.kiwi.common.fastdfs.config;
 
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableMBeanExport;
 import org.springframework.context.annotation.Import;
@@ -27,7 +28,7 @@ import com.github.tobato.fastdfs.FdfsClientConfig;
  * @Author zhanshifeng @Date 2019/11/4 10:51 AM
  */
 @Configuration
-// @ComponentScan("me.fengorz.kiwi.common.fastdfs.service")
+@ComponentScan("me.fengorz.kiwi.common.fastdfs")
 @Import(FdfsClientConfig.class)
 @EnableMBeanExport(registration = RegistrationPolicy.IGNORE_EXISTING)
 public class DfsConfig {}

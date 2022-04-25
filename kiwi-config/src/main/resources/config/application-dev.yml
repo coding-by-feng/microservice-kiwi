@@ -6,8 +6,8 @@ jasypt:
 
 spring:
   redis:
-    host: kiwi-redis
-    password: ENC(HoKhohl8MlDnTVC9MaFPjvTMZY5N61Mf)
+    host: 159.75.107.124
+    password: fengORZ123
     port: 6379
   servlet:
     multipart:

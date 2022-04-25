@@ -16,10 +16,7 @@
 
 package me.fengorz.kiwi.auth.endpoint;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.springframework.data.redis.core.ConvertingCursor;
 import org.springframework.data.redis.core.Cursor;
@@ -57,8 +54,9 @@ public class KiwiTokenEndpoint {
         SecurityConstants.PROJECT_PREFIX + SecurityConstants.OAUTH_PREFIX + "access:";
     private static final String CURRENT = "current";
     private static final String SIZE = "size";
+    private static final String KIWI_OAUTH_ACCESS = "kiwi_oauth:access:*";
     private final TokenStore tokenStore;
-    private final RedisTemplate redisTemplate;
+    private final RedisTemplate<String, ?> redisTemplate;
 
     /**
      * 退出并删除token
@@ -104,7 +102,8 @@ public class KiwiTokenEndpoint {
      * @param from 标志
      */
     @PostMapping("/page")
-    public R getTokenPage(@RequestBody Map<String, Object> params, @RequestHeader(required = false) String from) {
+    public R<Page<Map<String, String>>> getTokenPage(@RequestBody Map<String, Object> params,
+        @RequestHeader(required = false) String from) {
         if (StrUtil.isBlank(from)) {
             return null;
         }
@@ -115,8 +114,7 @@ public class KiwiTokenEndpoint {
             params.put(SIZE, 20);
         }
         // 根据分页参数获取对应数据
-        List<String> pages =
-            findKeysForPage(PROJECT_OAUTH_ACCESS + "*", MapUtil.getInt(params, CURRENT), MapUtil.getInt(params, SIZE));
+        List<String> pages = findKeysForPage(MapUtil.getInt(params, CURRENT), MapUtil.getInt(params, SIZE));
 
         for (String page : pages) {
             String accessToken = StrUtil.subAfter(page, PROJECT_OAUTH_ACCESS, true);
@@ -155,16 +153,17 @@ public class KiwiTokenEndpoint {
             list.add(map);
         }
 
-        Page result = new Page(MapUtil.getInt(params, CURRENT), MapUtil.getInt(params, SIZE));
+        Page<Map<String, String>> result = new Page<>(MapUtil.getInt(params, CURRENT), MapUtil.getInt(params, SIZE));
         result.setRecords(list);
-        result.setTotal(Long.valueOf(redisTemplate.keys(PROJECT_OAUTH_ACCESS + "*").size()));
+        result.setTotal(Objects.requireNonNull(redisTemplate.keys(PROJECT_OAUTH_ACCESS + "*")).size());
         return R.success(result);
     }
 
-    private List<String> findKeysForPage(String patternKey, int pageNum, int pageSize) {
-        ScanOptions options = ScanOptions.scanOptions().match(patternKey).build();
+    @SuppressWarnings("unchecked")
+    private List<String> findKeysForPage(int pageNum, int pageSize) {
+        ScanOptions options = ScanOptions.scanOptions().match(KIWI_OAUTH_ACCESS).build();
         RedisSerializer<String> redisSerializer = (RedisSerializer<String>)redisTemplate.getKeySerializer();
-        Cursor cursor = (Cursor)redisTemplate.executeWithStickyConnection(
+        Cursor<?> cursor = redisTemplate.executeWithStickyConnection(
             redisConnection -> new ConvertingCursor<>(redisConnection.scan(options), redisSerializer::deserialize));
         List<String> result = new ArrayList<>();
         int tmpIndex = 0;
@@ -174,7 +173,7 @@ public class KiwiTokenEndpoint {
         assert cursor != null;
         while (cursor.hasNext()) {
             if (tmpIndex >= startIndex && tmpIndex < end) {
-                result.add(cursor.next().toString());
+                result.add(Objects.requireNonNull(cursor.next()).toString());
                 tmpIndex++;
                 continue;
             }

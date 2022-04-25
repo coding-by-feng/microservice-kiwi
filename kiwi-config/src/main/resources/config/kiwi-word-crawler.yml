@@ -52,3 +52,7 @@ baidu:
     app-id: 20116041
     api-key: changeme
     secret-key: changeme
+
+my:
+  config:
+    exclude-db: true

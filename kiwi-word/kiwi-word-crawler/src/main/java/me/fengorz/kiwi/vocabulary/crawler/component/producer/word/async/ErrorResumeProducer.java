@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import org.apache.commons.collections4.ListUtils;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
@@ -29,7 +30,6 @@ import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.sdk.annotation.log.LogMarker;
 import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
 import me.fengorz.kiwi.common.sdk.util.lang.collection.KiwiCollectionUtils;
-import me.fengorz.kiwi.common.sdk.util.spring.SpringUtils;
 import me.fengorz.kiwi.vocabulary.crawler.component.producer.base.AbstractProducer;
 import me.fengorz.kiwi.vocabulary.crawler.component.producer.base.MQProducer;
 import me.fengorz.kiwi.vocabulary.crawler.component.producer.base.MQSender;
@@ -52,16 +52,17 @@ public class ErrorResumeProducer extends AbstractProducer implements MQProducer 
     @Override
     public void produce() {
         // SpringUtils.getBean(ErrorResumeProducer.class).resumeDelPronunciationError();
-        SpringUtils.getAopProxy(this).resumeDelPronunciationError();
-        SpringUtils.getAopProxy(this).resumeOverlap();
+        // SpringUtils.getBean(ErrorResumeProducer.class).resumeOverlap();
+        this.resumeDelPronunciationError();
+        this.resumeOverlap();
     }
 
     @LogMarker
     public void resumeDelPronunciationError() {
         List<FetchQueueDO> list = new ArrayList<>();
         List<FetchQueueDO> delPronunciationFailList =
-            (bizApi.pageQueue(WordCrawlerConstants.STATUS_DEL_PRONUNCIATION_FAIL, 0, 20,
-                WordCrawlerConstants.QUEUE_INFO_TYPE_WORD)).getData();
+            bizApi.pageQueue(WordCrawlerConstants.STATUS_DEL_PRONUNCIATION_FAIL, 0, 20,
+                WordCrawlerConstants.QUEUE_INFO_TYPE_WORD).getData();
         if (KiwiCollectionUtils.isNotEmpty(delPronunciationFailList)) {
             list.addAll(delPronunciationFailList);
         }
@@ -83,7 +84,7 @@ public class ErrorResumeProducer extends AbstractProducer implements MQProducer 
     @LogMarker
     public void resumeOverlap() {
         List<FetchQueueDO> list = new LinkedList<>();
-        bizApi.listOverlapAnyway().getData().stream()
+        ListUtils.emptyIfNull(bizApi.listOverlapAnyway().getData()).stream()
             .peek(wordName -> log.info("Overlapped wordName is {}", wordName)).map(wordName -> {
                 FetchQueueDO queue = bizApi.getAnyOne(wordName).getData();
                 if (queue == null) {

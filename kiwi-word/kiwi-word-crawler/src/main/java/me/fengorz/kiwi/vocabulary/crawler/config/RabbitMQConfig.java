@@ -22,17 +22,15 @@ import org.springframework.amqp.core.DirectExchange;
 import org.springframework.amqp.core.Queue;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
 
 import lombok.RequiredArgsConstructor;
-import me.fengorz.kiwi.common.rabbitmq.config.CommonMQConfig;
 import me.fengorz.kiwi.vocabulary.crawler.config.properties.MqProperties;
 
 /**
- * @Author zhanshifeng @Date 2019/10/26 7:56 PM
+ * @Author zhanshifeng
+ * @Date 2019/10/26 7:56 PM
  */
 @Configuration
-@Import({CommonMQConfig.class})
 @RequiredArgsConstructor
 public class RabbitMQConfig {
 

@@ -25,6 +25,5 @@ import me.fengorz.kiwi.bdf.core.config.CoreConfig;
  * @Author zhanshifeng @Date 2019-09-20 09:28
  */
 @Configuration
-// @MapperScan("me.fengorz.kiwi.admin.mapper")
 @Import({CoreConfig.class})
 public class UpmsBizConfig {}

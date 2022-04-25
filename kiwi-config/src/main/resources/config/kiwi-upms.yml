@@ -10,3 +10,7 @@ ignore:
     - /sys/user/info/*
     - /log/**
     - /sys/user/oneClickRegister
+
+my:
+  config:
+    exclude-db: false

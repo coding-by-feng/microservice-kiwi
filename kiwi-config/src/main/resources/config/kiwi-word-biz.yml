@@ -36,4 +36,6 @@ async:
     queue:
       capacity: 5
 
-
+my:
+  config:
+    exclude-db: false

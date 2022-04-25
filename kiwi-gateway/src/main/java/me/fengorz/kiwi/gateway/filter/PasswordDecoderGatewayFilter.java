@@ -61,9 +61,9 @@ public class PasswordDecoderGatewayFilter extends AbstractGatewayFilterFactory {
             if (StrUtil.isNotBlank(password)) {
                 try {
                     password = KiwiDecodeUtils.decryptAES(password, encodeKey);
-                    System.out.println(password);
+                    log.info("password is {}", password.trim());
                 } catch (Exception e) {
-                    log.error("密码解密失败:{}", password);
+                    log.error("密码解密失败:{}", password.trim());
                     return Mono.error(e);
                 }
                 decodeParamMap.put(SecurityConstants.KEY_PASSWORD, password.trim());

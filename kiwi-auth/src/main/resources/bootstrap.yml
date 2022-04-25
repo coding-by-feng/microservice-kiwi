@@ -17,10 +17,6 @@ spring:
         service-id: kiwi-config
         enabled: true
       profile: ${spring.profiles.active}
-  security:
-    user:
-      password: zsf
-      name: zsf
 
 eureka:
   instance:

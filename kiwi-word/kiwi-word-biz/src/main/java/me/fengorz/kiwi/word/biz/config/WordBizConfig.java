@@ -19,16 +19,24 @@ package me.fengorz.kiwi.word.biz.config;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
+import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.bdf.cache.redis.config.CacheConfig;
 import me.fengorz.kiwi.bdf.core.config.CoreConfig;
 import me.fengorz.kiwi.bdf.core.config.LogAspectConfig;
 import me.fengorz.kiwi.common.es.config.ESConfig;
 import me.fengorz.kiwi.common.fastdfs.config.DfsConfig;
+import me.fengorz.kiwi.common.sdk.config.UtilsBeanConfiguration;
 
 /**
  * @Author zhanshifeng
  * @Date 2019/10/30 3:45 PM
  */
+@Slf4j
 @Configuration
-@Import({CoreConfig.class, CacheConfig.class, DfsConfig.class, ESConfig.class, LogAspectConfig.class})
-public class WordBizConfig {}
+@Import({CoreConfig.class, UtilsBeanConfiguration.class, LogAspectConfig.class, CacheConfig.class, DfsConfig.class,
+    ESConfig.class})
+public class WordBizConfig {
+    public WordBizConfig() {
+        log.info("WordBizConfig...");
+    }
+}

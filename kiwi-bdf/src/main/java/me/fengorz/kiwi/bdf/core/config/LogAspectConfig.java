@@ -47,6 +47,10 @@ import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
 @Profile({"dev", "prod"})
 public class LogAspectConfig {
 
+    public LogAspectConfig() {
+        log.info("LogAspectConfig");
+    }
+
     @Pointcut("@annotation(me.fengorz.kiwi.common.sdk.annotation.log.LogMarker)")
     public void pointcut() {}
 

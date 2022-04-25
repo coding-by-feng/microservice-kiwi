@@ -61,3 +61,6 @@ ignore:
   codeVerifyChannels:
     - /sys/user/oneClickRegister
 
+my:
+  config:
+    exclude-db: true

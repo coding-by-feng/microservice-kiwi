@@ -19,14 +19,15 @@ package me.fengorz.kiwi.vocabulary.crawler.config;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
-import me.fengorz.kiwi.bdf.core.config.CoreConfig;
-import me.fengorz.kiwi.bdf.core.config.LogAspectConfig;
+import me.fengorz.kiwi.bdf.core.config.CoreExcludeDBConfig;
 import me.fengorz.kiwi.common.fastdfs.config.DfsConfig;
+import me.fengorz.kiwi.common.rabbitmq.config.CommonMQConfig;
+import me.fengorz.kiwi.common.sdk.config.UtilsBeanConfiguration;
 
 /**
  * @Author zhanshifeng
  * @Date 2019/10/30 3:45 PM
  */
 @Configuration
-@Import({CoreConfig.class, DfsConfig.class, LogAspectConfig.class})
+@Import({CoreExcludeDBConfig.class, DfsConfig.class, UtilsBeanConfiguration.class, CommonMQConfig.class})
 public class CrawlerConfig {}

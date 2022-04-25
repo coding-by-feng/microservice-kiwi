@@ -1,6 +1,6 @@
 /*
  *
- * Copyright [2019~2025] [zhanshifeng]
+ * Copyright [2019~2025] [codingByFeng]
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -14,24 +14,30 @@
  *
  */
 
-package me.fengorz.kiwi.gateway;
+package me.fengorz.kiwi.bdf.core.config;
 
-import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration;
-import org.springframework.cloud.client.SpringCloudApplication;
+import org.springframework.context.annotation.*;
+
+import me.fengorz.kiwi.bdf.core.mapper.SeqMapper;
+import me.fengorz.kiwi.bdf.core.service.ISeqService;
+import me.fengorz.kiwi.common.sdk.config.UtilsBeanConfiguration;
 
 /**
+ * @Description 排除DB的配置类
  * @Author zhanshifeng
- * @Date 2019-09-19 15:22
+ * @Date 2022/4/24 23:07
  */
-@SpringCloudApplication
+@Configuration
 @ImportAutoConfiguration(
     exclude = {DataSourceAutoConfiguration.class, DataSourceTransactionManagerAutoConfiguration.class})
-public class GatewayApplication {
-
-    public static void main(String[] args) {
-        SpringApplication.run(GatewayApplication.class, args);
-    }
-}
+@ComponentScan(basePackages = {"me.fengorz.kiwi"},
+    excludeFilters = {
+        @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, value = {ISeqService.class, SeqMapper.class})})
+@Import({UtilsBeanConfiguration.class})
+@EnableAspectJAutoProxy(proxyTargetClass = true, exposeProxy = true)
+@ConditionalOnProperty(value = "my.config.exclude-db", havingValue = "true")
+public class CoreExcludeDBConfig {}

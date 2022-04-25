@@ -16,9 +16,14 @@
 
 package me.fengorz.kiwi.bdf.cache.redis.config;
 
+import java.util.Collections;
+
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration;
+import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.cache.concurrent.ConcurrentMapCache;
+import org.springframework.cache.support.SimpleCacheManager;
 import org.springframework.context.annotation.AdviceMode;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -60,12 +65,12 @@ public class CacheConfig {
         return redisTemplate;
     }
 
-    // @Bean
-    // public CacheManager cacheManager() {
-    // // configure and return an implementation of Spring's CacheManager SPI
-    // SimpleCacheManager cacheManager = new SimpleCacheManager();
-    // cacheManager.setCaches(Arrays.asList(new ConcurrentMapCache("default")));
-    // return cacheManager;
-    // }
+    @Bean
+    public CacheManager cacheManager() {
+        // configure and return an implementation of Spring's CacheManager SPI
+        SimpleCacheManager cacheManager = new SimpleCacheManager();
+        cacheManager.setCaches(Collections.singletonList(new ConcurrentMapCache("kiwi")));
+        return cacheManager;
+    }
 
 }

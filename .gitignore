@@ -194,3 +194,4 @@ kiwi-visual/src/
 kiwi-word/kiwi-word-biz/src/main/resources/rebel-remote.xml
 kiwi-word/kiwi-word-biz/src/test/com/test/
 kiwi-word/kiwi-word-crawler/src/main/resources/rebel-remote.xml
+!/logs/

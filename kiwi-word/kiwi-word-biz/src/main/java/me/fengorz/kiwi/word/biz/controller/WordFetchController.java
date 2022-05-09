@@ -36,6 +36,7 @@ import me.fengorz.kiwi.word.api.dto.queue.result.FetchPhraseResultDTO;
 import me.fengorz.kiwi.word.api.dto.queue.result.FetchPhraseRunUpResultDTO;
 import me.fengorz.kiwi.word.api.dto.queue.result.FetchWordResultDTO;
 import me.fengorz.kiwi.word.api.entity.FetchQueueDO;
+import me.fengorz.kiwi.word.api.util.WordApiUtils;
 import me.fengorz.kiwi.word.biz.service.base.IWordFetchQueueService;
 import me.fengorz.kiwi.word.biz.service.operate.ICleanerService;
 import me.fengorz.kiwi.word.biz.service.operate.ICrawlerService;
@@ -66,12 +67,12 @@ public class WordFetchController extends BaseController {
 
     @GetMapping("/getOneByWordName")
     public R<FetchQueueDO> getOneByWordName(@RequestParam String wordName) {
-        return R.success(queueService.getOneInUnLock(wordName));
+        return R.success(queueService.getOneInUnLock(WordApiUtils.convert(wordName)));
     }
 
     @GetMapping("/getAnyOne")
     public R<FetchQueueDO> getAnyOne(@RequestParam String wordName) {
-        return R.success(queueService.getAnyOne(wordName));
+        return R.success(queueService.getAnyOne(WordApiUtils.convert(wordName)));
     }
 
     @GetMapping(value = "/pageQueue/{status}/{current}/{size}/{infoType}")

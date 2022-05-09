@@ -31,6 +31,7 @@ import me.fengorz.kiwi.vocabulary.crawler.component.scheduler.base.SchedulerDTO;
 import me.fengorz.kiwi.word.api.entity.FetchQueueDO;
 import me.fengorz.kiwi.word.api.feign.IBizAPI;
 import me.fengorz.kiwi.word.api.feign.IQueryAPI;
+import me.fengorz.kiwi.word.api.util.WordApiUtils;
 
 /**
  * 自动将所有未入缓存的单词纳入缓存 @Author zhanshifeng @Date 2020/9/17 6:14 PM
@@ -74,7 +75,7 @@ public class CacheWordScheduler extends AbstractScheduler implements IScheduler 
             // String url = WordCrawlerConstants.URL_QUERY_WORD + URLUtil.decode(wordName);
             // HttpUtil.get(url);
             // log.info(url);
-            queryAPI.queryWord(wordName);
+            queryAPI.queryWord(WordApiUtils.convert(wordName));
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         } finally {

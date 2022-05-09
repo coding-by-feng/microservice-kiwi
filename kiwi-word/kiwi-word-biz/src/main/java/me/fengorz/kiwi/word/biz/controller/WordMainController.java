@@ -1,19 +1,21 @@
 /*
  *
- * Copyright [2019~2025] [zhanshifeng]
- *
+ * Copyright [2019~2025] [codingByFeng]
+ * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
- *
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
- *
+ * 
  *
  */
 package me.fengorz.kiwi.word.biz.controller;
+
+import static me.fengorz.kiwi.word.api.util.WordApiUtils.convert;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -65,13 +67,14 @@ public class WordMainController extends BaseController {
     @GetMapping("/removeByWordName/{wordName}")
     // @PreAuthorize("@pms.hasPermission('biz_wordmain_del')")
     public R<Boolean> removeByWordName(@PathVariable String wordName) {
-        queueService.startFetchOnAsync(wordName);
+        queueService.startFetchOnAsync(convert(wordName));
         return R.success();
     }
 
     @PostMapping("/query/gate/{keyword}")
-    public R<IPage<WordQueryVO>> queryGate(@PathVariable(name = "keyword") String keyword,
-        Integer current, Integer size) {
+    public R<IPage<WordQueryVO>> queryGate(@PathVariable(name = "keyword") String keyword, Integer current,
+        Integer size) {
+        keyword = convert(keyword);
         log.info(KiwiStringUtils.format("========>queryGate[{}],[time={}]", keyword, KiwiDateUtils.now()));
         if (KiwiStringUtils.isContainChinese(keyword)) {
             return R.success(operateService.queryWordByCh(keyword, WebTools.deductCurrent(current), size));
@@ -83,6 +86,7 @@ public class WordMainController extends BaseController {
     @LogMarker(isPrintParameter = true)
     @GetMapping("/query/{wordName}")
     public R<IPage<WordQueryVO>> queryWord(@PathVariable(value = "wordName") String wordName) {
+        wordName = convert(wordName);
         IPage<WordQueryVO> page = new Page<>();
         if (KiwiStringUtils.isNotBlank(wordName)) {
             List<WordQueryVO> list = new LinkedList<>();
@@ -104,11 +108,12 @@ public class WordMainController extends BaseController {
     @LogMarker("模糊查询单词列表")
     @PostMapping("/fuzzyQueryList")
     public R<List<FuzzyQueryResultDTO>> fuzzyQueryList(@NotBlank String wordName, Page<WordMainDO> page) {
-        return R.success(mainService.fuzzyQueryList(page, wordName));
+        return R.success(mainService.fuzzyQueryList(page, convert(wordName)));
     }
 
     @GetMapping("/listOverlapAnyway")
     public R<List<String>> listOverlapAnyway() {
         return R.success(mainService.listOverlapAnyway());
     }
+
 }

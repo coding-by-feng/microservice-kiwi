@@ -49,4 +49,5 @@ public class KiwiStringUtils extends StrUtil {
             || CJK_RADICALS_SUPPLEMENT == ub || CJK_UNIFIED_IDEOGRAPHS_EXTENSION_A == ub
             || CJK_UNIFIED_IDEOGRAPHS_EXTENSION_B == ub;
     }
+
 }

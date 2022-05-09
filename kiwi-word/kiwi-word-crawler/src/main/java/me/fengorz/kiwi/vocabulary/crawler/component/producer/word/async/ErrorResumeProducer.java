@@ -36,6 +36,7 @@ import me.fengorz.kiwi.vocabulary.crawler.component.producer.base.MQSender;
 import me.fengorz.kiwi.word.api.common.WordCrawlerConstants;
 import me.fengorz.kiwi.word.api.entity.FetchQueueDO;
 import me.fengorz.kiwi.word.api.feign.IBizAPI;
+import me.fengorz.kiwi.word.api.util.WordApiUtils;
 
 /**
  * 爬虫异常重启-消息队列生产者 @Author zhanshifeng @Date 2019/10/30 10:33 AM
@@ -86,10 +87,10 @@ public class ErrorResumeProducer extends AbstractProducer implements MQProducer 
         List<FetchQueueDO> list = new LinkedList<>();
         ListUtils.emptyIfNull(bizApi.listOverlapAnyway().getData()).stream()
             .peek(wordName -> log.info("Overlapped wordName is {}", wordName)).map(wordName -> {
-                FetchQueueDO queue = bizApi.getAnyOne(wordName).getData();
+                FetchQueueDO queue = bizApi.getAnyOne(WordApiUtils.convert(wordName)).getData();
                 if (queue == null) {
                     log.info("The word queue does not exist, push it[{}] in a queue", wordName);
-                    this.bizApi.queryWord(wordName);
+                    this.bizApi.queryWord(WordApiUtils.convert(wordName));
                 }
                 return queue;
             }).peek(word -> log.info("Overlapped word is {}", word)).filter(Objects::nonNull)

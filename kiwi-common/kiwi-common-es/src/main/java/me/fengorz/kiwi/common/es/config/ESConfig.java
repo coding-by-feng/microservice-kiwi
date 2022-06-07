@@ -36,6 +36,10 @@ public class ESConfig extends AbstractElasticsearchConfiguration {
 
     @Value("${spring.elasticsearch.rest.uris}")
     private String hostAndPort;
+    @Value("${spring.elasticsearch.rest.username}")
+    private String username;
+    @Value("${spring.elasticsearch.rest.password}")
+    private String password;
 
     @Override
     @Bean
@@ -43,7 +47,9 @@ public class ESConfig extends AbstractElasticsearchConfiguration {
 
         System.out.println("----------------------->>>>>>>>>>>>>>>>>>>>>" + hostAndPort);
 
-        final ClientConfiguration clientConfiguration = ClientConfiguration.builder().connectedTo(hostAndPort).build();
+        final ClientConfiguration clientConfiguration = ClientConfiguration.builder().connectedTo(hostAndPort)
+                .withBasicAuth(username, password)
+                .build();
 
         return RestClients.create(clientConfiguration).rest();
     }

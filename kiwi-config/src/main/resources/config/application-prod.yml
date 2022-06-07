@@ -22,6 +22,8 @@ spring:
   elasticsearch:
     rest:
       uris: kiwi-es:9200
+      username: ENC(NKy6wa5SuHBhQmfLWf6Zv8wf8sPMaE0b)
+      password: ENC(oj9wNYu52oQH1d9T0zHeGDLz7P7em71u)
   main:
     allow-bean-definition-overriding: true
 #  sleuth:

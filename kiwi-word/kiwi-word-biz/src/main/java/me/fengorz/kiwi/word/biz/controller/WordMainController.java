@@ -15,7 +15,7 @@
  */
 package me.fengorz.kiwi.word.biz.controller;
 
-import static me.fengorz.kiwi.word.api.util.WordApiUtils.convert;
+import static me.fengorz.kiwi.word.api.util.WordApiUtils.decode;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -67,14 +67,14 @@ public class WordMainController extends BaseController {
     @GetMapping("/removeByWordName/{wordName}")
     // @PreAuthorize("@pms.hasPermission('biz_wordmain_del')")
     public R<Boolean> removeByWordName(@PathVariable String wordName) {
-        queueService.startFetchOnAsync(convert(wordName));
+        queueService.startFetchOnAsync(decode(wordName));
         return R.success();
     }
 
     @PostMapping("/query/gate/{keyword}")
     public R<IPage<WordQueryVO>> queryGate(@PathVariable(name = "keyword") String keyword, Integer current,
         Integer size) {
-        keyword = convert(keyword);
+        keyword = decode(keyword);
         log.info(KiwiStringUtils.format("========>queryGate[{}],[time={}]", keyword, KiwiDateUtils.now()));
         if (KiwiStringUtils.isContainChinese(keyword)) {
             return R.success(operateService.queryWordByCh(keyword, WebTools.deductCurrent(current), size));
@@ -86,7 +86,7 @@ public class WordMainController extends BaseController {
     @LogMarker(isPrintParameter = true)
     @GetMapping("/query/{wordName}")
     public R<IPage<WordQueryVO>> queryWord(@PathVariable(value = "wordName") String wordName) {
-        wordName = convert(wordName);
+        wordName = decode(wordName);
         IPage<WordQueryVO> page = new Page<>();
         if (KiwiStringUtils.isNotBlank(wordName)) {
             List<WordQueryVO> list = new LinkedList<>();
@@ -108,7 +108,7 @@ public class WordMainController extends BaseController {
     @LogMarker("模糊查询单词列表")
     @PostMapping("/fuzzyQueryList")
     public R<List<FuzzyQueryResultDTO>> fuzzyQueryList(@NotBlank String wordName, Page<WordMainDO> page) {
-        return R.success(mainService.fuzzyQueryList(page, convert(wordName)));
+        return R.success(mainService.fuzzyQueryList(page, decode(wordName)));
     }
 
     @GetMapping("/listOverlapAnyway")

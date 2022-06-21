@@ -67,12 +67,12 @@ public class WordFetchController extends BaseController {
 
     @GetMapping("/getOneByWordName")
     public R<FetchQueueDO> getOneByWordName(@RequestParam String wordName) {
-        return R.success(queueService.getOneInUnLock(WordApiUtils.convert(wordName)));
+        return R.success(queueService.getOneInUnLock(WordApiUtils.decode(wordName)));
     }
 
     @GetMapping("/getAnyOne")
     public R<FetchQueueDO> getAnyOne(@RequestParam String wordName) {
-        return R.success(queueService.getAnyOne(WordApiUtils.convert(wordName)));
+        return R.success(queueService.getAnyOne(WordApiUtils.decode(wordName)));
     }
 
     @GetMapping(value = "/pageQueue/{status}/{current}/{size}/{infoType}")

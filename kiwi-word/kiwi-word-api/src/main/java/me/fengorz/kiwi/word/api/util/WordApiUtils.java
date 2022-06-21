@@ -30,8 +30,12 @@ import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
 @UtilityClass
 public class WordApiUtils {
 
-    public static String convert(String word) {
+    public static String decode(String word) {
         return word.replaceAll(REGEX, GlobalConstants.SYMBOL_FORWARD_SLASH);
+    }
+
+    public static String encode(String word) {
+        return word.replaceAll(GlobalConstants.SYMBOL_FORWARD_SLASH, REGEX);
     }
 
     private static final String REGEX = "\\)\\(";

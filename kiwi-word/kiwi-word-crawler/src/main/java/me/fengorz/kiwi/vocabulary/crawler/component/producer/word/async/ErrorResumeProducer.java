@@ -87,10 +87,10 @@ public class ErrorResumeProducer extends AbstractProducer implements MQProducer 
         List<FetchQueueDO> list = new LinkedList<>();
         ListUtils.emptyIfNull(bizApi.listOverlapAnyway().getData()).stream()
             .peek(wordName -> log.info("Overlapped wordName is {}", wordName)).map(wordName -> {
-                FetchQueueDO queue = bizApi.getAnyOne(WordApiUtils.convert(wordName)).getData();
+                FetchQueueDO queue = bizApi.getAnyOne(WordApiUtils.encode(wordName)).getData();
                 if (queue == null) {
                     log.info("The word queue does not exist, push it[{}] in a queue", wordName);
-                    this.bizApi.queryWord(WordApiUtils.convert(wordName));
+                    this.bizApi.queryWord(WordApiUtils.encode(wordName));
                 }
                 return queue;
             }).peek(word -> log.info("Overlapped word is {}", word)).filter(Objects::nonNull)

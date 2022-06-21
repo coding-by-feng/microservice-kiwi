@@ -262,9 +262,23 @@ chmod 777 deployKiwi.sh
 # elasticsearch
 
 ```
+docker run -d -p 9200:9200 -p 9300:9300 --hostname kiwi-es -e "discovery.type=single-node" -e "xpack.security.enabled=true" -e "ES_JAVA_OPTS=-Xms512m -Xmx512m" --name kiwi-es -v es_config:/usr/share/elasticsearch/config  -v es_data:/usr/share/elasticsearch/data elasticsearch:7.16.1
+ 
+#进入容器
+/elasticsearch-setup-passwords auto
+ 
 docker pull docker.elastic.co/elasticsearch/elasticsearch:7.6.2
 docker run -d --name kiwi-es -p 9200:9200 -p 9300:9300 -e "discovery.type=single-node" docker.elastic.co/elasticsearch/elasticsearch:7.6.2
 curl http://localhost:9200
+
+elasticsearch-users useradd xxsuperuser -r superuser
+
+curl -XPUT -u xxsuperuser:xxxxx http://xxxxx:9200/_xpack/security/user/xxxxxxxusername/_password -H 
+"Content-Type: application/json" -d '
+{
+  "password": "xxxx"
+}'
+
 ```
 
 安装完了注意创建index，名为`kiwi_vocabulary`

@@ -18,6 +18,7 @@ package me.fengorz.kiwi.vocabulary.crawler.service.impl;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 
 import org.jsoup.Jsoup;
@@ -32,6 +33,7 @@ import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
 import me.fengorz.kiwi.common.sdk.util.lang.collection.KiwiCollectionUtils;
 import me.fengorz.kiwi.common.sdk.util.lang.string.KiwiStringUtils;
 import me.fengorz.kiwi.common.sdk.util.validate.KiwiAssertUtils;
+import me.fengorz.kiwi.vocabulary.crawler.common.enumeration.JsoupRootTypeEnum;
 import me.fengorz.kiwi.vocabulary.crawler.constant.CrawlerSourceEnum;
 import me.fengorz.kiwi.vocabulary.crawler.service.IJsoupService;
 import me.fengorz.kiwi.vocabulary.crawler.util.CrawlerAssertUtils;
@@ -60,10 +62,13 @@ public class JsoupServiceImpl implements IJsoupService {
     private static final String FETCH_MAIN_WORD_NAME_EXCEPTION = "The word name of {} is not found!";
     private static final String KEY_ROOT = "pr entry-body__el";
     private static final String KEY_ROOT_PHRASE = "entry-body";
+    private static final String KEY_ROOT_IDIOM = "di-body";
     private static final String FETCH_ROOT_EXCEPTION = "The {} is not found!";
     private static final String KEY_MAIN_PARAPHRASES = "sense-body dsense_b";
     private static final String FETCH_MAIN_PARAPHRASES_EXCEPTION = "The mainParaphrases of {} is not found!";
     private static final String KEY_CODE_HEADER = "pos-header dpos-h";
+    private static final String KEY_CODE_IDIOM_HEADER = "idiom-block";
+    private static final String KEY_CODE_IDIOM_HEADER_UNUSED_PREFIX = "pr";
     private static final String FETCH_CODE_HEADER_EXCEPTION = "The codeHeader of {} is not found or size great than 1!";
     private static final String KEY_HEADER_CODE = "pos dpos";
     private static final String KEY_HEADER_LABEL = "gram dgram";
@@ -322,9 +327,22 @@ public class JsoupServiceImpl implements IJsoupService {
         KiwiAssertUtils.serviceEmpty(jsoupWord, FETCH_MAIN_WORD_NAME_EXCEPTION, word);
         resultDTO.setWordName(jsoupWord);
 
-        Elements root = requireJsoupElements(doc, () -> KEY_ROOT);
+        AtomicReference<JsoupRootTypeEnum> currentRootType = new AtomicReference<>();
+        Elements root = requireJsoupElements(doc, () -> {
+            currentRootType.set(JsoupRootTypeEnum.WORD);
+            return KEY_ROOT;
+        });
         if (root == null || root.size() == 0) {
-            root = doc.getElementsByClass(KEY_ROOT_PHRASE);
+            root = requireJsoupElements(doc, () -> {
+                currentRootType.set(JsoupRootTypeEnum.PHRASE);
+                return KEY_ROOT_PHRASE;
+            });
+        }
+        if (root == null || root.size() == 0) {
+            root = requireJsoupElements(doc, () -> {
+                currentRootType.set(JsoupRootTypeEnum.IDIOM);
+                return KEY_ROOT_IDIOM;
+            });
         }
         CrawlerAssertUtils.notEmpty(root, FETCH_ROOT_EXCEPTION, word);
         List<FetchWordCodeDTO> codeDTOList = new LinkedList<>();
@@ -337,12 +355,20 @@ public class JsoupServiceImpl implements IJsoupService {
             FetchWordCodeDTO codeDTO = new FetchWordCodeDTO();
             List<FetchWordPronunciationDTO> pronunciationDTOList = new LinkedList<>();
             List<FetchParaphraseDTO> paraphraseDTOList = new LinkedList<>();
-            Elements codeHeader = block.getElementsByClass(KEY_CODE_HEADER);
+            Elements codeHeader = requireJsoupElements(doc, () -> {
+                if (currentRootType.get() == JsoupRootTypeEnum.IDIOM) {
+                    return KEY_CODE_IDIOM_HEADER;
+                }
+                return KEY_CODE_HEADER;
+            });
+            if (currentRootType.get() == JsoupRootTypeEnum.IDIOM && codeHeader.hasClass(KEY_CODE_IDIOM_HEADER_UNUSED_PREFIX)) {
+                codeHeader.remove(0);
+            }
             // The number of parts of code and label per main paraphrase block can normally only be 1
             // TODO ZSF 大于0的时候这里要特殊处理，比如：flirt，目前只是抓取主要词性，关联单词没有抓到
             CrawlerAssertUtils.mustBeTrue(codeHeader != null && !codeHeader.isEmpty(), FETCH_CODE_HEADER_EXCEPTION,
                 word);
-            // TODO ZSF fetchWordResultDTO 放入 爬虫回来的wordName，不是传进来的wordName
+            // TODO ZSF fetchWordResultDTO 放入爬虫回来的wordName，不是传进来的wordName
             final Element header = codeHeader.get(0);
             Optional.ofNullable(header.getElementsByClass(KEY_HEADER_CODE))
                 .flatMap(element -> Optional.ofNullable(element.text())).ifPresent(codeDTO::setCharacterCode);

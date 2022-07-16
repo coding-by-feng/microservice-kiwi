@@ -27,7 +27,7 @@ import me.fengorz.kiwi.common.sdk.exception.dfs.DfsOperateException;
 /**
  * @author zhanshifeng
  */
-public interface IDfsService {
+public interface DfsService {
 
     String uploadFile(InputStream inputStream, long size, String extName) throws DfsOperateException;
 

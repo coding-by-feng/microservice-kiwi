@@ -16,6 +16,8 @@
 
 package me.fengorz.kiwi.word.biz.config;
 
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
@@ -26,6 +28,7 @@ import me.fengorz.kiwi.bdf.core.config.LogAspectConfig;
 import me.fengorz.kiwi.common.es.config.ESConfig;
 import me.fengorz.kiwi.common.fastdfs.config.DfsConfig;
 import me.fengorz.kiwi.common.sdk.config.UtilsBeanConfiguration;
+import me.fengorz.kiwi.word.biz.model.TtsConfig;
 
 /**
  * @Author zhanshifeng
@@ -36,7 +39,15 @@ import me.fengorz.kiwi.common.sdk.config.UtilsBeanConfiguration;
 @Import({CoreConfig.class, UtilsBeanConfiguration.class, LogAspectConfig.class, CacheConfig.class, DfsConfig.class,
     ESConfig.class})
 public class WordBizConfig {
+
     public WordBizConfig() {
         log.info("WordBizConfig...");
     }
+
+    @Bean
+    @ConfigurationProperties(prefix = "tts.voicerss")
+    public TtsConfig ttsConfig() {
+        return new TtsConfig();
+    }
+
 }

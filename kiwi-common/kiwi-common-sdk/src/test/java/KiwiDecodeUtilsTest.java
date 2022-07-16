@@ -14,6 +14,7 @@
  *
  */
 
+import org.junit.jupiter.api.Test;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -24,9 +25,9 @@ import me.fengorz.kiwi.common.sdk.util.cipher.KiwiDecodeUtils;
  */
 public class KiwiDecodeUtilsTest {
 
-    // @Test
+    @Test
     public void test() {
-        System.out.println(KiwiDecodeUtils.decryptAES("qAOw8ST25fWeUm2yX52OXg==", "MyKiwiVocabulary").trim());
+        System.out.println(KiwiDecodeUtils.decryptAES("NKy6wa5SuHBhQmfLWf6Zv8wf8sPMaE0b", "coding-by-feng").trim());
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         System.out.println(passwordEncoder.encode("123456"));
     }

@@ -42,8 +42,8 @@ import me.fengorz.kiwi.word.api.vo.detail.ParaphraseVO;
 import me.fengorz.kiwi.word.api.vo.star.ParaphraseStarItemVO;
 import me.fengorz.kiwi.word.biz.service.base.IParaphraseService;
 import me.fengorz.kiwi.word.biz.service.base.IParaphraseStarListService;
-import me.fengorz.kiwi.word.biz.service.base.IWordReviewService;
 import me.fengorz.kiwi.word.biz.service.operate.IOperateService;
+import me.fengorz.kiwi.word.biz.service.operate.IReviewService;
 
 /**
  * 单词本
@@ -61,7 +61,7 @@ public class ParaphraseStarListController extends BaseController {
     private final IParaphraseStarListService starListService;
     private final IOperateService operateService;
     private final IParaphraseService paraphraseService;
-    private final IWordReviewService reviewService;
+    private final IReviewService reviewService;
     private final ISeqService seqService;
 
     /**

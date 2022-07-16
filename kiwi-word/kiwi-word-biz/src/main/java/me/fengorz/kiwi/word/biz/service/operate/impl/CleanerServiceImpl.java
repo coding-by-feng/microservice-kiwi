@@ -29,7 +29,7 @@ import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import me.fengorz.kiwi.common.fastdfs.service.IDfsService;
+import me.fengorz.kiwi.common.fastdfs.service.DfsService;
 import me.fengorz.kiwi.common.sdk.util.lang.collection.KiwiCollectionUtils;
 import me.fengorz.kiwi.common.sdk.util.lang.string.KiwiStringUtils;
 import me.fengorz.kiwi.word.api.common.WordCrawlerConstants;
@@ -46,7 +46,7 @@ import me.fengorz.kiwi.word.biz.service.operate.IOperateService;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class CleanerService implements ICleanerService {
+public class CleanerServiceImpl implements ICleanerService {
 
     private final IOperateService operateService;
     private final IWordFetchQueueService queueService;
@@ -57,7 +57,7 @@ public class CleanerService implements ICleanerService {
     private final IPronunciationService pronunciationService;
     private final IWordMainVariantService variantService;
     private final IParaphrasePhraseService phraseService;
-    private final IDfsService dfsService;
+    private final DfsService dfsService;
 
     @Override
     @Transactional(rollbackFor = Exception.class)

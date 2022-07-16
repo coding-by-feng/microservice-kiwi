@@ -17,7 +17,7 @@ package me.fengorz.kiwi.word.biz.controller;
 
 import static me.fengorz.kiwi.word.api.util.WordApiUtils.decode;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.validation.constraints.NotBlank;
@@ -42,8 +42,8 @@ import me.fengorz.kiwi.word.api.entity.WordMainDO;
 import me.fengorz.kiwi.word.api.vo.detail.WordQueryVO;
 import me.fengorz.kiwi.word.biz.service.base.IWordFetchQueueService;
 import me.fengorz.kiwi.word.biz.service.base.IWordMainService;
-import me.fengorz.kiwi.word.biz.service.base.IWordReviewService;
 import me.fengorz.kiwi.word.biz.service.operate.IOperateService;
+import me.fengorz.kiwi.word.biz.service.operate.IReviewService;
 
 /**
  * 单词主表
@@ -61,7 +61,7 @@ public class WordMainController extends BaseController {
     private final IWordMainService mainService;
     private final IOperateService operateService;
     private final IWordFetchQueueService queueService;
-    private final IWordReviewService reviewService;
+    private final IReviewService reviewService;
     private final DocumentOperations documentOperations;
 
     @GetMapping("/removeByWordName/{wordName}")
@@ -89,7 +89,7 @@ public class WordMainController extends BaseController {
         wordName = decode(wordName);
         IPage<WordQueryVO> page = new Page<>();
         if (KiwiStringUtils.isNotBlank(wordName)) {
-            List<WordQueryVO> list = new LinkedList<>();
+            List<WordQueryVO> list = new ArrayList<>(1);
             list.add(operateService.queryWord(wordName));
             page.setRecords(list);
         }

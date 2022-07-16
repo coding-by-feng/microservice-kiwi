@@ -31,17 +31,19 @@ import com.github.tobato.fastdfs.service.FastFileStorageClient;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.fastdfs.constant.DfsConstants;
-import me.fengorz.kiwi.common.fastdfs.service.IDfsService;
+import me.fengorz.kiwi.common.fastdfs.service.DfsService;
 import me.fengorz.kiwi.common.sdk.exception.dfs.DfsOperateDeleteException;
 import me.fengorz.kiwi.common.sdk.exception.dfs.DfsOperateException;
 
 /**
- * @Description Dfs分布式文件服务类 @Author zhanshifeng @Date 2019/11/4 10:58 AM
+ * @Description Dfs分布式文件服务类
+ * @Author zhanshifeng
+ * @Date 2019/11/4 10:58 AM
  */
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class DfsService implements IDfsService {
+public class DfsServiceImpl implements DfsService {
 
     /**
      * 面向普通应用的文件操作接口

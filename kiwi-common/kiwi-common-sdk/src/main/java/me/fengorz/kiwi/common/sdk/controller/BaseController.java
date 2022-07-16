@@ -49,4 +49,5 @@ public abstract class BaseController {
     protected String getMessageFromProperties(String code, Object... args) {
         return this.propertiesMessageSource.getMessage(code, args, LocaleContextHolder.getLocale());
     }
+
 }

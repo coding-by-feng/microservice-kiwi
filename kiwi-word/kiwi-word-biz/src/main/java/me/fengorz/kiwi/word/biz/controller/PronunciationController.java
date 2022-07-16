@@ -27,9 +27,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import me.fengorz.kiwi.common.fastdfs.service.IDfsService;
+import me.fengorz.kiwi.common.fastdfs.service.DfsService;
 import me.fengorz.kiwi.common.sdk.annotation.log.LogMarker;
-import me.fengorz.kiwi.common.sdk.controller.BaseController;
+import me.fengorz.kiwi.common.sdk.controller.AbstractDfsController;
 import me.fengorz.kiwi.common.sdk.exception.dfs.DfsOperateException;
 import me.fengorz.kiwi.common.sdk.web.WebTools;
 import me.fengorz.kiwi.word.api.entity.PronunciationDO;
@@ -45,15 +45,10 @@ import me.fengorz.kiwi.word.biz.service.base.IPronunciationService;
 @RequiredArgsConstructor
 @RequestMapping("/word/pronunciation")
 @Slf4j
-public class PronunciationController extends BaseController {
+public class PronunciationController extends AbstractDfsController {
 
-    private static final String CONTENT_TYPE = "Content-Type";
-    private static final String AUDIO_MPEG = "audio/mpeg";
-    private static final String ACCEPT_RANGES = "Accept-Ranges";
-    private static final String BYTES = "bytes";
-    private static final String CONTENT_LENGTH = "Content-Length";
     private final IPronunciationService wordPronunciationService;
-    private final IDfsService dfsService;
+    private final DfsService dfsService;
 
     @LogMarker("下载播放单词发音音频")
     @GetMapping("/downloadVoice/{pronunciationId}")

@@ -110,3 +110,8 @@ management:
   health:
     elasticsearch:
       enabled: false
+
+tts:
+  voicerss:
+    api-key-1: '02df0a8f48b641548ec4224c24ebff0e'
+    api-key-2: '0e3c0a35570543249f743f74c027ef8b'

@@ -38,6 +38,7 @@ import me.fengorz.kiwi.common.sdk.exception.ServiceException;
 import me.fengorz.kiwi.common.sdk.util.lang.string.KiwiStringUtils;
 import me.fengorz.kiwi.word.api.common.WordCrawlerConstants;
 import me.fengorz.kiwi.word.api.entity.FetchQueueDO;
+import me.fengorz.kiwi.word.api.enumeration.CrawlerStatusEnum;
 import me.fengorz.kiwi.word.biz.mapper.FetchQueueMapper;
 import me.fengorz.kiwi.word.biz.mapper.WordMainMapper;
 import me.fengorz.kiwi.word.biz.service.base.IWordFetchQueueService;
@@ -62,13 +63,7 @@ public class WordFetchQueueServiceImpl extends ServiceImpl<FetchQueueMapper, Fet
     private void fetch(String wordName, String derivation, Integer wordId, Integer... infoType) {
         // 如果没传infoType要判断是否包含空格
         int thisInfoType;
-        if (infoType == null || infoType.length == 0) {
-            boolean isPhrase = wordName.contains(GlobalConstants.SPACING);
-            thisInfoType =
-                isPhrase ? WordCrawlerConstants.QUEUE_INFO_TYPE_PHRASE : WordCrawlerConstants.QUEUE_INFO_TYPE_WORD;
-        } else {
-            thisInfoType = infoType[0];
-        }
+        thisInfoType = WordBizUtils.buildThisInfoType(wordName, infoType);
 
         FetchQueueDO one = this.getOneAnyhow(wordName, thisInfoType);
 
@@ -177,20 +172,20 @@ public class WordFetchQueueServiceImpl extends ServiceImpl<FetchQueueMapper, Fet
         FetchQueueDO one = this.getOneAnyhow(wordName);
         // 如果队列记录不存在
         if (one == null) {
-            log.info("The word {} has not been fetched and is about to be fetched.", wordName);
+            log.info("The word [{}] has not been fetched and is about to be fetched.", wordName);
             this.insertOne(null, wordName, wordName, WordCrawlerConstants.STATUS_TO_DEL_BASE);
             return;
         }
 
         // 爬虫状态进行中的不可以打断
         if (WordBizUtils.fetchQueueIsRunning(one.getFetchStatus())) {
-            log.info("The word {} queue is locked and cannot change the queue state.", wordName);
+            log.warn("The word {} queue is locked and cannot change the queue state.", wordName);
             return;
         }
 
-        log.info("Update the status of the word {} to query error!", wordName);
         this.updateById(
-            one.setFetchStatus(WordCrawlerConstants.STATUS_TO_QUERY_ERROR).setIsLock(GlobalConstants.FLAG_NO));
+            one.setFetchStatus(CrawlerStatusEnum.STATUS_TO_QUERY_ERROR.getStatus()).setIsLock(GlobalConstants.FLAG_NO));
+        log.info("Update the status of the word {} to query error!", wordName);
     }
 
     @Override
@@ -251,8 +246,8 @@ public class WordFetchQueueServiceImpl extends ServiceImpl<FetchQueueMapper, Fet
     @Override
     public FetchQueueDO getOneAnyhow(String wordName, Integer... infoType) {
         return this.getOne(
-            Wrappers.<FetchQueueDO>lambdaQuery().eq(FetchQueueDO::getWordName, wordName).eq(FetchQueueDO::getInfoType,
-                infoType == null || infoType.length == 0 ? WordCrawlerConstants.QUEUE_INFO_TYPE_WORD : infoType[0]));
+            Wrappers.<FetchQueueDO>lambdaQuery().eq(FetchQueueDO::getWordName, wordName)
+                    .eq(FetchQueueDO::getInfoType, WordBizUtils.buildThisInfoType(wordName, infoType)));
     }
 
     @Override

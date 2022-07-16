@@ -1,6 +1,6 @@
 /*
  *
- * Copyright [2019~2025] [codingByFeng]
+ * Copyright [2019~2025] [zhanshifeng]
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -14,25 +14,17 @@
  *
  */
 
-package me.fengorz.kiwi.common.sdk.exception;
-
-import lombok.NoArgsConstructor;
+package me.fengorz.kiwi.common.sdk.controller;
 
 /**
- * @Author zhanshifeng @Date 2019-09-10 14:48
+ * @Description 抽象控制层基类 @Author zhanshifeng @Date 2020/4/21 7:28 PM
  */
-@NoArgsConstructor
-public class CheckedException extends BaseException {
+public abstract class AbstractDfsController extends BaseController {
 
-    public CheckedException(String message) {
-        super(message);
-    }
+    protected static final String CONTENT_TYPE = "Content-Type";
+    protected static final String AUDIO_MPEG = "audio/mpeg";
+    protected static final String ACCEPT_RANGES = "Accept-Ranges";
+    protected static final String BYTES = "bytes";
+    protected static final String CONTENT_LENGTH = "Content-Length";
 
-    public CheckedException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    public CheckedException(Throwable cause) {
-        super(cause);
-    }
 }

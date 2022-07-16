@@ -14,7 +14,6 @@
     <artifactId>kiwi-word-biz</artifactId>
 
     <dependencies>
-        <!-- myself begin -->
         <dependency>
             <groupId>me.fengorz</groupId>
             <artifactId>kiwi-word-api</artifactId>
@@ -25,10 +24,14 @@
             <artifactId>kiwi-bdf</artifactId>
             <version>${kiwi.version}</version>
         </dependency>
-        <!-- myself end -->
         <dependency>
             <groupId>me.fengorz</groupId>
             <artifactId>kiwi-common-es</artifactId>
+            <version>${kiwi.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>me.fengorz</groupId>
+            <artifactId>kiwi-common-tts</artifactId>
             <version>${kiwi.version}</version>
         </dependency>
     </dependencies>

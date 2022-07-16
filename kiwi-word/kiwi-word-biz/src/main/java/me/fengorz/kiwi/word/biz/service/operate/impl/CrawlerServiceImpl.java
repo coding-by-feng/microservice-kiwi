@@ -35,7 +35,7 @@ import cn.hutool.http.HttpUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.bdf.core.service.ISeqService;
-import me.fengorz.kiwi.common.fastdfs.service.IDfsService;
+import me.fengorz.kiwi.common.fastdfs.service.DfsService;
 import me.fengorz.kiwi.common.sdk.annotation.log.LogMarker;
 import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
 import me.fengorz.kiwi.common.sdk.constant.MapperConstant;
@@ -69,7 +69,7 @@ public class CrawlerServiceImpl implements ICrawlerService {
     private final IPronunciationService pronunciationService;
     private final IWordFetchQueueService queueService;
     private final IParaphrasePhraseService phraseService;
-    private final IDfsService dfsService;
+    private final DfsService dfsService;
     private final ISeqService seqService;
     private final IOperateService operateService;
 

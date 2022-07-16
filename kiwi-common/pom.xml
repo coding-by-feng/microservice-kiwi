@@ -19,6 +19,7 @@
         <module>kiwi-common-es</module>
         <module>kiwi-common-mq</module>
         <module>kiwi-common-sdk</module>
+        <module>kiwi-common-tts</module>
     </modules>
 
     <dependencies>

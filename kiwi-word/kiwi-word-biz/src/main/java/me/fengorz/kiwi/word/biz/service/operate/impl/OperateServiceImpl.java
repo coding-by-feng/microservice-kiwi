@@ -45,7 +45,7 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import me.fengorz.kiwi.common.fastdfs.service.IDfsService;
+import me.fengorz.kiwi.common.fastdfs.service.DfsService;
 import me.fengorz.kiwi.common.sdk.annotation.cache.KiwiCacheKey;
 import me.fengorz.kiwi.common.sdk.annotation.cache.KiwiCacheKeyPrefix;
 import me.fengorz.kiwi.common.sdk.annotation.log.LogMarker;
@@ -69,9 +69,12 @@ import me.fengorz.kiwi.word.api.vo.detail.PronunciationVO;
 import me.fengorz.kiwi.word.api.vo.detail.WordQueryVO;
 import me.fengorz.kiwi.word.biz.service.base.*;
 import me.fengorz.kiwi.word.biz.service.operate.IOperateService;
+import me.fengorz.kiwi.word.biz.service.operate.IReviewService;
 
 /**
- * @Description 单词相关业务的复杂逻辑解耦 @Author zhanshifeng @Date 2019/11/25 3:13 PM
+ * @Description 单词相关业务的复杂逻辑解耦
+ * @Author zhanshifeng
+ * @Date 2019/11/25 3:13 PM
  */
 @Slf4j
 @Service
@@ -94,8 +97,8 @@ public class OperateServiceImpl implements IOperateService {
     private final IWordExampleStarRelService exampleStarRelService;
     private final IWordMainVariantService mainVariantService;
     private final IParaphrasePhraseService phraseService;
-    private final IWordReviewService reviewService;
-    private final IDfsService dfsService;
+    private final IReviewService reviewService;
+    private final DfsService dfsService;
     private final SearchOperations searchOperations;
     private final DocumentOperations documentOperations;
 

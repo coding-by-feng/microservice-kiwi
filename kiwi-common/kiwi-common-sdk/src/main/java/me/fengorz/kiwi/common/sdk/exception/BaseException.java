@@ -18,16 +18,13 @@ package me.fengorz.kiwi.common.sdk.exception;
 
 import org.apache.commons.lang3.StringUtils;
 
-import lombok.Data;
-import lombok.experimental.Accessors;
 import me.fengorz.kiwi.common.api.ResultCode;
+
 
 /**
  * @Description 异常基类 @Author zhanshifeng @Date 2020/4/8 4:32 PM
  */
-@Data
-@Accessors(chain = true)
-public class BaseException extends Exception {
+public abstract class BaseException extends Exception {
 
     private static final long serialVersionUID = -8424415276392691547L;
 

@@ -48,7 +48,7 @@ import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
 public class LogAspectConfig {
 
     public LogAspectConfig() {
-        log.info("LogAspectConfig");
+        log.info("LogAspectConfig set up.");
     }
 
     @Pointcut("@annotation(me.fengorz.kiwi.common.sdk.annotation.log.LogMarker)")

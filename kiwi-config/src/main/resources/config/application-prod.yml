@@ -110,3 +110,8 @@ management:
   health:
     elasticsearch:
       enabled: false
+
+tts:
+  voicerss:
+    api-key-1: 'changeme'
+    api-key-2: 'changeme'

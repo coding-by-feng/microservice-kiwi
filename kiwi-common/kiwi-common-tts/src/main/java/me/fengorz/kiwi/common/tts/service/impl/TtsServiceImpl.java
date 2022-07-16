@@ -16,11 +16,13 @@
 
 package me.fengorz.kiwi.common.tts.service.impl;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import com.voicerss.tts.*;
 
 import lombok.extern.slf4j.Slf4j;
+import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
 import me.fengorz.kiwi.common.sdk.exception.tts.TtsException;
 import me.fengorz.kiwi.common.tts.service.TtsService;
 
@@ -62,7 +64,15 @@ public class TtsServiceImpl implements TtsService {
 
     @Override
     public byte[] speechChinese(String apiKey, String text) throws TtsException {
-        return speech(Languages.Chinese_China, apiKey, text);
+        return speech(Languages.Chinese_China, apiKey, this.replaceEllipsis(text));
+    }
+
+    private String replaceEllipsis(String text) {
+        if (StringUtils.isBlank(text)) {
+            return GlobalConstants.EMPTY;
+        }
+        return text.replaceAll(GlobalConstants.SYMBOL_ENGLISH_ELLIPSIS, GlobalConstants.WHAT)
+                .replaceAll(GlobalConstants.SYMBOL_CHINESE_ELLIPSIS, GlobalConstants.WHAT);
     }
 
 }

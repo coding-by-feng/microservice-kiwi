@@ -20,14 +20,6 @@ public interface WordCrawlerConstants {
 
     String RECORDS = "records";
 
-    /**
-     * 状态>0，代表当前爬虫正常或者已经完成； 状态<0，代表当前爬虫已经发生异常； 状态=0，代表爬虫等待开始中。
-     */
-
-    /*分割线*/
-    int STATUS_PARTITION = -1;
-    /*查询异常*/
-    int STATUS_TO_QUERY_ERROR = -404;
     /*Jsoup连接失败*/
     int STATUS_JSOUP_CONNECT_FAILED = -2;
     /*爬虫抓取单词失败*/

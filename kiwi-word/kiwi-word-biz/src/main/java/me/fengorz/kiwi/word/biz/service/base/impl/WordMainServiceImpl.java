@@ -90,7 +90,7 @@ public class WordMainServiceImpl extends ServiceImpl<WordMainMapper, WordMainDO>
             }
             return KiwiBeanUtils.convertFrom(one, WordMainVO.class);
         } catch (Exception e) {
-            log.error(e.getMessage(), e);
+            log.error("Error in getOneAndCatch.", e);
             queueService.flagWordQueryException(wordName);
             throw new ServiceException("wordMainService.getOne error, wordName={}",
                     ErrorCodeEnum.QUERY_WORD_GET_ONE_FAILED, wordName);

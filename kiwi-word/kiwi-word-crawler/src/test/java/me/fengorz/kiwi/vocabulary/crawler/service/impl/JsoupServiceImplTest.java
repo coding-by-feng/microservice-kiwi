@@ -51,7 +51,7 @@ public class JsoupServiceImplTest {
     void testFetchWordInfo() throws Exception {
         // Setup
         final FetchWordMqDTO dto = new FetchWordMqDTO();
-        dto.setWord("against-time-the-clock");
+        dto.setWord("handover");
 
         // Run the test
         final FetchWordResultDTO result = jsoupServiceImplUnderTest.fetchWordInfo(dto);

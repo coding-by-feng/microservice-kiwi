@@ -25,7 +25,7 @@ import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.api.R;
-import me.fengorz.kiwi.common.fastdfs.service.IDfsService;
+import me.fengorz.kiwi.common.fastdfs.service.DfsService;
 import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
 import me.fengorz.kiwi.common.sdk.exception.dfs.DfsOperateDeleteException;
 import me.fengorz.kiwi.common.sdk.util.lang.collection.KiwiCollectionUtils;
@@ -40,6 +40,7 @@ import me.fengorz.kiwi.word.api.dto.queue.result.FetchPhraseResultDTO;
 import me.fengorz.kiwi.word.api.dto.queue.result.FetchPhraseRunUpResultDTO;
 import me.fengorz.kiwi.word.api.dto.queue.result.FetchWordResultDTO;
 import me.fengorz.kiwi.word.api.entity.FetchQueueDO;
+import me.fengorz.kiwi.word.api.enumeration.CrawlerStatusEnum;
 import me.fengorz.kiwi.word.api.exception.JsoupFetchConnectException;
 import me.fengorz.kiwi.word.api.exception.JsoupFetchPronunciationException;
 import me.fengorz.kiwi.word.api.exception.PhraseRemoveException;
@@ -59,7 +60,7 @@ public class FetchServiceImpl implements IFetchService {
     private final IBizAPI bizAPI;
     private final IWordMainVariantAPI wordVariantAPI;
     private final MQSender MQSender;
-    private final IDfsService dfsService;
+    private final DfsService dfsService;
 
     @Override
     public void handle(FetchWordMqDTO messageDTO) {
@@ -101,7 +102,7 @@ public class FetchServiceImpl implements IFetchService {
             }
             isUpdate = true;
         } catch (JsoupFetchConnectException e) {
-            handleException(queue, WordCrawlerConstants.STATUS_JSOUP_CONNECT_FAILED, e.getMessage());
+            handleException(queue, CrawlerStatusEnum.STATUS_JSOUP_CONNECT_FAILED.getStatus(), e.getMessage());
             isUpdate = true;
         } catch (Exception e) {
             handleException(queue, WordCrawlerConstants.STATUS_FETCH_FAIL, e.getMessage());

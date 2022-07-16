@@ -7,7 +7,7 @@ jasypt:
 spring:
   redis:
     host: 159.75.107.124
-    password: fengORZ123
+    password: ENC(H2wp5eUHhX+b3JrwEtcBEl1/0b3IyoIf)
     port: 6379
   servlet:
     multipart:
@@ -114,3 +114,8 @@ management:
 
 db:
   ip: ENC(jCAktjuyxSXGqPJuOqNWCURUDfjqRu+0)
+
+tts:
+  voicerss:
+    api-key-1: '02df0a8f48b641548ec4224c24ebff0e'
+    api-key-2: '0e3c0a35570543249f743f74c027ef8b'

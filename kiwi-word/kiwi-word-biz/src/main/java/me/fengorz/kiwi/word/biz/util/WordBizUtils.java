@@ -22,6 +22,7 @@ import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
 import me.fengorz.kiwi.word.api.common.WordCrawlerConstants;
 import me.fengorz.kiwi.word.api.dto.mapper.in.SelectStarListItemDTO;
 import me.fengorz.kiwi.word.api.entity.*;
+import me.fengorz.kiwi.word.api.enumeration.CrawlerStatusEnum;
 
 /**
  * @Author zhanshifeng @Date 2019/11/3 5:36 PM
@@ -93,11 +94,24 @@ public class WordBizUtils {
         if (status == WordCrawlerConstants.STATUS_ALL_SUCCESS) {
             return false;
         }
-        return status >= WordCrawlerConstants.STATUS_PARTITION;
+        return status >= CrawlerStatusEnum.STATUS_PARTITION.getStatus();
     }
 
     public static int getOpposition(int infoType) {
         return infoType == WordCrawlerConstants.QUEUE_INFO_TYPE_WORD ? WordCrawlerConstants.QUEUE_INFO_TYPE_PHRASE
             : WordCrawlerConstants.QUEUE_INFO_TYPE_WORD;
     }
+
+    public static int buildThisInfoType(String wordName, Integer[] infoType) {
+        int thisInfoType;
+        if (infoType == null || infoType.length == 0) {
+            boolean isPhrase = wordName.contains(GlobalConstants.SPACING);
+            thisInfoType =
+                    isPhrase ? WordCrawlerConstants.QUEUE_INFO_TYPE_PHRASE : WordCrawlerConstants.QUEUE_INFO_TYPE_WORD;
+        } else {
+            thisInfoType = infoType[0];
+        }
+        return thisInfoType;
+    }
+
 }

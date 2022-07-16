@@ -14,6 +14,18 @@
  *
  */
 
-package me.fengorz.kiwi.word.biz.controller;
+package me.fengorz.kiwi.word.biz.common;
 
-public class WordReviewControllerTest {}
+import me.fengorz.kiwi.common.sdk.exception.tts.TtsException;
+
+/**
+ * @Description TODO
+ * @Author zhanshifeng
+ * @Date 2022/7/14 23:13
+ */
+@FunctionalInterface
+public interface SpeakerFunction<T, R> {
+
+    R speech(T t) throws TtsException;
+
+}

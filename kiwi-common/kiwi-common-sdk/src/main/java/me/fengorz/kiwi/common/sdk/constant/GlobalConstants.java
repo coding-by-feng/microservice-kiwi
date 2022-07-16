@@ -34,6 +34,8 @@ public interface GlobalConstants extends ApiContants {
     String SYMBOL_RAIL = "-";
     String SYMBOL_LF = "\n";
     String SYMBOL_PERCENT = "%";
+    String SYMBOL_ENGLISH_ELLIPSIS = "…";
+    String SYMBOL_CHINESE_ELLIPSIS = "...";
 
     String FLAG_Y = "Y";
     String FLAG_N = "N";
@@ -75,4 +77,7 @@ public interface GlobalConstants extends ApiContants {
      * 验证码前缀
      */
     String DEFAULT_CODE_KEY = "DEFAULT_CODE_KEY_";
+
+    String WHAT = "什么什么";
+
 }

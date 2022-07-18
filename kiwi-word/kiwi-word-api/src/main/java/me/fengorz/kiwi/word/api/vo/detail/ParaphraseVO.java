@@ -44,6 +44,8 @@ public class ParaphraseVO implements Serializable {
     @Field(type = FieldType.Keyword)
     private String codes;
 
+    private Integer wordId;
+
     @Field(type = FieldType.Keyword)
     private String wordName;
 

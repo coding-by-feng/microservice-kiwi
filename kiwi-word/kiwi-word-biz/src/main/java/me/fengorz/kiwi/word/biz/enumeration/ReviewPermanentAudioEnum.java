@@ -25,7 +25,7 @@ import lombok.Getter;
  */
 public enum ReviewPermanentAudioEnum {
 
-    TEST(404, ReviewAudioTypeEnum.PARAPHRASE_EN.getType(), "The consequences of today are determined by the actions of the past. To change your future, alter your decisions today."),
+    TEST(404, ReviewAudioTypeEnum.PARAPHRASE_EN.getType(), "A, B, C, D"),
     WELL_DONE(0, ReviewAudioTypeEnum.PARAPHRASE_EN.getType(), "Very well, you've done your job for today!"),
     WORD_CHARACTER(1, ReviewAudioTypeEnum.PARAPHRASE_CH.getType(), "单词的词性是："),
     WORD_CHARACTER_ADJECTIVE(2, ReviewAudioTypeEnum.PARAPHRASE_CH.getType(), "形容词"),
@@ -36,7 +36,18 @@ public enum ReviewPermanentAudioEnum {
     WORD_CHARACTER_CONJUNCTION(7, ReviewAudioTypeEnum.PARAPHRASE_CH.getType(), "连词"),
     WORD_CHARACTER_PLURAL(8, ReviewAudioTypeEnum.PARAPHRASE_CH.getType(), "名词负数形式"),
     WORD_CHARACTER_PREPOSITION(9, ReviewAudioTypeEnum.PARAPHRASE_CH.getType(), "介词或者前置词"),
-    WORD_CHARACTER_PHRASE(9, ReviewAudioTypeEnum.PARAPHRASE_CH.getType(), "短语"),
+    WORD_CHARACTER_PHRASE(10, ReviewAudioTypeEnum.PARAPHRASE_CH.getType(), "短语"),
+    WORD_SPELLING_FIRST(11, ReviewAudioTypeEnum.PARAPHRASE_CH.getType(), "单词的拼写是："),
+    WORD_SPELLING_AGAIN(12, ReviewAudioTypeEnum.PARAPHRASE_CH.getType(), "再读一次拼写："),
+    WORD_CHINESE_PARAPHRASE(13, ReviewAudioTypeEnum.PARAPHRASE_CH.getType(), "中文释义是："),
+    WORD_ENGLISH_PARAPHRASE(14, ReviewAudioTypeEnum.PARAPHRASE_CH.getType(), "英文释义是："),
+    WORD_CHINESE_PARAPHRASE_AGAIN(15, ReviewAudioTypeEnum.PARAPHRASE_CH.getType(), "再读一次中文释义："),
+    WORD_ENGLISH_PARAPHRASE_AGAIN(16, ReviewAudioTypeEnum.PARAPHRASE_CH.getType(), "再读一遍英文释义："),
+    WORD_EXAMPLE(17, ReviewAudioTypeEnum.PARAPHRASE_CH.getType(), "播报单词的例句："),
+    NEXT_REVIEW_CHINESE_PARAPHRASE(18, ReviewAudioTypeEnum.PARAPHRASE_CH.getType(), "接下来复习的单词中文释义是："),
+    READ_CHINESE_PARAPHRASE_AGAIN(19, ReviewAudioTypeEnum.PARAPHRASE_CH.getType(), "再读一遍中文释义是："),
+    RECALL_WORDS_IN_MIND(20, ReviewAudioTypeEnum.PARAPHRASE_CH.getType(), "请在脑海回想对应的单词："),
+    CORRESPONDING_ENGLISH_WORD_IS(21, ReviewAudioTypeEnum.PARAPHRASE_CH.getType(), "对应的英文单词是："),
     ;
 
     //     .set('adjective', '形容词')

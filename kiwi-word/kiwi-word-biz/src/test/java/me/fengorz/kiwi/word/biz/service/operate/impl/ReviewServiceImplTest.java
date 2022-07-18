@@ -17,6 +17,7 @@
 package me.fengorz.kiwi.word.biz.service.operate.impl;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,7 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import me.fengorz.kiwi.common.sdk.constant.EnvConstants;
+import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
 import me.fengorz.kiwi.word.biz.WordBizApplication;
 import me.fengorz.kiwi.word.biz.service.operate.IReviewService;
 
@@ -40,6 +42,12 @@ public class ReviewServiceImplTest {
 
     @Test
     void initPermanent() {
-        Assertions.assertDoesNotThrow(() -> reviewService.initPermanent(true));
+        Assertions.assertDoesNotThrow(() -> reviewService.initPermanent(true, true));
+    }
+
+    @Test
+    @Disabled
+    void testReplace() {
+        System.out.println("--------------> AA...BB".replaceAll("\\.\\.\\.", GlobalConstants.WHAT));
     }
 }

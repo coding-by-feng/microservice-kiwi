@@ -43,9 +43,7 @@ import me.fengorz.kiwi.common.sdk.util.bean.KiwiBeanUtils;
 import me.fengorz.kiwi.common.sdk.web.security.SecurityUtils;
 import me.fengorz.kiwi.word.api.common.ReviewDailyCounterTypeEnum;
 import me.fengorz.kiwi.word.api.common.WordConstants;
-import me.fengorz.kiwi.word.api.entity.WordBreakpointReviewDO;
-import me.fengorz.kiwi.word.api.entity.WordReviewAudioDO;
-import me.fengorz.kiwi.word.api.entity.WordReviewDailyCounterDO;
+import me.fengorz.kiwi.word.api.entity.*;
 import me.fengorz.kiwi.word.api.vo.WordReviewDailyCounterVO;
 import me.fengorz.kiwi.word.biz.enumeration.ReviewAudioSourceEnum;
 import me.fengorz.kiwi.word.biz.enumeration.ReviewAudioTypeEnum;
@@ -72,6 +70,7 @@ public class ReviewServiceImpl implements IReviewService {
     private final ReviewAudioMapper reviewAudioMapper;
     private final ParaphraseMapper paraphraseMapper;
     private final ParaphraseExampleMapper paraphraseExampleMapper;
+    private final WordMainMapper wordMainMapper;
     private final DfsService dfsService;
     private final AudioService audioService;
 
@@ -151,8 +150,8 @@ public class ReviewServiceImpl implements IReviewService {
 
                 WordReviewAudioDO wordReviewAudioDO = new WordReviewAudioDO();
                 try {
-                    String englishText = acquireEnglishText(sourceId, type);
-                    String uploadResult = audioService.generateEnglishVoice(englishText);
+                    String text = acquireText(sourceId, type);
+                    String uploadResult = audioService.generateVoice(text, type);
                     wordReviewAudioDO.setId(seqService.genIntSequence(MapperConstant.T_INS_SEQUENCE));
                     wordReviewAudioDO.setGroupName(WordDfsUtils.getGroupName(uploadResult));
                     wordReviewAudioDO.setFilePath(WordDfsUtils.getUploadVoiceFilePath(uploadResult));
@@ -161,7 +160,7 @@ public class ReviewServiceImpl implements IReviewService {
                     wordReviewAudioDO.setIsDel(GlobalConstants.FLAG_DEL_NO);
                     wordReviewAudioDO.setCreateTime(LocalDateTime.now());
                     wordReviewAudioDO.setSourceUrl(ReviewAudioSourceEnum.VOICERSS.getSource());
-                    wordReviewAudioDO.setSourceText(englishText);
+                    wordReviewAudioDO.setSourceText(text);
                     reviewAudioMapper.insert(wordReviewAudioDO);
                 } catch (TtsException | DfsOperateException | DataCheckedException e) {
                     log.error(e.getMessage(), e);
@@ -172,8 +171,11 @@ public class ReviewServiceImpl implements IReviewService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void initPermanent(boolean isReplace) throws DfsOperateException, TtsException {
+    public void initPermanent(boolean isReplace, boolean isOnlyTest) throws DfsOperateException, TtsException {
         for (ReviewPermanentAudioEnum audio : ReviewPermanentAudioEnum.values()) {
+            if (isOnlyTest && !ReviewPermanentAudioEnum.TEST.equals(audio)) {
+                continue;
+            }
             Optional.ofNullable(reviewAudioMapper.selectOne(
                 Wrappers.<WordReviewAudioDO>lambdaQuery().eq(WordReviewAudioDO::getSourceId, audio.getSourceId())
                     .eq(WordReviewAudioDO::getType, audio.getType())))
@@ -210,14 +212,31 @@ public class ReviewServiceImpl implements IReviewService {
         }
     }
 
-    private String acquireEnglishText(Integer sourceId, Integer type) throws DataCheckedException {
+    private String acquireText(Integer sourceId, Integer type) throws DataCheckedException {
         if (ReviewAudioTypeEnum.isParaphrase(type)) {
-            return Optional.ofNullable(paraphraseMapper.selectById(sourceId))
-                .orElseThrow(() -> new ResourceNotFoundException("Paraphrase cannot be found!")).getParaphraseEnglish();
+            ParaphraseDO paraphraseDO = Optional.ofNullable(paraphraseMapper.selectById(sourceId))
+                .orElseThrow(() -> new ResourceNotFoundException("Paraphrase cannot be found!"));
+            if (ReviewAudioTypeEnum.isEnglish(type)) {
+                return paraphraseDO.getParaphraseEnglish();
+            } else if (ReviewAudioTypeEnum.isChinese(type)) {
+                return paraphraseDO.getParaphraseEnglishTranslate();
+            }
         } else if (ReviewAudioTypeEnum.isExample(type)) {
-            return Optional.ofNullable(paraphraseExampleMapper.selectById(sourceId))
-                .orElseThrow(() -> new ResourceNotFoundException("Paraphrase example cannot be found!"))
-                .getExampleSentence();
+            ParaphraseExampleDO paraphraseExampleDO = Optional.ofNullable(paraphraseExampleMapper.selectById(sourceId))
+                .orElseThrow(() -> new ResourceNotFoundException("Paraphrase example cannot be found!"));
+            if (ReviewAudioTypeEnum.isEnglish(type)) {
+                return paraphraseExampleDO.getExampleSentence();
+            } else if (ReviewAudioTypeEnum.isChinese(type)) {
+                return paraphraseExampleDO.getExampleTranslate();
+            }
+        } else if (ReviewAudioTypeEnum.isSpelling(type)) {
+            WordMainDO wordMainDO = Optional.ofNullable(wordMainMapper.selectById(sourceId))
+                .orElseThrow(() -> new ResourceNotFoundException("Word cannot be found!"));
+            StringBuilder sb = new StringBuilder();
+            for (char alphabet : wordMainDO.getWordName().toCharArray()) {
+                sb.append(alphabet).append(GlobalConstants.SYMBOL_COMMA);
+            }
+            return sb.toString();
         }
         throw new DataCheckedException("English text cannot be found!");
     }

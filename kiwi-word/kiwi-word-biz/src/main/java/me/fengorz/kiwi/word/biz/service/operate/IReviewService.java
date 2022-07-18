@@ -53,5 +53,5 @@ public interface IReviewService {
 
     WordReviewAudioDO findWordReviewAudio(Integer paraphraseId, Integer type);
 
-    void initPermanent(boolean isReplace) throws DfsOperateException, TtsException;
+    void initPermanent(boolean isReplace, boolean isOnlyTest) throws DfsOperateException, TtsException;
 }

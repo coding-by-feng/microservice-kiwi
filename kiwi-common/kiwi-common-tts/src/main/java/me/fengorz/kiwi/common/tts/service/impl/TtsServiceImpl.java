@@ -36,10 +36,32 @@ import me.fengorz.kiwi.common.tts.service.TtsService;
 public class TtsServiceImpl implements TtsService {
 
     private static final int DEFAULT_TTS_VOICE_RSS_ENGLISH_SPEECH_RATE = -2;
+    private static final String ENGLISH_PARAPHRASE_MISSING = "英文释义缺失";
+    private static final String CHINESE_PARAPHRASE_MISSING = "中文释义缺失";
+    private static final String REGEX = "\\.\\.\\.";
 
     @Override
     public byte[] speechEnglish(String apiKey, String text) throws TtsException {
+        if (StringUtils.isBlank(text)) {
+            return speech(Languages.Chinese_China, apiKey, ENGLISH_PARAPHRASE_MISSING);
+        }
         return speech(Languages.English_UnitedStates, apiKey, text);
+    }
+
+    @Override
+    public byte[] speechChinese(String apiKey, String text) throws TtsException {
+        if (StringUtils.isBlank(text)) {
+            return speech(Languages.Chinese_China, apiKey, CHINESE_PARAPHRASE_MISSING);
+        }
+        return speech(Languages.Chinese_China, apiKey, this.replaceEllipsis(text));
+    }
+
+    private String replaceEllipsis(String text) {
+        if (StringUtils.isBlank(text)) {
+            return null;
+        }
+        return text.replaceAll(GlobalConstants.SYMBOL_ENGLISH_ELLIPSIS, GlobalConstants.WHAT).replaceAll(REGEX,
+            GlobalConstants.WHAT);
     }
 
     private byte[] speech(String language, String apiKey, String text) throws TtsException {
@@ -60,19 +82,6 @@ public class TtsServiceImpl implements TtsService {
             throw new TtsException("tts speech error.");
         }
         return voice;
-    }
-
-    @Override
-    public byte[] speechChinese(String apiKey, String text) throws TtsException {
-        return speech(Languages.Chinese_China, apiKey, this.replaceEllipsis(text));
-    }
-
-    private String replaceEllipsis(String text) {
-        if (StringUtils.isBlank(text)) {
-            return GlobalConstants.EMPTY;
-        }
-        return text.replaceAll(GlobalConstants.SYMBOL_ENGLISH_ELLIPSIS, GlobalConstants.WHAT)
-                .replaceAll(GlobalConstants.SYMBOL_CHINESE_ELLIPSIS, GlobalConstants.WHAT);
     }
 
 }

@@ -28,7 +28,6 @@ import me.fengorz.kiwi.common.api.R;
 import me.fengorz.kiwi.common.fastdfs.service.DfsService;
 import me.fengorz.kiwi.common.sdk.controller.AbstractDfsController;
 import me.fengorz.kiwi.common.sdk.exception.dfs.DfsOperateException;
-import me.fengorz.kiwi.common.sdk.exception.tts.TtsException;
 import me.fengorz.kiwi.common.sdk.web.WebTools;
 import me.fengorz.kiwi.common.sdk.web.security.SecurityUtils;
 import me.fengorz.kiwi.word.api.entity.WordReviewAudioDO;
@@ -91,7 +90,7 @@ public class WordReviewController extends AbstractDfsController {
         try {
             reviewService.generateTtsVoice(isReplace);
             return R.success();
-        } catch (DfsOperateException | TtsException e) {
+        } catch (Exception e) {
             log.error("generateTtsVoice error!", e);
         }
         return R.error();

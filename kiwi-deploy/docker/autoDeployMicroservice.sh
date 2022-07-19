@@ -17,7 +17,7 @@ rm -rf ~/docker/kiwi/word/bizTmp/*
 rm -rf ~/docker/kiwi/word/bizTmp_02/*
 rm -rf ~/docker/kiwi/crawler/logs/*
 
-mvn clean install -X -Dmaven.test.skip=true
+mvn clean install -Dmaven.test.skip=true
 
 mv -f ~/microservice-kiwi/kiwi-eureka/Dockerfile ~/docker/kiwi/eureka/
 mv -f ~/microservice-kiwi/kiwi-config/Dockerfile ~/docker/kiwi/config/

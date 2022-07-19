@@ -257,8 +257,16 @@ public class ReviewServiceImpl implements IReviewService {
     private void generateTtsVoiceFromParaphraseId(boolean isReplace, Integer paraphraseId) {
         log.info("generateTtsVoiceFromParaphraseId beginning, paraphraseId is {}", paraphraseId);
         ParaphraseDO paraphraseDO = paraphraseMapper.selectById(paraphraseId);
+        if (paraphraseDO == null) {
+            log.info("paraphraseDO is null, skipping, paraphraseId is {}", paraphraseId);
+            return;
+        }
         CharacterDO characterDO = characterMapper.selectOne(
             Wrappers.<CharacterDO>lambdaQuery().eq(CharacterDO::getCharacterId, paraphraseDO.getCharacterId()));
+        if (characterDO == null) {
+            log.info("characterDO is null, skipping, characterDO is {}", paraphraseDO.getCharacterId());
+            return;
+        }
         List<ParaphraseExampleDO> paraphraseExamples = paraphraseExampleMapper.selectList(
             Wrappers.<ParaphraseExampleDO>lambdaQuery().eq(ParaphraseExampleDO::getParaphraseId, paraphraseId));
         generateWordReviewAudioDO(true, paraphraseDO.getWordId(), ReviewAudioTypeEnum.WORD_SPELLING.getType());

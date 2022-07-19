@@ -48,6 +48,7 @@ public enum ReviewPermanentAudioEnum {
     READ_CHINESE_PARAPHRASE_AGAIN(19, ReviewAudioTypeEnum.PARAPHRASE_CH.getType(), "再读一遍中文释义是："),
     RECALL_WORDS_IN_MIND(20, ReviewAudioTypeEnum.PARAPHRASE_CH.getType(), "请在脑海回想对应的单词："),
     CORRESPONDING_ENGLISH_WORD_IS(21, ReviewAudioTypeEnum.PARAPHRASE_CH.getType(), "对应的英文单词是："),
+    WORD_PARAPHRASE_MISSING(22, ReviewAudioTypeEnum.PARAPHRASE_CH.getType(), "中文释义缺失！"),
     ;
 
     //     .set('adjective', '形容词')

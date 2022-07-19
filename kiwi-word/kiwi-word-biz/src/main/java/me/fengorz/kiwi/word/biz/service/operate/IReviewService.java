@@ -52,7 +52,7 @@ public interface IReviewService {
 
     void initPermanent(boolean isReplace, boolean isOnlyTest) throws DfsOperateException, TtsException;
 
-    void generateTtsVoice(boolean isReplace) throws DfsOperateException, TtsException;
+    void generateTtsVoice(boolean isReplace) throws DfsOperateException, TtsException, InterruptedException;
 
     void generateTtsVoiceFromParaphraseId(Integer paraphraseId);
 }

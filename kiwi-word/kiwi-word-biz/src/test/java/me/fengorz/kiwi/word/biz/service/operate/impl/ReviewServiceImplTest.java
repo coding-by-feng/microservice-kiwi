@@ -41,8 +41,14 @@ public class ReviewServiceImplTest {
     private IReviewService reviewService;
 
     @Test
+    @Disabled
     void initPermanent() {
         Assertions.assertDoesNotThrow(() -> reviewService.initPermanent(true, true));
+    }
+
+    @Test
+    void generateTtsVoiceFromParaphraseId() {
+        Assertions.assertDoesNotThrow(() -> reviewService.generateTtsVoiceFromParaphraseId(2774367));
     }
 
     @Test

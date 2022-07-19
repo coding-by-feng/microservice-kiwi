@@ -17,12 +17,15 @@
 package me.fengorz.kiwi.word.biz.service.operate.impl;
 
 import java.io.ByteArrayInputStream;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.fastdfs.service.DfsService;
+import me.fengorz.kiwi.common.sdk.exception.ResourceNotFoundException;
 import me.fengorz.kiwi.common.sdk.exception.dfs.DfsOperateException;
 import me.fengorz.kiwi.common.sdk.exception.tts.TtsException;
 import me.fengorz.kiwi.common.tts.service.TtsService;
@@ -47,8 +50,17 @@ public class AudioServiceImpl implements AudioService {
     private final TtsConfig ttsConfig;
     private final DfsService dfsService;
     private final ReviewAudioMapper reviewAudioMapper;
+    private static final Map<Integer, Integer> API_KEY_USE_TIME_MAP = new ConcurrentHashMap<>();
+    private static final int API_KEY_MAX_USE_TIME = 350;
+    static {
+        API_KEY_USE_TIME_MAP.put(1, 60);
+        API_KEY_USE_TIME_MAP.put(2, 0);
+        API_KEY_USE_TIME_MAP.put(3, 0);
+        API_KEY_USE_TIME_MAP.put(4, 0);
+    }
 
     @Override
+
     public String generateVoice(String text, int type) throws DfsOperateException, TtsException {
         if (ReviewAudioTypeEnum.isEnglish(type)) {
             return generateEnglishVoice(text);
@@ -73,28 +85,31 @@ public class AudioServiceImpl implements AudioService {
 
     private byte[] generateBytes(SpeakerFunction<String, byte[]> speaker) throws TtsException {
         byte[] bytes;
+        String apiKey = chooseApiKey();
         try {
-            bytes = speaker.speech(ttsConfig.getApiKey1());
+            bytes = speaker.speech(apiKey);
         } catch (Exception e) {
-            log.error("tts api key {} is invalid!", ttsConfig.getApiKey1());
-            try {
-                bytes = speaker.speech(ttsConfig.getApiKey2());
-            } catch (Exception ex) {
-                log.error("tts api key {} is invalid!", ttsConfig.getApiKey2());
-                try {
-                    bytes = speaker.speech(ttsConfig.getApiKey3());
-                } catch (Exception exc) {
-                    log.error("tts api key {} is invalid!", ttsConfig.getApiKey3());
-                    try {
-                        bytes = speaker.speech(ttsConfig.getApiKey4());
-                    } catch (Exception ttsException) {
-                        log.error("tts api key {} is invalid!", ttsConfig.getApiKey4());
-                        throw ttsException;
-                    }
-                }
-            }
+            log.error("tts api key {} is invalid!", apiKey);
+            throw new TtsException();
         }
         return bytes;
+    }
+
+    private String chooseApiKey() {
+        if (API_KEY_USE_TIME_MAP.get(1) < API_KEY_MAX_USE_TIME) {
+            API_KEY_USE_TIME_MAP.computeIfPresent(1, (key, time) -> time++);
+            return ttsConfig.getApiKey1();
+        } else if (API_KEY_USE_TIME_MAP.get(2) < API_KEY_MAX_USE_TIME) {
+            API_KEY_USE_TIME_MAP.computeIfPresent(2, (key, time) -> time++);
+            return ttsConfig.getApiKey2();
+        } else if (API_KEY_USE_TIME_MAP.get(3) < API_KEY_MAX_USE_TIME) {
+            API_KEY_USE_TIME_MAP.computeIfPresent(3, (key, time) -> time++);
+            return ttsConfig.getApiKey3();
+        } else if (API_KEY_USE_TIME_MAP.get(4) < API_KEY_MAX_USE_TIME) {
+            API_KEY_USE_TIME_MAP.computeIfPresent(4, (key, time) -> time++);
+            return ttsConfig.getApiKey4();
+        }
+        throw new ResourceNotFoundException();
     }
 
 }

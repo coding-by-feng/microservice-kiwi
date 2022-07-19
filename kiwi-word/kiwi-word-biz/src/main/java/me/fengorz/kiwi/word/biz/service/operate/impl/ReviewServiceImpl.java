@@ -19,6 +19,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -71,6 +72,8 @@ public class ReviewServiceImpl implements IReviewService {
     private final ParaphraseMapper paraphraseMapper;
     private final ParaphraseExampleMapper paraphraseExampleMapper;
     private final WordMainMapper wordMainMapper;
+    private final CharacterMapper characterMapper;
+    private final ParaphraseStarRelMapper paraphraseStarRelMapper;
     private final DfsService dfsService;
     private final AudioService audioService;
 
@@ -145,28 +148,34 @@ public class ReviewServiceImpl implements IReviewService {
 
     @Override
     public WordReviewAudioDO findWordReviewAudio(Integer sourceId, Integer type) {
-        return Optional.ofNullable(reviewAudioMapper.selectOne(Wrappers.<WordReviewAudioDO>lambdaQuery()
-            .eq(WordReviewAudioDO::getSourceId, sourceId).eq(WordReviewAudioDO::getType, type))).orElseGet(() -> {
+        return Optional
+            .ofNullable(reviewAudioMapper.selectOne(Wrappers.<WordReviewAudioDO>lambdaQuery()
+                .eq(WordReviewAudioDO::getSourceId, sourceId).eq(WordReviewAudioDO::getType, type)))
+            .orElseGet(() -> generateWordReviewAudioDO(false, sourceId, type));
+    }
 
-                WordReviewAudioDO wordReviewAudioDO = new WordReviewAudioDO();
-                try {
-                    String text = acquireText(sourceId, type);
-                    String uploadResult = audioService.generateVoice(text, type);
-                    wordReviewAudioDO.setId(seqService.genIntSequence(MapperConstant.T_INS_SEQUENCE));
-                    wordReviewAudioDO.setGroupName(WordDfsUtils.getGroupName(uploadResult));
-                    wordReviewAudioDO.setFilePath(WordDfsUtils.getUploadVoiceFilePath(uploadResult));
-                    wordReviewAudioDO.setSourceId(sourceId);
-                    wordReviewAudioDO.setType(type);
-                    wordReviewAudioDO.setIsDel(GlobalConstants.FLAG_DEL_NO);
-                    wordReviewAudioDO.setCreateTime(LocalDateTime.now());
-                    wordReviewAudioDO.setSourceUrl(ReviewAudioSourceEnum.VOICERSS.getSource());
-                    wordReviewAudioDO.setSourceText(text);
-                    reviewAudioMapper.insert(wordReviewAudioDO);
-                } catch (TtsException | DfsOperateException | DataCheckedException e) {
-                    log.error(e.getMessage(), e);
-                }
-                return wordReviewAudioDO;
-            });
+    private WordReviewAudioDO generateWordReviewAudioDO(boolean isReplace, Integer sourceId, Integer type) {
+        if (isReplace) {
+            deleteExistAudio(sourceId, type);
+        }
+        WordReviewAudioDO wordReviewAudioDO = new WordReviewAudioDO();
+        try {
+            String text = acquireText(sourceId, type);
+            String uploadResult = audioService.generateVoice(text, type);
+            wordReviewAudioDO.setId(seqService.genIntSequence(MapperConstant.T_INS_SEQUENCE));
+            wordReviewAudioDO.setGroupName(WordDfsUtils.getGroupName(uploadResult));
+            wordReviewAudioDO.setFilePath(WordDfsUtils.getUploadVoiceFilePath(uploadResult));
+            wordReviewAudioDO.setSourceId(sourceId);
+            wordReviewAudioDO.setType(type);
+            wordReviewAudioDO.setIsDel(GlobalConstants.FLAG_DEL_NO);
+            wordReviewAudioDO.setCreateTime(LocalDateTime.now());
+            wordReviewAudioDO.setSourceUrl(ReviewAudioSourceEnum.VOICERSS.getSource());
+            wordReviewAudioDO.setSourceText(StringUtils.defaultIfBlank(text, GlobalConstants.EMPTY));
+            reviewAudioMapper.insert(wordReviewAudioDO);
+        } catch (TtsException | DfsOperateException | DataCheckedException e) {
+            log.error(e.getMessage(), e);
+        }
+        return wordReviewAudioDO;
     }
 
     @Override
@@ -176,21 +185,6 @@ public class ReviewServiceImpl implements IReviewService {
             if (isOnlyTest && !ReviewPermanentAudioEnum.TEST.equals(audio)) {
                 continue;
             }
-            Optional.ofNullable(reviewAudioMapper.selectOne(
-                Wrappers.<WordReviewAudioDO>lambdaQuery().eq(WordReviewAudioDO::getSourceId, audio.getSourceId())
-                    .eq(WordReviewAudioDO::getType, audio.getType())))
-                .ifPresent(wordReviewAudioDO -> {
-                    if (!isReplace) {
-                        return;
-                    }
-                    try {
-                        dfsService.deleteFile(wordReviewAudioDO.getGroupName(), wordReviewAudioDO.getFilePath());
-                    } catch (DfsOperateDeleteException e) {
-                        log.error("Error deleting old wordReviewAudioDO", e);
-                    } finally {
-                        reviewAudioMapper.deleteById(wordReviewAudioDO.getId());
-                    }
-                });
             log.info("Audio is generating..., {}", audio.getText());
             WordReviewAudioDO wordReviewAudioDO = new WordReviewAudioDO();
             try {
@@ -212,6 +206,61 @@ public class ReviewServiceImpl implements IReviewService {
         }
     }
 
+    private void deleteExistAudio(Integer sourceId, Integer type) {
+        Optional
+            .ofNullable(reviewAudioMapper.selectOne(Wrappers.<WordReviewAudioDO>lambdaQuery()
+                .eq(WordReviewAudioDO::getSourceId, sourceId).eq(WordReviewAudioDO::getType, type)))
+            .ifPresent(wordReviewAudioDO -> {
+                try {
+                    dfsService.deleteFile(wordReviewAudioDO.getGroupName(), wordReviewAudioDO.getFilePath());
+                } catch (DfsOperateDeleteException e) {
+                    log.error("Error deleting old wordReviewAudioDO", e);
+                } finally {
+                    reviewAudioMapper.deleteById(wordReviewAudioDO.getId());
+                }
+            });
+    }
+
+    @Override
+    public void generateTtsVoice(boolean isReplace) throws DfsOperateException, TtsException {
+        List<ParaphraseStarRelDO> relList = paraphraseStarRelMapper.selectList(Wrappers
+            .<ParaphraseStarRelDO>lambdaQuery().eq(ParaphraseStarRelDO::getIsKeepInMind, GlobalConstants.FLAG_DEL_NO));
+        for (ParaphraseStarRelDO starRelDO : relList) {
+            try {
+                generateTtsVoiceFromParaphraseId(isReplace, starRelDO.getParaphraseId());
+            } catch (Exception e) {
+                log.error("generateTtsVoice error, paraphraseId is {}", starRelDO.getParaphraseId());
+            } finally {
+                System.gc();
+            }
+        }
+    }
+
+    @Override
+    public void generateTtsVoiceFromParaphraseId(Integer paraphraseId) {
+        this.generateTtsVoiceFromParaphraseId(true, paraphraseId);
+    }
+
+    private void generateTtsVoiceFromParaphraseId(boolean isReplace, Integer paraphraseId) {
+        log.info("generateTtsVoiceFromParaphraseId beginning, paraphraseId is {}", paraphraseId);
+        ParaphraseDO paraphraseDO = paraphraseMapper.selectById(paraphraseId);
+        CharacterDO characterDO = characterMapper.selectOne(
+            Wrappers.<CharacterDO>lambdaQuery().eq(CharacterDO::getCharacterId, paraphraseDO.getCharacterId()));
+        List<ParaphraseExampleDO> paraphraseExamples = paraphraseExampleMapper.selectList(
+            Wrappers.<ParaphraseExampleDO>lambdaQuery().eq(ParaphraseExampleDO::getParaphraseId, paraphraseId));
+        generateWordReviewAudioDO(true, paraphraseDO.getWordId(), ReviewAudioTypeEnum.WORD_SPELLING.getType());
+        generateWordReviewAudioDO(isReplace, paraphraseId, ReviewAudioTypeEnum.PARAPHRASE_EN.getType());
+        generateWordReviewAudioDO(isReplace, paraphraseId, ReviewAudioTypeEnum.PARAPHRASE_CH.getType());
+        generateWordReviewAudioDO(isReplace, characterDO.getCharacterId(), ReviewAudioTypeEnum.CHARACTER_CH.getType());
+        for (ParaphraseExampleDO paraphraseExample : paraphraseExamples) {
+            generateWordReviewAudioDO(isReplace, paraphraseExample.getExampleId(),
+                ReviewAudioTypeEnum.EXAMPLE_EN.getType());
+            generateWordReviewAudioDO(isReplace, paraphraseExample.getExampleId(),
+                ReviewAudioTypeEnum.EXAMPLE_CH.getType());
+        }
+        log.info("generateTtsVoiceFromParaphraseId success, paraphraseId is {}", paraphraseId);
+    }
+
     private String acquireText(Integer sourceId, Integer type) throws DataCheckedException {
         if (ReviewAudioTypeEnum.isParaphrase(type)) {
             ParaphraseDO paraphraseDO = Optional.ofNullable(paraphraseMapper.selectById(sourceId))
@@ -219,7 +268,8 @@ public class ReviewServiceImpl implements IReviewService {
             if (ReviewAudioTypeEnum.isEnglish(type)) {
                 return paraphraseDO.getParaphraseEnglish();
             } else if (ReviewAudioTypeEnum.isChinese(type)) {
-                return paraphraseDO.getParaphraseEnglishTranslate();
+                return StringUtils.defaultIfBlank(paraphraseDO.getParaphraseEnglishTranslate(),
+                    ReviewPermanentAudioEnum.WORD_PARAPHRASE_MISSING.getText());
             }
         } else if (ReviewAudioTypeEnum.isExample(type)) {
             ParaphraseExampleDO paraphraseExampleDO = Optional.ofNullable(paraphraseExampleMapper.selectById(sourceId))
@@ -237,6 +287,10 @@ public class ReviewServiceImpl implements IReviewService {
                 sb.append(alphabet).append(GlobalConstants.SYMBOL_COMMA);
             }
             return sb.toString();
+        } else if (ReviewAudioTypeEnum.isCharacter(type)) {
+            CharacterDO characterDO = Optional.ofNullable(characterMapper.selectById(sourceId))
+                .orElseThrow(() -> new ResourceNotFoundException("Character cannot be found!"));
+            return ReviewPermanentAudioEnum.WORD_CHARACTER.getText() + characterDO.getCharacterCode();
         }
         throw new DataCheckedException("English text cannot be found!");
     }

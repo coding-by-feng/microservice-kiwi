@@ -53,7 +53,7 @@ public class AudioServiceImpl implements AudioService {
     private static final Map<Integer, Integer> API_KEY_USE_TIME_MAP = new ConcurrentHashMap<>();
     private static final int API_KEY_MAX_USE_TIME = 350;
     static {
-        API_KEY_USE_TIME_MAP.put(1, 60);
+        API_KEY_USE_TIME_MAP.put(1, 200);
         API_KEY_USE_TIME_MAP.put(2, 0);
         API_KEY_USE_TIME_MAP.put(3, 0);
         API_KEY_USE_TIME_MAP.put(4, 0);

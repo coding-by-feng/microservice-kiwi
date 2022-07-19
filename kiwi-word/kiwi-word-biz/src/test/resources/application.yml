@@ -44,3 +44,5 @@ tts:
   voicerss:
     api-key-1: 'changeme'
     api-key-2: 'changeme'
+    api-key-3: 'changeme'
+    api-key-4: 'changeme'

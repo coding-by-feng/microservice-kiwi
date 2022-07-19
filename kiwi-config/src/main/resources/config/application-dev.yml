@@ -99,8 +99,8 @@ security:
       token-info-uri: http://kiwi-auth/oauth/check_token
 
 fdfs:
-  connect-timeout: 600000
-  so-timeout: 600000
+  connect-timeout: 6000000
+  so-timeout: 6000000
   thumb-image:
     width: 150
     height: 150
@@ -120,3 +120,4 @@ tts:
     api-key-1: 'changeme'
     api-key-2: 'changeme'
     api-key-3: 'changeme'
+    api-key-4: 'changeme'

@@ -47,8 +47,14 @@ public class ReviewServiceImplTest {
     }
 
     @Test
+    @Disabled
     void generateTtsVoiceFromParaphraseId() {
         Assertions.assertDoesNotThrow(() -> reviewService.generateTtsVoiceFromParaphraseId(2774367));
+    }
+
+    @Test
+    void generateTtsVoice() {
+        Assertions.assertDoesNotThrow(() -> reviewService.generateTtsVoice(true));
     }
 
     @Test

@@ -18,6 +18,9 @@ package me.fengorz.kiwi.word.biz.service.operate.impl;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Semaphore;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.scheduling.annotation.Async;
@@ -76,6 +79,8 @@ public class ReviewServiceImpl implements IReviewService {
     private final ParaphraseStarRelMapper paraphraseStarRelMapper;
     private final DfsService dfsService;
     private final AudioService audioService;
+
+    private final static Semaphore STORAGE = new Semaphore(10);
 
     @Override
     public List<WordBreakpointReviewDO> listBreakpointReview(Integer listId) {
@@ -154,6 +159,7 @@ public class ReviewServiceImpl implements IReviewService {
             .orElseGet(() -> generateWordReviewAudioDO(false, sourceId, type));
     }
 
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     private WordReviewAudioDO generateWordReviewAudioDO(boolean isReplace, Integer sourceId, Integer type) {
         if (isReplace) {
             deleteExistAudio(sourceId, type);
@@ -172,7 +178,7 @@ public class ReviewServiceImpl implements IReviewService {
             wordReviewAudioDO.setSourceUrl(ReviewAudioSourceEnum.VOICERSS.getSource());
             wordReviewAudioDO.setSourceText(StringUtils.defaultIfBlank(text, GlobalConstants.EMPTY));
             reviewAudioMapper.insert(wordReviewAudioDO);
-        } catch (TtsException | DfsOperateException | DataCheckedException e) {
+        } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
         return wordReviewAudioDO;
@@ -222,17 +228,24 @@ public class ReviewServiceImpl implements IReviewService {
     }
 
     @Override
-    public void generateTtsVoice(boolean isReplace) throws DfsOperateException, TtsException {
+    public void generateTtsVoice(boolean isReplace) throws InterruptedException {
         List<ParaphraseStarRelDO> relList = paraphraseStarRelMapper.selectList(Wrappers
             .<ParaphraseStarRelDO>lambdaQuery().eq(ParaphraseStarRelDO::getIsKeepInMind, GlobalConstants.FLAG_DEL_NO));
+        ExecutorService executorService = Executors.newFixedThreadPool(10);
         for (ParaphraseStarRelDO starRelDO : relList) {
-            try {
-                generateTtsVoiceFromParaphraseId(isReplace, starRelDO.getParaphraseId());
-            } catch (Exception e) {
-                log.error("generateTtsVoice error, paraphraseId is {}", starRelDO.getParaphraseId());
-            } finally {
-                System.gc();
-            }
+            STORAGE.acquire();
+            executorService.submit(() -> {
+                try {
+                    log.info("executorService submit a task for generateTtsVoiceFromParaphraseId.");
+                    generateTtsVoiceFromParaphraseId(isReplace, starRelDO.getParaphraseId());
+                } catch (Exception e) {
+                    log.error("generateTtsVoice error, paraphraseId is {}", starRelDO.getParaphraseId());
+                    log.error(e.getMessage(), e);
+                } finally {
+                    STORAGE.release();
+                    System.gc();
+                }
+            });
         }
     }
 

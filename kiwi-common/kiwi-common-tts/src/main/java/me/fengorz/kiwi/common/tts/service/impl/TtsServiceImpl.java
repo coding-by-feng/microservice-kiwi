@@ -36,8 +36,8 @@ import me.fengorz.kiwi.common.tts.service.TtsService;
 public class TtsServiceImpl implements TtsService {
 
     private static final int DEFAULT_TTS_VOICE_RSS_ENGLISH_SPEECH_RATE = -2;
-    private static final String ENGLISH_PARAPHRASE_MISSING = "英文释义缺失";
-    private static final String CHINESE_PARAPHRASE_MISSING = "中文释义缺失";
+    private static final String ENGLISH_PARAPHRASE_MISSING = "英文缺失";
+    private static final String CHINESE_PARAPHRASE_MISSING = "中文缺失";
     private static final String REGEX = "\\.\\.\\.";
 
     @Override

@@ -23,6 +23,8 @@ ignore:
     - /word/main/listOverlapAnyway
     - /word/review/createTheDays
     - /word/review/downloadReviewAudio/**
+    - /word/review/generateTtsVoice/**
+    - /word/review/generateTtsVoiceFromParaphraseId/**
   userNames:
     - admin
 

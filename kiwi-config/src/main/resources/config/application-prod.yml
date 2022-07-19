@@ -98,8 +98,8 @@ security:
       token-info-uri: http://kiwi-auth/oauth/check_token
 
 fdfs:
-  connect-timeout: 30000
-  so-timeout: 60000
+  connect-timeout: 600000
+  so-timeout: 600000
   thumb-image:
     width: 150
     height: 150

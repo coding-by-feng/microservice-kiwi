@@ -37,7 +37,9 @@ public interface IReviewService {
 
     void increase(int type, Integer userId);
 
-    WordReviewDailyCounterVO getVO(int userId, int type);
+    WordReviewDailyCounterVO findReviewCounterVO(int userId, int type);
+
+    List<WordReviewDailyCounterVO> listReviewCounterVO(int userId);
 
     /**
      * Record the page number currently reviewed.

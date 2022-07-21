@@ -108,9 +108,9 @@ public class WordReviewController extends AbstractDfsController {
         return R.success();
     }
 
-    @GetMapping("/increaseCounter/{userId}/{type}")
-    public R<Void> increaseCounter(@PathVariable("userId") Integer userId, @PathVariable("type") Integer type) {
-        reviewService.increase(type, userId);
+    @GetMapping("/increaseCounter/{type}")
+    public R<Void> increaseCounter(@PathVariable("type") Integer type) {
+        reviewService.increase(type, SecurityUtils.getCurrentUserId());
         return R.success();
     }
 

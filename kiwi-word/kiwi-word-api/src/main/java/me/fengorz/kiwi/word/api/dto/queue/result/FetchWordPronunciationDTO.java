@@ -22,6 +22,8 @@ import lombok.Data;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 
+import java.io.Serializable;
+
 /**
  * @Author zhanshifeng @Date 2019/11/4 2:20 PM
  */

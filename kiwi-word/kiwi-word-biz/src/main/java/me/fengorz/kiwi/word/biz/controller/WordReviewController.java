@@ -14,6 +14,7 @@ package me.fengorz.kiwi.word.biz.controller;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -60,9 +61,14 @@ public class WordReviewController extends AbstractDfsController {
         return R.success();
     }
 
-    @GetMapping("/getVO/{type}")
-    public R<WordReviewDailyCounterVO> getVO(@PathVariable("type") Integer type) {
-        return R.success(reviewService.getVO(SecurityUtils.getCurrentUserId(), type));
+    @GetMapping("/getReviewCounterVO/{type}")
+    public R<WordReviewDailyCounterVO> getReviewCounterVO(@PathVariable("type") Integer type) {
+        return R.success(reviewService.findReviewCounterVO(SecurityUtils.getCurrentUserId(), type));
+    }
+
+    @GetMapping("/getAllReviewCounterVO")
+    public R<List<WordReviewDailyCounterVO>> getAllReviewCounterVO() {
+        return R.success(reviewService.listReviewCounterVO(SecurityUtils.getCurrentUserId()));
     }
 
     @GetMapping("/downloadReviewAudio/{sourceId}/{type}")
@@ -99,6 +105,12 @@ public class WordReviewController extends AbstractDfsController {
     @GetMapping("/generateTtsVoiceFromParaphraseId/{paraphraseId}")
     public R<Void> generateTtsVoiceFromParaphraseId(@PathVariable("paraphraseId") Integer paraphraseId) {
         reviewService.generateTtsVoiceFromParaphraseId(paraphraseId);
+        return R.success();
+    }
+
+    @GetMapping("/increaseCounter/{userId}/{type}")
+    public R<Void> increaseCounter(@PathVariable("userId") Integer userId, @PathVariable("type") Integer type) {
+        reviewService.increase(type, userId);
         return R.success();
     }
 

@@ -45,13 +45,13 @@ import me.fengorz.kiwi.common.sdk.exception.dfs.DfsOperateException;
 import me.fengorz.kiwi.common.sdk.exception.tts.TtsException;
 import me.fengorz.kiwi.common.sdk.util.bean.KiwiBeanUtils;
 import me.fengorz.kiwi.common.sdk.web.security.SecurityUtils;
-import me.fengorz.kiwi.word.api.common.ReviewDailyCounterTypeEnum;
 import me.fengorz.kiwi.word.api.common.WordConstants;
+import me.fengorz.kiwi.word.api.common.enumeration.ReviewAudioSourceEnum;
+import me.fengorz.kiwi.word.api.common.enumeration.ReviewAudioTypeEnum;
+import me.fengorz.kiwi.word.api.common.enumeration.ReviewDailyCounterTypeEnum;
+import me.fengorz.kiwi.word.api.common.enumeration.ReviewPermanentAudioEnum;
 import me.fengorz.kiwi.word.api.entity.*;
 import me.fengorz.kiwi.word.api.vo.WordReviewDailyCounterVO;
-import me.fengorz.kiwi.word.biz.enumeration.ReviewAudioSourceEnum;
-import me.fengorz.kiwi.word.biz.enumeration.ReviewAudioTypeEnum;
-import me.fengorz.kiwi.word.biz.enumeration.ReviewPermanentAudioEnum;
 import me.fengorz.kiwi.word.biz.mapper.*;
 import me.fengorz.kiwi.word.biz.service.operate.AudioService;
 import me.fengorz.kiwi.word.biz.service.operate.IReviewService;
@@ -105,14 +105,13 @@ public class ReviewServiceImpl implements IReviewService {
         if (userId == null) {
             throw new AuthException("userId cannot be null!");
         }
-        if (getDO(userId, ReviewDailyCounterTypeEnum.REVIEW.getType()) == null) {
-            createDO(ReviewDailyCounterTypeEnum.REVIEW.getType(), userId);
-        }
-        if (getDO(userId, ReviewDailyCounterTypeEnum.KEEP_IN_MIND.getType()) == null) {
-            createDO(ReviewDailyCounterTypeEnum.KEEP_IN_MIND.getType(), userId);
-        }
-        if (getDO(userId, ReviewDailyCounterTypeEnum.REMEMBER.getType()) == null) {
-            createDO(ReviewDailyCounterTypeEnum.REMEMBER.getType(), userId);
+        for (ReviewDailyCounterTypeEnum typeEnum : ReviewDailyCounterTypeEnum.values()) {
+            if (findReviewCounterDO(userId, typeEnum.getType()) == null) {
+                createDO(typeEnum.getType(), userId);
+                log.info("userId[{}] ReviewDailyCounterType[{}] is lacking， created", userId, typeEnum.name());
+            } else {
+                log.info("userId[{}] ReviewDailyCounterType[{}] is created.", userId, typeEnum.name());
+            }
         }
     }
 
@@ -120,18 +119,27 @@ public class ReviewServiceImpl implements IReviewService {
     @Override
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRES_NEW)
     public void increase(int type, Integer userId) {
-        WordReviewDailyCounterDO counter = getDO(userId, type);
+        WordReviewDailyCounterDO counter = findReviewCounterDO(userId, type);
         if (counter == null) {
             this.createTheDays(userId);
-            counter = getDO(userId, type);
+            counter = findReviewCounterDO(userId, type);
         }
         counter.setReviewCount(counter.getReviewCount() + 1);
         reviewDailyCounterMapper.updateById(counter);
     }
 
     @Override
-    public WordReviewDailyCounterVO getVO(int userId, int type) {
-        return KiwiBeanUtils.convertFrom(getDO(userId, type), WordReviewDailyCounterVO.class);
+    public WordReviewDailyCounterVO findReviewCounterVO(int userId, int type) {
+        return KiwiBeanUtils.convertFrom(findReviewCounterDO(userId, type), WordReviewDailyCounterVO.class);
+    }
+
+    @Override
+    public List<WordReviewDailyCounterVO> listReviewCounterVO(int userId) {
+        return KiwiBeanUtils.convertFrom(
+            reviewDailyCounterMapper.selectList(Wrappers.<WordReviewDailyCounterDO>lambdaQuery()
+                .eq(WordReviewDailyCounterDO::getUserId, userId)
+                .eq(WordReviewDailyCounterDO::getToday, LocalDateTime.now().toLocalDate())),
+            WordReviewDailyCounterVO.class, "id", "today");
     }
 
     @Override
@@ -161,10 +169,21 @@ public class ReviewServiceImpl implements IReviewService {
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     private WordReviewAudioDO generateWordReviewAudioDO(boolean isReplace, Integer sourceId, Integer type) {
-        if (isReplace) {
-            deleteExistAudio(sourceId, type);
+        WordReviewAudioDO wordReviewAudioDO = reviewAudioMapper.selectOne(Wrappers.<WordReviewAudioDO>lambdaQuery()
+            .eq(WordReviewAudioDO::getSourceId, sourceId).eq(WordReviewAudioDO::getType, type));
+        if (wordReviewAudioDO == null) {
+            wordReviewAudioDO = new WordReviewAudioDO();
+        } else if (isReplace) {
+            try {
+                dfsService.deleteFile(wordReviewAudioDO.getGroupName(), wordReviewAudioDO.getFilePath());
+            } catch (DfsOperateDeleteException e) {
+                log.error("Error deleting old wordReviewAudioDO", e);
+            }
+            reviewAudioMapper.deleteById(wordReviewAudioDO.getId());
+            wordReviewAudioDO = new WordReviewAudioDO();
+        } else {
+            return wordReviewAudioDO;
         }
-        WordReviewAudioDO wordReviewAudioDO = new WordReviewAudioDO();
         try {
             String text = acquireText(sourceId, type);
             String uploadResult = audioService.generateVoice(text, type);
@@ -181,6 +200,7 @@ public class ReviewServiceImpl implements IReviewService {
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
+
         return wordReviewAudioDO;
     }
 
@@ -192,7 +212,22 @@ public class ReviewServiceImpl implements IReviewService {
                 continue;
             }
             log.info("Audio is generating..., {}", audio.getText());
-            WordReviewAudioDO wordReviewAudioDO = new WordReviewAudioDO();
+            WordReviewAudioDO wordReviewAudioDO = reviewAudioMapper.selectOne(
+                Wrappers.<WordReviewAudioDO>lambdaQuery().eq(WordReviewAudioDO::getSourceId, audio.getSourceId())
+                    .eq(WordReviewAudioDO::getType, audio.getType()));
+            if (wordReviewAudioDO == null) {
+                wordReviewAudioDO = new WordReviewAudioDO();
+            } else if (isReplace) {
+                try {
+                    dfsService.deleteFile(wordReviewAudioDO.getGroupName(), wordReviewAudioDO.getFilePath());
+                } catch (DfsOperateDeleteException e) {
+                    log.error("Error deleting old wordReviewAudioDO", e);
+                }
+                reviewAudioMapper.deleteById(wordReviewAudioDO.getId());
+                wordReviewAudioDO = new WordReviewAudioDO();
+            } else {
+                continue;
+            }
             try {
                 String uploadResult = audioService.generateVoice(audio.getText(), audio.getType());
                 wordReviewAudioDO.setId(seqService.genIntSequence(MapperConstant.T_INS_SEQUENCE));
@@ -212,25 +247,11 @@ public class ReviewServiceImpl implements IReviewService {
         }
     }
 
-    private void deleteExistAudio(Integer sourceId, Integer type) {
-        Optional
-            .ofNullable(reviewAudioMapper.selectOne(Wrappers.<WordReviewAudioDO>lambdaQuery()
-                .eq(WordReviewAudioDO::getSourceId, sourceId).eq(WordReviewAudioDO::getType, type)))
-            .ifPresent(wordReviewAudioDO -> {
-                try {
-                    dfsService.deleteFile(wordReviewAudioDO.getGroupName(), wordReviewAudioDO.getFilePath());
-                } catch (DfsOperateDeleteException e) {
-                    log.error("Error deleting old wordReviewAudioDO", e);
-                } finally {
-                    reviewAudioMapper.deleteById(wordReviewAudioDO.getId());
-                }
-            });
-    }
-
     @Override
     public void generateTtsVoice(boolean isReplace) throws InterruptedException {
         List<ParaphraseStarRelDO> relList = paraphraseStarRelMapper.selectList(Wrappers
             .<ParaphraseStarRelDO>lambdaQuery().eq(ParaphraseStarRelDO::getIsKeepInMind, GlobalConstants.FLAG_DEL_NO));
+        // noinspection AlibabaThreadPoolCreation
         ExecutorService executorService = Executors.newFixedThreadPool(10);
         for (ParaphraseStarRelDO starRelDO : relList) {
             STORAGE.acquire();
@@ -329,7 +350,7 @@ public class ReviewServiceImpl implements IReviewService {
         throw new DataCheckedException("Chinese text cannot be found!");
     }
 
-    private WordReviewDailyCounterDO getDO(int userId, int type) {
+    private WordReviewDailyCounterDO findReviewCounterDO(int userId, int type) {
         LambdaQueryWrapper<WordReviewDailyCounterDO> wrapper = Wrappers.<WordReviewDailyCounterDO>lambdaQuery()
             .eq(WordReviewDailyCounterDO::getUserId, userId).eq(WordReviewDailyCounterDO::getType, type)
             .eq(WordReviewDailyCounterDO::getToday, LocalDateTime.now().toLocalDate());

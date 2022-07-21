@@ -47,7 +47,7 @@ public class WordReviewDailyCounterDO extends Model<WordReviewDailyCounterDO> {
     private Integer id;
 
     /**
-     * 1：remember 2：keep in mind 2：review
+     * 1：remember 2：keep in mind 3：review
      */
     @ApiModelProperty("")
     private Integer type;

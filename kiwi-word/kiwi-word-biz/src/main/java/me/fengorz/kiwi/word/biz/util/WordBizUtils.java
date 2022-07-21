@@ -20,9 +20,9 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
 import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
 import me.fengorz.kiwi.word.api.common.WordCrawlerConstants;
+import me.fengorz.kiwi.word.api.common.enumeration.CrawlerStatusEnum;
 import me.fengorz.kiwi.word.api.dto.mapper.in.SelectStarListItemDTO;
 import me.fengorz.kiwi.word.api.entity.*;
-import me.fengorz.kiwi.word.api.enumeration.CrawlerStatusEnum;
 
 /**
  * @Author zhanshifeng @Date 2019/11/3 5:36 PM

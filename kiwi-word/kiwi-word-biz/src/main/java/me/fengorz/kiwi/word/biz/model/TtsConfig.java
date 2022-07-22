@@ -19,6 +19,10 @@
 
 package me.fengorz.kiwi.word.biz.model;
 
+import java.util.Set;
+
+import org.apache.commons.collections4.SetUtils;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -35,5 +39,9 @@ public class TtsConfig {
     private String apiKey2;
     private String apiKey3;
     private String apiKey4;
+
+    public Set<String> listApiKey() {
+        return SetUtils.unmodifiableSet(apiKey1, apiKey2, apiKey3, apiKey4);
+    }
 
 }

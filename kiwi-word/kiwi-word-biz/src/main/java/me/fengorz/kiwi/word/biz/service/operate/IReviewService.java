@@ -61,4 +61,8 @@ public interface IReviewService {
     String autoSelectApiKey();
 
     void increaseApiKeyUsedTime(String apiKey);
+
+    Integer queryTtsApiKeyUsed(String apiKey);
+
+    Integer useTtsApiKey(String apiKey, Integer time);
 }

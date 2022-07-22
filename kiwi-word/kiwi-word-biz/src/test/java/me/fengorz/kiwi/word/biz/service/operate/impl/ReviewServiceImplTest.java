@@ -36,6 +36,7 @@ import me.fengorz.kiwi.word.api.common.enumeration.ReviewDailyCounterTypeEnum;
 import me.fengorz.kiwi.word.api.vo.WordReviewDailyCounterVO;
 import me.fengorz.kiwi.word.biz.WordBizApplication;
 import me.fengorz.kiwi.word.biz.controller.WordReviewController;
+import me.fengorz.kiwi.word.biz.model.TtsConfig;
 import me.fengorz.kiwi.word.biz.service.operate.IReviewService;
 
 @Slf4j
@@ -47,6 +48,9 @@ public class ReviewServiceImplTest {
 
     @Autowired
     private IReviewService reviewService;
+
+    @Autowired
+    private TtsConfig ttsConfig;
 
     @Autowired
     private WordReviewController controller;
@@ -76,10 +80,24 @@ public class ReviewServiceImplTest {
     }
 
     @Test
+    @Disabled
     void listReviewCounterVO() {
         List<WordReviewDailyCounterVO> list = reviewService.listReviewCounterVO(1);
         log.info("listReviewCounterVO >>>>>>>>>>>> {}", KiwiJsonUtils.toJsonStr(list));
         Assertions.assertEquals(ReviewDailyCounterTypeEnum.values().length, list.size());
+    }
+
+    @Test
+    @Disabled
+    void autoSelectApiKey() {
+        String apiKey = reviewService.autoSelectApiKey();
+        Assertions.assertTrue(ttsConfig.listApiKey().contains(apiKey));
+    }
+
+    @Test
+    // @Disabled
+    void increaseApiKeyUsedTime() {
+        Assertions.assertDoesNotThrow(() -> reviewService.increaseApiKeyUsedTime(ttsConfig.getApiKey1()));
     }
 
     @Test

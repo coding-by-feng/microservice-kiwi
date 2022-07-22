@@ -88,7 +88,7 @@ public class ReviewServiceImplTest {
     }
 
     @Test
-    // @Disabled
+    @Disabled
     void autoSelectApiKey() {
         String apiKey = reviewService.autoSelectApiKey();
         Assertions.assertTrue(ttsConfig.listApiKey().contains(apiKey));
@@ -110,12 +110,14 @@ public class ReviewServiceImplTest {
             // }
 
             reviewService.useTtsApiKey(ttsConfig.getApiKey5(), 0);
+            reviewService.useTtsApiKey(ttsConfig.getApiKey6(), 0);
         });
     }
 
     @Test
-    @Disabled
+    // @Disabled
     void queryTtsApiKeyUsed() {
+        Assertions.assertEquals(reviewService.queryTtsApiKeyUsed(ttsConfig.getApiKey6()), 0);
         Assertions.assertEquals(reviewService.queryTtsApiKeyUsed(ttsConfig.getApiKey5()), 0);
         Assertions.assertEquals(reviewService.queryTtsApiKeyUsed(ttsConfig.getApiKey1()), 350);
         Assertions.assertEquals(reviewService.queryTtsApiKeyUsed(ttsConfig.getApiKey2()), 350);

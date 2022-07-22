@@ -44,6 +44,7 @@ public class WordConstants {
         String METHOD_WORD_NAME = "word_name";
         String METHOD_PARAPHRASE_ID = "paraphrase_id";
         String METHOD_FETCH_REPLACE = "fetch_replace";
+        String TTS_VOICE_RSS_API_KEY_USED_TIME = "TTS_VOICE_RSS_API_KEY";
     }
 
     public interface CACHE_KEY_PREFIX_WORD_MAIN {
@@ -63,4 +64,11 @@ public class WordConstants {
         String CLASS = "character";
         String METHOD_ID = "id";
     }
+
+    public interface CACHE_KEY_PREFIX_TTS {
+        String TOTAL_API_KEY = "total_api_key";
+    }
+
+    public static final int API_KEY_MAX_USE_TIME = 350;
+
 }

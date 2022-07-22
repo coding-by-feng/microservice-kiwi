@@ -23,6 +23,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Semaphore;
 
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -35,6 +37,9 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.bdf.core.service.ISeqService;
 import me.fengorz.kiwi.common.fastdfs.service.DfsService;
+import me.fengorz.kiwi.common.sdk.annotation.cache.KiwiCacheKey;
+import me.fengorz.kiwi.common.sdk.annotation.cache.KiwiCacheKeyPrefix;
+import me.fengorz.kiwi.common.sdk.constant.CacheConstants;
 import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
 import me.fengorz.kiwi.common.sdk.constant.MapperConstant;
 import me.fengorz.kiwi.common.sdk.exception.AuthException;
@@ -53,6 +58,7 @@ import me.fengorz.kiwi.word.api.common.enumeration.ReviewPermanentAudioEnum;
 import me.fengorz.kiwi.word.api.entity.*;
 import me.fengorz.kiwi.word.api.vo.WordReviewDailyCounterVO;
 import me.fengorz.kiwi.word.biz.mapper.*;
+import me.fengorz.kiwi.word.biz.model.TtsConfig;
 import me.fengorz.kiwi.word.biz.service.operate.AudioService;
 import me.fengorz.kiwi.word.biz.service.operate.IReviewService;
 import me.fengorz.kiwi.word.biz.util.WordDfsUtils;
@@ -79,6 +85,7 @@ public class ReviewServiceImpl implements IReviewService {
     private final ParaphraseStarRelMapper paraphraseStarRelMapper;
     private final DfsService dfsService;
     private final AudioService audioService;
+    private final TtsConfig ttsConfig;
 
     private final static Semaphore STORAGE = new Semaphore(10);
 
@@ -113,15 +120,24 @@ public class ReviewServiceImpl implements IReviewService {
                 log.info("userId[{}] ReviewDailyCounterType[{}] is created.", userId, typeEnum.name());
             }
         }
+        for (String apiKey : ttsConfig.listApiKey()) {
+            useTtsApiKey(apiKey, 0);
+        }
+        useTtsApiKey(WordConstants.CACHE_KEY_PREFIX_TTS.TOTAL_API_KEY, 0);
     }
 
     @Async
     @Override
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRES_NEW)
     public void increase(int type, Integer userId) {
+        if (ReviewDailyCounterTypeEnum.REVIEW_AUDIO_VOICERSS_TTS_COUNTER.getType() == type) {
+            synchronized (BARRIER) {
+                voiceRssGlobalIncreaseCounter();
+            }
+        }
         WordReviewDailyCounterDO counter = findReviewCounterDO(userId, type);
         if (counter == null) {
-            this.createTheDays(userId);
+            createTheDays(userId);
             counter = findReviewCounterDO(userId, type);
         }
         counter.setReviewCount(counter.getReviewCount() + 1);
@@ -136,9 +152,9 @@ public class ReviewServiceImpl implements IReviewService {
     @Override
     public List<WordReviewDailyCounterVO> listReviewCounterVO(int userId) {
         return KiwiBeanUtils.convertFrom(
-            reviewDailyCounterMapper.selectList(Wrappers.<WordReviewDailyCounterDO>lambdaQuery()
-                .eq(WordReviewDailyCounterDO::getUserId, userId)
-                .eq(WordReviewDailyCounterDO::getToday, LocalDateTime.now().toLocalDate())),
+            reviewDailyCounterMapper.selectList(
+                Wrappers.<WordReviewDailyCounterDO>lambdaQuery().eq(WordReviewDailyCounterDO::getUserId, userId)
+                    .eq(WordReviewDailyCounterDO::getToday, LocalDateTime.now().toLocalDate())),
             WordReviewDailyCounterVO.class, "id", "today");
     }
 
@@ -272,7 +288,57 @@ public class ReviewServiceImpl implements IReviewService {
 
     @Override
     public void generateTtsVoiceFromParaphraseId(Integer paraphraseId) {
-        this.generateTtsVoiceFromParaphraseId(true, paraphraseId);
+        generateTtsVoiceFromParaphraseId(true, paraphraseId);
+    }
+
+    @SuppressWarnings("ConstantConditions")
+    @Override
+    public String autoSelectApiKey() {
+        Integer totalUsedTime = queryTtsApiKeyUsed(WordConstants.CACHE_KEY_PREFIX_TTS.TOTAL_API_KEY);
+        if (WordConstants.API_KEY_MAX_USE_TIME * ttsConfig.listApiKey().size() <= totalUsedTime) {
+            return null;
+        }
+        String finalApiKey = null;
+        int minUsedTime = WordConstants.API_KEY_MAX_USE_TIME;
+        for (String apiKey : ttsConfig.listApiKey()) {
+            int usedTime = Optional.ofNullable(queryTtsApiKeyUsed(apiKey)).orElseThrow(ResourceNotFoundException::new);
+            if (usedTime >= WordConstants.API_KEY_MAX_USE_TIME) {
+                continue;
+            }
+            if (usedTime < minUsedTime) {
+                minUsedTime = usedTime;
+                finalApiKey = apiKey;
+            }
+        }
+
+        log.info("autoSelectApiKey finalApiKey is {}, minUsedTime is {}", finalApiKey, minUsedTime);
+
+        return finalApiKey;
+    }
+
+    @Async
+    @Override
+    public void increaseApiKeyUsedTime(String apiKey) {
+        synchronized (BARRIER) {
+            voiceRssGlobalIncreaseCounter();
+            useTtsApiKey(apiKey,
+                Optional.ofNullable(queryTtsApiKeyUsed(apiKey)).orElseThrow(ResourceNotFoundException::new) + 1);
+        }
+    }
+
+    @KiwiCacheKeyPrefix(WordConstants.CACHE_KEY_PREFIX_OPERATE.TTS_VOICE_RSS_API_KEY_USED_TIME)
+    @Cacheable(cacheNames = WordConstants.CACHE_NAMES, keyGenerator = CacheConstants.CACHE_KEY_GENERATOR_BEAN,
+        unless = "#result == null")
+    private Integer queryTtsApiKeyUsed(@KiwiCacheKey String apiKey) {
+        return null;
+    }
+
+    @SuppressWarnings("UnusedReturnValue")
+    @KiwiCacheKeyPrefix(WordConstants.CACHE_KEY_PREFIX_OPERATE.TTS_VOICE_RSS_API_KEY_USED_TIME)
+    @CachePut(cacheNames = WordConstants.CACHE_NAMES, keyGenerator = CacheConstants.CACHE_KEY_GENERATOR_BEAN,
+        unless = "#result == null")
+    private Integer useTtsApiKey(@KiwiCacheKey String apiKey, Integer time) {
+        return time;
     }
 
     private void generateTtsVoiceFromParaphraseId(boolean isReplace, Integer paraphraseId) {
@@ -371,5 +437,12 @@ public class ReviewServiceImpl implements IReviewService {
             .setUserId(userId).setListId(listId);
         breakpointReviewMapper.insert(breakpointReviewDO);
     }
+
+    private void voiceRssGlobalIncreaseCounter() {
+        Integer usedTime = queryTtsApiKeyUsed(WordConstants.CACHE_KEY_PREFIX_TTS.TOTAL_API_KEY);
+        useTtsApiKey(WordConstants.CACHE_KEY_PREFIX_TTS.TOTAL_API_KEY, usedTime);
+    }
+
+    private static final Object BARRIER = new Object();
 
 }

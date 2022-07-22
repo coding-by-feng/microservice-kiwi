@@ -80,4 +80,6 @@ public interface GlobalConstants extends ApiContants {
 
     String WHAT = "什么什么";
 
+    Integer GLOBAL_ALL_ACCOUNT_ID = 0;
+
 }

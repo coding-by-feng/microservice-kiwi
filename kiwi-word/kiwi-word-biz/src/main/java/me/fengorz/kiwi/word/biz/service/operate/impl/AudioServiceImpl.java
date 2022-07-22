@@ -16,6 +16,8 @@
 
 package me.fengorz.kiwi.word.biz.service.operate.impl;
 
+import static me.fengorz.kiwi.word.api.common.WordConstants.API_KEY_MAX_USE_TIME;
+
 import java.io.ByteArrayInputStream;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -51,7 +53,6 @@ public class AudioServiceImpl implements AudioService {
     private final DfsService dfsService;
     private final ReviewAudioMapper reviewAudioMapper;
     private static final Map<Integer, Integer> API_KEY_USE_TIME_MAP = new ConcurrentHashMap<>();
-    private static final int API_KEY_MAX_USE_TIME = 350;
     static {
         API_KEY_USE_TIME_MAP.put(1, 300);
         API_KEY_USE_TIME_MAP.put(2, 0);

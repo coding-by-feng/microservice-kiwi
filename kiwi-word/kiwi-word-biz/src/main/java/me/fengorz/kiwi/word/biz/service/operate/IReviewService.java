@@ -57,4 +57,8 @@ public interface IReviewService {
     void generateTtsVoice(boolean isReplace) throws DfsOperateException, TtsException, InterruptedException;
 
     void generateTtsVoiceFromParaphraseId(Integer paraphraseId);
+
+    String autoSelectApiKey();
+
+    void increaseApiKeyUsedTime(String apiKey);
 }

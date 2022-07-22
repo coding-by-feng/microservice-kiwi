@@ -329,7 +329,8 @@ public class ReviewServiceImpl implements IReviewService {
     @KiwiCacheKeyPrefix(WordConstants.CACHE_KEY_PREFIX_OPERATE.TTS_VOICE_RSS_API_KEY_USED_TIME)
     @Cacheable(cacheNames = WordConstants.CACHE_NAMES, keyGenerator = CacheConstants.CACHE_KEY_GENERATOR_BEAN,
         unless = "#result == null")
-    private Integer queryTtsApiKeyUsed(@KiwiCacheKey String apiKey) {
+    @Override
+    public Integer queryTtsApiKeyUsed(@KiwiCacheKey String apiKey) {
         return null;
     }
 
@@ -337,7 +338,8 @@ public class ReviewServiceImpl implements IReviewService {
     @KiwiCacheKeyPrefix(WordConstants.CACHE_KEY_PREFIX_OPERATE.TTS_VOICE_RSS_API_KEY_USED_TIME)
     @CachePut(cacheNames = WordConstants.CACHE_NAMES, keyGenerator = CacheConstants.CACHE_KEY_GENERATOR_BEAN,
         unless = "#result == null")
-    private Integer useTtsApiKey(@KiwiCacheKey String apiKey, Integer time) {
+    @Override
+    public Integer useTtsApiKey(@KiwiCacheKey String apiKey, Integer time) {
         return time;
     }
 

@@ -114,4 +114,15 @@ public class WordReviewController extends AbstractDfsController {
         return R.success();
     }
 
+    @GetMapping("/autoSelectApiKey")
+    public R<String> autoSelectApiKey() {
+        return R.success(reviewService.autoSelectApiKey());
+    }
+
+    @GetMapping("/increaseApiKeyUsedTime/{apiKey}")
+    public R<Void> increaseApiKeyUsedTime(@PathVariable("apiKey") String apiKey) {
+        reviewService.increaseApiKeyUsedTime(apiKey);
+        return R.success();
+    }
+
 }

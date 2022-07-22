@@ -419,10 +419,8 @@ public class OperateServiceImpl implements IOperateService {
     @KiwiCacheKeyPrefix(WordConstants.CACHE_KEY_PREFIX_OPERATE.METHOD_FETCH_REPLACE)
     @CachePut(cacheNames = WordConstants.CACHE_NAMES, keyGenerator = CacheConstants.CACHE_KEY_GENERATOR_BEAN,
         unless = "#result == null")
-    public void cacheReplace(@KiwiCacheKey String wordName, FetchWordReplaceDTO dto) {
-        if (dto == null) {
-            new FetchWordReplaceDTO();
-        }
+    public FetchWordReplaceDTO cacheReplace(@KiwiCacheKey String wordName, FetchWordReplaceDTO dto) {
+        return dto;
     }
 
     @KiwiCacheKeyPrefix(WordConstants.CACHE_KEY_PREFIX_OPERATE.METHOD_FETCH_REPLACE)

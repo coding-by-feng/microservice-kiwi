@@ -32,6 +32,7 @@ import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.sdk.constant.EnvConstants;
 import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
 import me.fengorz.kiwi.common.sdk.util.json.KiwiJsonUtils;
+import me.fengorz.kiwi.word.api.common.WordConstants;
 import me.fengorz.kiwi.word.api.common.enumeration.ReviewDailyCounterTypeEnum;
 import me.fengorz.kiwi.word.api.vo.WordReviewDailyCounterVO;
 import me.fengorz.kiwi.word.biz.WordBizApplication;
@@ -115,14 +116,21 @@ public class ReviewServiceImplTest {
     }
 
     @Test
-    // @Disabled
+    @Disabled
     void queryTtsApiKeyUsed() {
         Assertions.assertEquals(reviewService.queryTtsApiKeyUsed(ttsConfig.getApiKey6()), 0);
         Assertions.assertEquals(reviewService.queryTtsApiKeyUsed(ttsConfig.getApiKey5()), 0);
-        Assertions.assertEquals(reviewService.queryTtsApiKeyUsed(ttsConfig.getApiKey1()), 350);
-        Assertions.assertEquals(reviewService.queryTtsApiKeyUsed(ttsConfig.getApiKey2()), 350);
-        Assertions.assertEquals(reviewService.queryTtsApiKeyUsed(ttsConfig.getApiKey3()), 350);
-        Assertions.assertEquals(reviewService.queryTtsApiKeyUsed(ttsConfig.getApiKey4()), 350);
+        Assertions.assertEquals(reviewService.queryTtsApiKeyUsed(ttsConfig.getApiKey1()), 0);
+        Assertions.assertEquals(reviewService.queryTtsApiKeyUsed(ttsConfig.getApiKey2()), 0);
+        Assertions.assertEquals(reviewService.queryTtsApiKeyUsed(ttsConfig.getApiKey3()), 0);
+        Assertions.assertEquals(reviewService.queryTtsApiKeyUsed(ttsConfig.getApiKey4()), 0);
+    }
+
+    @Test
+    void deprecateApiKeyToday() {
+        Assertions.assertDoesNotThrow(() -> reviewService.deprecateApiKeyToday(ttsConfig.getApiKey1()));
+        Assertions.assertEquals(reviewService.queryTtsApiKeyUsed(ttsConfig.getApiKey1()),
+            WordConstants.API_KEY_MAX_USE_TIME);
     }
 
     @Test

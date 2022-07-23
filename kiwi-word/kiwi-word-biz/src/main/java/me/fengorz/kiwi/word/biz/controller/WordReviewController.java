@@ -125,4 +125,10 @@ public class WordReviewController extends AbstractDfsController {
         return R.success();
     }
 
+    @GetMapping("/deprecateApiKeyToday/{apiKey}")
+    public R<Void> deprecateApiKeyToday(@PathVariable("apiKey") String apiKey) {
+        reviewService.deprecateApiKeyToday(apiKey);
+        return R.success();
+    }
+
 }

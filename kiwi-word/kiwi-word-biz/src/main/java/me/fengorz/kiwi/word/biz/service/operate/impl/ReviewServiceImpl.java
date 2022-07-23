@@ -112,18 +112,20 @@ public class ReviewServiceImpl implements IReviewService {
         if (userId == null) {
             throw new AuthException("userId cannot be null!");
         }
-        for (ReviewDailyCounterTypeEnum typeEnum : ReviewDailyCounterTypeEnum.values()) {
-            if (findReviewCounterDO(userId, typeEnum.getType()) == null) {
-                createDO(typeEnum.getType(), userId);
-                log.info("userId[{}] ReviewDailyCounterType[{}] is lacking， created", userId, typeEnum.name());
-            } else {
-                log.info("userId[{}] ReviewDailyCounterType[{}] is created.", userId, typeEnum.name());
+        synchronized (BARRIER_FOR_DAYS) {
+            for (ReviewDailyCounterTypeEnum typeEnum : ReviewDailyCounterTypeEnum.values()) {
+                if (findReviewCounterDO(userId, typeEnum.getType()) == null) {
+                    createDO(typeEnum.getType(), userId);
+                    log.info("userId[{}] ReviewDailyCounterType[{}] is lacking， created", userId, typeEnum.name());
+                } else {
+                    log.info("userId[{}] ReviewDailyCounterType[{}] is created.", userId, typeEnum.name());
+                }
             }
+            for (String apiKey : ttsConfig.listApiKey()) {
+                useTtsApiKey(apiKey, 0);
+            }
+            useTtsApiKey(WordConstants.CACHE_KEY_PREFIX_TTS.TOTAL_API_KEY, 0);
         }
-        for (String apiKey : ttsConfig.listApiKey()) {
-            useTtsApiKey(apiKey, 0);
-        }
-        useTtsApiKey(WordConstants.CACHE_KEY_PREFIX_TTS.TOTAL_API_KEY, 0);
     }
 
     @Async
@@ -291,7 +293,6 @@ public class ReviewServiceImpl implements IReviewService {
         generateTtsVoiceFromParaphraseId(true, paraphraseId);
     }
 
-    @SuppressWarnings("ConstantConditions")
     @Override
     public String autoSelectApiKey() {
         Integer totalUsedTime = queryTtsApiKeyUsed(WordConstants.CACHE_KEY_PREFIX_TTS.TOTAL_API_KEY);
@@ -341,6 +342,12 @@ public class ReviewServiceImpl implements IReviewService {
     @Override
     public Integer useTtsApiKey(@KiwiCacheKey String apiKey, Integer time) {
         return time;
+    }
+
+    @Async
+    @Override
+    public void deprecateApiKeyToday(String apiKey) {
+        useTtsApiKey(apiKey, WordConstants.API_KEY_MAX_USE_TIME);
     }
 
     private void generateTtsVoiceFromParaphraseId(boolean isReplace, Integer paraphraseId) {
@@ -446,5 +453,6 @@ public class ReviewServiceImpl implements IReviewService {
     }
 
     private static final Object BARRIER = new Object();
+    private static final Object BARRIER_FOR_DAYS = new Object();
 
 }

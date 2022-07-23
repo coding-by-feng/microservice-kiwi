@@ -65,4 +65,6 @@ public interface IReviewService {
     Integer queryTtsApiKeyUsed(String apiKey);
 
     Integer useTtsApiKey(String apiKey, Integer time);
+
+    void deprecateApiKeyToday(String apiKey);
 }

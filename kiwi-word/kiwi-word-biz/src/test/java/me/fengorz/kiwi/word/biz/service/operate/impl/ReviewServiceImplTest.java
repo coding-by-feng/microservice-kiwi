@@ -127,6 +127,7 @@ public class ReviewServiceImplTest {
     }
 
     @Test
+    @Disabled
     void deprecateApiKeyToday() {
         Assertions.assertDoesNotThrow(() -> reviewService.deprecateApiKeyToday(ttsConfig.getApiKey1()));
         Assertions.assertEquals(reviewService.queryTtsApiKeyUsed(ttsConfig.getApiKey1()),

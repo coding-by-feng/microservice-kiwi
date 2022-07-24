@@ -346,6 +346,9 @@ public class ReviewServiceImpl implements IReviewService {
     @Async
     @Override
     public void deprecateApiKeyToday(String apiKey) {
+        if (!ttsConfig.listApiKey().contains(apiKey)) {
+            return;
+        }
         useTtsApiKey(apiKey, WordConstants.API_KEY_MAX_USE_TIME);
     }
 

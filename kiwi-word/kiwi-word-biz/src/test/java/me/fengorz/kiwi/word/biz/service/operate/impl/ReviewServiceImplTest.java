@@ -103,15 +103,10 @@ public class ReviewServiceImplTest {
     }
 
     @Test
-    @Disabled
+    // @Disabled
     void useTtsApiKey() {
         Assertions.assertDoesNotThrow(() -> {
-            // for (String apiKey : ttsConfig.listApiKey()) {
-            // reviewService.useTtsApiKey(apiKey, 350);
-            // }
-
-            reviewService.useTtsApiKey(ttsConfig.getApiKey5(), 0);
-            reviewService.useTtsApiKey(ttsConfig.getApiKey6(), 0);
+            reviewService.useTtsApiKey(ttsConfig.getApiKey7(), 0);
         });
     }
 
@@ -132,6 +127,14 @@ public class ReviewServiceImplTest {
         Assertions.assertDoesNotThrow(() -> reviewService.deprecateApiKeyToday(ttsConfig.getApiKey1()));
         Assertions.assertEquals(reviewService.queryTtsApiKeyUsed(ttsConfig.getApiKey1()),
             WordConstants.API_KEY_MAX_USE_TIME);
+    }
+
+    @Test
+    @Disabled
+    void queryAllTtsApiKeyUsed() {
+        for (String apiKey : ttsConfig.listApiKey()) {
+            log.info("queryTtsApiKeyUsed [{}] used times is {}", apiKey, reviewService.queryTtsApiKeyUsed(apiKey));
+        }
     }
 
     @Test

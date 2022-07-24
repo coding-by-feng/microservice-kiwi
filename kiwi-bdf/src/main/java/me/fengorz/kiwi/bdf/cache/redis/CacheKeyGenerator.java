@@ -42,7 +42,7 @@ public class CacheKeyGenerator extends SimpleKeyGenerator {
 
     @Override
     public Object generate(Object target, Method method, Object... params) {
-        String prefix = null;
+        String prefix = GlobalConstants.EMPTY;
 
         KiwiCacheKeyPrefix classKeyPrefix = target.getClass().getAnnotation(KiwiCacheKeyPrefix.class);
         if (Objects.nonNull(classKeyPrefix)) {

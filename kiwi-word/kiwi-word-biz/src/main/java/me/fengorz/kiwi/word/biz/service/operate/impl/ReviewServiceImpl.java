@@ -295,14 +295,16 @@ public class ReviewServiceImpl implements IReviewService {
 
     @Override
     public String autoSelectApiKey() {
-        Integer totalUsedTime = queryTtsApiKeyUsed(WordConstants.CACHE_KEY_PREFIX_TTS.TOTAL_API_KEY);
+        Integer totalUsedTime =
+            Optional.ofNullable(queryTtsApiKeyUsed(WordConstants.CACHE_KEY_PREFIX_TTS.TOTAL_API_KEY))
+                .orElseThrow(ResourceNotFoundException::new);
         if (WordConstants.API_KEY_MAX_USE_TIME * ttsConfig.listApiKey().size() <= totalUsedTime) {
             return null;
         }
         String finalApiKey = null;
         int minUsedTime = WordConstants.API_KEY_MAX_USE_TIME;
         for (String apiKey : ttsConfig.listApiKey()) {
-            int usedTime = Optional.ofNullable(queryTtsApiKeyUsed(apiKey)).orElseThrow(ResourceNotFoundException::new);
+            int usedTime = queryTtsApiKeyUsed(apiKey);
             if (usedTime >= WordConstants.API_KEY_MAX_USE_TIME) {
                 continue;
             }
@@ -314,7 +316,7 @@ public class ReviewServiceImpl implements IReviewService {
 
         log.info("autoSelectApiKey finalApiKey is {}, minUsedTime is {}", finalApiKey, minUsedTime);
 
-        return finalApiKey;
+        return Optional.ofNullable(finalApiKey).orElseThrow(ResourceNotFoundException::new);
     }
 
     @Async
@@ -322,7 +324,8 @@ public class ReviewServiceImpl implements IReviewService {
     public void increaseApiKeyUsedTime(String apiKey) {
         synchronized (BARRIER) {
             voiceRssGlobalIncreaseCounter();
-            useTtsApiKey(apiKey, queryTtsApiKeyUsed(apiKey) + 1);
+            useTtsApiKey(apiKey,
+                Optional.ofNullable(queryTtsApiKeyUsed(apiKey)).orElseThrow(ResourceNotFoundException::new) + 1);
         }
     }
 
@@ -330,8 +333,8 @@ public class ReviewServiceImpl implements IReviewService {
     @Cacheable(cacheNames = WordConstants.CACHE_NAMES, keyGenerator = CacheConstants.CACHE_KEY_GENERATOR_BEAN,
         unless = "#result == null")
     @Override
-    public int queryTtsApiKeyUsed(@KiwiCacheKey String apiKey) {
-        return -1;
+    public Integer queryTtsApiKeyUsed(@KiwiCacheKey String apiKey) {
+        return null;
     }
 
     @SuppressWarnings("UnusedReturnValue")
@@ -450,7 +453,9 @@ public class ReviewServiceImpl implements IReviewService {
     }
 
     private void voiceRssGlobalIncreaseCounter() {
-        useTtsApiKey(WordConstants.CACHE_KEY_PREFIX_TTS.TOTAL_API_KEY, queryTtsApiKeyUsed(WordConstants.CACHE_KEY_PREFIX_TTS.TOTAL_API_KEY) + 1);
+        useTtsApiKey(WordConstants.CACHE_KEY_PREFIX_TTS.TOTAL_API_KEY,
+            Optional.ofNullable(queryTtsApiKeyUsed(WordConstants.CACHE_KEY_PREFIX_TTS.TOTAL_API_KEY))
+                .orElseThrow(ResourceNotFoundException::new) + 1);
     }
 
     private static final Object BARRIER = new Object();

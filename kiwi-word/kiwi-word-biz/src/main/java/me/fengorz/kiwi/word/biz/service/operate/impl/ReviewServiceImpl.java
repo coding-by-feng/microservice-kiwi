@@ -33,6 +33,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 
+import cn.hutool.core.util.StrUtil;
+import cn.hutool.http.HttpUtil;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.bdf.core.service.ISeqService;
@@ -352,7 +354,11 @@ public class ReviewServiceImpl implements IReviewService {
         if (!ttsConfig.listApiKey().contains(apiKey)) {
             return;
         }
-        useTtsApiKey(apiKey, WordConstants.API_KEY_MAX_USE_TIME);
+        Optional.ofNullable(HttpUtil.get(StrUtil.format(ttsConfig.getUrl(), apiKey))).ifPresent(response -> {
+            if (StringUtils.startsWith(response, "ERROR:")) {
+                useTtsApiKey(apiKey, WordConstants.API_KEY_MAX_USE_TIME);
+            }
+        });
     }
 
     private void generateTtsVoiceFromParaphraseId(boolean isReplace, Integer paraphraseId) {

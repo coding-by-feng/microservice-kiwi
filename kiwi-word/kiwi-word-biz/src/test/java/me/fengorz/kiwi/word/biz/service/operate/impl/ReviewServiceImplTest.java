@@ -28,6 +28,8 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import cn.hutool.core.util.StrUtil;
+import cn.hutool.http.HttpUtil;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.sdk.constant.EnvConstants;
 import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
@@ -89,7 +91,7 @@ public class ReviewServiceImplTest {
     }
 
     @Test
-    // @Disabled
+    @Disabled
     void autoSelectApiKey() {
         String apiKey = reviewService.autoSelectApiKey();
         Assertions.assertTrue(ttsConfig.listApiKey().contains(apiKey));
@@ -131,11 +133,17 @@ public class ReviewServiceImplTest {
     }
 
     @Test
-    // @Disabled
+    @Disabled
     void queryAllTtsApiKeyUsed() {
         for (String apiKey : ttsConfig.listApiKey()) {
             log.info("queryTtsApiKeyUsed [{}] used times is {}", apiKey, reviewService.queryTtsApiKeyUsed(apiKey));
         }
+    }
+
+    @Test
+    // @Disabled
+    void testVoiceRssUrl() {
+        log.info("testVoiceRssUrl response is {}", HttpUtil.get(StrUtil.format(ttsConfig.getUrl(), "58d4baef52414088998cbbda9751c812")));
     }
 
     @Test

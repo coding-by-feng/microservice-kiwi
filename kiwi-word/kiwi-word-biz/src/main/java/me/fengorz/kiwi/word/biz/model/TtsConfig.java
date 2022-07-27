@@ -35,6 +35,7 @@ import lombok.Setter;
 @Setter
 public class TtsConfig {
 
+    private String url;
     private String apiKey1;
     private String apiKey2;
     private String apiKey3;

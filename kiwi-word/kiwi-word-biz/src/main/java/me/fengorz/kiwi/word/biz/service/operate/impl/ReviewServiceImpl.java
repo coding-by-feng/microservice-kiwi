@@ -297,12 +297,6 @@ public class ReviewServiceImpl implements IReviewService {
 
     @Override
     public String autoSelectApiKey() {
-        Integer totalUsedTime =
-            Optional.ofNullable(queryTtsApiKeyUsed(WordConstants.CACHE_KEY_PREFIX_TTS.TOTAL_API_KEY))
-                .orElseThrow(ResourceNotFoundException::new);
-        if (WordConstants.API_KEY_MAX_USE_TIME * ttsConfig.listApiKey().size() <= totalUsedTime) {
-            return null;
-        }
         String finalApiKey = null;
         int minUsedTime = WordConstants.API_KEY_MAX_USE_TIME;
         for (String apiKey : ttsConfig.listApiKey()) {
@@ -315,7 +309,6 @@ public class ReviewServiceImpl implements IReviewService {
                 finalApiKey = apiKey;
             }
         }
-
         log.info("autoSelectApiKey finalApiKey is {}, minUsedTime is {}", finalApiKey, minUsedTime);
 
         return Optional.ofNullable(finalApiKey).orElseThrow(ResourceNotFoundException::new);

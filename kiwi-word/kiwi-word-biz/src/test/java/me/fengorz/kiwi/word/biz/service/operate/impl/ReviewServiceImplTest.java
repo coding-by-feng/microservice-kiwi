@@ -106,7 +106,7 @@ public class ReviewServiceImplTest {
     }
 
     @Test
-    // @Disabled
+    @Disabled
     void useTtsApiKey() {
         Assertions.assertDoesNotThrow(() -> {
             reviewService.useTtsApiKey(ttsConfig.getApiKey9(), 0);

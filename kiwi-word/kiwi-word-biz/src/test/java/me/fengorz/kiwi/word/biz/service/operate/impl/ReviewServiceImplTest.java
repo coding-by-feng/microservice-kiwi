@@ -109,7 +109,7 @@ public class ReviewServiceImplTest {
     @Disabled
     void useTtsApiKey() {
         Assertions.assertDoesNotThrow(() -> {
-            reviewService.useTtsApiKey(ttsConfig.getApiKey7(), 0);
+            reviewService.useTtsApiKey(ttsConfig.getApiKey8(), 0);
         });
     }
 
@@ -133,7 +133,7 @@ public class ReviewServiceImplTest {
     }
 
     @Test
-    @Disabled
+    // @Disabled
     void queryAllTtsApiKeyUsed() {
         for (String apiKey : ttsConfig.listApiKey()) {
             log.info("queryTtsApiKeyUsed [{}] used times is {}", apiKey, reviewService.queryTtsApiKeyUsed(apiKey));
@@ -141,7 +141,7 @@ public class ReviewServiceImplTest {
     }
 
     @Test
-    // @Disabled
+    @Disabled
     void testVoiceRssUrl() {
         log.info("testVoiceRssUrl response is {}", HttpUtil.get(StrUtil.format(ttsConfig.getUrl(), "58d4baef52414088998cbbda9751c812")));
     }

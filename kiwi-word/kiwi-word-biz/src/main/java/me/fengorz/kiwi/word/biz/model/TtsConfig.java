@@ -43,9 +43,10 @@ public class TtsConfig {
     private String apiKey5;
     private String apiKey6;
     private String apiKey7;
+    private String apiKey8;
 
     public Set<String> listApiKey() {
-        return SetUtils.unmodifiableSet(apiKey1, apiKey2, apiKey3, apiKey4, apiKey5, apiKey6, apiKey7);
+        return SetUtils.unmodifiableSet(apiKey1, apiKey2, apiKey3, apiKey4, apiKey5, apiKey6, apiKey7, apiKey8);
     }
 
 }

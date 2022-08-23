@@ -46,7 +46,7 @@ import me.fengorz.kiwi.word.api.vo.star.WordStarItemVO;
 import me.fengorz.kiwi.word.biz.mapper.WordStarListMapper;
 import me.fengorz.kiwi.word.biz.service.base.IWordStarListService;
 import me.fengorz.kiwi.word.biz.service.base.IWordStarRelService;
-import me.fengorz.kiwi.word.biz.service.operate.IAsyncArchiveService;
+import me.fengorz.kiwi.word.biz.service.operate.AsyncArchiveService;
 
 /**
  * 单词本
@@ -61,7 +61,7 @@ public class WordStarListServiceImpl extends ServiceImpl<WordStarListMapper, Wor
 
     private final WordStarListMapper wordStarListMapper;
     private final IWordStarRelService relService;
-    private final IAsyncArchiveService archiveService;
+    private final AsyncArchiveService archiveService;
 
     @Override
     public Integer countById(Integer id) {

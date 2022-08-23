@@ -16,7 +16,7 @@
 
 package me.fengorz.kiwi.word.biz.service.operate;
 
-public interface IAsyncArchiveService {
+public interface AsyncArchiveService {
 
     void archiveWordRel(Integer wordId, Integer listId, Integer userId);
 

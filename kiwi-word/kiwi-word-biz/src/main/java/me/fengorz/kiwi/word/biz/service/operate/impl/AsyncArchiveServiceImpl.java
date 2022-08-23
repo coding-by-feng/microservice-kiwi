@@ -36,7 +36,7 @@ import me.fengorz.kiwi.word.biz.service.base.IParaphraseExampleService;
 import me.fengorz.kiwi.word.biz.service.base.IStarRelHisService;
 import me.fengorz.kiwi.word.biz.service.base.ParaphraseService;
 import me.fengorz.kiwi.word.biz.service.base.WordMainService;
-import me.fengorz.kiwi.word.biz.service.operate.IAsyncArchiveService;
+import me.fengorz.kiwi.word.biz.service.operate.AsyncArchiveService;
 
 /**
  * @Author zhanshifeng @Date 2020/9/16 5:26 PM
@@ -44,7 +44,7 @@ import me.fengorz.kiwi.word.biz.service.operate.IAsyncArchiveService;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class AsyncArchiveServiceImpl implements IAsyncArchiveService {
+public class AsyncArchiveServiceImpl implements AsyncArchiveService {
 
     private final WordMainService mainService;
     private final ParaphraseService paraphraseService;

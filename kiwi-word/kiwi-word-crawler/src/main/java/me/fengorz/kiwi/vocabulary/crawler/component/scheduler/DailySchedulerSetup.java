@@ -16,32 +16,27 @@
 
 package me.fengorz.kiwi.vocabulary.crawler.component.scheduler;
 
-import org.springframework.scheduling.annotation.EnableScheduling;
+import java.util.Optional;
+
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import me.fengorz.kiwi.word.api.feign.IBizAPI;
+import me.fengorz.kiwi.common.sdk.util.spring.SpringUtils;
+import me.fengorz.kiwi.vocabulary.crawler.component.scheduler.base.DailyScheduler;
 
-/**
- * @Description Daily generation of review count records @Author zhanshifeng @Date 2021/8/19 8:54 PM
- */
-@Slf4j
 @Component
-@EnableScheduling
-@RequiredArgsConstructor
-public class ReviewDailyGenerateScheduler {
+@Slf4j
+public class DailySchedulerSetup {
 
-    private final IBizAPI api;
+    private static final String FETCH_PARAPHRASE_SCHEDULER = "fetchParaphraseScheduler";
 
     /**
      * Runs every day at 0 o'clock in the morning.
      */
     @Scheduled(cron = "0 0 0 */1 * ?")
-    public void generate() {
-        log.info("Daily generation of review count records starting.");
-        api.createTheDays();
-        log.info("Daily generation of review count records end.");
+    public void setup() {
+        Optional.ofNullable(SpringUtils.getBeansList(DailyScheduler.class))
+                .ifPresent(list -> list.forEach(DailyScheduler::schedule));
     }
 }

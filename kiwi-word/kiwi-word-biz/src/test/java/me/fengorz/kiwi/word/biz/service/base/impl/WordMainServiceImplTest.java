@@ -43,7 +43,7 @@ import me.fengorz.kiwi.word.api.entity.WordMainDO;
 import me.fengorz.kiwi.word.api.vo.WordMainVO;
 import me.fengorz.kiwi.word.biz.mapper.WordMainMapper;
 import me.fengorz.kiwi.word.biz.service.base.IWordFetchQueueService;
-import me.fengorz.kiwi.word.biz.service.base.IWordMainService;
+import me.fengorz.kiwi.word.biz.service.base.WordMainService;
 
 @ExtendWith(MockitoExtension.class)
 class WordMainServiceImplTest {
@@ -53,7 +53,7 @@ class WordMainServiceImplTest {
     @Mock
     private WordMainMapper mockMapper;
 
-    private IWordMainService underTester;
+    private WordMainService underTester;
 
     @BeforeEach
     void setUp() {

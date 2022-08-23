@@ -23,7 +23,7 @@ import org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerA
 import org.springframework.context.annotation.*;
 
 import me.fengorz.kiwi.bdf.core.mapper.SeqMapper;
-import me.fengorz.kiwi.bdf.core.service.ISeqService;
+import me.fengorz.kiwi.bdf.core.service.SeqService;
 import me.fengorz.kiwi.common.sdk.config.UtilsBeanConfiguration;
 
 /**
@@ -36,7 +36,7 @@ import me.fengorz.kiwi.common.sdk.config.UtilsBeanConfiguration;
     exclude = {DataSourceAutoConfiguration.class, DataSourceTransactionManagerAutoConfiguration.class})
 @ComponentScan(basePackages = {"me.fengorz.kiwi"},
     excludeFilters = {
-        @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, value = {ISeqService.class, SeqMapper.class})})
+        @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, value = {SeqService.class, SeqMapper.class})})
 @Import({UtilsBeanConfiguration.class})
 @EnableAspectJAutoProxy(proxyTargetClass = true, exposeProxy = true)
 @ConditionalOnProperty(value = "my.config.exclude-db", havingValue = "true")

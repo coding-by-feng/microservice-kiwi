@@ -16,22 +16,27 @@
 
 package me.fengorz.kiwi.vocabulary.crawler.component.scheduler;
 
+import java.util.Optional;
+
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.sdk.util.spring.SpringUtils;
-import me.fengorz.kiwi.vocabulary.crawler.component.scheduler.base.IScheduler;
+import me.fengorz.kiwi.vocabulary.crawler.component.scheduler.base.Scheduler;
 
+/**
+ * 定时扫描对列表 @Author zhanshifeng @Date 2019/10/29 4:12 PM
+ */
 @Component
 @Slf4j
-public class DailyScheduler {
+public class ChiefSchedulerSetup {
 
-    private static final String FETCH_PARAPHRASE_SCHEDULER = "fetchParaphraseScheduler";
+    private static final long INTERVAL = 1000 * 8;
 
-    @Scheduled(cron = "")
-    public void fetchParaphraseAudio() {
-        IScheduler scheduler = SpringUtils.getBean(FETCH_PARAPHRASE_SCHEDULER);
-        scheduler.schedule();
+    @Scheduled(fixedDelay = INTERVAL)
+    public void setup() {
+        Optional.ofNullable(SpringUtils.getBeansList(Scheduler.class))
+            .ifPresent(list -> list.forEach(Scheduler::schedule));
     }
 }

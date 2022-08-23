@@ -17,14 +17,15 @@ package me.fengorz.kiwi.word.biz.service.operate.impl;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Semaphore;
 
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -33,15 +34,10 @@ import org.springframework.transaction.annotation.Transactional;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 
-import cn.hutool.core.util.StrUtil;
-import cn.hutool.http.HttpUtil;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import me.fengorz.kiwi.bdf.core.service.ISeqService;
+import me.fengorz.kiwi.bdf.core.service.SeqService;
 import me.fengorz.kiwi.common.fastdfs.service.DfsService;
-import me.fengorz.kiwi.common.sdk.annotation.cache.KiwiCacheKey;
-import me.fengorz.kiwi.common.sdk.annotation.cache.KiwiCacheKeyPrefix;
-import me.fengorz.kiwi.common.sdk.constant.CacheConstants;
 import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
 import me.fengorz.kiwi.common.sdk.constant.MapperConstant;
 import me.fengorz.kiwi.common.sdk.exception.AuthException;
@@ -51,7 +47,11 @@ import me.fengorz.kiwi.common.sdk.exception.dfs.DfsOperateDeleteException;
 import me.fengorz.kiwi.common.sdk.exception.dfs.DfsOperateException;
 import me.fengorz.kiwi.common.sdk.exception.tts.TtsException;
 import me.fengorz.kiwi.common.sdk.util.bean.KiwiBeanUtils;
+import me.fengorz.kiwi.common.sdk.util.lang.collection.KiwiCollectionUtils;
 import me.fengorz.kiwi.common.sdk.web.security.SecurityUtils;
+import me.fengorz.kiwi.common.tts.TtsConstants;
+import me.fengorz.kiwi.common.tts.model.TtsConfig;
+import me.fengorz.kiwi.common.tts.service.TtsService;
 import me.fengorz.kiwi.word.api.common.WordConstants;
 import me.fengorz.kiwi.word.api.common.enumeration.ReviewAudioSourceEnum;
 import me.fengorz.kiwi.word.api.common.enumeration.ReviewAudioTypeEnum;
@@ -60,9 +60,8 @@ import me.fengorz.kiwi.word.api.common.enumeration.ReviewPermanentAudioEnum;
 import me.fengorz.kiwi.word.api.entity.*;
 import me.fengorz.kiwi.word.api.vo.WordReviewDailyCounterVO;
 import me.fengorz.kiwi.word.biz.mapper.*;
-import me.fengorz.kiwi.word.biz.model.TtsConfig;
 import me.fengorz.kiwi.word.biz.service.operate.AudioService;
-import me.fengorz.kiwi.word.biz.service.operate.IReviewService;
+import me.fengorz.kiwi.word.biz.service.operate.ReviewService;
 import me.fengorz.kiwi.word.biz.util.WordDfsUtils;
 
 /**
@@ -74,10 +73,10 @@ import me.fengorz.kiwi.word.biz.util.WordDfsUtils;
 @Slf4j
 @Service
 @AllArgsConstructor
-public class ReviewServiceImpl implements IReviewService {
+public class ReviewServiceImpl implements ReviewService {
 
     private final BreakpointReviewMapper breakpointReviewMapper;
-    private final ISeqService seqService;
+    private final SeqService seqService;
     private final ReviewDailyCounterMapper reviewDailyCounterMapper;
     private final ReviewAudioMapper reviewAudioMapper;
     private final ParaphraseMapper paraphraseMapper;
@@ -88,6 +87,7 @@ public class ReviewServiceImpl implements IReviewService {
     private final DfsService dfsService;
     private final AudioService audioService;
     private final TtsConfig ttsConfig;
+    private final TtsService ttsService;
 
     private final static Semaphore STORAGE = new Semaphore(10);
 
@@ -124,9 +124,9 @@ public class ReviewServiceImpl implements IReviewService {
                 }
             }
             for (String apiKey : ttsConfig.listApiKey()) {
-                useTtsApiKey(apiKey, 0);
+                ttsService.useTtsApiKey(apiKey, 0);
             }
-            useTtsApiKey(WordConstants.CACHE_KEY_PREFIX_TTS.TOTAL_API_KEY, 0);
+            ttsService.useTtsApiKey(TtsConstants.CACHE_KEY_PREFIX_TTS.TOTAL_API_KEY, 0);
         }
     }
 
@@ -136,7 +136,7 @@ public class ReviewServiceImpl implements IReviewService {
     public void increase(int type, Integer userId) {
         if (ReviewDailyCounterTypeEnum.REVIEW_AUDIO_VOICERSS_TTS_COUNTER.getType() == type) {
             synchronized (BARRIER) {
-                voiceRssGlobalIncreaseCounter();
+                ttsService.voiceRssGlobalIncreaseCounter();
             }
         }
         WordReviewDailyCounterDO counter = findReviewCounterDO(userId, type);
@@ -180,15 +180,20 @@ public class ReviewServiceImpl implements IReviewService {
     }
 
     @Override
-    public WordReviewAudioDO findWordReviewAudio(Integer sourceId, Integer type) {
-        return Optional
-            .ofNullable(reviewAudioMapper.selectOne(Wrappers.<WordReviewAudioDO>lambdaQuery()
-                .eq(WordReviewAudioDO::getSourceId, sourceId).eq(WordReviewAudioDO::getType, type)))
-            .orElseGet(() -> generateWordReviewAudioDO(false, sourceId, type));
+    public WordReviewAudioDO findWordReviewAudio(Integer sourceId, Integer type)
+        throws DfsOperateException, TtsException, DataCheckedException {
+        WordReviewAudioDO wordReviewAwoudioDO = reviewAudioMapper.selectOne(Wrappers.<WordReviewAudioDO>lambdaQuery()
+            .eq(WordReviewAudioDO::getSourceId, sourceId).eq(WordReviewAudioDO::getType, type));
+        if (Objects.isNull(wordReviewAwoudioDO)) {
+            wordReviewAwoudioDO = generateWordReviewAudio(false, sourceId, type);
+        }
+        return wordReviewAwoudioDO;
     }
 
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
-    private WordReviewAudioDO generateWordReviewAudioDO(boolean isReplace, Integer sourceId, Integer type) {
+    @Override
+    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRES_NEW)
+    public WordReviewAudioDO generateWordReviewAudio(boolean isReplace, Integer sourceId, Integer type)
+        throws DfsOperateException, TtsException, DataCheckedException {
         WordReviewAudioDO wordReviewAudioDO = reviewAudioMapper.selectOne(Wrappers.<WordReviewAudioDO>lambdaQuery()
             .eq(WordReviewAudioDO::getSourceId, sourceId).eq(WordReviewAudioDO::getType, type));
         if (wordReviewAudioDO == null) {
@@ -219,6 +224,7 @@ public class ReviewServiceImpl implements IReviewService {
             reviewAudioMapper.insert(wordReviewAudioDO);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
+            throw e;
         }
 
         return wordReviewAudioDO;
@@ -291,70 +297,51 @@ public class ReviewServiceImpl implements IReviewService {
     }
 
     @Override
-    public void generateTtsVoiceFromParaphraseId(Integer paraphraseId) {
+    public void generateTtsVoiceFromParaphraseId(Integer paraphraseId)
+        throws DfsOperateException, TtsException, DataCheckedException {
         generateTtsVoiceFromParaphraseId(true, paraphraseId);
     }
 
     @Override
-    public String autoSelectApiKey() {
-        String finalApiKey = null;
-        int minUsedTime = WordConstants.API_KEY_MAX_USE_TIME;
-        for (String apiKey : ttsConfig.listApiKey()) {
-            int usedTime = queryTtsApiKeyUsed(apiKey);
-            if (usedTime >= WordConstants.API_KEY_MAX_USE_TIME) {
-                continue;
-            }
-            if (usedTime < minUsedTime) {
-                minUsedTime = usedTime;
-                finalApiKey = apiKey;
-            }
-        }
-        log.info("autoSelectApiKey finalApiKey is {}, minUsedTime is {}", finalApiKey, minUsedTime);
-
-        return Optional.ofNullable(finalApiKey).orElseThrow(ResourceNotFoundException::new);
-    }
-
-    @Async
-    @Override
-    public void increaseApiKeyUsedTime(String apiKey) {
-        synchronized (BARRIER) {
-            voiceRssGlobalIncreaseCounter();
-            useTtsApiKey(apiKey,
-                Optional.ofNullable(queryTtsApiKeyUsed(apiKey)).orElseThrow(ResourceNotFoundException::new) + 1);
-        }
-    }
-
-    @KiwiCacheKeyPrefix(WordConstants.CACHE_KEY_PREFIX_OPERATE.TTS_VOICE_RSS_API_KEY_USED_TIME)
-    @Cacheable(cacheNames = WordConstants.CACHE_NAMES, keyGenerator = CacheConstants.CACHE_KEY_GENERATOR_BEAN,
-        unless = "#result == null")
-    @Override
-    public Integer queryTtsApiKeyUsed(@KiwiCacheKey String apiKey) {
-        return null;
-    }
-
-    @SuppressWarnings("UnusedReturnValue")
-    @KiwiCacheKeyPrefix(WordConstants.CACHE_KEY_PREFIX_OPERATE.TTS_VOICE_RSS_API_KEY_USED_TIME)
-    @CachePut(cacheNames = WordConstants.CACHE_NAMES, keyGenerator = CacheConstants.CACHE_KEY_GENERATOR_BEAN,
-        unless = "#result == null")
-    @Override
-    public int useTtsApiKey(@KiwiCacheKey String apiKey, int time) {
-        return time;
-    }
-
-    @Async
-    @Override
-    public void deprecateApiKeyToday(String apiKey) {
-        if (!ttsConfig.listApiKey().contains(apiKey)) {
+    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRES_NEW)
+    public void cleanReviewVoiceByParaphraseId(Integer paraphraseId) {
+        ListUtils.emptyIfNull(reviewAudioMapper
+                .selectList(Wrappers.<WordReviewAudioDO>lambdaQuery().eq(WordReviewAudioDO::getSourceId, paraphraseId)))
+            .forEach(this::cleanReviewAudio);
+        List<ParaphraseExampleDO> examples = paraphraseExampleMapper.selectList(
+            Wrappers.<ParaphraseExampleDO>lambdaQuery().eq(ParaphraseExampleDO::getParaphraseId, paraphraseId));
+        if (CollectionUtils.isEmpty(examples)) {
             return;
         }
-        Optional.ofNullable(HttpUtil.get(StrUtil.format(ttsConfig.getUrl(), apiKey))).ifPresent(response -> {
-            if (StringUtils.startsWith(response, "ERROR:")) {
-                useTtsApiKey(apiKey, WordConstants.API_KEY_MAX_USE_TIME);
-            }
-        });
+        examples.forEach(paraphraseExampleDO -> ListUtils
+            .emptyIfNull(reviewAudioMapper.selectList(Wrappers.<WordReviewAudioDO>lambdaQuery()
+                .eq(WordReviewAudioDO::getSourceId, paraphraseExampleDO.getExampleId())))
+            .forEach(this::cleanReviewAudio));
     }
 
-    private void generateTtsVoiceFromParaphraseId(boolean isReplace, Integer paraphraseId) {
+    private void cleanReviewAudio(WordReviewAudioDO wordReviewAudioDO) {
+        try {
+            dfsService.deleteFile(wordReviewAudioDO.getGroupName(), wordReviewAudioDO.getFilePath());
+        } catch (DfsOperateDeleteException e) {
+            log.error("Review audio file delete failed, group is {}, path is {}", wordReviewAudioDO.getGroupName(),
+                wordReviewAudioDO.getFilePath());
+        } finally {
+            reviewAudioMapper.deleteById(wordReviewAudioDO.getId());
+        }
+    }
+
+    @Override
+    public Integer getReviewBreakpointPageNumber(Integer listId) {
+        List<WordBreakpointReviewDO> list = listBreakpointReview(listId);
+        if (KiwiCollectionUtils.isEmpty(list)) {
+            return 0;
+        } else {
+            return list.get(0).getLastPage();
+        }
+    }
+
+    private void generateTtsVoiceFromParaphraseId(boolean isReplace, Integer paraphraseId)
+        throws DfsOperateException, TtsException, DataCheckedException {
         log.info("generateTtsVoiceFromParaphraseId beginning, paraphraseId is {}", paraphraseId);
         ParaphraseDO paraphraseDO = paraphraseMapper.selectById(paraphraseId);
         if (paraphraseDO == null) {
@@ -369,14 +356,14 @@ public class ReviewServiceImpl implements IReviewService {
         }
         List<ParaphraseExampleDO> paraphraseExamples = paraphraseExampleMapper.selectList(
             Wrappers.<ParaphraseExampleDO>lambdaQuery().eq(ParaphraseExampleDO::getParaphraseId, paraphraseId));
-        generateWordReviewAudioDO(true, paraphraseDO.getWordId(), ReviewAudioTypeEnum.WORD_SPELLING.getType());
-        generateWordReviewAudioDO(isReplace, paraphraseId, ReviewAudioTypeEnum.PARAPHRASE_EN.getType());
-        generateWordReviewAudioDO(isReplace, paraphraseId, ReviewAudioTypeEnum.PARAPHRASE_CH.getType());
-        generateWordReviewAudioDO(isReplace, characterDO.getCharacterId(), ReviewAudioTypeEnum.CHARACTER_CH.getType());
+        generateWordReviewAudio(true, paraphraseDO.getWordId(), ReviewAudioTypeEnum.WORD_SPELLING.getType());
+        generateWordReviewAudio(isReplace, paraphraseId, ReviewAudioTypeEnum.PARAPHRASE_EN.getType());
+        generateWordReviewAudio(isReplace, paraphraseId, ReviewAudioTypeEnum.PARAPHRASE_CH.getType());
+        generateWordReviewAudio(isReplace, characterDO.getCharacterId(), ReviewAudioTypeEnum.CHARACTER_CH.getType());
         for (ParaphraseExampleDO paraphraseExample : paraphraseExamples) {
-            generateWordReviewAudioDO(isReplace, paraphraseExample.getExampleId(),
+            generateWordReviewAudio(isReplace, paraphraseExample.getExampleId(),
                 ReviewAudioTypeEnum.EXAMPLE_EN.getType());
-            generateWordReviewAudioDO(isReplace, paraphraseExample.getExampleId(),
+            generateWordReviewAudio(isReplace, paraphraseExample.getExampleId(),
                 ReviewAudioTypeEnum.EXAMPLE_CH.getType());
         }
         log.info("generateTtsVoiceFromParaphraseId success, paraphraseId is {}", paraphraseId);
@@ -384,12 +371,12 @@ public class ReviewServiceImpl implements IReviewService {
 
     private String acquireText(Integer sourceId, Integer type) throws DataCheckedException {
         if (ReviewAudioTypeEnum.isParaphrase(type)) {
-            ParaphraseDO paraphraseDO = Optional.ofNullable(paraphraseMapper.selectById(sourceId))
-                .orElseThrow(() -> new ResourceNotFoundException("Paraphrase cannot be found!"));
+            ParaphraseDO paraphraseDO = Optional.ofNullable(paraphraseMapper.selectById(sourceId)).orElseThrow(
+                () -> new ResourceNotFoundException(String.format("Paraphrase[id=%s] cannot be found!", sourceId)));
             if (ReviewAudioTypeEnum.isEnglish(type)) {
                 return paraphraseDO.getParaphraseEnglish();
             } else if (ReviewAudioTypeEnum.isChinese(type)) {
-                return StringUtils.defaultIfBlank(paraphraseDO.getParaphraseEnglishTranslate(),
+                return StringUtils.defaultIfBlank(paraphraseDO.getMeaningChinese(),
                     ReviewPermanentAudioEnum.WORD_PARAPHRASE_MISSING.getText());
             }
         } else if (ReviewAudioTypeEnum.isExample(type)) {
@@ -419,8 +406,7 @@ public class ReviewServiceImpl implements IReviewService {
     private String acquireChineseText(Integer sourceId, Integer type) throws DataCheckedException {
         if (ReviewAudioTypeEnum.isParaphrase(type)) {
             return Optional.ofNullable(paraphraseMapper.selectById(sourceId))
-                .orElseThrow(() -> new ResourceNotFoundException("Paraphrase cannot be found!"))
-                .getParaphraseEnglishTranslate();
+                .orElseThrow(() -> new ResourceNotFoundException("Paraphrase cannot be found!")).getMeaningChinese();
         } else if (ReviewAudioTypeEnum.isExample(type)) {
             return Optional.ofNullable(paraphraseExampleMapper.selectById(sourceId))
                 .orElseThrow(() -> new ResourceNotFoundException("Paraphrase example cannot be found!"))
@@ -449,12 +435,6 @@ public class ReviewServiceImpl implements IReviewService {
         breakpointReviewDO.setId(0).setLastPage(pageNumber.intValue()).setOperateTime(LocalDateTime.now()).setType(type)
             .setUserId(userId).setListId(listId);
         breakpointReviewMapper.insert(breakpointReviewDO);
-    }
-
-    private void voiceRssGlobalIncreaseCounter() {
-        useTtsApiKey(WordConstants.CACHE_KEY_PREFIX_TTS.TOTAL_API_KEY,
-            Optional.ofNullable(queryTtsApiKeyUsed(WordConstants.CACHE_KEY_PREFIX_TTS.TOTAL_API_KEY))
-                .orElseThrow(ResourceNotFoundException::new) + 1);
     }
 
     private static final Object BARRIER = new Object();

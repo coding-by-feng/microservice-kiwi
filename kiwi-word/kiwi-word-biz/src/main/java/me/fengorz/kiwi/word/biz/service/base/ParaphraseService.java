@@ -15,15 +15,32 @@
  */
 package me.fengorz.kiwi.word.biz.service.base;
 
+import java.util.List;
+
 import com.baomidou.mybatisplus.extension.service.IService;
 
-import me.fengorz.kiwi.word.api.entity.ParaphraseStarRelDO;
+import me.fengorz.kiwi.word.api.entity.ParaphraseDO;
+import me.fengorz.kiwi.word.api.request.ParaphraseRequest;
+import me.fengorz.kiwi.word.api.vo.detail.ParaphraseVO;
 
 /**
+ * 单词释义表
+ *
  * @author zhanshifeng
- * @date 2020-01-03 14:44:37
+ * @date 2019-10-31 20:39:48
  */
-public interface IParaphraseStarRelService extends IService<ParaphraseStarRelDO> {
+public interface ParaphraseService extends IService<ParaphraseDO> {
 
-    void replaceFetchResult(Integer oldRelId, Integer newRelId);
+    Integer countById(Integer id);
+
+    @Deprecated
+    List<ParaphraseVO> selectParaphraseAndIsCollect(Integer characterId, Integer currentUserId);
+
+    List<ParaphraseVO> listPhrase(Integer wordId);
+
+    List<ParaphraseDO> listByWordName(String wordName);
+
+    void delByWordId(Integer wordId);
+
+    boolean modifyMeaningChinese(ParaphraseRequest request);
 }

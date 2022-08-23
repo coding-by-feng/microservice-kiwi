@@ -14,9 +14,25 @@
  *
  */
 
-package me.fengorz.kiwi.vocabulary.crawler.component.scheduler.base;
+package me.fengorz.kiwi.common.tts;
 
-public interface IScheduler {
+import lombok.experimental.UtilityClass;
 
-    void schedule();
+/**
+ * @Description TODO
+ * @Author zhanshifeng
+ * @Date 2022/8/20 18:35
+ */
+@UtilityClass
+public class TtsConstants {
+
+    public static final int API_KEY_MAX_USE_TIME = 350;
+
+    public static final String CACHE_NAMES = "tts";
+
+    public interface CACHE_KEY_PREFIX_TTS {
+        String TOTAL_API_KEY = "total_api_key";
+        String TTS_VOICE_RSS_API_KEY_USED_TIME = "TTS_VOICE_RSS_API_KEY";
+    }
+
 }

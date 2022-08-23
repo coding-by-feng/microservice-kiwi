@@ -28,13 +28,16 @@ import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.api.R;
 import me.fengorz.kiwi.common.fastdfs.service.DfsService;
 import me.fengorz.kiwi.common.sdk.controller.AbstractDfsController;
+import me.fengorz.kiwi.common.sdk.exception.DataCheckedException;
 import me.fengorz.kiwi.common.sdk.exception.dfs.DfsOperateException;
+import me.fengorz.kiwi.common.sdk.exception.tts.TtsException;
 import me.fengorz.kiwi.common.sdk.web.WebTools;
 import me.fengorz.kiwi.common.sdk.web.security.SecurityUtils;
+import me.fengorz.kiwi.common.tts.service.TtsService;
 import me.fengorz.kiwi.word.api.entity.WordReviewAudioDO;
 import me.fengorz.kiwi.word.api.vo.WordReviewDailyCounterVO;
-import me.fengorz.kiwi.word.biz.service.operate.IOperateService;
-import me.fengorz.kiwi.word.biz.service.operate.IReviewService;
+import me.fengorz.kiwi.word.biz.service.operate.OperateService;
+import me.fengorz.kiwi.word.biz.service.operate.ReviewService;
 
 /**
  * @author zhanShiFeng
@@ -46,13 +49,14 @@ import me.fengorz.kiwi.word.biz.service.operate.IReviewService;
 @RequestMapping("/word/review/")
 public class WordReviewController extends AbstractDfsController {
 
-    private final IReviewService reviewService;
-    private final IOperateService operateService;
+    private final ReviewService reviewService;
+    private final OperateService operateService;
     private final DfsService dfsService;
+    private final TtsService ttsService;
 
     @GetMapping("/getReviewBreakpointPageNumber/{listId}")
     public R<Integer> getReviewBreakpointPageNumber(@PathVariable Integer listId) {
-        return R.success(operateService.getReviewBreakpointPageNumber(listId));
+        return R.success(reviewService.getReviewBreakpointPageNumber(listId));
     }
 
     @GetMapping("/createTheDays")
@@ -74,7 +78,12 @@ public class WordReviewController extends AbstractDfsController {
     @GetMapping("/downloadReviewAudio/{sourceId}/{type}")
     public void downloadReviewAudio(HttpServletResponse response, @PathVariable("sourceId") Integer sourceId,
         @PathVariable("type") Integer type) {
-        WordReviewAudioDO wordReviewAudio = this.reviewService.findWordReviewAudio(sourceId, type);
+        WordReviewAudioDO wordReviewAudio = null;
+        try {
+            wordReviewAudio = this.reviewService.findWordReviewAudio(sourceId, type);
+        } catch (DfsOperateException | TtsException | DataCheckedException e) {
+            log.error("findWordReviewAudio exception, sourceId={}, type={}!", sourceId, type, e);
+        }
         if (wordReviewAudio == null) {
             return;
         }
@@ -104,7 +113,12 @@ public class WordReviewController extends AbstractDfsController {
 
     @GetMapping("/generateTtsVoiceFromParaphraseId/{paraphraseId}")
     public R<Void> generateTtsVoiceFromParaphraseId(@PathVariable("paraphraseId") Integer paraphraseId) {
-        reviewService.generateTtsVoiceFromParaphraseId(paraphraseId);
+        try {
+            reviewService.generateTtsVoiceFromParaphraseId(paraphraseId);
+        } catch (DfsOperateException | TtsException | DataCheckedException e) {
+            log.error("generateTtsVoiceFromParaphraseId exception, paraphraseId={}!", paraphraseId, e);
+            return R.failed();
+        }
         return R.success();
     }
 
@@ -116,18 +130,18 @@ public class WordReviewController extends AbstractDfsController {
 
     @GetMapping("/autoSelectApiKey")
     public R<String> autoSelectApiKey() {
-        return R.success(reviewService.autoSelectApiKey());
+        return R.success(ttsService.autoSelectApiKey());
     }
 
     @GetMapping("/increaseApiKeyUsedTime/{apiKey}")
     public R<Void> increaseApiKeyUsedTime(@PathVariable("apiKey") String apiKey) {
-        reviewService.increaseApiKeyUsedTime(apiKey);
+        ttsService.increaseApiKeyUsedTime(apiKey);
         return R.success();
     }
 
     @GetMapping("/deprecateApiKeyToday/{apiKey}")
     public R<Void> deprecateApiKeyToday(@PathVariable("apiKey") String apiKey) {
-        reviewService.deprecateApiKeyToday(apiKey);
+        ttsService.deprecateApiKeyToday(apiKey);
         return R.success();
     }
 

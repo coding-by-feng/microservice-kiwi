@@ -17,28 +17,35 @@ package me.fengorz.kiwi.word.biz.service.base;
 
 import java.util.List;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 
-import me.fengorz.kiwi.word.api.entity.ParaphraseDO;
-import me.fengorz.kiwi.word.api.request.ParaphraseRequest;
-import me.fengorz.kiwi.word.api.vo.detail.ParaphraseVO;
+import me.fengorz.kiwi.word.api.dto.mapper.out.FuzzyQueryResultDTO;
+import me.fengorz.kiwi.word.api.entity.WordMainDO;
+import me.fengorz.kiwi.word.api.vo.WordMainVO;
 
 /**
- * 单词释义表
+ * 单词主表
  *
  * @author zhanshifeng
- * @date 2019-10-31 20:39:48
+ * @date 2019-10-31 20:32:07
  */
-public interface IParaphraseService extends IService<ParaphraseDO> {
+public interface WordMainService extends IService<WordMainDO> {
 
-    Integer countById(Integer id);
+    WordMainVO getOneAndCatch(String wordName, Integer... infoType);
 
-    @Deprecated
-    List<ParaphraseVO> selectParaphraseAndIsCollect(Integer characterId, Integer currentUserId);
+    String getWordName(Integer id);
 
-    List<ParaphraseVO> listPhrase(Integer wordId);
+    List<FuzzyQueryResultDTO> fuzzyQueryList(Page<WordMainDO> page, String wordName);
 
-    void delByWordId(Integer wordId);
+    boolean isExist(String wordName);
 
-    boolean modifyMeaningChinese(ParaphraseRequest request);
+    void evictById(Integer id);
+
+    List<WordMainDO> list(String wordName, Integer infoType);
+
+    List<WordMainDO> listDirtyData(Integer wordId);
+
+    List<String> listOverlapAnyway();
+
 }

@@ -28,19 +28,22 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import cn.hutool.core.util.StrUtil;
-import cn.hutool.http.HttpUtil;
+import cn.hutool.core.io.FileUtil;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import me.fengorz.kiwi.common.fastdfs.service.DfsService;
 import me.fengorz.kiwi.common.sdk.constant.EnvConstants;
 import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
 import me.fengorz.kiwi.common.sdk.util.json.KiwiJsonUtils;
-import me.fengorz.kiwi.word.api.common.WordConstants;
+import me.fengorz.kiwi.word.api.common.enumeration.ReviewAudioTypeEnum;
 import me.fengorz.kiwi.word.api.common.enumeration.ReviewDailyCounterTypeEnum;
+import me.fengorz.kiwi.word.api.entity.ParaphraseDO;
+import me.fengorz.kiwi.word.api.entity.WordReviewAudioDO;
 import me.fengorz.kiwi.word.api.vo.WordReviewDailyCounterVO;
 import me.fengorz.kiwi.word.biz.WordBizApplication;
-import me.fengorz.kiwi.word.biz.controller.WordReviewController;
-import me.fengorz.kiwi.word.biz.model.TtsConfig;
-import me.fengorz.kiwi.word.biz.service.operate.IReviewService;
+import me.fengorz.kiwi.word.biz.service.base.ParaphraseService;
+import me.fengorz.kiwi.word.biz.service.base.WordMainService;
+import me.fengorz.kiwi.word.biz.service.operate.ReviewService;
 
 @Slf4j
 @ActiveProfiles({EnvConstants.DEV, EnvConstants.BASE})
@@ -50,13 +53,16 @@ import me.fengorz.kiwi.word.biz.service.operate.IReviewService;
 public class ReviewServiceImplTest {
 
     @Autowired
-    private IReviewService reviewService;
+    private ReviewService reviewService;
 
     @Autowired
-    private TtsConfig ttsConfig;
+    private WordMainService wordMainService;
 
     @Autowired
-    private WordReviewController controller;
+    private ParaphraseService paraphraseService;
+
+    @Autowired
+    private DfsService dfsService;
 
     @Test
     @Disabled
@@ -77,7 +83,7 @@ public class ReviewServiceImplTest {
     }
 
     @Test
-    @Disabled
+    // @Disabled
     void createTheDays() {
         Assertions.assertDoesNotThrow(() -> reviewService.createTheDays(1));
     }
@@ -92,63 +98,29 @@ public class ReviewServiceImplTest {
 
     @Test
     @Disabled
-    void autoSelectApiKey() {
-        String apiKey = reviewService.autoSelectApiKey();
-        Assertions.assertTrue(ttsConfig.listApiKey().contains(apiKey));
-        // Assertions.assertEquals(apiKey, ttsConfig.getApiKey5());
-        log.info("autoSelectApiKey >>>> {}", apiKey);
-    }
-
-    @Test
-    @Disabled
-    void increaseApiKeyUsedTime() {
-        Assertions.assertDoesNotThrow(() -> reviewService.increaseApiKeyUsedTime(ttsConfig.getApiKey1()));
-    }
-
-    @Test
-    @Disabled
-    void useTtsApiKey() {
-        Assertions.assertDoesNotThrow(() -> {
-            reviewService.useTtsApiKey(ttsConfig.getApiKey9(), 0);
-        });
-    }
-
-    @Test
-    @Disabled
-    void queryTtsApiKeyUsed() {
-        Assertions.assertEquals(reviewService.queryTtsApiKeyUsed(ttsConfig.getApiKey6()), 0);
-        Assertions.assertEquals(reviewService.queryTtsApiKeyUsed(ttsConfig.getApiKey5()), 0);
-        Assertions.assertEquals(reviewService.queryTtsApiKeyUsed(ttsConfig.getApiKey1()), 0);
-        Assertions.assertEquals(reviewService.queryTtsApiKeyUsed(ttsConfig.getApiKey2()), 0);
-        Assertions.assertEquals(reviewService.queryTtsApiKeyUsed(ttsConfig.getApiKey3()), 0);
-        Assertions.assertEquals(reviewService.queryTtsApiKeyUsed(ttsConfig.getApiKey4()), 0);
-    }
-
-    @Test
-    @Disabled
-    void deprecateApiKeyToday() {
-        Assertions.assertDoesNotThrow(() -> reviewService.deprecateApiKeyToday(ttsConfig.getApiKey1()));
-        Assertions.assertEquals(reviewService.queryTtsApiKeyUsed(ttsConfig.getApiKey1()),
-            WordConstants.API_KEY_MAX_USE_TIME);
-    }
-
-    @Test
-    // @Disabled
-    void queryAllTtsApiKeyUsed() {
-        for (String apiKey : ttsConfig.listApiKey()) {
-            log.info("queryTtsApiKeyUsed [{}] used times is {}", apiKey, reviewService.queryTtsApiKeyUsed(apiKey));
-        }
-    }
-
-    @Test
-    @Disabled
-    void testVoiceRssUrl() {
-        log.info("testVoiceRssUrl response is {}", HttpUtil.get(StrUtil.format(ttsConfig.getUrl(), "58d4baef52414088998cbbda9751c812")));
-    }
-
-    @Test
-    @Disabled
     void testReplace() {
         System.out.println("--------------> AA...BB".replaceAll("\\.\\.\\.", GlobalConstants.WHAT));
+    }
+
+    @SneakyThrows
+    @Test
+    @Disabled
+    void findWordReviewAudio() {
+        List<ParaphraseDO> test = paraphraseService.listByWordName("test");
+        Assertions.assertNotNull(test);
+        ParaphraseDO paraphraseDO = test.get(0);
+        WordReviewAudioDO wordReviewAudio = reviewService.findWordReviewAudio(paraphraseDO.getParaphraseId(),
+            ReviewAudioTypeEnum.PARAPHRASE_EN.getType());
+        byte[] bytes = this.dfsService.downloadFile(wordReviewAudio.getGroupName(), wordReviewAudio.getFilePath());
+        FileUtil.writeBytes(bytes, "test_paraphrase.mp3");
+    }
+
+    @SneakyThrows
+    @Test
+    @Disabled
+    void test_findWordReviewAudio() {
+        WordReviewAudioDO wordReviewAudio = reviewService.findWordReviewAudio(2107009, ReviewAudioTypeEnum.PARAPHRASE_CH.getType());
+        byte[] bytes = this.dfsService.downloadFile(wordReviewAudio.getGroupName(), wordReviewAudio.getFilePath());
+        FileUtil.writeBytes(bytes, "test_paraphrase_ch.mp3");
     }
 }

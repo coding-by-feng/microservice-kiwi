@@ -68,8 +68,8 @@ import me.fengorz.kiwi.word.api.vo.detail.ParaphraseVO;
 import me.fengorz.kiwi.word.api.vo.detail.PronunciationVO;
 import me.fengorz.kiwi.word.api.vo.detail.WordQueryVO;
 import me.fengorz.kiwi.word.biz.service.base.*;
-import me.fengorz.kiwi.word.biz.service.operate.IOperateService;
-import me.fengorz.kiwi.word.biz.service.operate.IReviewService;
+import me.fengorz.kiwi.word.biz.service.operate.OperateService;
+import me.fengorz.kiwi.word.biz.service.operate.ReviewService;
 
 /**
  * @Description 单词相关业务的复杂逻辑解耦
@@ -80,12 +80,12 @@ import me.fengorz.kiwi.word.biz.service.operate.IReviewService;
 @Service
 @RequiredArgsConstructor
 @KiwiCacheKeyPrefix(WordConstants.CACHE_KEY_PREFIX_OPERATE.CLASS)
-public class OperateServiceImpl implements IOperateService {
+public class OperateServiceImpl implements OperateService {
 
-    private static final Object barrier = new Object();
-    private final IWordMainService mainService;
+    private static final Object BARRIER = new Object();
+    private final WordMainService mainService;
     private final ICharacterService characterService;
-    private final IParaphraseService paraphraseService;
+    private final ParaphraseService paraphraseService;
     private final IParaphraseExampleService exampleService;
     private final IPronunciationService pronunciationService;
     private final IWordFetchQueueService fetchQueueService;
@@ -93,11 +93,11 @@ public class OperateServiceImpl implements IOperateService {
     private final IParaphraseStarListService paraphraseStarListService;
     private final IExampleStarListService exampleStarListService;
     private final IWordStarRelService wordStarRelService;
-    private final IParaphraseStarRelService paraphraseStarRelService;
+    private final ParaphraseStarRelService paraphraseStarRelService;
     private final IWordExampleStarRelService exampleStarRelService;
     private final IWordMainVariantService mainVariantService;
     private final IParaphrasePhraseService phraseService;
-    private final IReviewService reviewService;
+    private final ReviewService reviewService;
     private final DfsService dfsService;
     private final SearchOperations searchOperations;
     private final DocumentOperations documentOperations;
@@ -157,7 +157,7 @@ public class OperateServiceImpl implements IOperateService {
     }
 
     private void saveVo2Es(WordQueryVO vo) {
-        synchronized (barrier) {
+        synchronized (BARRIER) {
             NativeSearchQuery query = new NativeSearchQueryBuilder()
                 // .withIds() 这个API有坑，查询不生效的，慎用！
                 .withQuery(idsQuery().addIds(vo.getWordId().toString())).build();
@@ -431,19 +431,17 @@ public class OperateServiceImpl implements IOperateService {
     public void fetchReplaceCallBack(String wordName) {
         FetchWordReplaceDTO replaceDTO = this.getCacheReplace(wordName);
         wordStarRelService.replaceFetchResult(replaceDTO.getOldRelWordId(), replaceDTO.getNewRelWordId());
-        Optional.ofNullable(replaceDTO.getParaphraseBinderMap()).ifPresent(binderMap -> {
-            binderMap.forEach((num, binder) -> {
+        Optional.ofNullable(replaceDTO.getParaphraseBinderMap())
+            .ifPresent(binderMap -> binderMap.forEach((num, binder) -> {
                 // TODO ZSF 这里需要校验为空，如果为空要终止队列，详细记录收藏数据
                 paraphraseStarRelService.replaceFetchResult(binder.getOldId(), binder.getNewId());
-            });
-        });
+            }));
 
-        Optional.ofNullable(replaceDTO.getExampleBinderMap()).ifPresent(binderMap -> {
-            binderMap.forEach((num, binder) -> {
+        Optional.ofNullable(replaceDTO.getExampleBinderMap())
+            .ifPresent(binderMap -> binderMap.forEach((num, binder) -> {
                 // TODO ZSF 这里需要校验为空，如果为空要终止队列，详细记录收藏数据
                 exampleStarRelService.replaceFetchResult(binder.getOldId(), binder.getNewId());
-            });
-        });
+            }));
         this.cacheEvictFetchReplace(wordName);
     }
 
@@ -466,13 +464,4 @@ public class OperateServiceImpl implements IOperateService {
         return set;
     }
 
-    @Override
-    public Integer getReviewBreakpointPageNumber(Integer listId) {
-        List<WordBreakpointReviewDO> list = reviewService.listBreakpointReview(listId);
-        if (KiwiCollectionUtils.isEmpty(list)) {
-            return 0;
-        } else {
-            return list.get(0).getLastPage();
-        }
-    }
 }

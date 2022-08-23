@@ -26,16 +26,16 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import me.fengorz.kiwi.bdf.core.service.ISeqService;
+import me.fengorz.kiwi.bdf.core.service.SeqService;
 import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
 import me.fengorz.kiwi.common.sdk.constant.MapperConstant;
 import me.fengorz.kiwi.word.api.common.WordConstants;
 import me.fengorz.kiwi.word.api.entity.StarRelHisDO;
 import me.fengorz.kiwi.word.api.entity.WordMainDO;
 import me.fengorz.kiwi.word.biz.service.base.IParaphraseExampleService;
-import me.fengorz.kiwi.word.biz.service.base.IParaphraseService;
 import me.fengorz.kiwi.word.biz.service.base.IStarRelHisService;
-import me.fengorz.kiwi.word.biz.service.base.IWordMainService;
+import me.fengorz.kiwi.word.biz.service.base.ParaphraseService;
+import me.fengorz.kiwi.word.biz.service.base.WordMainService;
 import me.fengorz.kiwi.word.biz.service.operate.IAsyncArchiveService;
 
 /**
@@ -46,11 +46,11 @@ import me.fengorz.kiwi.word.biz.service.operate.IAsyncArchiveService;
 @RequiredArgsConstructor
 public class AsyncArchiveServiceImpl implements IAsyncArchiveService {
 
-    private final IWordMainService mainService;
-    private final IParaphraseService paraphraseService;
+    private final WordMainService mainService;
+    private final ParaphraseService paraphraseService;
     private final IParaphraseExampleService exampleService;
     private final IStarRelHisService relHisService;
-    private final ISeqService seqService;
+    private final SeqService seqService;
 
     @Override
     @Async

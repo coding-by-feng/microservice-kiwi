@@ -29,7 +29,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import me.fengorz.kiwi.bdf.core.service.ISeqService;
+import me.fengorz.kiwi.bdf.core.service.SeqService;
 import me.fengorz.kiwi.common.api.R;
 import me.fengorz.kiwi.common.sdk.annotation.log.LogMarker;
 import me.fengorz.kiwi.common.sdk.constant.MapperConstant;
@@ -39,7 +39,7 @@ import me.fengorz.kiwi.word.api.entity.ExampleStarListDO;
 import me.fengorz.kiwi.word.api.vo.ExampleStarListVO;
 import me.fengorz.kiwi.word.api.vo.star.ExampleStarItemVO;
 import me.fengorz.kiwi.word.biz.service.base.IExampleStarListService;
-import me.fengorz.kiwi.word.biz.service.operate.IOperateService;
+import me.fengorz.kiwi.word.biz.service.operate.OperateService;
 
 /**
  * @author zhanshifeng
@@ -53,8 +53,8 @@ import me.fengorz.kiwi.word.biz.service.operate.IOperateService;
 public class ExampleStarListController extends BaseController {
 
     private final IExampleStarListService starListService;
-    private final IOperateService operateService;
-    private final ISeqService seqService;
+    private final OperateService operateService;
+    private final SeqService seqService;
 
     /**
      * 新增

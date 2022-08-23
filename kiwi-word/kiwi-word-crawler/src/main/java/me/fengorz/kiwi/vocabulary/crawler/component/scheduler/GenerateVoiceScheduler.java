@@ -16,26 +16,30 @@
 
 package me.fengorz.kiwi.vocabulary.crawler.component.scheduler;
 
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import me.fengorz.kiwi.common.sdk.util.spring.SpringUtils;
-import me.fengorz.kiwi.vocabulary.crawler.component.scheduler.base.IScheduler;
+import me.fengorz.kiwi.vocabulary.crawler.component.scheduler.base.Scheduler;
+import me.fengorz.kiwi.word.api.feign.IBizAPI;
 
 /**
- * 定时扫描对列表 @Author zhanshifeng @Date 2019/10/29 4:12 PM
+ * @Description TODO
+ * @Author zhanshifeng
+ * @Date 2022/7/4 23:03
  */
-@Component
 @Slf4j
-public class ChiefScheduler {
+@Component
+@AllArgsConstructor
+public class GenerateVoiceScheduler implements Scheduler {
 
-    private static final String CACHE_WORD_SCHEDULER = "cacheWordScheduler";
-    private static final long CACHEING_WORD_INTERVAL = 1000 * 8;
+    private final IBizAPI bizAPI;
 
-    @Scheduled(fixedDelay = CACHEING_WORD_INTERVAL)
-    public void cachingWord() {
-        IScheduler scheduler = SpringUtils.getBean(CACHE_WORD_SCHEDULER);
-        scheduler.schedule();
+    @Override
+    public void schedule() {
+        log.info("Voice generation is starting.");
+        bizAPI.generateTtsVoice();
+        log.info("Voice generation has ended.");
     }
+
 }

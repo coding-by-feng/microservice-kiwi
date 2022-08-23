@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import lombok.RequiredArgsConstructor;
 import me.fengorz.kiwi.common.sdk.controller.BaseController;
 import me.fengorz.kiwi.word.biz.service.base.ICharacterService;
-import me.fengorz.kiwi.word.biz.service.operate.IOperateService;
+import me.fengorz.kiwi.word.biz.service.operate.OperateService;
 
 /**
  * 单词词性表
@@ -35,5 +35,5 @@ import me.fengorz.kiwi.word.biz.service.operate.IOperateService;
 public class CharacterController extends BaseController {
 
     private final ICharacterService wordCharacterService;
-    private final IOperateService wordOperateService;
+    private final OperateService wordOperateService;
 }

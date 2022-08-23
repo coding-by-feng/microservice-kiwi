@@ -3,7 +3,7 @@ package me.fengorz.kiwi.bdf.core.service;
 /**
  *
  */
-public interface ISeqService {
+public interface SeqService {
 
     /**
      * 产生一个整型的序列

@@ -38,8 +38,8 @@ import me.fengorz.kiwi.word.api.dto.queue.result.FetchWordResultDTO;
 import me.fengorz.kiwi.word.api.entity.FetchQueueDO;
 import me.fengorz.kiwi.word.api.util.WordApiUtils;
 import me.fengorz.kiwi.word.biz.service.base.IWordFetchQueueService;
+import me.fengorz.kiwi.word.biz.service.operate.CleanerService;
 import me.fengorz.kiwi.word.biz.service.operate.CrawlerService;
-import me.fengorz.kiwi.word.biz.service.operate.ICleanerService;
 import me.fengorz.kiwi.word.biz.service.operate.OperateService;
 
 /**
@@ -58,7 +58,7 @@ public class WordFetchController extends BaseController {
     private final IWordFetchQueueService queueService;
     private final OperateService operateService;
     private final CrawlerService crawlerService;
-    private final ICleanerService cleanerService;
+    private final CleanerService cleanerService;
 
     @GetMapping("/getOne/{queueId}")
     public R<FetchQueueDO> getOne(@PathVariable Integer queueId) {

@@ -43,7 +43,7 @@ import me.fengorz.kiwi.word.api.vo.star.ParaphraseStarItemVO;
 import me.fengorz.kiwi.word.biz.mapper.ParaphraseStarListMapper;
 import me.fengorz.kiwi.word.biz.service.base.IParaphraseStarListService;
 import me.fengorz.kiwi.word.biz.service.base.ParaphraseStarRelService;
-import me.fengorz.kiwi.word.biz.service.operate.IAsyncArchiveService;
+import me.fengorz.kiwi.word.biz.service.operate.AsyncArchiveService;
 import me.fengorz.kiwi.word.biz.service.operate.ReviewService;
 
 /**
@@ -59,7 +59,7 @@ public class ParaphraseStarListServiceImpl extends ServiceImpl<ParaphraseStarLis
 
     private final ParaphraseStarListMapper mapper;
     private final ParaphraseStarRelService relService;
-    private final IAsyncArchiveService archiveService;
+    private final AsyncArchiveService archiveService;
     private final ReviewService reviewService;
 
     @Override

@@ -185,7 +185,7 @@ public class ReviewServiceImpl implements ReviewService {
         WordReviewAudioDO wordReviewAwoudioDO = reviewAudioMapper.selectOne(Wrappers.<WordReviewAudioDO>lambdaQuery()
             .eq(WordReviewAudioDO::getSourceId, sourceId).eq(WordReviewAudioDO::getType, type));
         if (Objects.isNull(wordReviewAwoudioDO)) {
-            wordReviewAwoudioDO = generateWordReviewAudio(false, sourceId, type);
+            wordReviewAwoudioDO = generateWordReviewAudio(true, sourceId, type);
         }
         return wordReviewAwoudioDO;
     }

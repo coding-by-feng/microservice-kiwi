@@ -38,9 +38,9 @@ import me.fengorz.kiwi.word.api.dto.queue.result.FetchWordResultDTO;
 import me.fengorz.kiwi.word.api.entity.FetchQueueDO;
 import me.fengorz.kiwi.word.api.util.WordApiUtils;
 import me.fengorz.kiwi.word.biz.service.base.IWordFetchQueueService;
+import me.fengorz.kiwi.word.biz.service.operate.CrawlerService;
 import me.fengorz.kiwi.word.biz.service.operate.ICleanerService;
-import me.fengorz.kiwi.word.biz.service.operate.ICrawlerService;
-import me.fengorz.kiwi.word.biz.service.operate.IOperateService;
+import me.fengorz.kiwi.word.biz.service.operate.OperateService;
 
 /**
  * 单词待抓取列表
@@ -56,8 +56,8 @@ import me.fengorz.kiwi.word.biz.service.operate.IOperateService;
 public class WordFetchController extends BaseController {
 
     private final IWordFetchQueueService queueService;
-    private final IOperateService operateService;
-    private final ICrawlerService crawlerService;
+    private final OperateService operateService;
+    private final CrawlerService crawlerService;
     private final ICleanerService cleanerService;
 
     @GetMapping("/getOne/{queueId}")
@@ -154,4 +154,11 @@ public class WordFetchController extends BaseController {
     public R<Boolean> removePhrase(@PathVariable Integer queueId) {
         return R.success(cleanerService.removePhrase(queueId));
     }
+
+    @GetMapping("/generateTtsVoice")
+    public R<Void> generateTtsVoice() {
+        crawlerService.generateTtsVoice();
+        return R.success();
+    }
+
 }

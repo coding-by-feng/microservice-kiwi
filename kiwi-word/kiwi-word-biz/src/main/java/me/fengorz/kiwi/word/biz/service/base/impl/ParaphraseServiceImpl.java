@@ -16,6 +16,7 @@
 package me.fengorz.kiwi.word.biz.service.base.impl;
 
 import java.util.List;
+import java.util.Objects;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,10 +30,12 @@ import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
 import me.fengorz.kiwi.common.sdk.util.bean.KiwiBeanUtils;
 import me.fengorz.kiwi.word.api.dto.mapper.in.SelectEntityIsCollectDTO;
 import me.fengorz.kiwi.word.api.entity.ParaphraseDO;
+import me.fengorz.kiwi.word.api.entity.WordMainDO;
 import me.fengorz.kiwi.word.api.request.ParaphraseRequest;
 import me.fengorz.kiwi.word.api.vo.detail.ParaphraseVO;
 import me.fengorz.kiwi.word.biz.mapper.ParaphraseMapper;
-import me.fengorz.kiwi.word.biz.service.base.IParaphraseService;
+import me.fengorz.kiwi.word.biz.mapper.WordMainMapper;
+import me.fengorz.kiwi.word.biz.service.base.ParaphraseService;
 
 /**
  * 单词释义表
@@ -40,10 +43,11 @@ import me.fengorz.kiwi.word.biz.service.base.IParaphraseService;
  * @author zhanshifeng
  * @date 2019-10-31 20:39:48
  */
-@Service()
+@Service
 @RequiredArgsConstructor
-public class ParaphraseServiceImpl extends ServiceImpl<ParaphraseMapper, ParaphraseDO> implements IParaphraseService {
+public class ParaphraseServiceImpl extends ServiceImpl<ParaphraseMapper, ParaphraseDO> implements ParaphraseService {
 
+    private final WordMainMapper wordMainMapper;
     private final ParaphraseMapper mapper;
 
     @Override
@@ -63,6 +67,16 @@ public class ParaphraseServiceImpl extends ServiceImpl<ParaphraseMapper, Paraphr
         return KiwiBeanUtils.convertFrom(mapper.selectList(Wrappers.<ParaphraseDO>lambdaQuery()
             .eq(ParaphraseDO::getWordId, wordId).eq(ParaphraseDO::getIsDel, GlobalConstants.FLAG_NO)),
             ParaphraseVO.class);
+    }
+
+    @Override
+    public List<ParaphraseDO> listByWordName(String wordName) {
+        WordMainDO wordMainDO = wordMainMapper.selectOne(Wrappers.<WordMainDO>lambdaQuery()
+                .eq(WordMainDO::getWordName, wordName));
+        if (Objects.isNull(wordMainDO)) {
+            return null;
+        }
+        return mapper.selectList(Wrappers.<ParaphraseDO>lambdaQuery().eq(ParaphraseDO::getWordId, wordMainDO.getWordId()));
     }
 
     @Override

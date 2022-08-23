@@ -32,7 +32,7 @@ import me.fengorz.kiwi.word.api.entity.ParaphraseDO;
 import me.fengorz.kiwi.word.api.entity.ParaphraseStarRelDO;
 import me.fengorz.kiwi.word.biz.mapper.ParaphraseMapper;
 import me.fengorz.kiwi.word.biz.mapper.ParaphraseStarRelMapper;
-import me.fengorz.kiwi.word.biz.service.base.IParaphraseStarRelService;
+import me.fengorz.kiwi.word.biz.service.base.ParaphraseStarRelService;
 
 /**
  * @author zhanshifeng
@@ -41,7 +41,7 @@ import me.fengorz.kiwi.word.biz.service.base.IParaphraseStarRelService;
 @Service
 @RequiredArgsConstructor
 public class ParaphraseStarRelServiceImpl extends ServiceImpl<ParaphraseStarRelMapper, ParaphraseStarRelDO>
-    implements IParaphraseStarRelService {
+    implements ParaphraseStarRelService {
 
     private final ParaphraseStarRelMapper paraphraseStarRelMapper;
     private final ParaphraseMapper paraphraseMapper;
@@ -79,5 +79,10 @@ public class ParaphraseStarRelServiceImpl extends ServiceImpl<ParaphraseStarRelM
                     Wrappers.<ParaphraseStarRelDO>lambdaUpdate().in(ParaphraseStarRelDO::getParaphraseId, list));
             }
         }
+    }
+
+    @Override
+    public List<Integer> listNotGeneratedVoice() {
+        return paraphraseStarRelMapper.listNotGeneratedVoice();
     }
 }

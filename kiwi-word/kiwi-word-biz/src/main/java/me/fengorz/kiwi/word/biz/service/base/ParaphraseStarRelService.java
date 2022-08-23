@@ -17,35 +17,22 @@ package me.fengorz.kiwi.word.biz.service.base;
 
 import java.util.List;
 
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 
-import me.fengorz.kiwi.word.api.dto.mapper.out.FuzzyQueryResultDTO;
-import me.fengorz.kiwi.word.api.entity.WordMainDO;
-import me.fengorz.kiwi.word.api.vo.WordMainVO;
+import me.fengorz.kiwi.word.api.entity.ParaphraseStarRelDO;
 
 /**
- * 单词主表
- *
  * @author zhanshifeng
- * @date 2019-10-31 20:32:07
+ * @date 2020-01-03 14:44:37
  */
-public interface IWordMainService extends IService<WordMainDO> {
+public interface ParaphraseStarRelService extends IService<ParaphraseStarRelDO> {
 
-    WordMainVO getOneAndCatch(String wordName, Integer... infoType);
+    void replaceFetchResult(Integer oldRelId, Integer newRelId);
 
-    String getWordName(Integer id);
-
-    List<FuzzyQueryResultDTO> fuzzyQueryList(Page<WordMainDO> page, String wordName);
-
-    boolean isExist(String wordName);
-
-    void evictById(Integer id);
-
-    List<WordMainDO> list(String wordName, Integer infoType);
-
-    List<WordMainDO> listDirtyData(Integer wordId);
-
-    List<String> listOverlapAnyway();
+    /**
+     * 默认查询还没有生产音频文件的10个paraphrase
+     * @return
+     */
+    List<Integer> listNotGeneratedVoice();
 
 }

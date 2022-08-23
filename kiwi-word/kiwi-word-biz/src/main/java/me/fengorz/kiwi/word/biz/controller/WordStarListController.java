@@ -29,7 +29,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import me.fengorz.kiwi.bdf.core.service.ISeqService;
+import me.fengorz.kiwi.bdf.core.service.SeqService;
 import me.fengorz.kiwi.common.api.R;
 import me.fengorz.kiwi.common.sdk.annotation.log.LogMarker;
 import me.fengorz.kiwi.common.sdk.constant.MapperConstant;
@@ -41,7 +41,7 @@ import me.fengorz.kiwi.word.api.vo.WordStarListVO;
 import me.fengorz.kiwi.word.api.vo.star.WordStarItemVO;
 import me.fengorz.kiwi.word.biz.service.base.IWordStarListService;
 import me.fengorz.kiwi.word.biz.service.base.IWordStarRelService;
-import me.fengorz.kiwi.word.biz.service.operate.IOperateService;
+import me.fengorz.kiwi.word.biz.service.operate.OperateService;
 
 /**
  * 单词本
@@ -57,9 +57,9 @@ import me.fengorz.kiwi.word.biz.service.operate.IOperateService;
 public class WordStarListController extends BaseController {
 
     private final IWordStarListService starListService;
-    private final IOperateService operateService;
+    private final OperateService operateService;
     private final IWordStarRelService relService;
-    private final ISeqService seqService;
+    private final SeqService seqService;
 
     /**
      * 新增单词本

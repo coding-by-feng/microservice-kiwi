@@ -323,9 +323,9 @@ public class CrawlerServiceImpl implements CrawlerService {
                         }
                         for (ParaphraseExampleVO example : examples) {
                             try {
-                                reviewService.findWordReviewAudio(example.getExampleId(),
+                                reviewService.generateWordReviewAudio(true, example.getExampleId(),
                                     ReviewAudioTypeEnum.EXAMPLE_EN.getType());
-                                reviewService.findWordReviewAudio(example.getExampleId(),
+                                reviewService.generateWordReviewAudio(true, example.getExampleId(),
                                     ReviewAudioTypeEnum.EXAMPLE_CH.getType());
                             } catch (DfsOperateException | TtsException | DataCheckedException e) {
                                 log.error("generateWordReviewAudio exception, sourceId={}!", example.getExampleId(), e);

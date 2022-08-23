@@ -26,8 +26,8 @@ import me.fengorz.kiwi.common.api.R;
 import me.fengorz.kiwi.common.sdk.annotation.log.LogMarker;
 import me.fengorz.kiwi.common.sdk.controller.BaseController;
 import me.fengorz.kiwi.word.api.request.ParaphraseRequest;
-import me.fengorz.kiwi.word.biz.service.base.IParaphraseService;
-import me.fengorz.kiwi.word.biz.service.operate.IOperateService;
+import me.fengorz.kiwi.word.biz.service.base.ParaphraseService;
+import me.fengorz.kiwi.word.biz.service.operate.OperateService;
 
 /**
  * 单词释义表
@@ -40,8 +40,8 @@ import me.fengorz.kiwi.word.biz.service.operate.IOperateService;
 @RequestMapping("/word/paraphrase")
 public class ParaphraseController extends BaseController {
 
-    private final IParaphraseService service;
-    private final IOperateService operateService;
+    private final ParaphraseService service;
+    private final OperateService operateService;
 
     @LogMarker("修改单词释义")
     @PostMapping("/modifyMeaningChinese")

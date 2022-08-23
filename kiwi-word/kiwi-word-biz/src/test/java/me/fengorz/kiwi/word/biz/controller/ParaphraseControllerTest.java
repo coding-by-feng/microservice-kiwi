@@ -32,7 +32,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
 import me.fengorz.kiwi.word.api.request.ParaphraseRequest;
-import me.fengorz.kiwi.word.biz.service.base.IParaphraseService;
+import me.fengorz.kiwi.word.biz.service.base.ParaphraseService;
 
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(ParaphraseController.class)
@@ -42,7 +42,7 @@ class ParaphraseControllerTest {
     private MockMvc mockMvc;
 
     @MockBean
-    private IParaphraseService mockService;
+    private ParaphraseService mockService;
 
     @Test
     void testModifyMeaningChinese() throws Exception {

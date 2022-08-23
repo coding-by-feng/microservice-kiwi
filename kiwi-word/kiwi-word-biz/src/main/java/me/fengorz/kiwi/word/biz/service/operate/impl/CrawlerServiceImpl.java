@@ -21,7 +21,10 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.Semaphore;
+import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,23 +37,29 @@ import cn.hutool.core.util.URLUtil;
 import cn.hutool.http.HttpUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import me.fengorz.kiwi.bdf.core.service.ISeqService;
+import me.fengorz.kiwi.bdf.core.service.SeqService;
 import me.fengorz.kiwi.common.fastdfs.service.DfsService;
 import me.fengorz.kiwi.common.sdk.annotation.log.LogMarker;
 import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
 import me.fengorz.kiwi.common.sdk.constant.MapperConstant;
+import me.fengorz.kiwi.common.sdk.exception.DataCheckedException;
 import me.fengorz.kiwi.common.sdk.exception.ServiceException;
 import me.fengorz.kiwi.common.sdk.exception.dfs.DfsOperateDeleteException;
 import me.fengorz.kiwi.common.sdk.exception.dfs.DfsOperateException;
+import me.fengorz.kiwi.common.sdk.exception.tts.TtsException;
 import me.fengorz.kiwi.common.sdk.util.bean.KiwiBeanUtils;
 import me.fengorz.kiwi.common.sdk.util.lang.collection.KiwiCollectionUtils;
 import me.fengorz.kiwi.common.sdk.util.lang.string.KiwiStringUtils;
+import me.fengorz.kiwi.common.tts.service.TtsService;
 import me.fengorz.kiwi.word.api.common.WordCrawlerConstants;
+import me.fengorz.kiwi.word.api.common.enumeration.ReviewAudioTypeEnum;
 import me.fengorz.kiwi.word.api.dto.queue.result.*;
 import me.fengorz.kiwi.word.api.entity.*;
+import me.fengorz.kiwi.word.api.vo.ParaphraseExampleVO;
 import me.fengorz.kiwi.word.biz.service.base.*;
-import me.fengorz.kiwi.word.biz.service.operate.ICrawlerService;
-import me.fengorz.kiwi.word.biz.service.operate.IOperateService;
+import me.fengorz.kiwi.word.biz.service.operate.CrawlerService;
+import me.fengorz.kiwi.word.biz.service.operate.OperateService;
+import me.fengorz.kiwi.word.biz.service.operate.ReviewService;
 import me.fengorz.kiwi.word.biz.util.WordBizUtils;
 import me.fengorz.kiwi.word.biz.util.WordDfsUtils;
 
@@ -60,18 +69,21 @@ import me.fengorz.kiwi.word.biz.util.WordDfsUtils;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class CrawlerServiceImpl implements ICrawlerService {
+public class CrawlerServiceImpl implements CrawlerService {
 
-    private final IWordMainService mainService;
+    private final WordMainService mainService;
     private final ICharacterService characterService;
-    private final IParaphraseService wordParaphraseService;
+    private final ParaphraseService paraphraseService;
     private final IParaphraseExampleService exampleService;
     private final IPronunciationService pronunciationService;
     private final IWordFetchQueueService queueService;
     private final IParaphrasePhraseService phraseService;
+    private final ParaphraseStarRelService paraphraseStarRelService;
     private final DfsService dfsService;
-    private final ISeqService seqService;
-    private final IOperateService operateService;
+    private final SeqService seqService;
+    private final OperateService operateService;
+    private final TtsService ttsService;
+    private final ReviewService reviewService;
 
     @Value("${me.fengorz.file.crawler.voice.tmpPath:'/wordTmp'}")
     private String crawlerVoiceBasePath;
@@ -123,7 +135,7 @@ public class CrawlerServiceImpl implements ICrawlerService {
                     KiwiBeanUtils.copyProperties(paraphraseDTO, paraphrase);
                     paraphrase.setCharacterId(characterId).setWordId(wordId);
                     paraphrase.setParaphraseId(seqService.genIntSequence(MapperConstant.T_INS_SEQUENCE));
-                    wordParaphraseService.save(paraphrase);
+                    paraphraseService.save(paraphrase);
 
                     Integer paraphraseId = paraphrase.getParaphraseId();
                     Optional.ofNullable(paraphrase.getSerialNumber()).filter(serialNumber -> serialNumber > 0)
@@ -147,7 +159,7 @@ public class CrawlerServiceImpl implements ICrawlerService {
                             phrase.setCreateTime(LocalDateTime.now());
                             phraseService.save(phrase);
                             paraphrase.setIsHavePhrase(GlobalConstants.FLAG_YES);
-                            wordParaphraseService.updateById(paraphrase);
+                            paraphraseService.updateById(paraphrase);
                         }
                     }
 
@@ -253,7 +265,7 @@ public class CrawlerServiceImpl implements ICrawlerService {
             paraphraseDO.setWordId(wordMain.getWordId());
             paraphraseDO.setCharacterId(0);
             paraphraseDO.setSerialNumber(0);
-            wordParaphraseService.save(paraphraseDO);
+            paraphraseService.save(paraphraseDO);
             Optional.ofNullable(paraphrase.getExampleDTOList()).ifPresent(examples -> {
                 for (FetchParaphraseExampleDTO example : examples) {
                     ParaphraseExampleDO exampleDO = new ParaphraseExampleDO();
@@ -273,6 +285,71 @@ public class CrawlerServiceImpl implements ICrawlerService {
         });
 
         return true;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void generateTtsVoice() {
+        try {
+            log.info("Method generateTtsVoice is starting!");
+            if (!ttsService.hasValidApiKey()) {
+                log.info("There is not valid api key!");
+                return;
+            }
+            if (GENERATE_VOICE_BARRIER.tryAcquire(1, 1, TimeUnit.SECONDS)) {
+                List<Integer> notGeneratedParaphraseId = paraphraseStarRelService.listNotGeneratedVoice();
+                if (CollectionUtils.isEmpty(notGeneratedParaphraseId)) {
+                    log.info("There is not paraphrase need to generate voice.");
+                    GENERATE_VOICE_BARRIER.release();
+                    return;
+                }
+                for (Integer id : notGeneratedParaphraseId) {
+                    try {
+                        log.info("Paraphrase id({}) generation is starting!", id);
+                        ParaphraseDO paraphrase = paraphraseService.getById(id);
+                        try {
+                            reviewService.generateWordReviewAudio(true, id,
+                                ReviewAudioTypeEnum.PARAPHRASE_EN.getType());
+                            reviewService.generateWordReviewAudio(true, id,
+                                ReviewAudioTypeEnum.PARAPHRASE_CH.getType());
+                        } catch (DfsOperateException | TtsException | DataCheckedException e) {
+                            log.error("generateWordReviewAudio exception, sourceId={}!", id, e);
+                            throw e;
+                        }
+
+                        List<ParaphraseExampleVO> examples = exampleService.listExamples(id);
+                        if (CollectionUtils.isEmpty(examples)) {
+                            continue;
+                        }
+                        for (ParaphraseExampleVO example : examples) {
+                            try {
+                                reviewService.findWordReviewAudio(example.getExampleId(),
+                                    ReviewAudioTypeEnum.EXAMPLE_EN.getType());
+                                reviewService.findWordReviewAudio(example.getExampleId(),
+                                    ReviewAudioTypeEnum.EXAMPLE_CH.getType());
+                            } catch (DfsOperateException | TtsException | DataCheckedException e) {
+                                log.error("generateWordReviewAudio exception, sourceId={}!", example.getExampleId(), e);
+                                throw e;
+                            }
+                        }
+                    } catch (Exception e) {
+                        reviewService.cleanReviewVoiceByParaphraseId(id);
+                        GENERATE_VOICE_BARRIER.release();
+                        log.error(
+                            "Paraphrase id({}) generation failed, Data has cleaned, GENERATE_VOICE_BARRIER has released",
+                            id);
+                        return;
+                    }
+                    log.info("Paraphrase id({}) generation is end!", id);
+                }
+            } else {
+                log.info("Paraphrase is generating, GENERATE_VOICE_BARRIER tryAcquire false, skip work.");
+            }
+        } catch (InterruptedException e) {
+            log.error("GENERATE_VOICE_BARRIER tryAcquire failed.");
+            return;
+        }
+        GENERATE_VOICE_BARRIER.release();
     }
 
     private void fetchPronunciationVoice(PronunciationDO pronunciation) {
@@ -295,4 +372,7 @@ public class CrawlerServiceImpl implements ICrawlerService {
                 KiwiStringUtils.format("fetchPronunciationVoice error, pronunciation.url={}", voiceUrl));
         }
     }
+
+    private static final Semaphore GENERATE_VOICE_BARRIER = new Semaphore(1);
+
 }

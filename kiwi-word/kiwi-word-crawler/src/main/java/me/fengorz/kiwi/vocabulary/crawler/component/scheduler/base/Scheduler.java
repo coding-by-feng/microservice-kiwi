@@ -1,6 +1,6 @@
 /*
  *
- * Copyright [2019~2025] [zhanshifeng]
+ * Copyright [2019~2025] [codingByFeng]
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -13,20 +13,10 @@
  *
  *
  */
-package me.fengorz.kiwi.word.biz.mapper;
 
-import java.util.List;
+package me.fengorz.kiwi.vocabulary.crawler.component.scheduler.base;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+public interface Scheduler {
 
-import me.fengorz.kiwi.word.api.entity.ParaphraseStarRelDO;
-
-/**
- * @author zhanshifeng
- * @date 2020-01-03 14:44:37
- */
-public interface ParaphraseStarRelMapper extends BaseMapper<ParaphraseStarRelDO> {
-
-    List<Integer> listNotGeneratedVoice();
-
+    void schedule();
 }

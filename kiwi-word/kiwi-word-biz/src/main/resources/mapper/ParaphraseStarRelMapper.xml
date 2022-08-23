@@ -23,4 +23,12 @@
 
 <mapper namespace="me.fengorz.kiwi.word.biz.mapper.ParaphraseStarRelMapper">
 
+    <select id="listNotGeneratedVoice" resultType="java.lang.Integer">
+        select distinct(paraphrase_id)
+        from word_paraphrase_star_rel wpsr
+        where exists(select 1 from word_paraphrase wp where wp.paraphrase_id = wpsr.paraphrase_id)
+        and not exists(select 1 from word_review_audio wra where wra.source_id = wpsr.paraphrase_id)
+        limit 10
+    </select>
+
 </mapper>

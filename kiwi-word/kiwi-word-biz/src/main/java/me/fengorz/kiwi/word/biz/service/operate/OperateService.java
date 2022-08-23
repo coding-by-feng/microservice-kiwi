@@ -29,7 +29,7 @@ import me.fengorz.kiwi.word.api.vo.detail.WordQueryVO;
 /**
  * @Author zhanshifeng
  */
-public interface IOperateService {
+public interface OperateService {
 
     /* paraphrase methods begin */
 
@@ -67,11 +67,4 @@ public interface IOperateService {
 
     Set<WordMainDO> collectDirtyData(Integer queueId, String wordName);
 
-    /**
-     * 获取断点记录，如果返回页数大于0，代表当前有断点数据
-     *
-     * @param listId
-     * @return
-     */
-    Integer getReviewBreakpointPageNumber(Integer listId);
 }

@@ -29,7 +29,7 @@ import me.fengorz.kiwi.word.api.feign.IBizAPI;
  * @Author zhanshifeng @Date 2020/7/29 2:16 PM
  */
 @RequiredArgsConstructor
-public abstract class AbstractScheduler implements IScheduler {
+public abstract class AbstractFetchScheduler implements Scheduler {
 
     private static final String COUNT_DOWN_LATCH_ERROR = "countDownLatch error!";
     protected final IBizAPI bizAPI;

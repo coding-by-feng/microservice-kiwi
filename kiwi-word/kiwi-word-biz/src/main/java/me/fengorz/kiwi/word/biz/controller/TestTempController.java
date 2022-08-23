@@ -26,7 +26,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import cn.hutool.core.util.StrUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import me.fengorz.kiwi.bdf.core.service.ISeqService;
+import me.fengorz.kiwi.bdf.core.service.SeqService;
 import me.fengorz.kiwi.common.api.R;
 import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
 import me.fengorz.kiwi.common.sdk.constant.MapperConstant;
@@ -49,7 +49,7 @@ import me.fengorz.kiwi.word.biz.service.base.IWordFetchQueueService;
 public class TestTempController extends BaseController {
 
     private final IWordFetchQueueService wordFetchQueueService;
-    private final ISeqService seqService;
+    private final SeqService seqService;
     // @Value("${me.fengorz.file.vocabulary.word.list.path}")
     private String tmp;
 

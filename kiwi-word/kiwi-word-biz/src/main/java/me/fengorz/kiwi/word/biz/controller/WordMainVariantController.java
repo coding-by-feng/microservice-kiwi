@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
 import me.fengorz.kiwi.common.api.R;
-import me.fengorz.kiwi.word.biz.service.operate.IOperateService;
+import me.fengorz.kiwi.word.biz.service.operate.OperateService;
 
 /**
  * 单词时态、单复数等的变化 @Author zhanshifeng
@@ -33,7 +33,7 @@ import me.fengorz.kiwi.word.biz.service.operate.IOperateService;
 @RequestMapping("/word/main/variant")
 public class WordMainVariantController {
 
-    private final IOperateService wordOperateService;
+    private final OperateService wordOperateService;
 
     @GetMapping("/insertVariant/{inputWordName}/{fetchWordName}")
     public R<Void> insertVariant(@PathVariable String inputWordName, @PathVariable String fetchWordName) {

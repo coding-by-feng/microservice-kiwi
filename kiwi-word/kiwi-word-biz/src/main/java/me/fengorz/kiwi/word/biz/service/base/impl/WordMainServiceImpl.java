@@ -44,7 +44,7 @@ import me.fengorz.kiwi.word.api.entity.WordMainDO;
 import me.fengorz.kiwi.word.api.vo.WordMainVO;
 import me.fengorz.kiwi.word.biz.mapper.WordMainMapper;
 import me.fengorz.kiwi.word.biz.service.base.IWordFetchQueueService;
-import me.fengorz.kiwi.word.biz.service.base.IWordMainService;
+import me.fengorz.kiwi.word.biz.service.base.WordMainService;
 
 /**
  * 单词主表
@@ -56,7 +56,7 @@ import me.fengorz.kiwi.word.biz.service.base.IWordMainService;
 @Service
 @RequiredArgsConstructor
 @KiwiCacheKeyPrefix(WordConstants.CACHE_KEY_PREFIX_WORD_MAIN.CLASS)
-public class WordMainServiceImpl extends ServiceImpl<WordMainMapper, WordMainDO> implements IWordMainService {
+public class WordMainServiceImpl extends ServiceImpl<WordMainMapper, WordMainDO> implements WordMainService {
 
     private static final String VALUE = "value";
 

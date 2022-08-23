@@ -42,9 +42,9 @@ import me.fengorz.kiwi.word.api.vo.ParaphraseStarListVO;
 import me.fengorz.kiwi.word.api.vo.star.ParaphraseStarItemVO;
 import me.fengorz.kiwi.word.biz.mapper.ParaphraseStarListMapper;
 import me.fengorz.kiwi.word.biz.service.base.IParaphraseStarListService;
-import me.fengorz.kiwi.word.biz.service.base.IParaphraseStarRelService;
+import me.fengorz.kiwi.word.biz.service.base.ParaphraseStarRelService;
 import me.fengorz.kiwi.word.biz.service.operate.IAsyncArchiveService;
-import me.fengorz.kiwi.word.biz.service.operate.IReviewService;
+import me.fengorz.kiwi.word.biz.service.operate.ReviewService;
 
 /**
  * 单词本
@@ -58,9 +58,9 @@ public class ParaphraseStarListServiceImpl extends ServiceImpl<ParaphraseStarLis
     implements IParaphraseStarListService {
 
     private final ParaphraseStarListMapper mapper;
-    private final IParaphraseStarRelService relService;
+    private final ParaphraseStarRelService relService;
     private final IAsyncArchiveService archiveService;
-    private final IReviewService reviewService;
+    private final ReviewService reviewService;
 
     @Override
     public Integer countById(Integer id) {

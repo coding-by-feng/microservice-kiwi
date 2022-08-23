@@ -26,9 +26,9 @@ import org.junit.jupiter.api.Test;
 import me.fengorz.kiwi.common.sdk.exception.tts.TtsException;
 import me.fengorz.kiwi.common.tts.service.TtsService;
 
-public class TtsServiceImplTest {
+public class TtsTest {
 
-    private final TtsService ttsService = new TtsServiceImpl();
+    private final TtsService ttsService = new TtsServiceImpl(null);
 
     @Test
     public void test() {

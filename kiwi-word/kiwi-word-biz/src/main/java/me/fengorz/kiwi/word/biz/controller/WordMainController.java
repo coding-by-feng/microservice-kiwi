@@ -41,9 +41,9 @@ import me.fengorz.kiwi.word.api.dto.mapper.out.FuzzyQueryResultDTO;
 import me.fengorz.kiwi.word.api.entity.WordMainDO;
 import me.fengorz.kiwi.word.api.vo.detail.WordQueryVO;
 import me.fengorz.kiwi.word.biz.service.base.IWordFetchQueueService;
-import me.fengorz.kiwi.word.biz.service.base.IWordMainService;
-import me.fengorz.kiwi.word.biz.service.operate.IOperateService;
-import me.fengorz.kiwi.word.biz.service.operate.IReviewService;
+import me.fengorz.kiwi.word.biz.service.base.WordMainService;
+import me.fengorz.kiwi.word.biz.service.operate.OperateService;
+import me.fengorz.kiwi.word.biz.service.operate.ReviewService;
 
 /**
  * 单词主表
@@ -58,10 +58,10 @@ import me.fengorz.kiwi.word.biz.service.operate.IReviewService;
 @Slf4j
 public class WordMainController extends BaseController {
 
-    private final IWordMainService mainService;
-    private final IOperateService operateService;
+    private final WordMainService mainService;
+    private final OperateService operateService;
     private final IWordFetchQueueService queueService;
-    private final IReviewService reviewService;
+    private final ReviewService reviewService;
     private final DocumentOperations documentOperations;
 
     @GetMapping("/removeByWordName/{wordName}")

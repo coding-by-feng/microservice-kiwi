@@ -29,7 +29,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import me.fengorz.kiwi.bdf.core.service.ISeqService;
+import me.fengorz.kiwi.bdf.core.service.SeqService;
 import me.fengorz.kiwi.common.api.R;
 import me.fengorz.kiwi.common.sdk.annotation.log.LogMarker;
 import me.fengorz.kiwi.common.sdk.constant.MapperConstant;
@@ -40,10 +40,10 @@ import me.fengorz.kiwi.word.api.entity.ParaphraseStarListDO;
 import me.fengorz.kiwi.word.api.vo.ParaphraseStarListVO;
 import me.fengorz.kiwi.word.api.vo.detail.ParaphraseVO;
 import me.fengorz.kiwi.word.api.vo.star.ParaphraseStarItemVO;
-import me.fengorz.kiwi.word.biz.service.base.IParaphraseService;
 import me.fengorz.kiwi.word.biz.service.base.IParaphraseStarListService;
-import me.fengorz.kiwi.word.biz.service.operate.IOperateService;
-import me.fengorz.kiwi.word.biz.service.operate.IReviewService;
+import me.fengorz.kiwi.word.biz.service.base.ParaphraseService;
+import me.fengorz.kiwi.word.biz.service.operate.OperateService;
+import me.fengorz.kiwi.word.biz.service.operate.ReviewService;
 
 /**
  * 单词本
@@ -59,10 +59,10 @@ import me.fengorz.kiwi.word.biz.service.operate.IReviewService;
 public class ParaphraseStarListController extends BaseController {
 
     private final IParaphraseStarListService starListService;
-    private final IOperateService operateService;
-    private final IParaphraseService paraphraseService;
-    private final IReviewService reviewService;
-    private final ISeqService seqService;
+    private final OperateService operateService;
+    private final ParaphraseService paraphraseService;
+    private final ReviewService reviewService;
+    private final SeqService seqService;
 
     /**
      * 新增单词本

@@ -14,19 +14,9 @@
  *
  */
 
-package me.fengorz.kiwi.word.biz.service.operate;
+package me.fengorz.kiwi.vocabulary.crawler.component.scheduler.base;
 
-import me.fengorz.kiwi.word.api.dto.queue.result.FetchPhraseResultDTO;
-import me.fengorz.kiwi.word.api.dto.queue.result.FetchPhraseRunUpResultDTO;
-import me.fengorz.kiwi.word.api.dto.queue.result.FetchWordResultDTO;
+public interface DailyScheduler {
 
-public interface ICrawlerService {
-
-    boolean storeFetchWordResult(FetchWordResultDTO dto);
-
-    boolean fetchPronunciation(Integer wordId);
-
-    boolean handlePhrasesFetchResult(FetchPhraseRunUpResultDTO dto);
-
-    boolean storePhrasesFetchResult(FetchPhraseResultDTO dto);
+    void schedule();
 }

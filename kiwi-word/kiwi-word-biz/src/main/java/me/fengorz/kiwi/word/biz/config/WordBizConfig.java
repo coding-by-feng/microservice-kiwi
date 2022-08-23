@@ -28,7 +28,7 @@ import me.fengorz.kiwi.bdf.core.config.LogAspectConfig;
 import me.fengorz.kiwi.common.es.config.ESConfig;
 import me.fengorz.kiwi.common.fastdfs.config.DfsConfig;
 import me.fengorz.kiwi.common.sdk.config.UtilsBeanConfiguration;
-import me.fengorz.kiwi.word.biz.model.TtsConfig;
+import me.fengorz.kiwi.common.tts.model.TtsConfig;
 
 /**
  * @Author zhanshifeng

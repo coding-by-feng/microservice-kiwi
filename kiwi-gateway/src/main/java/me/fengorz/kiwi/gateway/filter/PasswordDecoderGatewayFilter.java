@@ -35,14 +35,14 @@ import me.fengorz.kiwi.common.sdk.util.cipher.KiwiDecodeUtils;
 import reactor.core.publisher.Mono;
 
 /**
- * @Author zhanshifeng @Date 2019-09-06 14:24
+ * @Author zhanshifeng
+ * @Date 2019-09-06 14:24
  */
 @Slf4j
 @Component
 public class PasswordDecoderGatewayFilter extends AbstractGatewayFilterFactory {
 
     // 这里定义成静态变量，性能比成员变量会更高，由于@Value不支持注入静态变量，所以通过setter注入。
-    @Value("${security.encode.key:1234567812345678}")
     private static String encodeKey;
 
     @Override

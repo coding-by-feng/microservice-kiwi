@@ -38,7 +38,7 @@ import me.fengorz.kiwi.word.api.dto.queue.result.FetchWordReplaceDTO;
 import me.fengorz.kiwi.word.api.entity.*;
 import me.fengorz.kiwi.word.biz.service.base.*;
 import me.fengorz.kiwi.word.biz.service.operate.ICleanerService;
-import me.fengorz.kiwi.word.biz.service.operate.IOperateService;
+import me.fengorz.kiwi.word.biz.service.operate.OperateService;
 
 /**
  * @Author zhanshifeng @Date 2020/7/29 8:56 PM
@@ -48,11 +48,11 @@ import me.fengorz.kiwi.word.biz.service.operate.IOperateService;
 @RequiredArgsConstructor
 public class CleanerServiceImpl implements ICleanerService {
 
-    private final IOperateService operateService;
+    private final OperateService operateService;
     private final IWordFetchQueueService queueService;
-    private final IWordMainService mainService;
+    private final WordMainService mainService;
     private final ICharacterService characterService;
-    private final IParaphraseService paraphraseService;
+    private final ParaphraseService paraphraseService;
     private final IParaphraseExampleService exampleService;
     private final IPronunciationService pronunciationService;
     private final IWordMainVariantService variantService;

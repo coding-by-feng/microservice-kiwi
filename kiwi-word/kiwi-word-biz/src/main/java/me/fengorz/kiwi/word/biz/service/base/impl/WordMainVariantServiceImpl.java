@@ -27,7 +27,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
 import lombok.RequiredArgsConstructor;
-import me.fengorz.kiwi.bdf.core.service.ISeqService;
+import me.fengorz.kiwi.bdf.core.service.SeqService;
 import me.fengorz.kiwi.common.sdk.annotation.cache.KiwiCacheKeyPrefix;
 import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
 import me.fengorz.kiwi.common.sdk.constant.MapperConstant;
@@ -40,8 +40,8 @@ import me.fengorz.kiwi.word.api.entity.WordMainVariantDO;
 import me.fengorz.kiwi.word.api.vo.WordMainVariantVO;
 import me.fengorz.kiwi.word.biz.mapper.WordMainVariantMapper;
 import me.fengorz.kiwi.word.biz.service.base.IWordFetchQueueService;
-import me.fengorz.kiwi.word.biz.service.base.IWordMainService;
 import me.fengorz.kiwi.word.biz.service.base.IWordMainVariantService;
+import me.fengorz.kiwi.word.biz.service.base.WordMainService;
 
 /**
  * 单词时态、单复数等的变化 @Author zhanshifeng
@@ -56,8 +56,8 @@ public class WordMainVariantServiceImpl extends ServiceImpl<WordMainVariantMappe
 
     private final WordMainVariantMapper wordMainVariantMapper;
     private final IWordFetchQueueService wordFetchQueueService;
-    private final IWordMainService wordMainService;
-    private final ISeqService seqService;
+    private final WordMainService wordMainService;
+    private final SeqService seqService;
 
     @Override
     public IPage<WordMainVariantVO> page(int current, int size, WordMainVariantDTO dto) {

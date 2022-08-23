@@ -17,6 +17,7 @@ package me.fengorz.kiwi.word.biz.service.operate;
 
 import java.util.List;
 
+import me.fengorz.kiwi.common.sdk.exception.DataCheckedException;
 import me.fengorz.kiwi.common.sdk.exception.dfs.DfsOperateException;
 import me.fengorz.kiwi.common.sdk.exception.tts.TtsException;
 import me.fengorz.kiwi.word.api.entity.WordBreakpointReviewDO;
@@ -27,7 +28,7 @@ import me.fengorz.kiwi.word.api.vo.WordReviewDailyCounterVO;
  * @author zhanShiFeng
  * @date 2021-08-19 20:42:11
  */
-public interface IReviewService {
+public interface ReviewService {
 
     List<WordBreakpointReviewDO> listBreakpointReview(Integer listId);
 
@@ -50,22 +51,24 @@ public interface IReviewService {
      */
     void recordReviewPageNumber(int listId, Long pageNumber, int type, Integer userId);
 
-    WordReviewAudioDO findWordReviewAudio(Integer paraphraseId, Integer type);
+    WordReviewAudioDO findWordReviewAudio(Integer sourceId, Integer type) throws DfsOperateException, TtsException, DataCheckedException;
+
+    WordReviewAudioDO generateWordReviewAudio(boolean isReplace, Integer sourceId, Integer type) throws DfsOperateException, TtsException, DataCheckedException;
 
     void initPermanent(boolean isReplace, boolean isOnlyTest) throws DfsOperateException, TtsException;
 
     void generateTtsVoice(boolean isReplace) throws DfsOperateException, TtsException, InterruptedException;
 
-    void generateTtsVoiceFromParaphraseId(Integer paraphraseId);
+    void generateTtsVoiceFromParaphraseId(Integer paraphraseId) throws DfsOperateException, TtsException, DataCheckedException;
 
-    String autoSelectApiKey();
+    void cleanReviewVoiceByParaphraseId(Integer paraphraseId);
 
-    void increaseApiKeyUsedTime(String apiKey);
+    /**
+     * 获取断点记录，如果返回页数大于0，代表当前有断点数据
+     *
+     * @param listId
+     * @return
+     */
+    Integer getReviewBreakpointPageNumber(Integer listId);
 
-    Integer queryTtsApiKeyUsed(String apiKey);
-
-    @SuppressWarnings("UnusedReturnValue")
-    int useTtsApiKey(String apiKey, int time);
-
-    void deprecateApiKeyToday(String apiKey);
 }

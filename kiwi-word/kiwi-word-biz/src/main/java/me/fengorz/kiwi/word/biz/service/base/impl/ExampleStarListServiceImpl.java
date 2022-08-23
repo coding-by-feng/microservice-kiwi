@@ -40,7 +40,7 @@ import me.fengorz.kiwi.word.api.vo.star.ExampleStarItemVO;
 import me.fengorz.kiwi.word.biz.mapper.ExampleStarListMapper;
 import me.fengorz.kiwi.word.biz.service.base.IExampleStarListService;
 import me.fengorz.kiwi.word.biz.service.base.IWordExampleStarRelService;
-import me.fengorz.kiwi.word.biz.service.operate.IAsyncArchiveService;
+import me.fengorz.kiwi.word.biz.service.operate.AsyncArchiveService;
 
 /**
  * @author zhanshifeng
@@ -53,7 +53,7 @@ public class ExampleStarListServiceImpl extends ServiceImpl<ExampleStarListMappe
 
     private final ExampleStarListMapper mapper;
     private final IWordExampleStarRelService relService;
-    private final IAsyncArchiveService archiveService;
+    private final AsyncArchiveService archiveService;
 
     @Override
     public Integer countById(Integer id) {

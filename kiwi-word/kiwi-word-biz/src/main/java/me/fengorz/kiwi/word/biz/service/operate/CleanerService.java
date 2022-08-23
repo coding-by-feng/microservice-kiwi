@@ -20,7 +20,7 @@ import java.util.List;
 
 import me.fengorz.kiwi.word.api.dto.queue.RemovePronunciatioinMqDTO;
 
-public interface ICleanerService {
+public interface CleanerService {
 
     @Deprecated
     List<RemovePronunciatioinMqDTO> removeWord(String wordName, Integer queueId);

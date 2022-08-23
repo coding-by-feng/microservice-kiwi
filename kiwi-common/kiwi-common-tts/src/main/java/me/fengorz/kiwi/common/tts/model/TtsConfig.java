@@ -17,7 +17,7 @@
  *
  */
 
-package me.fengorz.kiwi.word.biz.model;
+package me.fengorz.kiwi.common.tts.model;
 
 import java.util.Set;
 

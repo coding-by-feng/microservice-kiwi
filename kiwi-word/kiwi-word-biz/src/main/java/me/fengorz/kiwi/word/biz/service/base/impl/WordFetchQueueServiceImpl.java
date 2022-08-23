@@ -30,7 +30,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import me.fengorz.kiwi.bdf.core.service.ISeqService;
+import me.fengorz.kiwi.bdf.core.service.SeqService;
 import me.fengorz.kiwi.common.sdk.annotation.log.LogMarker;
 import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
 import me.fengorz.kiwi.common.sdk.constant.MapperConstant;
@@ -56,7 +56,7 @@ import me.fengorz.kiwi.word.biz.util.WordBizUtils;
 public class WordFetchQueueServiceImpl extends ServiceImpl<FetchQueueMapper, FetchQueueDO>
     implements IWordFetchQueueService {
 
-    private final ISeqService seqService;
+    private final SeqService seqService;
     private final WordMainMapper mainMapper;
 
     @Transactional(rollbackFor = Exception.class, noRollbackFor = ServiceException.class)

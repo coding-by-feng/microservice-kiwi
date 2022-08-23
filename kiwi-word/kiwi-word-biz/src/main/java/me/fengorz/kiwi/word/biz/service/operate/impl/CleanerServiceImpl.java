@@ -37,7 +37,7 @@ import me.fengorz.kiwi.word.api.dto.queue.RemovePronunciatioinMqDTO;
 import me.fengorz.kiwi.word.api.dto.queue.result.FetchWordReplaceDTO;
 import me.fengorz.kiwi.word.api.entity.*;
 import me.fengorz.kiwi.word.biz.service.base.*;
-import me.fengorz.kiwi.word.biz.service.operate.ICleanerService;
+import me.fengorz.kiwi.word.biz.service.operate.CleanerService;
 import me.fengorz.kiwi.word.biz.service.operate.OperateService;
 
 /**
@@ -46,7 +46,7 @@ import me.fengorz.kiwi.word.biz.service.operate.OperateService;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class CleanerServiceImpl implements ICleanerService {
+public class CleanerServiceImpl implements CleanerService {
 
     private final OperateService operateService;
     private final IWordFetchQueueService queueService;

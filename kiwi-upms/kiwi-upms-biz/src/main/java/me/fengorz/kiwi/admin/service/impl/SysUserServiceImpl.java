@@ -41,7 +41,7 @@ import me.fengorz.kiwi.admin.service.SysMenuService;
 import me.fengorz.kiwi.admin.service.SysRoleService;
 import me.fengorz.kiwi.admin.service.SysUserRoleRelService;
 import me.fengorz.kiwi.admin.service.SysUserService;
-import me.fengorz.kiwi.bdf.core.service.ISeqService;
+import me.fengorz.kiwi.bdf.core.service.SeqService;
 import me.fengorz.kiwi.common.sdk.constant.MapperConstant;
 
 /**
@@ -57,7 +57,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
     private final SysRoleService sysRoleService;
     private final SysUserRoleRelService sysUserRoleRelService;
     private final SysMenuService sysMenuService;
-    private final ISeqService seqService;
+    private final SeqService seqService;
 
     @Override
     public UserFullInfoDTO getUserFullInfo(SysUser sysUser) {

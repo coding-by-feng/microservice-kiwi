@@ -64,24 +64,25 @@ public class TtsServiceImplTest {
     }
 
     @Test
-    @Disabled
+    // @Disabled
     void useTtsApiKey() {
         Assertions.assertDoesNotThrow(() -> {
-            for (String apiKey : ttsConfig.listApiKey()) {
-                ttsService.useTtsApiKey(apiKey, 0);
-            }
+            // for (String apiKey : ttsConfig.listApiKey()) {
+            // ttsService.useTtsApiKey(apiKey, 0);
+            // }
+
+            ttsService.useTtsApiKey(ttsConfig.getApiKey10(), 0);
+            ttsService.useTtsApiKey(ttsConfig.getApiKey11(), 0);
+            ttsService.useTtsApiKey(ttsConfig.getApiKey12(), 0);
+            ttsService.useTtsApiKey(ttsConfig.getApiKey13(), 0);
+            ttsService.useTtsApiKey(ttsConfig.getApiKey14(), 0);
         });
     }
 
     @Test
     @Disabled
     void queryTtsApiKeyUsed() {
-        Assertions.assertEquals(ttsService.queryTtsApiKeyUsed(ttsConfig.getApiKey6()), 0);
-        Assertions.assertEquals(ttsService.queryTtsApiKeyUsed(ttsConfig.getApiKey5()), 0);
-        Assertions.assertEquals(ttsService.queryTtsApiKeyUsed(ttsConfig.getApiKey1()), 0);
-        Assertions.assertEquals(ttsService.queryTtsApiKeyUsed(ttsConfig.getApiKey2()), 0);
-        Assertions.assertEquals(ttsService.queryTtsApiKeyUsed(ttsConfig.getApiKey3()), 0);
-        Assertions.assertEquals(ttsService.queryTtsApiKeyUsed(ttsConfig.getApiKey4()), 0);
+        Assertions.assertEquals(ttsService.queryTtsApiKeyUsed(ttsConfig.getApiKey10()), 0);
     }
 
     @Test
@@ -94,8 +95,24 @@ public class TtsServiceImplTest {
 
     @Test
     // @Disabled
+    void queryApiKeyUsed() {
+        log.info("queryTtsApiKeyUsed [{}] used times is {}", ttsConfig.getApiKey10(),
+            ttsService.queryTtsApiKeyUsed(ttsConfig.getApiKey10()));
+        log.info("queryTtsApiKeyUsed [{}] used times is {}", ttsConfig.getApiKey11(),
+            ttsService.queryTtsApiKeyUsed(ttsConfig.getApiKey11()));
+        log.info("queryTtsApiKeyUsed [{}] used times is {}", ttsConfig.getApiKey12(),
+            ttsService.queryTtsApiKeyUsed(ttsConfig.getApiKey12()));
+        log.info("queryTtsApiKeyUsed [{}] used times is {}", ttsConfig.getApiKey13(),
+            ttsService.queryTtsApiKeyUsed(ttsConfig.getApiKey13()));
+        log.info("queryTtsApiKeyUsed [{}] used times is {}", ttsConfig.getApiKey14(),
+            ttsService.queryTtsApiKeyUsed(ttsConfig.getApiKey14()));
+    }
+
+    @Test
+    @Disabled
     void queryAllTtsApiKeyUsed() {
-        log.info("queryTtsApiKeyUsed [total] used times is {}", ttsService.queryTtsApiKeyUsed(TtsConstants.CACHE_KEY_PREFIX_TTS.TOTAL_API_KEY));
+        log.info("queryTtsApiKeyUsed [total] used times is {}",
+            ttsService.queryTtsApiKeyUsed(TtsConstants.CACHE_KEY_PREFIX_TTS.TOTAL_API_KEY));
         for (String apiKey : ttsConfig.listApiKey()) {
             log.info("queryTtsApiKeyUsed [{}] used times is {}", apiKey, ttsService.queryTtsApiKeyUsed(apiKey));
         }

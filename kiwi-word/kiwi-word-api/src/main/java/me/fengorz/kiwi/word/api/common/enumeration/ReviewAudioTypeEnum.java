@@ -29,7 +29,7 @@ import lombok.Getter;
 public enum ReviewAudioTypeEnum {
 
     WORD_SPELLING(0), PARAPHRASE_EN(1), PARAPHRASE_CH(2), EXAMPLE_EN(3), EXAMPLE_CH(4), ALL(5), CHARACTER_EN(6),
-    CHARACTER_CH(7);
+    CHARACTER_CH(7), NON_REVIEW_SPELL(8);
 
     @Getter
     private final Integer type;
@@ -42,6 +42,10 @@ public enum ReviewAudioTypeEnum {
         return PARAPHRASE_EN.getType() == type || PARAPHRASE_CH.getType() == type;
     }
 
+    public static boolean isWord(int type) {
+        return NON_REVIEW_SPELL.getType() == type;
+    }
+
     public static boolean isExample(int type) {
         return EXAMPLE_EN.getType() == type || EXAMPLE_CH.getType() == type;
     }
@@ -51,7 +55,7 @@ public enum ReviewAudioTypeEnum {
     }
 
     public static boolean isEnglish(int type) {
-        return PARAPHRASE_EN.getType() == type || EXAMPLE_EN.getType() == type;
+        return PARAPHRASE_EN.getType() == type || EXAMPLE_EN.getType() == type || NON_REVIEW_SPELL.getType() == type;
     }
 
     public static boolean isChinese(int type) {

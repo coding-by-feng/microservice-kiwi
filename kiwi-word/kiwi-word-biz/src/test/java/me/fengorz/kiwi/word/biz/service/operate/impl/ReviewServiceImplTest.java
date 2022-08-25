@@ -83,7 +83,7 @@ public class ReviewServiceImplTest {
     }
 
     @Test
-    // @Disabled
+    @Disabled
     void createTheDays() {
         Assertions.assertDoesNotThrow(() -> reviewService.createTheDays(1));
     }
@@ -117,9 +117,9 @@ public class ReviewServiceImplTest {
 
     @SneakyThrows
     @Test
-    @Disabled
+    // @Disabled
     void test_findWordReviewAudio() {
-        WordReviewAudioDO wordReviewAudio = reviewService.findWordReviewAudio(2107009, ReviewAudioTypeEnum.PARAPHRASE_CH.getType());
+        WordReviewAudioDO wordReviewAudio = reviewService.findWordReviewAudio(1510384, ReviewAudioTypeEnum.NON_REVIEW_SPELL.getType());
         byte[] bytes = this.dfsService.downloadFile(wordReviewAudio.getGroupName(), wordReviewAudio.getFilePath());
         FileUtil.writeBytes(bytes, "test_paraphrase_ch.mp3");
     }

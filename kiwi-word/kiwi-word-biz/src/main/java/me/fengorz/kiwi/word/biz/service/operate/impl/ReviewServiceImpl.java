@@ -185,7 +185,7 @@ public class ReviewServiceImpl implements ReviewService {
         WordReviewAudioDO wordReviewAwoudioDO = reviewAudioMapper.selectOne(Wrappers.<WordReviewAudioDO>lambdaQuery()
             .eq(WordReviewAudioDO::getSourceId, sourceId).eq(WordReviewAudioDO::getType, type));
         if (Objects.isNull(wordReviewAwoudioDO)) {
-            wordReviewAwoudioDO = generateWordReviewAudio(true, sourceId, type);
+            wordReviewAwoudioDO = generateWordReviewAudio(false, sourceId, type);
         }
         return wordReviewAwoudioDO;
     }
@@ -305,7 +305,8 @@ public class ReviewServiceImpl implements ReviewService {
     @Override
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRES_NEW)
     public void cleanReviewVoiceByParaphraseId(Integer paraphraseId) {
-        ListUtils.emptyIfNull(reviewAudioMapper
+        ListUtils
+            .emptyIfNull(reviewAudioMapper
                 .selectList(Wrappers.<WordReviewAudioDO>lambdaQuery().eq(WordReviewAudioDO::getSourceId, paraphraseId)))
             .forEach(this::cleanReviewAudio);
         List<ParaphraseExampleDO> examples = paraphraseExampleMapper.selectList(
@@ -399,6 +400,10 @@ public class ReviewServiceImpl implements ReviewService {
             CharacterDO characterDO = Optional.ofNullable(characterMapper.selectById(sourceId))
                 .orElseThrow(() -> new ResourceNotFoundException("Character cannot be found!"));
             return ReviewPermanentAudioEnum.WORD_CHARACTER.getText() + characterDO.getCharacterCode();
+        } else if (ReviewAudioTypeEnum.isWord(type)) {
+            WordMainDO wordMainDO = Optional.ofNullable(wordMainMapper.selectById(sourceId))
+                .orElseThrow(() -> new ResourceNotFoundException("word cannot be found!"));
+            return wordMainDO.getWordName();
         }
         throw new DataCheckedException("English text cannot be found!");
     }

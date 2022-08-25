@@ -168,6 +168,7 @@ public class TtsServiceImpl implements TtsService {
         try {
             voice = tts.speech(params);
         } catch (Exception e) {
+            this.deprecateApiKeyToday(apiKey);
             log.error(e.getMessage(), e);
             throw new TtsException("tts speech error.");
         }

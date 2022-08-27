@@ -33,7 +33,7 @@ import me.fengorz.kiwi.common.sdk.util.lang.collection.KiwiCollectionUtils;
 import me.fengorz.kiwi.vocabulary.crawler.component.producer.base.AbstractProducer;
 import me.fengorz.kiwi.vocabulary.crawler.component.producer.base.MQProducer;
 import me.fengorz.kiwi.vocabulary.crawler.component.producer.base.MQSender;
-import me.fengorz.kiwi.word.api.common.WordCrawlerConstants;
+import me.fengorz.kiwi.word.api.common.ApiCrawlerConstants;
 import me.fengorz.kiwi.word.api.entity.FetchQueueDO;
 import me.fengorz.kiwi.word.api.feign.IBizAPI;
 import me.fengorz.kiwi.word.api.util.WordApiUtils;
@@ -47,7 +47,7 @@ public class ErrorResumeProducer extends AbstractProducer implements MQProducer 
 
     public ErrorResumeProducer(IBizAPI bizApi, MQSender mqSender) {
         super(bizApi, mqSender);
-        this.infoType = WordCrawlerConstants.QUEUE_INFO_TYPE_WORD;
+        this.infoType = ApiCrawlerConstants.QUEUE_INFO_TYPE_WORD;
     }
 
     @Override
@@ -62,13 +62,13 @@ public class ErrorResumeProducer extends AbstractProducer implements MQProducer 
     public void resumeDelPronunciationError() {
         List<FetchQueueDO> list = new ArrayList<>();
         List<FetchQueueDO> delPronunciationFailList =
-            bizApi.pageQueue(WordCrawlerConstants.STATUS_DEL_PRONUNCIATION_FAIL, 0, 20,
-                WordCrawlerConstants.QUEUE_INFO_TYPE_WORD).getData();
+            bizApi.pageQueue(ApiCrawlerConstants.STATUS_DEL_PRONUNCIATION_FAIL, 0, 20,
+                ApiCrawlerConstants.QUEUE_INFO_TYPE_WORD).getData();
         if (KiwiCollectionUtils.isNotEmpty(delPronunciationFailList)) {
             list.addAll(delPronunciationFailList);
         }
-        List<FetchQueueDO> delBaseFailList = (bizApi.pageQueue(WordCrawlerConstants.STATUS_DEL_BASE_FAIL, 0, 20,
-            WordCrawlerConstants.QUEUE_INFO_TYPE_WORD)).getData();
+        List<FetchQueueDO> delBaseFailList = (bizApi.pageQueue(ApiCrawlerConstants.STATUS_DEL_BASE_FAIL, 0, 20,
+            ApiCrawlerConstants.QUEUE_INFO_TYPE_WORD)).getData();
         if (KiwiCollectionUtils.isNotEmpty(delBaseFailList)) {
             list.addAll(delBaseFailList);
         }
@@ -102,7 +102,7 @@ public class ErrorResumeProducer extends AbstractProducer implements MQProducer 
         list.forEach(queue -> {
             log.info("Data for the word {} is duplicate. Dirty data is to be deleted", queue.getWordName());
             queue.setIsLock(GlobalConstants.FLAG_YES);
-            queue.setFetchStatus(WordCrawlerConstants.STATUS_TO_DEL_BASE);
+            queue.setFetchStatus(ApiCrawlerConstants.STATUS_TO_DEL_BASE);
             bizApi.updateQueueById(queue);
         });
     }
@@ -116,7 +116,7 @@ public class ErrorResumeProducer extends AbstractProducer implements MQProducer 
     @Override
     protected void execute(FetchQueueDO queue) {
         queue.setIsLock(GlobalConstants.FLAG_YES);
-        queue.setFetchStatus(WordCrawlerConstants.STATUS_TO_FETCH);
+        queue.setFetchStatus(ApiCrawlerConstants.STATUS_TO_FETCH);
         bizApi.updateQueueById(queue);
     }
 }

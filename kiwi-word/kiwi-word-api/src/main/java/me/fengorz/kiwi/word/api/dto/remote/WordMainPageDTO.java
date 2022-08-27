@@ -27,6 +27,8 @@ import lombok.ToString;
 import lombok.experimental.Accessors;
 import me.fengorz.kiwi.word.api.entity.WordMainDO;
 
+import java.io.Serializable;
+
 /**
  * @Author zhanshifeng @Date 2019/11/2 4:13 PM
  */

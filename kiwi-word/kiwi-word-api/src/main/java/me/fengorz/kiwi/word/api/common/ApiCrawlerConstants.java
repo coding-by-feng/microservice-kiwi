@@ -16,7 +16,7 @@
 
 package me.fengorz.kiwi.word.api.common;
 
-public interface WordCrawlerConstants {
+public interface ApiCrawlerConstants {
 
     String RECORDS = "records";
 

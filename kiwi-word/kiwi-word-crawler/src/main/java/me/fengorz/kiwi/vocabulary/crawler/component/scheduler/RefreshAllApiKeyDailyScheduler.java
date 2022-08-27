@@ -28,18 +28,18 @@ import me.fengorz.kiwi.word.api.feign.IBizAPI;
  * @Description Daily generation of review count records @Author zhanshifeng @Date 2021/8/19 8:54 PM
  */
 @Slf4j
-@Component("generateReviewRecordDailyScheduler")
+@Component("refreshAllApiKeyDailyScheduler")
 @EnableScheduling
 @RequiredArgsConstructor
-public class GenerateReviewRecordDailyScheduler implements DailyScheduler {
+public class RefreshAllApiKeyDailyScheduler implements DailyScheduler {
 
     private final IBizAPI api;
 
     @Override
     public void schedule() {
-        log.info("Daily generation of review count records is starting.");
-        api.createTheDays();
-        log.info("Daily generation of review count records is end.");
+        log.info("Daily refresh for all api key is starting.");
+        api.refreshAllApiKey();
+        log.info("Daily refresh for all api key is end.");
     }
 
 }

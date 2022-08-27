@@ -26,7 +26,7 @@ import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
 import me.fengorz.kiwi.vocabulary.crawler.component.producer.base.AbstractProducer;
 import me.fengorz.kiwi.vocabulary.crawler.component.producer.base.MQProducer;
 import me.fengorz.kiwi.vocabulary.crawler.component.producer.base.MQSender;
-import me.fengorz.kiwi.word.api.common.WordCrawlerConstants;
+import me.fengorz.kiwi.word.api.common.ApiCrawlerConstants;
 import me.fengorz.kiwi.word.api.dto.queue.FetchPronunciationMqDTO;
 import me.fengorz.kiwi.word.api.entity.FetchQueueDO;
 import me.fengorz.kiwi.word.api.feign.IBizAPI;
@@ -40,19 +40,19 @@ public class FetchPronunciationProducer extends AbstractProducer implements MQPr
 
     public FetchPronunciationProducer(IBizAPI bizApi, MQSender mqSender) {
         super(bizApi, mqSender);
-        this.infoType = WordCrawlerConstants.QUEUE_INFO_TYPE_WORD;
+        this.infoType = ApiCrawlerConstants.QUEUE_INFO_TYPE_WORD;
     }
 
     @Override
     public void produce() {
-        super.produce(WordCrawlerConstants.STATUS_TO_FETCH_PRONUNCIATION);
+        super.produce(ApiCrawlerConstants.STATUS_TO_FETCH_PRONUNCIATION);
     }
 
     @Async
     @Override
     public void execute(FetchQueueDO queue) {
         queue.setIsLock(GlobalConstants.FLAG_YES);
-        queue.setFetchStatus(WordCrawlerConstants.STATUS_DOING_FETCH_PRONUNCIATION);
+        queue.setFetchStatus(ApiCrawlerConstants.STATUS_DOING_FETCH_PRONUNCIATION);
         if (Optional.of(bizApi.updateQueueById(queue)).get().isSuccess()) {
             mqSender.fetchPronunciation(
                 new FetchPronunciationMqDTO().setWordId(queue.getWordId()).setQueueId(queue.getQueueId()));

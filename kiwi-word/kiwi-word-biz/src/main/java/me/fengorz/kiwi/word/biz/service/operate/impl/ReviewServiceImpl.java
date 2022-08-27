@@ -49,7 +49,6 @@ import me.fengorz.kiwi.common.sdk.exception.tts.TtsException;
 import me.fengorz.kiwi.common.sdk.util.bean.KiwiBeanUtils;
 import me.fengorz.kiwi.common.sdk.util.lang.collection.KiwiCollectionUtils;
 import me.fengorz.kiwi.common.sdk.web.security.SecurityUtils;
-import me.fengorz.kiwi.common.tts.TtsConstants;
 import me.fengorz.kiwi.common.tts.model.TtsConfig;
 import me.fengorz.kiwi.common.tts.service.TtsService;
 import me.fengorz.kiwi.word.api.common.WordConstants;
@@ -123,10 +122,6 @@ public class ReviewServiceImpl implements ReviewService {
                     log.info("userId[{}] ReviewDailyCounterType[{}] is created.", userId, typeEnum.name());
                 }
             }
-            for (String apiKey : ttsConfig.listApiKey()) {
-                ttsService.useTtsApiKey(apiKey, 0);
-            }
-            ttsService.useTtsApiKey(TtsConstants.CACHE_KEY_PREFIX_TTS.TOTAL_API_KEY, 0);
         }
     }
 

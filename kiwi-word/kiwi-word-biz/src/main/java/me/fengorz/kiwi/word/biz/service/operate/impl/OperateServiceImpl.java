@@ -56,8 +56,8 @@ import me.fengorz.kiwi.common.sdk.exception.ServiceException;
 import me.fengorz.kiwi.common.sdk.util.lang.collection.KiwiCollectionUtils;
 import me.fengorz.kiwi.common.sdk.util.lang.string.KiwiStringUtils;
 import me.fengorz.kiwi.common.sdk.util.validate.KiwiAssertUtils;
+import me.fengorz.kiwi.word.api.common.ApiCrawlerConstants;
 import me.fengorz.kiwi.word.api.common.WordConstants;
-import me.fengorz.kiwi.word.api.common.WordCrawlerConstants;
 import me.fengorz.kiwi.word.api.dto.queue.result.FetchWordReplaceDTO;
 import me.fengorz.kiwi.word.api.entity.*;
 import me.fengorz.kiwi.word.api.request.ParaphraseRequest;
@@ -132,7 +132,7 @@ public class OperateServiceImpl implements OperateService {
         KiwiAssertUtils.resourceNotNull(word, "No results for [{}]!", wordName);
 
         // 如果是词组的话
-        if (word.getInfoType() == WordCrawlerConstants.QUEUE_INFO_TYPE_PHRASE) {
+        if (word.getInfoType() == ApiCrawlerConstants.QUEUE_INFO_TYPE_PHRASE) {
             List<CharacterVO> characterVOList = new LinkedList<>();
             characterVOList.add(new CharacterVO().setCharacterCode(WordConstants.PHRASE_CODE).setCharacterId(0)
                 .setParaphraseVOList(new LinkedList<>()).setPronunciationVOList(new LinkedList<>()));

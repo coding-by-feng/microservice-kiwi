@@ -96,7 +96,7 @@ public class WebTools extends WebUtils {
                 temps.flush();
             } while (readLength == IN_READ_BYTES_LENGTH);
         } catch (IOException e) {
-            log.error(e.getMessage(), e);
+            log.error("WebTools downloadResponse occurred error, cause of the error is {}", e.getMessage());
         } finally {
             if (temps != null) {
                 try {

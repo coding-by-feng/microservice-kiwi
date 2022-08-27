@@ -44,4 +44,6 @@ public interface TtsService {
 
     boolean hasValidApiKey();
 
+    void refreshAllApiKey();
+
 }

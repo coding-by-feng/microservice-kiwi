@@ -51,7 +51,7 @@ import me.fengorz.kiwi.common.sdk.util.bean.KiwiBeanUtils;
 import me.fengorz.kiwi.common.sdk.util.lang.collection.KiwiCollectionUtils;
 import me.fengorz.kiwi.common.sdk.util.lang.string.KiwiStringUtils;
 import me.fengorz.kiwi.common.tts.service.TtsService;
-import me.fengorz.kiwi.word.api.common.WordCrawlerConstants;
+import me.fengorz.kiwi.word.api.common.ApiCrawlerConstants;
 import me.fengorz.kiwi.word.api.common.enumeration.ReviewAudioTypeEnum;
 import me.fengorz.kiwi.word.api.dto.queue.result.*;
 import me.fengorz.kiwi.word.api.entity.*;
@@ -255,7 +255,7 @@ public class CrawlerServiceImpl implements CrawlerService {
 
         final String phrase = dto.getPhrase();
         WordMainDO wordMain = new WordMainDO().setWordId(seqService.genIntSequence(MapperConstant.T_INS_SEQUENCE))
-            .setWordName(phrase).setInfoType(WordCrawlerConstants.QUEUE_INFO_TYPE_PHRASE);
+            .setWordName(phrase).setInfoType(ApiCrawlerConstants.QUEUE_INFO_TYPE_PHRASE);
         mainService.save(wordMain);
 
         for (FetchParaphraseDTO paraphrase : paraphrases) {
@@ -362,12 +362,12 @@ public class CrawlerServiceImpl implements CrawlerService {
         if (KiwiStringUtils.isBlank(voiceUrl)) {
             return;
         }
-        String voiceFileUrl = WordCrawlerConstants.URL_CAMBRIDGE_BASE + voiceUrl;
+        String voiceFileUrl = ApiCrawlerConstants.URL_CAMBRIDGE_BASE + voiceUrl;
         long voiceSize = HttpUtil.downloadFile(URLUtil.decode(voiceFileUrl), FileUtil.file(crawlerVoiceBasePath));
         String tempVoice = crawlerVoiceBasePath + WordDfsUtils.getVoiceFileName(voiceFileUrl);
         try {
             String uploadResult =
-                dfsService.uploadFile(FileUtil.getInputStream(tempVoice), voiceSize, WordCrawlerConstants.EXT_MP3);
+                dfsService.uploadFile(FileUtil.getInputStream(tempVoice), voiceSize, ApiCrawlerConstants.EXT_MP3);
             pronunciation.setGroupName(WordDfsUtils.getGroupName(uploadResult));
             pronunciation.setVoiceFilePath(WordDfsUtils.getUploadVoiceFilePath(uploadResult));
             pronunciationService.updateById(pronunciation);

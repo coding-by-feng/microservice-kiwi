@@ -87,7 +87,7 @@ public class TtsServiceImpl implements TtsService {
         if (StringUtils.isNotBlank(finalApiKey)) {
             increaseApiKeyUsedTime(finalApiKey);
         } else {
-            throw new ResourceNotFoundException();
+            throw new ResourceNotFoundException(ERROR_MSG_NOT_VALID_API_KEY);
         }
         return finalApiKey;
     }
@@ -146,6 +146,14 @@ public class TtsServiceImpl implements TtsService {
             && totalUsedTime < TtsConstants.API_KEY_MAX_USE_TIME * ttsConfig.listApiKey().size();
     }
 
+    @Override
+    public void refreshAllApiKey() {
+        for (String apiKey : ttsConfig.listApiKey()) {
+            useTtsApiKey(apiKey, 0);
+        }
+        useTtsApiKey(TtsConstants.CACHE_KEY_PREFIX_TTS.TOTAL_API_KEY, 0);
+    }
+
     private String replaceEllipsis(String text) {
         if (StringUtils.isBlank(text)) {
             return null;
@@ -180,5 +188,6 @@ public class TtsServiceImpl implements TtsService {
     private static final String CHINESE_PARAPHRASE_MISSING = "中文缺失";
     private static final String REGEX = "\\.\\.\\.";
     private static final Object BARRIER = new Object();
+    private static final String ERROR_MSG_NOT_VALID_API_KEY = "There is not valid api key.";
 
 }

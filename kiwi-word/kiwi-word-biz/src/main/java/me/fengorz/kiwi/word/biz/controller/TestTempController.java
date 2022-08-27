@@ -31,7 +31,7 @@ import me.fengorz.kiwi.common.api.R;
 import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
 import me.fengorz.kiwi.common.sdk.constant.MapperConstant;
 import me.fengorz.kiwi.common.sdk.controller.BaseController;
-import me.fengorz.kiwi.word.api.common.WordCrawlerConstants;
+import me.fengorz.kiwi.word.api.common.ApiCrawlerConstants;
 import me.fengorz.kiwi.word.api.entity.FetchQueueDO;
 import me.fengorz.kiwi.word.api.entity.WordMainDO;
 import me.fengorz.kiwi.word.biz.service.base.IWordFetchQueueService;
@@ -61,11 +61,11 @@ public class TestTempController extends BaseController {
                 .getOne(new LambdaQueryWrapper<FetchQueueDO>().eq(FetchQueueDO::getWordName, word));
             FetchQueueDO queue = null;
             if (one != null) {
-                if (WordCrawlerConstants.STATUS_ALL_SUCCESS == one.getFetchStatus()) {
+                if (ApiCrawlerConstants.STATUS_ALL_SUCCESS == one.getFetchStatus()) {
                     continue;
                 } else {
                     queue = one;
-                    queue.setFetchStatus(WordCrawlerConstants.STATUS_TO_FETCH);
+                    queue.setFetchStatus(ApiCrawlerConstants.STATUS_TO_FETCH);
                     queue.setWordName(word.trim());
                     queue.setFetchPriority(100);
                     queue.setIsLock(GlobalConstants.FLAG_YES);
@@ -74,7 +74,7 @@ public class TestTempController extends BaseController {
             } else {
                 queue = new FetchQueueDO();
                 queue.setQueueId(seqService.genIntSequence(MapperConstant.T_INS_SEQUENCE));
-                queue.setFetchStatus(WordCrawlerConstants.STATUS_TO_FETCH);
+                queue.setFetchStatus(ApiCrawlerConstants.STATUS_TO_FETCH);
                 queue.setWordName(word.trim());
                 queue.setFetchPriority(100);
                 queue.setIsLock(GlobalConstants.FLAG_YES);

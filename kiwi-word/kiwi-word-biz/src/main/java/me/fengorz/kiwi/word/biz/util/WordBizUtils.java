@@ -19,7 +19,7 @@ package me.fengorz.kiwi.word.biz.util;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
 import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
-import me.fengorz.kiwi.word.api.common.WordCrawlerConstants;
+import me.fengorz.kiwi.word.api.common.ApiCrawlerConstants;
 import me.fengorz.kiwi.word.api.common.enumeration.CrawlerStatusEnum;
 import me.fengorz.kiwi.word.api.dto.mapper.in.SelectStarListItemDTO;
 import me.fengorz.kiwi.word.api.entity.*;
@@ -81,7 +81,7 @@ public class WordBizUtils {
         pronunciation.setSoundmark(soundmark);
         pronunciation.setSoundmarkType(soundmarkType);
         pronunciation.setVoiceFilePath(voiceUrl);
-        pronunciation.setSourceUrl(WordCrawlerConstants.URL_CAMBRIDGE_BASE + voiceUrl);
+        pronunciation.setSourceUrl(ApiCrawlerConstants.URL_CAMBRIDGE_BASE + voiceUrl);
         return pronunciation;
     }
 
@@ -91,15 +91,15 @@ public class WordBizUtils {
     }
 
     public static boolean fetchQueueIsRunning(Integer status) {
-        if (status == WordCrawlerConstants.STATUS_ALL_SUCCESS) {
+        if (status == ApiCrawlerConstants.STATUS_ALL_SUCCESS) {
             return false;
         }
         return status >= CrawlerStatusEnum.STATUS_PARTITION.getStatus();
     }
 
     public static int getOpposition(int infoType) {
-        return infoType == WordCrawlerConstants.QUEUE_INFO_TYPE_WORD ? WordCrawlerConstants.QUEUE_INFO_TYPE_PHRASE
-            : WordCrawlerConstants.QUEUE_INFO_TYPE_WORD;
+        return infoType == ApiCrawlerConstants.QUEUE_INFO_TYPE_WORD ? ApiCrawlerConstants.QUEUE_INFO_TYPE_PHRASE
+            : ApiCrawlerConstants.QUEUE_INFO_TYPE_WORD;
     }
 
     public static int buildThisInfoType(String wordName, Integer[] infoType) {
@@ -107,7 +107,7 @@ public class WordBizUtils {
         if (infoType == null || infoType.length == 0) {
             boolean isPhrase = wordName.contains(GlobalConstants.SPACING);
             thisInfoType =
-                    isPhrase ? WordCrawlerConstants.QUEUE_INFO_TYPE_PHRASE : WordCrawlerConstants.QUEUE_INFO_TYPE_WORD;
+                    isPhrase ? ApiCrawlerConstants.QUEUE_INFO_TYPE_PHRASE : ApiCrawlerConstants.QUEUE_INFO_TYPE_WORD;
         } else {
             thisInfoType = infoType[0];
         }

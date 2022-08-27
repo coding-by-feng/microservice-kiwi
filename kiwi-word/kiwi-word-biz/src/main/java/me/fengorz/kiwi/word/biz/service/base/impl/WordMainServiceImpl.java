@@ -36,8 +36,8 @@ import me.fengorz.kiwi.common.sdk.constant.CacheConstants;
 import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
 import me.fengorz.kiwi.common.sdk.exception.ServiceException;
 import me.fengorz.kiwi.common.sdk.util.bean.KiwiBeanUtils;
+import me.fengorz.kiwi.word.api.common.ApiCrawlerConstants;
 import me.fengorz.kiwi.word.api.common.WordConstants;
-import me.fengorz.kiwi.word.api.common.WordCrawlerConstants;
 import me.fengorz.kiwi.word.api.common.enumeration.ErrorCodeEnum;
 import me.fengorz.kiwi.word.api.dto.mapper.out.FuzzyQueryResultDTO;
 import me.fengorz.kiwi.word.api.entity.WordMainDO;
@@ -84,9 +84,9 @@ public class WordMainServiceImpl extends ServiceImpl<WordMainMapper, WordMainDO>
             // 如果指定infoType直接指定查询，如果不指定默认查询单词
             boolean isNotSpecialize = infoType == null || infoType.length == 0;
             WordMainDO one = this.getOne(query.clone().eq(WordMainDO::getInfoType,
-                isNotSpecialize ? WordCrawlerConstants.QUEUE_INFO_TYPE_WORD : infoType[0]));
+                isNotSpecialize ? ApiCrawlerConstants.QUEUE_INFO_TYPE_WORD : infoType[0]));
             if (one == null && isNotSpecialize) {
-                one = this.getOne(query.eq(WordMainDO::getInfoType, WordCrawlerConstants.QUEUE_INFO_TYPE_PHRASE));
+                one = this.getOne(query.eq(WordMainDO::getInfoType, ApiCrawlerConstants.QUEUE_INFO_TYPE_PHRASE));
             }
             return KiwiBeanUtils.convertFrom(one, WordMainVO.class);
         } catch (Exception e) {

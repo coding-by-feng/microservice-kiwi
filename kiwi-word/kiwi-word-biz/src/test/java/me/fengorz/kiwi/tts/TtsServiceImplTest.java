@@ -116,6 +116,12 @@ public class TtsServiceImplTest {
 
     @Test
     // @Disabled
+    void refreshAllApiKey() {
+        Assertions.assertDoesNotThrow(() -> ttsService.refreshAllApiKey());
+    }
+
+    @Test
+    // @Disabled
     void queryAllTtsApiKeyUsed() {
         log.info("queryTtsApiKeyUsed [total] used times is {}",
             ttsService.queryTtsApiKeyUsed(TtsConstants.CACHE_KEY_PREFIX_TTS.TOTAL_API_KEY));

@@ -204,7 +204,7 @@ public class ReviewServiceImpl implements ReviewService {
             } catch (DfsOperateDeleteException e) {
                 log.error("Error deleting old wordReviewAudioDO", e);
             }
-            reviewAudioMapper.deleteById(wordReviewAudioDO.getId());
+            this.delete(wordReviewAudioDO.getId());
             wordReviewAudioDO = new WordReviewAudioDO();
         } else {
             return wordReviewAudioDO;
@@ -433,6 +433,12 @@ public class ReviewServiceImpl implements ReviewService {
         counterDO.setId(0).setUserId(userId).setReviewCount(0).setToday(LocalDateTime.now().toLocalDate())
             .setType(type);
         reviewDailyCounterMapper.insert(counterDO);
+    }
+
+
+    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRES_NEW)
+    private void delete(Integer id) {
+        reviewAudioMapper.deleteById(id);
     }
 
     private void firstRecordReviewPageNumber(int listId, Long pageNumber, int type, Integer userId) {

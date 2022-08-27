@@ -37,7 +37,7 @@ import me.fengorz.kiwi.vocabulary.crawler.common.enumeration.JsoupRootTypeEnum;
 import me.fengorz.kiwi.vocabulary.crawler.constant.CrawlerSourceEnum;
 import me.fengorz.kiwi.vocabulary.crawler.service.IJsoupService;
 import me.fengorz.kiwi.vocabulary.crawler.util.CrawlerAssertUtils;
-import me.fengorz.kiwi.word.api.common.WordCrawlerConstants;
+import me.fengorz.kiwi.word.api.common.ApiCrawlerConstants;
 import me.fengorz.kiwi.word.api.dto.queue.FetchPhraseMqDTO;
 import me.fengorz.kiwi.word.api.dto.queue.FetchPhraseRunUpMqDTO;
 import me.fengorz.kiwi.word.api.dto.queue.FetchWordMqDTO;
@@ -114,11 +114,11 @@ public class JsoupServiceImpl implements IJsoupService {
             this.paraphraseSerialNumMap.put(finalWord, 1);
             this.exampleSerialNumMap.put(finalWord, 1);
             this.crawlerSourceEnumMap.put(finalWord, CrawlerSourceEnum.CAMBRIDGE_CHINESE);
-            result = fetch(WordCrawlerConstants.URL_CAMBRIDGE_FETCH_CHINESE, finalWord);
+            result = fetch(ApiCrawlerConstants.URL_CAMBRIDGE_FETCH_CHINESE, finalWord);
         } catch (JsoupFetchConnectException | JsoupFetchResultException | JsoupFetchPronunciationException e) {
             log.error(JSOUP_FETCH_IN_CHINESE_EXCEPTION, finalWord);
             this.crawlerSourceEnumMap.put(finalWord, CrawlerSourceEnum.CAMBRIDGE_ENGLISH);
-            return fetch(WordCrawlerConstants.URL_CAMBRIDGE_FETCH_ENGLISH, finalWord);
+            return fetch(ApiCrawlerConstants.URL_CAMBRIDGE_FETCH_ENGLISH, finalWord);
         } finally {
             this.paraphraseSerialNumMap.remove(finalWord);
             this.exampleSerialNumMap.remove(finalWord);
@@ -137,10 +137,10 @@ public class JsoupServiceImpl implements IJsoupService {
 
         Document doc;
         try {
-            doc = Jsoup.connect(WordCrawlerConstants.URL_CAMBRIDGE_FETCH_CHINESE
+            doc = Jsoup.connect(ApiCrawlerConstants.URL_CAMBRIDGE_FETCH_CHINESE
                 + word.replaceAll(GlobalConstants.SPACING, GlobalConstants.SYMBOL_RAIL)).get();
         } catch (IOException e) {
-            log.error(JSOUP_CONNECT_EXCEPTION, WordCrawlerConstants.URL_CAMBRIDGE_FETCH_CHINESE + word);
+            log.error(JSOUP_CONNECT_EXCEPTION, ApiCrawlerConstants.URL_CAMBRIDGE_FETCH_CHINESE + word);
             throw new JsoupFetchConnectException();
         }
 
@@ -152,8 +152,8 @@ public class JsoupServiceImpl implements IJsoupService {
         Optional.ofNullable(doc.getElementsByClass("hax lp-10 lb lb-cm lbt0 dbrowse")).ifPresent(idiomElements -> {
             for (Element element : idiomElements) {
                 Optional.ofNullable(element.getElementsByClass("lmb-12")).ifPresent(elements -> {
-                    putPhrase(word, phrases, elements, WordCrawlerConstants.PHRASE_FETCH_VERBOSE_IDIOM,
-                        WordCrawlerConstants.PHRASE_FETCH_VERBOSE_IDIOM_LENGTH);
+                    putPhrase(word, phrases, elements, ApiCrawlerConstants.PHRASE_FETCH_VERBOSE_IDIOM,
+                        ApiCrawlerConstants.PHRASE_FETCH_VERBOSE_IDIOM_LENGTH);
                 });
             }
         });
@@ -163,8 +163,8 @@ public class JsoupServiceImpl implements IJsoupService {
             .ifPresent(idiomElements -> {
                 for (Element element : idiomElements) {
                     Optional.ofNullable(element.getElementsByClass("item lc lc1 lpb-10 lpr-10")).ifPresent(elements -> {
-                        putPhrase(word, phrases, elements, WordCrawlerConstants.PHRASE_FETCH_VERBOSE_MEAN,
-                            WordCrawlerConstants.PHRASE_FETCH_VERBOSE_MEAN_LENGTH);
+                        putPhrase(word, phrases, elements, ApiCrawlerConstants.PHRASE_FETCH_VERBOSE_MEAN,
+                            ApiCrawlerConstants.PHRASE_FETCH_VERBOSE_MEAN_LENGTH);
                     });
                 }
             });
@@ -175,8 +175,8 @@ public class JsoupServiceImpl implements IJsoupService {
                 for (Element element : idiomElements) {
                     Optional.ofNullable(element.getElementsByClass("item lc lc1 lc-xs6-12 lpb-10 lpr-10"))
                         .ifPresent(elements -> {
-                            putPhrase(word, relatedWords, elements, WordCrawlerConstants.PHRASE_FETCH_VERBOSE_MEAN,
-                                WordCrawlerConstants.PHRASE_FETCH_VERBOSE_MEAN_LENGTH);
+                            putPhrase(word, relatedWords, elements, ApiCrawlerConstants.PHRASE_FETCH_VERBOSE_MEAN,
+                                ApiCrawlerConstants.PHRASE_FETCH_VERBOSE_MEAN_LENGTH);
                         });
                 }
             });
@@ -200,7 +200,7 @@ public class JsoupServiceImpl implements IJsoupService {
 
         Document doc;
         try {
-            doc = Jsoup.connect(WordCrawlerConstants.URL_CAMBRIDGE_FETCH_CHINESE
+            doc = Jsoup.connect(ApiCrawlerConstants.URL_CAMBRIDGE_FETCH_CHINESE
                 + phrase.replaceAll(GlobalConstants.SPACING, GlobalConstants.SYMBOL_RAIL)).get();
         } catch (IOException e) {
             log.error(JSOUP_CONNECT_EXCEPTION, phrase);
@@ -379,12 +379,12 @@ public class JsoupServiceImpl implements IJsoupService {
                 // fetch UK pronunciation
                 Optional
                     .ofNullable(subFetchPronunciation(word, block, KEY_UK_PRONUNCIATIOIN,
-                        WordCrawlerConstants.PRONUNCIATION_TYPE_UK, isAlreadyFetchPronunciation))
+                        ApiCrawlerConstants.PRONUNCIATION_TYPE_UK, isAlreadyFetchPronunciation))
                     .ifPresent(pronunciationDTOList::add);
                 // fetch US pronunciation
                 Optional
                     .ofNullable(subFetchPronunciation(word, block, KEY_US_PRONUNCIATIOIN,
-                        WordCrawlerConstants.PRONUNCIATION_TYPE_US, isAlreadyFetchPronunciation))
+                        ApiCrawlerConstants.PRONUNCIATION_TYPE_US, isAlreadyFetchPronunciation))
                     .ifPresent(pronunciationDTOList::add);
             } catch (JsoupFetchPronunciationException e) {
                 if (!isAlreadyFetchPronunciation) {
@@ -502,7 +502,7 @@ public class JsoupServiceImpl implements IJsoupService {
             .ifPresent((Elements elements) -> exampleDTO.setExampleSentence(elements.text()));
         Optional.ofNullable(sentence.getElementsByClass(KEY_SENTENCE_TRANSLATE))
             .ifPresent(elements -> exampleDTO.setExampleTranslate(elements.text()));
-        exampleDTO.setTranslateLanguage(WordCrawlerConstants.DEFAULT_TRANSLATE_LANGUAGE);
+        exampleDTO.setTranslateLanguage(ApiCrawlerConstants.DEFAULT_TRANSLATE_LANGUAGE);
         exampleDTOList.add(exampleDTO);
         return exampleDTO;
     }

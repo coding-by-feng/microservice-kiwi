@@ -172,6 +172,12 @@ public class BizAPIFallback extends AbstractFallback implements IBizAPI {
     }
 
     @Override
+    public void refreshAllApiKey() {
+        log.error(throwable.getCause().getMessage());
+        R.feignCallFailed(throwable.getMessage());
+    }
+
+    @Override
     public void generateTtsVoice() {
         log.error(throwable.getCause().getMessage());
         R.feignCallFailed(throwable.getMessage());

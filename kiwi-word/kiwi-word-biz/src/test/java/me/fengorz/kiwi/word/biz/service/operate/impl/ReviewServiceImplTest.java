@@ -83,7 +83,7 @@ public class ReviewServiceImplTest {
     }
 
     @Test
-    @Disabled
+    // @Disabled
     void createTheDays() {
         Assertions.assertDoesNotThrow(() -> reviewService.createTheDays(1));
     }

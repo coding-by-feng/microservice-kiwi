@@ -177,7 +177,8 @@ public class TtsServiceImpl implements TtsService {
             voice = tts.speech(params);
         } catch (Exception e) {
             this.deprecateApiKeyToday(apiKey);
-            log.error(e.getMessage(), e);
+            log.error(e.getMessage());
+            log.error("Api key({}) has deprecated.", apiKey);
             throw new TtsException("tts speech error.");
         }
         return voice;

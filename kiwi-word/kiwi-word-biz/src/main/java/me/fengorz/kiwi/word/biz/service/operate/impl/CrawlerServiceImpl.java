@@ -299,9 +299,13 @@ public class CrawlerServiceImpl implements CrawlerService {
             if (GENERATE_VOICE_BARRIER.tryAcquire(1, 1, TimeUnit.SECONDS)) {
                 List<Integer> notGeneratedParaphraseId = paraphraseStarRelService.listNotGeneratedVoice();
                 if (CollectionUtils.isEmpty(notGeneratedParaphraseId)) {
-                    log.info("There is not paraphrase need to generate voice.");
-                    GENERATE_VOICE_BARRIER.release();
-                    return;
+                    log.info("There is not notGeneratedParaphraseId need to generate voice.");
+                    notGeneratedParaphraseId = paraphraseService.listNotGeneratedAndNotCollectVoice();
+                    if (CollectionUtils.isEmpty(notGeneratedParaphraseId)) {
+                        log.info("There is not notGeneratedAndNotCollectVoice need to generate voice.");
+                        GENERATE_VOICE_BARRIER.release();
+                        return;
+                    }
                 }
                 for (Integer id : notGeneratedParaphraseId) {
                     try {

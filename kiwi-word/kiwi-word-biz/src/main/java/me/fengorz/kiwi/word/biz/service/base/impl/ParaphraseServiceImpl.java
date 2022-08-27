@@ -91,4 +91,9 @@ public class ParaphraseServiceImpl extends ServiceImpl<ParaphraseMapper, Paraphr
         KiwiBeanUtils.copyProperties(request, paraphraseDO);
         return mapper.updateById(paraphraseDO) > 0;
     }
+
+    @Override
+    public List<Integer> listNotGeneratedAndNotCollectVoice() {
+        return mapper.listNotGeneratedAndNotCollectVoice();
+    }
 }

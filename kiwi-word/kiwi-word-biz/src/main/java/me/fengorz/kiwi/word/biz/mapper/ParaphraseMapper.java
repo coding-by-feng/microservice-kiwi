@@ -35,4 +35,7 @@ import me.fengorz.kiwi.word.api.vo.detail.ParaphraseVO;
 public interface ParaphraseMapper extends BaseMapper<ParaphraseDO> {
 
     List<ParaphraseVO> selectParaphraseAndIsCollect(@Param(MapperConstant.QUERY_PARAMS) SelectEntityIsCollectDTO dto);
+
+    List<Integer> listNotGeneratedAndNotCollectVoice();
+
 }

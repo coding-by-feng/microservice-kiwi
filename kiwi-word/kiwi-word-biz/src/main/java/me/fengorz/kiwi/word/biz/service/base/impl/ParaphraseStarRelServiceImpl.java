@@ -85,4 +85,5 @@ public class ParaphraseStarRelServiceImpl extends ServiceImpl<ParaphraseStarRelM
     public List<Integer> listNotGeneratedVoice() {
         return paraphraseStarRelMapper.listNotGeneratedVoice();
     }
+
 }

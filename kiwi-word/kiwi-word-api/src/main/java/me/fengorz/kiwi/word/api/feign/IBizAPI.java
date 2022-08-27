@@ -102,6 +102,9 @@ public interface IBizAPI {
     @GetMapping(WORD_REVIEW + "/createTheDays")
     void createTheDays();
 
+    @GetMapping(WORD_REVIEW + "/refreshAllApiKey")
+    void refreshAllApiKey();
+
     @GetMapping(WORD_FETCH_QUEUE + "/generateTtsVoice")
     void generateTtsVoice();
 }

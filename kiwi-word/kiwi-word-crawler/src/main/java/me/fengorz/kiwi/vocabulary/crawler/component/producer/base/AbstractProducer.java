@@ -24,7 +24,7 @@ import java.util.concurrent.Semaphore;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
 import me.fengorz.kiwi.common.sdk.util.lang.collection.KiwiCollectionUtils;
-import me.fengorz.kiwi.word.api.common.WordCrawlerConstants;
+import me.fengorz.kiwi.word.api.common.ApiCrawlerConstants;
 import me.fengorz.kiwi.word.api.entity.FetchQueueDO;
 import me.fengorz.kiwi.word.api.feign.IBizAPI;
 
@@ -78,10 +78,10 @@ public abstract class AbstractProducer implements MQProducer {
     protected abstract void execute(FetchQueueDO queue);
 
     protected boolean isCleanUp(FetchQueueDO queue) {
-        if (WordCrawlerConstants.WORD_MAX_FETCH_LIMITED_TIME < queue.getFetchTime()) {
+        if (ApiCrawlerConstants.WORD_MAX_FETCH_LIMITED_TIME < queue.getFetchTime()) {
             queue.setFetchTime(0);
             queue.setIsLock(GlobalConstants.FLAG_NO);
-            queue.setFetchStatus(WordCrawlerConstants.STATUS_TO_DEL_BASE);
+            queue.setFetchStatus(ApiCrawlerConstants.STATUS_TO_DEL_BASE);
             queue.setFetchResult(GlobalConstants.EMPTY);
             bizApi.updateQueueById(queue);
             log.info("Words[{}] repeatedly fetch exceptions, ready to clear historical exception data!", queue);

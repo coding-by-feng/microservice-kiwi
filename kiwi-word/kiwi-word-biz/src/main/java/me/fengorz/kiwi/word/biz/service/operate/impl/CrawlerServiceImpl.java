@@ -317,7 +317,7 @@ public class CrawlerServiceImpl implements CrawlerService {
                             reviewService.generateWordReviewAudio(true, id,
                                 ReviewAudioTypeEnum.PARAPHRASE_CH.getType());
                         } catch (DfsOperateException | TtsException | DataCheckedException e) {
-                            log.error("generateWordReviewAudio exception, sourceId={}!", id, e);
+                            log.error("generateWordReviewAudio exception, sourceId={}, {}", id, e.getMessage());
                             throw e;
                         }
 
@@ -332,16 +332,14 @@ public class CrawlerServiceImpl implements CrawlerService {
                                 reviewService.generateWordReviewAudio(true, example.getExampleId(),
                                     ReviewAudioTypeEnum.EXAMPLE_CH.getType());
                             } catch (DfsOperateException | TtsException | DataCheckedException e) {
-                                log.error("generateWordReviewAudio exception, sourceId={}!", example.getExampleId(), e);
+                                log.error("generateWordReviewAudio exception, sourceId={}, {}", example.getExampleId(), e.getMessage());
                                 throw e;
                             }
                         }
                     } catch (Exception e) {
                         reviewService.cleanReviewVoiceByParaphraseId(id);
                         GENERATE_VOICE_BARRIER.release();
-                        log.error(
-                            "Paraphrase id({}) generation failed, Data has cleaned, GENERATE_VOICE_BARRIER has released",
-                            id);
+                        log.error("Paraphrase id({}) generation failed, Data has cleaned, GENERATE_VOICE_BARRIER has released", id);
                         return;
                     }
                     log.info("Paraphrase id({}) generation is end!", id);

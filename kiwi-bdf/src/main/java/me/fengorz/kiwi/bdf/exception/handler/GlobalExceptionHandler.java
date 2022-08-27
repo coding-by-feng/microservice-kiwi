@@ -88,7 +88,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler({ResourceNotFoundException.class})
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public R<String> handleResourceNotFoundException(ResourceNotFoundException e) {
-        log.error("global ResourceNotFoundException:{}", e.getMessage(), e);
+        log.error("global ResourceNotFoundException:{}", e.getMessage());
         return R.error(e.getResultCode());
     }
 

@@ -65,6 +65,12 @@ public class WordReviewController extends AbstractDfsController {
         return R.success();
     }
 
+    @GetMapping("/refreshAllApiKey")
+    public R<Void> refreshAllApiKey() {
+        ttsService.refreshAllApiKey();
+        return R.success();
+    }
+
     @GetMapping("/getReviewCounterVO/{type}")
     public R<WordReviewDailyCounterVO> getReviewCounterVO(@PathVariable("type") Integer type) {
         return R.success(reviewService.findReviewCounterVO(SecurityUtils.getCurrentUserId(), type));

@@ -27,7 +27,7 @@ import me.fengorz.kiwi.common.sdk.exception.dfs.DfsOperateException;
 import me.fengorz.kiwi.common.sdk.exception.tts.TtsException;
 import me.fengorz.kiwi.common.tts.model.TtsConfig;
 import me.fengorz.kiwi.common.tts.service.TtsService;
-import me.fengorz.kiwi.word.api.common.WordCrawlerConstants;
+import me.fengorz.kiwi.word.api.common.ApiCrawlerConstants;
 import me.fengorz.kiwi.word.api.common.enumeration.ReviewAudioTypeEnum;
 import me.fengorz.kiwi.word.biz.common.SpeakerFunction;
 import me.fengorz.kiwi.word.biz.mapper.ReviewAudioMapper;
@@ -61,14 +61,14 @@ public class AudioServiceImpl implements AudioService {
     public String generateEnglishVoice(String englishText) throws DfsOperateException, TtsException {
         byte[] bytes;
         bytes = generateBytes(apiKey -> ttsService.speechEnglish(apiKey, englishText));
-        return dfsService.uploadFile(new ByteArrayInputStream(bytes), bytes.length, WordCrawlerConstants.EXT_MP3);
+        return dfsService.uploadFile(new ByteArrayInputStream(bytes), bytes.length, ApiCrawlerConstants.EXT_MP3);
     }
 
     @Override
     public String generateChineseVoice(String chineseText) throws DfsOperateException, TtsException {
         byte[] bytes;
         bytes = generateBytes(apiKey -> ttsService.speechChinese(apiKey, chineseText));
-        return dfsService.uploadFile(new ByteArrayInputStream(bytes), bytes.length, WordCrawlerConstants.EXT_MP3);
+        return dfsService.uploadFile(new ByteArrayInputStream(bytes), bytes.length, ApiCrawlerConstants.EXT_MP3);
     }
 
     private byte[] generateBytes(SpeakerFunction<String, byte[]> speaker) throws TtsException {

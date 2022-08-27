@@ -32,7 +32,7 @@ import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.fastdfs.service.DfsService;
 import me.fengorz.kiwi.common.sdk.util.lang.collection.KiwiCollectionUtils;
 import me.fengorz.kiwi.common.sdk.util.lang.string.KiwiStringUtils;
-import me.fengorz.kiwi.word.api.common.WordCrawlerConstants;
+import me.fengorz.kiwi.word.api.common.ApiCrawlerConstants;
 import me.fengorz.kiwi.word.api.dto.queue.RemovePronunciatioinMqDTO;
 import me.fengorz.kiwi.word.api.dto.queue.result.FetchWordReplaceDTO;
 import me.fengorz.kiwi.word.api.entity.*;
@@ -90,11 +90,11 @@ public class CleanerServiceImpl implements CleanerService {
             String derivation = queue.getDerivation();
             // if (KiwiStringUtils.equals(wordName, derivation)) {
             // list.addAll(mainService.list(wordName,
-            // WordCrawlerConstants.QUEUE_INFO_TYPE_WORD));
+            // ApiCrawlerConstants.QUEUE_INFO_TYPE_WORD));
             // } else {
             // // 如果所查单词和单词的原型不同的话
             // list.addAll(mainService.list(derivation,
-            // WordCrawlerConstants.QUEUE_INFO_TYPE_WORD));
+            // ApiCrawlerConstants.QUEUE_INFO_TYPE_WORD));
             // }
             // List<WordMainDO> list = new
             // LinkedList<>(mainService.listDirtyData(queue.getWordId()));
@@ -121,7 +121,7 @@ public class CleanerServiceImpl implements CleanerService {
         Optional.ofNullable(queueService.getOneAnyhow(queueId)).ifPresent(queue -> {
             String wordName = queue.getWordName();
             List<WordMainDO> list =
-                new LinkedList<>(mainService.list(wordName, WordCrawlerConstants.QUEUE_INFO_TYPE_PHRASE));
+                new LinkedList<>(mainService.list(wordName, ApiCrawlerConstants.QUEUE_INFO_TYPE_PHRASE));
             if (KiwiCollectionUtils.isEmpty(list)) {
                 return;
             }
@@ -129,7 +129,7 @@ public class CleanerServiceImpl implements CleanerService {
                 Integer wordId = wordMainDO.getWordId();
                 this.evictAll(wordMainDO, wordName);
                 mainService.remove(Wrappers.<WordMainDO>lambdaQuery().eq(WordMainDO::getWordName, wordName)
-                    .eq(WordMainDO::getInfoType, WordCrawlerConstants.QUEUE_INFO_TYPE_PHRASE));
+                    .eq(WordMainDO::getInfoType, ApiCrawlerConstants.QUEUE_INFO_TYPE_PHRASE));
                 variantService.delByWordId(wordId);
                 paraphraseService.delByWordId(wordId);
             }

@@ -429,6 +429,9 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Transactional(rollbackFor = Exception.class)
     private void createDO(int type, Integer userId) {
+        if (Objects.nonNull(this.findReviewCounterDO(userId, type))) {
+            return;
+        }
         WordReviewDailyCounterDO counterDO = new WordReviewDailyCounterDO();
         counterDO.setId(0).setUserId(userId).setReviewCount(0).setToday(LocalDateTime.now().toLocalDate())
             .setType(type);

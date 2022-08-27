@@ -218,7 +218,7 @@ public class ReviewServiceImpl implements ReviewService {
             wordReviewAudioDO.setSourceText(StringUtils.defaultIfBlank(text, GlobalConstants.EMPTY));
             reviewAudioMapper.insert(wordReviewAudioDO);
         } catch (Exception e) {
-            log.error(e.getMessage(), e);
+            log.error(e.getMessage());
             throw e;
         }
 

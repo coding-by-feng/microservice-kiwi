@@ -34,7 +34,7 @@ import me.fengorz.kiwi.vocabulary.crawler.component.producer.base.MQSender;
 import me.fengorz.kiwi.vocabulary.crawler.service.IFetchService;
 import me.fengorz.kiwi.vocabulary.crawler.service.IJsoupService;
 import me.fengorz.kiwi.vocabulary.crawler.util.CrawlerUtils;
-import me.fengorz.kiwi.word.api.common.WordCrawlerConstants;
+import me.fengorz.kiwi.word.api.common.ApiCrawlerConstants;
 import me.fengorz.kiwi.word.api.common.enumeration.CrawlerStatusEnum;
 import me.fengorz.kiwi.word.api.dto.queue.*;
 import me.fengorz.kiwi.word.api.dto.queue.result.FetchPhraseResultDTO;
@@ -79,7 +79,7 @@ public class FetchServiceImpl implements IFetchService {
 
             R<Void> storeResult = bizAPI.storeResult(fetchWordResultDTO);
             if (storeResult.isFail()) {
-                handleException(queue, WordCrawlerConstants.STATUS_FETCH_FAIL, storeResult.getMsg());
+                handleException(queue, ApiCrawlerConstants.STATUS_FETCH_FAIL, storeResult.getMsg());
             } else {
                 if (KiwiStringUtils.isNotEquals(inputWord, fetchWord)) {
                     wordVariantAPI.insertVariant(inputWord, fetchWord);
@@ -96,7 +96,7 @@ public class FetchServiceImpl implements IFetchService {
                 handleLog.append(fetchWord);
 
                 // 标记单词基础信息已经抓取完毕，即将抓取发音文件
-                queue.setFetchStatus(WordCrawlerConstants.STATUS_TO_FETCH_PRONUNCIATION);
+                queue.setFetchStatus(ApiCrawlerConstants.STATUS_TO_FETCH_PRONUNCIATION);
                 queue.setFetchResult(handleLog.toString());
                 queue.setIsLock(GlobalConstants.FLAG_YES);
             }
@@ -105,7 +105,7 @@ public class FetchServiceImpl implements IFetchService {
             handleException(queue, CrawlerStatusEnum.STATUS_JSOUP_CONNECT_FAILED.getStatus(), e.getMessage());
             isUpdate = true;
         } catch (Exception e) {
-            handleException(queue, WordCrawlerConstants.STATUS_FETCH_FAIL, e.getMessage());
+            handleException(queue, ApiCrawlerConstants.STATUS_FETCH_FAIL, e.getMessage());
             isUpdate = true;
         } finally {
             if (isUpdate) {
@@ -123,13 +123,13 @@ public class FetchServiceImpl implements IFetchService {
             R<Boolean> response = Optional.of(bizAPI.fetchPronunciation(Objects.requireNonNull(dto.getWordId()))).get();
             if (response.isSuccess()) {
                 queue.setIsLock(GlobalConstants.FLAG_NO);
-                queue.setFetchStatus(WordCrawlerConstants.STATUS_ALL_SUCCESS);
+                queue.setFetchStatus(ApiCrawlerConstants.STATUS_ALL_SUCCESS);
             } else {
                 throw new JsoupFetchPronunciationException();
             }
             isUpdate = true;
         } catch (Exception e) {
-            this.handleException(queue, WordCrawlerConstants.STATUS_TO_FETCH_PRONUNCIATION_FAIL,
+            this.handleException(queue, ApiCrawlerConstants.STATUS_TO_FETCH_PRONUNCIATION_FAIL,
                 "fetch pronunciation error!");
             isUpdate = true;
         } finally {
@@ -147,7 +147,7 @@ public class FetchServiceImpl implements IFetchService {
             R<List<RemovePronunciatioinMqDTO>> response = Optional.of(bizAPI.removeWord(dto.getQueueId())).get();
             if (response.isSuccess()) {
                 // 删除完老的基础数据重新开始抓取单词
-                queue.setFetchStatus(WordCrawlerConstants.STATUS_TO_FETCH);
+                queue.setFetchStatus(ApiCrawlerConstants.STATUS_TO_FETCH);
                 queue.setWordId(0);
                 queue.setIsLock(GlobalConstants.FLAG_YES);
                 response.getData().forEach(MQSender::removePronunciation);
@@ -157,7 +157,7 @@ public class FetchServiceImpl implements IFetchService {
             isUpdate = true;
         } catch (Exception e) {
             queue.setWordId(0);
-            this.handleException(queue, WordCrawlerConstants.STATUS_DEL_BASE_FAIL, "remove word error!");
+            this.handleException(queue, ApiCrawlerConstants.STATUS_DEL_BASE_FAIL, "remove word error!");
             isUpdate = true;
         } finally {
             if (isUpdate) {
@@ -173,7 +173,7 @@ public class FetchServiceImpl implements IFetchService {
         try {
             dfsService.deleteFile(dto.getGroupName(), dto.getVoiceFilePath());
         } catch (DfsOperateDeleteException e) {
-            this.handleException(queue, WordCrawlerConstants.STATUS_DEL_PRONUNCIATION_FAIL, "del pronunciation error!");
+            this.handleException(queue, ApiCrawlerConstants.STATUS_DEL_PRONUNCIATION_FAIL, "del pronunciation error!");
             isUpdate = true;
         } finally {
             if (isUpdate) {
@@ -192,10 +192,10 @@ public class FetchServiceImpl implements IFetchService {
                 bizAPI.handlePhrasesFetchResult(resultDTO);
             }
             queue.setIsLock(GlobalConstants.FLAG_NO);
-            queue.setFetchStatus(WordCrawlerConstants.STATUS_PERFECT_SUCCESS);
+            queue.setFetchStatus(ApiCrawlerConstants.STATUS_PERFECT_SUCCESS);
             isUpdate = true;
         } catch (JsoupFetchConnectException e) {
-            this.handleException(queue, WordCrawlerConstants.STATUS_FETCH_RELATED_PHRASE_FAIL,
+            this.handleException(queue, ApiCrawlerConstants.STATUS_FETCH_RELATED_PHRASE_FAIL,
                 "fetch related phrase error!");
             isUpdate = true;
         } finally {
@@ -212,17 +212,17 @@ public class FetchServiceImpl implements IFetchService {
         try {
             FetchPhraseResultDTO resultDTO = jsoupService.fetchPhraseInfo(dto);
             if (CrawlerUtils.is2word(resultDTO)) {
-                queue.setInfoType(WordCrawlerConstants.QUEUE_INFO_TYPE_WORD);
-                queue.setFetchStatus(WordCrawlerConstants.STATUS_TO_FETCH);
+                queue.setInfoType(ApiCrawlerConstants.QUEUE_INFO_TYPE_WORD);
+                queue.setFetchStatus(ApiCrawlerConstants.STATUS_TO_FETCH);
                 queue.setFetchTime(0);
             } else {
                 bizAPI.storePhrasesFetchResult(resultDTO);
-                queue.setFetchStatus(WordCrawlerConstants.STATUS_PERFECT_SUCCESS);
+                queue.setFetchStatus(ApiCrawlerConstants.STATUS_PERFECT_SUCCESS);
             }
             queue.setIsLock(GlobalConstants.FLAG_YES);
             isUpdate = true;
         } catch (Exception e) {
-            this.handleException(queue, WordCrawlerConstants.STATUS_FETCH_PHRASE_FAIL, "fetch phrase real info error!");
+            this.handleException(queue, ApiCrawlerConstants.STATUS_FETCH_PHRASE_FAIL, "fetch phrase real info error!");
             isUpdate = true;
         } finally {
             if (isUpdate) {
@@ -240,7 +240,7 @@ public class FetchServiceImpl implements IFetchService {
             R<Boolean> response = Optional.of(bizAPI.removePhrase(dto.getQueueId())).get();
             if (response.isSuccess()) {
                 // 删除完老的基础数据重新开始抓取单词
-                queue.setFetchStatus(WordCrawlerConstants.STATUS_TO_FETCH);
+                queue.setFetchStatus(ApiCrawlerConstants.STATUS_TO_FETCH);
                 queue.setWordId(0);
                 queue.setIsLock(GlobalConstants.FLAG_YES);
                 isUpdate = true;
@@ -249,7 +249,7 @@ public class FetchServiceImpl implements IFetchService {
             }
         } catch (Exception e) {
             queue.setWordId(0);
-            this.handleException(queue, WordCrawlerConstants.STATUS_DEL_PHRASE_FAIL, "remove phrase error!");
+            this.handleException(queue, ApiCrawlerConstants.STATUS_DEL_PHRASE_FAIL, "remove phrase error!");
             isUpdate = true;
         } finally {
             if (isUpdate) {

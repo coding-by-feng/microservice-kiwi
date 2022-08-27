@@ -117,7 +117,7 @@ public class ReviewServiceImplTest {
 
     @SneakyThrows
     @Test
-    // @Disabled
+    @Disabled
     void test_findWordReviewAudio() {
         WordReviewAudioDO wordReviewAudio = reviewService.findWordReviewAudio(1510384, ReviewAudioTypeEnum.NON_REVIEW_SPELL.getType());
         byte[] bytes = this.dfsService.downloadFile(wordReviewAudio.getGroupName(), wordReviewAudio.getFilePath());

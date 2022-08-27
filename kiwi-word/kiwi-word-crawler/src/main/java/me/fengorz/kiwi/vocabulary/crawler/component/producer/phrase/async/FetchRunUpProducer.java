@@ -26,7 +26,7 @@ import me.fengorz.kiwi.common.sdk.util.lang.string.KiwiStringUtils;
 import me.fengorz.kiwi.vocabulary.crawler.component.producer.base.AbstractProducer;
 import me.fengorz.kiwi.vocabulary.crawler.component.producer.base.MQProducer;
 import me.fengorz.kiwi.vocabulary.crawler.component.producer.base.MQSender;
-import me.fengorz.kiwi.word.api.common.WordCrawlerConstants;
+import me.fengorz.kiwi.word.api.common.ApiCrawlerConstants;
 import me.fengorz.kiwi.word.api.dto.queue.FetchPhraseRunUpMqDTO;
 import me.fengorz.kiwi.word.api.entity.FetchQueueDO;
 import me.fengorz.kiwi.word.api.feign.IBizAPI;
@@ -40,7 +40,7 @@ public class FetchRunUpProducer extends AbstractProducer implements MQProducer {
 
     public FetchRunUpProducer(IBizAPI bizAPI, MQSender MQSender) {
         super(bizAPI, MQSender);
-        this.infoType = WordCrawlerConstants.QUEUE_INFO_TYPE_WORD;
+        this.infoType = ApiCrawlerConstants.QUEUE_INFO_TYPE_WORD;
     }
 
     @Override
@@ -50,7 +50,7 @@ public class FetchRunUpProducer extends AbstractProducer implements MQProducer {
 
     @Override
     public void produce() {
-        super.produce(WordCrawlerConstants.STATUS_ALL_SUCCESS);
+        super.produce(ApiCrawlerConstants.STATUS_ALL_SUCCESS);
     }
 
     @Async
@@ -59,7 +59,7 @@ public class FetchRunUpProducer extends AbstractProducer implements MQProducer {
         mqSender.fetchPhraseRunUp(new FetchPhraseRunUpMqDTO().setQueueId(queue.getQueueId())
             .setWord(KiwiStringUtils.isBlank(queue.getDerivation()) ? queue.getWordName() : queue.getDerivation())
             .setWordId(queue.getWordId()));
-        queue.setFetchStatus(WordCrawlerConstants.STATUS_TO_FETCH_PHRASE);
+        queue.setFetchStatus(ApiCrawlerConstants.STATUS_TO_FETCH_PHRASE);
         bizApi.updateQueueById(queue);
     }
 }

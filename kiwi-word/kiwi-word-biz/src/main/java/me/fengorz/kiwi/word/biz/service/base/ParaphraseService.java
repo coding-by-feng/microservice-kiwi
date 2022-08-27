@@ -43,4 +43,11 @@ public interface ParaphraseService extends IService<ParaphraseDO> {
     void delByWordId(Integer wordId);
 
     boolean modifyMeaningChinese(ParaphraseRequest request);
+
+    /**
+     * 默认查询还没有生产音频文件而且也没被收藏过的10个paraphrase
+     * @return
+     */
+    List<Integer> listNotGeneratedAndNotCollectVoice();
+
 }

@@ -39,4 +39,12 @@
         and wp.is_del = 'N'
     </select>
 
+    <select id="listNotGeneratedAndNotCollectVoice" resultType="java.lang.Integer">
+        select distinct(paraphrase_id)
+        from word_paraphrase wp
+        where exists(select 1 from word_main wm where wm.word_id = wp.word_id)
+        and not exists(select 1 from word_review_audio wra where wra.source_id = wp.paraphrase_id)
+        limit 10;
+    </select>
+
 </mapper>

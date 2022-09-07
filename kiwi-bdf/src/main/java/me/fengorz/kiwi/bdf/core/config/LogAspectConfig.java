@@ -29,8 +29,6 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.CodeSignature;
 import org.aspectj.lang.reflect.MethodSignature;
-import org.springframework.context.annotation.Profile;
-import org.springframework.stereotype.Component;
 
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.sdk.annotation.log.LogMarker;
@@ -43,15 +41,13 @@ import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
  */
 @Slf4j
 @Aspect
-@Component
-@Profile({"dev", "prod"})
 public class LogAspectConfig {
 
     public LogAspectConfig() {
         log.info("LogAspectConfig set up.");
     }
 
-    @Pointcut("@annotation(me.fengorz.kiwi.common.sdk.annotation.log.LogMarker)")
+    @Pointcut("@annotation(me.fengorz.kiwi.common.sdk.annotation.log.LogMarker) && within(me.fengorz.kiwi..*)")
     public void pointcut() {}
 
     @Around("pointcut()")

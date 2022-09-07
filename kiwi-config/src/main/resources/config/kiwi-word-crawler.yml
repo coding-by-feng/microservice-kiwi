@@ -38,14 +38,15 @@ async:
 
 crawler:
   config:
-    core:
-      pool:
-        size: 10
-    max:
-      pool:
-        size: 20
-    queue:
-      capacity: 10
+    core-pool-size: 10
+    max-pool-size: 20
+    queue-capacity: 10
+    enable-mq: false
+    enable-scheduler: {
+      "voice-generate": true,
+      "cache-word": false,
+      "refresh-all-api-key": true
+    }
 
 baidu:
   tts:

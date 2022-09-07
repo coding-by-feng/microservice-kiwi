@@ -17,17 +17,12 @@
  *
  */
 
-package me.fengorz.kiwi.common.sdk.constant;
+package me.fengorz.kiwi.dict.crawler.component.scheduler.base;
 
 /**
- * @Description Dedicated to environment variables.
+ * @Description TODO
  * @Author zhanshifeng
- * @Date 2022/6/29 11:30
+ * @Date 2022/9/7 23:04
  */
-public interface EnvConstants {
-
-    String DEV = "dev";
-    String BASE = "base";
-    String PROD = "prod";
-
+public interface Setup {
 }

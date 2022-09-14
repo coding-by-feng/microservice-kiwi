@@ -78,7 +78,7 @@ public class CrawlerTest {
             Assertions.assertNotNull(chiefSchedulerSetup);
             Assertions.assertNotNull(chiefProducerSchedulerSetup);
             chiefSchedulerSetup.setup();
-            chiefProducerSchedulerSetup.produce();
+            // chiefProducerSchedulerSetup.produce();
         } catch (Exception e) {
             e.printStackTrace();
         }

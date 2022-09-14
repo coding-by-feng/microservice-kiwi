@@ -52,7 +52,11 @@ public class CacheWordScheduler extends AbstractFetchScheduler implements Schedu
     @ScheduledAwake(key = "cache-word")
     public void schedule() {
         log.info("Word cache schedule is beginning.");
-        super.schedule(null);
+        try {
+            super.schedule(null);
+        } catch (Exception e) {
+            log.error("Word cache schedule failed.", e);
+        }
     }
 
     @Override

@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.sdk.util.lang.collection.KiwiCollectionUtils;
 import me.fengorz.kiwi.word.api.entity.FetchQueueDO;
 import me.fengorz.kiwi.word.api.exception.SchedulerException;
@@ -28,6 +29,7 @@ import me.fengorz.kiwi.word.api.feign.IBizAPI;
 /**
  * @Author zhanshifeng @Date 2020/7/29 2:16 PM
  */
+@Slf4j
 @RequiredArgsConstructor
 public abstract class AbstractFetchScheduler implements Scheduler {
 
@@ -48,7 +50,13 @@ public abstract class AbstractFetchScheduler implements Scheduler {
             return;
         }
 
-        list.forEach(this::execute);
+        list.forEach(fetchQueueDO -> {
+            try {
+                this.execute(fetchQueueDO);
+            } catch (Exception e) {
+                log.error("Method execute invoked failed.", e);
+            }
+        });
         if (countDownLatch == null) {
             return;
         }

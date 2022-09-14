@@ -91,11 +91,15 @@ public class WordReviewController extends AbstractDfsController {
             log.error("findWordReviewAudio exception, sourceId={}, type={}!", sourceId, type, e);
         }
         if (wordReviewAudio == null) {
+            log.error("=========> Required wordReviewAudio must not be null!");
             return;
+        } else {
+            log.info("Required wordReviewAudio is found.");
         }
         InputStream inputStream = null;
         try {
             byte[] bytes = this.dfsService.downloadFile(wordReviewAudio.getGroupName(), wordReviewAudio.getFilePath());
+            log.info("Required wordReviewAudio bytes download success.");
             inputStream = new ByteArrayInputStream(bytes);
             response.addHeader(CONTENT_TYPE, AUDIO_MPEG);
             response.addHeader(ACCEPT_RANGES, BYTES);
@@ -104,6 +108,7 @@ public class WordReviewController extends AbstractDfsController {
             log.error("downloadReviewAudio exception, sourceId={}, type={}!", sourceId, type, e);
         }
         WebTools.downloadResponse(response, inputStream);
+        log.info("Method downloadResponse invoked success.");
     }
 
     @GetMapping("/generateTtsVoice/{isReplace}")

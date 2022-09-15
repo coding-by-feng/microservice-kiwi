@@ -26,6 +26,8 @@ public interface CrawlerService {
 
     boolean fetchPronunciation(Integer wordId);
 
+    void reFetchPronunciation(Integer pronunciationId);
+
     boolean handlePhrasesFetchResult(FetchPhraseRunUpResultDTO dto);
 
     boolean storePhrasesFetchResult(FetchPhraseResultDTO dto);

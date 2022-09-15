@@ -43,6 +43,7 @@ import me.fengorz.kiwi.common.sdk.annotation.log.LogMarker;
 import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
 import me.fengorz.kiwi.common.sdk.constant.MapperConstant;
 import me.fengorz.kiwi.common.sdk.exception.DataCheckedException;
+import me.fengorz.kiwi.common.sdk.exception.ResourceNotFoundException;
 import me.fengorz.kiwi.common.sdk.exception.ServiceException;
 import me.fengorz.kiwi.common.sdk.exception.dfs.DfsOperateDeleteException;
 import me.fengorz.kiwi.common.sdk.exception.dfs.DfsOperateException;
@@ -72,12 +73,12 @@ import me.fengorz.kiwi.word.biz.util.WordDfsUtils;
 public class CrawlerServiceImpl implements CrawlerService {
 
     private final WordMainService mainService;
-    private final ICharacterService characterService;
+    private final CharacterService characterService;
     private final ParaphraseService paraphraseService;
-    private final IParaphraseExampleService exampleService;
-    private final IPronunciationService pronunciationService;
-    private final IWordFetchQueueService queueService;
-    private final IParaphrasePhraseService phraseService;
+    private final ParaphraseExampleService exampleService;
+    private final PronunciationService pronunciationService;
+    private final WordFetchQueueService queueService;
+    private final ParaphrasePhraseService phraseService;
     private final ParaphraseStarRelService paraphraseStarRelService;
     private final DfsService dfsService;
     private final SeqService seqService;
@@ -212,6 +213,14 @@ public class CrawlerServiceImpl implements CrawlerService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void reFetchPronunciation(Integer pronunciationId) {
+        PronunciationDO pronunciation = Optional.ofNullable(pronunciationService.getById(pronunciationId))
+            .orElseThrow(ResourceNotFoundException::new);
+        this.fetchPronunciation(pronunciation.getWordId());
+    }
+
+    @Override
     public boolean handlePhrasesFetchResult(FetchPhraseRunUpResultDTO dto) {
         for (String phrase : dto.getPhrases()) {
             // 词组是word本身跳过
@@ -332,14 +341,17 @@ public class CrawlerServiceImpl implements CrawlerService {
                                 reviewService.generateWordReviewAudio(true, example.getExampleId(),
                                     ReviewAudioTypeEnum.EXAMPLE_CH.getType());
                             } catch (DfsOperateException | TtsException | DataCheckedException e) {
-                                log.error("generateWordReviewAudio exception, sourceId={}, {}", example.getExampleId(), e.getMessage());
+                                log.error("generateWordReviewAudio exception, sourceId={}, {}", example.getExampleId(),
+                                    e.getMessage());
                                 throw e;
                             }
                         }
                     } catch (Exception e) {
                         reviewService.cleanReviewVoiceByParaphraseId(id);
                         GENERATE_VOICE_BARRIER.release();
-                        log.error("Paraphrase id({}) generation failed, Data has cleaned, GENERATE_VOICE_BARRIER has released", id);
+                        log.error(
+                            "Paraphrase id({}) generation failed, Data has cleaned, GENERATE_VOICE_BARRIER has released",
+                            id);
                         return;
                     }
                     log.info("Paraphrase id({}) generation is end!", id);
@@ -361,6 +373,7 @@ public class CrawlerServiceImpl implements CrawlerService {
             return;
         }
         String voiceFileUrl = ApiCrawlerConstants.URL_CAMBRIDGE_BASE + voiceUrl;
+        log.info("Download {}.", voiceFileUrl);
         long voiceSize = HttpUtil.downloadFile(URLUtil.decode(voiceFileUrl), FileUtil.file(crawlerVoiceBasePath));
         String tempVoice = crawlerVoiceBasePath + WordDfsUtils.getVoiceFileName(voiceFileUrl);
         try {
@@ -369,6 +382,7 @@ public class CrawlerServiceImpl implements CrawlerService {
             pronunciation.setGroupName(WordDfsUtils.getGroupName(uploadResult));
             pronunciation.setVoiceFilePath(WordDfsUtils.getUploadVoiceFilePath(uploadResult));
             pronunciationService.updateById(pronunciation);
+            log.info("Pronunciation fetched success, uploadResult = {}.", uploadResult);
         } catch (DfsOperateException e) {
             throw new ServiceException(
                 KiwiStringUtils.format("fetchPronunciationVoice error, pronunciation.url={}", voiceUrl));

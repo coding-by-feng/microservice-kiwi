@@ -15,19 +15,25 @@
  */
 package me.fengorz.kiwi.word.biz.service.base;
 
+import java.util.List;
+
 import com.baomidou.mybatisplus.extension.service.IService;
 
-import me.fengorz.kiwi.word.api.entity.PronunciationDO;
+import me.fengorz.kiwi.word.api.entity.ParaphraseExampleDO;
+import me.fengorz.kiwi.word.api.vo.ParaphraseExampleVO;
 
 /**
  * 单词例句表
  *
  * @author zhanshifeng
- * @date 2019-10-31 20:54:06
+ * @date 2019-10-31 20:40:38
  */
-public interface IPronunciationService extends IService<PronunciationDO> {
+public interface ParaphraseExampleService extends IService<ParaphraseExampleDO> {
 
-    int blankPronunciationVoice(String wordName);
+    Integer countById(Integer id);
 
-    int deleteByWordName(String wordName);
+    List<ParaphraseExampleVO> listExamples(Integer paraphraseId);
+
+    @Deprecated
+    List<ParaphraseExampleVO> selectExampleAndIsCollect(Integer owner, Integer paraphraseId);
 }

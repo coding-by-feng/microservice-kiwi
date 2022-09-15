@@ -43,7 +43,7 @@ import me.fengorz.kiwi.word.api.dto.mapper.out.FuzzyQueryResultDTO;
 import me.fengorz.kiwi.word.api.entity.WordMainDO;
 import me.fengorz.kiwi.word.api.vo.WordMainVO;
 import me.fengorz.kiwi.word.biz.mapper.WordMainMapper;
-import me.fengorz.kiwi.word.biz.service.base.IWordFetchQueueService;
+import me.fengorz.kiwi.word.biz.service.base.WordFetchQueueService;
 import me.fengorz.kiwi.word.biz.service.base.WordMainService;
 
 /**
@@ -60,7 +60,7 @@ public class WordMainServiceImpl extends ServiceImpl<WordMainMapper, WordMainDO>
 
     private static final String VALUE = "value";
 
-    private final IWordFetchQueueService queueService;
+    private final WordFetchQueueService queueService;
     private final WordMainMapper mapper;
 
     @Override

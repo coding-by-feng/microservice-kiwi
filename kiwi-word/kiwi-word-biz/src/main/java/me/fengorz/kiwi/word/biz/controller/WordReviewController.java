@@ -107,7 +107,7 @@ public class WordReviewController extends AbstractDfsController {
         } catch (DfsOperateException e) {
             log.error("downloadReviewAudio exception, sourceId={}, type={}!", sourceId, type, e);
         }
-        WebTools.downloadResponse(response, inputStream);
+        WebTools.downloadResponseAndClose(response, inputStream);
         log.info("Method downloadResponse for wordReviewAudio invoked success.");
     }
 

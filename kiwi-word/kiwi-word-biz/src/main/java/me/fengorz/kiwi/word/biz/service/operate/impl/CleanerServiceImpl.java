@@ -49,14 +49,14 @@ import me.fengorz.kiwi.word.biz.service.operate.OperateService;
 public class CleanerServiceImpl implements CleanerService {
 
     private final OperateService operateService;
-    private final IWordFetchQueueService queueService;
+    private final WordFetchQueueService queueService;
     private final WordMainService mainService;
-    private final ICharacterService characterService;
+    private final CharacterService characterService;
     private final ParaphraseService paraphraseService;
-    private final IParaphraseExampleService exampleService;
-    private final IPronunciationService pronunciationService;
+    private final ParaphraseExampleService exampleService;
+    private final PronunciationService pronunciationService;
     private final IWordMainVariantService variantService;
-    private final IParaphrasePhraseService phraseService;
+    private final ParaphrasePhraseService phraseService;
     private final DfsService dfsService;
 
     @Override

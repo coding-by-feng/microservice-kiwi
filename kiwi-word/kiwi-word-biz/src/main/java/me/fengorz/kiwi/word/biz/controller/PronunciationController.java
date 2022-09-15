@@ -16,6 +16,7 @@
 package me.fengorz.kiwi.word.biz.controller;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 
 import javax.servlet.http.HttpServletResponse;
@@ -30,7 +31,6 @@ import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.fastdfs.service.DfsService;
 import me.fengorz.kiwi.common.sdk.annotation.log.LogMarker;
 import me.fengorz.kiwi.common.sdk.controller.AbstractDfsController;
-import me.fengorz.kiwi.common.sdk.exception.dfs.DfsOperateException;
 import me.fengorz.kiwi.common.sdk.web.WebTools;
 import me.fengorz.kiwi.word.api.entity.PronunciationDO;
 import me.fengorz.kiwi.word.biz.service.base.PronunciationService;
@@ -71,11 +71,37 @@ public class PronunciationController extends AbstractDfsController {
             response.addHeader(CONTENT_TYPE, AUDIO_MPEG);
             response.addHeader(ACCEPT_RANGES, BYTES);
             response.addHeader(CONTENT_LENGTH, String.valueOf(bytes.length));
-        } catch (DfsOperateException e) {
+        } catch (Exception e) {
+            if (inputStream != null) {
+                try {
+                    inputStream.close();
+                } catch (IOException ioException) {
+                    log.error(ioException.getMessage(), ioException);
+                }
+            }
             log.error("downloadVoice exception, pronunciationId={}, re-fetching now!", pronunciationId, e);
             crawlerService.reFetchPronunciation(pronunciationId);
+            byte[] bytes;
+            try {
+                bytes = this.dfsService.downloadFile(wordPronunciation.getGroupName(),
+                    wordPronunciation.getVoiceFilePath());
+                log.info("Required wordPronunciation bytes download success.");
+                inputStream = new ByteArrayInputStream(bytes);
+                response.addHeader(CONTENT_TYPE, AUDIO_MPEG);
+                response.addHeader(ACCEPT_RANGES, BYTES);
+                response.addHeader(CONTENT_LENGTH, String.valueOf(bytes.length));
+            } catch (Exception ex) {
+                if (inputStream != null) {
+                    try {
+                        inputStream.close();
+                    } catch (IOException ioException) {
+                        log.error(ioException.getMessage(), ioException);
+                    }
+                }
+                log.error("downloadVoice exception, pronunciationId={}, re-fetching also failed !", pronunciationId);
+            }
         }
-        WebTools.downloadResponse(response, inputStream);
+        WebTools.downloadResponseAndClose(response, inputStream);
         log.info("Method downloadResponse for wordPronunciation invoked success.");
     }
 }

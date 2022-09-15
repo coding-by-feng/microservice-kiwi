@@ -55,12 +55,16 @@ public class PronunciationController extends AbstractDfsController {
     public void downloadVoice(HttpServletResponse response, @PathVariable("pronunciationId") Integer pronunciationId) {
         PronunciationDO wordPronunciation = this.wordPronunciationService.getById(pronunciationId);
         if (wordPronunciation == null) {
+            log.error("=========> Required wordPronunciation must not be null!");
             return;
+        } else {
+            log.info("Required wordPronunciation is found.");
         }
         InputStream inputStream = null;
         try {
             byte[] bytes =
                 this.dfsService.downloadFile(wordPronunciation.getGroupName(), wordPronunciation.getVoiceFilePath());
+            log.info("Required wordPronunciation bytes download success.");
             inputStream = new ByteArrayInputStream(bytes);
             response.addHeader(CONTENT_TYPE, AUDIO_MPEG);
             response.addHeader(ACCEPT_RANGES, BYTES);
@@ -69,5 +73,6 @@ public class PronunciationController extends AbstractDfsController {
             log.error("downloadVoice exception, pronunciationId={}!", pronunciationId, e);
         }
         WebTools.downloadResponse(response, inputStream);
+        log.info("Method downloadResponse for wordPronunciation invoked success.");
     }
 }

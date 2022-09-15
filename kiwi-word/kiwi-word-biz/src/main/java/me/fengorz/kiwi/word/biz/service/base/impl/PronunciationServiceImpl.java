@@ -23,7 +23,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.RequiredArgsConstructor;
 import me.fengorz.kiwi.word.api.entity.PronunciationDO;
 import me.fengorz.kiwi.word.biz.mapper.PronunciationMapper;
-import me.fengorz.kiwi.word.biz.service.base.IPronunciationService;
+import me.fengorz.kiwi.word.biz.service.base.PronunciationService;
 
 /**
  * 单词例句表
@@ -34,7 +34,7 @@ import me.fengorz.kiwi.word.biz.service.base.IPronunciationService;
 @Service()
 @RequiredArgsConstructor
 public class PronunciationServiceImpl extends ServiceImpl<PronunciationMapper, PronunciationDO>
-    implements IPronunciationService {
+    implements PronunciationService {
 
     private final PronunciationMapper pronunciationMapper;
 

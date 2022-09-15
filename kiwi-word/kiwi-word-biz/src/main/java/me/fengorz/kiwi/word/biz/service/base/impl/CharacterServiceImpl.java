@@ -25,7 +25,7 @@ import me.fengorz.kiwi.word.api.common.WordConstants;
 import me.fengorz.kiwi.word.api.entity.CharacterDO;
 import me.fengorz.kiwi.word.api.vo.detail.CharacterVO;
 import me.fengorz.kiwi.word.biz.mapper.CharacterMapper;
-import me.fengorz.kiwi.word.biz.service.base.ICharacterService;
+import me.fengorz.kiwi.word.biz.service.base.CharacterService;
 
 /**
  * 单词词性表
@@ -35,7 +35,7 @@ import me.fengorz.kiwi.word.biz.service.base.ICharacterService;
  */
 @Service()
 @KiwiCacheKeyPrefix(WordConstants.CACHE_KEY_PREFIX_CHARACTER.CLASS)
-public class CharacterServiceImpl extends ServiceImpl<CharacterMapper, CharacterDO> implements ICharacterService {
+public class CharacterServiceImpl extends ServiceImpl<CharacterMapper, CharacterDO> implements CharacterService {
 
     @Override
     public CharacterVO get(Integer characterId) {

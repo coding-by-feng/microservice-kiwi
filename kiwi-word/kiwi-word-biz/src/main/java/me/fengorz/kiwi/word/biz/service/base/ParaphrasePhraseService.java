@@ -17,18 +17,12 @@ package me.fengorz.kiwi.word.biz.service.base;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 
-import me.fengorz.kiwi.word.api.entity.CharacterDO;
-import me.fengorz.kiwi.word.api.vo.detail.CharacterVO;
+import me.fengorz.kiwi.word.api.entity.ParaphrasePhraseDO;
 
 /**
- * 单词词性表
+ * 服务类
  *
- * @author zhanshifeng
- * @date 2019-10-31 20:38:37
+ * @author zhanShiFeng
+ * @date 2020-05-31 22:22:22
  */
-public interface ICharacterService extends IService<CharacterDO> {
-
-    CharacterVO get(Integer characterId);
-
-    void evict(Integer characterId);
-}
+public interface ParaphrasePhraseService extends IService<ParaphrasePhraseDO> {}

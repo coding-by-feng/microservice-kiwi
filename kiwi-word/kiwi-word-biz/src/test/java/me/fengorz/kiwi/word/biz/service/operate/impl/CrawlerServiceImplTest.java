@@ -17,6 +17,7 @@
 package me.fengorz.kiwi.word.biz.service.operate.impl;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,7 +45,13 @@ public class CrawlerServiceImplTest {
     @Test
     @SneakyThrows
     // @RepeatedTest(value = 3)
+    @Disabled
     void generateTtsVoice() {
         Assertions.assertDoesNotThrow(() -> crawlerService.generateTtsVoice());
+    }
+
+    @Test
+    void test_reFetchPronunciation() {
+        crawlerService.reFetchPronunciation(3053026);
     }
 }

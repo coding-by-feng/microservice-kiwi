@@ -18,7 +18,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
 import me.fengorz.kiwi.word.api.entity.ParaphrasePhraseDO;
 import me.fengorz.kiwi.word.biz.mapper.ParaphrasePhraseMapper;
-import me.fengorz.kiwi.word.biz.service.base.IParaphrasePhraseService;
+import me.fengorz.kiwi.word.biz.service.base.ParaphrasePhraseService;
 
 /**
  * @author zhanShiFeng
@@ -26,4 +26,4 @@ import me.fengorz.kiwi.word.biz.service.base.IParaphrasePhraseService;
  */
 @Service()
 public class ParaphrasePhraseServiceImpl extends ServiceImpl<ParaphrasePhraseMapper, ParaphrasePhraseDO>
-    implements IParaphrasePhraseService {}
+    implements ParaphrasePhraseService {}

@@ -15,25 +15,20 @@
  */
 package me.fengorz.kiwi.word.biz.service.base;
 
-import java.util.List;
-
 import com.baomidou.mybatisplus.extension.service.IService;
 
-import me.fengorz.kiwi.word.api.entity.ParaphraseExampleDO;
-import me.fengorz.kiwi.word.api.vo.ParaphraseExampleVO;
+import me.fengorz.kiwi.word.api.entity.CharacterDO;
+import me.fengorz.kiwi.word.api.vo.detail.CharacterVO;
 
 /**
- * 单词例句表
+ * 单词词性表
  *
  * @author zhanshifeng
- * @date 2019-10-31 20:40:38
+ * @date 2019-10-31 20:38:37
  */
-public interface IParaphraseExampleService extends IService<ParaphraseExampleDO> {
+public interface CharacterService extends IService<CharacterDO> {
 
-    Integer countById(Integer id);
+    CharacterVO get(Integer characterId);
 
-    List<ParaphraseExampleVO> listExamples(Integer paraphraseId);
-
-    @Deprecated
-    List<ParaphraseExampleVO> selectExampleAndIsCollect(Integer owner, Integer paraphraseId);
+    void evict(Integer characterId);
 }

@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
 import me.fengorz.kiwi.common.sdk.controller.BaseController;
-import me.fengorz.kiwi.word.biz.service.base.IParaphraseExampleService;
+import me.fengorz.kiwi.word.biz.service.base.ParaphraseExampleService;
 
 /**
  * 单词例句表
@@ -33,5 +33,5 @@ import me.fengorz.kiwi.word.biz.service.base.IParaphraseExampleService;
 @RequestMapping("/word/paraphrase/example")
 public class ParaphraseExampleController extends BaseController {
 
-    private final IParaphraseExampleService wordParaphraseExampleService;
+    private final ParaphraseExampleService wordParaphraseExampleService;
 }

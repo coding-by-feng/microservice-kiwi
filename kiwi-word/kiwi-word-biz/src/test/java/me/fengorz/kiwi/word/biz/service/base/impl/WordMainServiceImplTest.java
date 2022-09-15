@@ -42,14 +42,14 @@ import me.fengorz.kiwi.word.api.dto.mapper.out.FuzzyQueryResultDTO;
 import me.fengorz.kiwi.word.api.entity.WordMainDO;
 import me.fengorz.kiwi.word.api.vo.WordMainVO;
 import me.fengorz.kiwi.word.biz.mapper.WordMainMapper;
-import me.fengorz.kiwi.word.biz.service.base.IWordFetchQueueService;
+import me.fengorz.kiwi.word.biz.service.base.WordFetchQueueService;
 import me.fengorz.kiwi.word.biz.service.base.WordMainService;
 
 @ExtendWith(MockitoExtension.class)
 class WordMainServiceImplTest {
 
     @Mock
-    private IWordFetchQueueService mockQueueService;
+    private WordFetchQueueService mockQueueService;
     @Mock
     private WordMainMapper mockMapper;
 

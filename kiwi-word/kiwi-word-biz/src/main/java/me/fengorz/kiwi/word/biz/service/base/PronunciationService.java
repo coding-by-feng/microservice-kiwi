@@ -17,12 +17,18 @@ package me.fengorz.kiwi.word.biz.service.base;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 
-import me.fengorz.kiwi.word.api.entity.ParaphrasePhraseDO;
+import me.fengorz.kiwi.word.api.entity.PronunciationDO;
 
 /**
- * 服务类
+ * 单词例句表
  *
- * @author zhanShiFeng
- * @date 2020-05-31 22:22:22
+ * @author zhanshifeng
+ * @date 2019-10-31 20:54:06
  */
-public interface IParaphrasePhraseService extends IService<ParaphrasePhraseDO> {}
+public interface PronunciationService extends IService<PronunciationDO> {
+
+    int blankPronunciationVoice(String wordName);
+
+    int deleteByWordName(String wordName);
+
+}

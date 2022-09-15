@@ -24,6 +24,7 @@ import me.fengorz.kiwi.common.sdk.exception.BaseException;
  */
 public class DfsOperateException extends BaseException {
 
+
     public DfsOperateException() {
         super();
     }

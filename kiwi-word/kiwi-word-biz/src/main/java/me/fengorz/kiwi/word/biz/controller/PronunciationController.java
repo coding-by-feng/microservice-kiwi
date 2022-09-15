@@ -33,7 +33,8 @@ import me.fengorz.kiwi.common.sdk.controller.AbstractDfsController;
 import me.fengorz.kiwi.common.sdk.exception.dfs.DfsOperateException;
 import me.fengorz.kiwi.common.sdk.web.WebTools;
 import me.fengorz.kiwi.word.api.entity.PronunciationDO;
-import me.fengorz.kiwi.word.biz.service.base.IPronunciationService;
+import me.fengorz.kiwi.word.biz.service.base.PronunciationService;
+import me.fengorz.kiwi.word.biz.service.operate.CrawlerService;
 
 /**
  * 单词例句表
@@ -47,8 +48,9 @@ import me.fengorz.kiwi.word.biz.service.base.IPronunciationService;
 @Slf4j
 public class PronunciationController extends AbstractDfsController {
 
-    private final IPronunciationService wordPronunciationService;
+    private final PronunciationService wordPronunciationService;
     private final DfsService dfsService;
+    private final CrawlerService crawlerService;
 
     @LogMarker("下载播放单词发音音频")
     @GetMapping("/downloadVoice/{pronunciationId}")
@@ -70,7 +72,8 @@ public class PronunciationController extends AbstractDfsController {
             response.addHeader(ACCEPT_RANGES, BYTES);
             response.addHeader(CONTENT_LENGTH, String.valueOf(bytes.length));
         } catch (DfsOperateException e) {
-            log.error("downloadVoice exception, pronunciationId={}!", pronunciationId, e);
+            log.error("downloadVoice exception, pronunciationId={}, re-fetching now!", pronunciationId, e);
+            crawlerService.reFetchPronunciation(pronunciationId);
         }
         WebTools.downloadResponse(response, inputStream);
         log.info("Method downloadResponse for wordPronunciation invoked success.");

@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
 import me.fengorz.kiwi.common.sdk.controller.BaseController;
-import me.fengorz.kiwi.word.biz.service.base.ICharacterService;
+import me.fengorz.kiwi.word.biz.service.base.CharacterService;
 import me.fengorz.kiwi.word.biz.service.operate.OperateService;
 
 /**
@@ -34,6 +34,6 @@ import me.fengorz.kiwi.word.biz.service.operate.OperateService;
 @RequestMapping("/word/character")
 public class CharacterController extends BaseController {
 
-    private final ICharacterService wordCharacterService;
+    private final CharacterService wordCharacterService;
     private final OperateService wordOperateService;
 }

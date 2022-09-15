@@ -37,7 +37,7 @@ import me.fengorz.kiwi.word.api.dto.queue.result.FetchPhraseRunUpResultDTO;
 import me.fengorz.kiwi.word.api.dto.queue.result.FetchWordResultDTO;
 import me.fengorz.kiwi.word.api.entity.FetchQueueDO;
 import me.fengorz.kiwi.word.api.util.WordApiUtils;
-import me.fengorz.kiwi.word.biz.service.base.IWordFetchQueueService;
+import me.fengorz.kiwi.word.biz.service.base.WordFetchQueueService;
 import me.fengorz.kiwi.word.biz.service.operate.CleanerService;
 import me.fengorz.kiwi.word.biz.service.operate.CrawlerService;
 import me.fengorz.kiwi.word.biz.service.operate.OperateService;
@@ -55,7 +55,7 @@ import me.fengorz.kiwi.word.biz.service.operate.OperateService;
 @RequestMapping("/word/fetch")
 public class WordFetchController extends BaseController {
 
-    private final IWordFetchQueueService queueService;
+    private final WordFetchQueueService queueService;
     private final OperateService operateService;
     private final CrawlerService crawlerService;
     private final CleanerService cleanerService;

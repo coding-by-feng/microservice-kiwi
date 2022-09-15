@@ -108,7 +108,7 @@ public class WordReviewController extends AbstractDfsController {
             log.error("downloadReviewAudio exception, sourceId={}, type={}!", sourceId, type, e);
         }
         WebTools.downloadResponse(response, inputStream);
-        log.info("Method downloadResponse invoked success.");
+        log.info("Method downloadResponse for wordReviewAudio invoked success.");
     }
 
     @GetMapping("/generateTtsVoice/{isReplace}")

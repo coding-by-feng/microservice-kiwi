@@ -39,8 +39,8 @@ import me.fengorz.kiwi.word.api.entity.WordMainDO;
 import me.fengorz.kiwi.word.api.entity.WordMainVariantDO;
 import me.fengorz.kiwi.word.api.vo.WordMainVariantVO;
 import me.fengorz.kiwi.word.biz.mapper.WordMainVariantMapper;
-import me.fengorz.kiwi.word.biz.service.base.IWordFetchQueueService;
 import me.fengorz.kiwi.word.biz.service.base.IWordMainVariantService;
+import me.fengorz.kiwi.word.biz.service.base.WordFetchQueueService;
 import me.fengorz.kiwi.word.biz.service.base.WordMainService;
 
 /**
@@ -55,7 +55,7 @@ public class WordMainVariantServiceImpl extends ServiceImpl<WordMainVariantMappe
     implements IWordMainVariantService {
 
     private final WordMainVariantMapper wordMainVariantMapper;
-    private final IWordFetchQueueService wordFetchQueueService;
+    private final WordFetchQueueService wordFetchQueueService;
     private final WordMainService wordMainService;
     private final SeqService seqService;
 

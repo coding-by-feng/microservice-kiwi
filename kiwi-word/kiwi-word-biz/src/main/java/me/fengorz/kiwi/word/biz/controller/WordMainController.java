@@ -40,7 +40,7 @@ import me.fengorz.kiwi.common.sdk.web.WebTools;
 import me.fengorz.kiwi.word.api.dto.mapper.out.FuzzyQueryResultDTO;
 import me.fengorz.kiwi.word.api.entity.WordMainDO;
 import me.fengorz.kiwi.word.api.vo.detail.WordQueryVO;
-import me.fengorz.kiwi.word.biz.service.base.IWordFetchQueueService;
+import me.fengorz.kiwi.word.biz.service.base.WordFetchQueueService;
 import me.fengorz.kiwi.word.biz.service.base.WordMainService;
 import me.fengorz.kiwi.word.biz.service.operate.OperateService;
 import me.fengorz.kiwi.word.biz.service.operate.ReviewService;
@@ -60,7 +60,7 @@ public class WordMainController extends BaseController {
 
     private final WordMainService mainService;
     private final OperateService operateService;
-    private final IWordFetchQueueService queueService;
+    private final WordFetchQueueService queueService;
     private final ReviewService reviewService;
     private final DocumentOperations documentOperations;
 

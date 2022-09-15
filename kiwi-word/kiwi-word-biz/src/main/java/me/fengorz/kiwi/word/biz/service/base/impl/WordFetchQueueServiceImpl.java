@@ -41,7 +41,7 @@ import me.fengorz.kiwi.word.api.common.enumeration.CrawlerStatusEnum;
 import me.fengorz.kiwi.word.api.entity.FetchQueueDO;
 import me.fengorz.kiwi.word.biz.mapper.FetchQueueMapper;
 import me.fengorz.kiwi.word.biz.mapper.WordMainMapper;
-import me.fengorz.kiwi.word.biz.service.base.IWordFetchQueueService;
+import me.fengorz.kiwi.word.biz.service.base.WordFetchQueueService;
 import me.fengorz.kiwi.word.biz.util.WordBizUtils;
 
 /**
@@ -54,7 +54,7 @@ import me.fengorz.kiwi.word.biz.util.WordBizUtils;
 @Service
 @RequiredArgsConstructor
 public class WordFetchQueueServiceImpl extends ServiceImpl<FetchQueueMapper, FetchQueueDO>
-    implements IWordFetchQueueService {
+    implements WordFetchQueueService {
 
     private final SeqService seqService;
     private final WordMainMapper mainMapper;

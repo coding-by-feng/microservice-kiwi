@@ -68,7 +68,7 @@ public class WebTools extends WebUtils {
         return new String(decoded, StandardCharsets.UTF_8);
     }
 
-    public static void downloadResponse(HttpServletResponse response, InputStream inputStream) {
+    public static void downloadResponseAndClose(HttpServletResponse response, InputStream inputStream) {
         if (inputStream == null) {
             return;
         }
@@ -111,6 +111,11 @@ public class WebTools extends WebUtils {
                 } catch (IOException e) {
                     log.error("in close exception", e);
                 }
+            }
+            try {
+                inputStream.close();
+            } catch (IOException e) {
+                log.error("inputStream close exception", e);
             }
         }
     }

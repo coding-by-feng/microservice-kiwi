@@ -81,7 +81,7 @@ public class WebTools extends WebUtils {
             // 这个方法写入音频流时有个致命问题，如果是音频流会出现尾部有杂音，因为2048如果尾部空流在音频当还是会被当做声音处理
             // 如果采用下面注释掉的这种写法的话
             byte[] b = new byte[IN_READ_BYTES_LENGTH];
-            int readLength = 0;
+            int readLength;
             do {
                 readLength = in.read(b);
                 if (readLength > 0 && readLength < IN_READ_BYTES_LENGTH) {

@@ -84,11 +84,11 @@ public class OperateServiceImpl implements OperateService {
 
     private static final Object BARRIER = new Object();
     private final WordMainService mainService;
-    private final ICharacterService characterService;
+    private final CharacterService characterService;
     private final ParaphraseService paraphraseService;
-    private final IParaphraseExampleService exampleService;
-    private final IPronunciationService pronunciationService;
-    private final IWordFetchQueueService fetchQueueService;
+    private final ParaphraseExampleService exampleService;
+    private final PronunciationService pronunciationService;
+    private final WordFetchQueueService fetchQueueService;
     private final IWordStarListService wordStarListService;
     private final IParaphraseStarListService paraphraseStarListService;
     private final IExampleStarListService exampleStarListService;
@@ -96,7 +96,7 @@ public class OperateServiceImpl implements OperateService {
     private final ParaphraseStarRelService paraphraseStarRelService;
     private final IWordExampleStarRelService exampleStarRelService;
     private final IWordMainVariantService mainVariantService;
-    private final IParaphrasePhraseService phraseService;
+    private final ParaphrasePhraseService phraseService;
     private final ReviewService reviewService;
     private final DfsService dfsService;
     private final SearchOperations searchOperations;

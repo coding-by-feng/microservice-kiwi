@@ -27,7 +27,7 @@ import me.fengorz.kiwi.word.api.entity.FetchQueueDO;
  * @author zhanshifeng
  * @date 2019-10-30 14:45:45
  */
-public interface IWordFetchQueueService extends IService<FetchQueueDO> {
+public interface WordFetchQueueService extends IService<FetchQueueDO> {
 
     @Deprecated
     boolean invalid(String wordName);

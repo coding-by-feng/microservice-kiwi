@@ -32,8 +32,8 @@ import me.fengorz.kiwi.common.sdk.constant.MapperConstant;
 import me.fengorz.kiwi.word.api.common.WordConstants;
 import me.fengorz.kiwi.word.api.entity.StarRelHisDO;
 import me.fengorz.kiwi.word.api.entity.WordMainDO;
-import me.fengorz.kiwi.word.biz.service.base.IParaphraseExampleService;
 import me.fengorz.kiwi.word.biz.service.base.IStarRelHisService;
+import me.fengorz.kiwi.word.biz.service.base.ParaphraseExampleService;
 import me.fengorz.kiwi.word.biz.service.base.ParaphraseService;
 import me.fengorz.kiwi.word.biz.service.base.WordMainService;
 import me.fengorz.kiwi.word.biz.service.operate.AsyncArchiveService;
@@ -48,7 +48,7 @@ public class AsyncArchiveServiceImpl implements AsyncArchiveService {
 
     private final WordMainService mainService;
     private final ParaphraseService paraphraseService;
-    private final IParaphraseExampleService exampleService;
+    private final ParaphraseExampleService exampleService;
     private final IStarRelHisService relHisService;
     private final SeqService seqService;
 

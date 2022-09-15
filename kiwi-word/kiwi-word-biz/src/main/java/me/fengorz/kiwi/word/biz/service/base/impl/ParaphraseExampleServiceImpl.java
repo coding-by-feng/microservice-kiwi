@@ -30,7 +30,7 @@ import me.fengorz.kiwi.word.api.dto.mapper.in.SelectEntityIsCollectDTO;
 import me.fengorz.kiwi.word.api.entity.ParaphraseExampleDO;
 import me.fengorz.kiwi.word.api.vo.ParaphraseExampleVO;
 import me.fengorz.kiwi.word.biz.mapper.ParaphraseExampleMapper;
-import me.fengorz.kiwi.word.biz.service.base.IParaphraseExampleService;
+import me.fengorz.kiwi.word.biz.service.base.ParaphraseExampleService;
 
 /**
  * 单词例句表
@@ -41,7 +41,7 @@ import me.fengorz.kiwi.word.biz.service.base.IParaphraseExampleService;
 @Service
 @RequiredArgsConstructor
 public class ParaphraseExampleServiceImpl extends ServiceImpl<ParaphraseExampleMapper, ParaphraseExampleDO>
-    implements IParaphraseExampleService {
+    implements ParaphraseExampleService {
 
     private final ParaphraseExampleMapper mapper;
 

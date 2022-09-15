@@ -34,7 +34,7 @@ import me.fengorz.kiwi.common.sdk.controller.BaseController;
 import me.fengorz.kiwi.word.api.common.ApiCrawlerConstants;
 import me.fengorz.kiwi.word.api.entity.FetchQueueDO;
 import me.fengorz.kiwi.word.api.entity.WordMainDO;
-import me.fengorz.kiwi.word.biz.service.base.IWordFetchQueueService;
+import me.fengorz.kiwi.word.biz.service.base.WordFetchQueueService;
 
 /**
  * 单词主表
@@ -48,7 +48,7 @@ import me.fengorz.kiwi.word.biz.service.base.IWordFetchQueueService;
 @Slf4j
 public class TestTempController extends BaseController {
 
-    private final IWordFetchQueueService wordFetchQueueService;
+    private final WordFetchQueueService wordFetchQueueService;
     private final SeqService seqService;
     // @Value("${me.fengorz.file.vocabulary.word.list.path}")
     private String tmp;

@@ -41,10 +41,10 @@ crawler:
     core-pool-size: 10
     max-pool-size: 20
     queue-capacity: 10
-    enable-mq: false
+    enable-mq: true
     enable-scheduler: {
       "voice-generate": true,
-      "cache-word": false,
+      "cache-word": true,
       "refresh-all-api-key": true
     }
 

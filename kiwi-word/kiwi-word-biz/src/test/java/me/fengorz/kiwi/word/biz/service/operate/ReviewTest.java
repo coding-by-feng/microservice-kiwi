@@ -14,9 +14,14 @@
  *
  */
 
-package me.fengorz.kiwi.word.biz.service.operate.impl;
+package me.fengorz.kiwi.word.biz.service.operate;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
@@ -31,26 +36,35 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import cn.hutool.core.io.FileUtil;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import me.fengorz.kiwi.admin.api.dto.UserFullInfoDTO;
+import me.fengorz.kiwi.admin.api.feign.UserApi;
+import me.fengorz.kiwi.bdf.core.service.SeqService;
+import me.fengorz.kiwi.common.api.R;
 import me.fengorz.kiwi.common.fastdfs.service.DfsService;
 import me.fengorz.kiwi.common.sdk.constant.EnvConstants;
 import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
+import me.fengorz.kiwi.common.sdk.constant.MapperConstant;
 import me.fengorz.kiwi.common.sdk.util.json.KiwiJsonUtils;
+import me.fengorz.kiwi.word.api.common.WordConstants;
 import me.fengorz.kiwi.word.api.common.enumeration.ReviewAudioTypeEnum;
 import me.fengorz.kiwi.word.api.common.enumeration.ReviewDailyCounterTypeEnum;
 import me.fengorz.kiwi.word.api.entity.ParaphraseDO;
+import me.fengorz.kiwi.word.api.entity.ParaphraseStarListDO;
 import me.fengorz.kiwi.word.api.entity.WordReviewAudioDO;
+import me.fengorz.kiwi.word.api.vo.ParaphraseStarListVO;
 import me.fengorz.kiwi.word.api.vo.WordReviewDailyCounterVO;
 import me.fengorz.kiwi.word.biz.WordBizApplication;
 import me.fengorz.kiwi.word.biz.service.base.ParaphraseService;
+import me.fengorz.kiwi.word.biz.service.base.ParaphraseStarListService;
 import me.fengorz.kiwi.word.biz.service.base.WordMainService;
-import me.fengorz.kiwi.word.biz.service.operate.ReviewService;
+import me.fengorz.kiwi.word.biz.util.WordDataSetupUtils;
 
 @Slf4j
 @ActiveProfiles({EnvConstants.DEV, EnvConstants.BASE})
 @ExtendWith(SpringExtension.class)
 @TestPropertySource("classpath:env.properties")
 @SpringBootTest(classes = WordBizApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class ReviewServiceImplTest {
+public class ReviewTest {
 
     @Autowired
     private ReviewService reviewService;
@@ -63,6 +77,15 @@ public class ReviewServiceImplTest {
 
     @Autowired
     private DfsService dfsService;
+
+    @Autowired
+    private ParaphraseStarListService paraphraseStarListService;
+
+    @Autowired
+    private SeqService seqService;
+
+    @Autowired
+    private UserApi userApi;
 
     @Test
     @Disabled
@@ -83,7 +106,7 @@ public class ReviewServiceImplTest {
     }
 
     @Test
-    // @Disabled
+    @Disabled
     void createTheDays() {
         Assertions.assertDoesNotThrow(() -> reviewService.createTheDays(1));
     }
@@ -119,8 +142,59 @@ public class ReviewServiceImplTest {
     @Test
     @Disabled
     void test_findWordReviewAudio() {
-        WordReviewAudioDO wordReviewAudio = reviewService.findWordReviewAudio(1510384, ReviewAudioTypeEnum.NON_REVIEW_SPELL.getType());
+        WordReviewAudioDO wordReviewAudio =
+            reviewService.findWordReviewAudio(1510384, ReviewAudioTypeEnum.NON_REVIEW_SPELL.getType());
         byte[] bytes = this.dfsService.downloadFile(wordReviewAudio.getGroupName(), wordReviewAudio.getFilePath());
         FileUtil.writeBytes(bytes, "test_paraphrase_ch.mp3");
     }
+
+    @Test
+    @Disabled
+    void test_createCommonParaphraseCollection() {
+        R<?> echo = userApi.info("echo");
+        Assertions.assertFalse(echo.getData() instanceof String);
+        log.info("echo.getData(): {}", echo.getData());
+        UserFullInfoDTO echoUserInfo = (UserFullInfoDTO)echo.getData();
+        Integer seqId = seqService.genIntSequence(MapperConstant.T_INS_SEQUENCE);
+        ParaphraseStarListDO paraphraseStarListDO =
+            new ParaphraseStarListDO().setId(seqId).setOwner(echoUserInfo.getSysUser().getUserId())
+                .setCreateTime(LocalDateTime.now()).setIsDel(GlobalConstants.FLAG_N).setRemark("auto gen.")
+                .setListName(WordConstants.COMMON_PARAPHRASE_COLLECTION.IELTS);
+        paraphraseStarListService.save(paraphraseStarListDO);
+        Assertions.assertNotNull(paraphraseStarListService.getById(seqId));
+    }
+
+    @Test
+    @Disabled
+    void test_commonParaphraseCollection() {
+        R<UserFullInfoDTO> echo = userApi.info("echo");
+        log.info("echo.getData(): {}", echo.getData());
+        UserFullInfoDTO echoUserInfo = echo.getData();
+        Assertions.assertNotNull(echoUserInfo);
+        log.info("echoUserInfo userid: {}", echoUserInfo.getSysUser().getUserId());
+        List<ParaphraseStarListVO> list =
+            paraphraseStarListService.getCurrentUserList(echoUserInfo.getSysUser().getUserId());
+        Assertions.assertNotNull(list);
+        Assertions.assertTrue(list.size() > 0);
+        List<String> collectionNames = list.stream().map(collection -> {
+            log.info("Collection name is: {}", collection.getListName());
+            return collection.getListName();
+        }).collect(Collectors.toList());
+        Assertions.assertTrue(collectionNames.contains(WordConstants.COMMON_PARAPHRASE_COLLECTION.IELTS));
+    }
+
+    @Test
+    @SneakyThrows
+    void test_IELTS_wordList() {
+        String resourcePath = this.getClass().getResource(GlobalConstants.SYMBOL_FORWARD_SLASH).getPath();
+        Files.list(Paths.get(resourcePath + "/word-list")).forEach(path -> {
+            log.info("path: {}", path);
+            try {
+                WordDataSetupUtils.extractWordList(path.toString());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
 }

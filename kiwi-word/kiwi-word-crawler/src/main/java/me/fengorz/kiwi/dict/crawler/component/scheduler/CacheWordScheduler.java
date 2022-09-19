@@ -29,8 +29,8 @@ import me.fengorz.kiwi.dict.crawler.component.scheduler.base.AbstractFetchSchedu
 import me.fengorz.kiwi.dict.crawler.component.scheduler.base.Scheduler;
 import me.fengorz.kiwi.dict.crawler.component.scheduler.base.SchedulerDTO;
 import me.fengorz.kiwi.word.api.entity.FetchQueueDO;
-import me.fengorz.kiwi.word.api.feign.IBizAPI;
-import me.fengorz.kiwi.word.api.feign.IQueryAPI;
+import me.fengorz.kiwi.word.api.feign.DictFetchApi;
+import me.fengorz.kiwi.word.api.feign.QueryApi;
 import me.fengorz.kiwi.word.api.util.WordApiUtils;
 
 /**
@@ -41,10 +41,10 @@ import me.fengorz.kiwi.word.api.util.WordApiUtils;
 public class CacheWordScheduler extends AbstractFetchScheduler implements Scheduler {
 
     private static final String CACHING_WORD = "caching word {}!";
-    private final IQueryAPI queryAPI;
+    private final QueryApi queryAPI;
 
-    public CacheWordScheduler(final IBizAPI bizAPI, final IQueryAPI queryAPI) {
-        super(bizAPI);
+    public CacheWordScheduler(final DictFetchApi dictFetchApi, final QueryApi queryAPI) {
+        super(dictFetchApi);
         this.queryAPI = queryAPI;
     }
 
@@ -61,7 +61,7 @@ public class CacheWordScheduler extends AbstractFetchScheduler implements Schedu
 
     @Override
     public List<FetchQueueDO> getQueueDO(SchedulerDTO dto) {
-        List<FetchQueueDO> list = bizAPI.listNotIntoCache().getData();
+        List<FetchQueueDO> list = dictFetchApi.listNotIntoCache().getData();
         if (!KiwiCollectionUtils.isEmpty(list)) {
             countDownLatch = new CountDownLatch(list.size());
         }
@@ -84,7 +84,7 @@ public class CacheWordScheduler extends AbstractFetchScheduler implements Schedu
         } finally {
             queue.setIsIntoCache(GlobalConstants.FLAG_YES);
             countDownLatch.countDown();
-            bizAPI.updateQueueById(queue);
+            dictFetchApi.updateQueueById(queue);
         }
     }
 }

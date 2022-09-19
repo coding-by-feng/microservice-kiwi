@@ -1,6 +1,6 @@
 /*
  *
- * Copyright [2019~2025] [zhanshifeng]
+ * Copyright [2019~2025] [codingByFeng]
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -22,17 +22,27 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestHeader;
 
 import me.fengorz.kiwi.admin.api.dto.UserFullInfoDTO;
-import me.fengorz.kiwi.admin.api.feign.factory.UserAPIFallBackFactory;
+import me.fengorz.kiwi.admin.api.feign.factory.UserApiFallbackFactory;
 import me.fengorz.kiwi.common.api.R;
+import me.fengorz.kiwi.common.sdk.constant.EnvConstants;
 import me.fengorz.kiwi.common.sdk.constant.SecurityConstants;
 
 /**
- * @Description 用户信息服务 @Author zhanshifeng @Date 2019-09-26 09:25
+ * @Description TODO
+ * @Author zhanshifeng
+ * @Date 2022/9/18 10:15
  */
-@FeignClient(contextId = "remoteUserService", value = "kiwi-upms", fallbackFactory = UserAPIFallBackFactory.class)
-public interface IUserAPI {
+@FeignClient(contextId = "userApi", value = EnvConstants.APPLICATION_NAME_KIWI_UPMS,
+    fallbackFactory = UserApiFallbackFactory.class)
+public interface UserApi {
 
-    @GetMapping("/sys/user/info/{username}")
+    String SYS_USER = "/sys/user";
+
+    @GetMapping(SYS_USER + "/info/{username}")
+    R<UserFullInfoDTO> info(@PathVariable("username") String username);
+
+    @GetMapping(SYS_USER + "/info/{username}")
     R<UserFullInfoDTO> info(@PathVariable("username") String username,
         @RequestHeader(SecurityConstants.KEY_HEADER_FROM) String from);
+
 }

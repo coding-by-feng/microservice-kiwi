@@ -29,7 +29,7 @@ import me.fengorz.kiwi.dict.crawler.component.producer.base.MqSender;
 import me.fengorz.kiwi.word.api.common.ApiCrawlerConstants;
 import me.fengorz.kiwi.word.api.dto.queue.FetchWordMqDTO;
 import me.fengorz.kiwi.word.api.entity.FetchQueueDO;
-import me.fengorz.kiwi.word.api.feign.IBizAPI;
+import me.fengorz.kiwi.word.api.feign.DictFetchApi;
 
 /**
  * 抓取单词基本信息-消息队列生产者 @Author zhanshifeng @Date 2019/10/30 10:33 AM
@@ -38,8 +38,8 @@ import me.fengorz.kiwi.word.api.feign.IBizAPI;
 @Slf4j
 public class FetchWordProducer extends AbstractProducer implements MqProducer {
 
-    public FetchWordProducer(IBizAPI bizAPI, MqSender MQSender) {
-        super(bizAPI, MQSender);
+    public FetchWordProducer(DictFetchApi dictFetchApi, MqSender MQSender) {
+        super(dictFetchApi, MQSender);
         this.infoType = ApiCrawlerConstants.QUEUE_INFO_TYPE_WORD;
     }
 
@@ -64,13 +64,13 @@ public class FetchWordProducer extends AbstractProducer implements MqProducer {
         queue.setFetchResult(GlobalConstants.EMPTY);
         if (null == queue.getWordId() || 0 == queue.getWordId()) {
             queue.setFetchStatus(ApiCrawlerConstants.STATUS_DOING_FETCH);
-            if (Optional.of(bizApi.updateQueueById(queue)).get().isSuccess()) {
+            if (Optional.of(dictFetchApi.updateQueueById(queue)).get().isSuccess()) {
                 mqSender.fetchWord(new FetchWordMqDTO().setWord(queue.getWordName()).setQueueId(queue.getQueueId()));
             }
         } else {
             // 删除老的数据
             queue.setFetchStatus(ApiCrawlerConstants.STATUS_TO_DEL_BASE);
-            bizApi.updateQueueById(queue);
+            dictFetchApi.updateQueueById(queue);
         }
     }
 }

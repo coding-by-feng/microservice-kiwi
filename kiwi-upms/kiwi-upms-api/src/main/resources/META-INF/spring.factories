@@ -1,3 +1,3 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
   me.fengorz.kiwi.admin.api.feign.factory.UserAPIFallBackFactory,\
-  me.fengorz.kiwi.admin.api.feign.fallback.IUserAPIFallBackImpl
+  me.fengorz.kiwi.admin.api.feign.fallback.UserApiFallback

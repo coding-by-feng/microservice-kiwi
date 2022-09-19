@@ -35,7 +35,7 @@ import me.fengorz.kiwi.dict.crawler.component.producer.base.MqProducer;
 import me.fengorz.kiwi.dict.crawler.component.producer.base.MqSender;
 import me.fengorz.kiwi.word.api.common.ApiCrawlerConstants;
 import me.fengorz.kiwi.word.api.entity.FetchQueueDO;
-import me.fengorz.kiwi.word.api.feign.IBizAPI;
+import me.fengorz.kiwi.word.api.feign.DictFetchApi;
 import me.fengorz.kiwi.word.api.util.WordApiUtils;
 
 /**
@@ -45,8 +45,8 @@ import me.fengorz.kiwi.word.api.util.WordApiUtils;
 @Component
 public class ErrorResumeProducer extends AbstractProducer implements MqProducer {
 
-    public ErrorResumeProducer(IBizAPI bizApi, MqSender mqSender) {
-        super(bizApi, mqSender);
+    public ErrorResumeProducer(DictFetchApi dictFetchApi, MqSender mqSender) {
+        super(dictFetchApi, mqSender);
         this.infoType = ApiCrawlerConstants.QUEUE_INFO_TYPE_WORD;
     }
 
@@ -62,12 +62,12 @@ public class ErrorResumeProducer extends AbstractProducer implements MqProducer 
     public void resumeDelPronunciationError() {
         List<FetchQueueDO> list = new ArrayList<>();
         List<FetchQueueDO> delPronunciationFailList =
-            bizApi.pageQueue(ApiCrawlerConstants.STATUS_DEL_PRONUNCIATION_FAIL, 0, 20,
+            dictFetchApi.pageQueue(ApiCrawlerConstants.STATUS_DEL_PRONUNCIATION_FAIL, 0, 20,
                 ApiCrawlerConstants.QUEUE_INFO_TYPE_WORD).getData();
         if (KiwiCollectionUtils.isNotEmpty(delPronunciationFailList)) {
             list.addAll(delPronunciationFailList);
         }
-        List<FetchQueueDO> delBaseFailList = (bizApi.pageQueue(ApiCrawlerConstants.STATUS_DEL_BASE_FAIL, 0, 20,
+        List<FetchQueueDO> delBaseFailList = (dictFetchApi.pageQueue(ApiCrawlerConstants.STATUS_DEL_BASE_FAIL, 0, 20,
             ApiCrawlerConstants.QUEUE_INFO_TYPE_WORD)).getData();
         if (KiwiCollectionUtils.isNotEmpty(delBaseFailList)) {
             list.addAll(delBaseFailList);
@@ -85,12 +85,12 @@ public class ErrorResumeProducer extends AbstractProducer implements MqProducer 
     @LogMarker
     public void resumeOverlap() {
         List<FetchQueueDO> list = new LinkedList<>();
-        ListUtils.emptyIfNull(bizApi.listOverlapAnyway().getData()).stream()
+        ListUtils.emptyIfNull(dictFetchApi.listOverlapAnyway().getData()).stream()
             .peek(wordName -> log.info("Overlapped wordName is {}", wordName)).map(wordName -> {
-                FetchQueueDO queue = bizApi.getAnyOne(WordApiUtils.encode(wordName)).getData();
+                FetchQueueDO queue = dictFetchApi.getAnyOne(WordApiUtils.encode(wordName)).getData();
                 if (queue == null) {
                     log.info("The word queue does not exist, push it[{}] in a queue", wordName);
-                    this.bizApi.queryWord(WordApiUtils.encode(wordName));
+                    this.dictFetchApi.queryWord(WordApiUtils.encode(wordName));
                 }
                 return queue;
             }).peek(word -> log.info("Overlapped word is {}", word)).filter(Objects::nonNull)
@@ -103,7 +103,7 @@ public class ErrorResumeProducer extends AbstractProducer implements MqProducer 
             log.info("Data for the word {} is duplicate. Dirty data is to be deleted", queue.getWordName());
             queue.setIsLock(GlobalConstants.FLAG_YES);
             queue.setFetchStatus(ApiCrawlerConstants.STATUS_TO_DEL_BASE);
-            bizApi.updateQueueById(queue);
+            dictFetchApi.updateQueueById(queue);
         });
     }
 
@@ -117,6 +117,6 @@ public class ErrorResumeProducer extends AbstractProducer implements MqProducer 
     protected void execute(FetchQueueDO queue) {
         queue.setIsLock(GlobalConstants.FLAG_YES);
         queue.setFetchStatus(ApiCrawlerConstants.STATUS_TO_FETCH);
-        bizApi.updateQueueById(queue);
+        dictFetchApi.updateQueueById(queue);
     }
 }

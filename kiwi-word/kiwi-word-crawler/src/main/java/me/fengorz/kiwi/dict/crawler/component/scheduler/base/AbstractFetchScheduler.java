@@ -24,7 +24,7 @@ import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.sdk.util.lang.collection.KiwiCollectionUtils;
 import me.fengorz.kiwi.word.api.entity.FetchQueueDO;
 import me.fengorz.kiwi.word.api.exception.SchedulerException;
-import me.fengorz.kiwi.word.api.feign.IBizAPI;
+import me.fengorz.kiwi.word.api.feign.DictFetchApi;
 
 /**
  * @Author zhanshifeng @Date 2020/7/29 2:16 PM
@@ -34,7 +34,7 @@ import me.fengorz.kiwi.word.api.feign.IBizAPI;
 public abstract class AbstractFetchScheduler implements Scheduler {
 
     private static final String COUNT_DOWN_LATCH_ERROR = "countDownLatch error!";
-    protected final IBizAPI bizAPI;
+    protected final DictFetchApi dictFetchApi;
     protected final Object barrier = new Object();
     protected CountDownLatch countDownLatch;
 

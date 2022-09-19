@@ -31,7 +31,7 @@ import me.fengorz.kiwi.word.api.vo.star.ParaphraseStarItemVO;
  * @author zhanshifeng
  * @date 2019-12-08 23:27:41
  */
-public interface IParaphraseStarListService extends IService<ParaphraseStarListDO> {
+public interface ParaphraseStarListService extends IService<ParaphraseStarListDO> {
 
     Integer countById(Integer id);
 

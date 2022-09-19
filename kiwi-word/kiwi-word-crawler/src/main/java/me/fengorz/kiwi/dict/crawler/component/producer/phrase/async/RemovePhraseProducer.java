@@ -29,7 +29,7 @@ import me.fengorz.kiwi.dict.crawler.component.producer.base.MqSender;
 import me.fengorz.kiwi.word.api.common.ApiCrawlerConstants;
 import me.fengorz.kiwi.word.api.dto.queue.RemoveMqDTO;
 import me.fengorz.kiwi.word.api.entity.FetchQueueDO;
-import me.fengorz.kiwi.word.api.feign.IBizAPI;
+import me.fengorz.kiwi.word.api.feign.DictFetchApi;
 
 /**
  * 老旧单词数据清除--消息队列生产者 @Author zhanshifeng @Date 2019/10/30 10:33 AM
@@ -38,8 +38,8 @@ import me.fengorz.kiwi.word.api.feign.IBizAPI;
 @Slf4j
 public class RemovePhraseProducer extends AbstractProducer implements MqProducer {
 
-    public RemovePhraseProducer(IBizAPI bizAPI, MqSender MQSender) {
-        super(bizAPI, MQSender);
+    public RemovePhraseProducer(DictFetchApi dictFetchApi, MqSender MQSender) {
+        super(dictFetchApi, MQSender);
         this.infoType = ApiCrawlerConstants.QUEUE_INFO_TYPE_PHRASE;
     }
 
@@ -53,7 +53,7 @@ public class RemovePhraseProducer extends AbstractProducer implements MqProducer
     public void execute(FetchQueueDO queue) {
         queue.setIsLock(GlobalConstants.FLAG_YES);
         queue.setFetchStatus(ApiCrawlerConstants.STATUS_DOING_DEL_BASE);
-        if (Optional.of(bizApi.updateQueueById(queue)).get().isSuccess()) {
+        if (Optional.of(dictFetchApi.updateQueueById(queue)).get().isSuccess()) {
             mqSender.removePhrase(new RemoveMqDTO().setQueueId(queue.getQueueId()));
         }
     }

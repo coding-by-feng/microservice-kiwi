@@ -26,7 +26,7 @@ import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
 import me.fengorz.kiwi.common.sdk.util.lang.collection.KiwiCollectionUtils;
 import me.fengorz.kiwi.word.api.common.ApiCrawlerConstants;
 import me.fengorz.kiwi.word.api.entity.FetchQueueDO;
-import me.fengorz.kiwi.word.api.feign.IBizAPI;
+import me.fengorz.kiwi.word.api.feign.DictFetchApi;
 
 /**
  * @Author zhanshifeng
@@ -36,12 +36,12 @@ import me.fengorz.kiwi.word.api.feign.IBizAPI;
 public abstract class AbstractProducer implements MqProducer {
 
     public final Semaphore barrier;
-    protected final IBizAPI bizApi;
+    protected final DictFetchApi dictFetchApi;
     protected final MqSender mqSender;
     protected Integer infoType;
 
-    public AbstractProducer(IBizAPI bizApi, MqSender mqSender) {
-        this.bizApi = bizApi;
+    public AbstractProducer(DictFetchApi dictFetchApi, MqSender mqSender) {
+        this.dictFetchApi = dictFetchApi;
         this.mqSender = mqSender;
         this.barrier = new Semaphore(2);
     }
@@ -52,7 +52,7 @@ public abstract class AbstractProducer implements MqProducer {
     }
 
     protected List<FetchQueueDO> getQueueDO(Integer status) {
-        return bizApi.pageQueueLockIn(status, 0, 20, infoType).getData();
+        return dictFetchApi.pageQueueLockIn(status, 0, 20, infoType).getData();
     }
 
     protected void produce(Integer... status) {
@@ -83,7 +83,7 @@ public abstract class AbstractProducer implements MqProducer {
             queue.setIsLock(GlobalConstants.FLAG_NO);
             queue.setFetchStatus(ApiCrawlerConstants.STATUS_TO_DEL_BASE);
             queue.setFetchResult(GlobalConstants.EMPTY);
-            bizApi.updateQueueById(queue);
+            dictFetchApi.updateQueueById(queue);
             log.info("Words[{}] repeatedly fetch exceptions, ready to clear historical exception data!", queue);
             return true;
         }

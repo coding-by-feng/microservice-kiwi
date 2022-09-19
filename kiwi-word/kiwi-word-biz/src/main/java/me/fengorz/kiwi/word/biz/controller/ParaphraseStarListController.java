@@ -40,8 +40,8 @@ import me.fengorz.kiwi.word.api.entity.ParaphraseStarListDO;
 import me.fengorz.kiwi.word.api.vo.ParaphraseStarListVO;
 import me.fengorz.kiwi.word.api.vo.detail.ParaphraseVO;
 import me.fengorz.kiwi.word.api.vo.star.ParaphraseStarItemVO;
-import me.fengorz.kiwi.word.biz.service.base.IParaphraseStarListService;
 import me.fengorz.kiwi.word.biz.service.base.ParaphraseService;
+import me.fengorz.kiwi.word.biz.service.base.ParaphraseStarListService;
 import me.fengorz.kiwi.word.biz.service.operate.OperateService;
 import me.fengorz.kiwi.word.biz.service.operate.ReviewService;
 
@@ -58,7 +58,7 @@ import me.fengorz.kiwi.word.biz.service.operate.ReviewService;
 @Slf4j
 public class ParaphraseStarListController extends BaseController {
 
-    private final IParaphraseStarListService starListService;
+    private final ParaphraseStarListService starListService;
     private final OperateService operateService;
     private final ParaphraseService paraphraseService;
     private final ReviewService reviewService;

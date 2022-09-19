@@ -14,23 +14,23 @@
  *
  */
 
-package me.fengorz.kiwi.word.api.feign.factory;
+package me.fengorz.kiwi.admin.api.feign.factory;
 
 import org.springframework.stereotype.Component;
 
 import feign.hystrix.FallbackFactory;
-import me.fengorz.kiwi.word.api.feign.IWordMainVariantAPI;
-import me.fengorz.kiwi.word.api.feign.fallback.WordMainVariantAPIFallback;
+import me.fengorz.kiwi.admin.api.feign.UserApi;
+import me.fengorz.kiwi.admin.api.feign.fallback.UserApiFallback;
 
 /**
  * @Author zhanshifeng @Date 2019/10/30 3:19 PM
  */
 @Component
-public class WordMainVariantFallBackFactory implements FallbackFactory<IWordMainVariantAPI> {
+public class UserApiFallbackFactory implements FallbackFactory<UserApi> {
     @Override
-    public IWordMainVariantAPI create(Throwable throwable) {
-        WordMainVariantAPIFallback fallback = new WordMainVariantAPIFallback();
-        fallback.setThrowable(throwable);
-        return fallback;
+    public UserApi create(Throwable throwable) {
+        UserApiFallback userApiFallback = new UserApiFallback();
+        userApiFallback.setThrowable(throwable);
+        return userApiFallback;
     }
 }

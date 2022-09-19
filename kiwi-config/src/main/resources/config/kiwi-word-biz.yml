@@ -22,6 +22,7 @@ ignore:
     - /word/main/variant/**
     - /word/main/listOverlapAnyway
     - /word/review/createTheDays
+    - /word/review/refreshAllApiKey
     - /word/review/downloadReviewAudio/**
     - /word/review/generateTtsVoice/**
     - /word/review/generateTtsVoiceFromParaphraseId/**

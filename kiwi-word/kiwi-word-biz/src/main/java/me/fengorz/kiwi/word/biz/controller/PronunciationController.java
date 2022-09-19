@@ -75,7 +75,7 @@ public class PronunciationController extends AbstractDfsController {
             log.error("downloadVoice exception, pronunciationId={}, re-fetching now!", pronunciationId, e);
             crawlerService.reFetchPronunciation(pronunciationId);
         }
-        WebTools.downloadResponse(response, inputStream);
+        WebTools.downloadResponseAndClose(response, inputStream);
         log.info("Method downloadResponse for wordPronunciation invoked success.");
     }
 }

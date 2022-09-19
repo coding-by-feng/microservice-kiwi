@@ -30,4 +30,8 @@ public interface EnvConstants {
     String BASE = "base";
     String PROD = "prod";
 
+    String APPLICATION_NAME_KIWI_WORD_BIZ = "kiwi-word-biz";
+    String APPLICATION_NAME_KIWI_WORD_BIZ_CRAWLER = "kiwi-word-biz-crawler";
+    String APPLICATION_NAME_KIWI_UPMS = "kiwi-upms";
+
 }

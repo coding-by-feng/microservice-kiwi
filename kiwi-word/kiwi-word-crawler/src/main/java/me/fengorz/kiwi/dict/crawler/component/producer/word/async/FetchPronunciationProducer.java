@@ -29,7 +29,7 @@ import me.fengorz.kiwi.dict.crawler.component.producer.base.MqSender;
 import me.fengorz.kiwi.word.api.common.ApiCrawlerConstants;
 import me.fengorz.kiwi.word.api.dto.queue.FetchPronunciationMqDTO;
 import me.fengorz.kiwi.word.api.entity.FetchQueueDO;
-import me.fengorz.kiwi.word.api.feign.IBizAPI;
+import me.fengorz.kiwi.word.api.feign.DictFetchApi;
 
 /**
  * 抓取音标和发音资源-消息队列生产者 @Author zhanshifeng @Date 2019/10/30 10:33 AM
@@ -38,8 +38,8 @@ import me.fengorz.kiwi.word.api.feign.IBizAPI;
 @Slf4j
 public class FetchPronunciationProducer extends AbstractProducer implements MqProducer {
 
-    public FetchPronunciationProducer(IBizAPI bizApi, MqSender mqSender) {
-        super(bizApi, mqSender);
+    public FetchPronunciationProducer(DictFetchApi dictFetchApi, MqSender mqSender) {
+        super(dictFetchApi, mqSender);
         this.infoType = ApiCrawlerConstants.QUEUE_INFO_TYPE_WORD;
     }
 
@@ -53,7 +53,7 @@ public class FetchPronunciationProducer extends AbstractProducer implements MqPr
     public void execute(FetchQueueDO queue) {
         queue.setIsLock(GlobalConstants.FLAG_YES);
         queue.setFetchStatus(ApiCrawlerConstants.STATUS_DOING_FETCH_PRONUNCIATION);
-        if (Optional.of(bizApi.updateQueueById(queue)).get().isSuccess()) {
+        if (Optional.of(dictFetchApi.updateQueueById(queue)).get().isSuccess()) {
             mqSender.fetchPronunciation(
                 new FetchPronunciationMqDTO().setWordId(queue.getWordId()).setQueueId(queue.getQueueId()));
         }

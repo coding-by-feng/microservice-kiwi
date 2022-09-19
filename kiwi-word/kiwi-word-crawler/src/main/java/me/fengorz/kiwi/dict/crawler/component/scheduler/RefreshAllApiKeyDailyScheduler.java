@@ -16,7 +16,6 @@
 
 package me.fengorz.kiwi.dict.crawler.component.scheduler;
 
-import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.stereotype.Component;
 
 import lombok.RequiredArgsConstructor;
@@ -24,18 +23,17 @@ import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.sdk.annotation.ScheduledAwake;
 import me.fengorz.kiwi.dict.crawler.common.CrawlerConstants;
 import me.fengorz.kiwi.dict.crawler.component.scheduler.base.DailyScheduler;
-import me.fengorz.kiwi.word.api.feign.IBizAPI;
+import me.fengorz.kiwi.word.api.feign.DictFetchApi;
 
 /**
  * @Description Daily generation of review count records @Author zhanshifeng @Date 2021/8/19 8:54 PM
  */
 @Slf4j
 @Component(CrawlerConstants.COMPONENT_BEAN_ID.REFRESH_ALL_API_KEY_DAILY_SCHEDULER)
-@EnableScheduling
 @RequiredArgsConstructor
 public class RefreshAllApiKeyDailyScheduler implements DailyScheduler {
 
-    private final IBizAPI api;
+    private final DictFetchApi api;
 
     @Override
     @ScheduledAwake(key = "refresh-all-api-key")

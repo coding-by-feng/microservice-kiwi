@@ -35,7 +35,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.admin.api.dto.UserFullInfoDTO;
 import me.fengorz.kiwi.admin.api.entity.SysUser;
-import me.fengorz.kiwi.admin.api.feign.IUserAPI;
+import me.fengorz.kiwi.admin.api.feign.UserApi;
 import me.fengorz.kiwi.common.api.R;
 import me.fengorz.kiwi.common.api.entity.EnhancerUser;
 import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
@@ -49,7 +49,7 @@ import me.fengorz.kiwi.common.sdk.constant.SecurityConstants;
 @RequiredArgsConstructor
 public class KiwiUserDetailServiceImpl implements UserDetailsService {
     private final CacheManager cacheManager;
-    private final IUserAPI iUserAPI;
+    private final UserApi userApi;
 
     @Override
     public UserDetails loadUserByUsername(String username) {
@@ -57,7 +57,7 @@ public class KiwiUserDetailServiceImpl implements UserDetailsService {
         if (cache != null && cache.get(username) != null) {
             return (EnhancerUser)cache.get(username).get();
         }
-        R<UserFullInfoDTO> info = iUserAPI.info(username, SecurityConstants.FROM_IN);
+        R<UserFullInfoDTO> info = userApi.info(username, SecurityConstants.FROM_IN);
         UserDetails userDetails = getUserDetails(info);
         cache.put(username, userDetails);
         return userDetails;

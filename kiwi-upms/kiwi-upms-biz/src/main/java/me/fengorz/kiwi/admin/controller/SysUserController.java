@@ -25,6 +25,7 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
 import lombok.RequiredArgsConstructor;
+import me.fengorz.kiwi.admin.api.dto.UserFullInfoDTO;
 import me.fengorz.kiwi.admin.api.entity.SysUser;
 import me.fengorz.kiwi.admin.service.SysUserService;
 import me.fengorz.kiwi.common.api.R;
@@ -50,7 +51,7 @@ public class SysUserController extends BaseController {
     }
 
     @GetMapping("/current/info")
-    public R currentInfo() {
+    public R<UserFullInfoDTO> currentInfo() {
         final SysUser[] user = {null};
         Optional.ofNullable(this.getCurrentUser()).ifPresent(inspectUser -> {
             String username = inspectUser.getUsername();
@@ -62,11 +63,12 @@ public class SysUserController extends BaseController {
         return R.success(sysUserService.getUserFullInfo(user[0]));
     }
 
+    // TODO ZSF Add permission verification.
     @GetMapping("/info/{username}")
-    public R info(@PathVariable String username) {
+    public R<UserFullInfoDTO> info(@PathVariable String username) {
         SysUser user = sysUserService.getOne(Wrappers.<SysUser>query().lambda().eq(SysUser::getUsername, username));
         if (Objects.isNull(user)) {
-            return R.failed("用户信息查询不到 %s", username);
+            return R.failed("用户信息查询不到 %s");
         }
         return R.success(sysUserService.getUserFullInfo(user));
     }

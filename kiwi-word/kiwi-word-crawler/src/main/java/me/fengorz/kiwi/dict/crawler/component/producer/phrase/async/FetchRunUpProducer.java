@@ -29,7 +29,7 @@ import me.fengorz.kiwi.dict.crawler.component.producer.base.MqSender;
 import me.fengorz.kiwi.word.api.common.ApiCrawlerConstants;
 import me.fengorz.kiwi.word.api.dto.queue.FetchPhraseRunUpMqDTO;
 import me.fengorz.kiwi.word.api.entity.FetchQueueDO;
-import me.fengorz.kiwi.word.api.feign.IBizAPI;
+import me.fengorz.kiwi.word.api.feign.DictFetchApi;
 
 /**
  * 抓取词组基本信息-消息队列生产者 @Author zhanshifeng @Date 2019/10/30 10:33 AM
@@ -38,14 +38,14 @@ import me.fengorz.kiwi.word.api.feign.IBizAPI;
 @Slf4j
 public class FetchRunUpProducer extends AbstractProducer implements MqProducer {
 
-    public FetchRunUpProducer(IBizAPI bizAPI, MqSender MQSender) {
-        super(bizAPI, MQSender);
+    public FetchRunUpProducer(DictFetchApi dictFetchApi, MqSender MQSender) {
+        super(dictFetchApi, MQSender);
         this.infoType = ApiCrawlerConstants.QUEUE_INFO_TYPE_WORD;
     }
 
     @Override
     protected List<FetchQueueDO> getQueueDO(Integer status) {
-        return bizApi.pageQueue(status, 0, 20, infoType).getData();
+        return dictFetchApi.pageQueue(status, 0, 20, infoType).getData();
     }
 
     @Override
@@ -60,6 +60,6 @@ public class FetchRunUpProducer extends AbstractProducer implements MqProducer {
             .setWord(KiwiStringUtils.isBlank(queue.getDerivation()) ? queue.getWordName() : queue.getDerivation())
             .setWordId(queue.getWordId()));
         queue.setFetchStatus(ApiCrawlerConstants.STATUS_TO_FETCH_PHRASE);
-        bizApi.updateQueueById(queue);
+        dictFetchApi.updateQueueById(queue);
     }
 }

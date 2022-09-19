@@ -22,13 +22,14 @@ import org.springframework.stereotype.Component;
 
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.api.R;
+import me.fengorz.kiwi.common.api.feign.AbstractFallback;
 import me.fengorz.kiwi.common.sdk.annotation.log.LogMarker;
 import me.fengorz.kiwi.word.api.dto.queue.RemovePronunciatioinMqDTO;
 import me.fengorz.kiwi.word.api.dto.queue.result.FetchPhraseResultDTO;
 import me.fengorz.kiwi.word.api.dto.queue.result.FetchPhraseRunUpResultDTO;
 import me.fengorz.kiwi.word.api.dto.queue.result.FetchWordResultDTO;
 import me.fengorz.kiwi.word.api.entity.FetchQueueDO;
-import me.fengorz.kiwi.word.api.feign.IBizAPI;
+import me.fengorz.kiwi.word.api.feign.DictFetchApi;
 import me.fengorz.kiwi.word.api.vo.detail.WordQueryVO;
 
 /**
@@ -36,125 +37,108 @@ import me.fengorz.kiwi.word.api.vo.detail.WordQueryVO;
  */
 @Slf4j
 @Component
-public class BizAPIFallback extends AbstractFallback implements IBizAPI {
+public class DictFetchApiFallback extends AbstractFallback implements DictFetchApi {
 
     @Override
     @LogMarker(isPrintParameter = true)
     public R<FetchQueueDO> getOne(Integer queueId) {
-        log.error(throwable.getCause().getMessage());
-        return R.feignCallFailed(throwable.getMessage());
+        return handleError();
     }
 
     @Override
     @LogMarker(isPrintParameter = true)
     public R<FetchQueueDO> getOneByWordName(String wordName) {
-        log.error(throwable.getCause().getMessage());
-        return R.feignCallFailed(throwable.getMessage());
+        return handleError();
     }
 
     @Override
     @LogMarker(isPrintParameter = true)
     public R<FetchQueueDO> getAnyOne(String wordName) {
-        log.error(throwable.getCause().getMessage());
-        return R.feignCallFailed(throwable.getMessage());
+        return handleError();
     }
 
     @Override
     @LogMarker(isPrintParameter = true)
     public R<List<FetchQueueDO>> pageQueue(Integer status, Integer current, Integer size, Integer infoType) {
-        log.error(throwable.getCause().getMessage());
-        return R.feignCallFailed(throwable.getMessage());
+        return handleError();
     }
 
     @Override
     @LogMarker(isPrintParameter = true)
     public R<List<FetchQueueDO>> listNotIntoCache() {
-        log.error(throwable.getCause().getMessage());
-        return R.feignCallFailed(throwable.getMessage());
+        return handleError();
     }
 
     @Override
     @LogMarker(isPrintParameter = true)
     public R<List<FetchQueueDO>> pageQueueLockIn(Integer status, Integer current, Integer size, Integer infoType) {
-        log.error(throwable.getCause().getMessage());
-        return R.feignCallFailed(throwable.getMessage());
+        return handleError();
     }
 
     @Override
     @LogMarker(isPrintParameter = true)
     public R<Boolean> updateQueueById(FetchQueueDO queueDO) {
-        log.error(throwable.getCause().getMessage());
-        return R.feignCallFailed(throwable.getMessage());
+        return handleError();
     }
 
     @Override
     @LogMarker(isPrintParameter = true)
     public R<Void> storeResult(FetchWordResultDTO dto) {
-        log.error(throwable.getCause().getMessage());
-        return R.feignCallFailed(throwable.getMessage());
+        return handleError();
     }
 
     @Override
     @LogMarker(isPrintParameter = true)
     public R<Boolean> fetchPronunciation(Integer wordId) {
-        log.error(throwable.getCause().getMessage());
-        return R.feignCallFailed(throwable.getMessage());
+        return handleError();
     }
 
     @Override
     @LogMarker(isPrintParameter = true)
     public R<List<RemovePronunciatioinMqDTO>> removeWord(String wordName, Integer queueId) {
-        log.error(throwable.getCause().getMessage());
-        return R.feignCallFailed(throwable.getMessage());
+        return handleError();
     }
 
     @Override
     @LogMarker(isPrintParameter = true)
     public R<List<RemovePronunciatioinMqDTO>> removeWord(Integer queueId) {
-        log.error(throwable.getCause().getMessage());
-        return R.feignCallFailed(throwable.getMessage());
+        return handleError();
     }
 
     @Override
     @LogMarker(isPrintParameter = true)
     public R<Boolean> removePhrase(Integer queueId) {
-        log.error(throwable.getCause().getMessage());
-        return R.feignCallFailed(throwable.getMessage());
+        return handleError();
     }
 
     @Override
     @LogMarker(isPrintParameter = true)
     public R<Boolean> updateByWordName(FetchQueueDO queueDO) {
-        log.error(throwable.getCause().getMessage());
-        return R.feignCallFailed(throwable.getMessage());
+        return handleError();
     }
 
     @Override
     @LogMarker(isPrintParameter = true)
     public R<Boolean> lock(String wordName) {
-        log.error(throwable.getCause().getMessage());
-        return R.feignCallFailed(throwable.getMessage());
+        return handleError();
     }
 
     @Override
     @LogMarker(isPrintParameter = true)
     public R<List<String>> listOverlapAnyway() {
-        log.error(throwable.getCause().getMessage());
-        return R.feignCallFailed();
+        return handleError();
     }
 
     @Override
     @LogMarker(isPrintParameter = true)
     public void handlePhrasesFetchResult(FetchPhraseRunUpResultDTO dto) {
-        log.error(throwable.getCause().getMessage());
-        R.feignCallFailed(throwable.getMessage());
+        handleErrorNotReturn();
     }
 
     @Override
     @LogMarker(isPrintParameter = true)
     public void storePhrasesFetchResult(FetchPhraseResultDTO dto) {
-        log.error(throwable.getCause().getMessage());
-        R.feignCallFailed(throwable.getMessage());
+        handleErrorNotReturn();
     }
 
     @Override
@@ -167,19 +151,16 @@ public class BizAPIFallback extends AbstractFallback implements IBizAPI {
     @Override
     @LogMarker(isPrintParameter = true)
     public void createTheDays() {
-        log.error(throwable.getCause().getMessage());
-        R.feignCallFailed(throwable.getMessage());
+        handleErrorNotReturn();
     }
 
     @Override
     public void refreshAllApiKey() {
-        log.error(throwable.getCause().getMessage());
-        R.feignCallFailed(throwable.getMessage());
+        handleErrorNotReturn();
     }
 
     @Override
     public void generateTtsVoice() {
-        log.error(throwable.getCause().getMessage());
-        R.feignCallFailed(throwable.getMessage());
+        handleErrorNotReturn();
     }
 }

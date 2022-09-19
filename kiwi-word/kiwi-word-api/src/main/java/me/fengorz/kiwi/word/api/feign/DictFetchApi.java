@@ -22,20 +22,20 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 
 import me.fengorz.kiwi.common.api.R;
-import me.fengorz.kiwi.word.api.common.WordConstants;
+import me.fengorz.kiwi.common.sdk.constant.EnvConstants;
 import me.fengorz.kiwi.word.api.dto.queue.RemovePronunciatioinMqDTO;
 import me.fengorz.kiwi.word.api.dto.queue.result.FetchPhraseResultDTO;
 import me.fengorz.kiwi.word.api.dto.queue.result.FetchPhraseRunUpResultDTO;
 import me.fengorz.kiwi.word.api.dto.queue.result.FetchWordResultDTO;
 import me.fengorz.kiwi.word.api.entity.FetchQueueDO;
-import me.fengorz.kiwi.word.api.feign.factory.BizFallbackFactory;
+import me.fengorz.kiwi.word.api.feign.factory.BizApiFallbackFactory;
 import me.fengorz.kiwi.word.api.vo.detail.WordQueryVO;
 
 /**
  * @Author zhanshifeng
  */
-@FeignClient(contextId = "bizAPI", value = WordConstants.KIWI_WORD_BIZ, fallbackFactory = BizFallbackFactory.class)
-public interface IBizAPI {
+@FeignClient(contextId = "dictFetchApi", value = EnvConstants.APPLICATION_NAME_KIWI_WORD_BIZ, fallbackFactory = BizApiFallbackFactory.class)
+public interface DictFetchApi {
 
     String WORD_FETCH_QUEUE = "/word/fetch";
     String WORD_MAIN = "/word/main";

@@ -19,18 +19,18 @@ package me.fengorz.kiwi.word.api.feign.factory;
 import org.springframework.stereotype.Component;
 
 import feign.hystrix.FallbackFactory;
-import me.fengorz.kiwi.word.api.feign.IBizAPI;
-import me.fengorz.kiwi.word.api.feign.fallback.BizAPIFallback;
+import me.fengorz.kiwi.word.api.feign.QueryApi;
+import me.fengorz.kiwi.word.api.feign.fallback.QueryApiFallback;
 
 /**
  * @Author zhanshifeng @Date 2019/10/30 3:19 PM
  */
 @Component
-public class BizFallbackFactory implements FallbackFactory<IBizAPI> {
+public class QueryApiFallbackFactory implements FallbackFactory<QueryApi> {
     @Override
-    public IBizAPI create(Throwable throwable) {
-        BizAPIFallback remoteWordFetchServiceFallBack = new BizAPIFallback();
-        remoteWordFetchServiceFallBack.setThrowable(throwable);
-        return remoteWordFetchServiceFallBack;
+    public QueryApi create(Throwable throwable) {
+        QueryApiFallback fallback = new QueryApiFallback();
+        fallback.setThrowable(throwable);
+        return fallback;
     }
 }

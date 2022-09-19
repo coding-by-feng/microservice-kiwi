@@ -45,8 +45,8 @@ import me.fengorz.kiwi.word.api.exception.JsoupFetchConnectException;
 import me.fengorz.kiwi.word.api.exception.JsoupFetchPronunciationException;
 import me.fengorz.kiwi.word.api.exception.PhraseRemoveException;
 import me.fengorz.kiwi.word.api.exception.WordRemoveException;
-import me.fengorz.kiwi.word.api.feign.IBizAPI;
-import me.fengorz.kiwi.word.api.feign.IWordMainVariantAPI;
+import me.fengorz.kiwi.word.api.feign.DictFetchApi;
+import me.fengorz.kiwi.word.api.feign.QueryApi;
 
 /**
  * @Author zhanshifeng @Date 2020/5/20 11:54 PM
@@ -57,8 +57,8 @@ import me.fengorz.kiwi.word.api.feign.IWordMainVariantAPI;
 public class FetchServiceImpl implements IFetchService {
 
     private final IJsoupService jsoupService;
-    private final IBizAPI bizAPI;
-    private final IWordMainVariantAPI wordVariantAPI;
+    private final DictFetchApi dictFetchApi;
+    private final QueryApi queryApi;
     private final MqSender MQSender;
     private final DfsService dfsService;
 
@@ -77,12 +77,12 @@ public class FetchServiceImpl implements IFetchService {
             final String fetchWord = fetchWordResultDTO.getWordName();
             queue.setDerivation(fetchWord);
 
-            R<Void> storeResult = bizAPI.storeResult(fetchWordResultDTO);
+            R<Void> storeResult = dictFetchApi.storeResult(fetchWordResultDTO);
             if (storeResult.isFail()) {
                 handleException(queue, ApiCrawlerConstants.STATUS_FETCH_FAIL, storeResult.getMsg());
             } else {
                 if (KiwiStringUtils.isNotEquals(inputWord, fetchWord)) {
-                    wordVariantAPI.insertVariant(inputWord, fetchWord);
+                    queryApi.insertVariant(inputWord, fetchWord);
                     String insertVariantResult = KiwiStringUtils
                         .format("word({}) has a variant({}), variant insert success!", fetchWord, inputWord);
                     log.info(insertVariantResult);
@@ -110,7 +110,7 @@ public class FetchServiceImpl implements IFetchService {
         } finally {
             if (isUpdate) {
                 queue.setIsIntoCache(GlobalConstants.FLAG_NO);
-                bizAPI.updateQueueById(queue);
+                dictFetchApi.updateQueueById(queue);
             }
         }
     }
@@ -120,7 +120,7 @@ public class FetchServiceImpl implements IFetchService {
         FetchQueueDO queue = new FetchQueueDO().setQueueId(Objects.requireNonNull(dto.getQueueId()));
         boolean isUpdate = false;
         try {
-            R<Boolean> response = Optional.of(bizAPI.fetchPronunciation(Objects.requireNonNull(dto.getWordId()))).get();
+            R<Boolean> response = Optional.of(dictFetchApi.fetchPronunciation(Objects.requireNonNull(dto.getWordId()))).get();
             if (response.isSuccess()) {
                 queue.setIsLock(GlobalConstants.FLAG_NO);
                 queue.setFetchStatus(ApiCrawlerConstants.STATUS_ALL_SUCCESS);
@@ -134,7 +134,7 @@ public class FetchServiceImpl implements IFetchService {
             isUpdate = true;
         } finally {
             if (isUpdate) {
-                bizAPI.updateQueueById(queue);
+                dictFetchApi.updateQueueById(queue);
             }
         }
     }
@@ -144,7 +144,7 @@ public class FetchServiceImpl implements IFetchService {
         FetchQueueDO queue = new FetchQueueDO().setQueueId(Objects.requireNonNull(dto.getQueueId()));
         boolean isUpdate = false;
         try {
-            R<List<RemovePronunciatioinMqDTO>> response = Optional.of(bizAPI.removeWord(dto.getQueueId())).get();
+            R<List<RemovePronunciatioinMqDTO>> response = Optional.of(dictFetchApi.removeWord(dto.getQueueId())).get();
             if (response.isSuccess()) {
                 // 删除完老的基础数据重新开始抓取单词
                 queue.setFetchStatus(ApiCrawlerConstants.STATUS_TO_FETCH);
@@ -161,7 +161,7 @@ public class FetchServiceImpl implements IFetchService {
             isUpdate = true;
         } finally {
             if (isUpdate) {
-                bizAPI.updateQueueById(queue);
+                dictFetchApi.updateQueueById(queue);
             }
         }
     }
@@ -177,7 +177,7 @@ public class FetchServiceImpl implements IFetchService {
             isUpdate = true;
         } finally {
             if (isUpdate) {
-                bizAPI.updateQueueById(queue);
+                dictFetchApi.updateQueueById(queue);
             }
         }
     }
@@ -189,7 +189,7 @@ public class FetchServiceImpl implements IFetchService {
         try {
             FetchPhraseRunUpResultDTO resultDTO = jsoupService.fetchPhraseRunUp(dto);
             if (KiwiCollectionUtils.isNotEmpty(resultDTO.getPhrases())) {
-                bizAPI.handlePhrasesFetchResult(resultDTO);
+                dictFetchApi.handlePhrasesFetchResult(resultDTO);
             }
             queue.setIsLock(GlobalConstants.FLAG_NO);
             queue.setFetchStatus(ApiCrawlerConstants.STATUS_PERFECT_SUCCESS);
@@ -200,7 +200,7 @@ public class FetchServiceImpl implements IFetchService {
             isUpdate = true;
         } finally {
             if (isUpdate) {
-                bizAPI.updateQueueById(queue);
+                dictFetchApi.updateQueueById(queue);
             }
         }
     }
@@ -216,7 +216,7 @@ public class FetchServiceImpl implements IFetchService {
                 queue.setFetchStatus(ApiCrawlerConstants.STATUS_TO_FETCH);
                 queue.setFetchTime(0);
             } else {
-                bizAPI.storePhrasesFetchResult(resultDTO);
+                dictFetchApi.storePhrasesFetchResult(resultDTO);
                 queue.setFetchStatus(ApiCrawlerConstants.STATUS_PERFECT_SUCCESS);
             }
             queue.setIsLock(GlobalConstants.FLAG_YES);
@@ -227,7 +227,7 @@ public class FetchServiceImpl implements IFetchService {
         } finally {
             if (isUpdate) {
                 queue.setIsIntoCache(GlobalConstants.FLAG_NO);
-                bizAPI.updateQueueById(queue);
+                dictFetchApi.updateQueueById(queue);
             }
         }
     }
@@ -237,7 +237,7 @@ public class FetchServiceImpl implements IFetchService {
         FetchQueueDO queue = new FetchQueueDO().setQueueId(Objects.requireNonNull(dto.getQueueId()));
         boolean isUpdate = false;
         try {
-            R<Boolean> response = Optional.of(bizAPI.removePhrase(dto.getQueueId())).get();
+            R<Boolean> response = Optional.of(dictFetchApi.removePhrase(dto.getQueueId())).get();
             if (response.isSuccess()) {
                 // 删除完老的基础数据重新开始抓取单词
                 queue.setFetchStatus(ApiCrawlerConstants.STATUS_TO_FETCH);
@@ -253,7 +253,7 @@ public class FetchServiceImpl implements IFetchService {
             isUpdate = true;
         } finally {
             if (isUpdate) {
-                bizAPI.updateQueueById(queue);
+                dictFetchApi.updateQueueById(queue);
             }
         }
     }

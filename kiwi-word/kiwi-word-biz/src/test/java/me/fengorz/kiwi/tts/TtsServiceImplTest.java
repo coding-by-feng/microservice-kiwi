@@ -115,7 +115,7 @@ public class TtsServiceImplTest {
     }
 
     @Test
-    @Disabled
+    // @Disabled
     void refreshAllApiKey() {
         Assertions.assertDoesNotThrow(() -> ttsService.refreshAllApiKey());
     }

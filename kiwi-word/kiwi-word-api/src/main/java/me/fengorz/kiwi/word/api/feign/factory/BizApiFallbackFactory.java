@@ -14,23 +14,23 @@
  *
  */
 
-package me.fengorz.kiwi.admin.api.feign.factory;
+package me.fengorz.kiwi.word.api.feign.factory;
 
 import org.springframework.stereotype.Component;
 
 import feign.hystrix.FallbackFactory;
-import me.fengorz.kiwi.admin.api.feign.IUserAPI;
-import me.fengorz.kiwi.admin.api.feign.fallback.IUserAPIFallBackImpl;
+import me.fengorz.kiwi.word.api.feign.DictFetchApi;
+import me.fengorz.kiwi.word.api.feign.fallback.DictFetchApiFallback;
 
 /**
- * @Author zhanshifeng @Date 2019-09-26 17:03
+ * @Author zhanshifeng @Date 2019/10/30 3:19 PM
  */
 @Component
-public class UserAPIFallBackFactory implements FallbackFactory<IUserAPI> {
+public class BizApiFallbackFactory implements FallbackFactory<DictFetchApi> {
     @Override
-    public IUserAPI create(Throwable throwable) {
-        IUserAPIFallBackImpl remoteUserServiceFallback = new IUserAPIFallBackImpl();
-        remoteUserServiceFallback.setThrowable(throwable);
-        return remoteUserServiceFallback;
+    public DictFetchApi create(Throwable throwable) {
+        DictFetchApiFallback remoteWordFetchServiceFallBack = new DictFetchApiFallback();
+        remoteWordFetchServiceFallBack.setThrowable(throwable);
+        return remoteWordFetchServiceFallBack;
     }
 }

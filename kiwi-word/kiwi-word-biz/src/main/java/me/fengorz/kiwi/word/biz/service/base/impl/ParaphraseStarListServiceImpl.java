@@ -41,7 +41,7 @@ import me.fengorz.kiwi.word.api.entity.column.WordParaphraseStarListColumn;
 import me.fengorz.kiwi.word.api.vo.ParaphraseStarListVO;
 import me.fengorz.kiwi.word.api.vo.star.ParaphraseStarItemVO;
 import me.fengorz.kiwi.word.biz.mapper.ParaphraseStarListMapper;
-import me.fengorz.kiwi.word.biz.service.base.IParaphraseStarListService;
+import me.fengorz.kiwi.word.biz.service.base.ParaphraseStarListService;
 import me.fengorz.kiwi.word.biz.service.base.ParaphraseStarRelService;
 import me.fengorz.kiwi.word.biz.service.operate.AsyncArchiveService;
 import me.fengorz.kiwi.word.biz.service.operate.ReviewService;
@@ -55,7 +55,7 @@ import me.fengorz.kiwi.word.biz.service.operate.ReviewService;
 @Service
 @RequiredArgsConstructor
 public class ParaphraseStarListServiceImpl extends ServiceImpl<ParaphraseStarListMapper, ParaphraseStarListDO>
-    implements IParaphraseStarListService {
+    implements ParaphraseStarListService {
 
     private final ParaphraseStarListMapper mapper;
     private final ParaphraseStarRelService relService;

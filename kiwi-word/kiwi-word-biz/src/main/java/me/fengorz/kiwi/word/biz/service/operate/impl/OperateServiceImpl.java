@@ -90,7 +90,7 @@ public class OperateServiceImpl implements OperateService {
     private final PronunciationService pronunciationService;
     private final WordFetchQueueService fetchQueueService;
     private final IWordStarListService wordStarListService;
-    private final IParaphraseStarListService paraphraseStarListService;
+    private final ParaphraseStarListService paraphraseStarListService;
     private final IExampleStarListService exampleStarListService;
     private final IWordStarRelService wordStarRelService;
     private final ParaphraseStarRelService paraphraseStarRelService;

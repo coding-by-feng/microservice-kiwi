@@ -23,10 +23,6 @@ public class WordConstants {
 
     public static final int SOUND_MARK_OVERLENGTH_THRESHOLD = 16;
 
-    public static final String KIWI_WORD_BIZ = "kiwi-word-biz";
-
-    public static final String KIWI_WORD_BIZ_CRAWLER = "kiwi-word-biz-crawler";
-
     public static final String CACHE_NAMES = "kiwi";
     public static final int VARIANT_TYPE_UNKNOWN = 0;
     public static final String PHRASE_CODE = "phrase";
@@ -62,6 +58,10 @@ public class WordConstants {
     public interface CACHE_KEY_PREFIX_CHARACTER {
         String CLASS = "character";
         String METHOD_ID = "id";
+    }
+
+    public interface COMMON_PARAPHRASE_COLLECTION {
+        String IELTS = "IELTS";
     }
 
 }

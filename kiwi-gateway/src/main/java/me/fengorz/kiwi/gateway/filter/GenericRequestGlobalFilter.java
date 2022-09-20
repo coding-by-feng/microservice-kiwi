@@ -31,6 +31,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.server.ServerWebExchange;
 
+import cn.hutool.http.Header;
 import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
 import me.fengorz.kiwi.common.sdk.constant.SecurityConstants;
 import reactor.core.publisher.Mono;
@@ -57,6 +58,8 @@ public class GenericRequestGlobalFilter implements GlobalFilter, Ordered {
                 .skip(skipUrlSlashCount).collect(Collectors.joining(GlobalConstants.SYMBOL_FORWARD_SLASH));
         ServerHttpRequest newRequest = request.mutate().path(newPath).build();
         exchange.getAttributes().put(GATEWAY_REQUEST_URL_ATTR, newRequest.getURI());
+
+        exchange.getResponse().getHeaders().add(Header.CACHE_CONTROL.toString(), "max-age=864000");
 
         return chain.filter(exchange.mutate().request(newRequest.mutate().build()).build());
     }

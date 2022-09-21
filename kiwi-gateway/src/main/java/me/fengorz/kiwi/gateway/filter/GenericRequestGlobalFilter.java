@@ -26,6 +26,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.Ordered;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -59,7 +60,11 @@ public class GenericRequestGlobalFilter implements GlobalFilter, Ordered {
         ServerHttpRequest newRequest = request.mutate().path(newPath).build();
         exchange.getAttributes().put(GATEWAY_REQUEST_URL_ATTR, newRequest.getURI());
 
-        exchange.getResponse().getHeaders().add(Header.CACHE_CONTROL.toString(), "max-age=864000");
+        HttpHeaders headers = exchange.getResponse().getHeaders();
+        headers.add(Header.CACHE_CONTROL.toString(), "max-age=25920000");
+        headers.remove(Header.PRAGMA.toString());
+        headers.remove(HEADER_EXPIRES_UPPER_CASE);
+        headers.remove(HEADER_EXPIRES_LOWER_CASE);
 
         return chain.filter(exchange.mutate().request(newRequest.mutate().build()).build());
     }
@@ -73,4 +78,8 @@ public class GenericRequestGlobalFilter implements GlobalFilter, Ordered {
     public void setSkipUrlSlashCount(Long skipUrlSlashCount) {
         GenericRequestGlobalFilter.skipUrlSlashCount = skipUrlSlashCount;
     }
+
+    private static final String HEADER_EXPIRES_UPPER_CASE = "Expires";
+    private static final String HEADER_EXPIRES_LOWER_CASE = "expires";
+
 }

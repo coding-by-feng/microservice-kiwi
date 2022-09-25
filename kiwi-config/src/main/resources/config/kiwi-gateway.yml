@@ -56,8 +56,9 @@ security:
 # 不校验验证码终端
 ignore:
   clients:
-    - test
-    - admin
+    - test:non_auth
+    - test:test
+    - daemon:non_auth
   codeVerifyChannels:
     - /sys/user/oneClickRegister
 

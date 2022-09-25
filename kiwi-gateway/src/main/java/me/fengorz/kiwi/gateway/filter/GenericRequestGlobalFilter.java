@@ -26,13 +26,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.Ordered;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.server.ServerWebExchange;
 
-import cn.hutool.http.Header;
 import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
 import me.fengorz.kiwi.common.sdk.constant.SecurityConstants;
 import reactor.core.publisher.Mono;
@@ -59,12 +57,6 @@ public class GenericRequestGlobalFilter implements GlobalFilter, Ordered {
                 .skip(skipUrlSlashCount).collect(Collectors.joining(GlobalConstants.SYMBOL_FORWARD_SLASH));
         ServerHttpRequest newRequest = request.mutate().path(newPath).build();
         exchange.getAttributes().put(GATEWAY_REQUEST_URL_ATTR, newRequest.getURI());
-
-        HttpHeaders headers = exchange.getResponse().getHeaders();
-        headers.add(Header.CACHE_CONTROL.toString(), "max-age=25920000");
-        headers.remove(Header.PRAGMA.toString());
-        headers.remove(HEADER_EXPIRES_UPPER_CASE);
-        headers.remove(HEADER_EXPIRES_LOWER_CASE);
 
         return chain.filter(exchange.mutate().request(newRequest.mutate().build()).build());
     }

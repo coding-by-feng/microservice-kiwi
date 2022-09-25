@@ -23,6 +23,7 @@ import org.springframework.security.oauth2.common.exceptions.InvalidClientExcept
 import org.springframework.security.oauth2.provider.ClientDetails;
 import org.springframework.security.oauth2.provider.client.JdbcClientDetailsService;
 
+import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.sdk.annotation.cache.KiwiCacheKey;
 import me.fengorz.kiwi.common.sdk.annotation.cache.KiwiCacheKeyPrefix;
 import me.fengorz.kiwi.common.sdk.constant.CacheConstants;
@@ -31,6 +32,7 @@ import me.fengorz.kiwi.common.sdk.constant.SecurityConstants;
 /**
  * @Author zhanshifeng
  */
+@Slf4j
 public class KiwiClientDetailsService extends JdbcClientDetailsService {
 
     public KiwiClientDetailsService(DataSource dataSource) {
@@ -42,6 +44,11 @@ public class KiwiClientDetailsService extends JdbcClientDetailsService {
     @Cacheable(value = SecurityConstants.CLIENT_DETAILS_KEY, keyGenerator = CacheConstants.CACHE_KEY_GENERATOR_BEAN,
         unless = "#result == null")
     public ClientDetails loadClientByClientId(@KiwiCacheKey String clientId) throws InvalidClientException {
-        return super.loadClientByClientId(clientId);
+        try {
+            return super.loadClientByClientId(clientId);
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+        }
+        return null;
     }
 }

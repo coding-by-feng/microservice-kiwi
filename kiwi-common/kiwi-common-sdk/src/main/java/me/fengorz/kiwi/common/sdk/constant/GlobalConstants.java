@@ -82,4 +82,11 @@ public interface GlobalConstants extends ApiContants {
 
     Integer GLOBAL_ALL_ACCOUNT_ID = 0;
 
+    interface HEADERS {
+        String CACHE_CONTROL_LONG_MAX_AGE = "max-age=25920000";
+        String HEADER_EXPIRES_UPPER_CASE = "Expires";
+        String HEADER_EXPIRES_LOWER_CASE = "expires";
+    }
+
+
 }

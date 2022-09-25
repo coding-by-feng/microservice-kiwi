@@ -50,14 +50,15 @@ public class GenericHeaderGlobalFilter implements GlobalFilter, Ordered {
         String path = exchange.getRequest().getURI().getPath();
         log.info("path is: {}", path);
 
-        ServerHttpResponse response = exchange.getResponse();
         if (StringUtils.startsWithAny(path, cacheControlApiProperties.getApi().toArray(new String[0]))) {
+            ServerHttpResponse response = exchange.getResponse();
             log.info("Enabled cache-control header.");
             response.getHeaders().add(Header.CACHE_CONTROL.toString(),
                 CacheControl.maxAge(365, TimeUnit.DAYS).cachePublic().toString());
+            return chain.filter(exchange.mutate().response(response).build());
         }
 
-        return chain.filter(exchange.mutate().response(response).build());
+        return chain.filter(exchange);
     }
 
     @Override

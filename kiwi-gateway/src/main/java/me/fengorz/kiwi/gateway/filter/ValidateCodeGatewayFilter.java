@@ -98,7 +98,6 @@ public class ValidateCodeGatewayFilter extends AbstractGatewayFilterFactory {
             throw new AuthException("验证码不能为空");
         }
 
-        // TODO 这个randomStr的作用是？应该是redis存储验证码的key
         String randomStr = request.getQueryParams().getFirst("randomStr");
         if (StrUtil.isBlank(randomStr)) {
             randomStr = request.getQueryParams().getFirst(SecurityConstants.KEY_MOBILE);

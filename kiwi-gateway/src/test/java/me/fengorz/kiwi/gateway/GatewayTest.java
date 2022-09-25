@@ -56,4 +56,21 @@ public class GatewayTest {
         Assertions.assertTrue(headers.containsKey(Header.CACHE_CONTROL.toString()));
     }
 
+    @Test
+    void test_fuzzyQueryList() {
+        ResponseEntity<R> response =
+                testRestTemplate.getForEntity("http://localhost:9991/wordBiz/word/main/fuzzyQueryList/te", R.class);
+        Assertions.assertNotNull(response.getBody());
+        Assertions.assertEquals(response.getStatusCode(), HttpStatus.OK);
+        log.info("Data is: {}", response.getBody());
+        HttpHeaders headers = response.getHeaders();
+        headers.forEach((k, v) -> {
+            log.info("header name is: {}, value is: {}", k, v);
+        });
+        Assertions.assertFalse(headers.containsKey(Header.PRAGMA.toString()));
+        Assertions.assertFalse(headers.containsKey(GlobalConstants.HEADERS.HEADER_EXPIRES_UPPER_CASE));
+        Assertions.assertFalse(headers.containsKey(GlobalConstants.HEADERS.HEADER_EXPIRES_LOWER_CASE));
+        Assertions.assertTrue(headers.containsKey(Header.CACHE_CONTROL.toString()));
+    }
+
 }

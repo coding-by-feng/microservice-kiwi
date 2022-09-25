@@ -25,11 +25,13 @@ import org.springframework.security.web.server.SecurityWebFilterChain;
  * @Author zhanshifeng @Date 2020/4/25 11:08 PM
  */
 @EnableWebFluxSecurity
-public class SecurityConfig {
+public class WebFluxSecurityConfig {
 
     @Bean
     public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) {
         // TODO: 2020/4/25 这里应该不能全部放开
-        return http.authorizeExchange().anyExchange().permitAll().and().csrf().disable().build();
+        return http.authorizeExchange().anyExchange().permitAll().and().csrf().disable()
+                .headers()
+                .cache().disable().and().build();
     }
 }

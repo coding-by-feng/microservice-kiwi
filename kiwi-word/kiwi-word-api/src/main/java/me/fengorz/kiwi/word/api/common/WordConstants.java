@@ -64,4 +64,8 @@ public class WordConstants {
         String IELTS = "IELTS";
     }
 
+    public interface BEAN_NAMES {
+        String RESPONSE_HANDLER_INTERCEPTOR = "ResponseHandlerInterceptor";
+    }
+
 }

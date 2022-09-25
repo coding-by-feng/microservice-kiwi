@@ -1,3 +1,6 @@
+server:
+  port: 8081
+
 security:
   oauth2:
     client:
@@ -63,5 +66,4 @@ tts:
     api-key-18: '3744309a79ff48588fc1b63928c68c91'
     api-key-19: '3744309a79ff48588fc1b63928c68c91'
     api-key-20: 'd2f5e9a0fbf14318a475d808c0dddc62'
-
 

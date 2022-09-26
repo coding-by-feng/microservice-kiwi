@@ -67,3 +67,10 @@ tts:
     api-key-19: '3744309a79ff48588fc1b63928c68c91'
     api-key-20: 'd2f5e9a0fbf14318a475d808c0dddc62'
 
+cache-control:
+  need-cache-api:
+    - /word/main/query
+    - /word/main/queryById
+    - /word/paraphrase/star/list/getItemDetail
+    - /word/pronunciation/downloadVoice
+    - /word/review/downloadReviewAudio

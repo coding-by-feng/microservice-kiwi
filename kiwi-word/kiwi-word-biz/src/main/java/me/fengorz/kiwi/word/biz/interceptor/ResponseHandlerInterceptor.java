@@ -21,12 +21,17 @@ import java.util.concurrent.TimeUnit;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.CacheControl;
+import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
 import cn.hutool.http.Header;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import me.fengorz.kiwi.word.api.common.WordConstants;
+import me.fengorz.kiwi.word.biz.property.CacheControlApiProperties;
 
 /**
  * @Description TODO
@@ -34,17 +39,28 @@ import lombok.extern.slf4j.Slf4j;
  * @Date 2022/9/25 09:03
  */
 @Slf4j
-// @Component(WordConstants.BEAN_NAMES.RESPONSE_HANDLER_INTERCEPTOR)
+@Component(WordConstants.BEAN_NAMES.RESPONSE_HANDLER_INTERCEPTOR)
+@RequiredArgsConstructor
 public class ResponseHandlerInterceptor implements HandlerInterceptor {
+
+    private final CacheControlApiProperties cacheControlApiProperties;
 
     @Override
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
         ModelAndView modelAndView) throws Exception {
-        response.addHeader(Header.CACHE_CONTROL.toString(),
-            CacheControl.maxAge(365, TimeUnit.DAYS).cachePublic().toString());
+        if (StringUtils.startsWithAny(request.getRequestURI(),
+            cacheControlApiProperties.getNeedCacheApi().toArray(new String[0]))) {
+            response.setHeader(Header.CACHE_CONTROL.toString(),
+                CacheControl.maxAge(365, TimeUnit.DAYS).cachePublic().toString());
+            response.setHeader("test", "test");
+        }
         response.getHeaderNames().forEach(headerName -> {
             log.info("header name is {}, value is {}", headerName, response.getHeaders(headerName));
         });
     }
 
+    @Override
+    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
+        HandlerInterceptor.super.afterCompletion(request, response, handler, ex);
+    }
 }

@@ -14,7 +14,7 @@
  *
  */
 
-package me.fengorz.kiwi.gateway.property;
+package me.fengorz.kiwi.word.biz.property;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,6 +36,6 @@ import lombok.Data;
 @ConfigurationProperties(prefix = "cache-control")
 public class CacheControlApiProperties {
 
-    private List<String> api = new ArrayList<>();
+    private List<String> needCacheApi = new ArrayList<>();
 
 }

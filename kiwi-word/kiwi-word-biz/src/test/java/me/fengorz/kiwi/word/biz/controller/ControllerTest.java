@@ -61,10 +61,14 @@ public class ControllerTest {
         headers.forEach((k, v) -> {
             log.info("header name is: {}, value is: {}", k, v);
         });
+        assertCacheControl(headers);
+    }
+
+    private void assertCacheControl(HttpHeaders headers) {
         Assertions.assertTrue(headers.containsKey(Header.CACHE_CONTROL.toString()));
         Assertions.assertEquals(headers.get(Header.CACHE_CONTROL.toString()).size(), 1);
         Assertions.assertEquals(headers.get(Header.CACHE_CONTROL.toString()).get(0),
-            CacheControl.maxAge(365, TimeUnit.DAYS).cachePublic().toString());
+                CacheControl.maxAge(365, TimeUnit.DAYS).getHeaderValue());
     }
 
 }

@@ -43,3 +43,11 @@ async:
 my:
   config:
     exclude-db: false
+
+cache-control:
+  need-cache-api:
+    - /word/main/query
+    - /word/main/queryById
+    - /word/paraphrase/star/list/getItemDetail
+    - /word/pronunciation/downloadVoice
+    - /word/review/downloadReviewAudio

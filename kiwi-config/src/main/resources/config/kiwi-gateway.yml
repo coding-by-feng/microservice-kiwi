@@ -65,12 +65,3 @@ ignore:
 my:
   config:
     exclude-db: true
-
-cache-control:
-  api:
-    - /word/main/query
-    - /word/main/queryById
-    - /word/main/variant
-    - /word/paraphrase/star/list/getItemDetail
-    - /word/pronunciation/downloadVoice
-    - /word/review/downloadReviewAudio

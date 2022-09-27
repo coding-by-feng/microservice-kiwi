@@ -160,7 +160,7 @@ public class DictFetchApiFallback extends AbstractFallback implements DictFetchA
     }
 
     @Override
-    public void generateTtsVoice() {
+    public void generateTtsVoice(Integer type) {
         handleErrorNotReturn();
     }
 }

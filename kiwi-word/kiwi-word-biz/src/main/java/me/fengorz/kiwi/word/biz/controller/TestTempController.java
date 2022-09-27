@@ -35,6 +35,7 @@ import me.fengorz.kiwi.word.api.common.ApiCrawlerConstants;
 import me.fengorz.kiwi.word.api.entity.FetchQueueDO;
 import me.fengorz.kiwi.word.api.entity.WordMainDO;
 import me.fengorz.kiwi.word.biz.service.base.WordFetchQueueService;
+import me.fengorz.kiwi.word.biz.service.operate.CrawlerService;
 
 /**
  * 单词主表
@@ -50,11 +51,13 @@ public class TestTempController extends BaseController {
 
     private final WordFetchQueueService wordFetchQueueService;
     private final SeqService seqService;
+    private final CrawlerService crawlerService;
+
     // @Value("${me.fengorz.file.vocabulary.word.list.path}")
     private String tmp;
 
     @GetMapping("/readTxt")
-    public R readTxt() throws Exception {
+    public R<Void> readTxt() {
         List<String> words = this.readWords();
         for (String word : words) {
             FetchQueueDO one = wordFetchQueueService
@@ -86,7 +89,7 @@ public class TestTempController extends BaseController {
     }
 
     @PostMapping("/testEdit")
-    public R testEdit(@RequestBody WordMainDO wordMainDO) {
+    public R<Void> testEdit(@RequestBody WordMainDO wordMainDO) {
         return R.success();
     }
 
@@ -94,8 +97,9 @@ public class TestTempController extends BaseController {
         log.info("=================>this.tmp=" + this.tmp);
         List<String> wordList = new ArrayList<>();
         FileInputStream fis = null;
+        // 用于包装InputStreamReader,提高处理性能。因为BufferedReader有缓冲的，而InputStreamReader没有。
         InputStreamReader isr = null;
-        BufferedReader br = null; // 用于包装InputStreamReader,提高处理性能。因为BufferedReader有缓冲的，而InputStreamReader没有。
+        BufferedReader br = null;
         try {
             fis = new FileInputStream(this.tmp + "/vocabulary.txt"); // FileInputStream
             // fis = new FileInputStream("/root/tmp/vocabulary.txt");// FileInputStream
@@ -125,5 +129,11 @@ public class TestTempController extends BaseController {
             }
         }
         return wordList;
+    }
+
+    @GetMapping("/setup/ielts/word-list")
+    public R<Void> setupIeltsWordList() {
+        crawlerService.test_initIeltsWordList();
+        return R.success();
     }
 }

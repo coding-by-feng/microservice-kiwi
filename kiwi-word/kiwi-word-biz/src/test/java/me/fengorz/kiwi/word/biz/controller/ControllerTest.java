@@ -19,12 +19,14 @@ package me.fengorz.kiwi.word.biz.controller;
 import java.util.concurrent.TimeUnit;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.CacheControl;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
@@ -51,7 +53,7 @@ public class ControllerTest {
     private final TestRestTemplate testRestTemplate = new TestRestTemplate();
 
     @Test
-    // @Disabled
+    @Disabled
     void test_queryWord() {
         ResponseEntity<R> response =
             testRestTemplate.getForEntity("http://localhost:8081/word/main/query/test", R.class);
@@ -62,6 +64,14 @@ public class ControllerTest {
             log.info("header name is: {}, value is: {}", k, v);
         });
         assertCacheControl(headers);
+    }
+
+    @Test
+    // @Disabled
+    void test_setupIeltsWordList() {
+        ResponseEntity<R> response =
+            testRestTemplate.getForEntity("http://localhost:8081/test/setup/ielts/word-list", R.class);
+        Assertions.assertEquals(response.getStatusCode(), HttpStatus.OK);
     }
 
     private void assertCacheControl(HttpHeaders headers) {

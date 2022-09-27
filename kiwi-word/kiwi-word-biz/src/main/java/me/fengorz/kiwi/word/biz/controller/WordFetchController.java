@@ -26,11 +26,13 @@ import org.springframework.web.bind.annotation.*;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 
+import cn.hutool.core.util.EnumUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.api.R;
 import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
 import me.fengorz.kiwi.common.sdk.controller.BaseController;
+import me.fengorz.kiwi.word.api.common.enumeration.ReviewAudioGenerationEnum;
 import me.fengorz.kiwi.word.api.dto.queue.RemovePronunciatioinMqDTO;
 import me.fengorz.kiwi.word.api.dto.queue.result.FetchPhraseResultDTO;
 import me.fengorz.kiwi.word.api.dto.queue.result.FetchPhraseRunUpResultDTO;
@@ -155,9 +157,9 @@ public class WordFetchController extends BaseController {
         return R.success(cleanerService.removePhrase(queueId));
     }
 
-    @GetMapping("/generateTtsVoice")
-    public R<Void> generateTtsVoice() {
-        crawlerService.generateTtsVoice();
+    @GetMapping("/generateTtsVoice/{type}")
+    public R<Void> generateTtsVoice(@PathVariable("type") Integer type) {
+        crawlerService.generateTtsVoice(EnumUtil.likeValueOf(ReviewAudioGenerationEnum.class, type));
         return R.success();
     }
 

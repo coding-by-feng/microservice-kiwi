@@ -60,7 +60,7 @@ public class CrawlerTest {
         Assertions.assertNotNull(crawlerConfigProperties);
         Assertions.assertNotNull(crawlerConfigProperties.getEnableScheduler());
         Assertions.assertFalse(enabler.isMqEnable());
-        Assertions.assertTrue(crawlerConfigProperties.getEnableScheduler().get("voice-generate"));
+        Assertions.assertTrue(crawlerConfigProperties.getEnableScheduler().get("voice-generate-only-collected"));
         log.info("enabler.isMqEnable() is {}", enabler.isMqEnable());
         log.info("crawlerConfigProperties.getSchedulerEnable() is {}", crawlerConfigProperties.getEnableScheduler());
     }

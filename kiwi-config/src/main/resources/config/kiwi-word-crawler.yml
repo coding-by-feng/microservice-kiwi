@@ -43,7 +43,8 @@ crawler:
     queue-capacity: 10
     enable-mq: true
     enable-scheduler: {
-      "voice-generate": true,
+      "voice-generate-only-collected": true,
+      "voice-generate-non-collected": false,
       "cache-word": true,
       "refresh-all-api-key": true
     }

@@ -31,4 +31,11 @@ public class CrawlerConstants {
         String REFRESH_ALL_API_KEY_DAILY_SCHEDULER = "refreshAllApiKeyDailyScheduler";
     }
 
+    public interface ENABLE_SCHEDULER_KEY {
+        String VOICE_GENERATE_ONLY_COLLECTED = "voice-generate-only-collected";
+        String VOICE_GENERATE_NON_COLLECTED = "voice-generate-non-collected";
+        String CACHE_WORD = "cache-word";
+        String REFRESH_ALL_API_KEY = "refresh-all-api-key";
+    }
+
 }

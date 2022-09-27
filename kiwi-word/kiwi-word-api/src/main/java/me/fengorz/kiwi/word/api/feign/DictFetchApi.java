@@ -105,6 +105,7 @@ public interface DictFetchApi {
     @GetMapping(WORD_REVIEW + "/refreshAllApiKey")
     void refreshAllApiKey();
 
-    @GetMapping(WORD_FETCH_QUEUE + "/generateTtsVoice")
-    void generateTtsVoice();
+    @GetMapping(WORD_FETCH_QUEUE + "/generateTtsVoice/{type}")
+    void generateTtsVoice(@PathVariable("type") Integer type);
+
 }

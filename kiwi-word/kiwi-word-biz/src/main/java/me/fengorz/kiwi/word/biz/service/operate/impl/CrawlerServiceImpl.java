@@ -23,13 +23,19 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.google.common.collect.Lists;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.io.FileUtil;
@@ -38,6 +44,7 @@ import cn.hutool.http.HttpUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.bdf.core.service.SeqService;
+import me.fengorz.kiwi.common.api.entity.EnhancerUser;
 import me.fengorz.kiwi.common.fastdfs.service.DfsService;
 import me.fengorz.kiwi.common.sdk.annotation.log.LogMarker;
 import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
@@ -53,15 +60,18 @@ import me.fengorz.kiwi.common.sdk.util.lang.collection.KiwiCollectionUtils;
 import me.fengorz.kiwi.common.sdk.util.lang.string.KiwiStringUtils;
 import me.fengorz.kiwi.common.tts.service.TtsService;
 import me.fengorz.kiwi.word.api.common.ApiCrawlerConstants;
+import me.fengorz.kiwi.word.api.common.WordConstants;
 import me.fengorz.kiwi.word.api.common.enumeration.ReviewAudioTypeEnum;
 import me.fengorz.kiwi.word.api.dto.queue.result.*;
 import me.fengorz.kiwi.word.api.entity.*;
 import me.fengorz.kiwi.word.api.vo.ParaphraseExampleVO;
+import me.fengorz.kiwi.word.api.vo.ParaphraseStarListVO;
 import me.fengorz.kiwi.word.biz.service.base.*;
 import me.fengorz.kiwi.word.biz.service.operate.CrawlerService;
 import me.fengorz.kiwi.word.biz.service.operate.OperateService;
 import me.fengorz.kiwi.word.biz.service.operate.ReviewService;
 import me.fengorz.kiwi.word.biz.util.WordBizUtils;
+import me.fengorz.kiwi.word.biz.util.WordDataSetupUtils;
 import me.fengorz.kiwi.word.biz.util.WordDfsUtils;
 
 /**
@@ -75,6 +85,7 @@ public class CrawlerServiceImpl implements CrawlerService {
     private final WordMainService mainService;
     private final CharacterService characterService;
     private final ParaphraseService paraphraseService;
+    private final ParaphraseStarListService paraphraseStarListService;
     private final ParaphraseExampleService exampleService;
     private final PronunciationService pronunciationService;
     private final WordFetchQueueService queueService;
@@ -364,6 +375,34 @@ public class CrawlerServiceImpl implements CrawlerService {
             return;
         }
         GENERATE_VOICE_BARRIER.release();
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void test_initIeltsWordList() {
+        Integer echoUserId = 1286037;
+        String echoUserName = "echo";
+        SecurityContextHolder.getContext()
+            .setAuthentication(new UsernamePasswordAuthenticationToken(new EnhancerUser(echoUserId, 0, echoUserName,
+                "test", true, true, true, true, Lists.newArrayList(new SimpleGrantedAuthority("test_role"))), null));
+        Set<String> wordList = WordDataSetupUtils.extractIeltsWordList();
+        log.info("extractIeltsWordList size is: {}", wordList.size());
+        for (String word : wordList) {
+            List<
+                ParaphraseStarListVO> collection =
+                    paraphraseStarListService
+                        .getCurrentUserList(echoUserId).stream().filter(vo -> StringUtils
+                            .equalsIgnoreCase(vo.getListName(), WordConstants.COMMON_PARAPHRASE_COLLECTION.IELTS))
+                        .collect(Collectors.toList());
+            for (ParaphraseStarListVO listVO : collection) {
+                List<ParaphraseDO> paraphrases = paraphraseService.listByWordName(word);
+                if (CollectionUtils.isEmpty(paraphrases)) {
+                    continue;
+                }
+                paraphrases.forEach(paraphraseDO -> paraphraseStarListService
+                    .putIntoStarList(paraphraseDO.getParaphraseId(), listVO.getId()));
+            }
+        }
     }
 
     private void fetchPronunciationVoice(PronunciationDO pronunciation) {

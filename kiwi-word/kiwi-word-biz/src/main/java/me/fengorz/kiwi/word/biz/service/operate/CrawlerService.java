@@ -33,4 +33,7 @@ public interface CrawlerService {
     boolean storePhrasesFetchResult(FetchPhraseResultDTO dto);
 
     void generateTtsVoice();
+
+    void test_initIeltsWordList();
+
 }

@@ -67,10 +67,17 @@ public class ControllerTest {
     }
 
     @Test
-    // @Disabled
+    @Disabled
     void test_setupIeltsWordList() {
         ResponseEntity<R> response =
             testRestTemplate.getForEntity("http://localhost:8081/test/setup/ielts/word-list", R.class);
+        Assertions.assertEquals(response.getStatusCode(), HttpStatus.OK);
+    }
+
+    @Test
+    void test_deprecateReviewAudio() {
+        ResponseEntity<R> response =
+            testRestTemplate.getForEntity("http://localhost:8081/word/review/deprecate-review-audio/2350782", R.class);
         Assertions.assertEquals(response.getStatusCode(), HttpStatus.OK);
     }
 
@@ -78,7 +85,7 @@ public class ControllerTest {
         Assertions.assertTrue(headers.containsKey(Header.CACHE_CONTROL.toString()));
         Assertions.assertEquals(headers.get(Header.CACHE_CONTROL.toString()).size(), 1);
         Assertions.assertEquals(headers.get(Header.CACHE_CONTROL.toString()).get(0),
-                CacheControl.maxAge(365, TimeUnit.DAYS).getHeaderValue());
+            CacheControl.maxAge(365, TimeUnit.DAYS).getHeaderValue());
     }
 
 }

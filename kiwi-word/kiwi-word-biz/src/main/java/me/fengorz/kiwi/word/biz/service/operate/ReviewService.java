@@ -53,6 +53,8 @@ public interface ReviewService {
 
     WordReviewAudioDO findWordReviewAudio(Integer sourceId, Integer type) throws DfsOperateException, TtsException, DataCheckedException;
 
+    void removeWordReviewAudio(Integer sourceId);
+
     WordReviewAudioDO generateWordReviewAudio(boolean isReplace, Integer sourceId, Integer type) throws DfsOperateException, TtsException, DataCheckedException;
 
     void initPermanent(boolean isReplace, boolean isOnlyTest) throws DfsOperateException, TtsException;

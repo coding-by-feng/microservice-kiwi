@@ -21,7 +21,9 @@ import org.springframework.stereotype.Component;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.sdk.annotation.ScheduledAwake;
+import me.fengorz.kiwi.dict.crawler.common.CrawlerConstants;
 import me.fengorz.kiwi.dict.crawler.component.scheduler.base.Scheduler;
+import me.fengorz.kiwi.word.api.common.enumeration.ReviewAudioGenerationEnum;
 import me.fengorz.kiwi.word.api.feign.DictFetchApi;
 
 /**
@@ -30,17 +32,17 @@ import me.fengorz.kiwi.word.api.feign.DictFetchApi;
  * @Date 2022/7/4 23:03
  */
 @Slf4j
-@Component("generateVoiceScheduler")
+@Component("generateVoiceNonCollectedScheduler")
 @AllArgsConstructor
-public class GenerateVoiceScheduler implements Scheduler {
+public class GenerateVoiceNonCollectedScheduler implements Scheduler {
 
     private final DictFetchApi dictFetchApi;
 
     @Override
-    @ScheduledAwake(key = "voice-generate")
+    @ScheduledAwake(key = CrawlerConstants.ENABLE_SCHEDULER_KEY.VOICE_GENERATE_NON_COLLECTED)
     public void schedule() {
         log.info("Voice generation is starting.");
-        dictFetchApi.generateTtsVoice();
+        dictFetchApi.generateTtsVoice(ReviewAudioGenerationEnum.NON_COLLECTED.getType());
         log.info("Voice generation has ended.");
     }
 

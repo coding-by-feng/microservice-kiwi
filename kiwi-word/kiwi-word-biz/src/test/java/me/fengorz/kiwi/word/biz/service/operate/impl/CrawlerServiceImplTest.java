@@ -29,6 +29,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.sdk.constant.EnvConstants;
+import me.fengorz.kiwi.word.api.common.enumeration.ReviewAudioGenerationEnum;
 import me.fengorz.kiwi.word.biz.WordBizApplication;
 import me.fengorz.kiwi.word.biz.service.operate.CrawlerService;
 
@@ -47,7 +48,8 @@ public class CrawlerServiceImplTest {
     // @RepeatedTest(value = 3)
     @Disabled
     void generateTtsVoice() {
-        Assertions.assertDoesNotThrow(() -> crawlerService.generateTtsVoice());
+        Assertions.assertDoesNotThrow(
+            () -> crawlerService.generateTtsVoice(ReviewAudioGenerationEnum.ONLY_COLLECTED));
     }
 
     @Test

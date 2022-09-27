@@ -61,6 +61,7 @@ import me.fengorz.kiwi.common.sdk.util.lang.string.KiwiStringUtils;
 import me.fengorz.kiwi.common.tts.service.TtsService;
 import me.fengorz.kiwi.word.api.common.ApiCrawlerConstants;
 import me.fengorz.kiwi.word.api.common.WordConstants;
+import me.fengorz.kiwi.word.api.common.enumeration.ReviewAudioGenerationEnum;
 import me.fengorz.kiwi.word.api.common.enumeration.ReviewAudioTypeEnum;
 import me.fengorz.kiwi.word.api.dto.queue.result.*;
 import me.fengorz.kiwi.word.api.entity.*;
@@ -309,7 +310,7 @@ public class CrawlerServiceImpl implements CrawlerService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void generateTtsVoice() {
+    public void generateTtsVoice(ReviewAudioGenerationEnum type) {
         try {
             log.info("Method generateTtsVoice is starting!");
             if (!ttsService.hasValidApiKey()) {
@@ -320,6 +321,10 @@ public class CrawlerServiceImpl implements CrawlerService {
                 List<Integer> notGeneratedParaphraseId = paraphraseStarRelService.listNotGeneratedVoice();
                 if (CollectionUtils.isEmpty(notGeneratedParaphraseId)) {
                     log.info("There is not notGeneratedParaphraseId need to generate voice.");
+                    if (type.equals(ReviewAudioGenerationEnum.ONLY_COLLECTED)) {
+                        log.info("Only generate collected paraphrase, and skip this generation invoke.");
+                        return;
+                    }
                     notGeneratedParaphraseId = paraphraseService.listNotGeneratedAndNotCollectVoice();
                     if (CollectionUtils.isEmpty(notGeneratedParaphraseId)) {
                         log.info("There is not notGeneratedAndNotCollectVoice need to generate voice.");

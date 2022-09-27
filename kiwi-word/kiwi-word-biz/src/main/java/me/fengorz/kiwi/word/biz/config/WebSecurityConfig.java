@@ -54,7 +54,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter implements O
             .startsWithAny(request.getRequestURI(), cacheControlApiProperties.getNeedCacheApi().toArray(new String[0])))
             .headers().cacheControl().disable()
             .addHeaderWriter(new StaticHeadersWriter(Header.CACHE_CONTROL.toString(),
-                CacheControl.maxAge(3, TimeUnit.DAYS).cachePublic().getHeaderValue()))
+                CacheControl.maxAge(365, TimeUnit.DAYS).cachePublic().getHeaderValue()))
             .and().csrf().disable();
     }
 

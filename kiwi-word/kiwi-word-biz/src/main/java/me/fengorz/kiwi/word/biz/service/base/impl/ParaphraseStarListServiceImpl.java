@@ -19,6 +19,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -30,6 +31,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
 import me.fengorz.kiwi.common.sdk.util.bean.KiwiBeanUtils;
 import me.fengorz.kiwi.common.sdk.web.security.SecurityUtils;
@@ -52,6 +54,7 @@ import me.fengorz.kiwi.word.biz.service.operate.ReviewService;
  * @author zhanshifeng
  * @date 2019-12-08 23:27:41
  */
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ParaphraseStarListServiceImpl extends ServiceImpl<ParaphraseStarListMapper, ParaphraseStarListDO>
@@ -174,8 +177,9 @@ public class ParaphraseStarListServiceImpl extends ServiceImpl<ParaphraseStarLis
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRES_NEW)
     public void putIntoStarList(Integer paraphraseId, Integer listId) {
+        log.info("Method putIntoStarList is invoked, paraphraseId is {}, listId is {}", paraphraseId, listId);
         LambdaQueryWrapper<ParaphraseStarRelDO> wrapper = Wrappers.<ParaphraseStarRelDO>lambdaQuery()
             .eq(ParaphraseStarRelDO::getListId, listId).eq(ParaphraseStarRelDO::getParaphraseId, paraphraseId);
         if (relService.count(wrapper) > 0) {

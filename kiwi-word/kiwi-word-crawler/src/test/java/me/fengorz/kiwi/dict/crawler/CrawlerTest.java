@@ -30,6 +30,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.sdk.constant.EnvConstants;
+import me.fengorz.kiwi.dict.crawler.common.CrawlerConstants;
 import me.fengorz.kiwi.dict.crawler.component.Enabler;
 import me.fengorz.kiwi.dict.crawler.component.scheduler.ChiefProducerSchedulerSetup;
 import me.fengorz.kiwi.dict.crawler.component.scheduler.ChiefSchedulerSetup;
@@ -55,24 +56,27 @@ public class CrawlerTest {
     private ChiefProducerSchedulerSetup chiefProducerSchedulerSetup;
 
     @Test
-    @Disabled
+    // @Disabled
     public void setupTest() {
         Assertions.assertNotNull(crawlerConfigProperties);
         Assertions.assertNotNull(crawlerConfigProperties.getEnableScheduler());
-        Assertions.assertFalse(enabler.isMqEnable());
-        Assertions.assertTrue(crawlerConfigProperties.getEnableScheduler().get("voice-generate-only-collected"));
+        Assertions.assertTrue(enabler.isMqEnable());
+        Assertions.assertTrue(crawlerConfigProperties.getEnableScheduler()
+            .get(CrawlerConstants.ENABLE_SCHEDULER_KEY.VOICE_GENERATE_ONLY_COLLECTED));
+        Assertions.assertFalse(crawlerConfigProperties.getEnableScheduler()
+            .get(CrawlerConstants.ENABLE_SCHEDULER_KEY.VOICE_GENERATE_NON_COLLECTED));
         log.info("enabler.isMqEnable() is {}", enabler.isMqEnable());
         log.info("crawlerConfigProperties.getSchedulerEnable() is {}", crawlerConfigProperties.getEnableScheduler());
     }
 
     @Test
-    @Disabled
+    // @Disabled
     public void cacheWordScheduler() {
         cacheWordScheduler.schedule();
     }
 
     @Test
-    // @Disabled
+    @Disabled
     public void schedulerTest() {
         try {
             Assertions.assertNotNull(chiefSchedulerSetup);

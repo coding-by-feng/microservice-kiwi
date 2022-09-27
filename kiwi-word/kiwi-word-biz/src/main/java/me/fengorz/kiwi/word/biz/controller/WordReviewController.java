@@ -156,4 +156,10 @@ public class WordReviewController extends AbstractDfsController {
         return R.success();
     }
 
+    @GetMapping("/deprecate-review-audio/{sourceId}")
+    public R<Void> deprecateReviewAudio(@PathVariable("sourceId") Integer sourceId) {
+        reviewService.removeWordReviewAudio(sourceId);
+        return R.success();
+    }
+
 }

@@ -186,6 +186,18 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
+    public void removeWordReviewAudio(Integer sourceId) {
+        LambdaQueryWrapper<WordReviewAudioDO> wrapper =
+            Wrappers.<WordReviewAudioDO>lambdaQuery().eq(WordReviewAudioDO::getSourceId, sourceId);
+        Integer count = reviewAudioMapper.selectCount(wrapper);
+        log.info("Method removeWordReviewAudio count is: {}", count);
+        if (count < 1) {
+            return;
+        }
+        reviewAudioMapper.delete(wrapper);
+    }
+
+    @Override
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRES_NEW)
     public WordReviewAudioDO generateWordReviewAudio(boolean isReplace, Integer sourceId, Integer type)
         throws DfsOperateException, TtsException, DataCheckedException {
@@ -432,7 +444,6 @@ public class ReviewServiceImpl implements ReviewService {
             .setType(type);
         reviewDailyCounterMapper.insert(counterDO);
     }
-
 
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRES_NEW)
     private void delete(Integer id) {

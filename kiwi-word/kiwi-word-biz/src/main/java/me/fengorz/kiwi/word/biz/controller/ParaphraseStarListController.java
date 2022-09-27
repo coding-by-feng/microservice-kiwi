@@ -35,7 +35,6 @@ import me.fengorz.kiwi.common.sdk.annotation.log.LogMarker;
 import me.fengorz.kiwi.common.sdk.constant.MapperConstant;
 import me.fengorz.kiwi.common.sdk.controller.BaseController;
 import me.fengorz.kiwi.common.sdk.web.security.SecurityUtils;
-import me.fengorz.kiwi.word.api.common.enumeration.ReviewDailyCounterTypeEnum;
 import me.fengorz.kiwi.word.api.entity.ParaphraseStarListDO;
 import me.fengorz.kiwi.word.api.vo.ParaphraseStarListVO;
 import me.fengorz.kiwi.word.api.vo.detail.ParaphraseVO;
@@ -134,7 +133,7 @@ public class ParaphraseStarListController extends BaseController {
 
     @GetMapping("/getItemDetail/{paraphraseId}")
     public R<ParaphraseVO> getItemDetail(@PathVariable Integer paraphraseId) {
-        reviewService.increase(ReviewDailyCounterTypeEnum.REVIEW_COUNTER.getType(), SecurityUtils.getCurrentUserId());
+        // reviewService.increase(ReviewDailyCounterTypeEnum.REVIEW_COUNTER.getType(), SecurityUtils.getCurrentUserId());
         return R.success(operateService.findParaphraseVO(paraphraseId));
     }
 

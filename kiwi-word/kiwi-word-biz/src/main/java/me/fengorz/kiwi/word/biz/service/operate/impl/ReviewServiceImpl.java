@@ -184,7 +184,7 @@ public class ReviewServiceImpl implements ReviewService {
     @KiwiCacheKeyPrefix(WordConstants.CACHE_KEY_PREFIX_REVIEW.METHOD_REVIEW_AUDIO)
     @Cacheable(cacheNames = WordConstants.CACHE_NAMES, keyGenerator = CacheConstants.CACHE_KEY_GENERATOR_BEAN,
         unless = "#result == null")
-    public WordReviewAudioDO findWordReviewAudio(@KiwiCacheKey Integer sourceId, @KiwiCacheKey Integer type)
+    public WordReviewAudioDO findWordReviewAudio(@KiwiCacheKey(1) Integer sourceId, @KiwiCacheKey(2) Integer type)
         throws DfsOperateException, TtsException, DataCheckedException {
         List<WordReviewAudioDO> wordReviewAudioList =
             reviewAudioMapper.selectList(Wrappers.<WordReviewAudioDO>lambdaQuery()

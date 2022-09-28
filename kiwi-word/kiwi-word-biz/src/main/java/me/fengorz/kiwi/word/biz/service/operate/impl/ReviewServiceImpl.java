@@ -26,6 +26,7 @@ import java.util.concurrent.Semaphore;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -38,6 +39,10 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.bdf.core.service.SeqService;
 import me.fengorz.kiwi.common.fastdfs.service.DfsService;
+import me.fengorz.kiwi.common.sdk.annotation.cache.KiwiCacheKey;
+import me.fengorz.kiwi.common.sdk.annotation.cache.KiwiCacheKeyPrefix;
+import me.fengorz.kiwi.common.sdk.annotation.log.LogMarker;
+import me.fengorz.kiwi.common.sdk.constant.CacheConstants;
 import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
 import me.fengorz.kiwi.common.sdk.constant.MapperConstant;
 import me.fengorz.kiwi.common.sdk.exception.AuthException;
@@ -175,17 +180,29 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
-    public WordReviewAudioDO findWordReviewAudio(Integer sourceId, Integer type)
+    @LogMarker(isPrintParameter = true, isPrintReturnValue = true)
+    @KiwiCacheKeyPrefix(WordConstants.CACHE_KEY_PREFIX_REVIEW.METHOD_REVIEW_AUDIO)
+    @Cacheable(cacheNames = WordConstants.CACHE_NAMES, keyGenerator = CacheConstants.CACHE_KEY_GENERATOR_BEAN,
+        unless = "#result == null")
+    public WordReviewAudioDO findWordReviewAudio(@KiwiCacheKey Integer sourceId, @KiwiCacheKey Integer type)
         throws DfsOperateException, TtsException, DataCheckedException {
-        WordReviewAudioDO wordReviewAwoudioDO = reviewAudioMapper.selectOne(Wrappers.<WordReviewAudioDO>lambdaQuery()
-            .eq(WordReviewAudioDO::getSourceId, sourceId).eq(WordReviewAudioDO::getType, type));
-        if (Objects.isNull(wordReviewAwoudioDO)) {
+        List<WordReviewAudioDO> wordReviewAudioList =
+            reviewAudioMapper.selectList(Wrappers.<WordReviewAudioDO>lambdaQuery()
+                .eq(WordReviewAudioDO::getSourceId, sourceId).eq(WordReviewAudioDO::getType, type));
+        WordReviewAudioDO wordReviewAwoudioDO;
+        if (wordReviewAudioList.size() != 1) {
+            if (wordReviewAudioList.size() > 1) {
+                removeWordReviewAudio(sourceId);
+            }
             wordReviewAwoudioDO = generateWordReviewAudio(false, sourceId, type);
+        } else {
+            wordReviewAwoudioDO = wordReviewAudioList.get(0);
         }
         return wordReviewAwoudioDO;
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void removeWordReviewAudio(Integer sourceId) {
         LambdaQueryWrapper<WordReviewAudioDO> wrapper =
             Wrappers.<WordReviewAudioDO>lambdaQuery().eq(WordReviewAudioDO::getSourceId, sourceId);

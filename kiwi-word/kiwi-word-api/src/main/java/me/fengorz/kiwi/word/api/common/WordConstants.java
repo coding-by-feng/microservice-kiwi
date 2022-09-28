@@ -35,11 +35,14 @@ public class WordConstants {
     public static final int BREAKPOINT_REVIEW_TYPE_PARAPHRASE = 1;
 
     public interface CACHE_KEY_PREFIX_OPERATE {
-
         String CLASS = "operate";
         String METHOD_WORD_NAME = "word_name";
         String METHOD_PARAPHRASE_ID = "paraphrase_id";
         String METHOD_FETCH_REPLACE = "fetch_replace";
+    }
+
+    public interface CACHE_KEY_PREFIX_REVIEW {
+        String METHOD_REVIEW_AUDIO = "review_audio";
     }
 
     public interface CACHE_KEY_PREFIX_WORD_MAIN {

@@ -18,6 +18,7 @@ package me.fengorz.kiwi.word.biz.service.base.impl;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -140,6 +141,7 @@ public class ParaphraseStarListServiceImpl extends ServiceImpl<ParaphraseStarLis
         archiveService.invalidArchiveParaphraseRel(paraphraseId, listId, SecurityUtils.getCurrentUserId());
     }
 
+    @Async
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void rememberOne(Integer paraphraseId, Integer listId) {
@@ -150,6 +152,7 @@ public class ParaphraseStarListServiceImpl extends ServiceImpl<ParaphraseStarLis
                 .eq(ParaphraseStarRelDO::getParaphraseId, paraphraseId));
     }
 
+    @Async
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void keepInMind(Integer paraphraseId, Integer listId) {
@@ -161,6 +164,7 @@ public class ParaphraseStarListServiceImpl extends ServiceImpl<ParaphraseStarLis
                 .eq(ParaphraseStarRelDO::getParaphraseId, paraphraseId));
     }
 
+    @Async
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void forgetOne(Integer paraphraseId, Integer listId) {

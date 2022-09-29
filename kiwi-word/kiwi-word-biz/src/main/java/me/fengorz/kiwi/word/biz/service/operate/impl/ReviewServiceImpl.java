@@ -198,6 +198,7 @@ public class ReviewServiceImpl implements ReviewService {
         } else {
             wordReviewAwoudioDO = wordReviewAudioList.get(0);
         }
+        log.info("wordReviewAwoudioDO be found, {}", wordReviewAwoudioDO);
         return wordReviewAwoudioDO;
     }
 

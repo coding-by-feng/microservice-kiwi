@@ -134,6 +134,7 @@ public class ParaphraseStarListController extends BaseController {
     @GetMapping("/getItemDetail/{paraphraseId}")
     public R<ParaphraseVO> getItemDetail(@PathVariable Integer paraphraseId) {
         // reviewService.increase(ReviewDailyCounterTypeEnum.REVIEW_COUNTER.getType(), SecurityUtils.getCurrentUserId());
+        log.info("Querying paraphraseId={}", paraphraseId);
         return R.success(operateService.findParaphraseVO(paraphraseId));
     }
 

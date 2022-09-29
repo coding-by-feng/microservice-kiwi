@@ -84,7 +84,7 @@ public class WordReviewController extends AbstractDfsController {
     @GetMapping("/downloadReviewAudio/{sourceId}/{type}")
     public void downloadReviewAudio(HttpServletResponse response, @PathVariable("sourceId") Integer sourceId,
         @PathVariable("type") Integer type) {
-        log.info("downloadReviewAudio, sourceid={}, type={}", sourceId, type);
+        log.info("downloadReviewAudio, sourceId={}, type={}", sourceId, type);
         WordReviewAudioDO wordReviewAudio = null;
         try {
             wordReviewAudio = this.reviewService.findWordReviewAudio(sourceId, type);

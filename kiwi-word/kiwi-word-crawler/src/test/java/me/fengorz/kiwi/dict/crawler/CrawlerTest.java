@@ -30,10 +30,12 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.sdk.constant.EnvConstants;
+import me.fengorz.kiwi.common.sdk.util.spring.SpringUtils;
 import me.fengorz.kiwi.dict.crawler.common.CrawlerConstants;
 import me.fengorz.kiwi.dict.crawler.component.Enabler;
 import me.fengorz.kiwi.dict.crawler.component.scheduler.ChiefProducerSchedulerSetup;
 import me.fengorz.kiwi.dict.crawler.component.scheduler.ChiefSchedulerSetup;
+import me.fengorz.kiwi.dict.crawler.component.scheduler.base.DailyScheduler;
 import me.fengorz.kiwi.dict.crawler.component.scheduler.base.Scheduler;
 import me.fengorz.kiwi.dict.crawler.config.properties.CrawlerConfigProperties;
 
@@ -56,7 +58,7 @@ public class CrawlerTest {
     private ChiefProducerSchedulerSetup chiefProducerSchedulerSetup;
 
     @Test
-    // @Disabled
+    @Disabled
     public void setupTest() {
         Assertions.assertNotNull(crawlerConfigProperties);
         Assertions.assertNotNull(crawlerConfigProperties.getEnableScheduler());
@@ -70,9 +72,16 @@ public class CrawlerTest {
     }
 
     @Test
-    // @Disabled
+    @Disabled
     public void cacheWordScheduler() {
         cacheWordScheduler.schedule();
+    }
+
+    @Test
+    public void test_RefreshAllApiKey() {
+        DailyScheduler scheduler = SpringUtils
+            .getBean(CrawlerConstants.COMPONENT_BEAN_ID.REFRESH_ALL_API_KEY_DAILY_SCHEDULER, DailyScheduler.class);
+        scheduler.schedule();
     }
 
     @Test

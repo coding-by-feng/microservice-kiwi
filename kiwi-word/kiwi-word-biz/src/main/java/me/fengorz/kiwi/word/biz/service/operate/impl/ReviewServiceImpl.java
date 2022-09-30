@@ -26,6 +26,7 @@ import java.util.concurrent.Semaphore;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -198,7 +199,7 @@ public class ReviewServiceImpl implements ReviewService {
         } else {
             wordReviewAwoudioDO = wordReviewAudioList.get(0);
         }
-        log.info("wordReviewAwoudioDO be found, {}", wordReviewAwoudioDO);
+        log.info("wordReviewAudioDO be found, {}", wordReviewAwoudioDO);
         return wordReviewAwoudioDO;
     }
 
@@ -216,9 +217,15 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
+    @KiwiCacheKeyPrefix(WordConstants.CACHE_KEY_PREFIX_REVIEW.METHOD_REVIEW_AUDIO)
+    @CacheEvict(cacheNames = WordConstants.CACHE_NAMES, keyGenerator = CacheConstants.CACHE_KEY_GENERATOR_BEAN)
+    public void evictWordReviewAudio(@KiwiCacheKey(1) Integer sourceId, @KiwiCacheKey(2) Integer type) {}
+
+    @Override
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRES_NEW)
     public WordReviewAudioDO generateWordReviewAudio(boolean isReplace, Integer sourceId, Integer type)
         throws DfsOperateException, TtsException, DataCheckedException {
+        this.evictWordReviewAudio(sourceId, type);
         WordReviewAudioDO wordReviewAudioDO = reviewAudioMapper.selectOne(Wrappers.<WordReviewAudioDO>lambdaQuery()
             .eq(WordReviewAudioDO::getSourceId, sourceId).eq(WordReviewAudioDO::getType, type));
         if (wordReviewAudioDO == null) {

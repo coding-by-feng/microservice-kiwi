@@ -197,4 +197,9 @@ public class ReviewTest {
         });
     }
 
+    @Test
+    void test_evictWordReviewAudio() {
+        reviewService.evictWordReviewAudio(1, 1);
+    }
+
 }

@@ -14,6 +14,7 @@ package me.fengorz.kiwi.word.biz.service.base;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 
+import me.fengorz.kiwi.word.api.common.enumeration.ReviewAudioTypeEnum;
 import me.fengorz.kiwi.word.api.entity.WordReviewAudioGenerationDO;
 
 /**
@@ -24,6 +25,6 @@ import me.fengorz.kiwi.word.api.entity.WordReviewAudioGenerationDO;
  */
 public interface ReviewAudioGenerationService extends IService<WordReviewAudioGenerationDO> {
 
-    void markParaphraseGenerateFinish(Integer sourceId);
+    void markGenerateFinish(Integer sourceId, Integer audioId, ReviewAudioTypeEnum type);
 
 }

@@ -34,6 +34,11 @@
             <artifactId>kiwi-common-tts</artifactId>
             <version>${kiwi.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.baidu.aip</groupId>
+            <artifactId>java-sdk</artifactId>
+            <version>${baidu.aip.version}</version>
+        </dependency>
     </dependencies>
 
     <build>

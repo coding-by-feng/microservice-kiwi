@@ -33,7 +33,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-public class TtsConfig {
+public class TtsProperties {
 
     private String url;
     private String apiKey1;

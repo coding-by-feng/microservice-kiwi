@@ -110,17 +110,7 @@ public class WordReviewController extends AbstractDfsController {
         log.info("Method downloadResponse for wordReviewAudio invoked success, sourceId={}, type={}", sourceId, type);
     }
 
-    @GetMapping("/generateTtsVoice/{isReplace}")
-    public R<Void> generateTtsVoice(@PathVariable("isReplace") Boolean isReplace) {
-        try {
-            reviewService.generateTtsVoice(isReplace);
-            return R.success();
-        } catch (Exception e) {
-            log.error("generateTtsVoice error!", e);
-        }
-        return R.error();
-    }
-
+    @Deprecated
     @GetMapping("/generateTtsVoiceFromParaphraseId/{paraphraseId}")
     public R<Void> generateTtsVoiceFromParaphraseId(@PathVariable("paraphraseId") Integer paraphraseId) {
         try {

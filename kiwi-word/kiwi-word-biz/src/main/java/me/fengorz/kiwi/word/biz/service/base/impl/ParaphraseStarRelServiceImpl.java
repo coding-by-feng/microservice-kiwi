@@ -89,7 +89,7 @@ public class ParaphraseStarRelServiceImpl extends ServiceImpl<ParaphraseStarRelM
 
     @Override
     public List<Integer> listNotAllGeneratedVoice() {
-        return mapper.listNotAllGeneratedVoice(ReviewAudioTypeEnum.ALL.getType());
+        return mapper.listNotAllGeneratedVoice(ReviewAudioTypeEnum.COMBO.getType());
     }
 
 }

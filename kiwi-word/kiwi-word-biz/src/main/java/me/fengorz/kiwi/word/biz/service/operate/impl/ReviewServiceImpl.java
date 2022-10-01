@@ -15,6 +15,7 @@
  */
 package me.fengorz.kiwi.word.biz.service.operate.impl;
 
+import java.io.ByteArrayInputStream;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
@@ -25,6 +26,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.scheduling.annotation.Async;
@@ -51,11 +53,13 @@ import me.fengorz.kiwi.common.sdk.exception.dfs.DfsOperateDeleteException;
 import me.fengorz.kiwi.common.sdk.exception.dfs.DfsOperateException;
 import me.fengorz.kiwi.common.sdk.exception.tts.TtsException;
 import me.fengorz.kiwi.common.sdk.util.bean.KiwiBeanUtils;
+import me.fengorz.kiwi.common.sdk.util.lang.array.KiwiArrayUtils;
 import me.fengorz.kiwi.common.sdk.util.lang.collection.KiwiCollectionUtils;
 import me.fengorz.kiwi.common.sdk.util.validate.KiwiAssertUtils;
 import me.fengorz.kiwi.common.sdk.web.security.SecurityUtils;
 import me.fengorz.kiwi.common.tts.model.TtsProperties;
 import me.fengorz.kiwi.common.tts.service.TtsService;
+import me.fengorz.kiwi.word.api.common.ApiCrawlerConstants;
 import me.fengorz.kiwi.word.api.common.WordConstants;
 import me.fengorz.kiwi.word.api.common.enumeration.ReviewAudioSourceEnum;
 import me.fengorz.kiwi.word.api.common.enumeration.ReviewAudioTypeEnum;
@@ -281,6 +285,7 @@ public class ReviewServiceImpl implements ReviewService {
             throw e;
         }
 
+        reviewAudioGenerationService.markGenerateFinish(sourceId, wordReviewAudioDO.getId(), type);
         return wordReviewAudioDO;
     }
 
@@ -396,13 +401,15 @@ public class ReviewServiceImpl implements ReviewService {
         log.info("generateTtsVoiceFromParaphraseId beginning, paraphraseId is {}", paraphraseId);
         final ParaphraseDO paraphraseDO = paraphraseMapper.selectById(paraphraseId);
         if (paraphraseDO == null) {
-            log.info("paraphraseDO is null, skipping, paraphraseId is {}", paraphraseId);
+            log.info("paraphraseDO is null, skipping generateTtsVoiceFromParaphraseId, paraphraseId is {}",
+                paraphraseId);
             return;
         }
         final CharacterDO characterDO = characterMapper.selectOne(
             Wrappers.<CharacterDO>lambdaQuery().eq(CharacterDO::getCharacterId, paraphraseDO.getCharacterId()));
         if (characterDO == null) {
-            log.info("characterDO is null, skipping, characterDO is {}", paraphraseDO.getCharacterId());
+            log.info("characterDO is null, skipping generateTtsVoiceFromParaphraseId, characterDO is {}",
+                paraphraseDO.getCharacterId());
             return;
         }
         final List<ParaphraseExampleDO> paraphraseExamples = paraphraseExampleMapper.selectList(
@@ -440,7 +447,78 @@ public class ReviewServiceImpl implements ReviewService {
                 log.error("generateWordReviewAudio invoke failed");
             }
         });
-        reviewAudioGenerationService.markParaphraseGenerateFinish(paraphraseId);
+
+        this.generateComboFromParaphraseId(paraphraseId);
+    }
+
+    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRES_NEW)
+    private void generateComboFromParaphraseId(Integer paraphraseId) {
+        final ParaphraseDO paraphraseDO = paraphraseMapper.selectById(paraphraseId);
+        if (paraphraseDO == null) {
+            log.info("paraphraseDO is null, skipping generateComboFromParaphraseId, paraphraseId is {}", paraphraseId);
+            return;
+        }
+        final CharacterDO characterDO = characterMapper.selectOne(
+            Wrappers.<CharacterDO>lambdaQuery().eq(CharacterDO::getCharacterId, paraphraseDO.getCharacterId()));
+        if (characterDO == null) {
+            log.info("characterDO is null, skipping generateComboFromParaphraseId, characterDO is {}",
+                paraphraseDO.getCharacterId());
+            return;
+        }
+        final List<ParaphraseExampleDO> paraphraseExamples = paraphraseExampleMapper.selectList(
+            Wrappers.<ParaphraseExampleDO>lambdaQuery().eq(ParaphraseExampleDO::getParaphraseId, paraphraseId));
+        int exampleIndex = 0;
+        final List<byte[]> buffer = new ArrayList<>();
+        for (ImmutablePair<ReviewAudioTypeEnum, Integer> counter : paraphraseTtsGenerationPayload.getCounters()) {
+            Integer sourceId = null;
+            ReviewAudioTypeEnum type = counter.getLeft();
+            if (ReviewAudioTypeEnum.isWord(type.getType())) {
+                sourceId = paraphraseDO.getWordId();
+            } else if (ReviewAudioTypeEnum.isParaphrase(type.getType())) {
+                sourceId = paraphraseId;
+            } else if (ReviewAudioTypeEnum.isExample(type.getType())) {
+                if (CollectionUtils.isNotEmpty(paraphraseExamples) && paraphraseExamples.size() > exampleIndex) {
+                    sourceId = paraphraseExamples.get(exampleIndex++).getExampleId();
+                }
+            }
+            if (sourceId == null) {
+                log.info("sourceId is null, type={},  skipping generateWordReviewAudio()", type.name());
+                continue;
+            }
+
+            try {
+                WordReviewAudioDO wordReviewAudio = findWordReviewAudio(sourceId, type.getType());
+                buffer.add(this.dfsService.downloadFile(wordReviewAudio.getGroupName(), wordReviewAudio.getFilePath()));
+            } catch (DfsOperateException | TtsException | DataCheckedException e) {
+                log.error(e.getMessage(), e);
+            }
+        }
+
+        byte[] mergedBytes = KiwiArrayUtils.merge(buffer.toArray(new byte[buffer.size()][]));
+        String uploadResult = null;
+        try {
+            uploadResult = this.dfsService.uploadFile(new ByteArrayInputStream(mergedBytes), mergedBytes.length,
+                ApiCrawlerConstants.EXT_MP3);
+        } catch (DfsOperateException e) {
+            log.error(e.getMessage(), e);
+        }
+
+        KiwiAssertUtils.serviceNotEmpty(uploadResult, "uploadResult must not be empty");
+        WordReviewAudioDO wordReviewAudio = new WordReviewAudioDO();
+        wordReviewAudio.setId(seqService.genCommonIntSequence());
+        wordReviewAudio.setGroupName(WordDfsUtils.getGroupName(uploadResult));
+        wordReviewAudio.setFilePath(WordDfsUtils.getUploadVoiceFilePath(uploadResult));
+        wordReviewAudio.setSourceId(paraphraseId);
+        wordReviewAudio.setType(ReviewAudioTypeEnum.COMBO.getType());
+        wordReviewAudio.setIsDel(GlobalConstants.FLAG_DEL_NO);
+        wordReviewAudio.setCreateTime(LocalDateTime.now());
+        wordReviewAudio.setSourceUrl(ReviewAudioSourceEnum.COMBO.getSource());
+        wordReviewAudio
+            .setSourceText(StringUtils.defaultIfBlank(ReviewAudioSourceEnum.COMBO.name(), GlobalConstants.EMPTY));
+        reviewAudioMapper.insert(wordReviewAudio);
+
+        reviewAudioGenerationService.markGenerateFinish(paraphraseId, wordReviewAudio.getId(),
+            ReviewAudioTypeEnum.COMBO);
     }
 
     private String acquireText(Integer sourceId, Integer type) throws DataCheckedException {

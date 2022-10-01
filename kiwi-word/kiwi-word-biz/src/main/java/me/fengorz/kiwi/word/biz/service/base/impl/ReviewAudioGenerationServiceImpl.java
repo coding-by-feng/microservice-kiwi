@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
 import lombok.RequiredArgsConstructor;
@@ -42,11 +43,23 @@ public class ReviewAudioGenerationServiceImpl extends
 
     @Override
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRES_NEW)
-    public void markParaphraseGenerateFinish(Integer sourceId) {
-        reviewAudioGenerationMapper
-            .insert(new WordReviewAudioGenerationDO().setId(seqService.genCommonIntSequence()).setSourceId(sourceId)
-                .setIsFinish(GlobalConstants.FLAG_DEL_YES).setType(ReviewAudioTypeEnum.ALL.getType()));
-        log.info("Method markParaphraseGenerateFinish invoked success, sourceId is {}", sourceId);
+    public void markGenerateFinish(Integer sourceId, Integer audioId, ReviewAudioTypeEnum type) {
+        WordReviewAudioGenerationDO wordReviewAudioGenerationDO = reviewAudioGenerationMapper.selectOne(
+            Wrappers.<WordReviewAudioGenerationDO>lambdaQuery().eq(WordReviewAudioGenerationDO::getSourceId, sourceId)
+                .eq(WordReviewAudioGenerationDO::getType, type.getType()));
+        if (wordReviewAudioGenerationDO == null) {
+            reviewAudioGenerationMapper
+                .insert(new WordReviewAudioGenerationDO().setId(seqService.genCommonIntSequence()).setSourceId(sourceId)
+                    .setAudioId(audioId).setIsFinish(GlobalConstants.FLAG_DEL_YES).setType(type.getType()));
+        } else {
+            if (GlobalConstants.FLAG_YES != wordReviewAudioGenerationDO.getIsFinish()) {
+                wordReviewAudioGenerationDO.setIsFinish(GlobalConstants.FLAG_YES);
+            }
+            wordReviewAudioGenerationDO.setAudioId(audioId);
+            reviewAudioGenerationMapper.updateById(wordReviewAudioGenerationDO);
+        }
+        log.info("Method markParaphraseGenerateFinish invoked success, sourceId={}, audioId={}, type={}", sourceId,
+            audioId, type.name());
     }
 
 }

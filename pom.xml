@@ -55,7 +55,7 @@
         <junit.version>4.13</junit.version>
         <mockito.version>4.1.0</mockito.version>
         <redisson.version>3.16.7</redisson.version>
-        <baidu.aip.version>4.16.5</baidu.aip.version>
+        <baidu.aip.version>4.16.11</baidu.aip.version>
         <commons-configuration.version>1.10</commons-configuration.version>
         <freemarker.version>2.3.29</freemarker.version>
         <commons-collections4.version>4.4</commons-collections4.version>

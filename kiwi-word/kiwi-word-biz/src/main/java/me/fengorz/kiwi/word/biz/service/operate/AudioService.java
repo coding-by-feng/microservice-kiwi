@@ -31,4 +31,6 @@ public interface AudioService {
     String generateEnglishVoice(String englishText) throws DfsOperateException, TtsException;
 
     String generateChineseVoice(String chineseText) throws DfsOperateException, TtsException;
+
+    String generateVoiceUseBaiduTts(String chineseText) throws DfsOperateException, TtsException;
 }

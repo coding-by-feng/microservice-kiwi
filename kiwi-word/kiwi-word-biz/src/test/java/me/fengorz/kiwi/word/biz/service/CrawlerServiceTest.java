@@ -14,7 +14,7 @@
  *
  */
 
-package me.fengorz.kiwi.word.biz.service.operate.impl;
+package me.fengorz.kiwi.word.biz.service;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
@@ -38,7 +38,7 @@ import me.fengorz.kiwi.word.biz.service.operate.CrawlerService;
 @ExtendWith(SpringExtension.class)
 @TestPropertySource("classpath:env.properties")
 @SpringBootTest(classes = WordBizApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class CrawlerServiceImplTest {
+public class CrawlerServiceTest {
 
     @Autowired
     private CrawlerService crawlerService;
@@ -46,13 +46,13 @@ public class CrawlerServiceImplTest {
     @Test
     @SneakyThrows
     // @RepeatedTest(value = 3)
-    @Disabled
+    // @Disabled
     void generateTtsVoice() {
-        Assertions.assertDoesNotThrow(
-            () -> crawlerService.generateTtsVoice(ReviewAudioGenerationEnum.ONLY_COLLECTED));
+        Assertions.assertDoesNotThrow(() -> crawlerService.generateTtsVoice(ReviewAudioGenerationEnum.ONLY_COLLECTED));
     }
 
     @Test
+    @Disabled
     void test_reFetchPronunciation() {
         crawlerService.reFetchPronunciation(3053026);
     }

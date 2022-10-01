@@ -55,7 +55,7 @@ public class CleanerServiceImpl implements CleanerService {
     private final ParaphraseService paraphraseService;
     private final ParaphraseExampleService exampleService;
     private final PronunciationService pronunciationService;
-    private final IWordMainVariantService variantService;
+    private final WordMainVariantService variantService;
     private final ParaphrasePhraseService phraseService;
     private final DfsService dfsService;
 

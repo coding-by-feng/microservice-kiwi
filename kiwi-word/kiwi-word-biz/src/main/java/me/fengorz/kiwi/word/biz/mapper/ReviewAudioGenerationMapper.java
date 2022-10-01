@@ -10,16 +10,10 @@
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
  */
-package me.fengorz.kiwi.word.biz.service.base;
+package me.fengorz.kiwi.word.biz.mapper;
 
-import com.baomidou.mybatisplus.extension.service.IService;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
-import me.fengorz.kiwi.word.api.entity.StarRelHisDO;
+import me.fengorz.kiwi.word.api.entity.WordReviewAudioGenerationDO;
 
-/**
- * 服务类
- *
- * @author zhanShiFeng
- * @date 2020-09-16 16:56:42
- */
-public interface IStarRelHisService extends IService<StarRelHisDO> {}
+public interface ReviewAudioGenerationMapper extends BaseMapper<WordReviewAudioGenerationDO> {}

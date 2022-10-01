@@ -37,7 +37,7 @@ import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
 import me.fengorz.kiwi.common.sdk.exception.ResourceNotFoundException;
 import me.fengorz.kiwi.common.sdk.exception.tts.TtsException;
 import me.fengorz.kiwi.common.tts.TtsConstants;
-import me.fengorz.kiwi.common.tts.model.TtsConfig;
+import me.fengorz.kiwi.common.tts.model.TtsProperties;
 import me.fengorz.kiwi.common.tts.service.TtsService;
 
 /**
@@ -50,7 +50,7 @@ import me.fengorz.kiwi.common.tts.service.TtsService;
 @RequiredArgsConstructor
 public class TtsServiceImpl implements TtsService {
 
-    private final TtsConfig ttsConfig;
+    private final TtsProperties ttsProperties;
 
     @Override
     public byte[] speechEnglish(String apiKey, String text) throws TtsException {
@@ -72,7 +72,7 @@ public class TtsServiceImpl implements TtsService {
     public String autoSelectApiKey() {
         String finalApiKey = null;
         int minUsedTime = TtsConstants.API_KEY_MAX_USE_TIME;
-        for (String apiKey : ttsConfig.listApiKey()) {
+        for (String apiKey : ttsProperties.listApiKey()) {
             int usedTime = queryTtsApiKeyUsed(apiKey);
             if (usedTime >= TtsConstants.API_KEY_MAX_USE_TIME) {
                 continue;
@@ -122,10 +122,10 @@ public class TtsServiceImpl implements TtsService {
     @Async
     @Override
     public void deprecateApiKeyToday(String apiKey) {
-        if (!ttsConfig.listApiKey().contains(apiKey)) {
+        if (!ttsProperties.listApiKey().contains(apiKey)) {
             return;
         }
-        Optional.ofNullable(HttpUtil.get(StrUtil.format(ttsConfig.getUrl(), apiKey))).ifPresent(response -> {
+        Optional.ofNullable(HttpUtil.get(StrUtil.format(ttsProperties.getUrl(), apiKey))).ifPresent(response -> {
             if (StringUtils.startsWith(response, "ERROR:")) {
                 useTtsApiKey(apiKey, TtsConstants.API_KEY_MAX_USE_TIME);
             }
@@ -143,12 +143,12 @@ public class TtsServiceImpl implements TtsService {
     public boolean hasValidApiKey() {
         Integer totalUsedTime = queryTtsApiKeyUsed(TtsConstants.CACHE_KEY_PREFIX_TTS.TOTAL_API_KEY);
         return totalUsedTime != null
-            && totalUsedTime < TtsConstants.API_KEY_MAX_USE_TIME * ttsConfig.listApiKey().size();
+            && totalUsedTime < TtsConstants.API_KEY_MAX_USE_TIME * ttsProperties.listApiKey().size();
     }
 
     @Override
     public void refreshAllApiKey() {
-        for (String apiKey : ttsConfig.listApiKey()) {
+        for (String apiKey : ttsProperties.listApiKey()) {
             useTtsApiKey(apiKey, 0);
         }
         useTtsApiKey(TtsConstants.CACHE_KEY_PREFIX_TTS.TOTAL_API_KEY, 0);

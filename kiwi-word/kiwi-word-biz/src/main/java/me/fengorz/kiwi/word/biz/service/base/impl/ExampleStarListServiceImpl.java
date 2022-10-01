@@ -38,8 +38,8 @@ import me.fengorz.kiwi.word.api.entity.column.WordParaphraseExampleListColumn;
 import me.fengorz.kiwi.word.api.vo.ExampleStarListVO;
 import me.fengorz.kiwi.word.api.vo.star.ExampleStarItemVO;
 import me.fengorz.kiwi.word.biz.mapper.ExampleStarListMapper;
-import me.fengorz.kiwi.word.biz.service.base.IExampleStarListService;
-import me.fengorz.kiwi.word.biz.service.base.IWordExampleStarRelService;
+import me.fengorz.kiwi.word.biz.service.base.ExampleStarListService;
+import me.fengorz.kiwi.word.biz.service.base.ExampleStarRelService;
 import me.fengorz.kiwi.word.biz.service.operate.AsyncArchiveService;
 
 /**
@@ -49,10 +49,10 @@ import me.fengorz.kiwi.word.biz.service.operate.AsyncArchiveService;
 @Service()
 @RequiredArgsConstructor
 public class ExampleStarListServiceImpl extends ServiceImpl<ExampleStarListMapper, ExampleStarListDO>
-    implements IExampleStarListService {
+    implements ExampleStarListService {
 
     private final ExampleStarListMapper mapper;
-    private final IWordExampleStarRelService relService;
+    private final ExampleStarRelService relService;
     private final AsyncArchiveService archiveService;
 
     @Override

@@ -33,7 +33,6 @@ import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.bdf.core.service.SeqService;
 import me.fengorz.kiwi.common.sdk.annotation.log.LogMarker;
 import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
-import me.fengorz.kiwi.common.sdk.constant.MapperConstant;
 import me.fengorz.kiwi.common.sdk.exception.ServiceException;
 import me.fengorz.kiwi.common.sdk.util.lang.string.KiwiStringUtils;
 import me.fengorz.kiwi.word.api.common.ApiCrawlerConstants;
@@ -96,7 +95,7 @@ public class WordFetchQueueServiceImpl extends ServiceImpl<FetchQueueMapper, Fet
 
     private void insertOne(Integer wordId, String wordName, String derivation, int status, Integer... infoType) {
         FetchQueueDO queueDO =
-            new FetchQueueDO().setQueueId(seqService.genIntSequence(MapperConstant.T_INS_SEQUENCE)).setWordId(wordId)
+            new FetchQueueDO().setQueueId(seqService.genCommonIntSequence()).setWordId(wordId)
                 .setWordName(wordName).setDerivation(KiwiStringUtils.isNotBlank(derivation) ? derivation : null)
                 .setFetchStatus(status).setFetchPriority(100).setInTime(LocalDateTime.now())
                 .setOperateTime(LocalDateTime.now()).setIsLock(GlobalConstants.FLAG_YES);

@@ -21,29 +21,23 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 
-import me.fengorz.kiwi.word.api.entity.WordStarListDO;
-import me.fengorz.kiwi.word.api.vo.WordStarListVO;
-import me.fengorz.kiwi.word.api.vo.star.WordStarItemVO;
+import me.fengorz.kiwi.word.api.entity.ExampleStarListDO;
+import me.fengorz.kiwi.word.api.vo.ExampleStarListVO;
+import me.fengorz.kiwi.word.api.vo.star.ExampleStarItemVO;
 
 /**
- * 单词本
- *
  * @author zhanshifeng
- * @date 2019-12-08 23:26:57
+ * @date 2019-12-08 23:27:12
  */
-public interface IWordStarListService extends IService<WordStarListDO> {
+public interface ExampleStarListService extends IService<ExampleStarListDO> {
 
     Integer countById(Integer id);
 
-    List<WordStarListVO> getCurrentUserList(Integer userId);
+    List<ExampleStarListVO> getCurrentUserList(Integer userId);
 
-    boolean updateListByUser(WordStarListDO entity, Integer id, Integer userId);
+    IPage<ExampleStarItemVO> getListItems(Page<ExampleStarListDO> page, Integer listId);
 
-    void putIntoStarList(Integer wordId, Integer listId);
+    void removeOneRel(Integer exampleId, Integer listId);
 
-    void removeStarList(Integer wordId, Integer listId);
-
-    IPage<WordStarItemVO> getListItems(Page<WordStarListDO> page, Integer listId);
-
-    boolean countWordIsCollect(Integer wordId, Integer owner);
+    void putIntoStarList(Integer exampleId, Integer listId);
 }

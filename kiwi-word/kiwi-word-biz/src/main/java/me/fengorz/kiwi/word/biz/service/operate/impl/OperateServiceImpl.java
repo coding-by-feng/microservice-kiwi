@@ -89,13 +89,13 @@ public class OperateServiceImpl implements OperateService {
     private final ParaphraseExampleService exampleService;
     private final PronunciationService pronunciationService;
     private final WordFetchQueueService fetchQueueService;
-    private final IWordStarListService wordStarListService;
+    private final WordStarListService wordStarListService;
     private final ParaphraseStarListService paraphraseStarListService;
-    private final IExampleStarListService exampleStarListService;
-    private final IWordStarRelService wordStarRelService;
+    private final ExampleStarListService exampleStarListService;
+    private final WordStarRelService wordStarRelService;
     private final ParaphraseStarRelService paraphraseStarRelService;
-    private final IWordExampleStarRelService exampleStarRelService;
-    private final IWordMainVariantService mainVariantService;
+    private final ExampleStarRelService exampleStarRelService;
+    private final WordMainVariantService mainVariantService;
     private final ParaphrasePhraseService phraseService;
     private final ReviewService reviewService;
     private final DfsService dfsService;

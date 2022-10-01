@@ -44,8 +44,8 @@ import me.fengorz.kiwi.word.api.vo.WordStarListVO;
 import me.fengorz.kiwi.word.api.vo.star.WordStarItemParaphraseVO;
 import me.fengorz.kiwi.word.api.vo.star.WordStarItemVO;
 import me.fengorz.kiwi.word.biz.mapper.WordStarListMapper;
-import me.fengorz.kiwi.word.biz.service.base.IWordStarListService;
-import me.fengorz.kiwi.word.biz.service.base.IWordStarRelService;
+import me.fengorz.kiwi.word.biz.service.base.WordStarListService;
+import me.fengorz.kiwi.word.biz.service.base.WordStarRelService;
 import me.fengorz.kiwi.word.biz.service.operate.AsyncArchiveService;
 
 /**
@@ -57,10 +57,10 @@ import me.fengorz.kiwi.word.biz.service.operate.AsyncArchiveService;
 @Service()
 @RequiredArgsConstructor
 public class WordStarListServiceImpl extends ServiceImpl<WordStarListMapper, WordStarListDO>
-    implements IWordStarListService {
+    implements WordStarListService {
 
     private final WordStarListMapper wordStarListMapper;
-    private final IWordStarRelService relService;
+    private final WordStarRelService relService;
     private final AsyncArchiveService archiveService;
 
     @Override

@@ -16,7 +16,11 @@
 
 package me.fengorz.kiwi.word.biz.config;
 
-import org.springframework.boot.context.properties.ConfigurationProperties;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.commons.collections4.ListUtils;
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -28,7 +32,10 @@ import me.fengorz.kiwi.bdf.core.config.LogAspectConfig;
 import me.fengorz.kiwi.common.es.config.ESConfig;
 import me.fengorz.kiwi.common.fastdfs.config.DfsConfig;
 import me.fengorz.kiwi.common.sdk.config.UtilsBeanConfiguration;
-import me.fengorz.kiwi.common.tts.model.TtsConfig;
+import me.fengorz.kiwi.common.tts.config.TtsConfig;
+import me.fengorz.kiwi.word.api.common.enumeration.ReviewAudioSourceEnum;
+import me.fengorz.kiwi.word.api.common.enumeration.ReviewAudioTypeEnum;
+import me.fengorz.kiwi.word.api.model.ParaphraseTtsGenerationPayload;
 
 /**
  * @Author zhanshifeng
@@ -37,7 +44,7 @@ import me.fengorz.kiwi.common.tts.model.TtsConfig;
 @Slf4j
 @Configuration
 @Import({CoreConfig.class, UtilsBeanConfiguration.class, LogAspectConfig.class, CacheConfig.class, DfsConfig.class,
-    ESConfig.class})
+    ESConfig.class, TtsConfig.class})
 public class WordBizConfig {
 
     public WordBizConfig() {
@@ -45,9 +52,41 @@ public class WordBizConfig {
     }
 
     @Bean
-    @ConfigurationProperties(prefix = "tts.voicerss")
-    public TtsConfig ttsConfig() {
-        return new TtsConfig();
+    public ParaphraseTtsGenerationPayload paraphraseTtsGenerationPayload() {
+        List<ImmutablePair<ReviewAudioTypeEnum, ReviewAudioSourceEnum>> pairs = new ArrayList<>();
+        pairs.add(ImmutablePair.of(ReviewAudioTypeEnum.WORD_SPELLING, ReviewAudioSourceEnum.BAIDU));
+        pairs.add(ImmutablePair.of(ReviewAudioTypeEnum.CHARACTER_CH, ReviewAudioSourceEnum.BAIDU));
+        pairs.add(ImmutablePair.of(ReviewAudioTypeEnum.PARAPHRASE_CH, ReviewAudioSourceEnum.BAIDU));
+        pairs.add(ImmutablePair.of(ReviewAudioTypeEnum.PARAPHRASE_EN, ReviewAudioSourceEnum.VOICERSS));
+        pairs.add(ImmutablePair.of(ReviewAudioTypeEnum.EXAMPLE_CH, ReviewAudioSourceEnum.BAIDU));
+        pairs.add(ImmutablePair.of(ReviewAudioTypeEnum.EXAMPLE_EN, ReviewAudioSourceEnum.VOICERSS));
+
+        List<ImmutablePair<ReviewAudioTypeEnum, Boolean>> isReplacePayload = new ArrayList<>();
+        isReplacePayload.add(ImmutablePair.of(ReviewAudioTypeEnum.WORD_SPELLING, true));
+        isReplacePayload.add(ImmutablePair.of(ReviewAudioTypeEnum.CHARACTER_CH, true));
+        isReplacePayload.add(ImmutablePair.of(ReviewAudioTypeEnum.PARAPHRASE_CH, true));
+        isReplacePayload.add(ImmutablePair.of(ReviewAudioTypeEnum.PARAPHRASE_EN, false));
+        isReplacePayload.add(ImmutablePair.of(ReviewAudioTypeEnum.EXAMPLE_CH, true));
+        isReplacePayload.add(ImmutablePair.of(ReviewAudioTypeEnum.EXAMPLE_EN, false));
+
+        List<ImmutablePair<ReviewAudioTypeEnum, Integer>> counters = new ArrayList<>();
+        counters.add(ImmutablePair.of(ReviewAudioTypeEnum.PRONUNCIATION, 2));
+        counters.add(ImmutablePair.of(ReviewAudioTypeEnum.WORD_SPELLING, 2));
+        counters.add(ImmutablePair.of(ReviewAudioTypeEnum.PRONUNCIATION, 2));
+        counters.add(ImmutablePair.of(ReviewAudioTypeEnum.WORD_SPELLING, 2));
+        counters.add(ImmutablePair.of(ReviewAudioTypeEnum.CHARACTER_CH, 1));
+        counters.add(ImmutablePair.of(ReviewAudioTypeEnum.PARAPHRASE_CH, 2));
+        counters.add(ImmutablePair.of(ReviewAudioTypeEnum.PARAPHRASE_EN, 2));
+        counters.add(ImmutablePair.of(ReviewAudioTypeEnum.PARAPHRASE_CH, 1));
+        counters.add(ImmutablePair.of(ReviewAudioTypeEnum.PARAPHRASE_EN, 1));
+        counters.add(ImmutablePair.of(ReviewAudioTypeEnum.EXAMPLE_CH, 2));
+        counters.add(ImmutablePair.of(ReviewAudioTypeEnum.EXAMPLE_EN, 2));
+        counters.add(ImmutablePair.of(ReviewAudioTypeEnum.EXAMPLE_CH, 1));
+        counters.add(ImmutablePair.of(ReviewAudioTypeEnum.EXAMPLE_EN, 1));
+
+        return ParaphraseTtsGenerationPayload.builder().pairs(ListUtils.unmodifiableList(pairs))
+            .isReplacePayload(ListUtils.unmodifiableList(isReplacePayload))
+            .counters(ListUtils.unmodifiableList(counters)).build();
     }
 
 }

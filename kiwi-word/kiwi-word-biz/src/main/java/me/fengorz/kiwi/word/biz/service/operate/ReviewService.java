@@ -51,19 +51,19 @@ public interface ReviewService {
      */
     void recordReviewPageNumber(int listId, Long pageNumber, int type, Integer userId);
 
-    WordReviewAudioDO findWordReviewAudio(Integer sourceId, Integer type) throws DfsOperateException, TtsException, DataCheckedException;
+    WordReviewAudioDO findWordReviewAudio(Integer sourceId, Integer type)
+        throws DfsOperateException, TtsException, DataCheckedException;
 
     void removeWordReviewAudio(Integer sourceId);
 
     void evictWordReviewAudio(Integer sourceId, Integer type);
 
-    WordReviewAudioDO generateWordReviewAudio(boolean isReplace, Integer sourceId, Integer type) throws DfsOperateException, TtsException, DataCheckedException;
-
     void initPermanent(boolean isReplace, boolean isOnlyTest) throws DfsOperateException, TtsException;
 
-    void generateTtsVoice(boolean isReplace) throws DfsOperateException, TtsException, InterruptedException;
+    void generateTtsVoice() throws DfsOperateException, TtsException, InterruptedException;
 
-    void generateTtsVoiceFromParaphraseId(Integer paraphraseId) throws DfsOperateException, TtsException, DataCheckedException;
+    void generateTtsVoiceFromParaphraseId(Integer paraphraseId)
+        throws DfsOperateException, TtsException, DataCheckedException;
 
     void cleanReviewVoiceByParaphraseId(Integer paraphraseId);
 

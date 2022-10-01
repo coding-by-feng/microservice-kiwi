@@ -30,7 +30,6 @@ import lombok.RequiredArgsConstructor;
 import me.fengorz.kiwi.bdf.core.service.SeqService;
 import me.fengorz.kiwi.common.sdk.annotation.cache.KiwiCacheKeyPrefix;
 import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
-import me.fengorz.kiwi.common.sdk.constant.MapperConstant;
 import me.fengorz.kiwi.common.sdk.util.bean.KiwiBeanUtils;
 import me.fengorz.kiwi.common.sdk.util.lang.collection.KiwiCollectionUtils;
 import me.fengorz.kiwi.word.api.common.WordConstants;
@@ -39,9 +38,9 @@ import me.fengorz.kiwi.word.api.entity.WordMainDO;
 import me.fengorz.kiwi.word.api.entity.WordMainVariantDO;
 import me.fengorz.kiwi.word.api.vo.WordMainVariantVO;
 import me.fengorz.kiwi.word.biz.mapper.WordMainVariantMapper;
-import me.fengorz.kiwi.word.biz.service.base.IWordMainVariantService;
 import me.fengorz.kiwi.word.biz.service.base.WordFetchQueueService;
 import me.fengorz.kiwi.word.biz.service.base.WordMainService;
+import me.fengorz.kiwi.word.biz.service.base.WordMainVariantService;
 
 /**
  * 单词时态、单复数等的变化 @Author zhanshifeng
@@ -52,7 +51,7 @@ import me.fengorz.kiwi.word.biz.service.base.WordMainService;
 @RequiredArgsConstructor
 @KiwiCacheKeyPrefix(WordConstants.CACHE_KEY_PREFIX_WORD_VARIANT.CLASS)
 public class WordMainVariantServiceImpl extends ServiceImpl<WordMainVariantMapper, WordMainVariantDO>
-    implements IWordMainVariantService {
+    implements WordMainVariantService {
 
     private final WordMainVariantMapper wordMainVariantMapper;
     private final WordFetchQueueService wordFetchQueueService;
@@ -148,7 +147,7 @@ public class WordMainVariantServiceImpl extends ServiceImpl<WordMainVariantMappe
     @Transactional(rollbackFor = Exception.class)
     private boolean insertOne(Integer wordId, String variantName, Integer type) {
         WordMainVariantDO entity =
-            new WordMainVariantDO().setId(seqService.genIntSequence(MapperConstant.T_INS_SEQUENCE)).setWordId(wordId)
+            new WordMainVariantDO().setId(seqService.genCommonIntSequence()).setWordId(wordId)
                 .setVariantName(variantName).setType(WordConstants.VARIANT_TYPE_UNKNOWN)
                 .setIsValid(GlobalConstants.FLAG_DEL_YES);
         return this.save(entity);

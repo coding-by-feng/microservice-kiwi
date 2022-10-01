@@ -29,4 +29,6 @@ public interface ParaphraseStarRelMapper extends BaseMapper<ParaphraseStarRelDO>
 
     List<Integer> listNotGeneratedVoice();
 
+    List<Integer> listNotAllGeneratedVoice(Integer type);
+
 }

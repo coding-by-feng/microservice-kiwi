@@ -24,7 +24,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.RequiredArgsConstructor;
 import me.fengorz.kiwi.word.api.entity.ExampleStarRelDO;
 import me.fengorz.kiwi.word.biz.mapper.ExampleStarRelMapper;
-import me.fengorz.kiwi.word.biz.service.base.IWordExampleStarRelService;
+import me.fengorz.kiwi.word.biz.service.base.ExampleStarRelService;
 
 /**
  * 释义例句本与例句关系表
@@ -34,8 +34,8 @@ import me.fengorz.kiwi.word.biz.service.base.IWordExampleStarRelService;
  */
 @Service
 @RequiredArgsConstructor
-public class WordExampleStarRelServiceImpl extends ServiceImpl<ExampleStarRelMapper, ExampleStarRelDO>
-    implements IWordExampleStarRelService {
+public class ExampleStarRelServiceImpl extends ServiceImpl<ExampleStarRelMapper, ExampleStarRelDO>
+    implements ExampleStarRelService {
 
     private final ExampleStarRelMapper exampleStarRelMapper;
 

@@ -31,8 +31,17 @@ public interface ParaphraseStarRelService extends IService<ParaphraseStarRelDO> 
 
     /**
      * 默认查询还没有生产音频文件的10个paraphrase
+     * 
      * @return
      */
     List<Integer> listNotGeneratedVoice();
+
+    /**
+     * 查询已经收藏的释义中，有哪些关联音频还没有完全生成的
+     * 
+     * @param type
+     * @return
+     */
+    List<Integer> listNotAllGeneratedVoice();
 
 }

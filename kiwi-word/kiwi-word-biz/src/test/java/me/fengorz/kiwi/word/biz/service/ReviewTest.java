@@ -1,18 +1,15 @@
 /*
  *
- *   Copyright [2019~2025] [codingByFeng]
+ * Copyright [2019~2025] [codingByFeng]
  *
- *   Licensed under the Apache License, Version 2.0 (the "License");
- *   you may not use this file except in compliance with the License.
- *   You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *   Unless required by applicable law or agreed to in writing, software
- *   distributed under the License is distributed on an "AS IS" BASIS,
- *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *   See the License for the specific language governing permissions and
- *   limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  *
  *
  */
@@ -146,9 +143,9 @@ public class ReviewTest {
     @Disabled
     void test_findWordReviewAudio() {
         WordReviewAudioDO wordReviewAudio =
-            reviewService.findWordReviewAudio(1510384, ReviewAudioTypeEnum.NON_REVIEW_SPELL.getType());
+            reviewService.findWordReviewAudio(2774367, ReviewAudioTypeEnum.COMBO.getType());
         byte[] bytes = this.dfsService.downloadFile(wordReviewAudio.getGroupName(), wordReviewAudio.getFilePath());
-        FileUtil.writeBytes(bytes, "test_paraphrase_ch.mp3");
+        FileUtil.writeBytes(bytes, "/Users/zhanshifeng/Documents/temp/test_all.mp3");
     }
 
     @Test

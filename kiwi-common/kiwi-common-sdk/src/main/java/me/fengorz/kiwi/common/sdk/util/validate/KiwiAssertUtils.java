@@ -58,15 +58,14 @@ public class KiwiAssertUtils extends Assert {
         return object;
     }
 
-    public static <T> T serviceNotEmpty(T object, String errorMsgTemplate, Object... params) {
+    public static <T> void serviceNotEmpty(T object, String errorMsgTemplate, Object... params) {
         serviceNotNull(object, errorMsgTemplate, params);
-        if (object instanceof Collection && ((Collection)object).isEmpty()) {
+        if (object instanceof Collection && ((Collection<?>)object).isEmpty()) {
             throw new ServiceException(StrUtil.format(errorMsgTemplate, params));
         }
-        if ((object instanceof Integer) && ((Integer)object).equals(0)) {
+        if ((object instanceof Integer) && object.equals(0)) {
             throw new ServiceException(StrUtil.format(errorMsgTemplate, params));
         }
-        return object;
     }
 
     public static void isTrue(boolean expression, String errorMsgTemplate, Object... params)

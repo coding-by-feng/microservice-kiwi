@@ -29,7 +29,6 @@ import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.bdf.core.service.SeqService;
 import me.fengorz.kiwi.common.api.R;
 import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
-import me.fengorz.kiwi.common.sdk.constant.MapperConstant;
 import me.fengorz.kiwi.common.sdk.controller.BaseController;
 import me.fengorz.kiwi.word.api.common.ApiCrawlerConstants;
 import me.fengorz.kiwi.word.api.entity.FetchQueueDO;
@@ -76,7 +75,7 @@ public class TestTempController extends BaseController {
                 }
             } else {
                 queue = new FetchQueueDO();
-                queue.setQueueId(seqService.genIntSequence(MapperConstant.T_INS_SEQUENCE));
+                queue.setQueueId(seqService.genCommonIntSequence());
                 queue.setFetchStatus(ApiCrawlerConstants.STATUS_TO_FETCH);
                 queue.setWordName(word.trim());
                 queue.setFetchPriority(100);

@@ -32,13 +32,12 @@ import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.bdf.core.service.SeqService;
 import me.fengorz.kiwi.common.api.R;
 import me.fengorz.kiwi.common.sdk.annotation.log.LogMarker;
-import me.fengorz.kiwi.common.sdk.constant.MapperConstant;
 import me.fengorz.kiwi.common.sdk.controller.BaseController;
 import me.fengorz.kiwi.common.sdk.web.security.SecurityUtils;
 import me.fengorz.kiwi.word.api.entity.ExampleStarListDO;
 import me.fengorz.kiwi.word.api.vo.ExampleStarListVO;
 import me.fengorz.kiwi.word.api.vo.star.ExampleStarItemVO;
-import me.fengorz.kiwi.word.biz.service.base.IExampleStarListService;
+import me.fengorz.kiwi.word.biz.service.base.ExampleStarListService;
 import me.fengorz.kiwi.word.biz.service.operate.OperateService;
 
 /**
@@ -52,7 +51,7 @@ import me.fengorz.kiwi.word.biz.service.operate.OperateService;
 @Slf4j
 public class ExampleStarListController extends BaseController {
 
-    private final IExampleStarListService starListService;
+    private final ExampleStarListService starListService;
     private final OperateService operateService;
     private final SeqService seqService;
 
@@ -66,7 +65,7 @@ public class ExampleStarListController extends BaseController {
     // @PreAuthorize("@pms.hasPermission('api_wordparaphraseexamplelist_add')")
     public R<Boolean> save(ExampleStarListVO vo) {
         vo.setOwner(SecurityUtils.getCurrentUserId());
-        vo.setId(seqService.genIntSequence(MapperConstant.T_INS_SEQUENCE));
+        vo.setId(seqService.genCommonIntSequence());
         return R.success(starListService.save(vo));
     }
 

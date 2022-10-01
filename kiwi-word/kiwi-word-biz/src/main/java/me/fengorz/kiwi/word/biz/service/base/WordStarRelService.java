@@ -17,27 +17,19 @@ package me.fengorz.kiwi.word.biz.service.base;
 
 import java.util.List;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 
-import me.fengorz.kiwi.word.api.entity.ExampleStarListDO;
-import me.fengorz.kiwi.word.api.vo.ExampleStarListVO;
-import me.fengorz.kiwi.word.api.vo.star.ExampleStarItemVO;
+import me.fengorz.kiwi.word.api.entity.WordStarRelDO;
 
 /**
+ * 单词本与单词的关联表
+ *
  * @author zhanshifeng
- * @date 2019-12-08 23:27:12
+ * @date 2020-01-03 14:39:28
  */
-public interface IExampleStarListService extends IService<ExampleStarListDO> {
+public interface WordStarRelService extends IService<WordStarRelDO> {
 
-    Integer countById(Integer id);
+    List<Integer> findAllWordId(Integer listId);
 
-    List<ExampleStarListVO> getCurrentUserList(Integer userId);
-
-    IPage<ExampleStarItemVO> getListItems(Page<ExampleStarListDO> page, Integer listId);
-
-    void removeOneRel(Integer exampleId, Integer listId);
-
-    void putIntoStarList(Integer exampleId, Integer listId);
+    void replaceFetchResult(Integer oldRelId, Integer newRelId);
 }

@@ -42,7 +42,6 @@ import me.fengorz.kiwi.admin.service.SysRoleService;
 import me.fengorz.kiwi.admin.service.SysUserRoleRelService;
 import me.fengorz.kiwi.admin.service.SysUserService;
 import me.fengorz.kiwi.bdf.core.service.SeqService;
-import me.fengorz.kiwi.common.sdk.constant.MapperConstant;
 
 /**
  * 用户表
@@ -84,7 +83,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
     @Transactional(rollbackFor = Exception.class)
     public SysUser oneClickRegister() {
         SysUser sysUser = new SysUser();
-        sysUser.setUserId(seqService.genIntSequence(MapperConstant.T_INS_SEQUENCE));
+        sysUser.setUserId(seqService.genCommonIntSequence());
         sysUser.setUsername(this.randomUserName());
         sysUser.setCreateTime(LocalDateTime.now());
         sysUser.setPassword(new BCryptPasswordEncoder().encode("123456"));

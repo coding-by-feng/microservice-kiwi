@@ -25,7 +25,8 @@ import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.fastdfs.service.DfsService;
 import me.fengorz.kiwi.common.sdk.exception.dfs.DfsOperateException;
 import me.fengorz.kiwi.common.sdk.exception.tts.TtsException;
-import me.fengorz.kiwi.common.tts.model.TtsConfig;
+import me.fengorz.kiwi.common.tts.model.TtsProperties;
+import me.fengorz.kiwi.common.tts.service.BaiduTtsService;
 import me.fengorz.kiwi.common.tts.service.TtsService;
 import me.fengorz.kiwi.word.api.common.ApiCrawlerConstants;
 import me.fengorz.kiwi.word.api.common.enumeration.ReviewAudioTypeEnum;
@@ -44,7 +45,8 @@ import me.fengorz.kiwi.word.biz.service.operate.AudioService;
 public class AudioServiceImpl implements AudioService {
 
     private final TtsService ttsService;
-    private final TtsConfig ttsConfig;
+    private final BaiduTtsService baiduTtsService;
+    private final TtsProperties ttsProperties;
     private final DfsService dfsService;
     private final ReviewAudioMapper reviewAudioMapper;
 
@@ -68,6 +70,12 @@ public class AudioServiceImpl implements AudioService {
     public String generateChineseVoice(String chineseText) throws DfsOperateException, TtsException {
         byte[] bytes;
         bytes = generateBytes(apiKey -> ttsService.speechChinese(apiKey, chineseText));
+        return dfsService.uploadFile(new ByteArrayInputStream(bytes), bytes.length, ApiCrawlerConstants.EXT_MP3);
+    }
+
+    @Override
+    public String generateVoiceUseBaiduTts(String chineseText) throws DfsOperateException, TtsException {
+        byte[] bytes = baiduTtsService.speech(chineseText);
         return dfsService.uploadFile(new ByteArrayInputStream(bytes), bytes.length, ApiCrawlerConstants.EXT_MP3);
     }
 

@@ -29,7 +29,7 @@ import lombok.RequiredArgsConstructor;
 import me.fengorz.kiwi.common.sdk.util.lang.collection.KiwiCollectionUtils;
 import me.fengorz.kiwi.word.api.entity.WordStarRelDO;
 import me.fengorz.kiwi.word.biz.mapper.WordStarRelMapper;
-import me.fengorz.kiwi.word.biz.service.base.IWordStarRelService;
+import me.fengorz.kiwi.word.biz.service.base.WordStarRelService;
 
 /**
  * 单词本与单词的关联表
@@ -40,7 +40,7 @@ import me.fengorz.kiwi.word.biz.service.base.IWordStarRelService;
 @Service
 @RequiredArgsConstructor
 public class WordStarRelServiceImpl extends ServiceImpl<WordStarRelMapper, WordStarRelDO>
-    implements IWordStarRelService {
+    implements WordStarRelService {
 
     private final WordStarRelMapper wordStarRelMapper;
 

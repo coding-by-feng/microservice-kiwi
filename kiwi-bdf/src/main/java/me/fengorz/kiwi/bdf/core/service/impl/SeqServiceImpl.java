@@ -24,6 +24,7 @@ import lombok.RequiredArgsConstructor;
 import me.fengorz.kiwi.bdf.core.entity.Sequence;
 import me.fengorz.kiwi.bdf.core.mapper.SeqMapper;
 import me.fengorz.kiwi.bdf.core.service.SeqService;
+import me.fengorz.kiwi.common.sdk.constant.MapperConstant;
 
 /**
  * @Description 序列生成服务
@@ -50,5 +51,10 @@ public class SeqServiceImpl implements SeqService {
         seqMapper.genSequence(seq);
         seqMapper.deleteSequence(seq);
         return seq.getId();
+    }
+
+    @Override
+    public Integer genCommonIntSequence() {
+        return this.genIntSequence(MapperConstant.T_INS_SEQUENCE);
     }
 }

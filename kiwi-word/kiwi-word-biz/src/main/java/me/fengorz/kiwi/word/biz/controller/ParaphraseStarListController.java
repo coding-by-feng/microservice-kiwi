@@ -32,7 +32,6 @@ import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.bdf.core.service.SeqService;
 import me.fengorz.kiwi.common.api.R;
 import me.fengorz.kiwi.common.sdk.annotation.log.LogMarker;
-import me.fengorz.kiwi.common.sdk.constant.MapperConstant;
 import me.fengorz.kiwi.common.sdk.controller.BaseController;
 import me.fengorz.kiwi.common.sdk.web.security.SecurityUtils;
 import me.fengorz.kiwi.word.api.entity.ParaphraseStarListDO;
@@ -73,7 +72,7 @@ public class ParaphraseStarListController extends BaseController {
     // @PreAuthorize("@pms.hasPermission('api_wordparaphrasestarlist_add')")
     public R<Boolean> save(ParaphraseStarListVO vo) {
         vo.setOwner(SecurityUtils.getCurrentUserId());
-        vo.setId(seqService.genIntSequence(MapperConstant.T_INS_SEQUENCE));
+        vo.setId(seqService.genCommonIntSequence());
         return R.success(starListService.save(vo));
     }
 

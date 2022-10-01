@@ -1,5 +1,4 @@
 /*
- *
  * Copyright [2019~2025] [codingByFeng]
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
@@ -10,26 +9,21 @@
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
- *
- *
  */
 package me.fengorz.kiwi.word.biz.service.base;
 
-import java.util.List;
-
 import com.baomidou.mybatisplus.extension.service.IService;
 
-import me.fengorz.kiwi.word.api.entity.WordStarRelDO;
+import me.fengorz.kiwi.word.api.entity.WordReviewAudioGenerationDO;
 
 /**
- * 单词本与单词的关联表
+ * 服务类
  *
- * @author zhanshifeng
- * @date 2020-01-03 14:39:28
+ * @author zhanShiFeng
+ * @date 2020-09-16 16:56:42
  */
-public interface IWordStarRelService extends IService<WordStarRelDO> {
+public interface ReviewAudioGenerationService extends IService<WordReviewAudioGenerationDO> {
 
-    List<Integer> findAllWordId(Integer listId);
+    void markParaphraseGenerateFinish(Integer sourceId);
 
-    void replaceFetchResult(Integer oldRelId, Integer newRelId);
 }

@@ -31,4 +31,15 @@
         limit 10
     </select>
 
+    <select id="listNotAllGeneratedVoice" resultType="java.lang.Integer" parameterType="java.lang.Integer">
+        select distinct(paraphrase_id)
+        from word_paraphrase_star_rel wpsr
+        where not exists(select 1
+        from word_review_audio_generation wrag
+        where wrag.source_id = wpsr.paraphrase_id
+        and wrag.type = #{type}
+        and wrag.is_finish = 1)
+        limit 10
+    </select>
+
 </mapper>

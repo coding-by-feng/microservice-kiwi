@@ -30,7 +30,7 @@ import me.fengorz.kiwi.word.api.vo.WordMainVariantVO;
  *
  * @date 2020-05-24 01:40:36
  */
-public interface IWordMainVariantService extends IService<WordMainVariantDO> {
+public interface WordMainVariantService extends IService<WordMainVariantDO> {
 
     IPage<WordMainVariantVO> page(int current, int size, WordMainVariantDTO dto);
 

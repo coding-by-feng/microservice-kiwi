@@ -14,12 +14,12 @@ package me.fengorz.kiwi.word.biz.service.base;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 
-import me.fengorz.kiwi.word.api.entity.PhraseMainDO;
+import me.fengorz.kiwi.word.api.entity.StarRelHisDO;
 
 /**
  * 服务类
  *
  * @author zhanShiFeng
- * @date 2020-10-10 20:09:06
+ * @date 2020-09-16 16:56:42
  */
-public interface IPhraseMainService extends IService<PhraseMainDO> {}
+public interface StarRelHisService extends IService<StarRelHisDO> {}

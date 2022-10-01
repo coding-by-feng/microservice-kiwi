@@ -1,20 +1,23 @@
 /*
  *
- * Copyright [2019~2025] [codingByFeng]
+ *   Copyright [2019~2025] [codingByFeng]
  *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
+ *   Licensed under the Apache License, Version 2.0 (the "License");
+ *   you may not use this file except in compliance with the License.
+ *   You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *   limitations under the License.
  *
  *
  */
 
-package me.fengorz.kiwi.word.biz.service.operate;
+package me.fengorz.kiwi.word.biz.service;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -43,7 +46,6 @@ import me.fengorz.kiwi.common.api.R;
 import me.fengorz.kiwi.common.fastdfs.service.DfsService;
 import me.fengorz.kiwi.common.sdk.constant.EnvConstants;
 import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
-import me.fengorz.kiwi.common.sdk.constant.MapperConstant;
 import me.fengorz.kiwi.common.sdk.util.json.KiwiJsonUtils;
 import me.fengorz.kiwi.word.api.common.WordConstants;
 import me.fengorz.kiwi.word.api.common.enumeration.ReviewAudioTypeEnum;
@@ -57,6 +59,7 @@ import me.fengorz.kiwi.word.biz.WordBizApplication;
 import me.fengorz.kiwi.word.biz.service.base.ParaphraseService;
 import me.fengorz.kiwi.word.biz.service.base.ParaphraseStarListService;
 import me.fengorz.kiwi.word.biz.service.base.WordMainService;
+import me.fengorz.kiwi.word.biz.service.operate.ReviewService;
 import me.fengorz.kiwi.word.biz.util.WordDataSetupUtils;
 
 @Slf4j
@@ -94,7 +97,7 @@ public class ReviewTest {
     }
 
     @Test
-    @Disabled
+    // @Disabled
     void generateTtsVoiceFromParaphraseId() {
         Assertions.assertDoesNotThrow(() -> reviewService.generateTtsVoiceFromParaphraseId(2774367));
     }
@@ -102,7 +105,7 @@ public class ReviewTest {
     @Test
     @Disabled
     void generateTtsVoice() {
-        Assertions.assertDoesNotThrow(() -> reviewService.generateTtsVoice(true));
+        Assertions.assertDoesNotThrow(() -> reviewService.generateTtsVoice());
     }
 
     @Test
@@ -155,7 +158,7 @@ public class ReviewTest {
         Assertions.assertFalse(echo.getData() instanceof String);
         log.info("echo.getData(): {}", echo.getData());
         UserFullInfoDTO echoUserInfo = (UserFullInfoDTO)echo.getData();
-        Integer seqId = seqService.genIntSequence(MapperConstant.T_INS_SEQUENCE);
+        Integer seqId = seqService.genCommonIntSequence();
         ParaphraseStarListDO paraphraseStarListDO =
             new ParaphraseStarListDO().setId(seqId).setOwner(echoUserInfo.getSysUser().getUserId())
                 .setCreateTime(LocalDateTime.now()).setIsDel(GlobalConstants.FLAG_N).setRemark("auto gen.")
@@ -184,6 +187,7 @@ public class ReviewTest {
     }
 
     @Test
+    @Disabled
     @SneakyThrows
     void test_IELTS_wordList() {
         String resourcePath = this.getClass().getResource(GlobalConstants.SYMBOL_FORWARD_SLASH).getPath();
@@ -198,6 +202,7 @@ public class ReviewTest {
     }
 
     @Test
+    @Disabled
     void test_evictWordReviewAudio() {
         reviewService.evictWordReviewAudio(1, 1);
     }

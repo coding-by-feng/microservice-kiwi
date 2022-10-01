@@ -16,6 +16,9 @@
 
 package me.fengorz.kiwi.word.biz.service.base.impl;
 
+import java.util.List;
+
+import org.apache.commons.collections4.CollectionUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -35,14 +38,17 @@ import me.fengorz.kiwi.word.biz.service.base.ParaphraseStarRelService;
 @ExtendWith(SpringExtension.class)
 @TestPropertySource("classpath:env.properties")
 @SpringBootTest(classes = WordBizApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class ParaphraseStarRelServiceImplTest {
+public class BaseServiceTest {
 
     @Autowired
     private ParaphraseStarRelService paraphraseStarRelService;
 
     @Test
     public void test_listNotGeneratedVoice() {
-        Assertions.assertNotNull(paraphraseStarRelService.listNotGeneratedVoice());
+        Assertions.assertTrue(CollectionUtils.isEmpty(paraphraseStarRelService.listNotGeneratedVoice()));
+        List<Integer> notAllGeneratedList = paraphraseStarRelService.listNotAllGeneratedVoice();
+        Assertions.assertTrue(CollectionUtils.isNotEmpty(notAllGeneratedList));
+        log.info("notAllGeneratedList size={}", notAllGeneratedList.size());
     }
 
 }

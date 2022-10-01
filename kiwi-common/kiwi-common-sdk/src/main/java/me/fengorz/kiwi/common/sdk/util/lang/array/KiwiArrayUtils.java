@@ -18,7 +18,34 @@ package me.fengorz.kiwi.common.sdk.util.lang.array;
 
 import org.apache.commons.lang3.ArrayUtils;
 
+import cn.hutool.core.io.FileUtil;
+
 /**
  * @Author zhanshifeng @Date 2020/5/17 12:31 PM
  */
-public class KiwiArrayUtils extends ArrayUtils {}
+public class KiwiArrayUtils extends ArrayUtils {
+
+    public static byte[] merge(byte[] left, byte[] right) {
+        byte[] merged = new byte[left.length + right.length];
+        System.arraycopy(left, 0, merged, 0, left.length);
+        System.arraycopy(right, 0, merged, left.length, right.length);
+        return merged;
+    }
+
+    public static byte[] merge(byte[]... bytes) {
+        int bufferSize = 0;
+        for (byte[] perBytes : bytes) {
+            bufferSize += perBytes.length;
+        }
+        byte[] merged = new byte[bufferSize];
+        for (int i = 0; i < bytes.length - 1; i++) {
+            FileUtil.writeBytes(bytes[i], String.format("/Users/zhanshifeng/Documents/temp/test_all_%d.mp3", i));
+            System.arraycopy(bytes[i], 0, merged, 0, bytes[i].length);
+            System.arraycopy(bytes[i + 1], 0, merged, bytes[i].length, bytes[i + 1].length);
+        }
+        FileUtil.writeBytes(bytes[bytes.length - 1],
+            String.format("/Users/zhanshifeng/Documents/temp/test_all_%d.mp3", bytes.length - 1));
+        return merged;
+    }
+
+}

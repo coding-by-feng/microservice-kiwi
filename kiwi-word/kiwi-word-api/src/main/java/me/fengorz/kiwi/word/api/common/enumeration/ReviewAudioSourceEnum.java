@@ -28,7 +28,7 @@ import lombok.Getter;
  */
 public enum ReviewAudioSourceEnum {
 
-    VOICERSS("voicerss"), BAIDU("baidu");
+    VOICERSS("voicerss"), BAIDU("baidu"), COMBO("combo");
 
     @Getter
     private final String source;

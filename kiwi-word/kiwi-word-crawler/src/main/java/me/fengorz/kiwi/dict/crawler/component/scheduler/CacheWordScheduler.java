@@ -25,6 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.sdk.annotation.ScheduledAwake;
 import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
 import me.fengorz.kiwi.common.sdk.util.lang.collection.KiwiCollectionUtils;
+import me.fengorz.kiwi.dict.crawler.common.CrawlerConstants;
 import me.fengorz.kiwi.dict.crawler.component.scheduler.base.AbstractFetchScheduler;
 import me.fengorz.kiwi.dict.crawler.component.scheduler.base.Scheduler;
 import me.fengorz.kiwi.dict.crawler.component.scheduler.base.SchedulerDTO;
@@ -37,7 +38,7 @@ import me.fengorz.kiwi.word.api.util.WordApiUtils;
  * 自动将所有未入缓存的单词纳入缓存 @Author zhanshifeng @Date 2020/9/17 6:14 PM
  */
 @Slf4j
-@Component("cacheWordScheduler")
+@Component(CrawlerConstants.COMPONENT_BEAN_ID.CACHE_WORD_SCHEDULER)
 public class CacheWordScheduler extends AbstractFetchScheduler implements Scheduler {
 
     private static final String CACHING_WORD = "caching word {}!";

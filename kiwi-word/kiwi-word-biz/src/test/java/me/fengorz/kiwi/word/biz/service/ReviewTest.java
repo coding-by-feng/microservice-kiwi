@@ -94,7 +94,7 @@ public class ReviewTest {
     }
 
     @Test
-    @Disabled
+    // @Disabled
     void generateTtsVoiceFromParaphraseId() {
         Assertions.assertDoesNotThrow(() -> reviewService.generateTtsVoiceFromParaphraseId(2774367));
     }
@@ -128,7 +128,7 @@ public class ReviewTest {
     @SneakyThrows
     @Test
     @Order(1)
-    // @Disabled
+    @Disabled
     void findWordReviewAudio() {
 
         // List<ParaphraseDO> test = paraphraseService.listByWordName("test");

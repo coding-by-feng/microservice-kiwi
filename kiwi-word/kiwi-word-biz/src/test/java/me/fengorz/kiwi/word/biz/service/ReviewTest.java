@@ -25,6 +25,7 @@ import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,7 +48,6 @@ import me.fengorz.kiwi.common.sdk.util.json.KiwiJsonUtils;
 import me.fengorz.kiwi.word.api.common.WordConstants;
 import me.fengorz.kiwi.word.api.common.enumeration.ReviewAudioTypeEnum;
 import me.fengorz.kiwi.word.api.common.enumeration.ReviewDailyCounterTypeEnum;
-import me.fengorz.kiwi.word.api.entity.ParaphraseDO;
 import me.fengorz.kiwi.word.api.entity.ParaphraseStarListDO;
 import me.fengorz.kiwi.word.api.entity.WordReviewAudioDO;
 import me.fengorz.kiwi.word.api.vo.ParaphraseStarListVO;
@@ -94,7 +94,7 @@ public class ReviewTest {
     }
 
     @Test
-    // @Disabled
+    @Disabled
     void generateTtsVoiceFromParaphraseId() {
         Assertions.assertDoesNotThrow(() -> reviewService.generateTtsVoiceFromParaphraseId(2774367));
     }
@@ -127,15 +127,23 @@ public class ReviewTest {
 
     @SneakyThrows
     @Test
-    @Disabled
+    @Order(1)
+    // @Disabled
     void findWordReviewAudio() {
-        List<ParaphraseDO> test = paraphraseService.listByWordName("test");
-        Assertions.assertNotNull(test);
-        ParaphraseDO paraphraseDO = test.get(0);
-        WordReviewAudioDO wordReviewAudio = reviewService.findWordReviewAudio(paraphraseDO.getParaphraseId(),
-            ReviewAudioTypeEnum.PARAPHRASE_EN.getType());
+
+        // List<ParaphraseDO> test = paraphraseService.listByWordName("test");
+        // Assertions.assertNotNull(test);
+        // ParaphraseDO paraphraseDO = test.get(0);
+        // WordReviewAudioDO wordReviewAudio = reviewService.findWordReviewAudio(paraphraseDO.getParaphraseId(),
+        // ReviewAudioTypeEnum.PARAPHRASE_EN.getType());
+
+        // id=3749976, sourceId=2774291, type=0
+        WordReviewAudioDO wordReviewAudio =
+            reviewService.findWordReviewAudio(2774291, ReviewAudioTypeEnum.WORD_SPELLING.getType());
+        Assertions.assertNotNull(wordReviewAudio);
+        Assertions.assertEquals(3749976, wordReviewAudio.getId());
         byte[] bytes = this.dfsService.downloadFile(wordReviewAudio.getGroupName(), wordReviewAudio.getFilePath());
-        FileUtil.writeBytes(bytes, "test_paraphrase.mp3");
+        FileUtil.writeBytes(bytes, "/Users/zhanshifeng/Documents/temp/test_paraphrase_2774291_0.mp3");
     }
 
     @SneakyThrows
@@ -199,9 +207,10 @@ public class ReviewTest {
     }
 
     @Test
+    @Order(2)
     @Disabled
     void test_evictWordReviewAudio() {
-        reviewService.evictWordReviewAudio(1, 1);
+        reviewService.evictWordReviewAudio(2774291, ReviewAudioTypeEnum.WORD_SPELLING.getType());
     }
 
 }

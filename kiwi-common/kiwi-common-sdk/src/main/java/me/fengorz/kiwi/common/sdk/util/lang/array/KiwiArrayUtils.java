@@ -16,6 +16,9 @@
 
 package me.fengorz.kiwi.common.sdk.util.lang.array;
 
+import java.nio.ByteBuffer;
+import java.util.stream.Stream;
+
 import org.apache.commons.lang3.ArrayUtils;
 
 /**
@@ -42,10 +45,34 @@ public class KiwiArrayUtils extends ArrayUtils {
             System.arraycopy(bytes[i + 1], 0, merged, bytes[i].length, bytes[i + 1].length);
         }
         // FileUtil.writeBytes(bytes[bytes.length - 1],
-        //     String.format("/Users/zhanshifeng/Documents/temp/test_all_%d.mp3", bytes.length - 1));
+        // String.format("/Users/zhanshifeng/Documents/temp/test_all_%d.mp3", bytes.length - 1));
 
         // FileUtil.writeBytes(merged, "/Users/zhanshifeng/Documents/temp/test_all_combo.mp3");
         return merged;
+    }
+
+    public static byte[] mergeUseByteBuffer(byte[]... bytes) {
+        ByteBuffer byteBuffer = ByteBuffer.allocate(sumBytesLength(bytes));
+        for (byte[] perByte : bytes) {
+            byteBuffer.put(perByte);
+        }
+        return byteBuffer.array();
+    }
+
+    public static int sumBytes(byte[]... bytes) {
+        // noinspection OptionalGetWithoutIsPresent
+        return Stream.of(bytes).map(perBytes -> {
+            int sum = 0;
+            for (byte perByte : perBytes) {
+                sum += perByte;
+            }
+            return sum;
+        }).reduce(Integer::sum).get();
+    }
+
+    public static int sumBytesLength(byte[]... bytes) {
+        // noinspection OptionalGetWithoutIsPresent
+        return Stream.of(bytes).map(perBytes -> perBytes.length).reduce(Integer::sum).get();
     }
 
 }

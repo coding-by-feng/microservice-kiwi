@@ -41,9 +41,11 @@ public class ParaphraseTtsGenerationPayload implements InitializingBean {
     private List<ImmutablePair<ReviewAudioTypeEnum, ReviewAudioSourceEnum>> pairs;
     private List<ImmutablePair<ReviewAudioTypeEnum, Integer>> counters;
     private List<ImmutablePair<ReviewAudioTypeEnum, Boolean>> isReplacePayload;
+    private List<ImmutablePair<ReviewAudioTypeEnum, Boolean>> enablePayload;
 
     private Map<ReviewAudioTypeEnum, ReviewAudioSourceEnum> typeAndSourceMap;
     private Map<ReviewAudioTypeEnum, Boolean> isReplaceMap;
+    private Map<ReviewAudioTypeEnum, Boolean> isEnableMap;
 
     public ReviewAudioSourceEnum getFromReviewAudioTypeEnum(ReviewAudioTypeEnum type) {
         return this.typeAndSourceMap.get(type);
@@ -55,10 +57,16 @@ public class ParaphraseTtsGenerationPayload implements InitializingBean {
             this.pairs.stream().collect(Collectors.toMap(ImmutablePair::getLeft, ImmutablePair::getRight)));
         this.isReplaceMap = MapUtils.unmodifiableMap(
             this.isReplacePayload.stream().collect(Collectors.toMap(ImmutablePair::getLeft, ImmutablePair::getRight)));
+        this.isEnableMap = MapUtils.unmodifiableMap(
+            this.enablePayload.stream().collect(Collectors.toMap(ImmutablePair::getLeft, ImmutablePair::getRight)));
     }
 
     public Boolean getIsReplace(ReviewAudioTypeEnum type) {
         return this.isReplaceMap.get(type);
+    }
+
+    public Boolean getEnable(ReviewAudioTypeEnum type) {
+        return this.isEnableMap.get(type);
     }
 
 }

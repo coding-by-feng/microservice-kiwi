@@ -13,7 +13,6 @@
 package me.fengorz.kiwi.word.biz.service.base.impl;
 
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
@@ -42,7 +41,7 @@ public class ReviewAudioGenerationServiceImpl extends
     private final SeqService seqService;
 
     @Override
-    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRES_NEW)
+    @Transactional(rollbackFor = Exception.class)
     public void markGenerateFinish(Integer sourceId, Integer audioId, ReviewAudioTypeEnum type) {
         WordReviewAudioGenerationDO wordReviewAudioGenerationDO = reviewAudioGenerationMapper.selectOne(
             Wrappers.<WordReviewAudioGenerationDO>lambdaQuery().eq(WordReviewAudioGenerationDO::getSourceId, sourceId)

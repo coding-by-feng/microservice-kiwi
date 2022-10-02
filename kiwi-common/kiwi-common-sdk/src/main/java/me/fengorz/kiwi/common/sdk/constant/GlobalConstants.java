@@ -26,6 +26,7 @@ public interface GlobalConstants extends ApiContants {
     String SPACING = " ";
     String SYMBOL_DOT = ".";
     String SYMBOL_COMMA = ",";
+    String SYMBOL_CH_PERIOD = "。";
     String SYMBOL_SQUARE_BRACKET_LEFT = "[";
     String SYMBOL_SQUARE_BRACKET_RIGHT = "]";
     String SYMBOL_FORWARD_SLASH = "/";

@@ -50,8 +50,10 @@ public class CrawlerTest {
     private CrawlerConfigProperties crawlerConfigProperties;
     @Autowired
     private Enabler enabler;
-    @Resource(name = "cacheWordScheduler")
+    @Resource(name = CrawlerConstants.COMPONENT_BEAN_ID.CACHE_WORD_SCHEDULER)
     private Scheduler cacheWordScheduler;
+    @Resource(name = CrawlerConstants.COMPONENT_BEAN_ID.GENERATE_VOICE_ONLY_COLLECTED_SCHEDULER)
+    private Scheduler generateVoiceOnlyCollectedScheduler;
     @Autowired
     private ChiefSchedulerSetup chiefSchedulerSetup;
     @Autowired
@@ -78,23 +80,23 @@ public class CrawlerTest {
     }
 
     @Test
+    @Disabled
     public void test_RefreshAllApiKey() {
-        DailyScheduler scheduler = SpringUtils
-            .getBean(CrawlerConstants.COMPONENT_BEAN_ID.REFRESH_ALL_API_KEY_DAILY_SCHEDULER, DailyScheduler.class);
+        DailyScheduler scheduler =
+            SpringUtils.getBean(CrawlerConstants.COMPONENT_BEAN_ID.CACHE_WORD_SCHEDULER, DailyScheduler.class);
         scheduler.schedule();
     }
 
     @Test
-    @Disabled
+    // @Disabled
     public void schedulerTest() {
-        try {
-            Assertions.assertNotNull(chiefSchedulerSetup);
-            Assertions.assertNotNull(chiefProducerSchedulerSetup);
-            chiefSchedulerSetup.setup();
+        Assertions.assertDoesNotThrow(() -> {
+            // Assertions.assertNotNull(chiefSchedulerSetup);
+            // Assertions.assertNotNull(chiefProducerSchedulerSetup);
+            // chiefSchedulerSetup.setup();
             // chiefProducerSchedulerSetup.produce();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+            generateVoiceOnlyCollectedScheduler.schedule();
+        });
     }
 
 }

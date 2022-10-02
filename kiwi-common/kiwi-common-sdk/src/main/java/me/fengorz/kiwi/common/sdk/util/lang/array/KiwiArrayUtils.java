@@ -42,7 +42,9 @@ public class KiwiArrayUtils extends ArrayUtils {
             System.arraycopy(bytes[i + 1], 0, merged, bytes[i].length, bytes[i + 1].length);
         }
         // FileUtil.writeBytes(bytes[bytes.length - 1],
-        // String.format("/Users/zhanshifeng/Documents/temp/test_all_%d.mp3", bytes.length - 1));
+        //     String.format("/Users/zhanshifeng/Documents/temp/test_all_%d.mp3", bytes.length - 1));
+
+        // FileUtil.writeBytes(merged, "/Users/zhanshifeng/Documents/temp/test_all_combo.mp3");
         return merged;
     }
 

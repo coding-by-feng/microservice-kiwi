@@ -458,6 +458,8 @@ public class ReviewServiceImpl implements ReviewService {
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRES_NEW)
     private void generateComboFromParaphraseId(Integer paraphraseId) {
         if (!paraphraseTtsGenerationPayload.getEnable(ReviewAudioTypeEnum.COMBO)) {
+            reviewAudioGenerationService.markGenerateFinish(paraphraseId, 0,
+                    ReviewAudioTypeEnum.COMBO);
             return;
         }
         WordReviewAudioDO wordReviewAudio =

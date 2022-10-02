@@ -48,12 +48,10 @@ import me.fengorz.kiwi.common.api.entity.EnhancerUser;
 import me.fengorz.kiwi.common.fastdfs.service.DfsService;
 import me.fengorz.kiwi.common.sdk.annotation.log.LogMarker;
 import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
-import me.fengorz.kiwi.common.sdk.exception.DataCheckedException;
 import me.fengorz.kiwi.common.sdk.exception.ResourceNotFoundException;
 import me.fengorz.kiwi.common.sdk.exception.ServiceException;
 import me.fengorz.kiwi.common.sdk.exception.dfs.DfsOperateDeleteException;
 import me.fengorz.kiwi.common.sdk.exception.dfs.DfsOperateException;
-import me.fengorz.kiwi.common.sdk.exception.tts.TtsException;
 import me.fengorz.kiwi.common.sdk.util.bean.KiwiBeanUtils;
 import me.fengorz.kiwi.common.sdk.util.lang.collection.KiwiCollectionUtils;
 import me.fengorz.kiwi.common.sdk.util.lang.string.KiwiStringUtils;
@@ -115,8 +113,8 @@ public class CrawlerServiceImpl implements CrawlerService {
             return true;
         }
 
-        WordMainDO wordMainDO = new WordMainDO().setWordName(wordName)
-            .setWordId(seqService.genCommonIntSequence()).setIsDel(GlobalConstants.FLAG_DEL_NO);
+        WordMainDO wordMainDO = new WordMainDO().setWordName(wordName).setWordId(seqService.genCommonIntSequence())
+            .setIsDel(GlobalConstants.FLAG_DEL_NO);
         mainService.save(wordMainDO);
         this.subStoreFetchWordResult(dto, wordMainDO);
         queueService.flagFetchBaseFinish(dto.getQueueId(), wordMainDO.getWordId());
@@ -272,8 +270,8 @@ public class CrawlerServiceImpl implements CrawlerService {
         }
 
         final String phrase = dto.getPhrase();
-        WordMainDO wordMain = new WordMainDO().setWordId(seqService.genCommonIntSequence())
-            .setWordName(phrase).setInfoType(ApiCrawlerConstants.QUEUE_INFO_TYPE_PHRASE);
+        WordMainDO wordMain = new WordMainDO().setWordId(seqService.genCommonIntSequence()).setWordName(phrase)
+            .setInfoType(ApiCrawlerConstants.QUEUE_INFO_TYPE_PHRASE);
         mainService.save(wordMain);
 
         for (FetchParaphraseDTO paraphrase : paraphrases) {
@@ -309,7 +307,7 @@ public class CrawlerServiceImpl implements CrawlerService {
     @Transactional(rollbackFor = Exception.class)
     public void generateTtsVoice(ReviewAudioGenerationEnum type) {
         try {
-            log.info("Method generateTtsVoice is starting!");
+            log.info("Method generateTtsVoice is starting! type={}", type.name());
             if (!ttsService.hasValidApiKey()) {
                 log.info("There is not valid api key!");
                 return;
@@ -332,17 +330,14 @@ public class CrawlerServiceImpl implements CrawlerService {
                 for (Integer id : notGeneratedParaphraseId) {
                     try {
                         log.info("Paraphrase id({}) generation is starting!", id);
-                        ParaphraseDO paraphrase = paraphraseService.getById(id);
-                        try {
-                            reviewService.generateTtsVoiceFromParaphraseId(id);
-                        } catch (DfsOperateException | TtsException | DataCheckedException e) {
-                            log.error("generateWordReviewAudio exception, sourceId={}, {}", id, e.getMessage());
-                            throw e;
-                        }
+                        reviewService.generateTtsVoiceFromParaphraseId(id);
                     } catch (Exception e) {
+                        log.error(e.getMessage(), e);
                         reviewService.cleanReviewVoiceByParaphraseId(id);
                         GENERATE_VOICE_BARRIER.release();
-                        log.error("Paraphrase id({}) generation failed, Data has cleaned, GENERATE_VOICE_BARRIER has released", id);
+                        log.error(
+                            "Paraphrase id({}) generation failed, Data has cleaned, GENERATE_VOICE_BARRIER has released",
+                            id);
                         return;
                     }
                     log.info("Paraphrase id({}) generation is end!", id);

@@ -69,6 +69,7 @@ import me.fengorz.kiwi.word.api.model.ParaphraseTtsGenerationPayload;
 import me.fengorz.kiwi.word.api.vo.WordReviewDailyCounterVO;
 import me.fengorz.kiwi.word.biz.mapper.*;
 import me.fengorz.kiwi.word.biz.service.base.ReviewAudioGenerationService;
+import me.fengorz.kiwi.word.biz.service.base.ReviewAudioService;
 import me.fengorz.kiwi.word.biz.service.operate.AudioService;
 import me.fengorz.kiwi.word.biz.service.operate.ReviewService;
 import me.fengorz.kiwi.word.biz.util.WordDfsUtils;
@@ -87,7 +88,7 @@ public class ReviewServiceImpl implements ReviewService {
     private final BreakpointReviewMapper breakpointReviewMapper;
     private final SeqService seqService;
     private final ReviewDailyCounterMapper reviewDailyCounterMapper;
-    private final ReviewAudioMapper reviewAudioMapper;
+    private final ReviewAudioService reviewAudioService;
     private final ReviewAudioGenerationService reviewAudioGenerationService;
     private final ParaphraseMapper paraphraseMapper;
     private final ParaphraseExampleMapper paraphraseExampleMapper;
@@ -206,7 +207,7 @@ public class ReviewServiceImpl implements ReviewService {
     public WordReviewAudioDO findWordReviewAudio(@KiwiCacheKey(1) Integer sourceId, @KiwiCacheKey(2) Integer type)
         throws DfsOperateException, TtsException, DataCheckedException {
         List<WordReviewAudioDO> wordReviewAudioList =
-            reviewAudioMapper.selectList(Wrappers.<WordReviewAudioDO>lambdaQuery()
+            reviewAudioService.list(Wrappers.<WordReviewAudioDO>lambdaQuery()
                 .eq(WordReviewAudioDO::getSourceId, sourceId).eq(WordReviewAudioDO::getType, type));
         WordReviewAudioDO wordReviewAudioDO;
         if (wordReviewAudioList.size() != 1) {
@@ -223,16 +224,8 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
     public void removeWordReviewAudio(Integer sourceId) {
-        LambdaQueryWrapper<WordReviewAudioDO> wrapper =
-            Wrappers.<WordReviewAudioDO>lambdaQuery().eq(WordReviewAudioDO::getSourceId, sourceId);
-        Integer count = reviewAudioMapper.selectCount(wrapper);
-        log.info("Method removeWordReviewAudio count is: {}", count);
-        if (count < 1) {
-            return;
-        }
-        reviewAudioMapper.delete(wrapper);
+        reviewAudioService.cleanBySourceId(sourceId);
     }
 
     @Override
@@ -244,8 +237,7 @@ public class ReviewServiceImpl implements ReviewService {
     private WordReviewAudioDO generateUseTts(Integer sourceId, ReviewAudioTypeEnum type,
         ReviewAudioSourceEnum sourceType) throws DfsOperateException, TtsException, DataCheckedException {
         this.evictWordReviewAudio(sourceId, type.getType());
-        WordReviewAudioDO wordReviewAudioDO = reviewAudioMapper.selectOne(Wrappers.<WordReviewAudioDO>lambdaQuery()
-            .eq(WordReviewAudioDO::getSourceId, sourceId).eq(WordReviewAudioDO::getType, type.getType()));
+        WordReviewAudioDO wordReviewAudioDO = reviewAudioService.selectOne(sourceId, type.getType());
         Boolean isReplace = paraphraseTtsGenerationPayload.getIsReplace(type);
         if (wordReviewAudioDO == null) {
             wordReviewAudioDO = new WordReviewAudioDO();
@@ -255,7 +247,7 @@ public class ReviewServiceImpl implements ReviewService {
             } catch (DfsOperateDeleteException e) {
                 log.error("Error deleting old wordReviewAudioDO file", e);
             }
-            this.delete(wordReviewAudioDO.getId());
+            reviewAudioService.cleanById(wordReviewAudioDO.getId());
             wordReviewAudioDO = new WordReviewAudioDO();
         } else {
             return wordReviewAudioDO;
@@ -278,8 +270,7 @@ public class ReviewServiceImpl implements ReviewService {
             wordReviewAudioDO.setCreateTime(LocalDateTime.now());
             wordReviewAudioDO.setSourceUrl(sourceType.getSource());
             wordReviewAudioDO.setSourceText(StringUtils.defaultIfBlank(text, GlobalConstants.EMPTY));
-            reviewAudioMapper.insert(wordReviewAudioDO);
-            log.info("wordReviewAudioDO insert success!, wordReviewAudioDO={}", wordReviewAudioDO);
+            reviewAudioService.cleanAndInsert(wordReviewAudioDO);
         } catch (Exception e) {
             log.error(e.getMessage());
             throw e;
@@ -297,9 +288,7 @@ public class ReviewServiceImpl implements ReviewService {
                 continue;
             }
             log.info("Audio is generating..., {}", audio.getText());
-            WordReviewAudioDO wordReviewAudioDO = reviewAudioMapper.selectOne(
-                Wrappers.<WordReviewAudioDO>lambdaQuery().eq(WordReviewAudioDO::getSourceId, audio.getSourceId())
-                    .eq(WordReviewAudioDO::getType, audio.getType()));
+            WordReviewAudioDO wordReviewAudioDO = reviewAudioService.selectOne(audio.getSourceId(), audio.getType());
             if (wordReviewAudioDO == null) {
                 wordReviewAudioDO = new WordReviewAudioDO();
             } else if (isReplace) {
@@ -308,7 +297,7 @@ public class ReviewServiceImpl implements ReviewService {
                 } catch (DfsOperateDeleteException e) {
                     log.error("Error deleting old wordReviewAudioDO", e);
                 }
-                reviewAudioMapper.deleteById(wordReviewAudioDO.getId());
+                reviewAudioService.cleanById(wordReviewAudioDO.getId());
                 wordReviewAudioDO = new WordReviewAudioDO();
             } else {
                 continue;
@@ -324,7 +313,7 @@ public class ReviewServiceImpl implements ReviewService {
                 wordReviewAudioDO.setCreateTime(LocalDateTime.now());
                 wordReviewAudioDO.setSourceUrl(ReviewAudioSourceEnum.VOICERSS.getSource());
                 wordReviewAudioDO.setSourceText(audio.getText());
-                reviewAudioMapper.insert(wordReviewAudioDO);
+                reviewAudioService.cleanAndInsert(wordReviewAudioDO);
             } catch (TtsException | DfsOperateException e) {
                 log.error(e.getMessage(), e);
                 throw e;
@@ -360,8 +349,8 @@ public class ReviewServiceImpl implements ReviewService {
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRES_NEW)
     public void cleanReviewVoiceByParaphraseId(Integer paraphraseId) {
         ListUtils
-            .emptyIfNull(reviewAudioMapper
-                .selectList(Wrappers.<WordReviewAudioDO>lambdaQuery().eq(WordReviewAudioDO::getSourceId, paraphraseId)))
+            .emptyIfNull(reviewAudioService
+                .list(Wrappers.<WordReviewAudioDO>lambdaQuery().eq(WordReviewAudioDO::getSourceId, paraphraseId)))
             .forEach(this::cleanReviewAudio);
         List<ParaphraseExampleDO> examples = paraphraseExampleMapper.selectList(
             Wrappers.<ParaphraseExampleDO>lambdaQuery().eq(ParaphraseExampleDO::getParaphraseId, paraphraseId));
@@ -369,7 +358,7 @@ public class ReviewServiceImpl implements ReviewService {
             return;
         }
         examples.forEach(paraphraseExampleDO -> ListUtils
-            .emptyIfNull(reviewAudioMapper.selectList(Wrappers.<WordReviewAudioDO>lambdaQuery()
+            .emptyIfNull(reviewAudioService.list(Wrappers.<WordReviewAudioDO>lambdaQuery()
                 .eq(WordReviewAudioDO::getSourceId, paraphraseExampleDO.getExampleId())))
             .forEach(this::cleanReviewAudio));
     }
@@ -381,7 +370,7 @@ public class ReviewServiceImpl implements ReviewService {
             log.error("Review audio file delete failed, group is {}, path is {}", wordReviewAudioDO.getGroupName(),
                 wordReviewAudioDO.getFilePath());
         } finally {
-            reviewAudioMapper.deleteById(wordReviewAudioDO.getId());
+            reviewAudioService.cleanById(wordReviewAudioDO.getId());
         }
     }
 
@@ -396,19 +385,19 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRES_NEW)
     public void generateTtsVoiceFromParaphraseId(Integer paraphraseId) {
         log.info("generateTtsVoiceFromParaphraseId beginning, paraphraseId is {}", paraphraseId);
         final ParaphraseDO paraphraseDO = paraphraseMapper.selectById(paraphraseId);
         if (paraphraseDO == null) {
-            log.info("paraphraseDO is null, skipping generateTtsVoiceFromParaphraseId, paraphraseId is {}",
+            log.error("paraphraseDO is null, skip generateTtsVoiceFromParaphraseId, paraphraseId is {}",
                 paraphraseId);
             return;
         }
         final CharacterDO characterDO = characterMapper.selectOne(
             Wrappers.<CharacterDO>lambdaQuery().eq(CharacterDO::getCharacterId, paraphraseDO.getCharacterId()));
         if (characterDO == null) {
-            log.info("characterDO is null, skipping generateTtsVoiceFromParaphraseId, characterDO is {}",
+            log.error("characterDO is null, skip generateTtsVoiceFromParaphraseId, characterDO is {}",
                 paraphraseDO.getCharacterId());
             return;
         }
@@ -523,9 +512,8 @@ public class ReviewServiceImpl implements ReviewService {
         wordReviewAudio.setIsDel(GlobalConstants.FLAG_DEL_NO);
         wordReviewAudio.setCreateTime(LocalDateTime.now());
         wordReviewAudio.setSourceUrl(ReviewAudioSourceEnum.COMBO.getSource());
-        wordReviewAudio
-            .setSourceText(StringUtils.defaultIfBlank(ReviewAudioSourceEnum.COMBO.name(), GlobalConstants.EMPTY));
-        reviewAudioMapper.insert(wordReviewAudio);
+        wordReviewAudio.setSourceText(StringUtils.defaultIfBlank(ReviewAudioSourceEnum.COMBO.name(), GlobalConstants.EMPTY));
+        reviewAudioService.cleanAndInsert(wordReviewAudio);
 
         reviewAudioGenerationService.markGenerateFinish(paraphraseId, wordReviewAudio.getId(),
             ReviewAudioTypeEnum.COMBO);
@@ -597,11 +585,6 @@ public class ReviewServiceImpl implements ReviewService {
         counterDO.setId(0).setUserId(userId).setReviewCount(0).setToday(LocalDateTime.now().toLocalDate())
             .setType(type);
         reviewDailyCounterMapper.insert(counterDO);
-    }
-
-    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRES_NEW)
-    private void delete(Integer id) {
-        reviewAudioMapper.deleteById(id);
     }
 
     private void firstRecordReviewPageNumber(int listId, Long pageNumber, int type, Integer userId) {

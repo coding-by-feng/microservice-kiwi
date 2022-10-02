@@ -32,7 +32,7 @@ import me.fengorz.kiwi.word.api.feign.DictFetchApi;
  * @Date 2022/7/4 23:03
  */
 @Slf4j
-@Component("generateVoiceNonCollectedScheduler")
+@Component(CrawlerConstants.COMPONENT_BEAN_ID.GENERATE_VOICE_NON_COLLECTED_SCHEDULER)
 @AllArgsConstructor
 public class GenerateVoiceNonCollectedScheduler implements Scheduler {
 

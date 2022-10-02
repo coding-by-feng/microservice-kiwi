@@ -68,6 +68,16 @@ public class WordBizConfig {
         isReplacePayload.add(ImmutablePair.of(ReviewAudioTypeEnum.PARAPHRASE_EN, false));
         isReplacePayload.add(ImmutablePair.of(ReviewAudioTypeEnum.EXAMPLE_CH, true));
         isReplacePayload.add(ImmutablePair.of(ReviewAudioTypeEnum.EXAMPLE_EN, false));
+        isReplacePayload.add(ImmutablePair.of(ReviewAudioTypeEnum.COMBO, true));
+
+        List<ImmutablePair<ReviewAudioTypeEnum, Boolean>> enablePayload = new ArrayList<>();
+        enablePayload.add(ImmutablePair.of(ReviewAudioTypeEnum.WORD_SPELLING, true));
+        enablePayload.add(ImmutablePair.of(ReviewAudioTypeEnum.CHARACTER_CH, true));
+        enablePayload.add(ImmutablePair.of(ReviewAudioTypeEnum.PARAPHRASE_CH, true));
+        enablePayload.add(ImmutablePair.of(ReviewAudioTypeEnum.PARAPHRASE_EN, true));
+        enablePayload.add(ImmutablePair.of(ReviewAudioTypeEnum.EXAMPLE_CH, true));
+        enablePayload.add(ImmutablePair.of(ReviewAudioTypeEnum.EXAMPLE_EN, true));
+        enablePayload.add(ImmutablePair.of(ReviewAudioTypeEnum.COMBO, false));
 
         List<ImmutablePair<ReviewAudioTypeEnum, Integer>> counters = new ArrayList<>();
         counters.add(ImmutablePair.of(ReviewAudioTypeEnum.PRONUNCIATION, 2));
@@ -86,7 +96,8 @@ public class WordBizConfig {
 
         return ParaphraseTtsGenerationPayload.builder().pairs(ListUtils.unmodifiableList(pairs))
             .isReplacePayload(ListUtils.unmodifiableList(isReplacePayload))
-            .counters(ListUtils.unmodifiableList(counters)).build();
+            .counters(ListUtils.unmodifiableList(counters)).enablePayload(ListUtils.unmodifiableList(enablePayload))
+            .build();
     }
 
 }

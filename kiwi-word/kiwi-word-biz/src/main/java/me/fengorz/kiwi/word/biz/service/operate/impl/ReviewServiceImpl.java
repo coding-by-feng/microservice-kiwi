@@ -441,6 +441,7 @@ public class ReviewServiceImpl implements ReviewService {
             }
         });
 
+        reviewAudioGenerationService.markGenerateFinish(paraphraseId, null, ReviewAudioTypeEnum.COMBO);
         // this.generateComboFromParaphraseId(paraphraseId);
     }
 

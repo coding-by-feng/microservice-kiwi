@@ -12,20 +12,20 @@
  */
 package me.fengorz.kiwi.word.biz.service.base.impl;
 
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.bdf.core.service.SeqService;
 import me.fengorz.kiwi.word.api.entity.WordReviewAudioDO;
 import me.fengorz.kiwi.word.biz.mapper.ReviewAudioMapper;
 import me.fengorz.kiwi.word.biz.service.base.ReviewAudioService;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 /**
  * @author zhanShiFeng
@@ -74,8 +74,15 @@ public class ReviewAudioServiceImpl extends ServiceImpl<ReviewAudioMapper, WordR
     @Override
     @Transactional(rollbackFor = Exception.class)
     public WordReviewAudioDO selectOne(Integer sourceId, Integer type) {
+        log.info("Method selectOne invoke, sourceId={}, type={}", sourceId, type);
         return mapper.selectOne(Wrappers.<WordReviewAudioDO>lambdaQuery().eq(WordReviewAudioDO::getSourceId, sourceId)
             .eq(WordReviewAudioDO::getType, type));
+    }
+
+    @Override
+    public List<WordReviewAudioDO> list(Integer sourceId, Integer type) {
+        return mapper.selectList(Wrappers.<WordReviewAudioDO>lambdaQuery().eq(WordReviewAudioDO::getSourceId, sourceId)
+                .eq(WordReviewAudioDO::getType, type));
     }
 
     @Override

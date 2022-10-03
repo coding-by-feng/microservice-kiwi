@@ -99,6 +99,7 @@ services:
     network_mode: "host"
     depends_on:
       - kiwi-gate
+      - kiwi-word-biz
 #    deploy:
 #      resources:
 #        limits:

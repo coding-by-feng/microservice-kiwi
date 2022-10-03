@@ -46,7 +46,7 @@ import me.fengorz.kiwi.word.biz.WordBizApplication;
 @ExtendWith(SpringExtension.class)
 @TestPropertySource("classpath:env.properties")
 @SpringBootTest(classes = WordBizApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class TtsTest {
+public class TtsServiceTest {
 
     @Autowired
     private TtsProperties ttsProperties;
@@ -159,9 +159,10 @@ public class TtsTest {
     public void test() {
         byte[] data = baiduTtsService.speech(
                 " A。R。E。F。E。R。L。a way of discovering, by questions or practical activities, what someone knows, or what someone or something can do or is like");
+        Assertions.assertNotNull(data);
         if (data != null) {
             try {
-                Util.writeBytesToFileSystem(data, "/Users/zhanshifeng/Documents/temp/baidu_tts_2.mp3");
+                Util.writeBytesToFileSystem(data, "/Users/zhanshifeng/Documents/temp/baidu_tts_test.mp3");
             } catch (IOException e) {
                 e.printStackTrace();
             }

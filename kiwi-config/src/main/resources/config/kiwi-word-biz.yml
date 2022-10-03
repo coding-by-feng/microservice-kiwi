@@ -24,6 +24,7 @@ ignore:
     - /word/review/createTheDays
     - /word/review/refreshAllApiKey
     - /word/review/downloadReviewAudio/**
+    - /word/review/character/downloadReviewAudio/**
     - /word/review/generateTtsVoice/**
     - /word/review/generateTtsVoiceFromParaphraseId/**
   userNames:

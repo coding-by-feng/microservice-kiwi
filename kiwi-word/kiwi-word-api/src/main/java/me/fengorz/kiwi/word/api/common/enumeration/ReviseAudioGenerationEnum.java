@@ -23,14 +23,14 @@ import lombok.Getter;
  * @Author zhanshifeng
  * @Date 2022/7/12 09:20
  */
-public enum ReviewAudioGenerationEnum {
+public enum ReviseAudioGenerationEnum {
 
     ONLY_COLLECTED(0), NON_COLLECTED(1);
 
     @Getter
     private final Integer type;
 
-    ReviewAudioGenerationEnum(Integer type) {
+    ReviseAudioGenerationEnum(Integer type) {
         this.type = type;
     }
 

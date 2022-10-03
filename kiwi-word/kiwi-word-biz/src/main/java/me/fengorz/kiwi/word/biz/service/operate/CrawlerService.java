@@ -16,7 +16,7 @@
 
 package me.fengorz.kiwi.word.biz.service.operate;
 
-import me.fengorz.kiwi.word.api.common.enumeration.ReviewAudioGenerationEnum;
+import me.fengorz.kiwi.word.api.common.enumeration.ReviseAudioGenerationEnum;
 import me.fengorz.kiwi.word.api.dto.queue.result.FetchPhraseResultDTO;
 import me.fengorz.kiwi.word.api.dto.queue.result.FetchPhraseRunUpResultDTO;
 import me.fengorz.kiwi.word.api.dto.queue.result.FetchWordResultDTO;
@@ -33,7 +33,7 @@ public interface CrawlerService {
 
     boolean storePhrasesFetchResult(FetchPhraseResultDTO dto);
 
-    void generateTtsVoice(ReviewAudioGenerationEnum type);
+    void generateTtsVoice(ReviseAudioGenerationEnum type);
 
     void test_initIeltsWordList();
 

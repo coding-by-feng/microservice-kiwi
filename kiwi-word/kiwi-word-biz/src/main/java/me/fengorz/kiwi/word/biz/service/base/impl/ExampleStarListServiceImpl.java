@@ -95,7 +95,7 @@ public class ExampleStarListServiceImpl extends ServiceImpl<ExampleStarListMappe
         LambdaQueryWrapper<ExampleStarRelDO> queryWrapper = new LambdaQueryWrapper<ExampleStarRelDO>()
             .eq(ExampleStarRelDO::getListId, listId).eq(ExampleStarRelDO::getExampleId, exampleId);
         int count = relService.count(queryWrapper);
-        KiwiAssertUtils.serviceNotEmpty(count, "example is not exists!");
+        KiwiAssertUtils.assertNotEmpty(count, "example is not exists!");
         relService.remove(queryWrapper);
         archiveService.invalidArchiveExampleRel(exampleId, listId, SecurityUtils.getCurrentUserId());
     }

@@ -24,7 +24,7 @@ package me.fengorz.kiwi.word.api.common.enumeration;
  * @Author zhanshifeng
  * @Date 2021/8/22 7:27 PM
  */
-public enum ReviewBreakpointTypeEnum {
+public enum ReviseBreakpointTypeEnum {
     REMEMBER(1), KEEP_IN_MIND(2);
 
     /**
@@ -32,7 +32,7 @@ public enum ReviewBreakpointTypeEnum {
      */
     private final int type;
 
-    ReviewBreakpointTypeEnum(int type) {
+    ReviseBreakpointTypeEnum(int type) {
         this.type = type;
     }
 

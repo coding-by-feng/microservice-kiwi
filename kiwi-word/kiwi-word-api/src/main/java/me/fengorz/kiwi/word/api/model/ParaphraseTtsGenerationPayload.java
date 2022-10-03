@@ -26,8 +26,8 @@ import org.springframework.beans.factory.InitializingBean;
 
 import lombok.Builder;
 import lombok.Getter;
-import me.fengorz.kiwi.word.api.common.enumeration.ReviewAudioSourceEnum;
-import me.fengorz.kiwi.word.api.common.enumeration.ReviewAudioTypeEnum;
+import me.fengorz.kiwi.common.tts.enumeration.TtsSourceEnum;
+import me.fengorz.kiwi.word.api.common.enumeration.ReviseAudioTypeEnum;
 
 /**
  * @Description 用于配置每个tts audio要用哪个tts channel去gen
@@ -38,16 +38,16 @@ import me.fengorz.kiwi.word.api.common.enumeration.ReviewAudioTypeEnum;
 @Builder
 public class ParaphraseTtsGenerationPayload implements InitializingBean {
 
-    private List<ImmutablePair<ReviewAudioTypeEnum, ReviewAudioSourceEnum>> pairs;
-    private List<ImmutablePair<ReviewAudioTypeEnum, Integer>> counters;
-    private List<ImmutablePair<ReviewAudioTypeEnum, Boolean>> isReplacePayload;
-    private List<ImmutablePair<ReviewAudioTypeEnum, Boolean>> enablePayload;
+    private List<ImmutablePair<ReviseAudioTypeEnum, TtsSourceEnum>> pairs;
+    private List<ImmutablePair<ReviseAudioTypeEnum, Integer>> counters;
+    private List<ImmutablePair<ReviseAudioTypeEnum, Boolean>> isReplacePayload;
+    private List<ImmutablePair<ReviseAudioTypeEnum, Boolean>> enablePayload;
 
-    private Map<ReviewAudioTypeEnum, ReviewAudioSourceEnum> typeAndSourceMap;
-    private Map<ReviewAudioTypeEnum, Boolean> isReplaceMap;
-    private Map<ReviewAudioTypeEnum, Boolean> isEnableMap;
+    private Map<ReviseAudioTypeEnum, TtsSourceEnum> typeAndSourceMap;
+    private Map<ReviseAudioTypeEnum, Boolean> isReplaceMap;
+    private Map<ReviseAudioTypeEnum, Boolean> isEnableMap;
 
-    public ReviewAudioSourceEnum getFromReviewAudioTypeEnum(ReviewAudioTypeEnum type) {
+    public TtsSourceEnum getFromReviewAudioTypeEnum(ReviseAudioTypeEnum type) {
         return this.typeAndSourceMap.get(type);
     }
 
@@ -61,11 +61,11 @@ public class ParaphraseTtsGenerationPayload implements InitializingBean {
             this.enablePayload.stream().collect(Collectors.toMap(ImmutablePair::getLeft, ImmutablePair::getRight)));
     }
 
-    public Boolean getIsReplace(ReviewAudioTypeEnum type) {
+    public Boolean getIsReplace(ReviseAudioTypeEnum type) {
         return this.isReplaceMap.get(type);
     }
 
-    public Boolean getEnable(ReviewAudioTypeEnum type) {
+    public Boolean getEnable(ReviseAudioTypeEnum type) {
         return this.isEnableMap.get(type);
     }
 

@@ -25,7 +25,7 @@ import lombok.Getter;
  * @Author zhanshifeng
  * @Date 2021/8/21 8:11 PM
  */
-public enum ReviewDailyCounterTypeEnum {
+public enum ReviseDailyCounterTypeEnum {
 
     /**
      * 1：remember 2：keep in mind 3：review
@@ -36,7 +36,7 @@ public enum ReviewDailyCounterTypeEnum {
     @Getter
     private final int type;
 
-    ReviewDailyCounterTypeEnum(int type) {
+    ReviseDailyCounterTypeEnum(int type) {
         this.type = type;
     }
 

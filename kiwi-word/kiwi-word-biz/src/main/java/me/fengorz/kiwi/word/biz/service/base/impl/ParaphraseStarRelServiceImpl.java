@@ -28,7 +28,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
 import lombok.RequiredArgsConstructor;
 import me.fengorz.kiwi.common.sdk.util.lang.collection.KiwiCollectionUtils;
-import me.fengorz.kiwi.word.api.common.enumeration.ReviewAudioTypeEnum;
+import me.fengorz.kiwi.word.api.common.enumeration.ReviseAudioTypeEnum;
 import me.fengorz.kiwi.word.api.entity.ParaphraseDO;
 import me.fengorz.kiwi.word.api.entity.ParaphraseStarRelDO;
 import me.fengorz.kiwi.word.biz.mapper.ParaphraseMapper;
@@ -89,7 +89,7 @@ public class ParaphraseStarRelServiceImpl extends ServiceImpl<ParaphraseStarRelM
 
     @Override
     public List<Integer> listNotAllGeneratedVoice() {
-        return mapper.listNotAllGeneratedVoice(ReviewAudioTypeEnum.COMBO.getType());
+        return mapper.listNotAllGeneratedVoice(ReviseAudioTypeEnum.COMBO.getType());
     }
 
 }

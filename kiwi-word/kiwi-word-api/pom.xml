@@ -23,6 +23,11 @@
             <artifactId>kiwi-common-es</artifactId>
             <version>${kiwi.version}</version>
         </dependency>
+        <dependency>
+            <groupId>me.fengorz</groupId>
+            <artifactId>kiwi-common-tts</artifactId>
+            <version>${kiwi.version}</version>
+        </dependency>
     </dependencies>
 
 </project>

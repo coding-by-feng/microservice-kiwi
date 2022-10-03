@@ -36,8 +36,8 @@ import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
 import me.fengorz.kiwi.common.sdk.util.bean.KiwiBeanUtils;
 import me.fengorz.kiwi.common.sdk.web.security.SecurityUtils;
-import me.fengorz.kiwi.word.api.common.enumeration.ReviewBreakpointTypeEnum;
-import me.fengorz.kiwi.word.api.common.enumeration.ReviewDailyCounterTypeEnum;
+import me.fengorz.kiwi.word.api.common.enumeration.ReviseBreakpointTypeEnum;
+import me.fengorz.kiwi.word.api.common.enumeration.ReviseDailyCounterTypeEnum;
 import me.fengorz.kiwi.word.api.entity.ParaphraseStarListDO;
 import me.fengorz.kiwi.word.api.entity.ParaphraseStarRelDO;
 import me.fengorz.kiwi.word.api.entity.column.WordParaphraseStarListColumn;
@@ -109,7 +109,7 @@ public class ParaphraseStarListServiceImpl extends ServiceImpl<ParaphraseStarLis
     @Override
     public IPage<ParaphraseStarItemVO> selectReviewListItems(Page<ParaphraseStarListDO> page, Integer listId) {
         // When querying the list to be remembered, record the current query page number.
-        reviewService.recordReviewPageNumber(listId, page.getCurrent(), ReviewBreakpointTypeEnum.REMEMBER.getType(),
+        reviewService.recordReviewPageNumber(listId, page.getCurrent(), ReviseBreakpointTypeEnum.REMEMBER.getType(),
             SecurityUtils.getCurrentUserId());
         if (listId == 0) {
             return mapper.selectRecentReviewItems(page, SecurityUtils.getCurrentUserId());
@@ -120,7 +120,7 @@ public class ParaphraseStarListServiceImpl extends ServiceImpl<ParaphraseStarLis
     @Override
     public IPage<ParaphraseStarItemVO> selectRememberListItems(Page<ParaphraseStarListDO> page, Integer listId) {
         // When querying the list to be kept in mind, record the current query page number.
-        reviewService.recordReviewPageNumber(listId, page.getCurrent(), ReviewBreakpointTypeEnum.KEEP_IN_MIND.getType(),
+        reviewService.recordReviewPageNumber(listId, page.getCurrent(), ReviseBreakpointTypeEnum.KEEP_IN_MIND.getType(),
             SecurityUtils.getCurrentUserId());
         if (listId == 0) {
             return mapper.selectRecentRememberItems(page, SecurityUtils.getCurrentUserId());
@@ -145,7 +145,7 @@ public class ParaphraseStarListServiceImpl extends ServiceImpl<ParaphraseStarLis
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void rememberOne(Integer paraphraseId, Integer listId) {
-        reviewService.increase(ReviewDailyCounterTypeEnum.REMEMBER.getType(), SecurityUtils.getCurrentUserId());
+        reviewService.increase(ReviseDailyCounterTypeEnum.REMEMBER.getType(), SecurityUtils.getCurrentUserId());
         relService.update(
             new ParaphraseStarRelDO().setIsRemember(GlobalConstants.FLAG_DEL_YES).setRememberTime(LocalDateTime.now()),
             Wrappers.<ParaphraseStarRelDO>lambdaQuery().eq(ParaphraseStarRelDO::getListId, listId)
@@ -156,7 +156,7 @@ public class ParaphraseStarListServiceImpl extends ServiceImpl<ParaphraseStarLis
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void keepInMind(Integer paraphraseId, Integer listId) {
-        reviewService.increase(ReviewDailyCounterTypeEnum.KEEP_IN_MIND.getType(), SecurityUtils.getCurrentUserId());
+        reviewService.increase(ReviseDailyCounterTypeEnum.KEEP_IN_MIND.getType(), SecurityUtils.getCurrentUserId());
         relService.update(
             new ParaphraseStarRelDO().setIsKeepInMind(GlobalConstants.FLAG_DEL_YES)
                 .setKeepInMindTime(LocalDateTime.now()),

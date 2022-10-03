@@ -54,6 +54,8 @@ public interface ReviewService {
     WordReviewAudioDO findWordReviewAudio(Integer sourceId, Integer type)
         throws DfsOperateException, TtsException, DataCheckedException;
 
+    WordReviewAudioDO findCharacterReviewAudio(String characterCode);
+
     void removeWordReviewAudio(Integer sourceId);
 
     void evictWordReviewAudio(Integer sourceId, Integer type);

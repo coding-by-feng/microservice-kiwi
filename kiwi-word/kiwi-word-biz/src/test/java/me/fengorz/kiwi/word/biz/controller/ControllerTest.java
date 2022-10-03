@@ -16,8 +16,11 @@
 
 package me.fengorz.kiwi.word.biz.controller;
 
-import java.util.concurrent.TimeUnit;
-
+import cn.hutool.http.Header;
+import lombok.extern.slf4j.Slf4j;
+import me.fengorz.kiwi.common.api.R;
+import me.fengorz.kiwi.common.sdk.constant.EnvConstants;
+import me.fengorz.kiwi.word.biz.WordBizApplication;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -32,11 +35,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import cn.hutool.http.Header;
-import lombok.extern.slf4j.Slf4j;
-import me.fengorz.kiwi.common.api.R;
-import me.fengorz.kiwi.common.sdk.constant.EnvConstants;
-import me.fengorz.kiwi.word.biz.WordBizApplication;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @Description TODO
@@ -75,9 +74,17 @@ public class ControllerTest {
     }
 
     @Test
+    @Disabled
     void test_deprecateReviewAudio() {
         ResponseEntity<R> response =
             testRestTemplate.getForEntity("http://localhost:8081/word/review/deprecate-review-audio/2350782", R.class);
+        Assertions.assertEquals(response.getStatusCode(), HttpStatus.OK);
+    }
+
+    @Test
+    void test_downloadReviewAudio() {
+        ResponseEntity<R> response =
+            testRestTemplate.getForEntity("http://localhost:8081/word/review/downloadReviewAudio/2499456/0", R.class);
         Assertions.assertEquals(response.getStatusCode(), HttpStatus.OK);
     }
 

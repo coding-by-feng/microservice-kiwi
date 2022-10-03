@@ -596,7 +596,7 @@ public class ReviewServiceImpl implements ReviewService {
                     .orElseThrow(() -> new ResourceNotFoundException("Word cannot be found!"));
             StringBuilder sb = new StringBuilder();
             for (char alphabet : wordMainDO.getWordName().toCharArray()) {
-                sb.append(alphabet).append(GlobalConstants.SYMBOL_CH_PERIOD);
+                sb.append(alphabet).append(GlobalConstants.SYMBOL_LF).append(GlobalConstants.SYMBOL_CH_PERIOD);
             }
             return sb.toString();
         } else if (ReviseAudioTypeEnum.isCharacter(type)) {

@@ -22,6 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.admin.api.dto.UserFullInfoDTO;
 import me.fengorz.kiwi.admin.api.feign.UserApi;
 import me.fengorz.kiwi.bdf.core.service.SeqService;
+import me.fengorz.kiwi.common.api.ApiContants;
 import me.fengorz.kiwi.common.api.R;
 import me.fengorz.kiwi.common.fastdfs.service.DfsService;
 import me.fengorz.kiwi.common.sdk.constant.EnvConstants;
@@ -97,7 +98,7 @@ public class ReviewServiceTest {
     }
 
     @Test
-    // @Disabled
+    @Disabled
     void generateTtsVoiceFromParaphraseId() {
         Assertions.assertDoesNotThrow(() -> reviewService.generateTtsVoiceFromParaphraseId(2347007));
     }
@@ -111,7 +112,7 @@ public class ReviewServiceTest {
     @Test
     @Disabled
     void createTheDays() {
-        Assertions.assertDoesNotThrow(() -> reviewService.createTheDays(1));
+        Assertions.assertDoesNotThrow(() -> reviewService.createTheDays(ApiContants.ADMIN_ID));
     }
 
     @Test
@@ -131,9 +132,7 @@ public class ReviewServiceTest {
     @SneakyThrows
     @Test
     @Order(1)
-    @Disabled
     void findWordReviewAudio() {
-
         // List<ParaphraseDO> test = paraphraseService.listByWordName("test");
         // Assertions.assertNotNull(test);
         // ParaphraseDO paraphraseDO = test.get(0);
@@ -142,11 +141,13 @@ public class ReviewServiceTest {
 
         // id=3749976, sourceId=2774291, type=0
         WordReviewAudioDO wordReviewAudio =
-            reviewService.findWordReviewAudio(2774291, ReviseAudioTypeEnum.WORD_SPELLING.getType());
+                reviewService.findWordReviewAudio(2447981, ReviseAudioTypeEnum.WORD_SPELLING.getType());
         Assertions.assertNotNull(wordReviewAudio);
-        Assertions.assertEquals(3749976, wordReviewAudio.getId());
+        log.info("wordReviewAudio.getSourceText() = {}", wordReviewAudio.getSourceText());
+        log.info("wordReviewAudio.getSourceUrl() = {}", wordReviewAudio.getSourceUrl());
+        // Assertions.assertEquals(3749976, wordReviewAudio.getId());
         byte[] bytes = this.dfsService.downloadFile(wordReviewAudio.getGroupName(), wordReviewAudio.getFilePath());
-        FileUtil.writeBytes(bytes, "/Users/zhanshifeng/Documents/temp/test_paraphrase_2774291_0.mp3");
+        FileUtil.writeBytes(bytes, "/Users/zhanshifeng/Documents/temp/test_paraphrase_2447983_0.mp3");
     }
 
     @SneakyThrows
@@ -154,7 +155,9 @@ public class ReviewServiceTest {
     @Disabled
     void test_findWordReviewAudio() {
         WordReviewAudioDO wordReviewAudio =
-            reviewService.findWordReviewAudio(2774367, ReviseAudioTypeEnum.COMBO.getType());
+                reviewService.findWordReviewAudio(2774367, ReviseAudioTypeEnum.COMBO.getType());
+        log.info("wordReviewAudio.getSourceText() = {}", wordReviewAudio.getSourceText());
+        log.info("wordReviewAudio.getSourceUrl() = {}", wordReviewAudio.getSourceUrl());
         byte[] bytes = this.dfsService.downloadFile(wordReviewAudio.getGroupName(), wordReviewAudio.getFilePath());
         FileUtil.writeBytes(bytes, "/Users/zhanshifeng/Documents/temp/test_all.mp3");
     }
@@ -165,12 +168,12 @@ public class ReviewServiceTest {
         R<?> echo = userApi.info("echo");
         Assertions.assertFalse(echo.getData() instanceof String);
         log.info("echo.getData(): {}", echo.getData());
-        UserFullInfoDTO echoUserInfo = (UserFullInfoDTO)echo.getData();
+        UserFullInfoDTO echoUserInfo = (UserFullInfoDTO) echo.getData();
         Integer seqId = seqService.genCommonIntSequence();
         ParaphraseStarListDO paraphraseStarListDO =
-            new ParaphraseStarListDO().setId(seqId).setOwner(echoUserInfo.getSysUser().getUserId())
-                .setCreateTime(LocalDateTime.now()).setIsDel(GlobalConstants.FLAG_N).setRemark("auto gen.")
-                .setListName(WordConstants.COMMON_PARAPHRASE_COLLECTION.IELTS);
+                new ParaphraseStarListDO().setId(seqId).setOwner(echoUserInfo.getSysUser().getUserId())
+                        .setCreateTime(LocalDateTime.now()).setIsDel(GlobalConstants.FLAG_N).setRemark("auto gen.")
+                        .setListName(WordConstants.COMMON_PARAPHRASE_COLLECTION.IELTS);
         paraphraseStarListService.save(paraphraseStarListDO);
         Assertions.assertNotNull(paraphraseStarListService.getById(seqId));
     }
@@ -184,7 +187,7 @@ public class ReviewServiceTest {
         Assertions.assertNotNull(echoUserInfo);
         log.info("echoUserInfo userid: {}", echoUserInfo.getSysUser().getUserId());
         List<ParaphraseStarListVO> list =
-            paraphraseStarListService.getCurrentUserList(echoUserInfo.getSysUser().getUserId());
+                paraphraseStarListService.getCurrentUserList(echoUserInfo.getSysUser().getUserId());
         Assertions.assertNotNull(list);
         Assertions.assertTrue(list.size() > 0);
         List<String> collectionNames = list.stream().map(collection -> {
@@ -227,7 +230,7 @@ public class ReviewServiceTest {
         Assertions.assertEquals(size3, size2);
         Assertions.assertEquals(size3, size4);
         revisePermanentAudioHelper.getPermanentAudioEnums().forEach(audioEnum -> Assertions
-            .assertNotNull(revisePermanentAudioHelper.getCacheStoreWithEnumKey().get(audioEnum)));
+                .assertNotNull(revisePermanentAudioHelper.getCacheStoreWithEnumKey().get(audioEnum)));
     }
 
 }

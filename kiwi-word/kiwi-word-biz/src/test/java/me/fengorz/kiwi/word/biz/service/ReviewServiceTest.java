@@ -46,8 +46,8 @@ import me.fengorz.kiwi.common.sdk.constant.EnvConstants;
 import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
 import me.fengorz.kiwi.common.sdk.util.json.KiwiJsonUtils;
 import me.fengorz.kiwi.word.api.common.WordConstants;
-import me.fengorz.kiwi.word.api.common.enumeration.ReviewAudioTypeEnum;
-import me.fengorz.kiwi.word.api.common.enumeration.ReviewDailyCounterTypeEnum;
+import me.fengorz.kiwi.word.api.common.enumeration.ReviseAudioTypeEnum;
+import me.fengorz.kiwi.word.api.common.enumeration.ReviseDailyCounterTypeEnum;
 import me.fengorz.kiwi.word.api.entity.ParaphraseStarListDO;
 import me.fengorz.kiwi.word.api.entity.WordReviewAudioDO;
 import me.fengorz.kiwi.word.api.vo.ParaphraseStarListVO;
@@ -56,6 +56,7 @@ import me.fengorz.kiwi.word.biz.WordBizApplication;
 import me.fengorz.kiwi.word.biz.service.base.ParaphraseService;
 import me.fengorz.kiwi.word.biz.service.base.ParaphraseStarListService;
 import me.fengorz.kiwi.word.biz.service.base.WordMainService;
+import me.fengorz.kiwi.word.biz.service.initialing.RevisePermanentAudioHelper;
 import me.fengorz.kiwi.word.biz.service.operate.ReviewService;
 import me.fengorz.kiwi.word.biz.util.WordDataSetupUtils;
 
@@ -64,7 +65,7 @@ import me.fengorz.kiwi.word.biz.util.WordDataSetupUtils;
 @ExtendWith(SpringExtension.class)
 @TestPropertySource("classpath:env.properties")
 @SpringBootTest(classes = WordBizApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class ReviewTest {
+public class ReviewServiceTest {
 
     @Autowired
     private ReviewService reviewService;
@@ -86,6 +87,9 @@ public class ReviewTest {
 
     @Autowired
     private UserApi userApi;
+
+    @Autowired
+    private RevisePermanentAudioHelper revisePermanentAudioHelper;
 
     @Test
     @Disabled
@@ -116,7 +120,7 @@ public class ReviewTest {
     void listReviewCounterVO() {
         List<WordReviewDailyCounterVO> list = reviewService.listReviewCounterVO(1);
         log.info("listReviewCounterVO >>>>>>>>>>>> {}", KiwiJsonUtils.toJsonStr(list));
-        Assertions.assertEquals(ReviewDailyCounterTypeEnum.values().length, list.size());
+        Assertions.assertEquals(ReviseDailyCounterTypeEnum.values().length, list.size());
     }
 
     @Test
@@ -135,11 +139,11 @@ public class ReviewTest {
         // Assertions.assertNotNull(test);
         // ParaphraseDO paraphraseDO = test.get(0);
         // WordReviewAudioDO wordReviewAudio = reviewService.findWordReviewAudio(paraphraseDO.getParaphraseId(),
-        // ReviewAudioTypeEnum.PARAPHRASE_EN.getType());
+        // ReviseAudioTypeEnum.PARAPHRASE_EN.getType());
 
         // id=3749976, sourceId=2774291, type=0
         WordReviewAudioDO wordReviewAudio =
-            reviewService.findWordReviewAudio(2774291, ReviewAudioTypeEnum.WORD_SPELLING.getType());
+            reviewService.findWordReviewAudio(2774291, ReviseAudioTypeEnum.WORD_SPELLING.getType());
         Assertions.assertNotNull(wordReviewAudio);
         Assertions.assertEquals(3749976, wordReviewAudio.getId());
         byte[] bytes = this.dfsService.downloadFile(wordReviewAudio.getGroupName(), wordReviewAudio.getFilePath());
@@ -151,7 +155,7 @@ public class ReviewTest {
     @Disabled
     void test_findWordReviewAudio() {
         WordReviewAudioDO wordReviewAudio =
-            reviewService.findWordReviewAudio(2774367, ReviewAudioTypeEnum.COMBO.getType());
+            reviewService.findWordReviewAudio(2774367, ReviseAudioTypeEnum.COMBO.getType());
         byte[] bytes = this.dfsService.downloadFile(wordReviewAudio.getGroupName(), wordReviewAudio.getFilePath());
         FileUtil.writeBytes(bytes, "/Users/zhanshifeng/Documents/temp/test_all.mp3");
     }
@@ -210,7 +214,21 @@ public class ReviewTest {
     @Order(2)
     @Disabled
     void test_evictWordReviewAudio() {
-        reviewService.evictWordReviewAudio(2774291, ReviewAudioTypeEnum.WORD_SPELLING.getType());
+        reviewService.evictWordReviewAudio(2774291, ReviseAudioTypeEnum.WORD_SPELLING.getType());
+    }
+
+    @Test
+    @Disabled
+    void test_revisePermanentAudioHelper() {
+        int size1 = revisePermanentAudioHelper.getPermanentAudioEnums().size();
+        int size2 = revisePermanentAudioHelper.getPermanentAudioEnumMap().size();
+        int size3 = revisePermanentAudioHelper.getCacheStoreWithEnumKey().size();
+        int size4 = revisePermanentAudioHelper.getCacheStoreWithEnumKey().size();
+        Assertions.assertEquals(size1, size2);
+        Assertions.assertEquals(size3, size2);
+        Assertions.assertEquals(size3, size4);
+        revisePermanentAudioHelper.getPermanentAudioEnums().forEach(audioEnum -> Assertions
+            .assertNotNull(revisePermanentAudioHelper.getCacheStoreWithEnumKey().get(audioEnum)));
     }
 
 }

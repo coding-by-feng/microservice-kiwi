@@ -29,7 +29,7 @@ import me.fengorz.kiwi.common.tts.model.TtsProperties;
 import me.fengorz.kiwi.common.tts.service.BaiduTtsService;
 import me.fengorz.kiwi.common.tts.service.TtsService;
 import me.fengorz.kiwi.word.api.common.ApiCrawlerConstants;
-import me.fengorz.kiwi.word.api.common.enumeration.ReviewAudioTypeEnum;
+import me.fengorz.kiwi.word.api.common.enumeration.ReviseAudioTypeEnum;
 import me.fengorz.kiwi.word.biz.common.SpeakerFunction;
 import me.fengorz.kiwi.word.biz.mapper.ReviewAudioMapper;
 import me.fengorz.kiwi.word.biz.service.operate.AudioService;
@@ -52,7 +52,7 @@ public class AudioServiceImpl implements AudioService {
 
     @Override
     public String generateVoice(String text, int type) throws DfsOperateException, TtsException {
-        if (ReviewAudioTypeEnum.isEnglish(type)) {
+        if (ReviseAudioTypeEnum.isEnglish(type)) {
             return generateEnglishVoice(text);
         } else {
             return generateChineseVoice(text);

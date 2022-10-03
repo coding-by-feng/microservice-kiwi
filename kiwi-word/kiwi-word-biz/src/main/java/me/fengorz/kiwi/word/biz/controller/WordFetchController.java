@@ -32,7 +32,7 @@ import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.api.R;
 import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
 import me.fengorz.kiwi.common.sdk.controller.BaseController;
-import me.fengorz.kiwi.word.api.common.enumeration.ReviewAudioGenerationEnum;
+import me.fengorz.kiwi.word.api.common.enumeration.ReviseAudioGenerationEnum;
 import me.fengorz.kiwi.word.api.dto.queue.RemovePronunciatioinMqDTO;
 import me.fengorz.kiwi.word.api.dto.queue.result.FetchPhraseResultDTO;
 import me.fengorz.kiwi.word.api.dto.queue.result.FetchPhraseRunUpResultDTO;
@@ -159,7 +159,7 @@ public class WordFetchController extends BaseController {
 
     @GetMapping("/generateTtsVoice/{type}")
     public R<Void> generateTtsVoice(@PathVariable("type") Integer type) {
-        crawlerService.generateTtsVoice(EnumUtil.likeValueOf(ReviewAudioGenerationEnum.class, type));
+        crawlerService.generateTtsVoice(EnumUtil.likeValueOf(ReviseAudioGenerationEnum.class, type));
         return R.success();
     }
 

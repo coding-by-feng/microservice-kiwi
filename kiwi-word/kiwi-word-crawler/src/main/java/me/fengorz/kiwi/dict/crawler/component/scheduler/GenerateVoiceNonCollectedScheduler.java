@@ -23,7 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.sdk.annotation.ScheduledAwake;
 import me.fengorz.kiwi.dict.crawler.common.CrawlerConstants;
 import me.fengorz.kiwi.dict.crawler.component.scheduler.base.Scheduler;
-import me.fengorz.kiwi.word.api.common.enumeration.ReviewAudioGenerationEnum;
+import me.fengorz.kiwi.word.api.common.enumeration.ReviseAudioGenerationEnum;
 import me.fengorz.kiwi.word.api.feign.DictFetchApi;
 
 /**
@@ -42,7 +42,7 @@ public class GenerateVoiceNonCollectedScheduler implements Scheduler {
     @ScheduledAwake(key = CrawlerConstants.ENABLE_SCHEDULER_KEY.VOICE_GENERATE_NON_COLLECTED)
     public void schedule() {
         log.info("Voice generation is starting.");
-        dictFetchApi.generateTtsVoice(ReviewAudioGenerationEnum.NON_COLLECTED.getType());
+        dictFetchApi.generateTtsVoice(ReviseAudioGenerationEnum.NON_COLLECTED.getType());
         log.info("Voice generation has ended.");
     }
 

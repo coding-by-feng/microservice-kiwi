@@ -43,7 +43,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter implements O
     public WebSecurityConfig(CacheControlApiProperties cacheControlApiProperties) {
         // default enable: false
         super(false);
-        KiwiAssertUtils.serviceNotEmpty(cacheControlApiProperties, "cacheControlApiProperties must not be empty.");
+        KiwiAssertUtils.assertNotEmpty(cacheControlApiProperties, "cacheControlApiProperties must not be empty.");
         this.cacheControlApiProperties = cacheControlApiProperties;
     }
 

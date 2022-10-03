@@ -17,23 +17,23 @@
  *
  */
 
-package me.fengorz.kiwi.word.api.common.enumeration;
+package me.fengorz.kiwi.common.tts.enumeration;
 
 import lombok.Getter;
 
 /**
- * @Description TODO
+ * @Description TTS power source
  * @Author zhanshifeng
  * @Date 2022/7/12 09:20
  */
-public enum ReviewAudioSourceEnum {
+public enum TtsSourceEnum {
 
     VOICERSS("voicerss"), BAIDU("baidu"), COMBO("combo");
 
     @Getter
     private final String source;
 
-    ReviewAudioSourceEnum(String source) {
+    TtsSourceEnum(String source) {
         this.source = source;
     }
 }

@@ -16,10 +16,14 @@
 
 package me.fengorz.kiwi.word.biz.service.base.impl;
 
-import java.util.List;
-
+import lombok.extern.slf4j.Slf4j;
+import me.fengorz.kiwi.common.sdk.constant.EnvConstants;
+import me.fengorz.kiwi.word.biz.WordBizApplication;
+import me.fengorz.kiwi.word.biz.service.base.ParaphraseStarListService;
+import me.fengorz.kiwi.word.biz.service.base.ParaphraseStarRelService;
 import org.apache.commons.collections4.CollectionUtils;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,10 +32,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import lombok.extern.slf4j.Slf4j;
-import me.fengorz.kiwi.common.sdk.constant.EnvConstants;
-import me.fengorz.kiwi.word.biz.WordBizApplication;
-import me.fengorz.kiwi.word.biz.service.base.ParaphraseStarRelService;
+import java.util.List;
 
 @Slf4j
 @ActiveProfiles({EnvConstants.DEV, EnvConstants.BASE})
@@ -42,13 +43,23 @@ public class BaseServiceTest {
 
     @Autowired
     private ParaphraseStarRelService paraphraseStarRelService;
+    @Autowired
+    private ParaphraseStarListService starListService;
 
     @Test
+    @Disabled
     public void test_listNotGeneratedVoice() {
         Assertions.assertTrue(CollectionUtils.isEmpty(paraphraseStarRelService.listNotGeneratedVoice()));
         List<Integer> notAllGeneratedList = paraphraseStarRelService.listNotAllGeneratedVoice();
         Assertions.assertTrue(CollectionUtils.isNotEmpty(notAllGeneratedList));
         log.info("notAllGeneratedList size={}", notAllGeneratedList.size());
+    }
+
+    @Test
+    public void test_rememberOne() {
+        Assertions.assertDoesNotThrow(() -> {
+            starListService.rememberOne(2539690, 1266094);
+        });
     }
 
 }

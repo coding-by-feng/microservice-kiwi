@@ -16,35 +16,15 @@
 
 package me.fengorz.kiwi.word.biz.service.operate.impl;
 
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.concurrent.Semaphore;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
-
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.google.common.collect.Lists;
-
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.URLUtil;
 import cn.hutool.http.HttpUtil;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.bdf.core.service.SeqService;
-import me.fengorz.kiwi.common.api.entity.EnhancerUser;
+import me.fengorz.kiwi.common.api.ApiContants;
 import me.fengorz.kiwi.common.fastdfs.service.DfsService;
 import me.fengorz.kiwi.common.fastdfs.util.DfsUtils;
 import me.fengorz.kiwi.common.sdk.annotation.log.LogMarker;
@@ -56,6 +36,7 @@ import me.fengorz.kiwi.common.sdk.exception.dfs.DfsOperateException;
 import me.fengorz.kiwi.common.sdk.util.bean.KiwiBeanUtils;
 import me.fengorz.kiwi.common.sdk.util.lang.collection.KiwiCollectionUtils;
 import me.fengorz.kiwi.common.sdk.util.lang.string.KiwiStringUtils;
+import me.fengorz.kiwi.common.sdk.web.security.SecurityUtils;
 import me.fengorz.kiwi.common.tts.service.TtsService;
 import me.fengorz.kiwi.word.api.common.ApiCrawlerConstants;
 import me.fengorz.kiwi.word.api.common.WordConstants;
@@ -69,6 +50,20 @@ import me.fengorz.kiwi.word.biz.service.operate.OperateService;
 import me.fengorz.kiwi.word.biz.service.operate.ReviewService;
 import me.fengorz.kiwi.word.biz.util.WordBizUtils;
 import me.fengorz.kiwi.word.biz.util.WordDataSetupUtils;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.concurrent.Semaphore;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * @Description 爬虫服务 @Author zhanshifeng @Date 2020/7/28 8:03 PM
@@ -114,12 +109,12 @@ public class CrawlerServiceImpl implements CrawlerService {
         }
 
         WordMainDO wordMainDO = new WordMainDO().setWordName(wordName).setWordId(seqService.genCommonIntSequence())
-            .setIsDel(GlobalConstants.FLAG_DEL_NO);
+                .setIsDel(GlobalConstants.FLAG_DEL_NO);
         mainService.save(wordMainDO);
         this.subStoreFetchWordResult(dto, wordMainDO);
         queueService.flagFetchBaseFinish(dto.getQueueId(), wordMainDO.getWordId());
         operateService.cacheReplace(wordName,
-            operateService.getCacheReplace(wordName).setNewRelWordId(wordMainDO.getWordId()));
+                operateService.getCacheReplace(wordName).setNewRelWordId(wordMainDO.getWordId()));
         operateService.fetchReplaceCallBack(wordName);
         return true;
     }
@@ -147,14 +142,14 @@ public class CrawlerServiceImpl implements CrawlerService {
 
                     Integer paraphraseId = paraphrase.getParaphraseId();
                     Optional.ofNullable(paraphrase.getSerialNumber()).filter(serialNumber -> serialNumber > 0)
-                        .ifPresent(serialNumber -> {
-                            FetchWordReplaceDTO.Binder binder = replaceDTO.getParaphraseBinderMap().get(serialNumber);
-                            if (binder == null) {
-                                return;
-                            }
-                            binder.setNewId(paraphraseId);
-                            replaceDTO.getParaphraseBinderMap().put(serialNumber, binder);
-                        });
+                            .ifPresent(serialNumber -> {
+                                FetchWordReplaceDTO.Binder binder = replaceDTO.getParaphraseBinderMap().get(serialNumber);
+                                if (binder == null) {
+                                    return;
+                                }
+                                binder.setNewId(paraphraseId);
+                                replaceDTO.getParaphraseBinderMap().put(serialNumber, binder);
+                            });
 
                     List<FetchPhraseDTO> phraseDTOList = paraphraseDTO.getPhraseDTOList();
                     if (KiwiCollectionUtils.isNotEmpty(phraseDTOList)) {
@@ -172,25 +167,25 @@ public class CrawlerServiceImpl implements CrawlerService {
                     }
 
                     Optional.ofNullable(paraphraseDTO.getExampleDTOList())
-                        .ifPresent(list -> list.forEach(exampleDTO -> {
-                            ParaphraseExampleDO example = new ParaphraseExampleDO();
-                            KiwiBeanUtils.copyProperties(exampleDTO, example);
-                            example.setWordId(wordId);
-                            example.setParaphraseId(paraphraseId);
-                            example.setExampleId(seqService.genCommonIntSequence());
-                            exampleService.save(example);
+                            .ifPresent(list -> list.forEach(exampleDTO -> {
+                                ParaphraseExampleDO example = new ParaphraseExampleDO();
+                                KiwiBeanUtils.copyProperties(exampleDTO, example);
+                                example.setWordId(wordId);
+                                example.setParaphraseId(paraphraseId);
+                                example.setExampleId(seqService.genCommonIntSequence());
+                                exampleService.save(example);
 
-                            Optional.ofNullable(example.getSerialNumber()).filter(serialNumber -> serialNumber > 0)
-                                .ifPresent(serialNumber -> {
-                                    FetchWordReplaceDTO.Binder binder =
-                                        replaceDTO.getExampleBinderMap().get(serialNumber);
-                                    if (binder == null) {
-                                        return;
-                                    }
-                                    binder.setNewId(example.getExampleId());
-                                    replaceDTO.getExampleBinderMap().put(serialNumber, binder);
-                                });
-                        }));
+                                Optional.ofNullable(example.getSerialNumber()).filter(serialNumber -> serialNumber > 0)
+                                        .ifPresent(serialNumber -> {
+                                            FetchWordReplaceDTO.Binder binder =
+                                                    replaceDTO.getExampleBinderMap().get(serialNumber);
+                                            if (binder == null) {
+                                                return;
+                                            }
+                                            binder.setNewId(example.getExampleId());
+                                            replaceDTO.getExampleBinderMap().put(serialNumber, binder);
+                                        });
+                            }));
                 });
                 operateService.cacheReplace(word.getWordName(), replaceDTO);
 
@@ -199,8 +194,8 @@ public class CrawlerServiceImpl implements CrawlerService {
                 if (CollUtil.isNotEmpty(pronunciationDTOList)) {
                     for (FetchWordPronunciationDTO pronunciationDTO : pronunciationDTOList) {
                         PronunciationDO pronunciation =
-                            WordBizUtils.initPronunciation(wordId, characterId, pronunciationDTO.getVoiceFileUrl(),
-                                pronunciationDTO.getSoundmark(), pronunciationDTO.getSoundmarkType());
+                                WordBizUtils.initPronunciation(wordId, characterId, pronunciationDTO.getVoiceFileUrl(),
+                                        pronunciationDTO.getSoundmark(), pronunciationDTO.getSoundmarkType());
                         pronunciation.setPronunciationId(seqService.genCommonIntSequence());
                         pronunciationService.save(pronunciation);
                     }
@@ -213,9 +208,9 @@ public class CrawlerServiceImpl implements CrawlerService {
     @Transactional(rollbackFor = Exception.class)
     public boolean fetchPronunciation(Integer wordId) {
         Objects
-            .requireNonNull(pronunciationService
-                .list(Wrappers.<PronunciationDO>lambdaQuery().eq(PronunciationDO::getWordId, wordId)))
-            .forEach(this::fetchPronunciationVoice);
+                .requireNonNull(pronunciationService
+                        .list(Wrappers.<PronunciationDO>lambdaQuery().eq(PronunciationDO::getWordId, wordId)))
+                .forEach(this::fetchPronunciationVoice);
         return true;
     }
 
@@ -223,7 +218,7 @@ public class CrawlerServiceImpl implements CrawlerService {
     @Transactional(rollbackFor = Exception.class)
     public void reFetchPronunciation(Integer pronunciationId) {
         PronunciationDO pronunciation = Optional.ofNullable(pronunciationService.getById(pronunciationId))
-            .orElseThrow(ResourceNotFoundException::new);
+                .orElseThrow(ResourceNotFoundException::new);
         this.fetchPronunciation(pronunciation.getWordId());
     }
 
@@ -271,7 +266,7 @@ public class CrawlerServiceImpl implements CrawlerService {
 
         final String phrase = dto.getPhrase();
         WordMainDO wordMain = new WordMainDO().setWordId(seqService.genCommonIntSequence()).setWordName(phrase)
-            .setInfoType(ApiCrawlerConstants.QUEUE_INFO_TYPE_PHRASE);
+                .setInfoType(ApiCrawlerConstants.QUEUE_INFO_TYPE_PHRASE);
         mainService.save(wordMain);
 
         for (FetchParaphraseDTO paraphrase : paraphrases) {
@@ -336,8 +331,8 @@ public class CrawlerServiceImpl implements CrawlerService {
                         reviewService.cleanReviewVoiceByParaphraseId(id);
                         GENERATE_VOICE_BARRIER.release();
                         log.error(
-                            "Paraphrase id({}) generation failed, Data has cleaned, GENERATE_VOICE_BARRIER has released",
-                            id);
+                                "Paraphrase id({}) generation failed, Data has cleaned, GENERATE_VOICE_BARRIER has released",
+                                id);
                         return;
                     }
                     log.info("Paraphrase id({}) generation is end!", id);
@@ -355,27 +350,23 @@ public class CrawlerServiceImpl implements CrawlerService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void test_initIeltsWordList() {
-        Integer echoUserId = 1286037;
-        String echoUserName = "echo";
-        SecurityContextHolder.getContext()
-            .setAuthentication(new UsernamePasswordAuthenticationToken(new EnhancerUser(echoUserId, 0, echoUserName,
-                "test", true, true, true, true, Lists.newArrayList(new SimpleGrantedAuthority("test_role"))), null));
+        SecurityUtils.buildTestUser(ApiContants.ADMIN_ID, ApiContants.ADMIN_USERNAME);
         Set<String> wordList = WordDataSetupUtils.extractIeltsWordList();
         log.info("extractIeltsWordList size is: {}", wordList.size());
         for (String word : wordList) {
             List<
-                ParaphraseStarListVO> collection =
+                    ParaphraseStarListVO> collection =
                     paraphraseStarListService
-                        .getCurrentUserList(echoUserId).stream().filter(vo -> StringUtils
-                            .equalsIgnoreCase(vo.getListName(), WordConstants.COMMON_PARAPHRASE_COLLECTION.IELTS))
-                        .collect(Collectors.toList());
+                            .getCurrentUserList(ApiContants.ADMIN_ID).stream().filter(vo -> StringUtils
+                                    .equalsIgnoreCase(vo.getListName(), WordConstants.COMMON_PARAPHRASE_COLLECTION.IELTS))
+                            .collect(Collectors.toList());
             for (ParaphraseStarListVO listVO : collection) {
                 List<ParaphraseDO> paraphrases = paraphraseService.listByWordName(word);
                 if (CollectionUtils.isEmpty(paraphrases)) {
                     continue;
                 }
                 paraphrases.forEach(paraphraseDO -> paraphraseStarListService
-                    .putIntoStarList(paraphraseDO.getParaphraseId(), listVO.getId()));
+                        .putIntoStarList(paraphraseDO.getParaphraseId(), listVO.getId()));
             }
         }
     }
@@ -392,14 +383,14 @@ public class CrawlerServiceImpl implements CrawlerService {
         String tempVoice = crawlerVoiceBasePath + DfsUtils.getFileName(voiceFileUrl);
         try {
             String uploadResult =
-                dfsService.uploadFile(FileUtil.getInputStream(tempVoice), voiceSize, ApiCrawlerConstants.EXT_MP3);
+                    dfsService.uploadFile(FileUtil.getInputStream(tempVoice), voiceSize, ApiCrawlerConstants.EXT_MP3);
             pronunciation.setGroupName(DfsUtils.getGroupName(uploadResult));
             pronunciation.setVoiceFilePath(DfsUtils.getUploadVoiceFilePath(uploadResult));
             pronunciationService.updateById(pronunciation);
             log.info("Pronunciation fetched success, uploadResult = {}.", uploadResult);
         } catch (DfsOperateException e) {
             throw new ServiceException(
-                KiwiStringUtils.format("fetchPronunciationVoice error, pronunciation.url={}", voiceUrl));
+                    KiwiStringUtils.format("fetchPronunciationVoice error, pronunciation.url={}", voiceUrl));
         }
     }
 

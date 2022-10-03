@@ -20,7 +20,7 @@ import java.lang.annotation.*;
 
 /**
  * 操作日志注解
- * 
+ *
  * @Author zhanshifeng
  */
 @Target(ElementType.METHOD)
@@ -28,7 +28,7 @@ import java.lang.annotation.*;
 @Documented
 public @interface LogMarker {
 
-    String value() default "";
+    String value() default "no default value";
 
     /**
      * 是否打印方法参数
@@ -39,13 +39,14 @@ public @interface LogMarker {
 
     /**
      * 是否打印返回结果
-     * 
+     *
      * @return
      */
     boolean isPrintReturnValue() default false;
 
     /**
      * 是否打印方法执行时间
+     *
      * @return
      */
     boolean isPrintExecutionTime() default false;

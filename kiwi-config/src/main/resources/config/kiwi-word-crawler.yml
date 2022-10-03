@@ -49,12 +49,6 @@ crawler:
       "refresh-all-api-key": true
     }
 
-baidu:
-  tts:
-    app-id: 20116041
-    api-key: changeme
-    secret-key: changeme
-
 my:
   config:
     exclude-db: true

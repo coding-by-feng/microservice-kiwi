@@ -198,7 +198,7 @@ public class OperateServiceImpl implements OperateService {
     private List<CharacterVO> assembleWordQueryVO(String wordName, Integer wordId) throws ServiceException {
         List<CharacterDO> characterList =
             characterService.list(new QueryWrapper<>(new CharacterDO().setWordId(wordId)));
-        KiwiAssertUtils.serviceNotEmpty(characterList, "No character for [{}]!", wordName);
+        KiwiAssertUtils.assertNotEmpty(characterList, "No character for [{}]!", wordName);
 
         List<CharacterVO> characterVOList = new ArrayList<>();
         for (CharacterDO character : characterList) {

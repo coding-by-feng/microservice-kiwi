@@ -3,8 +3,8 @@ package com;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.URLUtil;
 import cn.hutool.http.HttpUtil;
+import me.fengorz.kiwi.common.fastdfs.util.DfsUtils;
 import me.fengorz.kiwi.word.api.common.ApiCrawlerConstants;
-import me.fengorz.kiwi.word.biz.util.WordDfsUtils;
 
 /**
  * @Author zhanshifeng @Date 2019/11/4 4:37 PM
@@ -16,6 +16,6 @@ public class HttpTest {
             + URLUtil.decode("/zhs/media/%E8%8B%B1%E8%AF%AD/uk_pron_ogg/u/ukb/ukbp0/ukbp0573.ogg");
         long voiceSize =
             HttpUtil.downloadFile(voiceFileUrl, FileUtil.file(ApiCrawlerConstants.URL_CAMBRIDGE_FETCH_CHINESE));
-        System.out.println(WordDfsUtils.getVoiceFileName(voiceFileUrl));
+        System.out.println(DfsUtils.getFileName(voiceFileUrl));
     }
 }

@@ -49,12 +49,6 @@ crawler:
       "refresh-all-api-key": true
     }
 
-baidu:
-  tts:
-    app-id: 20116041
-    api-key: lTZsmSq37OtRKj6WDpjeemip
-    secret-key: iQkIhGf6O93FH8Dhe446w8rB3jd2A137
-
 my:
   config:
     exclude-db: true

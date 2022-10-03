@@ -54,7 +54,7 @@ public class CacheKeyGenerator extends SimpleKeyGenerator {
             prefix += methodKeyPrefix.value() + GlobalConstants.SYMBOL_DELIMITER_STR;
         }
 
-        KiwiAssertUtils.serviceEmpty(prefix, "Class[{}], Method[{}]: CacheKeyPrefix cannot be null!", classKeyPrefix,
+        KiwiAssertUtils.assertNotEmpty(prefix, "Class[{}], Method[{}]: CacheKeyPrefix cannot be null!", classKeyPrefix,
             methodKeyPrefix);
 
         Parameter[] parameters = method.getParameters();

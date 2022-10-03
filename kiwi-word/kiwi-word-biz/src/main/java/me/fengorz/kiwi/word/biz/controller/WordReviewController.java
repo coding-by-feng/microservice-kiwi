@@ -110,6 +110,29 @@ public class WordReviewController extends AbstractDfsController {
         log.info("Method downloadResponse for wordReviewAudio invoked success, sourceId={}, type={}", sourceId, type);
     }
 
+    @GetMapping("/character/downloadReviewAudio/{characterCode}")
+    public void downloadCharacterReviewAudio(HttpServletResponse response,
+        @PathVariable("characterCode") String characterCode) {
+        log.info("downloadCharacterReviewAudio, characterCode={}", characterCode);
+        WordReviewAudioDO wordReviewAudio = this.reviewService.findCharacterReviewAudio(characterCode);
+        if (wordReviewAudio == null) {
+            log.error("=========> Required wordReviewAudio must not be null!");
+            return;
+        }
+        InputStream inputStream = null;
+        try {
+            byte[] bytes = this.dfsService.downloadFile(wordReviewAudio.getGroupName(), wordReviewAudio.getFilePath());
+            log.info("Required wordReviewAudio bytes download success, characterCode={}", characterCode);
+            inputStream = new ByteArrayInputStream(bytes);
+            response.addHeader(CONTENT_TYPE, AUDIO_MPEG);
+            response.addHeader(ACCEPT_RANGES, BYTES);
+            response.addHeader(CONTENT_LENGTH, String.valueOf(bytes.length));
+        } catch (DfsOperateException e) {
+            log.error("downloadReviewAudio exception, characterCode={}!", characterCode, e);
+        }
+        WebTools.downloadResponseAndClose(response, inputStream);
+    }
+
     @Deprecated
     @GetMapping("/generateTtsVoiceFromParaphraseId/{paraphraseId}")
     public R<Void> generateTtsVoiceFromParaphraseId(@PathVariable("paraphraseId") Integer paraphraseId) {

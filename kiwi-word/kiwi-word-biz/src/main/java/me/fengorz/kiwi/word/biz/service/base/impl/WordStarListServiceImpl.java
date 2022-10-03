@@ -141,7 +141,6 @@ public class WordStarListServiceImpl extends ServiceImpl<WordStarListMapper, Wor
             return;
         }
         relService.save(new WordStarRelDO().setListId(listId).setWordId(wordId));
-
         archiveService.archiveWordRel(wordId, listId, SecurityUtils.getCurrentUserId());
     }
 
@@ -150,7 +149,7 @@ public class WordStarListServiceImpl extends ServiceImpl<WordStarListMapper, Wor
     public void removeStarList(Integer wordId, Integer listId) {
         LambdaQueryWrapper<WordStarRelDO> queryWrapper = new LambdaQueryWrapper<WordStarRelDO>()
             .eq(WordStarRelDO::getListId, listId).eq(WordStarRelDO::getWordId, wordId);
-        KiwiAssertUtils.serviceNotEmpty(relService.count(queryWrapper), "wordStar is not exists!");
+        KiwiAssertUtils.assertNotEmpty(relService.count(queryWrapper), "wordStar is not exists!");
         relService.remove(queryWrapper);
 
         archiveService.invalidArchiveWordRel(wordId, listId, SecurityUtils.getCurrentUserId());

@@ -15,18 +15,8 @@
  */
 package me.fengorz.kiwi.word.biz.controller;
 
-import java.util.List;
-
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
-
-import org.hibernate.validator.constraints.Range;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.bdf.core.service.SeqService;
@@ -34,6 +24,7 @@ import me.fengorz.kiwi.common.api.R;
 import me.fengorz.kiwi.common.sdk.annotation.log.LogMarker;
 import me.fengorz.kiwi.common.sdk.controller.BaseController;
 import me.fengorz.kiwi.common.sdk.web.security.SecurityUtils;
+import me.fengorz.kiwi.word.api.common.enumeration.ReviseDailyCounterTypeEnum;
 import me.fengorz.kiwi.word.api.entity.ParaphraseStarListDO;
 import me.fengorz.kiwi.word.api.vo.ParaphraseStarListVO;
 import me.fengorz.kiwi.word.api.vo.detail.ParaphraseVO;
@@ -42,6 +33,13 @@ import me.fengorz.kiwi.word.biz.service.base.ParaphraseService;
 import me.fengorz.kiwi.word.biz.service.base.ParaphraseStarListService;
 import me.fengorz.kiwi.word.biz.service.operate.OperateService;
 import me.fengorz.kiwi.word.biz.service.operate.ReviewService;
+import org.hibernate.validator.constraints.Range;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import java.util.List;
 
 /**
  * 单词本
@@ -139,12 +137,14 @@ public class ParaphraseStarListController extends BaseController {
 
     @PostMapping("/rememberOne")
     public R<Void> rememberOne(@NotNull Integer paraphraseId, @NotNull Integer listId) {
+        reviewService.increase(ReviseDailyCounterTypeEnum.REMEMBER.getType(), SecurityUtils.getCurrentUserId());
         starListService.rememberOne(paraphraseId, listId);
         return R.success();
     }
 
     @PostMapping("/keepInMind")
     public R<Void> keepInMind(@NotNull Integer paraphraseId, @NotNull Integer listId) {
+        reviewService.increase(ReviseDailyCounterTypeEnum.KEEP_IN_MIND.getType(), SecurityUtils.getCurrentUserId());
         starListService.keepInMind(paraphraseId, listId);
         return R.success();
     }

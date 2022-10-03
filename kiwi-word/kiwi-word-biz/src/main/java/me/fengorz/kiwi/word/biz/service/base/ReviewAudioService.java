@@ -13,8 +13,9 @@
 package me.fengorz.kiwi.word.biz.service.base;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-
 import me.fengorz.kiwi.word.api.entity.WordReviewAudioDO;
+
+import java.util.List;
 
 /**
  * 服务类
@@ -31,6 +32,8 @@ public interface ReviewAudioService extends IService<WordReviewAudioDO> {
     void cleanById(Integer id);
 
     WordReviewAudioDO selectOne(Integer sourceId, Integer type);
+
+    List<WordReviewAudioDO> list(Integer sourceId, Integer type);
 
     void cleanBySourceIdAndType(Integer sourceId, Integer type);
 

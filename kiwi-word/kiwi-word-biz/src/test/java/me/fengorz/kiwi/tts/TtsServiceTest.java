@@ -16,8 +16,17 @@
 
 package me.fengorz.kiwi.tts;
 
-import java.io.IOException;
-
+import cn.hutool.core.util.StrUtil;
+import cn.hutool.http.HttpUtil;
+import com.baidu.aip.util.Util;
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
+import me.fengorz.kiwi.common.sdk.constant.EnvConstants;
+import me.fengorz.kiwi.common.tts.TtsConstants;
+import me.fengorz.kiwi.common.tts.model.TtsProperties;
+import me.fengorz.kiwi.common.tts.service.BaiduTtsService;
+import me.fengorz.kiwi.common.tts.service.TtsService;
+import me.fengorz.kiwi.word.biz.WordBizApplication;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -28,18 +37,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import com.baidu.aip.util.Util;
-
-import cn.hutool.core.util.StrUtil;
-import cn.hutool.http.HttpUtil;
-import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
-import me.fengorz.kiwi.common.sdk.constant.EnvConstants;
-import me.fengorz.kiwi.common.tts.TtsConstants;
-import me.fengorz.kiwi.common.tts.model.TtsProperties;
-import me.fengorz.kiwi.common.tts.service.BaiduTtsService;
-import me.fengorz.kiwi.common.tts.service.TtsService;
-import me.fengorz.kiwi.word.biz.WordBizApplication;
+import java.io.IOException;
 
 @Slf4j
 @ActiveProfiles({EnvConstants.DEV, EnvConstants.BASE})
@@ -156,16 +154,15 @@ public class TtsServiceTest {
 
     @SneakyThrows
     @Test
+    @Disabled
     public void test() {
         byte[] data = baiduTtsService.speech(
                 " A。R。E。F。E。R。L。a way of discovering, by questions or practical activities, what someone knows, or what someone or something can do or is like");
         Assertions.assertNotNull(data);
-        if (data != null) {
-            try {
-                Util.writeBytesToFileSystem(data, "/Users/zhanshifeng/Documents/temp/baidu_tts_test.mp3");
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        try {
+            Util.writeBytesToFileSystem(data, "/Users/zhanshifeng/Documents/temp/baidu_tts_test.mp3");
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 

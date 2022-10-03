@@ -16,15 +16,6 @@
 
 package me.fengorz.kiwi.word.biz.config;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.commons.collections4.ListUtils;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
-
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.bdf.cache.redis.config.CacheConfig;
 import me.fengorz.kiwi.bdf.core.config.CoreConfig;
@@ -36,6 +27,14 @@ import me.fengorz.kiwi.common.tts.config.TtsConfig;
 import me.fengorz.kiwi.common.tts.enumeration.TtsSourceEnum;
 import me.fengorz.kiwi.word.api.common.enumeration.ReviseAudioTypeEnum;
 import me.fengorz.kiwi.word.api.model.ParaphraseTtsGenerationPayload;
+import org.apache.commons.collections4.ListUtils;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @Author zhanshifeng

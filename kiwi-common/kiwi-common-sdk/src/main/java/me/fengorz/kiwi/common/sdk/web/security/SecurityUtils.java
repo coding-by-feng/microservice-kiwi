@@ -16,14 +16,18 @@
 
 package me.fengorz.kiwi.common.sdk.web.security;
 
-import java.util.Objects;
-
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-
 import lombok.experimental.UtilityClass;
 import me.fengorz.kiwi.common.api.entity.EnhancerUser;
 import me.fengorz.kiwi.common.sdk.exception.AuthException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * @Author zhanshifeng @Date 2019-09-26 10:19
@@ -69,4 +73,13 @@ public class SecurityUtils {
         // return 1;
         throw new AuthException("登录超时");
     }
+
+    public static void buildTestUser(Integer userId, String userName) {
+        List<GrantedAuthority> list = new ArrayList<>(1);
+        list.add(new SimpleGrantedAuthority("test_role"));
+        SecurityContextHolder.getContext()
+                .setAuthentication(new UsernamePasswordAuthenticationToken(new EnhancerUser(userId, 0, userName,
+                        "test", true, true, true, true, list), null));
+    }
+
 }

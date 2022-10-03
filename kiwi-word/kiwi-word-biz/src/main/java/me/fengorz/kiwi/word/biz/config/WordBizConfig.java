@@ -80,9 +80,9 @@ public class WordBizConfig {
 
         List<ImmutablePair<ReviseAudioTypeEnum, Integer>> counters = new ArrayList<>();
         counters.add(ImmutablePair.of(ReviseAudioTypeEnum.PRONUNCIATION, 2));
-        counters.add(ImmutablePair.of(ReviseAudioTypeEnum.WORD_SPELLING, 2));
+        counters.add(ImmutablePair.of(ReviseAudioTypeEnum.WORD_SPELLING, 3));
         counters.add(ImmutablePair.of(ReviseAudioTypeEnum.PRONUNCIATION, 2));
-        counters.add(ImmutablePair.of(ReviseAudioTypeEnum.WORD_SPELLING, 2));
+        counters.add(ImmutablePair.of(ReviseAudioTypeEnum.WORD_SPELLING, 3));
         counters.add(ImmutablePair.of(ReviseAudioTypeEnum.CHARACTER_CH, 1));
         counters.add(ImmutablePair.of(ReviseAudioTypeEnum.PARAPHRASE_CH, 2));
         counters.add(ImmutablePair.of(ReviseAudioTypeEnum.PARAPHRASE_EN, 2));

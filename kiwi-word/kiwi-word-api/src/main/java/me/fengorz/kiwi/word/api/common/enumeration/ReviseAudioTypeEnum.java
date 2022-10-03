@@ -27,7 +27,7 @@ import lombok.Getter;
  * @Author zhanshifeng
  * @Date 2022/7/12 09:20
  */
-public enum ReviewAudioTypeEnum {
+public enum ReviseAudioTypeEnum {
 
     WORD_SPELLING(0), PARAPHRASE_EN(1), PARAPHRASE_CH(2), EXAMPLE_EN(3), EXAMPLE_CH(4), COMBO(5), CHARACTER_EN(6),
     CHARACTER_CH(7), NON_REVIEW_SPELL(8), PRONUNCIATION(9);
@@ -35,14 +35,14 @@ public enum ReviewAudioTypeEnum {
     @Getter
     private final Integer type;
 
-    ReviewAudioTypeEnum(Integer type) {
+    ReviseAudioTypeEnum(Integer type) {
         this.type = type;
     }
 
-    private static final Map<Integer, ReviewAudioTypeEnum> VALUES_MAP;
+    private static final Map<Integer, ReviseAudioTypeEnum> VALUES_MAP;
     static {
         VALUES_MAP =
-            Arrays.stream(values()).collect(Collectors.toMap(ReviewAudioTypeEnum::getType, typeEnum -> typeEnum));
+            Arrays.stream(values()).collect(Collectors.toMap(ReviseAudioTypeEnum::getType, typeEnum -> typeEnum));
     }
 
     public static boolean isParaphrase(int type) {
@@ -77,7 +77,7 @@ public enum ReviewAudioTypeEnum {
         return CHARACTER_EN.getType() == type || CHARACTER_CH.getType() == type;
     }
 
-    public static ReviewAudioTypeEnum fromValue(int type) {
+    public static ReviseAudioTypeEnum fromValue(int type) {
         return VALUES_MAP.get(type);
     }
 

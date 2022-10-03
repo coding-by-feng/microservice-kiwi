@@ -46,6 +46,7 @@ import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.bdf.core.service.SeqService;
 import me.fengorz.kiwi.common.api.entity.EnhancerUser;
 import me.fengorz.kiwi.common.fastdfs.service.DfsService;
+import me.fengorz.kiwi.common.fastdfs.util.DfsUtils;
 import me.fengorz.kiwi.common.sdk.annotation.log.LogMarker;
 import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
 import me.fengorz.kiwi.common.sdk.exception.ResourceNotFoundException;
@@ -58,7 +59,7 @@ import me.fengorz.kiwi.common.sdk.util.lang.string.KiwiStringUtils;
 import me.fengorz.kiwi.common.tts.service.TtsService;
 import me.fengorz.kiwi.word.api.common.ApiCrawlerConstants;
 import me.fengorz.kiwi.word.api.common.WordConstants;
-import me.fengorz.kiwi.word.api.common.enumeration.ReviewAudioGenerationEnum;
+import me.fengorz.kiwi.word.api.common.enumeration.ReviseAudioGenerationEnum;
 import me.fengorz.kiwi.word.api.dto.queue.result.*;
 import me.fengorz.kiwi.word.api.entity.*;
 import me.fengorz.kiwi.word.api.vo.ParaphraseStarListVO;
@@ -68,7 +69,6 @@ import me.fengorz.kiwi.word.biz.service.operate.OperateService;
 import me.fengorz.kiwi.word.biz.service.operate.ReviewService;
 import me.fengorz.kiwi.word.biz.util.WordBizUtils;
 import me.fengorz.kiwi.word.biz.util.WordDataSetupUtils;
-import me.fengorz.kiwi.word.biz.util.WordDfsUtils;
 
 /**
  * @Description 爬虫服务 @Author zhanshifeng @Date 2020/7/28 8:03 PM
@@ -305,7 +305,7 @@ public class CrawlerServiceImpl implements CrawlerService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void generateTtsVoice(ReviewAudioGenerationEnum type) {
+    public void generateTtsVoice(ReviseAudioGenerationEnum type) {
         try {
             log.info("Method generateTtsVoice is starting! type={}", type.name());
             if (!ttsService.hasValidApiKey()) {
@@ -316,7 +316,7 @@ public class CrawlerServiceImpl implements CrawlerService {
                 List<Integer> notGeneratedParaphraseId = paraphraseStarRelService.listNotAllGeneratedVoice();
                 if (CollectionUtils.isEmpty(notGeneratedParaphraseId)) {
                     log.info("There is not notGeneratedParaphraseId need to generate voice.");
-                    if (type.equals(ReviewAudioGenerationEnum.ONLY_COLLECTED)) {
+                    if (type.equals(ReviseAudioGenerationEnum.ONLY_COLLECTED)) {
                         log.info("Only generate collected paraphrase, and skip this generation invoke.");
                         return;
                     }
@@ -389,12 +389,12 @@ public class CrawlerServiceImpl implements CrawlerService {
         String voiceFileUrl = ApiCrawlerConstants.URL_CAMBRIDGE_BASE + voiceUrl;
         log.info("Download {}.", voiceFileUrl);
         long voiceSize = HttpUtil.downloadFile(URLUtil.decode(voiceFileUrl), FileUtil.file(crawlerVoiceBasePath));
-        String tempVoice = crawlerVoiceBasePath + WordDfsUtils.getVoiceFileName(voiceFileUrl);
+        String tempVoice = crawlerVoiceBasePath + DfsUtils.getFileName(voiceFileUrl);
         try {
             String uploadResult =
                 dfsService.uploadFile(FileUtil.getInputStream(tempVoice), voiceSize, ApiCrawlerConstants.EXT_MP3);
-            pronunciation.setGroupName(WordDfsUtils.getGroupName(uploadResult));
-            pronunciation.setVoiceFilePath(WordDfsUtils.getUploadVoiceFilePath(uploadResult));
+            pronunciation.setGroupName(DfsUtils.getGroupName(uploadResult));
+            pronunciation.setVoiceFilePath(DfsUtils.getUploadVoiceFilePath(uploadResult));
             pronunciationService.updateById(pronunciation);
             log.info("Pronunciation fetched success, uploadResult = {}.", uploadResult);
         } catch (DfsOperateException e) {

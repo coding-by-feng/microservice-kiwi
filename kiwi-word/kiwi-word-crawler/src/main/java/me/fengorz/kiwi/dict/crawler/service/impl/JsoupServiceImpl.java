@@ -324,7 +324,7 @@ public class JsoupServiceImpl implements IJsoupService {
         Elements wordName = requireJsoupElements(wordNameHeader.get(0), () -> KEY_WORD_NAME);
         CrawlerAssertUtils.notEmpty(wordName, FETCH_MAIN_WORD_NAME_EXCEPTION, word);
         jsoupWord = wordName.get(0).text();
-        KiwiAssertUtils.serviceEmpty(jsoupWord, FETCH_MAIN_WORD_NAME_EXCEPTION, word);
+        KiwiAssertUtils.assertNotEmpty(jsoupWord, FETCH_MAIN_WORD_NAME_EXCEPTION, word);
         resultDTO.setWordName(jsoupWord);
 
         AtomicReference<JsoupRootTypeEnum> currentRootType = new AtomicReference<>();

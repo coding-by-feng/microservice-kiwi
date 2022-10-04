@@ -132,6 +132,7 @@ public class ReviewServiceTest {
     @SneakyThrows
     @Test
     @Order(1)
+    @Disabled
     void findWordReviewAudio() {
         // List<ParaphraseDO> test = paraphraseService.listByWordName("test");
         // Assertions.assertNotNull(test);

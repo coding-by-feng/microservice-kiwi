@@ -43,7 +43,8 @@ public class BaiduTtsServiceImpl implements BaiduTtsService {
     private final BaiduTtsProperties config;
     private static final String SPEAK_SPEED_DEFAULT_VALUE = "5";
     private static final String SPEAK_TONE_DEFAULT_VALUE = "5";
-    private static final String SPEAK_PER_DEFAULT_VALUE = "4";
+    private static final String SPEAK_PER_DEFAULT_VALUE_DUYAYA = "4";
+    private static final String SPEAK_PER_DEFAULT_VALUE_DUXIAOMEI = "0";
     private static final String SPEAK_AUE_DEFAULT_VALUE = "3";
     private static final String SPEAK_LANGUAGE_DEFAULT_VALUE = "zh";
 
@@ -59,7 +60,7 @@ public class BaiduTtsServiceImpl implements BaiduTtsService {
         HashMap<String, Object> options = new HashMap<>(3);
         options.put(TtsConstants.BAIDU_TTS_OPTIONS.SPEAK_SPEED, SPEAK_SPEED_DEFAULT_VALUE);
         options.put(TtsConstants.BAIDU_TTS_OPTIONS.SPEAK_TONE, SPEAK_TONE_DEFAULT_VALUE);
-        options.put(TtsConstants.BAIDU_TTS_OPTIONS.SPEAK_PER, SPEAK_PER_DEFAULT_VALUE);
+        options.put(TtsConstants.BAIDU_TTS_OPTIONS.SPEAK_PER, SPEAK_PER_DEFAULT_VALUE_DUXIAOMEI);
         options.put(TtsConstants.BAIDU_TTS_OPTIONS.SPEAK_AUE, SPEAK_AUE_DEFAULT_VALUE);
 
         try {

@@ -421,11 +421,6 @@ public class ReviewServiceImpl implements ReviewService {
         }
         final CharacterDO characterDO = characterMapper.selectOne(
                 Wrappers.<CharacterDO>lambdaQuery().eq(CharacterDO::getCharacterId, paraphraseDO.getCharacterId()));
-        if (characterDO == null) {
-            log.error("characterDO is null, skip generateTtsVoiceFromParaphraseId, characterDO is {}",
-                    paraphraseDO.getCharacterId());
-            return;
-        }
         final List<ParaphraseExampleDO> paraphraseExamples = paraphraseExampleMapper.selectList(
                 Wrappers.<ParaphraseExampleDO>lambdaQuery().eq(ParaphraseExampleDO::getParaphraseId, paraphraseId));
         final Set<ReviseAudioTypeEnum> generatedTypes = new HashSet<>();
@@ -472,16 +467,18 @@ public class ReviewServiceImpl implements ReviewService {
                 sourceIds.add(paraphraseExample.getExampleId());
             }
         } else if (ReviseAudioTypeEnum.isCharacter(type.getType())) {
+            if (characterDO == null) {
+                log.error("characterDO is null, skipping, characterDO is {}", paraphraseDO.getCharacterId());
+                return sourceIds;
+            }
             RevisePermanentAudioEnum revisePermanentAudioEnum =
                     revisePermanentAudioHelper.getPermanentAudioEnumMap().get(characterDO.getCharacterCode());
             if (revisePermanentAudioEnum != null) {
                 sourceIds.add(revisePermanentAudioEnum.getSourceId());
-                log.info(
-                        "revisePermanentAudioEnum is exists, paraphraseId={}, characterId={},characterCode={}, type={}",
+                log.info("revisePermanentAudioEnum is exists, paraphraseId={}, characterId={},characterCode={}, type={}",
                         paraphraseId, characterDO.getCharacterId(), characterDO.getCharacterCode(), type.name());
             } else {
-                log.info(
-                        "revisePermanentAudioEnum is not exists, paraphraseId={}, characterId={}, characterCode={}, type={}",
+                log.info("revisePermanentAudioEnum is not exists, paraphraseId={}, characterId={}, characterCode={}, type={}",
                         paraphraseId, characterDO.getCharacterId(), characterDO.getCharacterCode(), type.name());
                 reviewAudioGenerationService.markGenerateNotFinish(characterDO.getCharacterId(), 0,
                         ReviseAudioTypeEnum.CHARACTER_CH);

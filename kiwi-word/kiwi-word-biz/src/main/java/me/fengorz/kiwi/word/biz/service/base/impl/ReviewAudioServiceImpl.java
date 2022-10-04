@@ -18,9 +18,12 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.bdf.core.service.SeqService;
+import me.fengorz.kiwi.common.fastdfs.service.DfsService;
+import me.fengorz.kiwi.common.sdk.exception.dfs.DfsOperateDeleteException;
 import me.fengorz.kiwi.word.api.entity.WordReviewAudioDO;
 import me.fengorz.kiwi.word.biz.mapper.ReviewAudioMapper;
 import me.fengorz.kiwi.word.biz.service.base.ReviewAudioService;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,16 +38,17 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class ReviewAudioServiceImpl extends ServiceImpl<ReviewAudioMapper, WordReviewAudioDO>
-    implements ReviewAudioService {
+        implements ReviewAudioService {
 
     private final ReviewAudioMapper mapper;
     private final SeqService seqService;
+    private final DfsService dfsService;
 
     @Override
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRES_NEW)
     public void cleanAndInsert(WordReviewAudioDO entity) {
         LambdaQueryWrapper<WordReviewAudioDO> condition = Wrappers.<WordReviewAudioDO>lambdaQuery()
-            .eq(WordReviewAudioDO::getSourceId, entity.getSourceId()).eq(WordReviewAudioDO::getType, entity.getType());
+                .eq(WordReviewAudioDO::getSourceId, entity.getSourceId()).eq(WordReviewAudioDO::getType, entity.getType());
         if (mapper.selectCount(condition) > 0) {
             this.cleanBySourceIdAndType(entity.getSourceId(), entity.getType());
         }
@@ -56,11 +60,18 @@ public class ReviewAudioServiceImpl extends ServiceImpl<ReviewAudioMapper, WordR
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRES_NEW)
     public void cleanBySourceId(Integer sourceId) {
         LambdaQueryWrapper<WordReviewAudioDO> condition =
-            Wrappers.<WordReviewAudioDO>lambdaQuery().eq(WordReviewAudioDO::getSourceId, sourceId);
-        Integer count = mapper.selectCount(condition);
-        log.info("Method removeWordReviewAudio count is: {}", count);
-        if (count < 1) {
+                Wrappers.<WordReviewAudioDO>lambdaQuery().eq(WordReviewAudioDO::getSourceId, sourceId);
+        List<WordReviewAudioDO> list = mapper.selectList(condition);
+        log.info("Method removeWordReviewAudio list size is: {}", list.size());
+        if (CollectionUtils.isEmpty(list)) {
             return;
+        }
+        for (WordReviewAudioDO wordReviewAudioDO : list) {
+            try {
+                dfsService.deleteFile(wordReviewAudioDO.getGroupName(), wordReviewAudioDO.getFilePath());
+            } catch (DfsOperateDeleteException e) {
+                log.error("Method deleteFile invoked failed, audioId = {}", wordReviewAudioDO.getId());
+            }
         }
         mapper.delete(condition);
     }
@@ -76,7 +87,7 @@ public class ReviewAudioServiceImpl extends ServiceImpl<ReviewAudioMapper, WordR
     public WordReviewAudioDO selectOne(Integer sourceId, Integer type) {
         log.info("Method selectOne invoke, sourceId={}, type={}", sourceId, type);
         return mapper.selectOne(Wrappers.<WordReviewAudioDO>lambdaQuery().eq(WordReviewAudioDO::getSourceId, sourceId)
-            .eq(WordReviewAudioDO::getType, type));
+                .eq(WordReviewAudioDO::getType, type));
     }
 
     @Override
@@ -89,7 +100,7 @@ public class ReviewAudioServiceImpl extends ServiceImpl<ReviewAudioMapper, WordR
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRES_NEW)
     public void cleanBySourceIdAndType(Integer sourceId, Integer type) {
         LambdaQueryWrapper<WordReviewAudioDO> condition =
-            Wrappers.<WordReviewAudioDO>lambdaQuery().eq(WordReviewAudioDO::getSourceId, sourceId);
+                Wrappers.<WordReviewAudioDO>lambdaQuery().eq(WordReviewAudioDO::getSourceId, sourceId);
         mapper.delete(condition);
         log.info("cleanBySourceIdAndType invoke success, sourceId={}, type={}", sourceId, type);
     }

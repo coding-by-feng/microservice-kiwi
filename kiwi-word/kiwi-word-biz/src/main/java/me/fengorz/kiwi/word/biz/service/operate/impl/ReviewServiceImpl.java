@@ -227,6 +227,7 @@ public class ReviewServiceImpl implements ReviewService {
         return revisePermanentAudioHelper.getCacheStoreWithStringKey().get(characterCode);
     }
 
+    @Async
     @Override
     public void removeWordReviewAudio(Integer sourceId) {
         reviewAudioService.cleanBySourceId(sourceId);

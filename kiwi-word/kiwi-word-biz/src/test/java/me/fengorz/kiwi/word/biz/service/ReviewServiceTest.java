@@ -234,4 +234,9 @@ public class ReviewServiceTest {
                 .assertNotNull(revisePermanentAudioHelper.getCacheStoreWithEnumKey().get(audioEnum)));
     }
 
+    @Test
+    void test_removeWordReviewAudio() {
+        reviewService.removeWordReviewAudio(2447981);
+    }
+
 }

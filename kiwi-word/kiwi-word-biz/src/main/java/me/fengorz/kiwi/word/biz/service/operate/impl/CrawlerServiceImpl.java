@@ -310,6 +310,9 @@ public class CrawlerServiceImpl implements CrawlerService {
             if (GENERATE_VOICE_BARRIER.tryAcquire(1, 1, TimeUnit.SECONDS)) {
                 List<Integer> notGeneratedParaphraseId = paraphraseStarRelService.listNotAllGeneratedVoice();
                 if (CollectionUtils.isEmpty(notGeneratedParaphraseId)) {
+                    notGeneratedParaphraseId = paraphraseStarRelService.listNotGeneratedPronunciationVoiceForPhrase();
+                }
+                if (CollectionUtils.isEmpty(notGeneratedParaphraseId)) {
                     log.info("There is not notGeneratedParaphraseId need to generate voice.");
                     if (type.equals(ReviseAudioGenerationEnum.ONLY_COLLECTED)) {
                         log.info("Only generate collected paraphrase, and skip this generation invoke.");

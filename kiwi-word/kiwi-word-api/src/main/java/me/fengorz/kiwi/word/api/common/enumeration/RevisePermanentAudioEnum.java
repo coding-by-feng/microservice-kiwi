@@ -21,6 +21,10 @@ package me.fengorz.kiwi.word.api.common.enumeration;
 
 import lombok.Getter;
 
+import java.util.Arrays;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 /**
  * @Description TODO
  * @Author zhanshifeng
@@ -30,6 +34,7 @@ public enum RevisePermanentAudioEnum {
 
     TEST(404, ReviseAudioTypeEnum.PARAPHRASE_EN.getType(), "A, B, C, D"),
     WORD_CHARACTER(-1, ReviseAudioTypeEnum.CHARACTER_CH.getType(), "单词的词性是："),
+    WORD_CHARACTER_EMPTY(-2, ReviseAudioTypeEnum.CHARACTER_CH.getType(), "词性丢失"),
     WORD_CHARACTER_ADJECTIVE(2, ReviseAudioTypeEnum.CHARACTER_CH.getType(), "形容词"),
     WORD_CHARACTER_ADJ(3, ReviseAudioTypeEnum.CHARACTER_CH.getType(), "形容词"),
     WORD_CHARACTER_NOUN(4, ReviseAudioTypeEnum.CHARACTER_CH.getType(), "名词"),
@@ -40,6 +45,14 @@ public enum RevisePermanentAudioEnum {
     WORD_CHARACTER_PREPOSITION(9, ReviseAudioTypeEnum.CHARACTER_CH.getType(), "介词或者前置词"),
     WORD_CHARACTER_PHRASE(10, ReviseAudioTypeEnum.CHARACTER_CH.getType(), "短语"),
     WORD_CHARACTER_PHRASAL_VERB(23, ReviseAudioTypeEnum.CHARACTER_CH.getType(), "动词短语"),
+    WORD_CHARACTER_SUFFIX(24, ReviseAudioTypeEnum.CHARACTER_CH.getType(), "后缀"),
+    WORD_CHARACTER_PHRASAL(25, ReviseAudioTypeEnum.CHARACTER_CH.getType(), "短语的"),
+    WORD_CHARACTER_EXCLAMATION(26, ReviseAudioTypeEnum.CHARACTER_CH.getType(), "语气助词，呼喊，惊叫"),
+    WORD_CHARACTER_PREFIX(27, ReviseAudioTypeEnum.CHARACTER_CH.getType(), "前缀"),
+    WORD_CHARACTER_DETERMINER(28, ReviseAudioTypeEnum.CHARACTER_CH.getType(), "限定词"),
+    WORD_CHARACTER_PREDETERMINER(29, ReviseAudioTypeEnum.CHARACTER_CH.getType(), "前位限定词"),
+    WORD_CHARACTER_PRONOUN(30, ReviseAudioTypeEnum.CHARACTER_CH.getType(), "代词"),
+    WORD_CHARACTER_AUXILIARY(31, ReviseAudioTypeEnum.CHARACTER_CH.getType(), "助动词"),
     WORD_SPELLING_FIRST(11, ReviseAudioTypeEnum.WORD_SPELLING.getType(), "单词的拼写是："),
     WORD_SPELLING_AGAIN(12, ReviseAudioTypeEnum.WORD_SPELLING.getType(), "再读一次拼写："),
     WORD_CHINESE_PARAPHRASE(13, ReviseAudioTypeEnum.PARAPHRASE_CH.getType(), "中文释义是："),
@@ -71,6 +84,20 @@ public enum RevisePermanentAudioEnum {
         this.sourceId = sourceId;
         this.type = type;
         this.text = text;
+    }
+
+    private static final Map<Integer, RevisePermanentAudioEnum> SOURCE_ID_MAP;
+
+    static {
+        SOURCE_ID_MAP = Arrays.stream(values()).collect(Collectors.toMap(RevisePermanentAudioEnum::getSourceId, typeEnum -> typeEnum));
+    }
+
+    public static boolean isPermanent(Integer sourceId) {
+        return SOURCE_ID_MAP.containsKey(sourceId);
+    }
+
+    public static RevisePermanentAudioEnum fromSourceId(Integer sourceId) {
+        return SOURCE_ID_MAP.get(sourceId);
     }
 
 }

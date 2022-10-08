@@ -15,17 +15,9 @@
  */
 package me.fengorz.kiwi.word.biz.service.base.impl;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-
 import lombok.RequiredArgsConstructor;
 import me.fengorz.kiwi.common.sdk.util.lang.collection.KiwiCollectionUtils;
 import me.fengorz.kiwi.word.api.common.enumeration.ReviseAudioTypeEnum;
@@ -34,6 +26,12 @@ import me.fengorz.kiwi.word.api.entity.ParaphraseStarRelDO;
 import me.fengorz.kiwi.word.biz.mapper.ParaphraseMapper;
 import me.fengorz.kiwi.word.biz.mapper.ParaphraseStarRelMapper;
 import me.fengorz.kiwi.word.biz.service.base.ParaphraseStarRelService;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * @author zhanshifeng
@@ -90,6 +88,11 @@ public class ParaphraseStarRelServiceImpl extends ServiceImpl<ParaphraseStarRelM
     @Override
     public List<Integer> listNotAllGeneratedVoice() {
         return mapper.listNotAllGeneratedVoice(ReviseAudioTypeEnum.COMBO.getType());
+    }
+
+    @Override
+    public List<Integer> listNotGeneratedPronunciationVoiceForPhrase() {
+        return mapper.listNotAllGeneratedVoice(ReviseAudioTypeEnum.PHRASE_PRONUNCIATION.getType());
     }
 
 }

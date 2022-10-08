@@ -574,7 +574,7 @@ public class ReviewServiceImpl implements ReviewService {
     private String acquireText(Integer sourceId, Integer type) throws DataCheckedException {
         if (ReviseAudioTypeEnum.isParaphrase(type)) {
             ParaphraseDO paraphraseDO = Optional.ofNullable(paraphraseMapper.selectById(sourceId)).orElseThrow(
-                    () -> new ResourceNotFoundException(String.format("Paraphrase[id=%s] cannot be found!", sourceId)));
+                    () -> new ResourceNotFoundException(String.format("Paraphrase cannot be found, sourceId=%d, type=%d", sourceId, type)));
             if (ReviseAudioTypeEnum.isEnglish(type)) {
                 return paraphraseDO.getParaphraseEnglish();
             } else if (ReviseAudioTypeEnum.isChinese(type)) {
@@ -583,7 +583,7 @@ public class ReviewServiceImpl implements ReviewService {
             }
         } else if (ReviseAudioTypeEnum.isExample(type)) {
             ParaphraseExampleDO paraphraseExampleDO = Optional.ofNullable(paraphraseExampleMapper.selectById(sourceId))
-                    .orElseThrow(() -> new ResourceNotFoundException("Paraphrase example cannot be found!"));
+                    .orElseThrow(() -> new ResourceNotFoundException("Example cannot be found, sourceId=%d, type=%d", sourceId, type));
             if (ReviseAudioTypeEnum.isEnglish(type)) {
                 return paraphraseExampleDO.getExampleSentence();
             } else if (ReviseAudioTypeEnum.isChinese(type)) {
@@ -591,22 +591,25 @@ public class ReviewServiceImpl implements ReviewService {
             }
         } else if (ReviseAudioTypeEnum.isSpelling(type)) {
             WordMainDO wordMainDO = Optional.ofNullable(wordMainMapper.selectById(sourceId))
-                    .orElseThrow(() -> new ResourceNotFoundException("Word cannot be found!"));
+                    .orElseThrow(() -> new ResourceNotFoundException("Word cannot be found, sourceId=%d, type=%d", sourceId, type));
             StringBuilder sb = new StringBuilder();
             for (char alphabet : wordMainDO.getWordName().toCharArray()) {
                 sb.append(StringUtils.upperCase(String.valueOf(alphabet))).append(GlobalConstants.SYMBOL_LF).append(GlobalConstants.SYMBOL_CH_PERIOD);
             }
             return sb.toString();
         } else if (ReviseAudioTypeEnum.isCharacter(type)) {
+            if (RevisePermanentAudioEnum.isPermanent(sourceId)) {
+                return RevisePermanentAudioEnum.fromSourceId(type).getText();
+            }
             CharacterDO characterDO = Optional.ofNullable(characterMapper.selectById(sourceId))
-                    .orElseThrow(() -> new ResourceNotFoundException("Character cannot be found!"));
+                    .orElseThrow(() -> new ResourceNotFoundException("Character cannot be found, sourceId=%d, type=%d", sourceId, type));
             return RevisePermanentAudioEnum.WORD_CHARACTER.getText() + characterDO.getCharacterCode();
         } else if (ReviseAudioTypeEnum.isWord(type)) {
             WordMainDO wordMainDO = Optional.ofNullable(wordMainMapper.selectById(sourceId))
-                    .orElseThrow(() -> new ResourceNotFoundException("word cannot be found!"));
+                    .orElseThrow(() -> new ResourceNotFoundException("Word cannot be found, sourceId=%d, type=%d", sourceId, type));
             return wordMainDO.getWordName();
         }
-        throw new DataCheckedException("English text cannot be found!");
+        throw new DataCheckedException("English text cannot be found, sourceId=%d, type=%d", sourceId, type);
     }
 
     private String acquireChineseText(Integer sourceId, Integer type) throws DataCheckedException {
@@ -618,7 +621,7 @@ public class ReviewServiceImpl implements ReviewService {
                     .orElseThrow(() -> new ResourceNotFoundException("Paraphrase example cannot be found!"))
                     .getExampleTranslate();
         }
-        throw new DataCheckedException("Chinese text cannot be found!");
+        throw new DataCheckedException("Chinese text cannot be found, sourceId=%d, type=%d", sourceId, type);
     }
 
     private WordReviewDailyCounterDO findReviewCounterDO(int userId, int type) {

@@ -16,14 +16,6 @@
 
 package me.fengorz.kiwi.word.biz.service.initialing;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.stereotype.Service;
-
 import cn.hutool.core.map.MapUtil;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -32,6 +24,13 @@ import me.fengorz.kiwi.common.tts.enumeration.TtsSourceEnum;
 import me.fengorz.kiwi.word.api.common.enumeration.RevisePermanentAudioEnum;
 import me.fengorz.kiwi.word.api.entity.WordReviewAudioDO;
 import me.fengorz.kiwi.word.biz.service.base.ReviewAudioService;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.stereotype.Service;
+
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @Description TODO
@@ -56,16 +55,25 @@ public class RevisePermanentAudioHelper implements InitializingBean {
     @Override
     public void afterPropertiesSet() throws Exception {
         this.permanentAudioEnumMap = MapUtil.<String, RevisePermanentAudioEnum>builder()
-            .put("adjective", RevisePermanentAudioEnum.WORD_CHARACTER_ADJECTIVE)
-            .put("adj", RevisePermanentAudioEnum.WORD_CHARACTER_ADJ)
-            .put("noun", RevisePermanentAudioEnum.WORD_CHARACTER_NOUN)
-            .put("verb", RevisePermanentAudioEnum.WORD_CHARACTER_VERB)
-            .put("adverb", RevisePermanentAudioEnum.WORD_CHARACTER_ADVERB)
-            .put("conjunction", RevisePermanentAudioEnum.WORD_CHARACTER_CONJUNCTION)
-            .put("plural", RevisePermanentAudioEnum.WORD_CHARACTER_PLURAL)
-            .put("preposition", RevisePermanentAudioEnum.WORD_CHARACTER_PREPOSITION)
-            .put("phrase", RevisePermanentAudioEnum.WORD_CHARACTER_PHRASE)
-            .put("phrasal verb verb", RevisePermanentAudioEnum.WORD_CHARACTER_PHRASAL_VERB).build();
+                .put("", RevisePermanentAudioEnum.WORD_CHARACTER_EMPTY)
+                .put("adjective", RevisePermanentAudioEnum.WORD_CHARACTER_ADJECTIVE)
+                .put("adj", RevisePermanentAudioEnum.WORD_CHARACTER_ADJ)
+                .put("noun", RevisePermanentAudioEnum.WORD_CHARACTER_NOUN)
+                .put("verb", RevisePermanentAudioEnum.WORD_CHARACTER_VERB)
+                .put("adverb", RevisePermanentAudioEnum.WORD_CHARACTER_ADVERB)
+                .put("conjunction", RevisePermanentAudioEnum.WORD_CHARACTER_CONJUNCTION)
+                .put("plural", RevisePermanentAudioEnum.WORD_CHARACTER_PLURAL)
+                .put("preposition", RevisePermanentAudioEnum.WORD_CHARACTER_PREPOSITION)
+                .put("phrase", RevisePermanentAudioEnum.WORD_CHARACTER_PHRASE)
+                .put("phrasal verb verb", RevisePermanentAudioEnum.WORD_CHARACTER_PHRASAL_VERB)
+                .put("suffix", RevisePermanentAudioEnum.WORD_CHARACTER_SUFFIX)
+                .put("exclamation", RevisePermanentAudioEnum.WORD_CHARACTER_EXCLAMATION)
+                .put("prefix", RevisePermanentAudioEnum.WORD_CHARACTER_PREFIX)
+                .put("determiner", RevisePermanentAudioEnum.WORD_CHARACTER_DETERMINER)
+                .put("predeterminer", RevisePermanentAudioEnum.WORD_CHARACTER_PREDETERMINER)
+                .put("pronoun", RevisePermanentAudioEnum.WORD_CHARACTER_PRONOUN)
+                .put("auxiliary", RevisePermanentAudioEnum.WORD_CHARACTER_AUXILIARY)
+                .build();
 
         this.permanentAudioEnums = new HashSet<>();
         this.cacheStoreWithEnumKey = new HashMap<>();

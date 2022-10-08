@@ -15,11 +15,10 @@
  */
 package me.fengorz.kiwi.word.biz.service.base;
 
-import java.util.List;
-
 import com.baomidou.mybatisplus.extension.service.IService;
-
 import me.fengorz.kiwi.word.api.entity.ParaphraseStarRelDO;
+
+import java.util.List;
 
 /**
  * @author zhanshifeng
@@ -43,5 +42,13 @@ public interface ParaphraseStarRelService extends IService<ParaphraseStarRelDO> 
      * @return
      */
     List<Integer> listNotAllGeneratedVoice();
+
+    /**
+     * 查询已经收藏的释义中，有哪些词组的读音音频还没有完全生成的
+     *
+     * @param type
+     * @return
+     */
+    List<Integer> listNotGeneratedPronunciationVoiceForPhrase();
 
 }

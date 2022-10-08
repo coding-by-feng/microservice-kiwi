@@ -59,15 +59,17 @@ public class WordBizConfig {
         pairs.add(ImmutablePair.of(ReviseAudioTypeEnum.PARAPHRASE_EN, TtsSourceEnum.VOICERSS));
         pairs.add(ImmutablePair.of(ReviseAudioTypeEnum.EXAMPLE_CH, TtsSourceEnum.BAIDU));
         pairs.add(ImmutablePair.of(ReviseAudioTypeEnum.EXAMPLE_EN, TtsSourceEnum.VOICERSS));
+        pairs.add(ImmutablePair.of(ReviseAudioTypeEnum.PHRASE_PRONUNCIATION, TtsSourceEnum.VOICERSS));
 
         List<ImmutablePair<ReviseAudioTypeEnum, Boolean>> isReplacePayload = new ArrayList<>();
-        isReplacePayload.add(ImmutablePair.of(ReviseAudioTypeEnum.WORD_SPELLING, true));
-        isReplacePayload.add(ImmutablePair.of(ReviseAudioTypeEnum.CHARACTER_CH, false));
-        isReplacePayload.add(ImmutablePair.of(ReviseAudioTypeEnum.PARAPHRASE_CH, true));
+        isReplacePayload.add(ImmutablePair.of(ReviseAudioTypeEnum.WORD_SPELLING, false));
+        isReplacePayload.add(ImmutablePair.of(ReviseAudioTypeEnum.CHARACTER_CH, true));
+        isReplacePayload.add(ImmutablePair.of(ReviseAudioTypeEnum.PARAPHRASE_CH, false));
         isReplacePayload.add(ImmutablePair.of(ReviseAudioTypeEnum.PARAPHRASE_EN, false));
-        isReplacePayload.add(ImmutablePair.of(ReviseAudioTypeEnum.EXAMPLE_CH, true));
+        isReplacePayload.add(ImmutablePair.of(ReviseAudioTypeEnum.EXAMPLE_CH, false));
         isReplacePayload.add(ImmutablePair.of(ReviseAudioTypeEnum.EXAMPLE_EN, false));
         isReplacePayload.add(ImmutablePair.of(ReviseAudioTypeEnum.COMBO, true));
+        isReplacePayload.add(ImmutablePair.of(ReviseAudioTypeEnum.PHRASE_PRONUNCIATION, false));
 
         List<ImmutablePair<ReviseAudioTypeEnum, Boolean>> enablePayload = new ArrayList<>();
         enablePayload.add(ImmutablePair.of(ReviseAudioTypeEnum.WORD_SPELLING, true));
@@ -77,6 +79,7 @@ public class WordBizConfig {
         enablePayload.add(ImmutablePair.of(ReviseAudioTypeEnum.EXAMPLE_CH, true));
         enablePayload.add(ImmutablePair.of(ReviseAudioTypeEnum.EXAMPLE_EN, true));
         enablePayload.add(ImmutablePair.of(ReviseAudioTypeEnum.COMBO, false));
+        enablePayload.add(ImmutablePair.of(ReviseAudioTypeEnum.PHRASE_PRONUNCIATION, true));
 
         List<ImmutablePair<ReviseAudioTypeEnum, Integer>> counters = new ArrayList<>();
         counters.add(ImmutablePair.of(ReviseAudioTypeEnum.PRONUNCIATION, 2));

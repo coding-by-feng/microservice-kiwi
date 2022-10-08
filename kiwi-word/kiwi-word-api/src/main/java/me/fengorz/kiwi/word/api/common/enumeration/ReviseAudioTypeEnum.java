@@ -16,11 +16,11 @@
 
 package me.fengorz.kiwi.word.api.common.enumeration;
 
+import lombok.Getter;
+
 import java.util.Arrays;
 import java.util.Map;
 import java.util.stream.Collectors;
-
-import lombok.Getter;
 
 /**
  * @Description TODO
@@ -30,7 +30,7 @@ import lombok.Getter;
 public enum ReviseAudioTypeEnum {
 
     WORD_SPELLING(0), PARAPHRASE_EN(1), PARAPHRASE_CH(2), EXAMPLE_EN(3), EXAMPLE_CH(4), COMBO(5), CHARACTER_EN(6),
-    CHARACTER_CH(7), NON_REVIEW_SPELL(8), PRONUNCIATION(9);
+    CHARACTER_CH(7), NON_REVIEW_SPELL(8), PRONUNCIATION(9), PHRASE_PRONUNCIATION(10);
 
     @Getter
     private final Integer type;
@@ -50,7 +50,7 @@ public enum ReviseAudioTypeEnum {
     }
 
     public static boolean isWord(int type) {
-        return NON_REVIEW_SPELL.getType() == type || WORD_SPELLING.getType() == type;
+        return NON_REVIEW_SPELL.getType() == type || WORD_SPELLING.getType() == type || PHRASE_PRONUNCIATION.getType() == type;
     }
 
     public static boolean isExample(int type) {

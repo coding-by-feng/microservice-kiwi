@@ -246,6 +246,7 @@ public class ReviewServiceImpl implements ReviewService {
         WordReviewAudioDO wordReviewAudioDO;
         List<WordReviewAudioDO> list = reviewAudioService.list(sourceId, type.getType());
         Boolean isReplace = paraphraseTtsGenerationPayload.getIsReplace(type);
+        log.info("{} isReplace={}", type.name(), isReplace);
         if (CollectionUtils.isEmpty(list)) {
             wordReviewAudioDO = new WordReviewAudioDO();
         } else if (isReplace || list.size() > 1) {
@@ -253,6 +254,7 @@ public class ReviewServiceImpl implements ReviewService {
             wordReviewAudioDO = replaceWordReviewAudioDO(list);
         } else {
             wordReviewAudioDO = list.get(0);
+            log.info("The wordReviewAudioDO has been found, skip generation");
             return wordReviewAudioDO;
         }
         try {
@@ -428,6 +430,7 @@ public class ReviewServiceImpl implements ReviewService {
         paraphraseTtsGenerationPayload.getPairs().forEach(pair -> {
             try {
                 ReviseAudioTypeEnum type = pair.getLeft();
+                log.info("{} starting process.", type.name());
                 if (generatedTypes.contains(type) || ReviseAudioTypeEnum.COMBO.equals(type)
                         || !paraphraseTtsGenerationPayload.getEnable(type)) {
                     log.info("Type({}) has generated, skipping processing.", type.name());
@@ -460,13 +463,16 @@ public class ReviewServiceImpl implements ReviewService {
                                         List<ParaphraseExampleDO> paraphraseExamples, ReviseAudioTypeEnum type) {
         Set<Integer> sourceIds = new HashSet<>(paraphraseExamples.size());
         if (ReviseAudioTypeEnum.isWord(type.getType())) {
+            log.info("Method buildSourceIds invoke success, source id from wordId.");
             sourceIds.add(paraphraseDO.getWordId());
         } else if (ReviseAudioTypeEnum.isParaphrase(type.getType())) {
+            log.info("Method buildSourceIds invoke success, source id from paraphraseId.");
             sourceIds.add(paraphraseId);
         } else if (ReviseAudioTypeEnum.isExample(type.getType())) {
             for (ParaphraseExampleDO paraphraseExample : paraphraseExamples) {
                 sourceIds.add(paraphraseExample.getExampleId());
             }
+            log.info("Method buildSourceIds invoke success, source id from exampleIds.");
         } else if (ReviseAudioTypeEnum.isCharacter(type.getType())) {
             if (characterDO == null) {
                 log.error("characterDO is null, skipping, characterDO is {}", paraphraseDO.getCharacterId());

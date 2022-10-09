@@ -12,12 +12,8 @@
  */
 package me.fengorz.kiwi.word.biz.service.base.impl;
 
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.bdf.core.service.SeqService;
@@ -26,6 +22,9 @@ import me.fengorz.kiwi.word.api.common.enumeration.ReviseAudioTypeEnum;
 import me.fengorz.kiwi.word.api.entity.WordReviewAudioGenerationDO;
 import me.fengorz.kiwi.word.biz.mapper.ReviewAudioGenerationMapper;
 import me.fengorz.kiwi.word.biz.service.base.ReviewAudioGenerationService;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @author zhanShiFeng
@@ -41,7 +40,7 @@ public class ReviewAudioGenerationServiceImpl extends
     private final SeqService seqService;
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRES_NEW)
     public void markGenerateFinish(Integer sourceId, Integer audioId, ReviseAudioTypeEnum type) {
         mark(sourceId, audioId, type, GlobalConstants.FLAG_YES);
         log.info("Method markGenerateFinish invoked success, sourceId={}, audioId={}, type={}", sourceId, audioId,

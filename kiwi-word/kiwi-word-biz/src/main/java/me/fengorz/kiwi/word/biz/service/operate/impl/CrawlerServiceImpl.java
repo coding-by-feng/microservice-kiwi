@@ -327,7 +327,6 @@ public class CrawlerServiceImpl implements CrawlerService {
                 }
                 for (Integer id : notGeneratedParaphraseId) {
                     try {
-                        log.info("Paraphrase id({}) generation is starting!", id);
                         reviewService.generateTtsVoiceFromParaphraseId(id);
                     } catch (Exception e) {
                         log.error(e.getMessage(), e);

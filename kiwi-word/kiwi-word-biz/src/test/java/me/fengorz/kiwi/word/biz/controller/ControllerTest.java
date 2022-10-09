@@ -27,14 +27,14 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.http.CacheControl;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.util.StreamUtils;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -55,7 +55,7 @@ public class ControllerTest {
     @Disabled
     void test_queryWord() {
         ResponseEntity<R> response =
-            testRestTemplate.getForEntity("http://localhost:8081/word/main/query/test", R.class);
+                testRestTemplate.getForEntity("http://localhost:8081/word/main/query/test", R.class);
         Assertions.assertNotNull(response.getBody());
         log.info("Data is: {}", response.getBody());
         HttpHeaders headers = response.getHeaders();
@@ -69,7 +69,7 @@ public class ControllerTest {
     @Disabled
     void test_setupIeltsWordList() {
         ResponseEntity<R> response =
-            testRestTemplate.getForEntity("http://localhost:8081/test/setup/ielts/word-list", R.class);
+                testRestTemplate.getForEntity("http://localhost:8081/test/setup/ielts/word-list", R.class);
         Assertions.assertEquals(response.getStatusCode(), HttpStatus.OK);
     }
 
@@ -77,22 +77,26 @@ public class ControllerTest {
     @Disabled
     void test_deprecateReviewAudio() {
         ResponseEntity<R> response =
-            testRestTemplate.getForEntity("http://localhost:8081/word/review/deprecate-review-audio/2350782", R.class);
+                testRestTemplate.getForEntity("http://localhost:8081/word/review/deprecate-review-audio/2350782", R.class);
         Assertions.assertEquals(response.getStatusCode(), HttpStatus.OK);
     }
 
     @Test
     void test_downloadReviewAudio() {
-        ResponseEntity<R> response =
-            testRestTemplate.getForEntity("http://localhost:8081/word/review/downloadReviewAudio/2499456/0", R.class);
-        Assertions.assertEquals(response.getStatusCode(), HttpStatus.OK);
+        String url = String.format("http://localhost:8081/word/review/downloadReviewAudio/%d/%d", 2979284, 1);
+        File file = testRestTemplate.execute(url, HttpMethod.GET, null, clientHttpResponse -> {
+            File ret = File.createTempFile("2979284", "mp3");
+            StreamUtils.copy(clientHttpResponse.getBody(), new FileOutputStream(ret));
+            return ret;
+        });
+        Assertions.assertNotNull(file);
     }
 
     private void assertCacheControl(HttpHeaders headers) {
         Assertions.assertTrue(headers.containsKey(Header.CACHE_CONTROL.toString()));
         Assertions.assertEquals(headers.get(Header.CACHE_CONTROL.toString()).size(), 1);
         Assertions.assertEquals(headers.get(Header.CACHE_CONTROL.toString()).get(0),
-            CacheControl.maxAge(365, TimeUnit.DAYS).getHeaderValue());
+                CacheControl.maxAge(365, TimeUnit.DAYS).getHeaderValue());
     }
 
 }

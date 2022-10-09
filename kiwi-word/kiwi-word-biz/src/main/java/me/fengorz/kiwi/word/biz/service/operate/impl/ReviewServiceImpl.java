@@ -186,7 +186,8 @@ public class ReviewServiceImpl implements ReviewService {
         }
     }
 
-    private WordReviewAudioDO generateWordReviewAudio(Integer sourceId, Integer type)
+    @Override
+    public WordReviewAudioDO generateWordReviewAudio(Integer sourceId, Integer type)
             throws DfsOperateException, TtsException, DataCheckedException {
         ReviseAudioTypeEnum typeEnum = ReviseAudioTypeEnum.fromValue(type);
         TtsSourceEnum sourceEnum = paraphraseTtsGenerationPayload.getFromReviewAudioTypeEnum(typeEnum);

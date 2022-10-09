@@ -15,14 +15,14 @@
  */
 package me.fengorz.kiwi.word.biz.service.operate;
 
-import java.util.List;
-
 import me.fengorz.kiwi.common.sdk.exception.DataCheckedException;
 import me.fengorz.kiwi.common.sdk.exception.dfs.DfsOperateException;
 import me.fengorz.kiwi.common.sdk.exception.tts.TtsException;
 import me.fengorz.kiwi.word.api.entity.WordBreakpointReviewDO;
 import me.fengorz.kiwi.word.api.entity.WordReviewAudioDO;
 import me.fengorz.kiwi.word.api.vo.WordReviewDailyCounterVO;
+
+import java.util.List;
 
 /**
  * @author zhanShiFeng
@@ -50,6 +50,9 @@ public interface ReviewService {
      * @param type
      */
     void recordReviewPageNumber(int listId, Long pageNumber, int type, Integer userId);
+
+    WordReviewAudioDO generateWordReviewAudio(Integer sourceId, Integer type)
+            throws DfsOperateException, TtsException, DataCheckedException;
 
     WordReviewAudioDO findWordReviewAudio(Integer sourceId, Integer type)
         throws DfsOperateException, TtsException, DataCheckedException;

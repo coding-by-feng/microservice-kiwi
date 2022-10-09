@@ -101,13 +101,13 @@ public class WordReviewController extends AbstractDfsController {
         try {
             inputStream = prepareInputStream(response, sourceId, type, wordReviewAudio, inputStream);
         } catch (DfsOperateException e) {
-            log.error("downloadReviewAudio exception, sourceId={}, type={}!", sourceId, ReviseAudioTypeEnum.fromValue(type).name(), e);
+            log.error("downloadReviewAudio exception, sourceId={}, type={}, {}", sourceId, ReviseAudioTypeEnum.fromValue(type).name(), e.getMessage());
             try {
                 if (inputStream != null) {
                     inputStream.close();
                 }
             } catch (IOException ex) {
-                log.error("Input stream close failed.", e);
+                log.error("Input stream close failed, {}", ex.getMessage());
             }
             try {
                 wordReviewAudio = this.reviewService.generateWordReviewAudio(sourceId, type);

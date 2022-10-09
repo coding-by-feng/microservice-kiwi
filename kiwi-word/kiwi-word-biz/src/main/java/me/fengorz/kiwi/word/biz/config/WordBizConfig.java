@@ -43,7 +43,7 @@ import java.util.List;
 @Slf4j
 @Configuration
 @Import({CoreConfig.class, UtilsBeanConfiguration.class, LogAspectConfig.class, CacheConfig.class, DfsConfig.class,
-    ESConfig.class, TtsConfig.class})
+        ESConfig.class, TtsConfig.class})
 public class WordBizConfig {
 
     public WordBizConfig() {
@@ -63,7 +63,7 @@ public class WordBizConfig {
 
         List<ImmutablePair<ReviseAudioTypeEnum, Boolean>> isReplacePayload = new ArrayList<>();
         isReplacePayload.add(ImmutablePair.of(ReviseAudioTypeEnum.WORD_SPELLING, false));
-        isReplacePayload.add(ImmutablePair.of(ReviseAudioTypeEnum.CHARACTER_CH, true));
+        isReplacePayload.add(ImmutablePair.of(ReviseAudioTypeEnum.CHARACTER_CH, false));
         isReplacePayload.add(ImmutablePair.of(ReviseAudioTypeEnum.PARAPHRASE_CH, false));
         isReplacePayload.add(ImmutablePair.of(ReviseAudioTypeEnum.PARAPHRASE_EN, false));
         isReplacePayload.add(ImmutablePair.of(ReviseAudioTypeEnum.EXAMPLE_CH, false));
@@ -97,9 +97,9 @@ public class WordBizConfig {
         counters.add(ImmutablePair.of(ReviseAudioTypeEnum.EXAMPLE_EN, 1));
 
         return ParaphraseTtsGenerationPayload.builder().pairs(ListUtils.unmodifiableList(pairs))
-            .isReplacePayload(ListUtils.unmodifiableList(isReplacePayload))
-            .counters(ListUtils.unmodifiableList(counters)).enablePayload(ListUtils.unmodifiableList(enablePayload))
-            .build();
+                .isReplacePayload(ListUtils.unmodifiableList(isReplacePayload))
+                .counters(ListUtils.unmodifiableList(counters)).enablePayload(ListUtils.unmodifiableList(enablePayload))
+                .build();
     }
 
 }

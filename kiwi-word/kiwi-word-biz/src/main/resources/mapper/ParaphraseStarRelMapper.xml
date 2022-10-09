@@ -50,7 +50,7 @@
         where wp.character_id = 0
         and not exists(select 1
         from word_review_audio_generation wrag
-        where wrag.source_id = wpsr.paraphrase_id
+        where wrag.source_id = wp.word_id
         and wrag.type = #{type}
         and wrag.is_finish = 1)
         order by wpsr.create_time desc

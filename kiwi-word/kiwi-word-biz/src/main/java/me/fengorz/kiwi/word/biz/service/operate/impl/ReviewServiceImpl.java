@@ -300,7 +300,7 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void initPermanent(boolean isReplace, boolean isOnlyTest) throws DfsOperateException, TtsException {
+    public void initPermanent(boolean isOnlyTest) throws DfsOperateException, TtsException {
         for (RevisePermanentAudioEnum audioEnum : RevisePermanentAudioEnum.values()) {
             if (isOnlyTest && !RevisePermanentAudioEnum.TEST.equals(audioEnum)) {
                 continue;
@@ -311,6 +311,7 @@ public class ReviewServiceImpl implements ReviewService {
             log.info("Audio is generating..., {}", audioEnum.getText());
             WordReviewAudioDO wordReviewAudioDO =
                     reviewAudioService.selectOne(audioEnum.getSourceId(), audioEnum.getType());
+            Boolean isReplace = paraphraseTtsGenerationPayload.getIsReplace(audioEnum.getType());
             if (wordReviewAudioDO == null) {
                 wordReviewAudioDO = new WordReviewAudioDO();
             } else if (isReplace) {

@@ -16,18 +16,18 @@
 
 package me.fengorz.kiwi.word.api.model;
 
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import org.apache.commons.collections4.MapUtils;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.springframework.beans.factory.InitializingBean;
-
 import lombok.Builder;
 import lombok.Getter;
 import me.fengorz.kiwi.common.tts.enumeration.TtsSourceEnum;
 import me.fengorz.kiwi.word.api.common.enumeration.ReviseAudioTypeEnum;
+import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.springframework.beans.factory.InitializingBean;
+
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @Description 用于配置每个tts audio要用哪个tts channel去gen
@@ -62,7 +62,11 @@ public class ParaphraseTtsGenerationPayload implements InitializingBean {
     }
 
     public Boolean getIsReplace(ReviseAudioTypeEnum type) {
-        return this.isReplaceMap.get(type);
+        return BooleanUtils.toBoolean(this.isReplaceMap.get(type));
+    }
+
+    public Boolean getIsReplace(Integer type) {
+        return BooleanUtils.toBoolean(this.isReplaceMap.get(ReviseAudioTypeEnum.fromValue(type)));
     }
 
     public Boolean getEnable(ReviseAudioTypeEnum type) {

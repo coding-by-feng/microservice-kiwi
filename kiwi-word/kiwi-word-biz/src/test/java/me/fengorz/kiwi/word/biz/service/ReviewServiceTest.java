@@ -92,9 +92,9 @@ public class ReviewServiceTest {
     private RevisePermanentAudioHelper revisePermanentAudioHelper;
 
     @Test
-    @Disabled
+    // @Disabled
     void initPermanent() {
-        Assertions.assertDoesNotThrow(() -> reviewService.initPermanent(false, false));
+        Assertions.assertDoesNotThrow(() -> reviewService.initPermanent( false));
     }
 
     @Test
@@ -235,6 +235,7 @@ public class ReviewServiceTest {
     }
 
     @Test
+    @Disabled
     void test_removeWordReviewAudio() {
         reviewService.removeWordReviewAudio(2447981);
     }

@@ -16,18 +16,6 @@
 
 package me.fengorz.kiwi.dict.crawler;
 
-import javax.annotation.Resource;
-
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.sdk.constant.EnvConstants;
 import me.fengorz.kiwi.common.sdk.util.spring.SpringUtils;
@@ -38,6 +26,17 @@ import me.fengorz.kiwi.dict.crawler.component.scheduler.ChiefSchedulerSetup;
 import me.fengorz.kiwi.dict.crawler.component.scheduler.base.DailyScheduler;
 import me.fengorz.kiwi.dict.crawler.component.scheduler.base.Scheduler;
 import me.fengorz.kiwi.dict.crawler.config.properties.CrawlerConfigProperties;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+
+import javax.annotation.Resource;
 
 @Slf4j
 @ActiveProfiles({EnvConstants.DEV})
@@ -94,8 +93,8 @@ public class CrawlerTest {
             // Assertions.assertNotNull(chiefSchedulerSetup);
             // Assertions.assertNotNull(chiefProducerSchedulerSetup);
             // chiefSchedulerSetup.setup();
-            // chiefProducerSchedulerSetup.produce();
-            generateVoiceOnlyCollectedScheduler.schedule();
+            chiefProducerSchedulerSetup.produce();
+            // generateVoiceOnlyCollectedScheduler.schedule();
         });
     }
 

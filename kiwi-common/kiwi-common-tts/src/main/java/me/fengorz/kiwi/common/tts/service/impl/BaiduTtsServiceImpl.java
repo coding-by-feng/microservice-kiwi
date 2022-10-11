@@ -54,7 +54,7 @@ public class BaiduTtsServiceImpl implements BaiduTtsService {
         AipSpeech client = new AipSpeech(config.getAppId(), config.getApiKey(), config.getSecretKey());
 
         // 可选：设置网络连接参数
-        client.setConnectionTimeoutInMillis(2000);
+        client.setConnectionTimeoutInMillis(5000);
         client.setSocketTimeoutInMillis(60000);
 
         HashMap<String, Object> options = new HashMap<>(3);

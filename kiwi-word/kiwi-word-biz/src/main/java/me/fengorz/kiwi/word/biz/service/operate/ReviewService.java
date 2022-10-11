@@ -63,7 +63,7 @@ public interface ReviewService {
 
     void evictWordReviewAudio(Integer sourceId, Integer type);
 
-    void initPermanent(boolean isReplace, boolean isOnlyTest) throws DfsOperateException, TtsException;
+    void initPermanent(boolean isOnlyTest) throws DfsOperateException, TtsException;
 
     void generateTtsVoice() throws DfsOperateException, TtsException, InterruptedException;
 

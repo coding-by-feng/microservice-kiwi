@@ -52,17 +52,17 @@ public class ControllerTest {
     private final TestRestTemplate testRestTemplate = new TestRestTemplate();
 
     @Test
-    @Disabled
+    // @Disabled
     void test_queryWord() {
         ResponseEntity<R> response =
-                testRestTemplate.getForEntity("http://localhost:8081/word/main/query/test", R.class);
+                testRestTemplate.getForEntity("http://localhost:8081/word/main/query/Tuesday", R.class);
         Assertions.assertNotNull(response.getBody());
         log.info("Data is: {}", response.getBody());
         HttpHeaders headers = response.getHeaders();
         headers.forEach((k, v) -> {
             log.info("header name is: {}, value is: {}", k, v);
         });
-        assertCacheControl(headers);
+        // assertCacheControl(headers);
     }
 
     @Test
@@ -82,6 +82,7 @@ public class ControllerTest {
     }
 
     @Test
+    @Disabled
     void test_downloadReviewAudio() {
         String url = String.format("http://localhost:8081/word/review/downloadReviewAudio/%d/%d", 2979284, 1);
         File file = testRestTemplate.execute(url, HttpMethod.GET, null, clientHttpResponse -> {

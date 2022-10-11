@@ -15,20 +15,8 @@
  */
 package me.fengorz.kiwi.word.biz.controller;
 
-import static me.fengorz.kiwi.word.api.util.WordApiUtils.decode;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.validation.constraints.NotBlank;
-
-import org.springframework.data.elasticsearch.core.DocumentOperations;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.api.R;
@@ -44,6 +32,15 @@ import me.fengorz.kiwi.word.biz.service.base.WordFetchQueueService;
 import me.fengorz.kiwi.word.biz.service.base.WordMainService;
 import me.fengorz.kiwi.word.biz.service.operate.OperateService;
 import me.fengorz.kiwi.word.biz.service.operate.ReviewService;
+import org.springframework.data.elasticsearch.core.DocumentOperations;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.constraints.NotBlank;
+import java.util.ArrayList;
+import java.util.List;
+
+import static me.fengorz.kiwi.word.api.util.WordApiUtils.decode;
 
 /**
  * 单词主表
@@ -87,7 +84,8 @@ public class WordMainController extends BaseController {
     @GetMapping("/query/{wordName}")
     public R<IPage<WordQueryVO>> queryWord(@PathVariable(value = "wordName") String wordName) {
         wordName = decode(wordName);
-        IPage<WordQueryVO> page = new Page<>();
+        IPage<WordQueryVO> page = null;
+        page = new Page<>();
         if (KiwiStringUtils.isNotBlank(wordName)) {
             List<WordQueryVO> list = new ArrayList<>(1);
             list.add(operateService.queryWord(wordName));

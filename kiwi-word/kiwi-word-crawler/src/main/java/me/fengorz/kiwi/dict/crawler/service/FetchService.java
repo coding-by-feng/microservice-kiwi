@@ -21,7 +21,7 @@ import me.fengorz.kiwi.word.api.dto.queue.*;
 /**
  * @Author zhanshifeng
  */
-public interface IFetchService {
+public interface FetchService {
 
     void handle(FetchWordMqDTO dto);
 

@@ -17,7 +17,7 @@
 package me.fengorz.kiwi.dict.crawler;
 
 import me.fengorz.kiwi.common.sdk.util.json.KiwiJsonUtils;
-import me.fengorz.kiwi.dict.crawler.service.IJsoupService;
+import me.fengorz.kiwi.dict.crawler.service.JsoupService;
 import me.fengorz.kiwi.dict.crawler.service.impl.JsoupServiceImpl;
 import me.fengorz.kiwi.word.api.dto.queue.FetchPhraseRunUpMqDTO;
 import me.fengorz.kiwi.word.api.dto.queue.result.FetchPhraseRunUpResultDTO;
@@ -32,7 +32,7 @@ public class FetchTest {
 
     // @Test
     public void test() throws JsoupFetchResultException, JsoupFetchConnectException, JsoupFetchPronunciationException {
-        IJsoupService jsoupService = new JsoupServiceImpl();
+        JsoupService jsoupService = new JsoupServiceImpl();
         // FetchWordResultDTO test = jsoupService.fetchWordInfo(new
         // FetchWordMqDTO().setWord("mandatory"));
         FetchPhraseRunUpResultDTO test = jsoupService.fetchPhraseRunUp(new FetchPhraseRunUpMqDTO().setWord("start"));

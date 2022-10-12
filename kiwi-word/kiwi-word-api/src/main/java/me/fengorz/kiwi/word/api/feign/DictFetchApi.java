@@ -16,11 +16,6 @@
 
 package me.fengorz.kiwi.word.api.feign;
 
-import java.util.List;
-
-import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.*;
-
 import me.fengorz.kiwi.common.api.R;
 import me.fengorz.kiwi.common.sdk.constant.EnvConstants;
 import me.fengorz.kiwi.word.api.dto.queue.RemovePronunciatioinMqDTO;
@@ -30,6 +25,10 @@ import me.fengorz.kiwi.word.api.dto.queue.result.FetchWordResultDTO;
 import me.fengorz.kiwi.word.api.entity.FetchQueueDO;
 import me.fengorz.kiwi.word.api.feign.factory.BizApiFallbackFactory;
 import me.fengorz.kiwi.word.api.vo.detail.WordQueryVO;
+import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * @Author zhanshifeng
@@ -55,11 +54,11 @@ public interface DictFetchApi {
         @PathVariable Integer size, @PathVariable Integer infoType);
 
     @GetMapping(WORD_FETCH_QUEUE + "/listNotIntoCache")
-    public R<List<FetchQueueDO>> listNotIntoCache();
+    R<List<FetchQueueDO>> listNotIntoCache();
 
     @GetMapping(WORD_FETCH_QUEUE + "/pageQueueLockIn/{status}/{current}/{size}/{infoType}")
-    R<List<FetchQueueDO>> pageQueueLockIn(@PathVariable Integer status, @PathVariable Integer current,
-        @PathVariable Integer size, @PathVariable Integer infoType);
+    R<List<FetchQueueDO>> pageQueueInLock(@PathVariable Integer status, @PathVariable Integer current,
+                                          @PathVariable Integer size, @PathVariable Integer infoType);
 
     @PostMapping(WORD_FETCH_QUEUE + "/updateById")
     R<Boolean> updateQueueById(@RequestBody FetchQueueDO queueDO);

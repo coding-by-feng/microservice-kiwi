@@ -24,6 +24,7 @@ import me.fengorz.kiwi.dict.crawler.component.producer.base.AbstractProducer;
 import me.fengorz.kiwi.dict.crawler.component.producer.base.MqProducer;
 import me.fengorz.kiwi.dict.crawler.component.producer.base.MqSender;
 import me.fengorz.kiwi.word.api.common.ApiCrawlerConstants;
+import me.fengorz.kiwi.word.api.common.enumeration.CrawlerStatusEnum;
 import me.fengorz.kiwi.word.api.entity.FetchQueueDO;
 import me.fengorz.kiwi.word.api.feign.DictFetchApi;
 import me.fengorz.kiwi.word.api.util.WordApiUtils;
@@ -117,7 +118,7 @@ public class ErrorResumeProducer extends AbstractProducer implements MqProducer 
     @Override
     protected void execute(FetchQueueDO queue) {
         queue.setIsLock(GlobalConstants.FLAG_YES);
-        queue.setFetchStatus(ApiCrawlerConstants.STATUS_TO_FETCH);
+        queue.setFetchStatus(CrawlerStatusEnum.STATUS_TO_FETCH.getStatus());
         dictFetchApi.updateQueueById(queue);
     }
 }

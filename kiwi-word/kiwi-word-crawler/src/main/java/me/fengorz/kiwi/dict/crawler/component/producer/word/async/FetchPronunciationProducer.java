@@ -16,20 +16,20 @@
 
 package me.fengorz.kiwi.dict.crawler.component.producer.word.async;
 
-import java.util.Optional;
-
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.stereotype.Component;
-
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
 import me.fengorz.kiwi.dict.crawler.component.producer.base.AbstractProducer;
 import me.fengorz.kiwi.dict.crawler.component.producer.base.MqProducer;
 import me.fengorz.kiwi.dict.crawler.component.producer.base.MqSender;
 import me.fengorz.kiwi.word.api.common.ApiCrawlerConstants;
+import me.fengorz.kiwi.word.api.common.enumeration.CrawlerStatusEnum;
 import me.fengorz.kiwi.word.api.dto.queue.FetchPronunciationMqDTO;
 import me.fengorz.kiwi.word.api.entity.FetchQueueDO;
 import me.fengorz.kiwi.word.api.feign.DictFetchApi;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Component;
+
+import java.util.Optional;
 
 /**
  * 抓取音标和发音资源-消息队列生产者 @Author zhanshifeng @Date 2019/10/30 10:33 AM
@@ -45,7 +45,9 @@ public class FetchPronunciationProducer extends AbstractProducer implements MqPr
 
     @Override
     public void produce() {
-        super.produce(ApiCrawlerConstants.STATUS_TO_FETCH_PRONUNCIATION);
+        log.info("FetchPronunciationProducer produce method is starting");
+        super.produce(CrawlerStatusEnum.STATUS_TO_FETCH_PRONUNCIATION.getStatus());
+        log.info("FetchPronunciationProducer produce method has ended");
     }
 
     @Async

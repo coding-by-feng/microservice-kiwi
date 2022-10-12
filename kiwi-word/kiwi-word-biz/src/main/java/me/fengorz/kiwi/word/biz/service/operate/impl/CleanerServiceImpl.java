@@ -16,17 +16,10 @@
 
 package me.fengorz.kiwi.word.biz.service.operate.impl;
 
-import java.util.*;
-import java.util.stream.Collectors;
-
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.fastdfs.service.DfsService;
@@ -39,6 +32,11 @@ import me.fengorz.kiwi.word.api.entity.*;
 import me.fengorz.kiwi.word.biz.service.base.*;
 import me.fengorz.kiwi.word.biz.service.operate.CleanerService;
 import me.fengorz.kiwi.word.biz.service.operate.OperateService;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @Author zhanshifeng @Date 2020/7/29 8:56 PM
@@ -75,7 +73,7 @@ public class CleanerServiceImpl implements CleanerService {
 
         for (WordMainDO wordMainDO : list) {
             this.evictAll(wordMainDO, wordName);
-            List<RemovePronunciatioinMqDTO> dtoList = this.subRemoveWord(wordMainDO);
+            List<RemovePronunciatioinMqDTO> dtoList = this.removeWordRelatedData(wordMainDO);
             dtoList.forEach(dto -> dto.setQueueId(queueId));
             KiwiCollectionUtils.addAllIfNotContains(result, dtoList);
         }
@@ -83,11 +81,15 @@ public class CleanerServiceImpl implements CleanerService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public List<RemovePronunciatioinMqDTO> removeWord(Integer queueId) {
         List<RemovePronunciatioinMqDTO> result = new LinkedList<>();
         Optional.ofNullable(queueService.getOneAnyhow(queueId)).ifPresent(queue -> {
             String wordName = queue.getWordName();
             String derivation = queue.getDerivation();
+
+            log.info("Remove word[{}] from queueId[{}], derivation[{}]", wordName, queueId, derivation);
+
             // if (KiwiStringUtils.equals(wordName, derivation)) {
             // list.addAll(mainService.list(wordName,
             // ApiCrawlerConstants.QUEUE_INFO_TYPE_WORD));
@@ -98,14 +100,18 @@ public class CleanerServiceImpl implements CleanerService {
             // }
             // List<WordMainDO> list = new
             // LinkedList<>(mainService.listDirtyData(queue.getWordId()));
-            List<WordMainDO> list = new LinkedList<>(operateService.collectDirtyData(queueId, wordName));
+
+            List<WordMainDO> list = new ArrayList<>(operateService.collectDirtyData(queueId, wordName));
+
+            log.info("Dirty data[wordName={}] list size: {}", wordName, list.size());
+
             if (KiwiCollectionUtils.isEmpty(list)) {
                 return;
             }
 
             for (WordMainDO wordMainDO : list) {
                 this.evictAll(wordMainDO, wordName);
-                List<RemovePronunciatioinMqDTO> temps = this.subRemoveWord(wordMainDO);
+                List<RemovePronunciatioinMqDTO> temps = this.removeWordRelatedData(wordMainDO);
                 variantService
                     .remove(Wrappers.<WordMainVariantDO>lambdaQuery().eq(WordMainVariantDO::getVariantName, wordName));
                 temps.forEach(dto -> dto.setQueueId(queueId));
@@ -137,7 +143,7 @@ public class CleanerServiceImpl implements CleanerService {
         return true;
     }
 
-    private List<RemovePronunciatioinMqDTO> subRemoveWord(WordMainDO wordMainDO) {
+    private List<RemovePronunciatioinMqDTO> removeWordRelatedData(WordMainDO wordMainDO) {
         final String wordName = wordMainDO.getWordName();
         mainService.removeById(wordMainDO.getWordId());
         operateService.cacheReplace(wordName,

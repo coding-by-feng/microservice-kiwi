@@ -15,15 +15,8 @@
  */
 package me.fengorz.kiwi.word.biz.controller;
 
-import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.springframework.web.bind.annotation.*;
-
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-
 import cn.hutool.core.util.StrUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.bdf.core.service.SeqService;
@@ -31,10 +24,16 @@ import me.fengorz.kiwi.common.api.R;
 import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
 import me.fengorz.kiwi.common.sdk.controller.BaseController;
 import me.fengorz.kiwi.word.api.common.ApiCrawlerConstants;
+import me.fengorz.kiwi.word.api.common.enumeration.CrawlerStatusEnum;
 import me.fengorz.kiwi.word.api.entity.FetchQueueDO;
 import me.fengorz.kiwi.word.api.entity.WordMainDO;
 import me.fengorz.kiwi.word.biz.service.base.WordFetchQueueService;
 import me.fengorz.kiwi.word.biz.service.operate.CrawlerService;
+import org.springframework.web.bind.annotation.*;
+
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 单词主表
@@ -67,7 +66,7 @@ public class TestTempController extends BaseController {
                     continue;
                 } else {
                     queue = one;
-                    queue.setFetchStatus(ApiCrawlerConstants.STATUS_TO_FETCH);
+                    queue.setFetchStatus(CrawlerStatusEnum.STATUS_TO_FETCH.getStatus());
                     queue.setWordName(word.trim());
                     queue.setFetchPriority(100);
                     queue.setIsLock(GlobalConstants.FLAG_YES);

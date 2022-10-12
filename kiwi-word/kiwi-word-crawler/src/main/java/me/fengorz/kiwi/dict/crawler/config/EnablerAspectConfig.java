@@ -16,17 +16,16 @@
 
 package me.fengorz.kiwi.dict.crawler.config;
 
+import lombok.extern.slf4j.Slf4j;
+import me.fengorz.kiwi.common.sdk.annotation.ScheduledAwake;
+import me.fengorz.kiwi.common.sdk.util.spring.SpringUtils;
+import me.fengorz.kiwi.dict.crawler.component.Enabler;
 import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
-
-import lombok.extern.slf4j.Slf4j;
-import me.fengorz.kiwi.common.sdk.annotation.ScheduledAwake;
-import me.fengorz.kiwi.common.sdk.util.spring.SpringUtils;
-import me.fengorz.kiwi.dict.crawler.component.Enabler;
 
 @Slf4j
 @Aspect
@@ -40,30 +39,31 @@ public class EnablerAspectConfig {
     }
 
     @Pointcut("@annotation(me.fengorz.kiwi.common.mq.MqAwake) && within(me.fengorz.kiwi.dict.crawler..*)")
-    public void mqPointcut() {}
+    public void mqPointcut() {
+    }
 
     @Pointcut("@annotation(me.fengorz.kiwi.common.sdk.annotation.ScheduledAwake) && within(me.fengorz.kiwi.dict.crawler..*)")
-    public void schedulePointcut() {}
+    public void schedulePointcut() {
+    }
 
     @Around("mqPointcut()")
     public Object mqAround(ProceedingJoinPoint point) throws Throwable {
-        log.info("mqAround");
         if (!enabler.isMqEnable()) {
             log.info("Enabler didn't enabled MQ.");
             return new Object();
         }
+        log.info("Enabler enabled MQ.");
         return point.proceed();
     }
 
     @Around("schedulePointcut()")
     public Object scheduleAround(ProceedingJoinPoint point) throws Throwable {
-        log.info("scheduleAround");
         String key;
-        MethodSignature signature = (MethodSignature)point.getSignature();
+        MethodSignature signature = (MethodSignature) point.getSignature();
         ScheduledAwake scheduledAwake = signature.getMethod().getAnnotation(ScheduledAwake.class);
         key = scheduledAwake.key();
         if (StringUtils.isBlank(key) || !enabler.isSchedulerEnable(key)) {
-            log.info("Enabler didn't enabled Scheduler.");
+            log.info("Enabler[{}] didn't enabled Scheduler.", key);
             return new Object();
         }
         log.info("Enabler[{}] enabled Scheduler.", key);

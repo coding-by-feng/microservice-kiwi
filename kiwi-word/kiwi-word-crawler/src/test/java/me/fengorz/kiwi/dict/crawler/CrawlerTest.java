@@ -16,8 +16,10 @@
 
 package me.fengorz.kiwi.dict.crawler;
 
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.sdk.constant.EnvConstants;
+import me.fengorz.kiwi.common.sdk.util.json.KiwiJsonUtils;
 import me.fengorz.kiwi.common.sdk.util.spring.SpringUtils;
 import me.fengorz.kiwi.dict.crawler.common.CrawlerConstants;
 import me.fengorz.kiwi.dict.crawler.component.Enabler;
@@ -26,6 +28,9 @@ import me.fengorz.kiwi.dict.crawler.component.scheduler.ChiefSchedulerSetup;
 import me.fengorz.kiwi.dict.crawler.component.scheduler.base.DailyScheduler;
 import me.fengorz.kiwi.dict.crawler.component.scheduler.base.Scheduler;
 import me.fengorz.kiwi.dict.crawler.config.properties.CrawlerConfigProperties;
+import me.fengorz.kiwi.dict.crawler.service.JsoupService;
+import me.fengorz.kiwi.word.api.dto.queue.FetchWordMqDTO;
+import me.fengorz.kiwi.word.api.dto.queue.result.FetchWordResultDTO;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -57,6 +62,8 @@ public class CrawlerTest {
     private ChiefSchedulerSetup chiefSchedulerSetup;
     @Autowired
     private ChiefProducerSchedulerSetup chiefProducerSchedulerSetup;
+    @Autowired
+    private JsoupService jsoupService;
 
     @Test
     @Disabled
@@ -87,7 +94,7 @@ public class CrawlerTest {
     }
 
     @Test
-    // @Disabled
+    @Disabled
     public void schedulerTest() {
         Assertions.assertDoesNotThrow(() -> {
             // Assertions.assertNotNull(chiefSchedulerSetup);
@@ -96,6 +103,14 @@ public class CrawlerTest {
             chiefProducerSchedulerSetup.produce();
             // generateVoiceOnlyCollectedScheduler.schedule();
         });
+    }
+
+    @Test
+    @SneakyThrows
+    public void test_fetchWordInfo() {
+        FetchWordResultDTO tuesday = jsoupService.fetchWordInfo(new FetchWordMqDTO().setWord("Tuesday"));
+        Assertions.assertNotNull(tuesday);
+        log.info("The result of fetching is: {}", KiwiJsonUtils.toJsonStr(tuesday));
     }
 
 }

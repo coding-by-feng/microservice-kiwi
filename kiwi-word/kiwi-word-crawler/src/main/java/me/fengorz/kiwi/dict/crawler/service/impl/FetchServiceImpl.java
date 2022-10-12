@@ -16,12 +16,6 @@
 
 package me.fengorz.kiwi.dict.crawler.service.impl;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-
-import org.springframework.stereotype.Service;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.api.R;
@@ -31,8 +25,8 @@ import me.fengorz.kiwi.common.sdk.exception.dfs.DfsOperateDeleteException;
 import me.fengorz.kiwi.common.sdk.util.lang.collection.KiwiCollectionUtils;
 import me.fengorz.kiwi.common.sdk.util.lang.string.KiwiStringUtils;
 import me.fengorz.kiwi.dict.crawler.component.producer.base.MqSender;
-import me.fengorz.kiwi.dict.crawler.service.IFetchService;
-import me.fengorz.kiwi.dict.crawler.service.IJsoupService;
+import me.fengorz.kiwi.dict.crawler.service.FetchService;
+import me.fengorz.kiwi.dict.crawler.service.JsoupService;
 import me.fengorz.kiwi.dict.crawler.util.CrawlerUtils;
 import me.fengorz.kiwi.word.api.common.ApiCrawlerConstants;
 import me.fengorz.kiwi.word.api.common.enumeration.CrawlerStatusEnum;
@@ -47,6 +41,11 @@ import me.fengorz.kiwi.word.api.exception.PhraseRemoveException;
 import me.fengorz.kiwi.word.api.exception.WordRemoveException;
 import me.fengorz.kiwi.word.api.feign.DictFetchApi;
 import me.fengorz.kiwi.word.api.feign.QueryApi;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 /**
  * @Author zhanshifeng @Date 2020/5/20 11:54 PM
@@ -54,9 +53,9 @@ import me.fengorz.kiwi.word.api.feign.QueryApi;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class FetchServiceImpl implements IFetchService {
+public class FetchServiceImpl implements FetchService {
 
-    private final IJsoupService jsoupService;
+    private final JsoupService jsoupService;
     private final DictFetchApi dictFetchApi;
     private final QueryApi queryApi;
     private final MqSender MQSender;
@@ -96,7 +95,7 @@ public class FetchServiceImpl implements IFetchService {
                 handleLog.append(fetchWord);
 
                 // 标记单词基础信息已经抓取完毕，即将抓取发音文件
-                queue.setFetchStatus(ApiCrawlerConstants.STATUS_TO_FETCH_PRONUNCIATION);
+                queue.setFetchStatus(CrawlerStatusEnum.STATUS_TO_FETCH_PRONUNCIATION.getStatus());
                 queue.setFetchResult(handleLog.toString());
                 queue.setIsLock(GlobalConstants.FLAG_YES);
             }
@@ -147,7 +146,7 @@ public class FetchServiceImpl implements IFetchService {
             R<List<RemovePronunciatioinMqDTO>> response = Optional.of(dictFetchApi.removeWord(dto.getQueueId())).get();
             if (response.isSuccess()) {
                 // 删除完老的基础数据重新开始抓取单词
-                queue.setFetchStatus(ApiCrawlerConstants.STATUS_TO_FETCH);
+                queue.setFetchStatus(CrawlerStatusEnum.STATUS_TO_FETCH.getStatus());
                 queue.setWordId(0);
                 queue.setIsLock(GlobalConstants.FLAG_YES);
                 response.getData().forEach(MQSender::removePronunciation);
@@ -213,7 +212,7 @@ public class FetchServiceImpl implements IFetchService {
             FetchPhraseResultDTO resultDTO = jsoupService.fetchPhraseInfo(dto);
             if (CrawlerUtils.is2word(resultDTO)) {
                 queue.setInfoType(ApiCrawlerConstants.QUEUE_INFO_TYPE_WORD);
-                queue.setFetchStatus(ApiCrawlerConstants.STATUS_TO_FETCH);
+                queue.setFetchStatus(CrawlerStatusEnum.STATUS_TO_FETCH.getStatus());
                 queue.setFetchTime(0);
             } else {
                 dictFetchApi.storePhrasesFetchResult(resultDTO);
@@ -240,7 +239,7 @@ public class FetchServiceImpl implements IFetchService {
             R<Boolean> response = Optional.of(dictFetchApi.removePhrase(dto.getQueueId())).get();
             if (response.isSuccess()) {
                 // 删除完老的基础数据重新开始抓取单词
-                queue.setFetchStatus(ApiCrawlerConstants.STATUS_TO_FETCH);
+                queue.setFetchStatus(CrawlerStatusEnum.STATUS_TO_FETCH.getStatus());
                 queue.setWordId(0);
                 queue.setIsLock(GlobalConstants.FLAG_YES);
                 isUpdate = true;

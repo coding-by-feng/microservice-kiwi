@@ -20,6 +20,7 @@ import cn.hutool.http.Header;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.api.R;
 import me.fengorz.kiwi.common.sdk.constant.EnvConstants;
+import me.fengorz.kiwi.common.sdk.util.json.KiwiJsonUtils;
 import me.fengorz.kiwi.word.biz.WordBizApplication;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
@@ -57,12 +58,21 @@ public class ControllerTest {
         ResponseEntity<R> response =
                 testRestTemplate.getForEntity("http://localhost:8081/word/main/query/Tuesday", R.class);
         Assertions.assertNotNull(response.getBody());
-        log.info("Data is: {}", response.getBody());
-        HttpHeaders headers = response.getHeaders();
-        headers.forEach((k, v) -> {
-            log.info("header name is: {}, value is: {}", k, v);
-        });
+        log.info("Data is: {}", KiwiJsonUtils.toJsonStr(response.getBody()));
+        // HttpHeaders headers = response.getHeaders();
+        // headers.forEach((k, v) -> {
+        //     log.info("header name is: {}, value is: {}", k, v);
+        // });
         // assertCacheControl(headers);
+    }
+
+    @Test
+    @Disabled
+    void test_removeWord() {
+        ResponseEntity<R> response =
+                testRestTemplate.getForEntity("http://localhost:8081/word/fetch/removeWord/1338674", R.class);
+        Assertions.assertNotNull(response.getBody());
+        log.info("Data is: {}", KiwiJsonUtils.toJsonStr(response.getBody()));
     }
 
     @Test

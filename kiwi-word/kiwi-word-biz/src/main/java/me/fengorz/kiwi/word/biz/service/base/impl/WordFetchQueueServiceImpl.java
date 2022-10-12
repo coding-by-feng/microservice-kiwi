@@ -15,19 +15,10 @@
  */
 package me.fengorz.kiwi.word.biz.service.base.impl;
 
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
-
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.bdf.core.service.SeqService;
@@ -42,6 +33,13 @@ import me.fengorz.kiwi.word.biz.mapper.FetchQueueMapper;
 import me.fengorz.kiwi.word.biz.mapper.WordMainMapper;
 import me.fengorz.kiwi.word.biz.service.base.WordFetchQueueService;
 import me.fengorz.kiwi.word.biz.util.WordBizUtils;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * 单词待抓取列表
@@ -85,12 +83,12 @@ public class WordFetchQueueServiceImpl extends ServiceImpl<FetchQueueMapper, Fet
             if (one.getInTime().compareTo(LocalDateTime.now().minusMinutes(1)) > 0) {
                 return;
             }
-            this.updateById(one.setFetchStatus(ApiCrawlerConstants.STATUS_TO_FETCH).setIsLock(GlobalConstants.FLAG_YES)
+            this.updateById(one.setFetchStatus(CrawlerStatusEnum.STATUS_TO_FETCH.getStatus()).setIsLock(GlobalConstants.FLAG_YES)
                 .setOperateTime(LocalDateTime.now()).setInfoType(thisInfoType));
             return;
         }
 
-        this.insertOne(wordId, wordName, derivation, ApiCrawlerConstants.STATUS_TO_FETCH, thisInfoType);
+        this.insertOne(wordId, wordName, derivation, CrawlerStatusEnum.STATUS_TO_FETCH.getStatus(), thisInfoType);
     }
 
     private void insertOne(Integer wordId, String wordName, String derivation, int status, Integer... infoType) {

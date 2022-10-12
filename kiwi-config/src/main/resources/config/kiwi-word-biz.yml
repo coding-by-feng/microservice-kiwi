@@ -44,6 +44,7 @@ async:
 my:
   config:
     exclude-db: false
+    exclude-redis: false
 
 cache-control:
   need-cache-api:

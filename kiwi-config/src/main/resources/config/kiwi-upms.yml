@@ -14,3 +14,4 @@ ignore:
 my:
   config:
     exclude-db: false
+    exclude-redis: false

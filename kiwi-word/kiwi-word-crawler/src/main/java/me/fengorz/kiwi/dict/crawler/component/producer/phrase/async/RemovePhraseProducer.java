@@ -16,11 +16,6 @@
 
 package me.fengorz.kiwi.dict.crawler.component.producer.phrase.async;
 
-import java.util.Optional;
-
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.stereotype.Component;
-
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
 import me.fengorz.kiwi.dict.crawler.component.producer.base.AbstractProducer;
@@ -30,6 +25,10 @@ import me.fengorz.kiwi.word.api.common.ApiCrawlerConstants;
 import me.fengorz.kiwi.word.api.dto.queue.RemoveMqDTO;
 import me.fengorz.kiwi.word.api.entity.FetchQueueDO;
 import me.fengorz.kiwi.word.api.feign.DictFetchApi;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Component;
+
+import java.util.Optional;
 
 /**
  * 老旧单词数据清除--消息队列生产者 @Author zhanshifeng @Date 2019/10/30 10:33 AM
@@ -45,7 +44,10 @@ public class RemovePhraseProducer extends AbstractProducer implements MqProducer
 
     @Override
     public void produce() {
+        log.info("RemovePhraseProducer produce method is starting");
         super.produce(ApiCrawlerConstants.STATUS_TO_DEL_BASE);
+        log.info("RemovePhraseProducer produce method has ended");
+
     }
 
     @Override

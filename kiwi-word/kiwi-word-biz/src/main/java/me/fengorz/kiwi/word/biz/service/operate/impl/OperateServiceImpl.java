@@ -131,7 +131,7 @@ public class OperateServiceImpl implements OperateService {
 
         // 如果是词组的话
         if (word.getInfoType() == ApiCrawlerConstants.QUEUE_INFO_TYPE_PHRASE) {
-            List<CharacterVO> characterVOList = new LinkedList<>();
+            List<CharacterVO> characterVOList = new ArrayList<>();
             characterVOList.add(new CharacterVO().setCharacterCode(WordConstants.PHRASE_CODE).setCharacterId(0)
                     .setParaphraseVOList(new LinkedList<>()).setPronunciationVOList(new LinkedList<>()));
             Optional.ofNullable(paraphraseService.listPhrase(word.getWordId())).ifPresent(paraphraseVOList -> {
@@ -140,6 +140,9 @@ public class OperateServiceImpl implements OperateService {
                     characterVOList.get(0).getParaphraseVOList().add(paraphraseVO);
                 }
             });
+
+            KiwiAssertUtils.resourceNotEmpty(characterVOList, "No characterVOList for [{}]!", wordName);
+
             vo.setCharacterVOList(characterVOList);
             return vo.setWordName(wordName).setWordId(word.getWordId());
         }
@@ -150,7 +153,9 @@ public class OperateServiceImpl implements OperateService {
 
         Integer wordId = word.getWordId();
         try {
-            vo.setCharacterVOList(assembleWordQueryVO(wordName, wordId));
+            vo.setCharacterVOList(
+                    KiwiAssertUtils.resourceNotEmpty(assembleWordQueryVO(wordName, wordId), "No characterVOList for [{}]!", wordName)
+            );
         } catch (ServiceException e) {
             log.error("assembleWordQueryVO error, wordName={}, wordId={}", wordName, wordId);
             fetchQueueService.startFetchOnAsync(wordName);
@@ -390,6 +395,7 @@ public class OperateServiceImpl implements OperateService {
     @KiwiCacheKeyPrefix(WordConstants.CACHE_KEY_PREFIX_OPERATE.METHOD_WORD_NAME)
     @CacheEvict(cacheNames = WordConstants.CACHE_NAMES, keyGenerator = CacheConstants.CACHE_KEY_GENERATOR_BEAN)
     public void evict(@KiwiCacheKey String wordName, WordMainDO one) {
+        log.info("Evict word[{}]", wordName);
         List<ParaphraseDO> list = paraphraseService.list(Wrappers.<ParaphraseDO>lambdaQuery()
                 .eq(ParaphraseDO::getWordId, one.getWordId()).eq(ParaphraseDO::getIsDel, GlobalConstants.FLAG_DEL_NO));
         if (KiwiCollectionUtils.isNotEmpty(list)) {
@@ -402,6 +408,7 @@ public class OperateServiceImpl implements OperateService {
     @KiwiCacheKeyPrefix(WordConstants.CACHE_KEY_PREFIX_OPERATE.METHOD_PARAPHRASE_ID)
     @CacheEvict(cacheNames = WordConstants.CACHE_NAMES, keyGenerator = CacheConstants.CACHE_KEY_GENERATOR_BEAN)
     private void evictParaphrase(@KiwiCacheKey Integer paraphraseId) {
+        log.info("Evict paraphrase[paraphraseId={}]", paraphraseId);
     }
 
     /**

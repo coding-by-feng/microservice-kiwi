@@ -16,19 +16,20 @@
 
 package me.fengorz.kiwi.dict.crawler.component;
 
-import org.springframework.amqp.core.AmqpTemplate;
-import org.springframework.stereotype.Component;
-
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.dict.crawler.component.producer.base.MqSender;
 import me.fengorz.kiwi.dict.crawler.config.properties.MqConfigProperties;
 import me.fengorz.kiwi.dict.crawler.config.properties.MqExchange;
 import me.fengorz.kiwi.word.api.dto.queue.*;
+import org.springframework.amqp.core.AmqpTemplate;
+import org.springframework.stereotype.Component;
 
 /**
  * @Author zhanshifeng
  * @Date 2019/10/28 9:20 AM
  */
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class MqMQSender implements MqSender {
@@ -38,6 +39,7 @@ public class MqMQSender implements MqSender {
 
     @Override
     public void fetchWord(FetchWordMqDTO dto) {
+        log.info("MQ(fetch word) is sending.");
         MqExchange exchange = properties.getWordFromCambridge();
         amqpTemplate.convertAndSend(exchange.getExchange(), exchange.getFetchRouting(), dto);
     }

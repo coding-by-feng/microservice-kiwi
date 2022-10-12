@@ -21,6 +21,9 @@ package me.fengorz.kiwi.word.api.common.enumeration;
 
 import lombok.Getter;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * @Author zhanshifeng
  * @Date 2022/6/29 15:39
@@ -84,4 +87,16 @@ public enum CrawlerStatusEnum {
     CrawlerStatusEnum(int status) {
         this.status = status;
     }
+
+    private static final Map<Integer, CrawlerStatusEnum> STATUS_MAP = new HashMap<>();
+    static {
+        for (CrawlerStatusEnum crawlerStatusEnum : values()) {
+            STATUS_MAP.put(crawlerStatusEnum.getStatus(), crawlerStatusEnum);
+        }
+    }
+
+    public static CrawlerStatusEnum fromStatus(Integer status) {
+        return STATUS_MAP.get(status);
+    }
+
 }

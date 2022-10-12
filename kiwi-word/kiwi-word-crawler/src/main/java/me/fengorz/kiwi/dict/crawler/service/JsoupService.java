@@ -26,7 +26,7 @@ import me.fengorz.kiwi.word.api.exception.JsoupFetchConnectException;
 import me.fengorz.kiwi.word.api.exception.JsoupFetchPronunciationException;
 import me.fengorz.kiwi.word.api.exception.JsoupFetchResultException;
 
-public interface IJsoupService {
+public interface JsoupService {
 
     FetchWordResultDTO fetchWordInfo(FetchWordMqDTO dto)
         throws JsoupFetchConnectException, JsoupFetchResultException, JsoupFetchPronunciationException;

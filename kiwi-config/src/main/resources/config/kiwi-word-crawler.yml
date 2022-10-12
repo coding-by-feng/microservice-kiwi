@@ -52,3 +52,4 @@ crawler:
 my:
   config:
     exclude-db: true
+    exclude-redis: false

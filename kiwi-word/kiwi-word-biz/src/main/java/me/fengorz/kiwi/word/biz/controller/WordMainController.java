@@ -84,7 +84,7 @@ public class WordMainController extends BaseController {
     @GetMapping("/query/{wordName}")
     public R<IPage<WordQueryVO>> queryWord(@PathVariable(value = "wordName") String wordName) {
         wordName = decode(wordName);
-        IPage<WordQueryVO> page = null;
+        IPage<WordQueryVO> page;
         page = new Page<>();
         if (KiwiStringUtils.isNotBlank(wordName)) {
             List<WordQueryVO> list = new ArrayList<>(1);

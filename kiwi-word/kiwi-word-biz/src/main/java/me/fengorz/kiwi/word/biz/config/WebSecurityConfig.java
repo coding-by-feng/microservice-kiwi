@@ -16,8 +16,11 @@
 
 package me.fengorz.kiwi.word.biz.config;
 
-import java.util.concurrent.TimeUnit;
-
+import cn.hutool.http.Header;
+import lombok.extern.slf4j.Slf4j;
+import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
+import me.fengorz.kiwi.common.sdk.util.validate.KiwiAssertUtils;
+import me.fengorz.kiwi.word.biz.property.CacheControlApiProperties;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
@@ -27,10 +30,10 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.web.header.writers.StaticHeadersWriter;
 
-import cn.hutool.http.Header;
-import lombok.extern.slf4j.Slf4j;
-import me.fengorz.kiwi.common.sdk.util.validate.KiwiAssertUtils;
-import me.fengorz.kiwi.word.biz.property.CacheControlApiProperties;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Configuration
@@ -51,11 +54,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter implements O
     protected void configure(HttpSecurity http) throws Exception {
         log.info("Disable default header.");
         http.requestMatcher(request -> StringUtils
-            .startsWithAny(request.getRequestURI(), cacheControlApiProperties.getNeedCacheApi().toArray(new String[0])))
-            .headers().cacheControl().disable()
-            .addHeaderWriter(new StaticHeadersWriter(Header.CACHE_CONTROL.toString(),
-                CacheControl.maxAge(365, TimeUnit.DAYS).noTransform().cachePublic().getHeaderValue()))
-            .and().csrf().disable();
+                        .startsWithAny(request.getRequestURI(), cacheControlApiProperties.getNeedCacheApi().toArray(new String[0])))
+                .headers().cacheControl().disable()
+                .addHeaderWriter(new StaticHeadersWriter(Header.CACHE_CONTROL.toString(),
+                        CacheControl.maxAge(365, TimeUnit.DAYS).noTransform().cachePublic().getHeaderValue()))
+                .addHeaderWriter(new StaticHeadersWriter(GlobalConstants.HEADERS.HEADER_EXPIRES_UPPER_CASE,
+                        ZonedDateTime.of(LocalDateTime.now().plusYears(1), ZoneId.of("GMT"))
+                                .format(GlobalConstants.HEADERS.HEADER_EXPIRES_TIME_FORMATTER)))
+                .and().csrf().disable();
     }
 
     @Override

@@ -16,16 +16,20 @@
 
 package me.fengorz.kiwi.word.biz;
 
-import org.junit.jupiter.api.Assertions;
+import lombok.extern.slf4j.Slf4j;
+import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
 import org.junit.jupiter.api.Test;
 
-import me.fengorz.kiwi.common.sdk.util.lang.array.KiwiArrayUtils;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 
 /**
  * @Description TODO
  * @Author zhanshifeng
  * @Date 2022/8/8 21:12
  */
+@Slf4j
 public class TempTest {
 
     @Test
@@ -44,10 +48,13 @@ public class TempTest {
         // Assertions.assertEquals(1, list.size());
         // Assertions.assertEquals("2", list.get(0));
 
-        byte[] bytes1 = {10, 10};
-        byte[] bytes2 = {20, 20};
-        Assertions.assertEquals(KiwiArrayUtils.sumBytesLength(bytes1, bytes2), 4);
-        Assertions.assertEquals(KiwiArrayUtils.sumBytes(bytes1, bytes2), 60);
+        // byte[] bytes1 = {10, 10};
+        // byte[] bytes2 = {20, 20};
+        // Assertions.assertEquals(KiwiArrayUtils.sumBytesLength(bytes1, bytes2), 4);
+        // Assertions.assertEquals(KiwiArrayUtils.sumBytes(bytes1, bytes2), 60);
+
+        log.info("test {}", ZonedDateTime.of(LocalDateTime.now().plusYears(1), ZoneId.of("GMT"))
+                .format(GlobalConstants.HEADERS.HEADER_EXPIRES_TIME_FORMATTER));
     }
 
 }

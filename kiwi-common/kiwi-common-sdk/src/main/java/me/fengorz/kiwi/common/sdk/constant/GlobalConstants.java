@@ -18,6 +18,8 @@ package me.fengorz.kiwi.common.sdk.constant;
 
 import me.fengorz.kiwi.common.api.ApiContants;
 
+import java.time.format.DateTimeFormatter;
+
 /**
  * @Author zhanshifeng @Date 2019-09-19 10:42
  */
@@ -86,6 +88,8 @@ public interface GlobalConstants extends ApiContants {
     interface HEADERS {
         String CACHE_CONTROL_LONG_MAX_AGE = "max-age=25920000";
         String HEADER_EXPIRES_UPPER_CASE = "Expires";
+        String HEADER_EXPIRES_TIME_FORMAT = "E, dd MMM yyyy HH:mm:ss 'GMT'";
+        DateTimeFormatter HEADER_EXPIRES_TIME_FORMATTER = DateTimeFormatter.ofPattern(HEADER_EXPIRES_TIME_FORMAT);
         String HEADER_EXPIRES_LOWER_CASE = "expires";
     }
 

@@ -53,3 +53,4 @@ cache-control:
     - /word/paraphrase/star/list/getItemDetail
     - /word/pronunciation/downloadVoice
     - /word/review/downloadReviewAudio
+    - /word/review/character/downloadReviewAudio

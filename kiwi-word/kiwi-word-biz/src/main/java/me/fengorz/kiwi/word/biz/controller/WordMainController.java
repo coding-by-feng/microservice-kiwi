@@ -32,6 +32,7 @@ import me.fengorz.kiwi.word.biz.service.base.WordFetchQueueService;
 import me.fengorz.kiwi.word.biz.service.base.WordMainService;
 import me.fengorz.kiwi.word.biz.service.operate.OperateService;
 import me.fengorz.kiwi.word.biz.service.operate.ReviewService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.elasticsearch.core.DocumentOperations;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -71,7 +72,7 @@ public class WordMainController extends BaseController {
     @PostMapping("/query/gate/{keyword}")
     public R<IPage<WordQueryVO>> queryGate(@PathVariable(name = "keyword") String keyword, Integer current,
         Integer size) {
-        keyword = decode(keyword);
+        keyword = decode(StringUtils.lowerCase(keyword));
         log.info(KiwiStringUtils.format("========>queryGate[{}],[time={}]", keyword, KiwiDateUtils.now()));
         if (KiwiStringUtils.isContainChinese(keyword)) {
             return R.success(operateService.queryWordByCh(keyword, WebTools.deductCurrent(current), size));
@@ -83,7 +84,7 @@ public class WordMainController extends BaseController {
     @LogMarker(isPrintParameter = true)
     @GetMapping("/query/{wordName}")
     public R<IPage<WordQueryVO>> queryWord(@PathVariable(value = "wordName") String wordName) {
-        wordName = decode(wordName);
+        wordName = decode(StringUtils.lowerCase(wordName));
         IPage<WordQueryVO> page;
         page = new Page<>();
         if (KiwiStringUtils.isNotBlank(wordName)) {

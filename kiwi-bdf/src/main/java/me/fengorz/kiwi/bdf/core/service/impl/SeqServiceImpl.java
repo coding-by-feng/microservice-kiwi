@@ -44,7 +44,8 @@ public class SeqServiceImpl implements SeqService {
      */
     @Override
     @Transactional(rollbackFor = RuntimeException.class, propagation = Propagation.REQUIRES_NEW)
-    public Integer genIntSequence(String seqTable) {
+    public synchronized Integer genIntSequence(String seqTable) {
+        // TODO ZSF refactor, not use synchronized on method.
         Sequence seq = new Sequence();
         seq.setTableName(seqTable);
         seqMapper.genSequence(seq);

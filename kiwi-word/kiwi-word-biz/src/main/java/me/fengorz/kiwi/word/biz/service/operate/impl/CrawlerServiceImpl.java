@@ -58,10 +58,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -89,6 +87,8 @@ public class CrawlerServiceImpl implements CrawlerService {
     private final TtsService ttsService;
     private final ReviewService reviewService;
 
+    private final static Map<String, Object> FETCH_BARRIER = new ConcurrentHashMap<>();
+
     @Value("${me.fengorz.file.crawler.voice.tmpPath:'/wordTmp'}")
     private String crawlerVoiceBasePath;
 
@@ -103,12 +103,17 @@ public class CrawlerServiceImpl implements CrawlerService {
     @LogMarker(isPrintParameter = true, isPrintExecutionTime = true, isPrintReturnValue = true)
     public boolean storeFetchWordResult(FetchWordResultDTO dto) {
         final String wordName = dto.getWordName();
+
+        if (FETCH_BARRIER.containsKey(wordName)) {
+            return true;
+        }
+        FETCH_BARRIER.put(wordName, new Object());
+
         WordMainDO old = mainService.getOneAndCatch(wordName);
         if (old != null) {
             queueService.flagFetchBaseFinish(dto.getQueueId(), old.getWordId());
             return true;
         }
-
         WordMainDO wordMainDO = new WordMainDO().setWordName(wordName).setWordId(seqService.genCommonIntSequence())
                 .setIsDel(GlobalConstants.FLAG_DEL_NO);
         mainService.save(wordMainDO);
@@ -117,6 +122,8 @@ public class CrawlerServiceImpl implements CrawlerService {
         operateService.cacheReplace(wordName,
                 operateService.getCacheReplace(wordName).setNewRelWordId(wordMainDO.getWordId()));
         operateService.fetchReplaceCallBack(wordName);
+
+        FETCH_BARRIER.remove(wordName);
         return true;
     }
 

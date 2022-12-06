@@ -103,10 +103,10 @@ public class CrawlerServiceImpl implements CrawlerService {
     @LogMarker(isPrintParameter = true, isPrintExecutionTime = true, isPrintReturnValue = true)
     public boolean storeFetchWordResult(FetchWordResultDTO dto) {
         final String wordName = dto.getWordName();
-
         if (FETCH_BARRIER.containsKey(wordName)) {
             return true;
         }
+
         FETCH_BARRIER.put(wordName, new Object());
         try {
             WordMainDO old = mainService.getOneAndCatch(wordName);
@@ -117,7 +117,7 @@ public class CrawlerServiceImpl implements CrawlerService {
             WordMainDO wordMainDO = new WordMainDO().setWordName(wordName).setWordId(seqService.genCommonIntSequence())
                     .setIsDel(GlobalConstants.FLAG_DEL_NO);
             mainService.save(wordMainDO);
-            this.subStoreFetchWordResult(dto, wordMainDO);
+            subStoreFetchWordResult(dto, wordMainDO);
             queueService.flagFetchBaseFinish(dto.getQueueId(), wordMainDO.getWordId());
             operateService.cacheReplace(wordName,
                     operateService.getCacheReplace(wordName).setNewRelWordId(wordMainDO.getWordId()));

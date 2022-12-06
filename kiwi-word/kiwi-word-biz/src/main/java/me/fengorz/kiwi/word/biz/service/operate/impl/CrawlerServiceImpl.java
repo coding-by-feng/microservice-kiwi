@@ -108,22 +108,23 @@ public class CrawlerServiceImpl implements CrawlerService {
             return true;
         }
         FETCH_BARRIER.put(wordName, new Object());
-
-        WordMainDO old = mainService.getOneAndCatch(wordName);
-        if (old != null) {
-            queueService.flagFetchBaseFinish(dto.getQueueId(), old.getWordId());
-            return true;
+        try {
+            WordMainDO old = mainService.getOneAndCatch(wordName);
+            if (old != null) {
+                queueService.flagFetchBaseFinish(dto.getQueueId(), old.getWordId());
+                return true;
+            }
+            WordMainDO wordMainDO = new WordMainDO().setWordName(wordName).setWordId(seqService.genCommonIntSequence())
+                    .setIsDel(GlobalConstants.FLAG_DEL_NO);
+            mainService.save(wordMainDO);
+            this.subStoreFetchWordResult(dto, wordMainDO);
+            queueService.flagFetchBaseFinish(dto.getQueueId(), wordMainDO.getWordId());
+            operateService.cacheReplace(wordName,
+                    operateService.getCacheReplace(wordName).setNewRelWordId(wordMainDO.getWordId()));
+            operateService.fetchReplaceCallBack(wordName);
+        } finally {
+            FETCH_BARRIER.remove(wordName);
         }
-        WordMainDO wordMainDO = new WordMainDO().setWordName(wordName).setWordId(seqService.genCommonIntSequence())
-                .setIsDel(GlobalConstants.FLAG_DEL_NO);
-        mainService.save(wordMainDO);
-        this.subStoreFetchWordResult(dto, wordMainDO);
-        queueService.flagFetchBaseFinish(dto.getQueueId(), wordMainDO.getWordId());
-        operateService.cacheReplace(wordName,
-                operateService.getCacheReplace(wordName).setNewRelWordId(wordMainDO.getWordId()));
-        operateService.fetchReplaceCallBack(wordName);
-
-        FETCH_BARRIER.remove(wordName);
         return true;
     }
 

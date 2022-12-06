@@ -16,18 +16,9 @@
 
 package me.fengorz.kiwi.common.tts.service.impl;
 
-import java.util.Optional;
-
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.stereotype.Service;
-
-import com.voicerss.tts.*;
-
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpUtil;
+import com.voicerss.tts.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.sdk.annotation.cache.KiwiCacheKey;
@@ -41,6 +32,13 @@ import me.fengorz.kiwi.common.tts.TtsConstants;
 import me.fengorz.kiwi.common.tts.enumeration.TtsSourceEnum;
 import me.fengorz.kiwi.common.tts.model.TtsProperties;
 import me.fengorz.kiwi.common.tts.service.TtsService;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 /**
  * @Description TODO
@@ -175,24 +173,26 @@ public class TtsServiceImpl implements TtsService {
         VoiceProvider tts = new VoiceProvider(apiKey, true);
         VoiceParameters params = new VoiceParameters(text, language);
         params.setCodec(AudioCodec.MP3);
-        params.setFormat(AudioFormat.Format_44KHZ.AF_44khz_16bit_stereo);
+        params.setFormat(AudioFormat.Format_11KHZ.AF_11khz_16bit_stereo);
         params.setRate(DEFAULT_TTS_VOICE_RSS_ENGLISH_SPEECH_RATE);
         params.setBase64(false);
         params.setSSML(false);
+        params.setVoice(DEFAULT_TTS_VOICES_ROLE);
 
         byte[] voice;
         try {
             voice = tts.speech(params);
         } catch (Exception e) {
-            this.deprecateApiKeyToday(apiKey);
             log.error(e.getMessage());
             log.error("Api key({}) has deprecated.", apiKey);
+            this.deprecateApiKeyToday(apiKey);
             throw new TtsException("tts speech error.");
         }
         return wrap(voice);
     }
 
-    private static final int DEFAULT_TTS_VOICE_RSS_ENGLISH_SPEECH_RATE = -2;
+    private static final int DEFAULT_TTS_VOICE_RSS_ENGLISH_SPEECH_RATE = 2;
+    private static final String DEFAULT_TTS_VOICES_ROLE = "Xia";
     private static final String ENGLISH_PARAPHRASE_MISSING = "英文缺失";
     private static final String CHINESE_PARAPHRASE_MISSING = "中文缺失";
     private static final String REGEX = "\\.\\.\\.";

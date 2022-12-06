@@ -16,19 +16,18 @@
 
 package me.fengorz.kiwi.word.api.vo.detail;
 
-import java.io.Serializable;
-import java.util.List;
-
-import org.springframework.data.annotation.Id;
-import org.springframework.data.elasticsearch.annotations.Document;
-import org.springframework.data.elasticsearch.annotations.Field;
-import org.springframework.data.elasticsearch.annotations.FieldType;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.Accessors;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.elasticsearch.annotations.Document;
+import org.springframework.data.elasticsearch.annotations.Field;
+import org.springframework.data.elasticsearch.annotations.FieldType;
+
+import java.io.Serializable;
+import java.util.List;
 
 /**
  * @Description A view of the word query results @Author zhanshifeng @Date 2019/11/25 10:57 PM

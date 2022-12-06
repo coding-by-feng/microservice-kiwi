@@ -16,11 +16,6 @@
 
 package me.fengorz.kiwi.dict.crawler.component.scheduler;
 
-import java.util.List;
-import java.util.concurrent.CountDownLatch;
-
-import org.springframework.stereotype.Component;
-
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.sdk.annotation.ScheduledAwake;
 import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
@@ -33,6 +28,10 @@ import me.fengorz.kiwi.word.api.entity.FetchQueueDO;
 import me.fengorz.kiwi.word.api.feign.DictFetchApi;
 import me.fengorz.kiwi.word.api.feign.QueryApi;
 import me.fengorz.kiwi.word.api.util.WordApiUtils;
+import org.springframework.stereotype.Component;
+
+import java.util.List;
+import java.util.concurrent.CountDownLatch;
 
 /**
  * 自动将所有未入缓存的单词纳入缓存 @Author zhanshifeng @Date 2020/9/17 6:14 PM

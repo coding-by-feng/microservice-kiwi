@@ -16,11 +16,9 @@
 
 package me.fengorz.kiwi.bdf.security.exception;
 
-import org.springframework.http.HttpStatus;
-
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-
 import me.fengorz.kiwi.bdf.security.component.KiwiAuth2ExceptionSerializer;
+import org.springframework.http.HttpStatus;
 
 /**
  * @author lengleng

@@ -15,14 +15,13 @@
  */
 package me.fengorz.kiwi.word.api.entity;
 
-import java.time.LocalDateTime;
-
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
-
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
+
+import java.time.LocalDateTime;
 
 /**
  * 释义例句本与例句关系表

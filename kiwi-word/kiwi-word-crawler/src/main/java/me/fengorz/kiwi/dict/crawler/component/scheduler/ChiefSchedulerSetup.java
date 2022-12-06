@@ -16,15 +16,14 @@
 
 package me.fengorz.kiwi.dict.crawler.component.scheduler;
 
-import java.util.Optional;
-
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
-
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.sdk.annotation.log.LogMarker;
 import me.fengorz.kiwi.common.sdk.util.spring.SpringUtils;
 import me.fengorz.kiwi.dict.crawler.component.scheduler.base.Scheduler;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
+
+import java.util.Optional;
 
 /**
  * 定时扫描对列表 @Author zhanshifeng @Date 2019/10/29 4:12 PM

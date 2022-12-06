@@ -30,6 +30,7 @@ import me.fengorz.kiwi.dict.crawler.service.JsoupService;
 import me.fengorz.kiwi.dict.crawler.util.CrawlerUtils;
 import me.fengorz.kiwi.word.api.common.ApiCrawlerConstants;
 import me.fengorz.kiwi.word.api.common.enumeration.CrawlerStatusEnum;
+import me.fengorz.kiwi.word.api.common.enumeration.WordTypeEnum;
 import me.fengorz.kiwi.word.api.dto.queue.*;
 import me.fengorz.kiwi.word.api.dto.queue.result.FetchPhraseResultDTO;
 import me.fengorz.kiwi.word.api.dto.queue.result.FetchPhraseRunUpResultDTO;
@@ -211,7 +212,7 @@ public class FetchServiceImpl implements FetchService {
         try {
             FetchPhraseResultDTO resultDTO = jsoupService.fetchPhraseInfo(dto);
             if (CrawlerUtils.is2word(resultDTO)) {
-                queue.setInfoType(ApiCrawlerConstants.QUEUE_INFO_TYPE_WORD);
+                queue.setInfoType(WordTypeEnum.WORD.getType());
                 queue.setFetchStatus(CrawlerStatusEnum.STATUS_TO_FETCH.getStatus());
                 queue.setFetchTime(0);
             } else {

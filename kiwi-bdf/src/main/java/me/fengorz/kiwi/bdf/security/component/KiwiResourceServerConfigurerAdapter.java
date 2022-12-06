@@ -16,6 +16,8 @@
 
 package me.fengorz.kiwi.bdf.security.component;
 
+import lombok.extern.slf4j.Slf4j;
+import me.fengorz.kiwi.common.sdk.config.FilterIgnorePropertiesConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.ExpressionUrlAuthorizationConfigurer;
@@ -26,9 +28,6 @@ import org.springframework.security.oauth2.provider.token.RemoteTokenServices;
 import org.springframework.security.oauth2.provider.token.UserAuthenticationConverter;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.web.client.RestTemplate;
-
-import lombok.extern.slf4j.Slf4j;
-import me.fengorz.kiwi.common.sdk.config.FilterIgnorePropertiesConfig;
 
 /**
  * 1. 支持remoteTokenServices 负载均衡 2. 支持 获取用户全部信息 @Author zhanshifeng

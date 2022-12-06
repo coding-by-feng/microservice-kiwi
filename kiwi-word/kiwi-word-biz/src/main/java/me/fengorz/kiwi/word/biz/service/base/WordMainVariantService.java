@@ -15,15 +15,14 @@
  */
 package me.fengorz.kiwi.word.biz.service.base;
 
-import java.util.List;
-
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
-
 import me.fengorz.kiwi.word.api.dto.WordMainVariantDTO;
 import me.fengorz.kiwi.word.api.entity.WordMainDO;
 import me.fengorz.kiwi.word.api.entity.WordMainVariantDO;
 import me.fengorz.kiwi.word.api.vo.WordMainVariantVO;
+
+import java.util.List;
 
 /**
  * 服务类 @Author zhanshifeng

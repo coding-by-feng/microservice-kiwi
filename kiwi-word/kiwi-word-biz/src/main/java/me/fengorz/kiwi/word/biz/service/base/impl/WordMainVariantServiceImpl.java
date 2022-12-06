@@ -12,20 +12,11 @@
  */
 package me.fengorz.kiwi.word.biz.service.base.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.concurrent.atomic.AtomicReference;
-
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-
 import lombok.RequiredArgsConstructor;
 import me.fengorz.kiwi.bdf.core.service.SeqService;
 import me.fengorz.kiwi.common.sdk.annotation.cache.KiwiCacheKeyPrefix;
@@ -41,6 +32,13 @@ import me.fengorz.kiwi.word.biz.mapper.WordMainVariantMapper;
 import me.fengorz.kiwi.word.biz.service.base.WordFetchQueueService;
 import me.fengorz.kiwi.word.biz.service.base.WordMainService;
 import me.fengorz.kiwi.word.biz.service.base.WordMainVariantService;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * 单词时态、单复数等的变化 @Author zhanshifeng

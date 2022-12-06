@@ -1,0 +1,67 @@
+过去完成时就是站在“过去时间”的角度回顾更远的另一个过去，表示一个事件从这个更远的过去持续到离现在较近的过去。
+现在完成时态的参照时间“现在”往往潜含在语境中，并不需要明确地表达出来。但是，对于过去完成时态，其参照时间“过去”则一般是要明确地在上下文中给出。
+
+At the hotel she asked immediately for Dr. Barrett, of St. Louis. He had left for home that morning and would not be back, she was told.
+这里的had left是发生在过去的动作asked之前的，所以用了过去完成时。
+一到酒店，她就立即打听从圣路易斯市来的巴雷特医生的消息。但被告知他在那天一早就动身回家了，将不会再回来了。
+
+另外，by the time常常可以与过去完成时搭配使用，具体结构是：“过去完成时+by the time+一般过去时”。
+A说 It was my grandmother’s birthday yesterday.
+B说 Is she old?
+A说 Well, by the time we lit up the last candle on her birthday cake, the first one had gone out!
+因为by the time本身的意思是“在……之前”，所以过去的动作lit之前发生了had gone out的动作，故用过去完成时态。
+
+延续事件、重复事件和单一事件的过去完成时
+过去完成时里同样涉及两个时间点：一个事件从更远的过去开始发生，然后“延续”到另一个较近的过去，或者“重复”到另一个较近的过去，或者在过去的某一时刻已经结束，这就分别构成了延续事件、重复事件和单一事件，类似于现在完成时，区别只是“坐标时间”由“现在”移至“过去”。
+
+- 在该过去时刻仍然在继续，或在该过去时刻刚刚停止（延续事件）；
+- 在该过去时刻之前的一段时间内重复的动作（重复事件）；
+- 在该过去时刻之前的某一时刻停止的动作（单一事件）。
+
+过去完成时表示“延续事件”
+I had stayed in America for two years when he moved here.
+moved是过去的动作，stayed发生在moved之前，即过去的过去，并且在moved之后还将会继续下去，因此用过去完成时had stayed。
+
+I had learned 1000 words by the end of last year.
+learned在过去的时间the end of last year之前已开始发生，到“去年年底”之后还将可能持续下去，因此用过去完成时had learned。
+到去年末，我已经学会了1000个单词。
+
+过去完成时表示“重复事件”，如同现在完成时，过去完成时可以表示在过去之前开始的动作，在过去之前的一段时间内重复发生。
+I had proposed to her five times, but she still refused to marry me. 我已经向她求婚五次了，但还是被拒绝。
+I had written her 100 letters when she finally promised to marry me. 我给她写了100封信，她最后终于答应嫁给我了。
+
+过去完成时表示“单一事件”，如同现在完成时，过去完成时可以表示开始于过去之前的动作到过去这一时刻之前即已停止。具体来说，就是表示一个动作或状态在过去的某一时间之前已经开始，并在这一过去的时间之前即告结束，而没有持续到这一过去的时刻。这时过去完成时的动作通常是短暂动作。
+
+She had made everything ready before I came.
+在我来之前，她已经把一切都准备好了。
+
+I had just sat down in the recliner to watch TV when I heard a knock on the door. When I opened the front door I saw a young man standing there staring at me.
+在过去的动作“听(heard)”之前“坐(sit)”的动作已经完成，故用过去完成时had sat。
+
+过去完成时的其他意义和用法，表示“非真实”的过去
+主要是指intend，mean，hope，want，plan，suppose，expect，think，propose和wish等动词用于过去完成时，可表示过去未能实现的计划、设想、意图或希望等。
+
+I had intended to watch just one program, but somehow I couldn’t make myself switch off the TV.
+我本来打算只看一个电视节目，可不知怎的，电视打开之后我就不想关。
+
+She had hoped that he would come to date her, but he didn’t show up.
+她本来希望他能来约会她，但是他没露面。
+
+过去完成时与一般过去时的比较
+两个或两个以上相继发生的动作，用and或but按动作发生的先后顺序连接，此时要用一般过去时，而不用过去完成时。过去完成时则强调主语在过去的某一时刻“回顾”更早的动作。具体来说，如果在谈论过去某一事件时，又想到在这之前已发生的某事，就要用过去完成时态。
+
+He opened the door and entered, but found nobody.
+他打开门进去了，但一个人都没看见。
+
+I heard voices and realized that there were several people in the next room.
+我听见说话的声音，知道隔壁房间里有好几个人。
+
+I realized that we had met before. 我意识到我们以前见过面。
+这里不能说成“I realized that we met before.”
+
+在表示两个相继发生的动作时，用过去完成时可以表示一个动作完成以后，另一个动作才开始发生，从而使得两个动作相互独立，彼此脱离开来。用一般过去时，则可能表示一个动作“导致”另一个动作的发生，或两个动作之间有因果关系。
+
+When I had opened all the windows, I sat down and had a cup of tea. 我把所有的窗子都打开后，就坐下来喝了杯茶。
+不宜说“When I opened all the windows, I sat down and had a cup of tea.”。
+When I opened the window the cat jumped in. （比说When I had opened…更自然。）我刚把窗子一打开，就有只猫跳了进来。
+When I wrote him a letter, he came at once. 我给他去了封信后，他立即就来了。

@@ -17,7 +17,6 @@
 package me.fengorz.kiwi.bdf.security.exception;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-
 import me.fengorz.kiwi.bdf.security.component.KiwiAuth2ExceptionSerializer;
 
 /**

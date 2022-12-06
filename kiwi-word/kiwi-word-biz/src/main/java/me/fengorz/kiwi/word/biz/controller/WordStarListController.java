@@ -15,18 +15,8 @@
  */
 package me.fengorz.kiwi.word.biz.controller;
 
-import java.util.List;
-
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
-
-import org.hibernate.validator.constraints.Range;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.bdf.core.service.SeqService;
@@ -41,6 +31,13 @@ import me.fengorz.kiwi.word.api.vo.star.WordStarItemVO;
 import me.fengorz.kiwi.word.biz.service.base.WordStarListService;
 import me.fengorz.kiwi.word.biz.service.base.WordStarRelService;
 import me.fengorz.kiwi.word.biz.service.operate.OperateService;
+import org.hibernate.validator.constraints.Range;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import java.util.List;
 
 /**
  * 单词本

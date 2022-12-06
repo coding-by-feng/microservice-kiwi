@@ -92,7 +92,7 @@ public class ReviewServiceTest {
     private RevisePermanentAudioHelper revisePermanentAudioHelper;
 
     @Test
-    // @Disabled
+    @Disabled
     void initPermanent() {
         Assertions.assertDoesNotThrow(() -> reviewService.initPermanent( false));
     }
@@ -132,7 +132,7 @@ public class ReviewServiceTest {
     @SneakyThrows
     @Test
     @Order(1)
-    @Disabled
+    // @Disabled
     void findWordReviewAudio() {
         // List<ParaphraseDO> test = paraphraseService.listByWordName("test");
         // Assertions.assertNotNull(test);
@@ -141,14 +141,16 @@ public class ReviewServiceTest {
         // ReviseAudioTypeEnum.PARAPHRASE_EN.getType());
 
         // id=3749976, sourceId=2774291, type=0
+        int sourceId = 3031198;
+        Integer type = ReviseAudioTypeEnum.PARAPHRASE_CH.getType();
         WordReviewAudioDO wordReviewAudio =
-                reviewService.findWordReviewAudio(2447981, ReviseAudioTypeEnum.WORD_SPELLING.getType());
+                reviewService.findWordReviewAudio(sourceId, type);
         Assertions.assertNotNull(wordReviewAudio);
         log.info("wordReviewAudio.getSourceText() = {}", wordReviewAudio.getSourceText());
         log.info("wordReviewAudio.getSourceUrl() = {}", wordReviewAudio.getSourceUrl());
         // Assertions.assertEquals(3749976, wordReviewAudio.getId());
         byte[] bytes = this.dfsService.downloadFile(wordReviewAudio.getGroupName(), wordReviewAudio.getFilePath());
-        FileUtil.writeBytes(bytes, "/Users/zhanshifeng/Documents/temp/test_paraphrase_2447983_0.mp3");
+        FileUtil.writeBytes(bytes, String.format("/Users/zhanshifeng/Documents/temp/test_paraphrase_%d_%d.mp3", sourceId, type));
     }
 
     @SneakyThrows

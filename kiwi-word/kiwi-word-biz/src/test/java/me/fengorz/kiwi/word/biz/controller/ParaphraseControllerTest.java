@@ -16,10 +16,8 @@
 
 package me.fengorz.kiwi.word.biz.controller;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-
+import me.fengorz.kiwi.word.api.request.ParaphraseRequest;
+import me.fengorz.kiwi.word.biz.service.base.ParaphraseService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,8 +29,9 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
-import me.fengorz.kiwi.word.api.request.ParaphraseRequest;
-import me.fengorz.kiwi.word.biz.service.base.ParaphraseService;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(ParaphraseController.class)

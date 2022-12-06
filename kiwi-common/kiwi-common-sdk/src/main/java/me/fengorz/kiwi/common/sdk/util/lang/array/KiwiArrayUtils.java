@@ -16,10 +16,10 @@
 
 package me.fengorz.kiwi.common.sdk.util.lang.array;
 
+import org.apache.commons.lang3.ArrayUtils;
+
 import java.nio.ByteBuffer;
 import java.util.stream.Stream;
-
-import org.apache.commons.lang3.ArrayUtils;
 
 /**
  * @Author zhanshifeng @Date 2020/5/17 12:31 PM

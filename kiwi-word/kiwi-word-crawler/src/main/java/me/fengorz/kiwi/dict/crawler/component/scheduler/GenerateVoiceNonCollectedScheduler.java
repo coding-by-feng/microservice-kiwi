@@ -16,8 +16,6 @@
 
 package me.fengorz.kiwi.dict.crawler.component.scheduler;
 
-import org.springframework.stereotype.Component;
-
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.sdk.annotation.ScheduledAwake;
@@ -25,6 +23,7 @@ import me.fengorz.kiwi.dict.crawler.common.CrawlerConstants;
 import me.fengorz.kiwi.dict.crawler.component.scheduler.base.Scheduler;
 import me.fengorz.kiwi.word.api.common.enumeration.ReviseAudioGenerationEnum;
 import me.fengorz.kiwi.word.api.feign.DictFetchApi;
+import org.springframework.stereotype.Component;
 
 /**
  * @Description TODO

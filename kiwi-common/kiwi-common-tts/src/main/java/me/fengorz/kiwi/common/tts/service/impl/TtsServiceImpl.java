@@ -73,7 +73,7 @@ public class TtsServiceImpl implements TtsService {
         String finalApiKey = null;
         int minUsedTime = TtsConstants.API_KEY_MAX_USE_TIME;
         for (String apiKey : ttsProperties.listApiKey()) {
-            int usedTime = queryTtsApiKeyUsed(apiKey);
+            int usedTime = Optional.ofNullable(queryTtsApiKeyUsed(apiKey)).orElse(0);
             if (usedTime >= TtsConstants.API_KEY_MAX_USE_TIME) {
                 continue;
             }

@@ -16,14 +16,7 @@
 
 package me.fengorz.kiwi.word.biz.service.operate.impl;
 
-import java.util.Optional;
-
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.bdf.core.service.SeqService;
@@ -36,6 +29,11 @@ import me.fengorz.kiwi.word.biz.service.base.ParaphraseService;
 import me.fengorz.kiwi.word.biz.service.base.StarRelHisService;
 import me.fengorz.kiwi.word.biz.service.base.WordMainService;
 import me.fengorz.kiwi.word.biz.service.operate.AsyncArchiveService;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 
 @Slf4j
 @Service

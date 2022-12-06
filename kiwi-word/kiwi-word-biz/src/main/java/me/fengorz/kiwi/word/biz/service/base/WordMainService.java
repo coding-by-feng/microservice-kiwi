@@ -15,14 +15,13 @@
  */
 package me.fengorz.kiwi.word.biz.service.base;
 
-import java.util.List;
-
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
-
 import me.fengorz.kiwi.word.api.dto.mapper.out.FuzzyQueryResultDTO;
 import me.fengorz.kiwi.word.api.entity.WordMainDO;
 import me.fengorz.kiwi.word.api.vo.WordMainVO;
+
+import java.util.List;
 
 /**
  * 单词主表

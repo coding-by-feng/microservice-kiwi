@@ -16,18 +16,17 @@
 
 package me.fengorz.kiwi.word.api.vo.detail;
 
-import java.io.Serializable;
-import java.util.List;
-
-import org.springframework.data.elasticsearch.annotations.Field;
-import org.springframework.data.elasticsearch.annotations.FieldType;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 import me.fengorz.kiwi.word.api.vo.ParaphraseExampleVO;
+import org.springframework.data.elasticsearch.annotations.Field;
+import org.springframework.data.elasticsearch.annotations.FieldType;
+
+import java.io.Serializable;
+import java.util.List;
 
 /**
  * @Author zhanshifeng @Date 2019/11/26 9:45 AM

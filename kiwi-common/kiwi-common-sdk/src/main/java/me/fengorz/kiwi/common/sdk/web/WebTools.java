@@ -16,24 +16,21 @@
 
 package me.fengorz.kiwi.common.sdk.web;
 
-import java.io.DataInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
-
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.lang3.CharEncoding;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.server.reactive.ServerHttpRequest;
-import org.springframework.web.util.WebUtils;
-
 import cn.hutool.core.codec.Base64;
 import cn.hutool.core.util.StrUtil;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.sdk.constant.SecurityConstants;
 import me.fengorz.kiwi.common.sdk.exception.AuthException;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.server.reactive.ServerHttpRequest;
+import org.springframework.web.util.WebUtils;
+
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
+import java.io.DataInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 
 /**
  * @Author zhanshifeng @Date 2019-09-07 21:11
@@ -59,7 +56,7 @@ public class WebTools extends WebUtils {
         byte[] decoded;
 
         try {
-            byte[] authorizationBytes = authorization.substring(6).getBytes(CharEncoding.UTF_8);
+            byte[] authorizationBytes = authorization.substring(6).getBytes(StandardCharsets.UTF_8);
             decoded = Base64.decode(authorizationBytes);
         } catch (Exception e) {
             throw new AuthException("Failed to decode basic authentication token");

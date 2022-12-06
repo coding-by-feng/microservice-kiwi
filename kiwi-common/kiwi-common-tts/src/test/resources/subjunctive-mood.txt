@@ -1,0 +1,318 @@
+虚拟语气笔记
+表示说话者的一种主观愿望、假想和建议等等，实际上并不能实现。这在英语里，用语法术语表达就叫“虚拟语气”。
+If I could rearrange the alphabet, I would put U and I together.
+如果我能重新来排列字母表，我要把U和I放在一起。
+If I could rearrange the alphabet, I would put U and I together.
+一般来讲，英语中的虚拟语气可以分为两大体系：一是表示与事实相反的或假想的情形，通常由if引导，叫作“非真实条件句”，或者叫“虚拟条件句”；
+另一个体系是在名词从句中使用虚拟语气，表示建议、命令或要求等语气，这是一个完全不同于非真实条件句的虚拟的结构形式。
+
+虚拟条件句：两类三时
+这里说的“两类三时”是指虚拟条件句具有两种类型，并会对三种时间进行虚拟。
+具体来说，虚拟条件句的两种类型是：假设条件句和事实相反句。
+假设条件句，顾名思义，是表示一种假想的情形，表示说话者的一种主观愿望或态度等，实现的可能性不大或极小。
+事实相反句，顾名思义，是表示与现在或过去的某个事实相反的情形。对三种时间进行虚拟，即是对将来、现在和过去这三种时间的虚拟。
+对于将来的情形只能是假设；对于现在的情形既可以是假设，也可以是谈与现在事实相反的情况；对于过去，只能是谈与事实相反的情形。
+
+If I were to have the time tomorrow, I would help him.
+这里是表示将来虚拟假设的情形。用了虚拟，就表明说话人“我”认为自己明天有时间的可能性不大，所以言外之意是“我”可能帮不了他。
+If I had the time now, I would help him.
+这里是表示现在虚拟假设的情形。用了虚拟，就表明说话人“我”认为自己现在有时间的可能性不大，所以言外之意是“我”可能帮不了他。这里用虚拟也只是说明可能性不大，而不是表达与事实相违背的不可能的情形。比如“我”现在完全可以抛开一切事情不做而去帮他，所以可能性还是存在的。
+If I were you, I would help him.
+这里是表示与现在事实相反的情形。因为“我”成为“你”是不可能发生的情形，而不是可能性不大的情形了。
+
+表示对过去事实虚拟的句子：
+If I had had the time yesterday, I would have helped him.
+
+综上所述，假设条件句表达的是一种在将来或现在可能性不大（unlikely）的情形，但不是不可能（impossible）的情形，表示说话人认为不可能，是一种比较主观的表达，而不是与客观事实相反。
+它尤其用来谈将来的情形，也可以谈现在。事实相反句表达的是一种与现在或过去的事实相违背的情形，因此是不可能发生的。
+它适合谈现在或过去。由此可见，谈将来的情形，只能是假设条件句；谈现在的情形，既可能是假设条件句，也可能是事实相反句；谈过去的情形，只能是事实相反句。
+
+虚拟条件句的谓语变化
+将来虚拟只能是谈将来的“不大可能”的情形，而不是一个与事实相反的情形。我们常常会用将来虚拟来谈一个不太可能实现的愿望。比如：
+If I were to live my life over again, I would have you as my wife.
+这句将来虚拟表达的是一个良好的愿望，将来是不会实现的。
+如果我有来生，我一定会娶你为妻。
+或者用将来虚拟来谈一个说话人认为不太可能发生的情形，这表明了说话人的自信程度。比如：
+If I should win the lottery, I would buy a house.
+万一我赢得了彩票大奖，我就会买一栋房子。
+
+对于很多将来的情况，选择用虚拟还是不用虚拟，完全取决于说话人对所陈述事件的态度，或者说虚拟语气能表明说话人的态度。比如：
+What do you think would be the value of the necklace, if I were to sell it?
+如果我把这条项链卖了，你觉得它值多少钱？
+What do you think would be the value of the necklace, if I were to sell it?
+这里“卖项链”这个事件是说话人完全可以控制的，但说话人依然用了将来虚拟的谓语形式were to sell，这只是表明说话人这样一个态度——不会卖或不大可能会卖这个项链。
+假如我把这串项链卖了，你觉得会是什么价？
+将来虚拟在很大程度上是由说话人对事件的态度决定的，所以，将来虚拟使用起来非常灵活。比如，同样是上面这个“卖项链”的事件，如果是对于一个急需用钱而且想把自己的项链卖掉来换钱的人，若他在询问卖价，这时他就不会用将来虚拟了，而是用一般陈述的语气来这样说：
+What do you think is the value of the necklace if I sell it to you?
+如果我把这串项链卖给你，你能出什么价？
+What do you think is the value of the necklace if I sell it to you?
+这里说话人是真想卖掉项链，所以他就用is和sell这样的一般时态来询问卖价。
+
+真实条件和将来虚拟条件的区别：
+例句1）If it were to rain, I would stay home.
+万一要下雨，那我就在家呆着。
+重复例句1）If it were to rain, I would stay home.
+例句2）If it rains, I will stay home.
+如果下雨了，我就在家呆着。
+重复例句2）If it rains, I will stay home.
+这种不同语气的选择，反映了说话人对未来下雨的可能性的信心程度不同。在例句1）中，用了虚拟语气，表明说话人认为将来不太可能会下雨。
+在例句2）中，用了陈述语气，表明说话人认为将来下雨的可能性比较大。
+
+思维总结：
+将来虚拟，从句用were to do或should do，主句用 would do。其意义是用将来虚拟谈论自己认为不太可能发生的事情。
+另外要注意的是，将来虚拟在很大程度上是由说话人对事件的态度决定的，即你说话语气（虚拟还是不虚拟）的选择，反映了你的态度。
+
+现在虚拟
+If everyone lived like Americans, then you would need three planet earths to sustain that level of consumption.
+如果世界上每一个人都像美国人这般生活的话，那我们得需要三个地球方能维持这样的消费水平。
+If everyone lived like Americans, then you would need three planet earths to sustain that level of consumption.
+由此可见，美国人常常指责别国破坏地球环境，浪费资源，殊不知他们自己才是破坏地球环境真正的罪魁祸首。在这句话中，彼得就是用了虚拟语气，因为事实上我们没有三个地球来供我们浪费和糟蹋。所以，主从句的谓语分别采用了“would动词（need）原形”和过去式（lived）这样标准的一般虚拟形式。
+
+This has been my life. I have found it worth living, and would gladly live it again if the chance were offered me.
+这就是我的一生。我已经找到了它的价值。而且如果有机会，我很愿意能再活它一次。
+This has been my life. I have found it worth living, and would gladly live it again if the chance were offered me.
+
+注意，比如对于“假如我当总统，我会……”这样一个简单的句子，都要根据说话人的不同身份来选择不同的语气表达。比如，这句话若是出自一个小学生之口，他应该说成：
+If I became President, I would…
+因为对于一个小学生来说，“当总统”是一个与现实相反的虚拟假设，所以这句话要借助谓语动词变化（即从句用过去式became，主句用would接一个原形动词）来传达这种虚拟的情形。
+但若是对于一位正在竞选中的总统候选人，比如2016年美国总统大选中的民主党候选人希拉里，她则要这么说：
+If I become President, I will make America stronger at home and more respected in the world.
+如果我当了美国总统，我要让美国变得更强大，在国际上更受尊重。
+If I become President, I will make America stronger at home and more respected in the world.
+因为她应该用表示真实条件的陈述语气来表明对自己未来总统竞选获胜的信心。
+如果希拉里用虚拟语气说：“If I became President, I would…”，恐怕连本来支持她的选民都要改旗易帜支持她的竞争对手了。
+
+思维总结：
+主句和从句都表示对现在一般情况的虚拟。此时，主句用would do，而从句用一般过去时态did；若从句的谓语是be动词，则一律用were。
+
+过去虚拟
+贝克汉姆曾在一次新闻发布会上说：
+Two years ago if someone had turned round to me and said“in two years you’ll be England captain”, I would have turned round and said:“I don’t think so!”
+两年前，如果有人转过身来对我说，两年后你将成为英格兰队的队长，我会转过身说:“我不这么认为!”
+Two years ago if someone had turned round to me and said“in two years you’ll be England captain”, I would have turned round and said:“I don’t think so!”
+这里是一个对过去事实的虚拟：两年前并没有人跟小贝说过“你将在两年后成为英格兰队的队长”，
+所以，小贝在这里用了虚拟语气：从句用过去完成时had turned，主句用would have turned。
+
+思维总结：
+表示对过去的虚拟，主句的谓语要采用 would have done的形式，从句的谓语则要用过去完成时态had done。
+
+混合虚拟（一）：主句现在+从句过去
+某个故事的结尾：
+Boy, were you lucky that I came along. If you had married him, you would be the wife of a gas station attendant instead of the wife of a chief executive officer.（你瞧，嫁给了我真是你的幸运啊，你当初要是嫁给了他，你现在就做不了总裁的太太，而只能是加油工的太太了。）
+他太太也不甘示弱地回敬道：My dear, if I had married him, he would be the chief executive officer and you would be the gas station attendant. （嘿，亲爱的，如果我当初嫁的是他，他就是总裁，而你就是加油工了。）
+在这两个例句中，从句的“结婚（married）”这一活动是发生在过去，而且是与过去事实相反的一个假设，即是对过去的虚拟，所以谓语用的是过去完成时had married。不同的是，这里的主句是表示与现在事实相反的一个假设，即是对现在事实的虚拟，所以谓语用would be这样的动词形式。
+简言之，这里的主句是对现在的虚拟，从句是对过去的虚拟，即主句和从句的虚拟时间不同。我们把这种主句、从句虚拟时间不一致的虚拟语气叫作“混合时间虚拟语气”。
+对于混合虚拟语气，可以分两步判断：首先是根据上下文的语境，要能判断出某个句子是表达了与事实相反的情形，即虚拟；其次，分析主从句各自的虚拟时间有何不同，从而选择各自的谓语形式来表达不同的虚拟意义。
+
+有则笑话如下：
+A说 I don’t like my mother-in-law.
+A说 我不喜欢我的岳母。
+B说 Listen, don’t you realize that you couldn’t have your wife if it hadn’t been for your mother-in-law?
+B：听着，你有没有想过，如果没有你的岳母，哪来你现在的妻子啊？
+A说 Yes, that’s why I don’t like her.
+A：正是因为这个所以我才不喜欢她。
+根据主句和从句的谓语形式，我们知道这是一个混合时间虚拟语气。主句的谓语couldn’t have表明是对现在的虚拟，从句的谓语hadn’t been表明是对过去的虚拟。那就要思考这里为什么要用混合时间虚拟呢？该如何判断虚拟时间呢？其实，这里的主句说“你不可能有你的妻子”，但事实是现在“你有妻子”，即是对现在一般情况的虚拟。那么从句为什么是表示对过去时间的虚拟呢？因为从句说“如果不是因为你的岳母”，言外之意是，“如果没有你的岳母生下你的妻子”——这是发生在过去的。所以，这里的从句是表示对过去的虚拟，于是采用过去完成时hadn’t been。
+
+思维总结：
+主现从过型虚拟语气，即主句对现在虚拟，用would do形式；从句对过去虚拟，用had done形式。这是最常用的一种混合虚拟语气。
+
+混合虚拟（二）：主句过去+从句现在
+某个故事中，将“如果我不爱她，我就不会娶她”翻译为英文，若是不懂英文的思维规律，只按照汉语的思维表达，将其译成英文就是：
+If I don’t love her, I won’t marry her.
+其实，这是一个典型的中式英语，并没有表达出原句的“言外之意”：我当然爱她，要不我就不会娶她了。而且实际上他们已经结婚了。
+可以选择的翻译大概如下：
+If I didn’t love her, I wouldn’t have married her.
+If I hadn’t loved her, I wouldn’t have married her.
+If I didn’t love her, I wouldn’t marry her.
+“如果我不爱她”，其实这是“正话反说”，实际上约翰是爱路易丝的，而且是一直都深爱着她，因此，这在英文中就是对“现在事实”表示虚拟，从句对现在的虚拟要用一般过去时来表示，所以，这句话用正确的英文就要说成“If I didn’t love her…”。
+“我就不会娶她”，实际上他们已经结婚了，所以，这句话是对“过去事实”的虚拟。在英文中，主句对过去的虚拟要用would have done的谓语动词形式。所以，这句话的正确英文表达是“I wouldn’t have married her.”。
+因此，“如果我不爱她，我就不会娶她”这句话的正确英文表达应该是“If I didn’t love her, I wouldn’t have married her.”。
+再来分析另外两个例句：
+If I hadn’t loved her, I wouldn’t have married her.
+这是一个主过从过型虚拟语气，即主句和从句都表示对过去的虚拟。含义是：在结婚时约翰是爱她的，要不然当时就不会娶她。言外之意可能是：当时能和她结婚，是因为当时爱她，但现在已经不爱了（所以离婚吧）。
+If I didn’t love her, I wouldn’t marry her.
+这里的wouldn’t marry 表示两人还没有结婚，说的是将来的情况。真正意思是“如果我不爱她，我将来就不打算和她结婚了”。这显然是以男朋友的身份来说这话的。
+
+思维总结：
+主过从现型混合时间虚拟语气，即主句对过去虚拟，用would have done的形式；从句对现在虚拟，用did的形式。
+
+倒装虚拟
+在英文中，虚拟从句可以采用倒装结构。具体来说，当if引导的条件句省去if时，可将should，had或were置于句首，从而构成倒装虚拟句，而意义不变。
+Should I win the lottery, I would buy a car.
+等同于 If I should win the lottery, I would buy a car.
+如果我能赢得大奖，我就会买一辆车。
+Should I win the lottery, I would buy a car.
+等同于 If I should win the lottery, I would buy a car.
+
+Were he to leave today, he would get there by Monday.
+=If he were to leave today, he would get there by Monday.
+如果他今天出发，他就能在星期一之前到达那里。
+
+另外在英语口语里，我们常常会使用“疑问句+陈述句”这样的结构，如：
+Are you ready? Okay we can leave.
+这里的一般疑问句就相当于一个条件从句“If you are ready…”，于是整个句子相当于“如果你准备好了，那我们现在就走”。
+你准备好了吗？那我们现在就走。
+
+跳层虚拟
+He must have heard her initial instructions or he would not have known where to take her.
+在她刚上车时告诉他要去哪里，他一定是听清了，否则他不会知道该把她送到哪儿。
+He must have heard her initial instructions or he would not have known where to take her.
+这个句子的谓语比较复杂，一个是must have heard，另一个是would not have known，即两个都带有情态动词。要注意的是，这里的must have heard不是虚拟语气，而是must表示推测的用法。在英文中，“must+have done”结构表示对过去的推测。也就是说，这里谈论的是一个过去的情形。接下来有一个关键词or，表示“否则”，其后面接的就是虚拟语气。此时要搞清楚两点：一是虚拟的时间。由or前面的句子我们知道，这里是表示对过去的虚拟；二是句子的谓语采用虚拟主句的谓语形式还是从句的谓语形式。因为or后面的句子相当于一个虚拟主句，所以其谓语自然要采用虚拟主句的谓语形式。搞清楚这两点，就知道为什么要说would not have known了，因为这正是一个过去虚拟的主句谓语结构形式。
+这类虚拟句一般分为两部分，两部分在语气上截然相反，一部分虚拟，另一部分不虚拟，而用的是陈述语气，用以陈述一个事实。比如上面这个句子就是“陈述句or+虚拟句”这样的结构。它们二者之间往往有but，or，or else或otherwise来连接。正是因为这种虚拟与不虚拟兼而有之，一部分虚拟，一部分又跳出虚拟的圈子，故称之为“跳层虚拟句”。
+
+陈述句+or+虚拟主句
+这里的连接词除了or，还可以用or else和otherwise。需要注意的是，or前面的句子是陈述语气，而后面的句子用的是虚拟语气，而且是虚拟主句。具体的谓语搭配结构是：
+主语 加 一般现在时的谓语形式, or 加 主语 加 would do → 表示对现在事实的虚拟；
+主语 加 一般过去时的谓语形式, or 加 主语 加 would have done → 表示对过去事实的虚拟。
+
+He must have had an accident, or he would have been here then.
+他一定是出事故了，要不然早就到了。
+He must have had an accident, or he would have been here then.
+这里or的前面通过用must have had这一形式来表示对过去的推测，是属于陈述过去，而or的后面则用过去虚拟。
+
+Mary couldn’t have received my letter; otherwise she would have replied before now.
+玛丽不可能收到我的信;否则她早就给我回信了。
+Mary couldn’t have received my letter; otherwise she would have replied before now.
+这里otherwise后面的句子表示对过去的虚拟，相应地，其前面的半个句子就是表示陈述过去，所以要用一般过去时。不过，这里情态动词的过去时态couldn’t have done的形式表示对过去的推测，类似于must表示推测。
+
+虚拟主句+but+陈述句
+与or等词不同的是，这里but的前面是虚拟主句，but的后面是陈述句。该句型的使用规律是：
+主语加would do, but加主语加一般现在时的谓语形式→表示对现在事实的虚拟；
+主语加would have done, BUT加主语加一般过去时的谓语形式→表示对过去事实的虚拟。
+
+当然，句中的would可换成should, might或could。这类跳层虚拟句的关键标志词是but，随着but一转折，句子的语气也由虚拟变为不虚拟，即but将句子一分为二，but前面部分的句子用虚拟语气，but后面部分的句子用陈述语气。
+He would put on weight, but he doesn’t eat much.
+=He would put on weight if he ate much.
+他本来是会发胖的，但是他从来不会多吃。
+He would put on weight, but he doesn’t eat much.
+=He would put on weight if he ate much.
+这里不用didn’t，而是doesn’t。因为前面的would不是表示过去时态，而是表示对现在事实的虚拟，but前面的半句话相当于虚拟主句形式了，因为but后面的陈述句相当于一个虚拟从句。
+
+Some women could have made a good salary in a job instead of staying home, but they decided not to work for the sake of the family.
+等同于Some women could have made a good salary in a job instead of staying home if they hadn’t decided not to work for the sake of the family.
+有些妇女本来是能够挣得高薪的，但是为了家庭，她们放弃了工作，呆在家里。
+Some women could have made a good salary in a job instead of staying home, but they decided not to work for the sake of the family.
+等同于Some women could have made a good salary in a job instead of staying home if they hadn’t decided not to work for the sake of the family.
+这里but后面的句子是陈述过去的事实，but前面的句子是对过去的虚拟，所以采用过去虚拟主句的谓语形式could have made。
+有时不用but来表示转折，而是用其他副词，比如下句中的unfortunately：
+A safety analysis would have identified the target as a potential danger. Unfortunately, it was never done.
+若是做一下安全分析，就可以发现这个潜在的隐患，但遗憾的是，并没有做安全分析。
+A safety analysis would have identified the target as a potential danger. Unfortunately, it was never done.
+这里的unfortunately在语义上相当于but，表示转折，使句子从虚拟转为不虚拟。这里的was表示过去，因此前半部分也是表示过去，所以采用过去虚拟主句的谓语形式would have identified。
+
+名词从句中如何使用虚拟
+在特定的名词从句中也需要用虚拟语气。这里所说的“特定的名词从句”，是指这样的名词从句中均要含有特定的标志词，这些标志词可用来表示愿望、建议、命令、请求或意志等语气。
+而且，与非真实条件虚拟句中的主句和从句的谓语动词的形式完全不同的是，名词从句虚拟句的谓语变化的形式只有一条规律，那就是：名词从句虚拟句无论其主句的谓语动词是何种形式，从句的谓语形式均为“should+动词原形”，其中should可以省去。这里特别要提醒读者注意：不是用would，而是用should。比如：
+I suggest that we should go tomorrow.
+我建议我们明天走。
+I suggested that we should go the next day.
+我当时建议我们第二天走。
+上面两个例句中的suggest 即是我们所说的标志词。这里从句中谓语的时态（should go）并没有受主句谓语时态（suggest， suggested）的影响。
+
+要掌握名词从句的虚拟句，最终归结为：记住相应的标志词即可：
+
+此类虚拟语气的宾语从句常见标记词
+ask （要求，请求），advise，beg，command，demand，decide， deserve，desire，determine，insist，move （动议，提议），order， prefer，propose，require，recommend，request，suggest和urge等。
+
+His father urged that he study medicine.
+他父亲要求他学医。
+注意这句话中用study，不用studies，省略了should。
+
+The instructions ask that we not take more than three tablets once.
+说明书要求每次服用的量不超过三粒。
+The instructions ask that we not take more than three tablets once.
+从句的谓语not take相当于should not take，这里should被省去了。
+
+The board deemed it urgent that these files should be printed right away.
+董事会要求把这些文件立刻打印出来。
+The board deemed it urgent that these files should be printed right away.
+这里因为有了形容词urgent，所以从句要用虚拟语气， 即用动词should be printed的形式。
+
+各种虚拟句型
+在wish后面的宾语从句中
+这是读者非常熟悉的一个虚拟句型，它用来表示说话者难以实现的或与事实违背的愿望，具有较强的感情色彩，可分别表示对现在、过去和将来情景的虚拟。
+对现在的虚拟，即表示对现状的愿望，从句的谓语动词用过去时。
+I wish I were a little younger. 我希望我能够年轻一点。
+I wish I could travel to the moon (but I can’t do that). 我希望我能够登上月球（但实际上我不能）。
+
+对过去的虚拟
+即对过去发生的事情表示遗憾或后悔，从句的谓语动词用过去完成时（had done）或“would(或者)could+现在完成时”，意指从句的谓语动词所表示的动作发生在主句的谓语所表示的动作之前。
+I wish I had been there. 我真希望我当时在那儿。
+I wish I could have gone with you to the concert last night. 我真希望昨晚能和你一起去听音乐会。
+
+对将来的虚拟
+指对将来发生的事情表示祝愿，从句的谓语动词用“would(或者)could+动词原形”，意指从句的谓语动词所表示的动作可能发生在主句的谓语所表示的动作之后。
+I wish he could explain what he means. 我希望他能解释一下他是什么意思。
+I wish you would shut up. 我希望你能闭嘴。
+注意，即使将wish改为wished，上述例句谓语的时态仍然不变。
+
+在if only感叹句中
+if only表示“但愿”“要是……就好了”，其用法和wish基本相同，可表示对现在、过去和将来的虚拟，只是比wish具有更强烈的感情色彩。
+If only the rain would stop. 但愿雨能停。（对将来的虚拟）
+If only I were taller. 我的个子要是能高一点就好了。（对现在的虚拟）
+If only he had followed your advice! 他要是听从了你的建议就好了！（对过去的虚拟）
+
+另外需要注意的是，可以把only放到句中的位置。
+If he had only followed your advice!
+
+If I’d only remembered to lock the door.
+= I wish I had locked the door.
+我要是记得锁门就好了。
+if only与wish的用法和意义均相同，比如这里wish的后面也是接过去完成时来表示过去虚拟的事件。
+
+在as if(或者)as though引导的从句中
+表示与现在事实相反或对现在情况有所怀疑，谓语用过去时
+I really don’t care for the way you’re speaking to me. It seems as if you were my father.
+我真的非常讨厌你和我说话的方式。你听起来就好像是我爸爸。
+I really don’t care for the way you’re speaking to me. It seems as if you were my father.
+
+表示与过去事实相反，谓语用过去完成时
+It seems as if he has been to America.
+他好像去过美国。
+It seems as if he has been to America.
+
+在it is （high） time （that）从句中
+该句型表示“该是做什么事的时候了”，含有“晚了一点”的意思，从句中用过去时。
+Don’t dawdle away your youth any more. It is time you thought about your future.
+不要再浪费青春了，你该考虑自己的将来了。
+Don’t dawdle away your youth any more. It is time you thought about your future.
+It seems to be high time that this argument were put to an end.
+现在似乎是时候结束争吵了。
+It seems to be high time that this argument were put to an end.
+
+在would rather, would （just） as soon, would sooner, would prefer等从句中
+would rather do sth.
+would rather的后面接动词原形，可以表示将来或现在的事件，意指“主语宁愿自己做某事”。这是would rather最常见的用法。
+I would rather go there tomorrow.
+我想明天去那里。
+I would rather go there tomorrow.
+He would rather stay at home than go to the cinema tonight.
+他今晚就想在家里呆着, 而不想去看电影。
+He would rather stay at home than go to the cinema tonight.
+注意，对该句型的否定，要在动词的前面加not，而不是在would的后面加not。例如：
+He would rather not stay at home tonight. 他今晚不想在家呆着。
+不能说成 He would not rather stay at home tonight.
+
+would rather have done sth.
+这是would rather后面接动词完成式的用法，表示过去的事件，意指“某人宁愿自己过去做了某事，但实际上没有做”，因此，具有过去虚拟的意味，如同过去虚拟条件主句的谓语形式。
+I took Sally to the cinema last night, but I would rather have been there alone.
+我昨晚带萨莉看电影去了，可是我还不如自己一个人去呢（真不该带她去）。
+I took Sally to the cinema last night, but I would rather have been there alone.
+这里的would rather have been表示对过去的虚拟，意思是“还不如自己一个人去”，但实际上不是一个人去的。
+
+would rather sb. did
+这是would rather后面接从句的用法，意指“主语宁愿让另一个人做某事”。这里从句的谓语用一般过去式，但表示的是现在或将来的事件，如同现在虚拟条件从句的谓语形式。
+Don’t come tomorrow. I’d rather you came next weekend.
+明天就别来了，我希望你下周末过来。
+Don’t come tomorrow. I’d rather you came next weekend.
+我们看到，这里的时间状语next weekend显然是表示一个将来的时间，但句子的谓语却用了came这样的一般过去式，而不用 will come，甚至也不用would come。
+She says she’d rather he left tomorrow instead of today.
+她说她希望他明天走，而不是今天。
+She says she’d rather he left tomorrow instead of today.
+
+would rather sb. had done
+这是would rather后面接从句的用法，意指“主语宁愿别人过去做了某事，但实际上没有做”。这里从句的谓语用过去完成时表示过去的事件，如同过去虚拟条件从句的谓语形式。
+For my ninth birthday, my father gave me a set of the World Book Encyclopedia. But I would rather he had given me a set of transformers.
+我九岁生日时，父亲送了我一套《世界百科全书》。但我宁愿他给我一套变形金刚。
+For my ninth birthday, my father gave me a set of the World Book Encyclopedia. But I would rather he had given me a set of transformers.
+For my ninth birthday, my father gave me a set of the World Book Encyclopedia. But I would rather he had given me a set of transformers.

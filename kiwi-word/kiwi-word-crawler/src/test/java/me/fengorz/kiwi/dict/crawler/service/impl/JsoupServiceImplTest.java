@@ -16,17 +16,6 @@
 
 package me.fengorz.kiwi.dict.crawler.service.impl;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-import java.util.Collections;
-import java.util.HashSet;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
-
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.word.api.dto.queue.FetchPhraseMqDTO;
 import me.fengorz.kiwi.word.api.dto.queue.FetchPhraseRunUpMqDTO;
@@ -35,6 +24,16 @@ import me.fengorz.kiwi.word.api.dto.queue.result.*;
 import me.fengorz.kiwi.word.api.exception.JsoupFetchConnectException;
 import me.fengorz.kiwi.word.api.exception.JsoupFetchPronunciationException;
 import me.fengorz.kiwi.word.api.exception.JsoupFetchResultException;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.Collections;
+import java.util.HashSet;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 @Slf4j
 @ExtendWith(MockitoExtension.class)

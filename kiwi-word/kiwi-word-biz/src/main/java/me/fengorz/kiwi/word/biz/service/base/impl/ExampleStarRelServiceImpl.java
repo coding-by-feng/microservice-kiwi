@@ -15,16 +15,14 @@
  */
 package me.fengorz.kiwi.word.biz.service.base.impl;
 
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-
 import lombok.RequiredArgsConstructor;
 import me.fengorz.kiwi.word.api.entity.ExampleStarRelDO;
 import me.fengorz.kiwi.word.biz.mapper.ExampleStarRelMapper;
 import me.fengorz.kiwi.word.biz.service.base.ExampleStarRelService;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 释义例句本与例句关系表

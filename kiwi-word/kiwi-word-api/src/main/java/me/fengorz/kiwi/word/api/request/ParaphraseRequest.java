@@ -16,13 +16,12 @@
 
 package me.fengorz.kiwi.word.api.request;
 
-import java.io.Serializable;
+import lombok.Data;
+import lombok.experimental.Accessors;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-
-import lombok.Data;
-import lombok.experimental.Accessors;
+import java.io.Serializable;
 
 /**
  * @Author zhanshifeng @Date 2021/8/7 5:28 PM

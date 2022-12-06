@@ -25,6 +25,7 @@ import me.fengorz.kiwi.dict.crawler.component.producer.base.MqProducer;
 import me.fengorz.kiwi.dict.crawler.component.producer.base.MqSender;
 import me.fengorz.kiwi.word.api.common.ApiCrawlerConstants;
 import me.fengorz.kiwi.word.api.common.enumeration.CrawlerStatusEnum;
+import me.fengorz.kiwi.word.api.common.enumeration.WordTypeEnum;
 import me.fengorz.kiwi.word.api.entity.FetchQueueDO;
 import me.fengorz.kiwi.word.api.feign.DictFetchApi;
 import me.fengorz.kiwi.word.api.util.WordApiUtils;
@@ -47,7 +48,7 @@ public class ErrorResumeProducer extends AbstractProducer implements MqProducer 
 
     public ErrorResumeProducer(DictFetchApi dictFetchApi, MqSender mqSender) {
         super(dictFetchApi, mqSender);
-        this.infoType = ApiCrawlerConstants.QUEUE_INFO_TYPE_WORD;
+        this.infoType = WordTypeEnum.WORD.getType();
     }
 
     @Override
@@ -65,12 +66,12 @@ public class ErrorResumeProducer extends AbstractProducer implements MqProducer 
         List<FetchQueueDO> list = new ArrayList<>();
         List<FetchQueueDO> delPronunciationFailList =
             dictFetchApi.pageQueue(ApiCrawlerConstants.STATUS_DEL_PRONUNCIATION_FAIL, 0, 20,
-                ApiCrawlerConstants.QUEUE_INFO_TYPE_WORD).getData();
+                WordTypeEnum.WORD.getType()).getData();
         if (KiwiCollectionUtils.isNotEmpty(delPronunciationFailList)) {
             list.addAll(delPronunciationFailList);
         }
         List<FetchQueueDO> delBaseFailList = (dictFetchApi.pageQueue(ApiCrawlerConstants.STATUS_DEL_BASE_FAIL, 0, 20,
-            ApiCrawlerConstants.QUEUE_INFO_TYPE_WORD)).getData();
+            WordTypeEnum.WORD.getType())).getData();
         if (KiwiCollectionUtils.isNotEmpty(delBaseFailList)) {
             list.addAll(delBaseFailList);
         }

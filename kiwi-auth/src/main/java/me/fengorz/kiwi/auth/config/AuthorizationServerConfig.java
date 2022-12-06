@@ -16,11 +16,11 @@
 
 package me.fengorz.kiwi.auth.config;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.sql.DataSource;
-
+import lombok.RequiredArgsConstructor;
+import me.fengorz.kiwi.bdf.security.component.KiwiWebResponseExceptionTranslator;
+import me.fengorz.kiwi.bdf.security.service.KiwiClientDetailsService;
+import me.fengorz.kiwi.common.api.entity.EnhancerUser;
+import me.fengorz.kiwi.common.sdk.constant.SecurityConstants;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -38,11 +38,9 @@ import org.springframework.security.oauth2.provider.token.TokenEnhancer;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.redis.RedisTokenStore;
 
-import lombok.RequiredArgsConstructor;
-import me.fengorz.kiwi.bdf.security.component.KiwiWebResponseExceptionTranslator;
-import me.fengorz.kiwi.bdf.security.service.KiwiClientDetailsService;
-import me.fengorz.kiwi.common.api.entity.EnhancerUser;
-import me.fengorz.kiwi.common.sdk.constant.SecurityConstants;
+import javax.sql.DataSource;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @Author zhanshifeng @Date 2019-09-23 21:07

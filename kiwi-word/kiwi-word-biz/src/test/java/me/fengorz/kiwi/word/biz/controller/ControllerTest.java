@@ -17,13 +17,13 @@
 package me.fengorz.kiwi.word.biz.controller;
 
 import cn.hutool.http.Header;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.api.R;
 import me.fengorz.kiwi.common.sdk.constant.EnvConstants;
 import me.fengorz.kiwi.common.sdk.util.json.KiwiJsonUtils;
 import me.fengorz.kiwi.word.biz.WordBizApplication;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -52,13 +52,16 @@ public class ControllerTest {
 
     private final TestRestTemplate testRestTemplate = new TestRestTemplate();
 
+    @SneakyThrows
     @Test
     // @Disabled
     void test_queryWord() {
         ResponseEntity<R> response =
-                testRestTemplate.getForEntity("http://localhost:8081/word/main/query/Tuesday", R.class);
+                testRestTemplate.getForEntity("http://localhost:8081/word/main/query/AOB", R.class);
         Assertions.assertNotNull(response.getBody());
         log.info("Data is: {}", KiwiJsonUtils.toJsonStr(response.getBody()));
+
+        TimeUnit.SECONDS.sleep(120);
         // HttpHeaders headers = response.getHeaders();
         // headers.forEach((k, v) -> {
         //     log.info("header name is: {}, value is: {}", k, v);
@@ -66,8 +69,7 @@ public class ControllerTest {
         // assertCacheControl(headers);
     }
 
-    @Test
-    @Disabled
+    // @Test
     void test_removeWord() {
         ResponseEntity<R> response =
                 testRestTemplate.getForEntity("http://localhost:8081/word/fetch/removeWord/1338674", R.class);
@@ -75,24 +77,21 @@ public class ControllerTest {
         log.info("Data is: {}", KiwiJsonUtils.toJsonStr(response.getBody()));
     }
 
-    @Test
-    @Disabled
+    // @Test
     void test_setupIeltsWordList() {
         ResponseEntity<R> response =
                 testRestTemplate.getForEntity("http://localhost:8081/test/setup/ielts/word-list", R.class);
         Assertions.assertEquals(response.getStatusCode(), HttpStatus.OK);
     }
 
-    @Test
-    @Disabled
+    // @Test
     void test_deprecateReviewAudio() {
         ResponseEntity<R> response =
                 testRestTemplate.getForEntity("http://localhost:8081/word/review/deprecate-review-audio/2350782", R.class);
         Assertions.assertEquals(response.getStatusCode(), HttpStatus.OK);
     }
 
-    @Test
-    @Disabled
+    // @Test
     void test_downloadReviewAudio() {
         String url = String.format("http://localhost:8081/word/review/downloadReviewAudio/%d/%d", 2979284, 1);
         File file = testRestTemplate.execute(url, HttpMethod.GET, null, clientHttpResponse -> {

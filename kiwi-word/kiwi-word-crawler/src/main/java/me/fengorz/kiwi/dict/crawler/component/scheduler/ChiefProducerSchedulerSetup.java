@@ -19,17 +19,16 @@
 
 package me.fengorz.kiwi.dict.crawler.component.scheduler;
 
-import java.util.Objects;
-import java.util.concurrent.TimeUnit;
-
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
-
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.mq.MqAwake;
 import me.fengorz.kiwi.common.sdk.util.spring.SpringUtils;
 import me.fengorz.kiwi.dict.crawler.component.producer.base.MqProducer;
 import me.fengorz.kiwi.dict.crawler.component.scheduler.base.Setup;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
+
+import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 定时扫描对列表

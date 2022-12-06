@@ -16,13 +16,13 @@
 
 package me.fengorz.kiwi.word.api.dto.queue.result;
 
+import lombok.Data;
+import lombok.experimental.Accessors;
+
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-
-import lombok.Data;
-import lombok.experimental.Accessors;
 
 /**
  * @Author zhanshifeng @Date 2020/6/19 4:45 PM

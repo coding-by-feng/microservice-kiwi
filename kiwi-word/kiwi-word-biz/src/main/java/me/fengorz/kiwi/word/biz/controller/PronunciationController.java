@@ -15,16 +15,6 @@
  */
 package me.fengorz.kiwi.word.biz.controller;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-
-import javax.servlet.http.HttpServletResponse;
-
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.fastdfs.service.DfsService;
@@ -35,6 +25,14 @@ import me.fengorz.kiwi.common.sdk.web.WebTools;
 import me.fengorz.kiwi.word.api.entity.PronunciationDO;
 import me.fengorz.kiwi.word.biz.service.base.PronunciationService;
 import me.fengorz.kiwi.word.biz.service.operate.CrawlerService;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import javax.servlet.http.HttpServletResponse;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 
 /**
  * 单词例句表

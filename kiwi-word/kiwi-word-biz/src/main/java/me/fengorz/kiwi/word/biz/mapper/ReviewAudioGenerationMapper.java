@@ -13,7 +13,6 @@
 package me.fengorz.kiwi.word.biz.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-
 import me.fengorz.kiwi.word.api.entity.WordReviewAudioGenerationDO;
 
 public interface ReviewAudioGenerationMapper extends BaseMapper<WordReviewAudioGenerationDO> {}

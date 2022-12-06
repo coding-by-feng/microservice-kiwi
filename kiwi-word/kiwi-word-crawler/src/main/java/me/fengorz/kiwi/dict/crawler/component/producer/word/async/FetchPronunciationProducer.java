@@ -23,6 +23,7 @@ import me.fengorz.kiwi.dict.crawler.component.producer.base.MqProducer;
 import me.fengorz.kiwi.dict.crawler.component.producer.base.MqSender;
 import me.fengorz.kiwi.word.api.common.ApiCrawlerConstants;
 import me.fengorz.kiwi.word.api.common.enumeration.CrawlerStatusEnum;
+import me.fengorz.kiwi.word.api.common.enumeration.WordTypeEnum;
 import me.fengorz.kiwi.word.api.dto.queue.FetchPronunciationMqDTO;
 import me.fengorz.kiwi.word.api.entity.FetchQueueDO;
 import me.fengorz.kiwi.word.api.feign.DictFetchApi;
@@ -40,7 +41,7 @@ public class FetchPronunciationProducer extends AbstractProducer implements MqPr
 
     public FetchPronunciationProducer(DictFetchApi dictFetchApi, MqSender mqSender) {
         super(dictFetchApi, mqSender);
-        this.infoType = ApiCrawlerConstants.QUEUE_INFO_TYPE_WORD;
+        this.infoType = WordTypeEnum.WORD.getType();
     }
 
     @Override

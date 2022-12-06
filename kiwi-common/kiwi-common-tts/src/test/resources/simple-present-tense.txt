@@ -1,0 +1,129 @@
+一般现在时态并非只表示“现在”。一般现在时本质的思维特征是：表示从过去到现在直至将来的一段时间内发生的动作（action）或存在的状态（state），它们可发生于任何时间，这一段时间可以近乎无限长（如表示客观真理），也可以是人们生活中的一段时间（如人们的习惯活动）。
+因此，一般现在时态通常被描述为有两种基本用法：
+1. 不受时间限制的科学事实、客观真理、 谚语格言，以及用于概括、结论、观点等；
+2. 表示人们日常生活习惯及 重复活动。
+
+用法一：表示普遍的事实或真理（expressing a general truth）
+表示不受时间限制的科学事实、客观真理、谚语格言，以及用于概括、结论、观点等。此时，这些动作或状态的发生不限于某个特定的时间，即它们可发生于任何时间，包括现在、过去和将来。
+
+Water freezes at 32 Fahrenheit and boils at 212 Fahrenheit.
+水在华氏32度结冰，在华氏212度沸腾。
+The sun rises in the east and sets in the west.
+太阳东升西落。
+Knowledge is power.
+知识就是力量。
+Opportunities always favor the prepared minds.
+机会总是青睐有准备的人。
+
+用法二：表示重复活动（expressing a regularly occurring event）
+表示经常发生的、习惯性的动作或者是存在的状态。
+He often goes to the gym. 他经常去健身房。
+I go to the gym twice a week. 我每周去两次健身房。
+He walks to school every day. 他每天步行去上学。
+表示习惯的状态
+I like rice for dinner. 我晚餐喜欢吃米饭。
+这一用法常和一些表示动作频率的时间副词连用。
+表示肯定的频度副词有：always, frequently, usually, sometimes, generally, occasionally和often等。
+表示否定的频度副词有：never, seldom和rarely。
+表示频度的副词短语有：once a week, twice a year和on alternate days等。
+
+在应用上述这些副词时，要注意以下几点：
+它在句子中的位置通常是：在be动词后、实义动词前。
+He is always late. 他总是迟到。
+He always goes to school by bike. 他总是骑自行车上学。
+上述否定副词不能再与否定助动词（如don't等）连用，比如：
+He doesn't seldom come late. （一般不这么说）
+一般这么说，He seldom comes late. 他几乎从不迟到。
+这些副词一般放在否定助动词前，always除外。
+The history lectures sometimes aren't interesting.
+关于历史的讲座有时很没意思。
+His wife complains that he sometimes doesn't listen to her.
+他的妻子抱怨，说他有时候不注意听她说话。
+He doesn't always leave before 6 o'clock. Sometimes he works until 7 o'clock.
+他并不总是在6点钟之前下班，有时他会工作到7点。
+He doesn't always leave before 6 o'clock. Sometimes he works until 7 o'clock.
+
+谋篇短文中频繁地使用了一般现在时来介绍“口腔清洁运动”。
+Brush your teeth at least twice a day.
+Replace the toothbrush every 3 to 4 months.
+Floss your teeth once a day.
+Clean your tongue at least once a day.
+Visit your dentist once in every 6 months.
+
+用法比较：表示重复活动的一般现在时态和现在完成进行时态
+在来比较下面两个句子：
+例句1）I swim 1000 meters every afternoon.
+例句2）I have been swimming 1000 meters every afternoon.
+例句1）用一般现在时swim，我们是指昨天以前是swim 1000 meters，今天也是swim 1000 meters，明天以后还是swim 1000 meters。
+例句2）话要理解成“到目前为止，我是每天下午游1000米”。在这里我们加上了“到目前为止”来对应翻译英文的语言标记have been doing这一动词变形，来潜含一个较为明确的时间段。这句话的意思是，也许“我”打算以后改变一下游泳锻炼的计划，比如说“我”决定游得更长些：
+I have been swimming 1000 meters every afternoon, but I think I'll make it a little longer later.
+在这样的上下文语境中，我们就不能说：
+I swim 1000 meters every afternoon, but I think I'll make it a little longer later. *
+
+用法三：一般现在时表示正在发生的动作
+一般现在时态用在以there或here开头的句子中，表示目前的短暂动作
+Here comes your wife.
+你妻子来了。
+这里显然是说话人看到your wife正在走过来，然后说的这句话，即表示正在发生的动作。在这个结构中不能用现在进行时态，不能说“Here is coming your wife.” 可以说“Your wife is coming.”。但是，此时的进行时是表示将来的动作，所以这句话的意思是：你妻子很快就要过来了。
+
+There goes our bus; we'll have to wait for the next one.
+我们的车开走了，我们只好等下一辆了。
+这句话是说话人看着自己要搭乘的车正在开走时说的。同样，在这个结构中不能用现在进行时态，说成“There is going our bus.”
+
+表示现在瞬间的动作（instant actions）
+这个瞬间动作是说话人在说话的同时即刻发生的。这只适用于表达动作的动词，表示对一些动作的解说，比如：球赛解说、剧情介绍、解释自己正在做的事情、给别人一边说一边做的示范动作等等。
+这是球赛的解说，表示在说话时刻正在发生的动作。
+迈克尔传给克林特，克林特传给杰克，杰克又回传给克林特——克林特射门——球进了！
+The woman is a spy, now she enters the room, opens the drawer, takes out a pistol and slips it into her pocket.
+这个女人是个间谍。现在她走进房间，打开抽屉，拿出手枪塞进衣兜里。
+The woman is a spy, now she enters the room, opens the drawer, takes out a pistol and slips it into her pocket.
+
+用法四：一般现在时表示将来发生的动作
+在某些特定的场合，一般现在时态有时可表示将来发生的动作。
+用在条件状语从句和时间状语从句中
+主要用在条件状语从句（if和unless）和时间状语从句（when, as soon as, before和after等）中，表示将来的动作。
+Please let me know when he comes back.
+他回来时请告诉我。
+What are you going to do when you leave school?
+你毕业以后想要干些什么？
+I will get everything ready before you come back.
+你回来之前我会把所有的东西都准备好。
+I'll give the book to him as soon as I see him.
+我一见到他就会把书给他。
+若从句的动作含有“意愿”的意思，则从句中可用will。
+If you will give me a hand with these books, I'll appreciate it.
+如果你愿意帮我拿这些书，我将非常感激。
+
+在谈到未来的计划和时间安排表的时候，表示将来的动作
+此时句中的动词往往是表示短暂性动作的动词，如go, come, leave, start和move等。
+The train starts at 2 o'clock. 火车两点钟开。
+We move next week. 我们下周搬家。
+They leave for Shanghai by train tomorrow evening. 他们明晚出发去上海。
+
+在从句中表示将来的动作，此时主句往往用了一个将来时
+I will reward the person who finds my lost kitten.
+我将酬谢找到我丢失的猫的人。
+I will give the booklet to whoever asks for it.
+谁来索取这个小册子，我就把它给谁。
+
+用法五：一般现在时表示过去发生的动作
+表示死者的理论、著作等，因为这些理论、著作到现在仍有效；或表示一些名人名言。
+Francis Bacon says, “Reading makes a full man; conference a ready man; and writing an exact man.”
+弗朗西斯·培根说：“读书使人充实，讨论使人机智，写作使人准确。
+引用书刊、报纸、通知或新近收到的信件的内容时
+The newspaper reads, “The criminal who killed eight women has been executed.”
+报纸上写着：“杀害八名妇女的那个罪犯已经被处决了”。
+The newspaper reads, “The criminal who killed eight women has been executed.”
+这里的reads其实是表示过去的，因为显然是说话人看过the newspaper之后才说了这句话。
+The sign on the washing machine says, “Out of Order.”
+洗衣机上有一个告示写着：“洗衣机坏了。”
+这里的says其实是表示过去的，因为显然是说话人看过the sign之后才说了这句话。
+
+用法六：一般现在时代指现在完成时
+在口语中，可以用一般现在时代指现在完成时。能这样使用的动词不多，通常有：hear, find, see, learn, tell和read等。
+I am（等于have been） informed that you have been there. 有人告诉我，你去过那里。
+I hear（等于have heard） that he has left Beijing. 我听说他已经离开北京了。
+I hear（等于have heard） you're getting married. 我听说你要结婚了。
+I see或者find（等于have seen或者found） that you have your hair cut. You look terrific! 我发现你理发了。你看上去棒极了！
+I read（等于have read）in the newspaper that the criminal who killed eight women has been executed.
+我在报纸上看到，杀害八名妇女的那个罪犯已经被处决了。

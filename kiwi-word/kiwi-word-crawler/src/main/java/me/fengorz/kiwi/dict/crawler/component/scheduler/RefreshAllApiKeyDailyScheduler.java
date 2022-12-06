@@ -16,14 +16,13 @@
 
 package me.fengorz.kiwi.dict.crawler.component.scheduler;
 
-import org.springframework.stereotype.Component;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.sdk.annotation.ScheduledAwake;
 import me.fengorz.kiwi.dict.crawler.common.CrawlerConstants;
 import me.fengorz.kiwi.dict.crawler.component.scheduler.base.DailyScheduler;
 import me.fengorz.kiwi.word.api.feign.DictFetchApi;
+import org.springframework.stereotype.Component;
 
 /**
  * @Description Daily generation of review count records @Author zhanshifeng @Date 2021/8/19 8:54 PM

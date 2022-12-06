@@ -16,11 +16,10 @@
 
 package me.fengorz.kiwi.common.sdk.util.lang.string;
 
-import static java.lang.Character.UnicodeBlock.*;
-
+import cn.hutool.core.util.StrUtil;
 import org.apache.commons.lang3.StringUtils;
 
-import cn.hutool.core.util.StrUtil;
+import static java.lang.Character.UnicodeBlock.*;
 
 /**
  * @Author zhanshifeng @Date 2020/5/17 12:39 PM

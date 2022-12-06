@@ -16,18 +16,15 @@
 
 package me.fengorz.kiwi.word.biz.config;
 
-import java.util.List;
-
-import javax.annotation.Resource;
-
+import com.google.common.collect.Lists;
+import lombok.extern.slf4j.Slf4j;
+import me.fengorz.kiwi.word.api.common.WordConstants;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import com.google.common.collect.Lists;
-
-import lombok.extern.slf4j.Slf4j;
-import me.fengorz.kiwi.word.api.common.WordConstants;
+import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * @Description TODO

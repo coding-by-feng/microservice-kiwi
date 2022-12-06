@@ -1,0 +1,267 @@
+英语语法之-名词从句
+
+简单句与名词从句
+何谓名词从句？
+在英语中，名词或名词短语主要充当四种句子成分：主语、宾语、表语和同位语，如果把句子当作名词来用，分别充当某句话的主语、宾语、表语或同位语。
+构成了四种从句：主语从句、宾语从句、表语从句和同位语从句，因为这四种从句在本质上相当于名词，所以将其统称为名词从句。
+
+相当于名词的句子有三类：陈述句、一般疑问句以及特殊疑问句。
+
+
+陈述句作句子成分，要在陈述句句首加上that
+当把一个完整的陈述句当作名词来使用时，需要在陈述句句首加that，然后可使“that 加 陈述句”这一结构分别充当另一个句子的主语、宾语、表语或同位语等四种成分，即构成主语从句、宾语从句、表语从句或同位语从句。
+
+为什么要加that？
+That English is important（主语从句）is an undoubted fact（谓语部分）.
+英语很重要，这是一个毋庸置疑的事实。
+假如把that去掉，上句就变成“English is important is an undoubted fact.”。
+这句话就有两个中心谓语部分，即is important和is an undoubted fact。但是，在英语中，句子的核心意思主要是靠谓语部分来表达的，
+一个句子只表达一个核心意思（因为我们说话要一句一句地说），也就只能有一个谓语部分。现在这个句子有两个谓语部分，读者就会纳闷：你要表达的意思到底是“某个东西重要”，还是要说“某个东西是事实”？
+为了避免混淆，在句首加上一个标志that，这里的that就相当于一个指路牌，它的出现就等于是在告诉读者：that后面紧接着的句子是要作为另一个句子的某一个成分来使用的，不是要表达的核心意思。因此，当读者读到“That English is important…”，他就会知道这个句子的核心意思并没有讲出来，他一定会期待着句子接下来的中心意思。当他读到“…is an undoubted fact”时，他知道了，句子要表达的意思是“英语很重要，这是一个毋庸置疑的事实”，而不是要说“英语很重要”。
+
+例句1） The criminal confessed his sins harmed many people.
+例句2） The criminal confessed that his sins harmed many people.
+这名罪犯承认，他的罪行伤害了很多人。
+对于例句2），因为有了that的存在，我们能轻而易举地判断出the criminal confessed是主句，而his sins harmed many people是宾语从句，因而缩短了理解的时间。
+
+He said no word at the meeting was strange.
+对于这个句子，很多读者自然会将其当作宾语从句理解：“He said that no word at the meeting was strange.”。此时句子的意思是：他说，会上人们的发言都很正常，并没有什么奇怪的。
+但是，如果在句首添加一个that而将其改写为“ That he said no word at the meeting was strange.”。
+此时则要理解成：他在会上一言不发，这真让人觉得有些蹊跷。
+
+那么为什么宾语从句中的that可以省去呢？这是因为对于宾语从句，主句的谓语已经出现，谓语后面所接的成分自然是宾语，所以在不影响句子意思的情况下，可以把that省去。
+
+比如“I think you are right.”或“I think that you are right.”都可以。
+但是，像上面的例句The criminal confessed that his sins harmed many people.，即使是宾语从句，that也不宜省去。
+
+一般疑问句作句子成分
+用whether或if引导
+当把一个一般疑问句当作名词来使用时，需要先将疑问句的倒装语序变成陈述句语序，并在句首加上whether或if（if只用在宾语从句中）来引导，以保留原句的疑问意义。
+然后， 用“whether 加 陈述句”这一结构分别充当另一个句子的主语、宾语、表语或同位语等四种成分，即构成主语从句、宾语从句、表语从句或同位语从句等四种名词从句。
+那么用使用if还是whether呢？对于if和whether这两个连词，其用法有以下区别：
+if一般只用于引导宾语从句，而whether可引导包括宾语从句在内的其他名词从句。
+比如下面这个句子不合适：
+If he comes or not makes no difference.
+他来不来无关紧要。
+应改为“Whether he comes or not makes no difference.”。这里是主语从句，应由whether引导。
+下面这个句子也不合适：
+The question is if he will come.
+问题是他是否会来。
+应改为“The question is whether he will come.”。这里是表语从句，应由whether引导。
+if不和or not直接连用，即一般不说if or not，但可以说if … or not。而whether没有此限制。
+错误的例句1）I don’t know if or not he comes.
+正确的例句2）I don’t know whether or not he comes.
+我不知道他是否会来。
+例句1）错误，因为if和or not不能直接连用，即不能说成if or not。
+
+特殊疑问句作句子成分，要变倒装语序为陈述句语序
+当把一个特殊疑问句当作名词来使用时，需要先将疑问句的倒装语序变成陈述句语序，然后分别充当另一个句子的主语、宾语、表语或同位语等四种成分，即构成主语从句、宾语从句、表语从句或同位语从句等四种名词从句。
+
+特殊疑问词作主语，无需调整句子语序
+如果特殊疑问词在句中作主语，则特殊疑问句无需调整语序而直接作成分，因为此时的问句即是一个陈述句语序。
+例句1） Who will chair the meeting?
+谁将会主持这个会议？
+例句2） Who will chair the meeting has not yet been decided.
+谁将会主持这个会议，目前还没有决定。
+在例句1）中，特殊疑问词who作主语，此时整个问句“Who will chair the meeting?”是一个“主语 加 谓语”结构的陈述句语序，因此用该问句作成分时，无需调整语序，而直接在例句2）中充当主语，构成一个主语从句。
+
+主语从句
+陈述句作主语
+把“that 加 陈述句”这一结构放在主语的位置即构成主语从句。
+That the seas are being overfished has been known for years.
+海洋正在被人类过度捕捞，多年以来这已是尽人皆知的。
+这里that引导的从句that the seas are being overfished是一个主语从句，直接置于主语的位置。
+That English is important is an undoubted fact.英语很重要，这是一个毋庸置疑的事实。
+That he doesn’t understand English is obvious.很显然，他不懂英语。
+That the world is round is a fact.地球是圆的，这是一个事实。
+对于陈述句作主语，更常见的是用it作形式主语置于句首，而将主语从句放在句末。因此上面各句可分别改为：
+It has been known for years that the seas are being overfished.
+It is an undoubted fact that English is important.
+It is obvious that he doesn’t understand English.
+It is a fact that the world is round.
+
+下列都是常见的主语从句句型（重点内容）：
+It is 加 过去分词 加 that从句
+It’s reported that…（据报道……）
+It’s believed that…（人们相信……）
+It is generally thought that…（人们普遍认为……）
+It should be noted that…（应当注意……）
+It has been found that…（现已发现……）
+It must be pointed out that…（必须指出……）
+类似动词还有say，expect，know，estimate和forecast等。
+
+It is 加 形容词 加 that从句
+It is clear that…（显然……）
+It is possible that…（很可能……）
+It is likely that…（很可能……）
+It is natural that…（很自然……）
+It is certain that…（可以相信……）
+It is strange that…（奇怪的是……）
+It is fortunate that…（幸运的是……）
+It is necessary that…（有必要……）
+
+It is true that English is becoming an international language.
+的确，英语正日益成为一门国际通用语言。
+
+It is 加 名词短语 加 that从句
+常用的名词有：a pity，a shame，an honor，a good idea和no wonder等等。
+It is a pity that…（可惜的是……）
+It is a fact that…（事实是……）
+It is good news that…（……真是太好了）
+It is a good thing that…（……真是件好事）
+It is no wonder that…（难怪……）
+It is a shame that…（遗憾的是……；……真是太不像话了）
+It is an honor that…（真荣幸……）
+It is common knowledge that…（……是常识）
+It is my belief that…（我相信……）
+It is a miracle that…（……真是奇迹）
+
+It is common knowledge that the whale is not a fish. 鲸鱼不是鱼类，这是一个常识。
+It is a shame that you did not pass the test. 你没通过这次考试，真遗憾。
+
+一般疑问句作主语时，要把一般疑问句变成陈述句，并且用whether来引导，然后充当句子的主语，即构成主语从句。
+Whether he comes or not makes no difference to me.
+他来不来对我来说无所谓。
+Whether he comes or not makes no difference to me.
+特殊疑问句作主语时，比如例句如下：
+What we need is a wholly new kind of police force.
+我们需要的是一个全新的警察机构。
+What we need is a wholly new kind of police force.
+这里的特殊疑问词what是作need的宾语，所以需将原来的倒装句what do we need调整为陈述句语序what we need，然后作主句的主语，即构成主语从句。
+
+When the meeting is to be held has not yet been decided.
+会议何时举行还没决定。
+这里的特殊疑问词when是作从句的时间状语，所以需将原来的倒装句when is the meeting to be held调整为陈述句语序when the meeting is to be held，然后作主句的主语，即构成主语从句。
+
+How a person masters his fate is more important than what his fate is.
+对于一个人来说，重要的是如何掌握自己的命运，而不是被动地接受命运的安排。
+How a person masters his fate is more important than what his fate is.
+这里的特殊疑问词how是作从句的方式状语，所以需将原来的倒装句how does a person master his fate调整为陈述句语序how a person masters his fate，然后作主句的主语，即构成主语从句。
+
+September 11, 2001 started out as an ordinary day, but what happened that morning will be forever etched（铭刻） in our memories.
+2001年9月11日那天和平日一样到来，但是那天早晨发生的事情将永远铭刻在人们的记忆里。
+September 11, 2001 started out as an ordinary day, but what happened that morning will be forever etched（铭刻） in our memories.
+这里的特殊疑问词what是作从句的主语，所以无需调整语序，而直接将疑问句what happened that morning作主句的主语，即构成主语从句。
+
+宾语从句
+陈述句作宾语，把“that+陈述句”这一结构放在宾语的位置即构成宾语从句。
+We know (that) the world is round.
+我们知道，地球是圆的。
+只有宾语从句中的that才可以省去（在不影响对句意的理解的情况下），而主语从句、表语从句和同位语从句中的that一般不能省去。
+
+that在宾语从句中省略的问题
+I once read that “the beauty of life is its changes” and that “the art of life lies in a constant readjustment to our surroundings”.
+我曾经读到过这样一句话：“生活的魅力在于变化，而生活的艺术在于不断地适应周围环境的变化。”
+I once read that “the beauty of life is its changes” and that “the art of life lies in a constant readjustment to our surroundings”.
+句中含有两个that从句，连词that一般不省去。这里两个that从句作read的宾语，即构成并列的宾语从句。
+
+一般疑问句作宾语
+把“whether 或者 if 加 陈述句”这一结构放在宾语的位置即构成宾语从句。
+I don’t know if 或者 whether he needs my help.
+我不知道他是否需要我的帮助。
+
+No one knew whether interest rates would rise.
+没有人知道利率是否会上升。
+这里原来的一般疑问句是would interest rates rise，变成陈述句语序后成为interest rates would rise，然后为了保留疑问的意义又添加了whether or not，构成宾语从句。一般不说if or not，所以这里的连词不宜用if。
+
+特殊疑问句作宾语
+把特殊疑问句变成陈述句语序后放在宾语的位置即构成宾语从句。
+I have not decided whom I should vote for.
+我还没有决定该投谁一票。
+这里的特殊疑问词whom是作vote for的宾语，所以需将原来的倒装句whom should I vote for调整为陈述句语序whom I should vote for，然后作主句谓语decided的宾语，即构成宾语从句。
+
+No one knows exactly how speech began.
+没有人确切地知道语言是如何产生的。
+这里的特殊疑问词how是作began的方式状语，所以需将原来的倒装句how did speech begin调整为陈述句语序how speech began，然后作主句谓语knows的宾语，即构成宾语从句。
+
+表语从句
+陈述句作表语，把“that 加 陈述句”这一结构放在表语的位置即构成表语从句。
+My idea is that the child should be sent to school.
+我的看法是，应该把这个孩子送去上学。
+
+一般疑问句作表语，把“whether 加 陈述句”这一结构放在表语的位置即构成表语从句。
+My concern is whether he comes or not.
+我关心的是他到底来不来。
+
+特殊疑问句作表语
+把特殊疑问句变成陈述句语序后放在表语的位置即构成表语从句。
+Change is what keeps us fresh and innovative. Change is what keeps us from getting stale. Change is what keeps us young.
+变革能使我们保持思维敏锐，富有创造性。变革能防止我们思想僵化。变革能使我们永葆青春。
+Yesterday is history. Tomorrow is a mystery. Today is a gift. That’s why it’s called the present!
+昨天是历史。明天是一个谜。今天是一个礼物。因此它才被称为present!
+The point is when you will become rich.
+问题的关键是你何时才能有钱。
+
+同位语从句
+所谓同位语，就是用来补充说明名词的成分。被补充说明的名词，叫作先行词。当用一个完整的句子来补充说明名词时，即构成同位语从句。所以，同位语从句都位于一个名词的后面，便构成了“名词 加 连词 加 同位语从句”这样的结构。
+陈述句作同位语是，把“that陈述句”这一结构放在同位语的位置即构成同位语从句。
+He was prepared to prove his theory that two different weights would fall to the ground at the same time.
+他准备证明他的这一理论：两个重量不同的物体将同时落地。
+这里的先行词是his theory，同位语从句是that two different weights would fall to the ground at the same time。
+再读一遍句子：He was prepared to prove his theory that two different weights would fall to the ground at the same time.
+
+The fact that he succeeded in the experiment pleased everybody.
+他的实验取得了成功，这让大家很高兴。
+The fact that he succeeded in the experiment pleased everybody.
+这里的先行词是the fact，同位语从句是that he succeeded in the experiment。
+
+The rumor that Tom was a thief turned out to be untrue.
+有谣传说汤姆是小偷，结果证明是假的。
+这里的先行词是the rumor，同位语从句是that Tom was a thief。
+
+要特别注意，同位语从句可能与其修饰的名词被其他成分隔开。
+They spread the lie everywhere that Tom was guilty of theft.
+这里的先行词the lie与同位语从句that Tom was guilty of theft被状语everywhere隔开。
+他们到处散布谣言说汤姆犯有盗窃罪。
+
+A saying goes that practice makes perfect.
+俗话说，熟能生巧。
+这里的先行词a saying与同位语从句that practice makes perfect被谓语goes隔开。
+
+同位语从句句型（一）：名词 加 that 加 陈述句
+I have been left with the knowledge that it's better to expect nothing than to give everything and then be disappointed.
+我从中懂得了，不抱任何期待比付出努力却最终失望要好。
+I have been left with the knowledge that it's better to expect nothing than to give everything and then be disappointed.
+
+同位语从句句型（二）：名词+定语+that+陈述句
+如果一个名词后面既有定语又有同位语从句，那么往往定语在前，同位语从句在后，这样便形成了先行词与同位语从句被定语分隔的结构。
+The statement by the driver of the vehicle that he did not see the lorry was rejected by the Court.
+该汽车司机说自己没有看见卡车，但法庭并不相信这个说法。
+The statement by the driver of the vehicle that he did not see the lorry was rejected by the Court.
+the statement by the driver of the vehicle表示“这位汽车司机的陈述”，即用介词短语来限定statement；the statement...that he did not see the lorry表示“他说没有看见卡车这一陈述”，即同位语从句用来详细说明statement的内容是什么。
+
+同位语从句句型（三）：名词+谓语+that+陈述句
+如果一个名词作主语，并且它后面还带有一个同位语从句，此时我们通常把这个同位语从句置于谓语的后面，而不是放在名词的后面，因而造成先行名词与同位语从句的分隔。
+Concerns were raised that witnesses might be encouraged to exaggerate their stories in court to ensure guilty verdicts.
+人们日益担心，证人可能会受到鼓励，在法庭上夸大其词以确保陪审团对被告做出有罪的判决。
+Concerns were raised that witnesses might be encouraged to exaggerate their stories in court to ensure guilty verdicts.
+这里的先行词concerns与that引导的同位语从句被谓语were raised隔开。
+
+一般疑问句作同位语
+把“whether 加 陈述句”这一结构放在同位语的位置即构成同位语从句。
+They are faced with the problem whether they should continue to work .
+他们面临这样一个问题：他们是否应该继续工作。
+
+特殊疑问句作同位语
+把特殊疑问句变成陈述句语序后放在同位语的位置即构成同位语从句。
+There arose the question of where we could get the loan.
+现在的问题是我们去哪里弄到这笔贷款。
+
+I have no idea when he will return.
+我不知道他什么时候回来。
+
+嵌套结构
+所谓名词从句的“嵌套结构”，即指多个名词从句之间存在的包含与被包含的关系。
+I realized that what I said was not exactly what I meant to say.
+我后来意识到，当时所说的话并非是我真正想要说的。
+I realized that what I said was not exactly what I meant to say.
+在that引导的宾语从句中同时含有what引导的主语从句 what I said和what引导的表语从句what I meant to say。
+
+The question is how what you have learned can be put into practice.
+问题是，你所学到的知识如何才能应用于实践。
+The question is how what you have learned can be put into practice.
+在how引导的表语从句中含有what引导的主语从句what you have learned。how引导的从句的谓语是can be put into practice，而what引导的从句的谓语是have learned。
+
+连词与动词的配比原则
+在分析句子结构时，我们可以先找到句中的各个谓语动词，然后再找连词。又因为连词后面必然是从句，而从句中必然有谓语动词，因此，在每个连词后面必然要找到一个与之相应的从句的谓语动词。当把连词与对应的谓语动词划分清楚之后，整个难句的结构也就迎刃而解了。
+在英语中，有N个谓语动词，就会对应有N-1个连词以及N-1个对应的从句，这就是张满胜老师提出的“连词与动词的配比原则”。

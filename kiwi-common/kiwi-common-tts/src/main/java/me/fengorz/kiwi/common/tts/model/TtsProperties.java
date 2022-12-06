@@ -19,12 +19,11 @@
 
 package me.fengorz.kiwi.common.tts.model;
 
-import java.util.Set;
-
-import org.apache.commons.collections4.SetUtils;
-
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.commons.collections4.SetUtils;
+
+import java.util.Set;
 
 /**
  * @Description TODO

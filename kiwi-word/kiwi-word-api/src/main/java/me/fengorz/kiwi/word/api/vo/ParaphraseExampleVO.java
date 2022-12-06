@@ -16,11 +16,11 @@
 
 package me.fengorz.kiwi.word.api.vo;
 
-import java.io.Serializable;
-
 import lombok.Data;
 import lombok.ToString;
 import lombok.experimental.Accessors;
+
+import java.io.Serializable;
 
 /**
  * @Author zhanshifeng @Date 2019/11/26 9:51 AM

@@ -158,7 +158,7 @@ public class OperateServiceImpl implements OperateService {
             );
         } catch (Exception e) {
             log.error("assembleWordQueryVO error, wordName={}, wordId={}", wordName, wordId);
-            fetchQueueService.startForceFetchOnAsync(wordName);
+            fetchQueueService.startFetchOnAsync(wordName);
             throw e;
         }
         this.saveVo2Es(vo);

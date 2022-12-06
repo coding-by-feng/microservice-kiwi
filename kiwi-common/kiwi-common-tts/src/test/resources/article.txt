@@ -1,0 +1,261 @@
+英语语法之-冠词
+
+冠词，限定词与名词的关系最为密切， 因为它必然是修饰某个名词，以限定名词所指的范围，对名词起泛指或特指、定量或不定量等限定修饰作用。
+限定词包括：
+第一种-冠词：the, an和a；
+第二种-基数词和序数词：one或者first, two或者second, three或者third等；
+第三种-指示限定词：this, that, these和those；
+第四种-物主限定词：my, your, his, her, our和their；
+第五种-数量限定词：a few, a little, much, many, a lot of, some, any, enough, several, most和all等；
+第六种-个体限定词：each, every, either, neither和both等；
+第七种-名词属格：Mary's, John's和his father's等。
+
+特指 vs 泛指
+所谓泛指，也叫类指，顾名思义，是表示一类事物，或某类事物的总称。 所谓特指，是表示某类事物中的具体的某一个或某一些。
+例句1) The tiger is becoming almost extinct.
+例句2) The tiger is sleeping in the cage.
+在例句1中，想到的是“老虎”这类动物，并不是想到特定的一只老虎。在例句2中，心里想的是“老虎”这类动物中特定的一只，比如就指眼前所看到的这只老虎。
+
+英语中四种泛指的表达模式
+
+- 不可数名词不加冠词表示泛指，如果与the连用，此时不可数名词是表示特指；
+例句 1) I love music, poetry and art.
+例句 2) I don't like the film, but I like the music (of the film) .
+
+- 复数名词不加冠词表示泛指，如果与the连用，此时复数名词是表示特指；
+例句 1) Books become more and more expensive.
+例句 2) Books fill leisure time for many people.
+例句 3) Put away the books on your desk.
+例句 4) Move the books off that chair and sit down.
+
+- 两种the+复数名词也可以表示泛指；
+第一种：the+国籍名词，是指一个国籍的、一个种族的人。
+例句) The Chinese are a great people.
+Chinese是单复数同形的名词，这里的the Chinese是表示复数的概念，这从谓语动词are可以看出来。但这里的the Chinese表示的是“整个中国人或中华民族”，是一个泛指的概念。
+当然也不是所有的国籍名词都可以这样用，比如不能说) the German are...。这样用的国籍名词只限于以) e、s、e和s、h和c、h结尾的词。
+以 e、s、e 结尾的国籍名词： Chinese, Japanese
+以 s、h 结尾的国籍名词： British, Cornish, Danish, English, Irish, Spanish, Turkish, Welsh
+以 c、h 结尾的国籍名词： Dutch, French
+第二种“the+形容词”表示一类人，是泛指，相当于在形容词的后面省去了people，所以被看作是复数名词，作主语时，谓语要用复数。
+The poor are causing the nation's leaders great concern.
+另外，定冠词the与单数名词连用时，可以表示泛指。在语气上显得比较正式或文雅，表示一个由典型的样品所代表的那个类别。
+例句 1) The tiger is becoming almost extinct.
+例句 2) Tigers are becoming almost extinct.
+对于例句1和例句2，想到的都是“老虎”这类动物，并不是特定的一只只老虎。因此，这两句的译文都一样，表示“老虎几乎要灭绝了”。
+
+- 单数名词与不定冠词连用可以表示泛指。
+不定冠词+单数可数名词”可以表示泛指，不定冠词的泛指用法指的是某一类事物中任何一个具有代表性的成员，所以这里的不定冠词相当于any。
+例句 1) A tiger is a dangerous animal.
+例句 2) The tiger is a dangerous animal.
+例句 3) Tigers are dangerous animals.
+对于这三个例句，想到的都是“老虎”这类动物，而不是特定的一只老虎。
+
+关于不定冠词的泛指用法的深入讨论
+不定冠词不能用来表示那些属于整个类别的特性。比如不能说：
+A tiger is becoming almost extinct.
+因为这里的extinct只适于描写整个老虎种群的特性，强调的是“种群”的灭绝，而不适于表示“老虎”这类动物的一般特性。
+对于这种“整个类别”的特性，可以用复数名词或the来泛指，比如：
+The tiger is becoming almost extinct.
+Tigers are becoming almost extinct.
+
+定冠词the的特指用法
+第一种：情景或者文化特指 ( situational或者cultural reference ) 
+定冠词the有一条用法，是可以表示“著名的”人或事物。比如说到大科学家“爱因斯坦”，我们就要用定冠词the这样说：
+Albert Einstein, the famous physicist
+阿尔伯特·爱因斯坦，著名的物理学家
+但是说到“刘德华”，我们则要区分读者对象了。如果是面向中国国内的读者，我们可以说：
+Andy Lau, the famous actor
+如果是面向世界的读者，我们可能要用不定冠词a来这样描述较为妥当：
+Andy Lau, a famous Chinese actor
+
+第二种：一般常识 (general knowledge) 、公共情景
+the North Pole 北极
+the Equator 赤道
+the earth 地球
+the moon 月亮
+the sky 天空
+the universe 宇宙
+the Renaissance (欧洲14至16世纪的) 文艺复兴
+
+第三种：具体知识 (specific knowledge) 、局部情景
+比如学校里就只有一个图书馆，我们就说：
+Let's go to the library.
+第四种：即时情景用法 ( immediate situation ) 
+A说 Where's the dessert?
+B说 What dessert?
+C说 You were supposed to bring the dessert.
+B说 I didn't know that. Nobody told me about it.
+第五种：上下文共指 (textual co-reference) 
+就是指听话者或读者可以根据上下文找到所指。它可分为前指 (anaphoric reference) 和后指 (cataphoric reference) 。前指又可分为直接前指 (direct anaphora) 和间接前指 (indirect anaphora) 
+
+直接前指
+直接前指是指前面提到的某个事物，在后文中再次提到，这样前后两个名词短语是一种共指关系 (co-reference) ，指代同一个事物。由于第一次提到的事物通常是不定指的，所以常用不定冠词来限定。可是一旦那个事物在话语中已经谈到过，就可以把它看作“从上文中已得知的东西”，此后再提到它时就要用定冠词。
+I had a banana and an apple. I ate the banana and gave the apple to Clint.
+
+间接前指
+间接前指表示所指的对象间接地成为听话者知识的一部分。这种知识不是通过上面讨论的那样的直接谈及而获得，而是从已经谈到的事物中推断得到的。
+John bought a bicycle, but when he rode it one of the wheels came off.
+约翰买了一辆自行车，可是当他骑上去的时候，有一个轮子掉了下来。
+
+后指或者结构特指
+后指也叫结构特指 (structural reference) ，往往出现在带有后置定语的名词短语中。一般来说，被某个后置定语所修饰的名词的前面要用定冠词the。
+The brick house on the corner is mine.
+这里的名词短语brick house被介词短语on the corner修饰，所以有the来限定brick house。
+不过，并非所有带有后置定语的名词的前面都得用the来限定，比如下面这个句子：
+What makes us different from women of past decades is our range of choices.
+这里的名词women被介词短语of past decades修饰，但并没有the来限定women ，变成the women 。
+
+所以，决定一个名词的前面是否要有the来限定，并不完全是看该名词的后面是否有后置定语修饰，主要还是看这个被后置定语修饰的名词是表达一个泛指概念还是特指概念。具体可分成两种情况xdc
+第一种情况：如果被后置定语修饰的名词是表达一个没有限制的、广泛的、不可预知的人或事物，此时名词的前面依然不用the来限定；
+第二种情况：如果被后置定语修饰的名词是表达某个被限定的、特殊的、听者或读者很熟悉或与之有关的人或事物，此时名词的前面需要用the来限定。
+例句 1) What makes us different from women of past decades is our range of choices.
+例句 2) The women of the other team all came from London.
+
+不定冠词的用法
+在名词当中，不定冠词仅用于限定单数可数名词。通常用于所指事物在前面未曾提及，并假定说话者或听话者对它还不熟悉的时候。
+如果“不定冠词+单数名词”是用在表语位置以及宾语位置，则失去了泛指的功能，而表现为其他的意义。
+单数可数名词在作表语时，通常需要一个冠词。如果用不定冠词，则具有描述的功能，而没有所指功能。
+Bill is an engineer. 不能说： Bill is engineer.
+当然，这里若用the，则表示特指。如：
+Bill is the engineer who will design the bridge.
+
+不定冠词与不可数名词
+在当中，不定冠词仅用于限定单数可数名词，不可数名词的前面通常不用。但是，出于特定的意义表达的需要，就要用不定冠词来限定不可数名词。
+
+很多不可数名词与不定冠词连用，表示“一种”或“一类”
+当说话者的意思是“一类”或“一种”的时候，不可数名词前可以用不定冠词。
+A cheese that I like is Camembert.
+我很喜欢的一种奶酪就是法国卡芒贝尔村产的软质奶酪。
+对于饮料类的不可数名词，与不定冠词连用时，表示“一杯”
+I'd like a beer, please. 我要一杯啤酒。
+有些不可数名词，当它们与不定冠词连用时，会有特别的意思，或者说意思会发生改变
+比如glass 表示“玻璃”这种物质，但a glass 则表示“一个玻璃杯”。同样，iron 表示“铁”这种物质，但an iron表示“一个电熨斗”等等。
+
+不定冠词与数词one
+强调数量“一”时用one
+当我们想加强口吻或引人注意的时候，我们用one强调“只有一个，或者不超过一个 (one only or not more than one) ”的意思，而不定冠词则没有这个意思，它显得比较平淡、中性。
+Customer说 When will they be ready?
+Assistant说 They take a week.
+Customer说 One week, right, thanks very much.
+讲故事中用one
+在讲故事或讲述某种经历时，我们常用one来强调人或事物，作为我们将要讲到的一个重要话题。
+There is one place we go to which is a Mexican restaurant, and they have a happy hour between 5点30 and 7点30.
+有一个地方是我们常去的，那是一家墨西哥餐馆，那里下午 5点30分 至 7点30分 之间饮料特价。
+表示度量的不定冠词不能换成one
+我们可以用不定冠词来表示度量，以表示价格、速度或比率等概念。这时的不定冠词相当于per (每，每一) ，不能换成one。
+The rent is $100 a week.  不能说成The rent is $100 one week.
+
+再比如下列这些表示度量的短语：
+ten dollars a day 每天10美元
+$5 a kilo 5美元一千克
+sixty kilometers an hour 每小时60千米
+four times a day 每天四次
+
+表示数量的固定搭配中的a不能换成one
+各种数量词中也含有不定冠词a，此时不能换成one，比如：a few, a little, a great many 以及a large number of等等。
+
+用不用冠词的意义区别 (the hospital 或者 hospital) 
+对于表示处所或社会事业机构类的名词 (如prison, church和college等) ，使用冠词the，是强调处所，指的是实际的建筑物或地点；不用冠词the，是强调活动。
+家居生活类名词
+at table 或者 at the table
+in bed 或者 in the bed
+处所、建筑物或社会事业机构
+go to hospital (as patients) 或者 redecorate the hospital
+go to prison 或者 walk around the prison (犯罪入狱，绕着这个监狱走) 
+关于上学 (class, school, college 和university等) 
+go to school, go to the school
+in school, in the school (在校念书，在学校里) 
+in class, in the class (在上课，在这个班级) 
+形容词或副词的最高级、序数词，以及only用作形容词后接名词时，它们的前面一般要用the。
+the only 或者 best way to cope with the problem 解决这个问题的唯一 或者 最好的方法
+This is the first time I've come to Beijing. 这是我第一次来北京。
+在乐器、乐团、合唱团及流行音乐团体前加the
+the Beatles “甲壳虫”乐队
+the Philadelphia Orchestra 费城管弦乐队
+play 或者 learn the guitar 弹 或者 学吉他
+learn the piano 学钢琴
+可以把定冠词the与姓氏连用，然后要在姓氏的后面添加复数-s 。
+the Smiths
+这类短语要表达的意思主要有两种：一是表示夫妇两人 (husband and wife) ，二是可以表示一家人，即包括孩子在内。
+此外，如果是名门望族的姓氏，则除了表示上述两个意思之外，往往还表示整个家族。
+the Kennedys
+这个短语虽然可以表示“肯尼迪总统夫妇”或“肯尼迪总统全家人”，但实际上往往是表示“肯尼迪家族”。
+
+其他不用冠词的场合
+关于职业、身份或头衔
+I am an English teacher.
+如果这个头衔是独一无二的，或者说这个职位在一个单位里是唯一的，此时常不用冠词。不过，也可以用the (既然是独一无二的身份，所以不可能用不定冠词) 。
+They appointed him Head Librarian.
+
+关于球类、棋类运动
+play football 踢足球
+play chess 下棋
+play tennis 打网球
+
+特殊名词
+nature ：泛指自然界 (动植物及无生命的物质的世界) ，不加冠词。比如“在大自然中”要说成in nature ，而不是in the nature。
+society ：泛指我们在其中生活的这个社会，一般不加冠词。比如“在社会中”要说成in society，而不是in the society。
+man ：泛指整个人类时，不加冠词。
+
+关于星期
+表示星期几的名词前面一般是不加冠词的，而是直接用介词on加上星期。
+比如现在的说话时间是在“周三”，那么我们说on Monday，就是指刚刚过去的那个“周一”，即“前天”，表示的是一个过去的时间；而我们说on Friday，就是指即将到来的那个“周五”，即“后天”，表示的是一个将来的时间。
+除此以外，“on加星期几”还可以表示周期性的“星期几”，比如on Monday可以表示“每逢周一”。在英语中，表示“每逢周几”，我们还可以在星期名词的后面加-s ，比如on Mondays。
+I have English class on Monday.
+这里的on Monday可以理解成“每周一”，此时也可以用复数，说成on Mondays。
+加了冠词说on a Monday和on the Thursday，此时的参照时间不是说话的时间，而是上下文里所确立的某一时间。
+
+关于四季，指一般的四季而不是具体指某年的某一段时间时，通常不加冠词。
+in spring (在春天) in summer (在夏天) in autumn (在秋天) in winter (在冬天) 
+但是，如果指特定的某一年的某个季节时，就要加冠词。比如：
+The spring of last year was cold. (去年春天很冷。) 
+
+关于昼夜的各段时间
+- dawn 或者 daybreak (黎明  或者  破晓) 
+- sunrise (日出) sunset (日落) 
+- noon (正午) dusk 或者 twilight (黄昏) 
+- night (夜晚) midnight (午夜) 
+以上这些名词尤其是当它们出现在at, by, after和before之后时，往往不加冠词。
+at dawn (在黎明时) at daybreak (在破晓时) at sunrise (在日出时) at sunset (在日落时) at noon (在正午时) at dusk 或者 twilight (在黄昏时) at night (在夜晚) at midnight (在午夜) 
+
+如果是用在其他介词之后，或者是在其他场合，这些名词前则往往要加冠词。
+watch the dawn (看黎明到来) The sunrise was splendid. (日出很壮观。) We admired the sunset. (我们欣赏了日落。) see nothing in the dusk (在黄昏时什么也没看见) wake up in the night (在夜里醒来) all through the night (整整一夜) 
+
+另外，若是表示某一天的某个时间段，往往用不定冠词，并且用介词on，此时这些名词的前面通常都会有形容词修饰。
+on a frosty December night
+
+关于进餐
+指一般日常惯例的用餐时，通常不加冠词。
+have rice for dinner 晚餐吃米饭
+for breakfast 或者 lunch (早餐  或者  午餐吃 …… ) stay for breakfast (留下来吃早餐) before lunch (午餐前) after dinner (晚餐后) 
+但是如果指需要特别提出的某一次用餐，则常用the来强调。
+) Where are we having dinner tonight?
+) The dinner after his retirement party was quite lavish.
+
+若在三餐名词前有形容词时，则一般加不定冠词，来表示什么样的一餐。
+We often have a big lunch and a nice dinner.
+
+关于交通工具的名词，接在by之后的交通工具名词，其前面不加冠词。
+- by bicycle
+- take the bicycle
+- by bus
+- be on the bus
+
+如果两个名词一起放在同一平行结构里，即使是单数可数名词，也通常不加冠词。
+face to face 面对面；当面 back to back 背对背
+arm in arm 手挽着手 hand in hand 手牵手
+eye to eye 或者 eyeball to eyeball 面对面地，针锋相对地
+toe to toe 脚尖挨脚尖，摩肩接踵 shoulder to shoulder 或者 side by side 肩并肩地
+inch by inch 逐渐地，一步一步地 day after day (=day by day) 日复一日
+from person to person 挨个地 from door to door 挨家挨户地
+from top to toe 从头到脚，完完全全 from father to son 从父到子
+They talked face to face. 他们面对面地谈话。
+They talked man to man. 他们坦率地交谈。
+
+这些名词没有冠词是因为它们基本上失去了名词的主要特性，比如它们没有数的变化。不能说：They talked faces to faces.
+它们的前面也不能有修饰语。比如不能说： They talked old man to young man.
+
+Home didn't have a flush toilet or refrigerator until Arnie was 14.
+这里的refrigerator前面不用加a，是因为or组成的两个名词前面只需要在第一个名词加不定冠词即可。
+Maria Shiver, is an anchor woman on U.S. TV news and niece of assassinated President John F. Kennedy.
+同样的道理，这里and修饰的前后两个名词，也只有前者需要加不定冠词。

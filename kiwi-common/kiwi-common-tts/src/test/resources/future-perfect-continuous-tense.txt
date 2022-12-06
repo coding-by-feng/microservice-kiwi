@@ -1,0 +1,21 @@
+英语语法之-将来完成完成进行时
+
+将来完成进行时的用法与现在完成进行时基本相同，只是将“坐标时间”移到了将来。
+同样是强调动作的持续性，表示开始于将来某个时刻之前的动作持续到将来这一时刻，并可能继续持续下去。
+从时间的角度来看，将来完成进行时需要在上下文中有将来的时间坐标，这类似于过去完成进行时的过去的时间坐标。
+通常用“by+将来时间”或者是“by the time+从句（从句谓语用一般现在时）”来给出一个将来的时间坐标。
+My brother has promised to help me study for my exam tomorrow.
+I get home from school at 3:00 and he gets home from school at 5:00.
+I will have been studying for two hours by the time he gets home.
+这里是“by the time+从句”结构给出的将来的时间坐标，从句的谓语gets是一般现在时态，但表示将来的动作。
+然后在这个将来时间的基础上谈论之前的一个延续事件——一直在学习（到5点时，studying的活动仍将持续），
+此时就要用将来完成进行时will have been studying这一较为复杂的动词形式。
+
+长期延续的事件：
+I’m retiring this fall. By then I’ll have been teaching for 30 years.
+我将于今年秋天退休，到那时，我教书就有30年了。
+She will have been taking care of her blind husband for 20 years by then.
+到那时，她照顾她双目失明的丈夫就将有20年了。
+说话时刻在延续的事件
+The old man will have been getting up at 4:00 for ten years by next month.
+到下个月，这老头坚持凌晨4:00起床就将长达10年时间了。

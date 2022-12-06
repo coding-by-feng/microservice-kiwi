@@ -16,22 +16,20 @@
 
 package me.fengorz.kiwi.word.biz.interceptor;
 
-import java.util.concurrent.TimeUnit;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import cn.hutool.http.Header;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import me.fengorz.kiwi.word.api.common.WordConstants;
+import me.fengorz.kiwi.word.biz.property.CacheControlApiProperties;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.CacheControl;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
-import cn.hutool.http.Header;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import me.fengorz.kiwi.word.api.common.WordConstants;
-import me.fengorz.kiwi.word.biz.property.CacheControlApiProperties;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @Description TODO

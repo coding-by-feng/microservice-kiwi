@@ -16,21 +16,19 @@
 
 package me.fengorz.kiwi.common.sdk.util.bean;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Consumer;
-
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
+import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.WordUtils;
 import org.springframework.beans.BeanUtils;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import lombok.extern.slf4j.Slf4j;
-import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Consumer;
 
 /**
  * @Description Bean工具类 @Author zhanshifeng @Date 2019/11/2 4:46 PM
@@ -83,7 +81,7 @@ public class KiwiBeanUtils extends BeanUtils {
         if (StringUtils.isNotBlank(str)) {
             str = str.replace("T_", "");
             str = str.toLowerCase();
-            return str.substring(0, 1).toUpperCase() + str.substring(1, str.length());
+            return str.substring(0, 1).toUpperCase() + str.substring(1);
         }
         return str;
     }

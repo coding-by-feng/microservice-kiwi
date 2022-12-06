@@ -15,18 +15,8 @@
  */
 package me.fengorz.kiwi.word.biz.controller;
 
-import java.time.LocalDateTime;
-import java.util.List;
-
-import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
-
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-
 import cn.hutool.core.util.EnumUtil;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.api.R;
@@ -43,6 +33,13 @@ import me.fengorz.kiwi.word.biz.service.base.WordFetchQueueService;
 import me.fengorz.kiwi.word.biz.service.operate.CleanerService;
 import me.fengorz.kiwi.word.biz.service.operate.CrawlerService;
 import me.fengorz.kiwi.word.biz.service.operate.OperateService;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
+import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * 单词待抓取列表

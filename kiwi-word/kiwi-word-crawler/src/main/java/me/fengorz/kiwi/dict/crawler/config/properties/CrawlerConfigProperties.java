@@ -16,14 +16,13 @@
 
 package me.fengorz.kiwi.dict.crawler.config.properties;
 
-import java.util.Map;
-
+import lombok.Data;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Configuration;
 
-import lombok.Data;
+import java.util.Map;
 
 @Data
 @Configuration

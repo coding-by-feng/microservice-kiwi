@@ -16,15 +16,15 @@
 
 package me.fengorz.kiwi.dict.crawler.component.scheduler.base;
 
-import java.util.List;
-import java.util.concurrent.CountDownLatch;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.sdk.util.lang.collection.KiwiCollectionUtils;
 import me.fengorz.kiwi.word.api.entity.FetchQueueDO;
 import me.fengorz.kiwi.word.api.exception.SchedulerException;
 import me.fengorz.kiwi.word.api.feign.DictFetchApi;
+
+import java.util.List;
+import java.util.concurrent.CountDownLatch;
 
 /**
  * @Author zhanshifeng @Date 2020/7/29 2:16 PM

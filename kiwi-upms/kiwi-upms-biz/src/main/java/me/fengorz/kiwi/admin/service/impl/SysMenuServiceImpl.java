@@ -15,15 +15,13 @@
  */
 package me.fengorz.kiwi.admin.service.impl;
 
-import java.util.List;
-
-import org.springframework.stereotype.Service;
-
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-
 import me.fengorz.kiwi.admin.api.entity.SysMenu;
 import me.fengorz.kiwi.admin.mapper.SysMenuMapper;
 import me.fengorz.kiwi.admin.service.SysMenuService;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * 菜单权限表

@@ -41,6 +41,7 @@ import me.fengorz.kiwi.common.tts.service.TtsService;
 import me.fengorz.kiwi.word.api.common.ApiCrawlerConstants;
 import me.fengorz.kiwi.word.api.common.WordConstants;
 import me.fengorz.kiwi.word.api.common.enumeration.ReviseAudioGenerationEnum;
+import me.fengorz.kiwi.word.api.common.enumeration.WordTypeEnum;
 import me.fengorz.kiwi.word.api.dto.queue.result.*;
 import me.fengorz.kiwi.word.api.entity.*;
 import me.fengorz.kiwi.word.api.vo.ParaphraseStarListVO;
@@ -266,7 +267,7 @@ public class CrawlerServiceImpl implements CrawlerService {
 
         final String phrase = dto.getPhrase();
         WordMainDO wordMain = new WordMainDO().setWordId(seqService.genCommonIntSequence()).setWordName(phrase)
-                .setInfoType(ApiCrawlerConstants.QUEUE_INFO_TYPE_PHRASE);
+                .setInfoType(WordTypeEnum.PHRASE.getType());
         mainService.save(wordMain);
 
         for (FetchParaphraseDTO paraphrase : paraphrases) {

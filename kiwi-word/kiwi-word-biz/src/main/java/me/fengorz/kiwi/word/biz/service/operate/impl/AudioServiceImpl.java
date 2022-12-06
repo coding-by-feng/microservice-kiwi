@@ -16,10 +16,6 @@
 
 package me.fengorz.kiwi.word.biz.service.operate.impl;
 
-import java.io.ByteArrayInputStream;
-
-import org.springframework.stereotype.Service;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.fastdfs.service.DfsService;
@@ -33,6 +29,9 @@ import me.fengorz.kiwi.word.api.common.enumeration.ReviseAudioTypeEnum;
 import me.fengorz.kiwi.word.biz.common.SpeakerFunction;
 import me.fengorz.kiwi.word.biz.mapper.ReviewAudioMapper;
 import me.fengorz.kiwi.word.biz.service.operate.AudioService;
+import org.springframework.stereotype.Service;
+
+import java.io.ByteArrayInputStream;
 
 /**
  * @Description TODO

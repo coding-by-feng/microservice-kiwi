@@ -17,10 +17,10 @@
 package me.fengorz.kiwi.word.biz.util;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-
 import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
 import me.fengorz.kiwi.word.api.common.ApiCrawlerConstants;
 import me.fengorz.kiwi.word.api.common.enumeration.CrawlerStatusEnum;
+import me.fengorz.kiwi.word.api.common.enumeration.WordTypeEnum;
 import me.fengorz.kiwi.word.api.dto.mapper.in.SelectStarListItemDTO;
 import me.fengorz.kiwi.word.api.entity.*;
 
@@ -98,16 +98,15 @@ public class WordBizUtils {
     }
 
     public static int getOpposition(int infoType) {
-        return infoType == ApiCrawlerConstants.QUEUE_INFO_TYPE_WORD ? ApiCrawlerConstants.QUEUE_INFO_TYPE_PHRASE
-            : ApiCrawlerConstants.QUEUE_INFO_TYPE_WORD;
+        return infoType == WordTypeEnum.WORD.getType() ? WordTypeEnum.PHRASE.getType()
+            : WordTypeEnum.WORD.getType();
     }
 
     public static int buildThisInfoType(String wordName, Integer[] infoType) {
         int thisInfoType;
         if (infoType == null || infoType.length == 0) {
             boolean isPhrase = wordName.contains(GlobalConstants.SPACING);
-            thisInfoType =
-                    isPhrase ? ApiCrawlerConstants.QUEUE_INFO_TYPE_PHRASE : ApiCrawlerConstants.QUEUE_INFO_TYPE_WORD;
+            thisInfoType = isPhrase ? WordTypeEnum.PHRASE.getType() : WordTypeEnum.WORD.getType();
         } else {
             thisInfoType = infoType[0];
         }

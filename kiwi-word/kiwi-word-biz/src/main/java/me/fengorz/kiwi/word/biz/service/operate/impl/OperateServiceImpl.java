@@ -36,8 +36,8 @@ import me.fengorz.kiwi.common.sdk.exception.ServiceException;
 import me.fengorz.kiwi.common.sdk.util.lang.collection.KiwiCollectionUtils;
 import me.fengorz.kiwi.common.sdk.util.lang.string.KiwiStringUtils;
 import me.fengorz.kiwi.common.sdk.util.validate.KiwiAssertUtils;
-import me.fengorz.kiwi.word.api.common.ApiCrawlerConstants;
 import me.fengorz.kiwi.word.api.common.WordConstants;
+import me.fengorz.kiwi.word.api.common.enumeration.WordTypeEnum;
 import me.fengorz.kiwi.word.api.dto.queue.result.FetchWordReplaceDTO;
 import me.fengorz.kiwi.word.api.entity.*;
 import me.fengorz.kiwi.word.api.request.ParaphraseRequest;
@@ -130,7 +130,7 @@ public class OperateServiceImpl implements OperateService {
         KiwiAssertUtils.resourceNotNull(word, "No results for [{}]!", wordName);
 
         // 如果是词组的话
-        if (word.getInfoType() == ApiCrawlerConstants.QUEUE_INFO_TYPE_PHRASE) {
+        if (word.getInfoType() == WordTypeEnum.PHRASE.getType()) {
             List<CharacterVO> characterVOList = new ArrayList<>();
             characterVOList.add(new CharacterVO().setCharacterCode(WordConstants.PHRASE_CODE).setCharacterId(0)
                     .setParaphraseVOList(new LinkedList<>()).setPronunciationVOList(new LinkedList<>()));
@@ -156,9 +156,10 @@ public class OperateServiceImpl implements OperateService {
             vo.setCharacterVOList(
                     KiwiAssertUtils.resourceNotEmpty(assembleWordQueryVO(wordName, wordId), "No characterVOList for [{}]!", wordName)
             );
-        } catch (ServiceException e) {
+        } catch (Exception e) {
             log.error("assembleWordQueryVO error, wordName={}, wordId={}", wordName, wordId);
-            fetchQueueService.startFetchOnAsync(wordName);
+            fetchQueueService.startForceFetchOnAsync(wordName);
+            throw e;
         }
         this.saveVo2Es(vo);
         return vo;

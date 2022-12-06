@@ -16,13 +16,12 @@
 
 package me.fengorz.kiwi.common.tts.config;
 
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.tts.model.BaiduTtsProperties;
 import me.fengorz.kiwi.common.tts.model.TtsProperties;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
 /**
  * @Author zhanshifeng

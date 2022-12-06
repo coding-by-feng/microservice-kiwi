@@ -53,6 +53,7 @@
         <lombok-maven-plugin.version>1.18.12.0</lombok-maven-plugin.version>
         <maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
         <junit.version>4.13</junit.version>
+        <junit-jupiter.version>5.8.2</junit-jupiter.version>
         <mockito.version>4.1.0</mockito.version>
         <redisson.version>3.16.7</redisson.version>
         <baidu.aip.version>4.16.11</baidu.aip.version>

@@ -16,8 +16,14 @@
 
 package me.fengorz.kiwi.bdf.exception.handler;
 
-import java.util.Objects;
-
+import com.github.tobato.fastdfs.exception.FdfsServerException;
+import lombok.extern.slf4j.Slf4j;
+import me.fengorz.kiwi.common.api.R;
+import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
+import me.fengorz.kiwi.common.sdk.exception.BaseRuntimeException;
+import me.fengorz.kiwi.common.sdk.exception.ResourceNotFoundException;
+import me.fengorz.kiwi.common.sdk.exception.ServiceException;
+import me.fengorz.kiwi.common.sdk.exception.dfs.DfsOperateDeleteException;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
@@ -26,15 +32,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import com.github.tobato.fastdfs.exception.FdfsServerException;
-
-import lombok.extern.slf4j.Slf4j;
-import me.fengorz.kiwi.common.api.R;
-import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
-import me.fengorz.kiwi.common.sdk.exception.BaseRuntimeException;
-import me.fengorz.kiwi.common.sdk.exception.ResourceNotFoundException;
-import me.fengorz.kiwi.common.sdk.exception.ServiceException;
-import me.fengorz.kiwi.common.sdk.exception.dfs.DfsOperateDeleteException;
+import java.util.Objects;
 
 /**
  * @Description 全局的异常处理器 @Author zhanshifeng @Date 2019/11/26 3:28 PM
@@ -74,7 +72,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler({ServiceException.class})
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public R<String> handleServiceRuntimeException(ServiceException e) {
-        log.error("global ServiceException:{}", e.getMessage(), e);
+        log.error("global ServiceException:{}", e.getMessage());
         return R.error(e.getResultCode());
     }
 

@@ -1,0 +1,288 @@
+句型一：主语加系动词加表语
+其谓语动词特点
+该句型的谓语动词是系动词，又叫连系动词，顾名思义，这种动词并没有具体的动作，而只是起连接主语和后面成分的作用。这种动词后面所接的成分用来说明主语的特点，表明主语的性质特征，因此被称为主语补足语或表语（能表示主语特征的成分）。
+
+系动词的分类
+单纯表示主语的特征或状态
+这样的系动词有feel，look，sound，taste，smell，seem和appear等。
+The iron feels hot.这块铁摸起来很热。
+The rose doesn’t smell much.这枝玫瑰花不是很香。
+
+表示主语由一种状态转变为另一种状态
+这样的系动词有become，grow，get，turn，fall，go和come等。
+The leaf will turn yellow in autumn.
+叶子秋天就会变黄。
+The teacher became angry.
+老师生气了。
+
+fall, go和come等词作系动词时，与形容词连用一般具有固定的搭配关系。
+Our supplies of sugar and rice fell short.
+我们的糖和大米供应不足。
+The jokes fell flat.这个玩笑毫无效果。
+The book was old and soon fell apart.
+这本书很旧，很快就散了。
+fall due 到期
+fall asleep 睡着
+因为这里的fall都是作系动词，所以其后面不能接shortly或flatly这样的副词，即不能说fall shortly或fall flatly等。
+
+go作系动词的例子：
+go hungry 饿了，挨饿
+go mad 变疯了
+go bad 坏掉了
+go wrong 出错了
+
+go作系动词时，一般用于贬义，即表示主语是朝着坏的或消极的一面改变。相反，come作为系动词，则是表示褒义的，即表示主语是朝着好的或积极的一面改变。
+
+Hope your dreams will come true. 祝你好梦成真。
+The dream has come true. 梦想已经实现。
+come right 纠正了，正确了
+
+表示主语保持某种状态
+这样的系动词有continue，remain，stay，keep，hold，rest和prove等。
+He has fallen into the habit of doing morning exercises to stay healthy.
+为了保持健康，他已经养成了晨练的习惯。
+He has fallen into the habit of doing morning exercises to stay healthy.
+不要说stay healthily，因为副词healthily不能作表语。
+
+He never stays angry for long.
+他生气时间从不会长。
+不要说stay angrily，因为副词angrily不能作表语。
+
+You may rest assured that he will come to the party.
+尽管放心，他会来参加聚会的。
+rest assured是一个固定搭配。
+
+The weather continued fine for several days. 连续几天都是晴天。
+He held silent for the whole day. 他一整天都沉默不语。
+
+近似于不及物动词的系动词有sit，act，arrive，blush，marry，die 和be born等。有人将其称为“半系动词”，因为它们介于不及物动词和系动词之间。
+He arrived in the U.S. a penniless 21-year-old.
+他到达美国的时候是一个身无分文的21岁的穷小子
+首先，介词短语in the U.S. 显然是表示地点的，修饰谓语arrived，即是一个地点状语，表示“他到达了美国”。其次，名词短语a penniless 21-year-old起什么作用呢？作arrived的宾语吗？显然不行，因为arrive是不及物动词，不可能接宾语。从语义上来看，a penniless 21-year-old显然是补充说明主语he的，表示“他到达美国的时候是一个身无分文的21岁的穷小子”，即a penniless 21-year-old是一个主语补足语，也就是相当于表语。可以把这个句子改写成：“He was a penniless 21-year-old when he arrived in the U.S.”。
+从而证明这里的谓语arrived相当于一个系动词的作用，连接主语he和表语a penniless 21-year-old。
+
+It lived the life of and died a prairie chicken.
+它就如同一只普通的草原鸡那样度过了一生然后死去。
+这个句子原本的结构是“It lived the life of a prairie chicken and died a prairie chicken.”。名词短语a prairie chicken同时充当两个谓语部分lived the life of和died的成分。a prairie chicken是作介词of的宾语，但是die是不及物动词，不能接宾语。从语义的角度来看，即使把a prairie chicken看作是died的宾语，也是讲不通的，因为这样一来句子的意思就成了“它把一只草原鸡弄死了”，这显然不对，因为这里it就是a prairie chicken，而不是两种不同的动物。其实，这里的die相当于一个系动词，其后面的名词短语a prairie chicken是用来补充说明主语的，也就是说是主语补足语。
+
+Jane Austin died a spinster.
+简·奥斯汀去世时，依然未嫁。
+He died a hero’s death.
+他英勇牺牲了。
+这两句话在表面上看都一样，就是在died后面接名词短语，分别是a spinster和a hero’s death。但实际上二者内在的深层结构是不同的。
+在例句1）中，a spinster作表语或者说是主语补足语，即补充说明主语Jane Austin的性质特征，所以可以将原句改写成“Jane Austin was a spinster when she died.”。
+但在例句2）中，a hero’s death则不具有a spinster这样的特点，即并不是充当表语来修饰主语he，因为“He was a hero’s death when he died. ”是讲不通的。事实上，a hero’s death是一类较为特殊的宾语，英语里称为“同源宾语”。因为death和die同词源，所以这里的a hero’s death是同源宾语。除了同源宾语外，die不能接其他正常的宾语。比如翻译这个句子“他把这个姑娘杀死了”，不能说“He died the girl.”，而要说“He killed the girl.”。
+其他可以带同源宾语的不及物动词有live（如“He lived a dog’s life.”），dream（如“He dreamt a beautiful dream”）等等。
+
+下面将表语和状语进行比较。
+例句1） Lei Feng died young.
+雷锋英年早逝。
+例句2） Lei Feng worked hard.
+雷锋工作很努力。
+在例句1）中，young是形容词，作表语（或者说是主语补足语），说明主语Lei Feng的性质特征，所以可将原句改写成“Lei Feng was young when he died.”。从这个句子里也可看出young不是用来修饰谓语动词die的。
+而在例句2）中，hard是副词，作状语，用来修饰work，说明work的行为特征，而不是说明主语Lei Feng的性质特征。所以，不能将这句话改写成：“Lei Feng is hard when he works.”。
+
+He died a local company manager.
+这句话相当于“He was a local company manager when he died.”。
+他死的时候是一家公司的经理。
+
+例句1）Don’t act stupid.
+别装傻。
+例句2）Don’t act stupidly.
+别笨手笨脚的。
+这两句话仅有形容词stupid和副词stupidly一词之差，但两句话的意思不同。在例句1）中，act是作系动词，表示to appear or seem to be，所以这个act不是讲行为动作，而只是讲故意装出某种样子。
+而在例句2）中，由于是用副词stupidly作状语来修饰谓语动词act以说明行为动作的特点，所以这里的act是讲具体的行为动作。
+
+act作行为动词和系动词时的词义区别：
+例句1）I acted foolish.
+我当时只是故意装傻。
+例句2）I’m ashamed I acted foolishly.
+我为自己的愚蠢行为感到羞耻。
+在例句1）中，act是系动词，后接形容词foolish作表语。在例句2）中，act是行为动词，后接副词foolishly作状语。
+
+“装病”就应该说成act sick，而不能说act sickly。
+
+He acted quickly and seized the thief.
+这里的act是行为动词，后接副词quickly作状语。
+他动作很快，一下子就抓住了窃贼。
+
+All the audience sat silent.
+全场观众鸦雀无声。
+这里的silent是说明主语all the audience的特征，而不是修饰sat，故不用silently。
+He was born poor.
+他出身贫寒。
+这里的poor是说明主语he的特征，而不是修饰born，故不用poorly。
+The boy blushed scarlet.
+这孩子羞红了脸。
+这里的scarlet是说明主语the boy的特征，而不是修饰blushed。
+
+简单句叠加成复杂难句
+Vitamins are organic compounds.
+维生素是一种有机化合物。
+这个句子的主语是vitamins，谓语是系动词are，名词短语organic compounds是表语。
+这个句子很简单，但现在要逐步将其复杂化。比如在名词compounds后面添加一个后置定语，如下句：
+Vitamins are organic compounds necessary for the normal growth of life.
+维生素是一种有机化合物，是生命正常生长所必不可少的。
+这里我们添加了一个形容词短语necessary for the normal growth of life，将其后置修饰名词compounds。
+进一步把后置定语复杂化：
+Vitamins are organic compounds necessary for the normal growth and maintenance of life of animals, including man.
+维生素是一种有机化合物，是所有动物（包括人类）正常生长和生命延续所必不可少的。
+这里的形容词短语是necessary for the normal growth and maintenance of life of animals, including man，依然将其后置修饰名词compounds。
+还可以把上句进一步复杂化：
+Vitamins are organic compounds necessary in small amounts in the diet for the normal growth and maintenance of life of animals, including man.
+维生素是一种有机化合物，尽管在饮食中的含量很少，但却是所有动物（包括人类）正常生长和生命延续所必不可少的。
+Vitamins are organic compounds necessary in small amounts in the diet for the normal growth and maintenance of life of animals, including man.
+这里是在necessary和for之间添加了介词短语in small amounts in the diet，整个形容词短语是necessary in small amounts in the diet for the normal growth and maintenance of life of animals, including man，依然将其后置修饰名词compounds。
+
+句型二：主语加谓语
+其谓语动词特点
+该句型的谓语动词是不及物动词（intransitive verb），所表示的动作没有作用对象，其本身意思完整，其后不需带宾语。
+The egg hatched.
+这枚蛋孵化了。
+The little eagle grew up.
+小鹰慢慢长大了。
+It clucked and cackled.
+它发出咯咯的叫声。
+最后一句话的谓语是并列谓语，即有两个动词clucked和cackled充当谓语。这些动词都是不及物动词，所以没有接宾语。
+
+尽管这个句型里没有宾语，但是在谓语动词后面往往会接状语，用来修饰谓语动词，比如表示动作发生的地点等。
+An eagle’s egg（主语）was placed（谓语）in the nest of a prairie chicken（地点状语）.
+一只苍鹰的蛋被放置在一只草原土鸡的窝里。
+
+It scratched in the dirt for seeds.
+它在土里找种子吃。
+It（主语）scratched（谓语）in the dirt（地点状语）for seeds（目的状语）.
+
+简单句叠加成复杂难句
+This trend began during the Second World War.
+该句的主语是this trend，谓语began是一个不及物动词，后边没有带宾语。介词短语during the Second World War作时间状语。
+这种趋势始于第二次世界大战期间。
+下面开始一步步把这个句子复杂化：
+This trend began during the Second World War, when several governments came to the conclusion.
+这里加了一个定语从句when several governments came to the conclusion，来修饰时间the Second World War。
+这种趋势始于第二次世界大战期间，当时一些国家的政府得出这样的结论。
+再进一步把这个句子复杂化：
+This trend began during the Second World War, when several governments came to the conclusion that the specific demands cannot generally be foreseen in detail.
+这里添加了一个同位语从句that the specific demands cannot generally be foreseen in detail，补充说明conclusion。这个同位语从句也是一个“主语加谓语”的句型，这里的主语是the specific demands，谓语是一个被动结构cannot generally be foreseen，介词短语in detail作状语。
+这种趋势始于第二次世界大战期间，当时一些国家的政府得出结论：具体要求通常是无法详尽预见的。
+再进一步把这个句子复杂化:
+This trend began during the Second World War, when several governments came to the conclusion that the specific demands that a government wants to make of its scientific establishment cannot generally be foreseen in detail.
+这里添加了一个定语从句that a government wants to make of its scientific establishment，来修饰the specific demands。这个定语从句是一个“主语加谓语加宾语”的句型，主语是a government，谓语是wants，宾语是to make of its scientific establishment。这里的that指代先行词demands，在定语从句中作谓语make的宾语，从而构成一个make demands of的搭配，表示“对……提出要求”。
+这种趋势始于第二次世界大战期间，当时一些国家的政府得出结论：政府想向科研机构提出的具体要求通常是无法详尽预见的。
+
+句型三：主语加谓语加宾语
+其谓语动词特点
+该句型的谓语动词是及物动词（transitive verb），这种动词告诉我们由主语发出的动作所作用的对象是什么，这个“所作用的对象”就是通常所说的宾语，即宾语是主语动作的承受对象。英文中绝大多数动词都是及物动词。
+They are looking for one-minute solutions to everything.
+他们想投机取巧，对一切事情都想快速解决。
+Just like instant coffee, they want instant happiness.
+这就像速溶咖啡一样，他们想要的只是“幸福快餐”。
+There are no quick fixes. This attitude leads to disappointment or even failure.
+生活中没有捷径，一味想找捷径最终会导致失望甚至失败。
+在以上例句中，谓语动词mean和want都是及物动词。若是不及物动词，则可以加适当的介词，然后再接宾语，比如looking for和leads to。
+
+简单句叠加成复杂难句
+The emphasis helped to obscure the great importance.
+这种强调模糊了这一重要性。
+该句的主语是the emphasis，谓语是helped，宾语是不定式短语to obscure the great importance。
+一步步把这个句子复杂化：
+The emphasis given by both scholars and statesmen helped to obscure the great importance.
+学者和政治家们的这种强调模糊了这一重要性。
+这里是在主语emphasis后面添加了一个分词短语given by both scholars and statesmen，作后置定语，表明是谁在强调。
+再进一步把这个句子复杂化：
+The emphasis given by both scholars and statesmen to the presumed disappearance of the American frontier helped to obscure the great importance.
+学者和政治家们强调美国边疆消失的假设，这种强调模糊了这一重要性。
+The emphasis given by both scholars and statesmen to the presumed disappearance of the American frontier helped to obscure the great importance.
+介词短语to the presumed disappearance of the American frontier是补充说明主语emphasis的，表明强调的内容是什么。
+再进一步把这个句子复杂化：
+The emphasis given by both scholars and statesmen to the presumed disappearance of the American frontier helped to obscure the great importance of changes in the conditions and consequences of international trade.
+学者和政治家们强调美国边疆消失的假设，这种强调模糊了国际贸易的条件和后果方面发生变化的巨大作用。
+The emphasis given by both scholars and statesmen to the presumed disappearance of the American frontier helped to obscure the great importance of changes in the conditions and consequences of international trade.
+这里在importance后面添加了介词短语of changes in the conditions and consequences of international trade，作后置定语。这里还要搞清楚并列关系，不是changes in the conditions和consequences of international trade并列，而是conditions和consequences并列，然后介词短语of international trade修饰conditions and consequences，表示“国际贸易的条件和后果”。
+最后整个介词短语in the conditions and consequences of international trade修饰changes，表示在哪方面发生的变化，即“在国际贸易的条件和后果两方面发生的变化”。
+再进一步把这个句子复杂化：
+The emphasis given by both scholars and statesmen to the presumed disappearance of the American frontier helped to obscure the great importance of changes in the conditions and consequences of international trade that occurred during the second half of the nineteenth century.
+学者和政治家们强调美国边疆消失的假设，这种强调模糊了在19世纪后半期国际贸易的条件和后果两方面发生变化的巨大作用。
+The emphasis given by both scholars and statesmen to the presumed disappearance of the American frontier helped to obscure the great importance of changes in the conditions and consequences of international trade that occurred during the second half of the nineteenth century.
+这里在international trade后面添加了定语从句that occurred during the second half of the nineteenth century，作后置定语。这个定语从句则是一个“主语加谓语”的句型，其主语是关系词that，谓语是occurred。
+综上所述，这个复杂的句子其实就是一个“主语加谓语加宾语”的句型，即the emphasis…helped to obscure the great importance…。其内部又带有一个“主语加谓语”的句型，即that occurred…。
+
+句型四：主语 加 谓语 加 间接宾语 加 直接宾语
+其谓语动词的特点
+该句型的谓语动词是双宾动词（dative verb），这种动词后面所接的成分有人又有物。一般来讲，这里的“人”表示动作的接受者，称作间接宾语（indirect object）；“物”表示动作作用的对象，是动作的承受者，称作直接宾语（direct object）。间接宾语和直接宾语合起来称为双宾语。
+He showed the guard（间接宾语）his passport（直接宾语）.
+他把护照给门卫看了。
+对于这个句型，一般可以进行这样的改写，即把直接宾语提前至谓语后面，然后添加介词to或for，再把间接宾语放在介词后面。比如上面这个句子可以改写成“He showed his passport to the guard.”。
+I am going to buy her a gift. 等同于 I am going to buy a gift for her.
+我打算给她买个礼物。
+
+选择介词for还是to，取决于谓语动词。具体详述如下：
+同show一样，当间接宾语后移时，间接宾语前需带介词to，表示间接宾语是动作的接受者。这样的动词有：assign，award，bring， deliver，deny，feed，give，grant，hand，lend，offer，owe，pass， pay，promise，post，read，recommend，sell，send，show，take和write 等等。
+同buy一样，当间接宾语后移时，间接宾语前需带介词for。这样的动词有：book （预订），buy，build，change，choose，cook， fetch，find，get，keep，make，order，prepare和sing等等。
+- 有个别动词只用于“主语+动词+间接宾语（+直接宾语）”的结构，而不用介词来替换。这样的动词有：charge，cost和bet等等。比如：
+I’ll bet you ten dollars. 我跟你赌10美元。
+The repairman charged me ten dollars. 修理工收了我10美元。
+上面这些句子都是无法用for或to来改写的。
+- 还有更特殊的动词（如ask）当间接宾语后移时，间接宾语前需带介词of。比如：
+Can I ask you a question? 等同于 Can I ask a question of you? 我能问你一个问题吗？
+I have a question to ask of you. 我有一个问题要问你。
+I have a big favor to ask of you. 我想请你帮个忙。
+
+简单句叠加成复杂难句
+Her work won her the Nobel Prize in 1983.
+她的工作使她赢得了1983年的诺贝尔奖。
+该句的动词won是一个双宾动词，其后要接双宾语，即 win sb. sth.，表示“为某人赢得某物”。这里的her是间接宾语，the Nobel Prize是直接宾语。
+Her work in genetics won United States scientist Barbara McClintock the Nobel Prize in 1983.
+芭芭拉·麦克林托克在遗传学领域的研究成果使她赢得了1983年的诺贝尔奖。
+
+句型五：主语 加 谓语 加 宾语 加 宾语补足语
+其谓语动词的特点
+该句型的谓语动词是宾补动词，这种动词后面接宾语，而此宾语后又接补充说明宾语的补足语。宾语和宾语补足语合起来称为复合宾语。
+常见的带复合宾语的动词有：appoint，believe，call，choose，consider，declare，elect，feel，find，keep，leave，let，make，name，nominate，prove，see，suppose和vote等等。请看例句：
+I very much hope that this new medium will make my Christmas message more personal and direct.
+从句中的宾语是my Christmas message，宾语补足语是more personal and direct。这里是形容词作宾语补足语。
+我衷心希望，这种新媒体能让我的圣诞寓意更有人情味、更加直接。
+
+A hedge （树篱） between keeps friendship green.
+保持距离，友谊长青。（这句话可引申为“君子之交淡如水”。）
+该句的宾语是friendship，宾语补足语是green。这里是形容词作宾语补足语。
+
+They appointed John chairman.
+他们任命约翰为主席。
+该句的宾语是John，宾语补足语是chairman。这里是名词作宾语补足语。
+
+I believe him to be true.
+我相信他是真诚的。
+该句的宾语是him，宾语补足语是to be true。这里是不定式作宾语补足语。
+
+The chairman declared the meeting over.
+主席宣布会议结束。
+该句的宾语是the meeting，宾语补足语是over。这里是副词作宾语补足语。
+
+区分双宾语和复合宾语
+区分这两种宾语的方法很简单，就是在宾语后面加上be动词，若能构成一个语义通顺的句子，即是补足语。因为宾语与宾语补足语的语义关系就相当于主语与主语补足语的关系，即类似一个主系表结构，而间接宾语与直接宾语二者之间就没有这样的语义关系。
+例句1） I made John our chairman.
+我选了约翰当我们的主席。
+例句2） I made John a cake.
+我给约翰做了一块蛋糕。
+在例句1）中，在宾语John后面添加is，即“John is our chairman.”。这说得通，所以例句1）中的our chairman是宾语补足语。
+而在例句2）中，在宾语John后面添加is，即“John is a cake. （约翰是一块蛋糕。）”。这显然讲不通，所以例句2）是一个双宾语结构，a cake是直接宾语。
+
+例句1） She will make him a good husband.
+她会把他变成一个好丈夫。
+例句2） She will make him a good wife.
+她会成为他的好妻子。
+在例句1）中，在宾语him后面加上 is，即“He is a good husband.”。这说得通，所以例句1）是一个复合宾语结构，句中的a good husband是宾语补足语。
+而在例句2）中，在宾语him后面加上is，即“He is a good wife.（他是一个好妻子。）”。这显然有悖常理。实际上它是补充说明主语she的，应该算作主语补足语，例句2）可以改写为“She will make a good wife for him.”。
+在例句1） 中，make是大家熟悉的使役动词，英文解释是to cause to be or become，表示“使……成为”；
+而在例句2）中，make并非使役动词，英文解释是to develop into，表示“成为”。
+
+简单句叠加成复杂难句
+Willa Cather considered this novel her best work.
+薇拉·凯瑟认为这部小说是她最好的一部作品。
+该句的动词considered是一个宾补动词，其后不但要带宾语this novel，还要接宾语补足语her best work，补充说明前面的宾语。若只说“Willa Cather considered this novel.”，这句话的意思显然不完整。
+把这句话稍微变得复杂一点：
+Willa Cather considered her novel of life in nineteenth-century Nebraska, My Antonia her best work.
+薇拉·凯瑟认为她的那部描写19世纪内布拉斯加州生活的小说《我的安东尼亚》是她最好的一部作品。
+Willa Cather considered her novel of life in nineteenth-century Nebraska, My Antonia her best work.
+这句话的宾语较长，是her novel of life in nineteenth- century Nebraska, My Antonia，其中My Antonia是小说的名字，与名词短语her novel of life in nineteenth-century Nebraska构成同位语。宾语补足语是her best work。

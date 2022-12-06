@@ -13,15 +13,13 @@
 
 package me.fengorz.kiwi.word.api.feign.fallback;
 
-import org.springframework.stereotype.Component;
-
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.api.R;
 import me.fengorz.kiwi.common.api.feign.AbstractFallback;
 import me.fengorz.kiwi.word.api.feign.QueryApi;
 import me.fengorz.kiwi.word.api.vo.detail.WordQueryVO;
+import org.springframework.stereotype.Component;
 
 /**
  * Hystrix熔断回调实现 @Author zhanshifeng

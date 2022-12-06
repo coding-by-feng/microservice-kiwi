@@ -16,15 +16,14 @@
 
 package me.fengorz.kiwi.common.api.entity;
 
-import static me.fengorz.kiwi.common.api.ApiContants.ADMIN_USERNAME;
-
-import java.util.Collection;
-
+import lombok.Getter;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 
-import lombok.Getter;
+import java.util.Collection;
+
+import static me.fengorz.kiwi.common.api.ApiContants.ADMIN_USERNAME;
 
 /**
  * @Author zhanshifeng @Date 2019-09-25 10:41

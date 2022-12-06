@@ -16,9 +16,8 @@
 
 package me.fengorz.kiwi.common.sdk.exception;
 
-import org.apache.commons.lang3.StringUtils;
-
 import me.fengorz.kiwi.common.api.ResultCode;
+import org.apache.commons.lang3.StringUtils;
 
 
 /**

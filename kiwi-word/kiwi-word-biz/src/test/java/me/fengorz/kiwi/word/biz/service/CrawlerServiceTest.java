@@ -16,8 +16,13 @@
 
 package me.fengorz.kiwi.word.biz.service;
 
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
+import me.fengorz.kiwi.common.sdk.constant.EnvConstants;
+import me.fengorz.kiwi.word.api.common.enumeration.ReviseAudioGenerationEnum;
+import me.fengorz.kiwi.word.biz.WordBizApplication;
+import me.fengorz.kiwi.word.biz.service.operate.CrawlerService;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,13 +30,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-
-import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
-import me.fengorz.kiwi.common.sdk.constant.EnvConstants;
-import me.fengorz.kiwi.word.api.common.enumeration.ReviseAudioGenerationEnum;
-import me.fengorz.kiwi.word.biz.WordBizApplication;
-import me.fengorz.kiwi.word.biz.service.operate.CrawlerService;
 
 @Slf4j
 @ActiveProfiles({EnvConstants.DEV, EnvConstants.BASE})
@@ -46,14 +44,13 @@ public class CrawlerServiceTest {
     @Test
     @SneakyThrows
     // @RepeatedTest(value = 3)
-    // @Disabled
     void generateTtsVoice() {
         Assertions.assertDoesNotThrow(() -> crawlerService.generateTtsVoice(ReviseAudioGenerationEnum.ONLY_COLLECTED));
     }
 
-    @Test
-    @Disabled
+    // @Test
     void test_reFetchPronunciation() {
         crawlerService.reFetchPronunciation(3053026);
     }
+
 }

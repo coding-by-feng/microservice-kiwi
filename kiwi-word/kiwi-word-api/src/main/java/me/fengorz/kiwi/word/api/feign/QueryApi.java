@@ -12,16 +12,14 @@
  */
 package me.fengorz.kiwi.word.api.feign;
 
-import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-
 import me.fengorz.kiwi.common.api.R;
 import me.fengorz.kiwi.common.sdk.constant.EnvConstants;
 import me.fengorz.kiwi.word.api.feign.factory.QueryApiFallbackFactory;
 import me.fengorz.kiwi.word.api.vo.detail.WordQueryVO;
+import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 /**
  * @Author zhanshifeng

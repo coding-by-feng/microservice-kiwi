@@ -19,8 +19,16 @@
 
 package me.fengorz.kiwi.word.biz.service;
 
-import java.util.List;
-
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import me.fengorz.kiwi.common.api.R;
+import me.fengorz.kiwi.common.sdk.constant.EnvConstants;
+import me.fengorz.kiwi.word.api.entity.WordMainDO;
+import me.fengorz.kiwi.word.api.vo.detail.WordQueryVO;
+import me.fengorz.kiwi.word.biz.WordBizApplication;
+import me.fengorz.kiwi.word.biz.controller.WordMainController;
+import me.fengorz.kiwi.word.biz.service.base.WordMainService;
+import me.fengorz.kiwi.word.biz.service.operate.CleanerService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -30,13 +38,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
-
-import me.fengorz.kiwi.common.api.R;
-import me.fengorz.kiwi.common.sdk.constant.EnvConstants;
-import me.fengorz.kiwi.word.api.vo.detail.WordQueryVO;
-import me.fengorz.kiwi.word.biz.WordBizApplication;
-import me.fengorz.kiwi.word.biz.controller.WordMainController;
+import java.util.List;
 
 @ActiveProfiles({EnvConstants.DEV, EnvConstants.BASE})
 @ExtendWith(SpringExtension.class)
@@ -46,12 +48,22 @@ public class OperateTest {
 
     @Autowired
     private WordMainController wordMainController;
+    @Autowired
+    private CleanerService cleanerService;
+    @Autowired
+    private WordMainService wordMainService;
 
-    @Test
+    // @Test
     void queryWord() {
         R<IPage<WordQueryVO>> result = wordMainController.queryWord("accede to sth");
         List<WordQueryVO> records = result.getData().getRecords();
         Assertions.assertTrue(records.size() > 0);
         Assertions.assertEquals(records.get(0).getWordName(), "accede to sth");
+    }
+
+    @Test
+    void evictAll() {
+        WordMainDO tuesday = wordMainService.getOne(Wrappers.<WordMainDO>lambdaQuery().eq(WordMainDO::getWordName, "Tuesday"));
+        cleanerService.evictAll(tuesday, "Tuesday");
     }
 }

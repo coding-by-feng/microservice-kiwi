@@ -53,11 +53,11 @@ public class WordBizConfig {
     @Bean
     public ParaphraseTtsGenerationPayload paraphraseTtsGenerationPayload() {
         List<ImmutablePair<ReviseAudioTypeEnum, TtsSourceEnum>> pairs = new ArrayList<>();
-        pairs.add(ImmutablePair.of(ReviseAudioTypeEnum.WORD_SPELLING, TtsSourceEnum.BAIDU));
-        pairs.add(ImmutablePair.of(ReviseAudioTypeEnum.CHARACTER_CH, TtsSourceEnum.BAIDU));
-        pairs.add(ImmutablePair.of(ReviseAudioTypeEnum.PARAPHRASE_CH, TtsSourceEnum.BAIDU));
+        pairs.add(ImmutablePair.of(ReviseAudioTypeEnum.WORD_SPELLING, TtsSourceEnum.VOICERSS));
+        pairs.add(ImmutablePair.of(ReviseAudioTypeEnum.CHARACTER_CH, TtsSourceEnum.VOICERSS));
+        pairs.add(ImmutablePair.of(ReviseAudioTypeEnum.PARAPHRASE_CH, TtsSourceEnum.VOICERSS));
         pairs.add(ImmutablePair.of(ReviseAudioTypeEnum.PARAPHRASE_EN, TtsSourceEnum.VOICERSS));
-        pairs.add(ImmutablePair.of(ReviseAudioTypeEnum.EXAMPLE_CH, TtsSourceEnum.BAIDU));
+        pairs.add(ImmutablePair.of(ReviseAudioTypeEnum.EXAMPLE_CH, TtsSourceEnum.VOICERSS));
         pairs.add(ImmutablePair.of(ReviseAudioTypeEnum.EXAMPLE_EN, TtsSourceEnum.VOICERSS));
         pairs.add(ImmutablePair.of(ReviseAudioTypeEnum.PHRASE_PRONUNCIATION, TtsSourceEnum.VOICERSS));
 

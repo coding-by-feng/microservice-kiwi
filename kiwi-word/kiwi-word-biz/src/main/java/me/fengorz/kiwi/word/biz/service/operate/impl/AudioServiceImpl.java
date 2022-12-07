@@ -29,6 +29,7 @@ import me.fengorz.kiwi.word.api.common.enumeration.ReviseAudioTypeEnum;
 import me.fengorz.kiwi.word.biz.common.SpeakerFunction;
 import me.fengorz.kiwi.word.biz.mapper.ReviewAudioMapper;
 import me.fengorz.kiwi.word.biz.service.operate.AudioService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayInputStream;
@@ -74,6 +75,9 @@ public class AudioServiceImpl implements AudioService {
 
     @Override
     public String generateVoiceUseBaiduTts(String chineseText) throws DfsOperateException, TtsException {
+        if (StringUtils.isBlank(chineseText)) {
+            chineseText = CHINESE_TEXT_MISSING;
+        }
         byte[] bytes = baiduTtsService.speech(chineseText);
         return dfsService.uploadFile(new ByteArrayInputStream(bytes), bytes.length, ApiCrawlerConstants.EXT_MP3);
     }
@@ -89,5 +93,7 @@ public class AudioServiceImpl implements AudioService {
         }
         return bytes;
     }
+
+    private static final String CHINESE_TEXT_MISSING = "中文翻译缺失";
 
 }

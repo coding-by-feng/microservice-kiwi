@@ -191,7 +191,7 @@ public class TtsServiceImpl implements TtsService {
         return wrap(voice);
     }
 
-    private static final int DEFAULT_TTS_VOICE_RSS_ENGLISH_SPEECH_RATE = 2;
+    private static final int DEFAULT_TTS_VOICE_RSS_ENGLISH_SPEECH_RATE = -2;
     private static final String DEFAULT_TTS_VOICES_ROLE = "Xia";
     private static final String ENGLISH_PARAPHRASE_MISSING = "英文缺失";
     private static final String CHINESE_PARAPHRASE_MISSING = "中文缺失";

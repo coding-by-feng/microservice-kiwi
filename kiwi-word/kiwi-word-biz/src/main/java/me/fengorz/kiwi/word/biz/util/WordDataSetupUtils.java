@@ -18,6 +18,7 @@ package me.fengorz.kiwi.word.biz.util;
 
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
+import me.fengorz.kiwi.common.sdk.util.CommonUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
@@ -37,9 +38,8 @@ public final class WordDataSetupUtils {
 
     public static Set<String> extractIeltsWordList() {
         final Set<String> wordList = new HashSet<>();
-        String resourcePath = WordDataSetupUtils.class.getResource(GlobalConstants.SYMBOL_FORWARD_SLASH).getPath();
         try {
-            Files.list(Paths.get(resourcePath + "/word-list")).forEach(path -> {
+            Files.list(Paths.get(CommonUtils.getResourcePath() + "/word-list")).forEach(path -> {
                 log.info("path: {}", path);
                 try {
                     wordList.addAll(WordDataSetupUtils.extractWordList(path.toString()));

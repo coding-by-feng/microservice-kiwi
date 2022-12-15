@@ -23,19 +23,20 @@ import me.fengorz.kiwi.common.api.R;
 import me.fengorz.kiwi.common.sdk.constant.EnvConstants;
 import me.fengorz.kiwi.common.sdk.util.json.KiwiJsonUtils;
 import me.fengorz.kiwi.word.biz.WordBizApplication;
+import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.*;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.util.StreamUtils;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -47,21 +48,23 @@ import java.util.concurrent.TimeUnit;
 @ActiveProfiles({EnvConstants.DEV, EnvConstants.BASE})
 @ExtendWith(SpringExtension.class)
 @TestPropertySource("classpath:env.properties")
-@SpringBootTest(classes = WordBizApplication.class, webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
+@SpringBootTest(classes = WordBizApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class ControllerTest {
 
     private final TestRestTemplate testRestTemplate = new TestRestTemplate();
+    @LocalServerPort
+    private Integer port;
 
     @SneakyThrows
     @Test
-    // @Disabled
+    @Disabled
     void test_queryWord() {
         ResponseEntity<R> response =
-                testRestTemplate.getForEntity("http://localhost:8081/word/main/query/AOB", R.class);
+                testRestTemplate.getForEntity(String.format("http://localhost:%d/word/main/query/AOB", port), R.class);
         Assertions.assertNotNull(response.getBody());
         log.info("Data is: {}", KiwiJsonUtils.toJsonStr(response.getBody()));
 
-        TimeUnit.SECONDS.sleep(120);
+        // TimeUnit.SECONDS.sleep(120);
         // HttpHeaders headers = response.getHeaders();
         // headers.forEach((k, v) -> {
         //     log.info("header name is: {}, value is: {}", k, v);
@@ -69,34 +72,63 @@ public class ControllerTest {
         // assertCacheControl(headers);
     }
 
-    // @Test
+    @Disabled
+    @Test
     void test_removeWord() {
         ResponseEntity<R> response =
-                testRestTemplate.getForEntity("http://localhost:8081/word/fetch/removeWord/1338674", R.class);
+                testRestTemplate.getForEntity(String.format("http://localhost:%d/word/fetch/removeWord/1338674", port), R.class);
         Assertions.assertNotNull(response.getBody());
         log.info("Data is: {}", KiwiJsonUtils.toJsonStr(response.getBody()));
     }
 
-    // @Test
+    @Disabled
+    @Test
     void test_setupIeltsWordList() {
         ResponseEntity<R> response =
-                testRestTemplate.getForEntity("http://localhost:8081/test/setup/ielts/word-list", R.class);
+                testRestTemplate.getForEntity(String.format("http://localhost:%d/test/setup/ielts/word-list", port), R.class);
         Assertions.assertEquals(response.getStatusCode(), HttpStatus.OK);
     }
 
-    // @Test
+    @Disabled
+    @Test
     void test_deprecateReviewAudio() {
         ResponseEntity<R> response =
-                testRestTemplate.getForEntity("http://localhost:8081/word/review/deprecate-review-audio/2350782", R.class);
+                testRestTemplate.getForEntity(String.format("http://localhost:%d/word/review/deprecate-review-audio/2350782", port), R.class);
         Assertions.assertEquals(response.getStatusCode(), HttpStatus.OK);
     }
 
-    // @Test
+    @Disabled
+    @Test
     void test_downloadReviewAudio() {
-        String url = String.format("http://localhost:8081/word/review/downloadReviewAudio/%d/%d", 2979284, 1);
+        String url = String.format("http://localhost:%d/word/review/downloadReviewAudio/%d/%d", port, 2979284, 1);
         File file = testRestTemplate.execute(url, HttpMethod.GET, null, clientHttpResponse -> {
-            File ret = File.createTempFile("2979284", "mp3");
-            StreamUtils.copy(clientHttpResponse.getBody(), new FileOutputStream(ret));
+            Assertions.assertFalse(clientHttpResponse.getStatusCode().isError());
+            File ret = File.createTempFile("2979284", ".mp3", new File("/Users/zhanshifeng/Documents/temp"));
+            FileUtils.copyInputStreamToFile(clientHttpResponse.getBody(), ret);
+            return ret;
+        });
+        Assertions.assertNotNull(file);
+    }
+
+    @Test
+    void test_grammar_downloadMp3() {
+        String url = String.format("http://localhost:%d/grammar/mp3/%s", port, "article");
+        File file = testRestTemplate.execute(url, HttpMethod.GET, null, clientHttpResponse -> {
+            Assertions.assertFalse(clientHttpResponse.getStatusCode().isError());
+            File ret = File.createTempFile("grammar", ".mp3", new File("/Users/zhanshifeng/Documents/temp"));
+            FileUtils.copyInputStreamToFile(clientHttpResponse.getBody(), ret);
+            return ret;
+        });
+        Assertions.assertNotNull(file);
+    }
+
+    @Test
+    void test_grammar_downloadSrt() {
+        String url = String.format("http://localhost:%d/grammar/srt/%s", port, "article");
+        File file = testRestTemplate.execute(url, HttpMethod.GET, null, clientHttpResponse -> {
+            Assertions.assertFalse(clientHttpResponse.getStatusCode().isError());
+            File ret = File.createTempFile("grammar", ".srt", new File("/Users/zhanshifeng/Documents/temp"));
+            FileUtils.copyInputStreamToFile(clientHttpResponse.getBody(), ret);
             return ret;
         });
         Assertions.assertNotNull(file);

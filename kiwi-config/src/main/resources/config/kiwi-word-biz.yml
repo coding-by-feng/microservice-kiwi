@@ -17,7 +17,7 @@ ignore:
     - /word/main/queryById/**
     - /word/main/fuzzyQueryList/**
     - /word/pronunciation/downloadVoice/**
-    - /word/main/query/**•
+    - /word/main/query/**
     - /word/fetch/**
     - /word/main/variant/**
     - /word/main/listOverlapAnyway
@@ -27,6 +27,8 @@ ignore:
     - /word/review/character/downloadReviewAudio/**
     - /word/review/generateTtsVoice/**
     - /word/review/generateTtsVoiceFromParaphraseId/**
+    - /grammar/mp3/**
+    - /grammar/srt/**
   userNames:
     - admin
 

@@ -26,7 +26,7 @@ import me.fengorz.kiwi.common.sdk.exception.tts.TtsException;
 import me.fengorz.kiwi.common.tts.service.TtsService;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
@@ -72,11 +72,18 @@ public class TtsTest {
         });
     }
 
-    @Test
+    // @Test
     public void test() {
         assertDoesNotThrow(() -> {
             generate("Dream.txt");
         });
+    }
+
+    @Test
+    @SneakyThrows
+    public void test_CH() {
+        byte[] bytes = ttsService.speechChinese("3744309a79ff48588fc1b63928c68c91", "a。b。p。d。u。p。a");
+        FileUtils.writeByteArrayToFile(new File("testCh.mp3"), bytes);
     }
 
     private void generate(final String file) throws IOException, TtsException {

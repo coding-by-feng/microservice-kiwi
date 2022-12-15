@@ -25,7 +25,13 @@ ignore:
     - /word/main/variant/**
     - /word/main/listOverlapAnyway
     - /word/review/createTheDays
-    - /word/review/deprecate-review-audio/**
+    - /word/review/refreshAllApiKey
+    - /word/review/downloadReviewAudio/**
+    - /word/review/character/downloadReviewAudio/**
+    - /word/review/generateTtsVoice/**
+    - /word/review/generateTtsVoiceFromParaphraseId/**
+    - /grammar/mp3/**
+    - /grammar/srt/**
   userNames:
     - admin
 

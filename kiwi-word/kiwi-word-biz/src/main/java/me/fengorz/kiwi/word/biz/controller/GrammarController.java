@@ -21,6 +21,7 @@ import me.fengorz.kiwi.common.sdk.controller.BaseController;
 import me.fengorz.kiwi.common.sdk.exception.ResourceNotFoundException;
 import me.fengorz.kiwi.common.sdk.util.CommonUtils;
 import me.fengorz.kiwi.common.sdk.web.WebTools;
+import org.apache.commons.io.IOUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,8 +31,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 
 @Slf4j
 @RestController
@@ -43,27 +42,35 @@ public class GrammarController extends BaseController {
     public void downloadMp3(HttpServletResponse response, @PathVariable("type") String type) {
         InputStream inputStream = null;
         try {
-            inputStream = getInputStream(type, MP3);
+            inputStream = CommonUtils.getResourceFileInputStream(FOLDER + File.separator + type + MP3);
             WebTools.downloadResponseAndClose(response, inputStream);
-        } catch (IOException e) {
+        } catch (Exception e) {
             log.error("Method downloadMp3 invoked failed.", e);
             throw new ResourceNotFoundException();
+        } finally {
+            try {
+                IOUtils.close(inputStream);
+            } catch (IOException e) {
+                log.error("Close input stream error!", e);
+            }
         }
-    }
-
-    private InputStream getInputStream(String type, String suffix) throws IOException {
-        return Files.newInputStream(Paths.get(CommonUtils.getResourcePath() + File.separator + FOLDER + File.separator + type + suffix));
     }
 
     @GetMapping("/srt/{type}")
     public void downloadSrt(HttpServletResponse response, @PathVariable("type") String type) {
         InputStream inputStream = null;
         try {
-            inputStream = getInputStream(type, SRT);
+            inputStream = CommonUtils.getResourceFileInputStream(FOLDER + File.separator + type + SRT);
             WebTools.downloadResponseAndClose(response, inputStream);
-        } catch (IOException e) {
+        } catch (Exception e) {
             log.error("Method downloadSrt invoked failed.", e);
             throw new ResourceNotFoundException();
+        } finally {
+            try {
+                IOUtils.close(inputStream);
+            } catch (IOException e) {
+                log.error("Close input stream error!", e);
+            }
         }
     }
 

@@ -21,6 +21,7 @@ import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
 import me.fengorz.kiwi.common.sdk.exception.ResourceNotFoundException;
 
 import java.io.File;
+import java.io.InputStream;
 import java.util.Optional;
 
 /**
@@ -41,5 +42,9 @@ public class CommonUtils {
     public static String getResourcePath() {
         return Optional.ofNullable(CommonUtils.class.getResource(File.separator))
                 .orElseThrow(ResourceNotFoundException::new).getPath();
+    }
+
+    public static InputStream getResourceFileInputStream(String pathAndFile) {
+        return CommonUtils.class.getClassLoader().getResourceAsStream(pathAndFile);
     }
 }

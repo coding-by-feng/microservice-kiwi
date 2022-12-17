@@ -66,12 +66,17 @@ public class WebTools extends WebUtils {
     }
 
     public static void downloadResponseAndClose(HttpServletResponse response, InputStream inputStream) {
+        downloadResponseAndClose(response, inputStream, false);
+    }
+
+    public static void downloadResponseAndClose(HttpServletResponse response, InputStream inputStream, boolean isCountLength) {
         if (inputStream == null) {
             return;
         }
 
         ServletOutputStream temps = null;
         DataInputStream in = null;
+        int readLengthTotal = 0;
         try {
             temps = response.getOutputStream();
             in = new DataInputStream(inputStream);
@@ -81,6 +86,7 @@ public class WebTools extends WebUtils {
             int readLength;
             do {
                 readLength = in.read(b);
+                readLengthTotal += readLength;
                 if (readLength > 0 && readLength < IN_READ_BYTES_LENGTH) {
                     byte[] minB = new byte[readLength];
                     System.arraycopy(b, 0, minB, 0, readLength);
@@ -95,6 +101,11 @@ public class WebTools extends WebUtils {
         } catch (IOException e) {
             log.error("WebTools downloadResponse occurred error, cause of the error is {}", e.getMessage());
         } finally {
+            if (isCountLength) {
+                response.addHeader(CONTENT_TYPE, AUDIO_MPEG);
+                response.addHeader(ACCEPT_RANGES, BYTES);
+                response.addHeader(CONTENT_LENGTH, String.valueOf(readLengthTotal));
+            }
             if (temps != null) {
                 try {
                     temps.close();
@@ -123,4 +134,11 @@ public class WebTools extends WebUtils {
         }
         return 0;
     }
+
+    public static final String CONTENT_TYPE = "Content-Type";
+    public static final String AUDIO_MPEG = "audio/mpeg";
+    public static final String ACCEPT_RANGES = "Accept-Ranges";
+    public static final String BYTES = "bytes";
+    public static final String CONTENT_LENGTH = "Content-Length";
+
 }

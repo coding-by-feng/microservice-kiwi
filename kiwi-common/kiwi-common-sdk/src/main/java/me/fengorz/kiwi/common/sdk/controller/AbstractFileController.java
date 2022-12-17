@@ -20,16 +20,12 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
+import static me.fengorz.kiwi.common.sdk.web.WebTools.*;
+
 /**
  * @Description 抽象控制层基类 @Author zhanshifeng @Date 2020/4/21 7:28 PM
  */
 public abstract class AbstractFileController extends BaseController {
-
-    protected static final String CONTENT_TYPE = "Content-Type";
-    protected static final String AUDIO_MPEG = "audio/mpeg";
-    protected static final String ACCEPT_RANGES = "Accept-Ranges";
-    protected static final String BYTES = "bytes";
-    protected static final String CONTENT_LENGTH = "Content-Length";
 
     protected InputStream buildInputStream(HttpServletResponse response, byte[] bytes) {
         InputStream inputStream;

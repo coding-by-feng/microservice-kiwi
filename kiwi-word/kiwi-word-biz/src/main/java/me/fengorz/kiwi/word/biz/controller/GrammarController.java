@@ -17,7 +17,7 @@ package me.fengorz.kiwi.word.biz.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import me.fengorz.kiwi.common.sdk.controller.BaseController;
+import me.fengorz.kiwi.common.sdk.controller.AbstractFileController;
 import me.fengorz.kiwi.common.sdk.exception.ResourceNotFoundException;
 import me.fengorz.kiwi.common.sdk.util.CommonUtils;
 import me.fengorz.kiwi.common.sdk.web.WebTools;
@@ -31,18 +31,24 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 @Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/grammar/")
-public class GrammarController extends BaseController {
+public class GrammarController extends AbstractFileController {
 
     @GetMapping("/mp3/{type}")
     public void downloadMp3(HttpServletResponse response, @PathVariable("type") String type) {
         InputStream inputStream = null;
         try {
-            inputStream = CommonUtils.getResourceFileInputStream(FOLDER + File.separator + type + MP3);
+            String pathAndFile = FOLDER + File.separator + type + MP3;
+            byte[] bytes = Files.readAllBytes(
+                    Paths.get(CommonUtils.getResourceFile(pathAndFile))
+            );
+            inputStream = buildInputStream(response, bytes);
             WebTools.downloadResponseAndClose(response, inputStream);
         } catch (Exception e) {
             log.error("Method downloadMp3 invoked failed.", e);
@@ -60,7 +66,11 @@ public class GrammarController extends BaseController {
     public void downloadSrt(HttpServletResponse response, @PathVariable("type") String type) {
         InputStream inputStream = null;
         try {
-            inputStream = CommonUtils.getResourceFileInputStream(FOLDER + File.separator + type + SRT);
+            String pathAndFile = FOLDER + File.separator + type + SRT;
+            byte[] bytes = Files.readAllBytes(
+                    Paths.get(CommonUtils.getResourceFile(pathAndFile))
+            );
+            inputStream = buildInputStream(response, bytes);
             WebTools.downloadResponseAndClose(response, inputStream);
         } catch (Exception e) {
             log.error("Method downloadSrt invoked failed.", e);

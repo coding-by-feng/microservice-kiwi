@@ -16,7 +16,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.api.R;
 import me.fengorz.kiwi.common.fastdfs.service.DfsService;
-import me.fengorz.kiwi.common.sdk.controller.AbstractDfsController;
+import me.fengorz.kiwi.common.sdk.controller.AbstractFileController;
 import me.fengorz.kiwi.common.sdk.exception.DataCheckedException;
 import me.fengorz.kiwi.common.sdk.exception.ResourceNotFoundException;
 import me.fengorz.kiwi.common.sdk.exception.dfs.DfsOperateException;
@@ -48,7 +48,7 @@ import java.util.List;
 @RestController
 @AllArgsConstructor
 @RequestMapping("/word/review/")
-public class WordReviewController extends AbstractDfsController {
+public class WordReviewController extends AbstractFileController {
 
     private final ReviewService reviewService;
     private final OperateService operateService;
@@ -130,10 +130,7 @@ public class WordReviewController extends AbstractDfsController {
     private InputStream prepareInputStream(HttpServletResponse response, Integer sourceId, Integer type, WordReviewAudioDO wordReviewAudio, InputStream inputStream) throws DfsOperateException {
         byte[] bytes = this.dfsService.downloadFile(wordReviewAudio.getGroupName(), wordReviewAudio.getFilePath());
         log.info("Required wordReviewAudio bytes download success, sourceId={}, type={}", sourceId, type);
-        inputStream = new ByteArrayInputStream(bytes);
-        response.addHeader(CONTENT_TYPE, AUDIO_MPEG);
-        response.addHeader(ACCEPT_RANGES, BYTES);
-        response.addHeader(CONTENT_LENGTH, String.valueOf(bytes.length));
+        inputStream = buildInputStream(response, bytes);
         return inputStream;
     }
 

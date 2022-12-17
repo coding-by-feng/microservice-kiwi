@@ -44,6 +44,11 @@ public class CommonUtils {
                 .orElseThrow(ResourceNotFoundException::new).getPath();
     }
 
+    public static String getResourceFile(String pathAndFile) {
+        return Optional.ofNullable(CommonUtils.class.getResource(File.separator))
+                .orElseThrow(ResourceNotFoundException::new).getFile() + pathAndFile;
+    }
+
     public static InputStream getResourceFileInputStream(String pathAndFile) {
         return CommonUtils.class.getClassLoader().getResourceAsStream(pathAndFile);
     }

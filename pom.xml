@@ -22,6 +22,7 @@
         <module>kiwi-gateway</module>
         <module>kiwi-common</module>
         <module>kiwi-visual</module>
+        <module>kiwi-test</module>
     </modules>
 
     <properties>

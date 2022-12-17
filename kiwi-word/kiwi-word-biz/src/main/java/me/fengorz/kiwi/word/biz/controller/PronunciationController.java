@@ -19,7 +19,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.fastdfs.service.DfsService;
 import me.fengorz.kiwi.common.sdk.annotation.log.LogMarker;
-import me.fengorz.kiwi.common.sdk.controller.AbstractDfsController;
+import me.fengorz.kiwi.common.sdk.controller.AbstractFileController;
 import me.fengorz.kiwi.common.sdk.exception.dfs.DfsOperateException;
 import me.fengorz.kiwi.common.sdk.web.WebTools;
 import me.fengorz.kiwi.word.api.entity.PronunciationDO;
@@ -44,7 +44,7 @@ import java.io.InputStream;
 @RequiredArgsConstructor
 @RequestMapping("/word/pronunciation")
 @Slf4j
-public class PronunciationController extends AbstractDfsController {
+public class PronunciationController extends AbstractFileController {
 
     private final PronunciationService wordPronunciationService;
     private final DfsService dfsService;

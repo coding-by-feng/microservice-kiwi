@@ -63,17 +63,14 @@ public class PronunciationController extends AbstractFileController {
         InputStream inputStream = null;
         try {
             byte[] bytes =
-                this.dfsService.downloadFile(wordPronunciation.getGroupName(), wordPronunciation.getVoiceFilePath());
+                    this.dfsService.downloadFile(wordPronunciation.getGroupName(), wordPronunciation.getVoiceFilePath());
             log.info("Required wordPronunciation bytes download success.");
             inputStream = new ByteArrayInputStream(bytes);
-            response.addHeader(CONTENT_TYPE, AUDIO_MPEG);
-            response.addHeader(ACCEPT_RANGES, BYTES);
-            response.addHeader(CONTENT_LENGTH, String.valueOf(bytes.length));
         } catch (DfsOperateException e) {
             log.error("downloadVoice exception, pronunciationId={}, re-fetching now!", pronunciationId, e);
             crawlerService.reFetchPronunciation(pronunciationId);
         }
-        WebTools.downloadResponseAndClose(response, inputStream);
+        WebTools.downloadResponseAndClose(response, inputStream, true);
         log.info("Method downloadResponse for wordPronunciation invoked success.");
     }
 }

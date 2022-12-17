@@ -35,7 +35,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletResponse;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
@@ -147,10 +146,7 @@ public class WordReviewController extends AbstractFileController {
         try {
             byte[] bytes = this.dfsService.downloadFile(wordReviewAudio.getGroupName(), wordReviewAudio.getFilePath());
             log.info("Required wordReviewAudio bytes download success, characterCode={}", characterCode);
-            inputStream = new ByteArrayInputStream(bytes);
-            response.addHeader(CONTENT_TYPE, AUDIO_MPEG);
-            response.addHeader(ACCEPT_RANGES, BYTES);
-            response.addHeader(CONTENT_LENGTH, String.valueOf(bytes.length));
+            buildInputStream(response, bytes);
         } catch (DfsOperateException e) {
             log.error("downloadReviewAudio exception, characterCode={}!", characterCode, e);
         }

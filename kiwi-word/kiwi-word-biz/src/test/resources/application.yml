@@ -87,3 +87,4 @@ cache-control:
     - /word/pronunciation/downloadVoice
     - /word/review/downloadReviewAudio
     - /word/review/character/downloadReviewAudio
+    - /grammar/mp3

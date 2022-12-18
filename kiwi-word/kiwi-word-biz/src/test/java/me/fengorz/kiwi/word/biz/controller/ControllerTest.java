@@ -105,11 +105,16 @@ public class ControllerTest {
             Assertions.assertFalse(clientHttpResponse.getStatusCode().isError());
             File ret = File.createTempFile("2979284", ".mp3", new File("/Users/zhanshifeng/Documents/temp"));
             FileUtils.copyInputStreamToFile(clientHttpResponse.getBody(), ret);
+            HttpHeaders headers = clientHttpResponse.getHeaders();
+            headers.forEach((k, v) -> {
+                log.info("header name is: {}, value is: {}", k, v);
+            });
             return ret;
         });
         Assertions.assertNotNull(file);
     }
 
+    // @Disabled
     @Test
     void test_grammar_downloadMp3() {
         String url = String.format("http://localhost:%d/grammar/mp3/%s", port, "article");
@@ -117,11 +122,16 @@ public class ControllerTest {
             Assertions.assertFalse(clientHttpResponse.getStatusCode().isError());
             File ret = File.createTempFile("grammar", ".mp3", new File("/Users/zhanshifeng/Documents/temp"));
             FileUtils.copyInputStreamToFile(clientHttpResponse.getBody(), ret);
+            HttpHeaders headers = clientHttpResponse.getHeaders();
+            headers.forEach((k, v) -> {
+                log.info("header name is: {}, value is: {}", k, v);
+            });
             return ret;
         });
         Assertions.assertNotNull(file);
     }
 
+    @Disabled
     @Test
     void test_grammar_downloadSrt() {
         String url = String.format("http://localhost:%d/grammar/srt/%s", port, "article");

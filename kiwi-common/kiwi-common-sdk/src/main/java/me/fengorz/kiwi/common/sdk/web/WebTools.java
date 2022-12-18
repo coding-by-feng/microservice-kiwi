@@ -98,14 +98,15 @@ public class WebTools extends WebUtils {
                 }
                 temps.flush();
             } while (readLength == IN_READ_BYTES_LENGTH);
-        } catch (IOException e) {
-            log.error("WebTools downloadResponse occurred error, cause of the error is {}", e.getMessage());
-        } finally {
+
             if (isCountLength) {
                 response.addHeader(CONTENT_TYPE, AUDIO_MPEG);
                 response.addHeader(ACCEPT_RANGES, BYTES);
                 response.addHeader(CONTENT_LENGTH, String.valueOf(readLengthTotal));
             }
+        } catch (IOException e) {
+            log.error("WebTools downloadResponse occurred error, cause of the error is {}", e.getMessage());
+        } finally {
             if (temps != null) {
                 try {
                     temps.close();

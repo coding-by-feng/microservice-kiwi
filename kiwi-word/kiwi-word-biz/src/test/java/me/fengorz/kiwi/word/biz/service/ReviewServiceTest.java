@@ -36,11 +36,14 @@ import me.fengorz.kiwi.word.api.entity.ParaphraseStarListDO;
 import me.fengorz.kiwi.word.api.entity.WordReviewAudioDO;
 import me.fengorz.kiwi.word.api.vo.ParaphraseStarListVO;
 import me.fengorz.kiwi.word.api.vo.WordReviewDailyCounterVO;
+import me.fengorz.kiwi.word.api.vo.detail.ParaphraseVO;
+import me.fengorz.kiwi.word.api.vo.detail.WordQueryVO;
 import me.fengorz.kiwi.word.biz.WordBizApplication;
 import me.fengorz.kiwi.word.biz.service.base.ParaphraseService;
 import me.fengorz.kiwi.word.biz.service.base.ParaphraseStarListService;
 import me.fengorz.kiwi.word.biz.service.base.WordMainService;
 import me.fengorz.kiwi.word.biz.service.initialing.RevisePermanentAudioHelper;
+import me.fengorz.kiwi.word.biz.service.operate.OperateService;
 import me.fengorz.kiwi.word.biz.service.operate.ReviewService;
 import me.fengorz.kiwi.word.biz.util.WordDataSetupUtils;
 import org.apache.commons.io.FileUtils;
@@ -50,6 +53,7 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
@@ -63,6 +67,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static me.fengorz.kiwi.common.tts.TtsConstants.BEAN_NAMES.BAIDU_TTS_SERVICE_IMPL;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+
 @Slf4j
 @ActiveProfiles({EnvConstants.DEV, EnvConstants.BASE})
 @ExtendWith(SpringExtension.class)
@@ -75,6 +82,9 @@ public class ReviewServiceTest {
 
     @Autowired
     private WordMainService wordMainService;
+
+    @Autowired
+    private OperateService operateService;
 
     @Autowired
     private ParaphraseService paraphraseService;
@@ -94,31 +104,32 @@ public class ReviewServiceTest {
     @Autowired
     private RevisePermanentAudioHelper revisePermanentAudioHelper;
 
+    @Qualifier(BAIDU_TTS_SERVICE_IMPL)
     @Autowired
     private BaiduTtsService baiduTtsService;
 
     @Test
     @Disabled
     void initPermanent() {
-        Assertions.assertDoesNotThrow(() -> reviewService.initPermanent(false));
+        assertDoesNotThrow(() -> reviewService.initPermanent(false));
     }
 
     // @Test
     @Disabled
     void generateTtsVoiceFromParaphraseId() {
-        Assertions.assertDoesNotThrow(() -> reviewService.generateTtsVoiceFromParaphraseId(2524421));
+        assertDoesNotThrow(() -> reviewService.generateTtsVoiceFromParaphraseId(2524421));
     }
 
     @Test
     @Disabled
     void generateTtsVoice() {
-        Assertions.assertDoesNotThrow(() -> reviewService.generateTtsVoice());
+        assertDoesNotThrow(() -> reviewService.generateTtsVoice());
     }
 
     @Test
     @Disabled
     void createTheDays() {
-        Assertions.assertDoesNotThrow(() -> reviewService.createTheDays(ApiContants.ADMIN_ID));
+        assertDoesNotThrow(() -> reviewService.createTheDays(ApiContants.ADMIN_ID));
     }
 
     @Test
@@ -137,7 +148,6 @@ public class ReviewServiceTest {
 
     @SneakyThrows
     @Test
-    @Order(1)
     @Disabled
     void findWordReviewAudio() {
         // List<ParaphraseDO> test = paraphraseService.listByWordName("test");
@@ -147,8 +157,8 @@ public class ReviewServiceTest {
         // ReviseAudioTypeEnum.PARAPHRASE_EN.getType());
 
         // id=3749976, sourceId=2774291, type=0
-        int sourceId = 1287538;
-        Integer type = ReviseAudioTypeEnum.EXAMPLE_CH.getType();
+        int sourceId = 1293771;
+        Integer type = ReviseAudioTypeEnum.PARAPHRASE_EN.getType();
         WordReviewAudioDO wordReviewAudio =
                 reviewService.findWordReviewAudio(sourceId, type);
         Assertions.assertNotNull(wordReviewAudio);
@@ -169,6 +179,17 @@ public class ReviewServiceTest {
         log.info("wordReviewAudio.getSourceUrl() = {}", wordReviewAudio.getSourceUrl());
         byte[] bytes = this.dfsService.downloadFile(wordReviewAudio.getGroupName(), wordReviewAudio.getFilePath());
         FileUtil.writeBytes(bytes, "/Users/zhanshifeng/Documents/temp/test_all.mp3");
+    }
+
+    @SneakyThrows
+    @Test
+    // @Disabled
+    void test_findCharacterReviewAudio() {
+        WordReviewAudioDO wordReviewAudio = reviewService.findCharacterReviewAudio("adjective");
+        log.info("wordReviewAudio.getSourceText() = {}", wordReviewAudio.getSourceText());
+        log.info("wordReviewAudio.getSourceUrl() = {}", wordReviewAudio.getSourceUrl());
+        byte[] bytes = this.dfsService.downloadFile(wordReviewAudio.getGroupName(), wordReviewAudio.getFilePath());
+        FileUtil.writeBytes(bytes, "/Users/zhanshifeng/Documents/temp/test_adjective.mp3");
     }
 
     @Test
@@ -248,11 +269,24 @@ public class ReviewServiceTest {
         reviewService.removeWordReviewAudio(2447981);
     }
 
-    // @Test
+    @Test
+    @Disabled
     @SneakyThrows
     void test_baidu_tts() {
         byte[] bytes = baiduTtsService.speech("A。B。C");
         FileUtils.writeByteArrayToFile(new File("baiduTts.mp3"), bytes);
+    }
+
+    @SneakyThrows
+    @Disabled
+    @Test
+    void test_generateParaphraseAllAudio() {
+        assertDoesNotThrow(() -> {
+            WordQueryVO test = operateService.queryWord("test");
+            ParaphraseVO paraphraseVO = test.getCharacterVOList().get(0).getParaphraseVOList().get(0);
+            reviewService.removeWordReviewAudio(paraphraseVO.getParaphraseId());
+            reviewService.generateTtsVoiceFromParaphraseId(paraphraseVO.getParaphraseId());
+        });
     }
 
 }

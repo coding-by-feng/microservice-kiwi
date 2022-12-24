@@ -29,10 +29,7 @@ import me.fengorz.kiwi.word.api.entity.WordReviewAudioDO;
 import me.fengorz.kiwi.word.api.vo.WordReviewDailyCounterVO;
 import me.fengorz.kiwi.word.biz.service.operate.OperateService;
 import me.fengorz.kiwi.word.biz.service.operate.ReviewService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -191,6 +188,18 @@ public class WordReviewController extends AbstractFileController {
     @GetMapping("/deprecate-review-audio/{sourceId}")
     public R<Void> deprecateReviewAudio(@PathVariable("sourceId") Integer sourceId) {
         reviewService.removeWordReviewAudio(sourceId);
+        return R.success();
+    }
+
+    @DeleteMapping("/reGenReviewAudio/{sourceId}")
+    public R<Void> reGenReviewAudioForParaphrase(@PathVariable("sourceId") Integer sourceId) {
+        reviewService.removeWordReviewAudio(sourceId);
+        try {
+            reviewService.generateTtsVoiceFromParaphraseId(sourceId);
+        } catch (DfsOperateException | TtsException | DataCheckedException e) {
+            log.error("reGenReviewAudio exception, sourceId={}!", sourceId, e);
+            return R.failed();
+        }
         return R.success();
     }
 

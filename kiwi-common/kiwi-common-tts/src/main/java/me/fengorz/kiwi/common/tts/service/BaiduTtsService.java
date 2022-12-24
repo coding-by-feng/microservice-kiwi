@@ -30,4 +30,11 @@ public interface BaiduTtsService {
 
     byte[] speech(String text) throws TtsException;
 
+    String SPEAK_SPEED_DEFAULT_VALUE = "5";
+    String SPEAK_TONE_DEFAULT_VALUE = "5";
+    String SPEAK_PER_DEFAULT_VALUE_DUYAYA = "4";
+    String SPEAK_PER_DEFAULT_VALUE_DUXIAOMEI = "0";
+    String SPEAK_AUE_DEFAULT_VALUE = "3";
+    String SPEAK_LANGUAGE_DEFAULT_VALUE = "zh";
+
 }

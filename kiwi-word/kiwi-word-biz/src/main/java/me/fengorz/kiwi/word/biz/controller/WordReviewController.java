@@ -95,7 +95,7 @@ public class WordReviewController extends AbstractFileController {
         }
         InputStream inputStream = null;
         try {
-            inputStream = prepareInputStream(response, sourceId, type, wordReviewAudio, inputStream);
+            inputStream = prepareInputStream(response, sourceId, type, wordReviewAudio);
         } catch (DfsOperateException e) {
             log.error("downloadReviewAudio exception, sourceId={}, type={}, {}", sourceId, ReviseAudioTypeEnum.fromValue(type).name(), e.getMessage());
             try {
@@ -107,7 +107,7 @@ public class WordReviewController extends AbstractFileController {
             }
             try {
                 wordReviewAudio = this.reviewService.generateWordReviewAudio(sourceId, type);
-                inputStream = prepareInputStream(response, sourceId, type, wordReviewAudio, inputStream);
+                inputStream = prepareInputStream(response, sourceId, type, wordReviewAudio);
             } catch (DfsOperateException | TtsException | DataCheckedException ex) {
                 try {
                     if (inputStream != null) {
@@ -123,11 +123,10 @@ public class WordReviewController extends AbstractFileController {
         log.info("Method downloadResponse for wordReviewAudio invoked success, sourceId={}, type={}", sourceId, type);
     }
 
-    private InputStream prepareInputStream(HttpServletResponse response, Integer sourceId, Integer type, WordReviewAudioDO wordReviewAudio, InputStream inputStream) throws DfsOperateException {
+    private InputStream prepareInputStream(HttpServletResponse response, Integer sourceId, Integer type, WordReviewAudioDO wordReviewAudio) throws DfsOperateException {
         byte[] bytes = this.dfsService.downloadFile(wordReviewAudio.getGroupName(), wordReviewAudio.getFilePath());
         log.info("Required wordReviewAudio bytes download success, sourceId={}, type={}", sourceId, type);
-        inputStream = buildInputStream(response, bytes);
-        return inputStream;
+        return buildInputStream(response, bytes);
     }
 
     @GetMapping("/character/downloadReviewAudio/{characterCode}")
@@ -142,8 +141,8 @@ public class WordReviewController extends AbstractFileController {
         InputStream inputStream = null;
         try {
             byte[] bytes = this.dfsService.downloadFile(wordReviewAudio.getGroupName(), wordReviewAudio.getFilePath());
-            log.info("Required wordReviewAudio bytes download success, characterCode={}", characterCode);
-            buildInputStream(response, bytes);
+            log.info("Required wordReviewAudio bytes download success, characterCode={}, bytes length={}", characterCode, bytes.length);
+            inputStream = buildInputStream(response, bytes);
         } catch (DfsOperateException e) {
             log.error("downloadReviewAudio exception, characterCode={}!", characterCode, e);
         }

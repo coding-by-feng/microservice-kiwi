@@ -16,6 +16,7 @@
 
 package me.fengorz.kiwi.word.biz.controller;
 
+import cn.hutool.core.io.FileUtil;
 import cn.hutool.http.Header;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -105,6 +106,22 @@ public class ControllerTest {
             Assertions.assertFalse(clientHttpResponse.getStatusCode().isError());
             File ret = File.createTempFile("2979284", ".mp3", new File("/Users/zhanshifeng/Documents/temp"));
             FileUtils.copyInputStreamToFile(clientHttpResponse.getBody(), ret);
+            HttpHeaders headers = clientHttpResponse.getHeaders();
+            headers.forEach((k, v) -> {
+                log.info("header name is: {}, value is: {}", k, v);
+            });
+            return ret;
+        });
+        Assertions.assertNotNull(file);
+    }
+
+    @Test
+    void test_downloadCharacterReviewAudio() {
+        String url = String.format("http://localhost:%d/word/review/character/downloadReviewAudio/%s", port, "adjective");
+        File file = testRestTemplate.execute(url, HttpMethod.GET, null, clientHttpResponse -> {
+            Assertions.assertFalse(clientHttpResponse.getStatusCode().isError());
+            File ret = File.createTempFile("2979284", ".mp3", new File("/Users/zhanshifeng/Documents/temp"));
+            FileUtil.writeFromStream(clientHttpResponse.getBody(), "/Users/zhanshifeng/Documents/temp/test_adjective.mp3");
             HttpHeaders headers = clientHttpResponse.getHeaders();
             headers.forEach((k, v) -> {
                 log.info("header name is: {}, value is: {}", k, v);

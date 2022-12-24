@@ -16,23 +16,31 @@
 
 package me.fengorz.kiwi.word.biz.service.base.impl;
 
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.sdk.constant.EnvConstants;
+import me.fengorz.kiwi.common.tts.service.BaiduTtsService;
 import me.fengorz.kiwi.word.biz.WordBizApplication;
 import me.fengorz.kiwi.word.biz.service.base.ParaphraseStarListService;
 import me.fengorz.kiwi.word.biz.service.base.ParaphraseStarRelService;
+import me.fengorz.kiwi.word.biz.service.operate.AudioService;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.io.File;
 import java.util.List;
+
+import static me.fengorz.kiwi.common.tts.TtsConstants.BEAN_NAMES.BAIDU_TTS_SERVICE_IMPL;
 
 @Slf4j
 @ActiveProfiles({EnvConstants.DEV, EnvConstants.BASE})
@@ -45,6 +53,11 @@ public class BaseServiceTest {
     private ParaphraseStarRelService paraphraseStarRelService;
     @Autowired
     private ParaphraseStarListService starListService;
+    @Autowired
+    private AudioService audioService;
+    @Autowired
+    @Qualifier(BAIDU_TTS_SERVICE_IMPL)
+    private BaiduTtsService baiduTtsService;
 
     @Test
     @Disabled
@@ -56,10 +69,18 @@ public class BaseServiceTest {
     }
 
     @Test
+    @Disabled
     public void test_rememberOne() {
         Assertions.assertDoesNotThrow(() -> {
             starListService.rememberOne(2539690, 1266094);
         });
+    }
+
+    @SneakyThrows
+    @Test
+    public void test_baidu_tts() {
+        byte[] bytes = baiduTtsService.speech("测试一下");
+        FileUtils.writeByteArrayToFile(new File("baidu-tts-test.mp3"), bytes);
     }
 
 }

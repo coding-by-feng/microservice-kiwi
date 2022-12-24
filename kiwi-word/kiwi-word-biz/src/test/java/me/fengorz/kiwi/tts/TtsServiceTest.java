@@ -32,12 +32,15 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.io.IOException;
+
+import static me.fengorz.kiwi.common.tts.TtsConstants.BEAN_NAMES.BAIDU_TTS_SERVICE_IMPL;
 
 @Slf4j
 @ActiveProfiles({EnvConstants.DEV, EnvConstants.BASE})
@@ -53,6 +56,7 @@ public class TtsServiceTest {
     private TtsService ttsService;
 
     @Autowired
+    @Qualifier(BAIDU_TTS_SERVICE_IMPL)
     private BaiduTtsService baiduTtsService;
 
     @Test

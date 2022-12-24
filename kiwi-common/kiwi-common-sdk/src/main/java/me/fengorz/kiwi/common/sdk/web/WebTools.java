@@ -21,6 +21,7 @@ import cn.hutool.core.util.StrUtil;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.sdk.constant.SecurityConstants;
 import me.fengorz.kiwi.common.sdk.exception.AuthException;
+import me.fengorz.kiwi.common.sdk.exception.ResourceNotFoundException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.web.util.WebUtils;
@@ -71,7 +72,7 @@ public class WebTools extends WebUtils {
 
     public static void downloadResponseAndClose(HttpServletResponse response, InputStream inputStream, boolean isCountLength) {
         if (inputStream == null) {
-            return;
+            throw new ResourceNotFoundException("inputStream cannot be null!");
         }
 
         ServletOutputStream temps = null;

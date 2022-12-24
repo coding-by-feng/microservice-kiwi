@@ -89,6 +89,7 @@ vi /etc/hosts
 127.0.0.1                                       fastdfs.fengorz.me
 127.0.0.1                                       kiwi-microservice-local
 127.0.0.1                                       kiwi-microservice
+127.0.0.1                                       kiwi-ui
 127.0.0.1                                       kiwi-eureka
 127.0.0.1                                       kiwi-redis
 127.0.0.1                                       kiwi-rabbitmq

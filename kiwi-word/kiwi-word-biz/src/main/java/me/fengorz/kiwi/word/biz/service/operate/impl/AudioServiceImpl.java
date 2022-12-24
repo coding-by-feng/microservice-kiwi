@@ -16,23 +16,23 @@
 
 package me.fengorz.kiwi.word.biz.service.operate.impl;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.fastdfs.service.DfsService;
 import me.fengorz.kiwi.common.sdk.exception.dfs.DfsOperateException;
 import me.fengorz.kiwi.common.sdk.exception.tts.TtsException;
-import me.fengorz.kiwi.common.tts.model.TtsProperties;
 import me.fengorz.kiwi.common.tts.service.BaiduTtsService;
 import me.fengorz.kiwi.common.tts.service.TtsService;
 import me.fengorz.kiwi.word.api.common.ApiCrawlerConstants;
 import me.fengorz.kiwi.word.api.common.enumeration.ReviseAudioTypeEnum;
 import me.fengorz.kiwi.word.biz.common.SpeakerFunction;
-import me.fengorz.kiwi.word.biz.mapper.ReviewAudioMapper;
 import me.fengorz.kiwi.word.biz.service.operate.AudioService;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayInputStream;
+
+import static me.fengorz.kiwi.common.tts.TtsConstants.BEAN_NAMES.BAIDU_TTS_SERVICE_IMPL;
 
 /**
  * @Description TODO
@@ -41,14 +41,19 @@ import java.io.ByteArrayInputStream;
  */
 @Slf4j
 @Service
-@RequiredArgsConstructor
 public class AudioServiceImpl implements AudioService {
 
     private final TtsService ttsService;
     private final BaiduTtsService baiduTtsService;
-    private final TtsProperties ttsProperties;
     private final DfsService dfsService;
-    private final ReviewAudioMapper reviewAudioMapper;
+
+    public AudioServiceImpl(TtsService ttsService,
+                            @Qualifier(BAIDU_TTS_SERVICE_IMPL) BaiduTtsService baiduTtsService,
+                            DfsService dfsService) {
+        this.ttsService = ttsService;
+        this.baiduTtsService = baiduTtsService;
+        this.dfsService = dfsService;
+    }
 
     @Override
     public String generateVoice(String text, int type) throws DfsOperateException, TtsException {

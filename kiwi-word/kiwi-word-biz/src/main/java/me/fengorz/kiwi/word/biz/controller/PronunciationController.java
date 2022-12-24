@@ -31,7 +31,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletResponse;
-import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
 /**
@@ -65,7 +64,7 @@ public class PronunciationController extends AbstractFileController {
             byte[] bytes =
                     this.dfsService.downloadFile(wordPronunciation.getGroupName(), wordPronunciation.getVoiceFilePath());
             log.info("Required wordPronunciation bytes download success.");
-            inputStream = new ByteArrayInputStream(bytes);
+            inputStream = buildInputStream(response, bytes);
         } catch (DfsOperateException e) {
             log.error("downloadVoice exception, pronunciationId={}, re-fetching now!", pronunciationId, e);
             crawlerService.reFetchPronunciation(pronunciationId);

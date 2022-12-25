@@ -93,9 +93,7 @@ public class ControllerTest {
     @Disabled
     @Test
     void test_deprecateReviewAudio() {
-        ResponseEntity<R> response =
-                testRestTemplate.getForEntity(String.format("http://localhost:%d/word/review/deprecate-review-audio/2350782", port), R.class);
-        Assertions.assertEquals(response.getStatusCode(), HttpStatus.OK);
+        testRestTemplate.delete(String.format("http://localhost:%d/word/review/deprecate-review-audio/2350782", port));
     }
 
     @Disabled

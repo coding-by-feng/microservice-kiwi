@@ -20,6 +20,7 @@ import me.fengorz.kiwi.word.api.vo.detail.WordQueryVO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 
 /**
  * @Author zhanshifeng
@@ -35,7 +36,7 @@ public interface QueryApi {
     @GetMapping(WORD_MAIN + "/query/{wordName}")
     R<Page<WordQueryVO>> queryWord(@PathVariable String wordName);
 
-    @GetMapping(WORD_MAIN_VARIANT + "/insertVariant/{inputWordName}/{fetchWordName}")
+    @PostMapping(WORD_MAIN_VARIANT + "/insertVariant/{inputWordName}/{fetchWordName}")
     R<Void> insertVariant(@PathVariable String inputWordName, @PathVariable String fetchWordName);
 
 }

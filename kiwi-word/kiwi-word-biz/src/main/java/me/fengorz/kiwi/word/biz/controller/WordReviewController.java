@@ -56,7 +56,7 @@ public class WordReviewController extends AbstractFileController {
         return R.success(reviewService.getReviewBreakpointPageNumber(listId));
     }
 
-    @GetMapping("/createTheDays")
+    @PostMapping("/createTheDays")
     public R<Void> createTheDays() {
         reviewService.createTheDays(SecurityUtils.getCurrentUserId());
         return R.success();
@@ -150,7 +150,7 @@ public class WordReviewController extends AbstractFileController {
     }
 
     @Deprecated
-    @GetMapping("/generateTtsVoiceFromParaphraseId/{paraphraseId}")
+    @PostMapping("/generateTtsVoiceFromParaphraseId/{paraphraseId}")
     public R<Void> generateTtsVoiceFromParaphraseId(@PathVariable("paraphraseId") Integer paraphraseId) {
         try {
             reviewService.generateTtsVoiceFromParaphraseId(paraphraseId);
@@ -161,7 +161,7 @@ public class WordReviewController extends AbstractFileController {
         return R.success();
     }
 
-    @GetMapping("/increaseCounter/{type}")
+    @PutMapping("/increaseCounter/{type}")
     public R<Void> increaseCounter(@PathVariable("type") Integer type) {
         reviewService.increase(type, SecurityUtils.getCurrentUserId());
         return R.success();
@@ -172,19 +172,19 @@ public class WordReviewController extends AbstractFileController {
         return R.success(ttsService.autoSelectApiKey());
     }
 
-    @GetMapping("/increaseApiKeyUsedTime/{apiKey}")
+    @PutMapping("/increaseApiKeyUsedTime/{apiKey}")
     public R<Void> increaseApiKeyUsedTime(@PathVariable("apiKey") String apiKey) {
         ttsService.increaseApiKeyUsedTime(apiKey);
         return R.success();
     }
 
-    @GetMapping("/deprecateApiKeyToday/{apiKey}")
+    @PutMapping("/deprecateApiKeyToday/{apiKey}")
     public R<Void> deprecateApiKeyToday(@PathVariable("apiKey") String apiKey) {
         ttsService.deprecateApiKeyToday(apiKey);
         return R.success();
     }
 
-    @GetMapping("/deprecate-review-audio/{sourceId}")
+    @DeleteMapping("/deprecate-review-audio/{sourceId}")
     public R<Void> deprecateReviewAudio(@PathVariable("sourceId") Integer sourceId) {
         reviewService.removeWordReviewAudio(sourceId);
         return R.success();

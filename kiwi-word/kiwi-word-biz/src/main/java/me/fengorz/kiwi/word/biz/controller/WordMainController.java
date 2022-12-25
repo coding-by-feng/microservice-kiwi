@@ -62,7 +62,7 @@ public class WordMainController extends BaseController {
     private final ReviewService reviewService;
     private final DocumentOperations documentOperations;
 
-    @GetMapping("/removeByWordName/{wordName}")
+    @DeleteMapping("/removeByWordName/{wordName}")
     // @PreAuthorize("@pms.hasPermission('biz_wordmain_del')")
     public R<Boolean> removeByWordName(@PathVariable String wordName) {
         queueService.startFetchOnAsync(decode(wordName));
@@ -113,6 +113,11 @@ public class WordMainController extends BaseController {
     @GetMapping("/listOverlapAnyway")
     public R<List<String>> listOverlapAnyway() {
         return R.success(mainService.listOverlapAnyway());
+    }
+
+    @PostMapping("/variant/insertVariant/{inputWordName}/{fetchWordName}")
+    public R<Void> insertVariant(@PathVariable String inputWordName, @PathVariable String fetchWordName) {
+        return R.auto(operateService.insertVariant(inputWordName, fetchWordName));
     }
 
 }

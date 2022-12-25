@@ -192,10 +192,9 @@ public class WordReviewController extends AbstractFileController {
 
     @DeleteMapping("/reGenReviewAudio/{sourceId}")
     public R<Void> reGenReviewAudioForParaphrase(@PathVariable("sourceId") Integer sourceId) {
-        reviewService.removeWordReviewAudio(sourceId);
         try {
-            reviewService.generateTtsVoiceFromParaphraseId(sourceId);
-        } catch (DfsOperateException | TtsException | DataCheckedException e) {
+            reviewService.reGenReviewAudioForParaphrase(sourceId);
+        } catch (Exception e) {
             log.error("reGenReviewAudio exception, sourceId={}!", sourceId, e);
             return R.failed();
         }

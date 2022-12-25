@@ -46,7 +46,8 @@ crawler:
       "voice-generate-only-collected": true,
       "voice-generate-non-collected": true,
       "cache-word": true,
-      "refresh-all-api-key": true
+      "refresh-all-api-key": true,
+      "regen-incorrect-audio-by-voicerss": true
     }
 
 my:

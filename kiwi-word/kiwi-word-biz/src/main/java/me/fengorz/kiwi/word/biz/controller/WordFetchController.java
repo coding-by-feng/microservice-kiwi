@@ -154,9 +154,15 @@ public class WordFetchController extends BaseController {
         return R.success(cleanerService.removePhrase(queueId));
     }
 
-    @GetMapping("/generateTtsVoice/{type}")
+    @PutMapping("/generateTtsVoice/{type}")
     public R<Void> generateTtsVoice(@PathVariable("type") Integer type) {
         crawlerService.generateTtsVoice(EnumUtil.likeValueOf(ReviseAudioGenerationEnum.class, type));
+        return R.success();
+    }
+
+    @PutMapping("/reGenIncorrectAudioByVoicerss")
+    public R<Void> reGenIncorrectAudioByVoicerss() {
+        crawlerService.reGenIncorrectAudioByVoicerss();
         return R.success();
     }
 

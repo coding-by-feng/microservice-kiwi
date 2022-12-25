@@ -101,6 +101,7 @@ public class ReviewServiceImpl implements ReviewService {
     private final ParaphraseTtsGenerationPayload paraphraseTtsGenerationPayload;
     private final RevisePermanentAudioHelper revisePermanentAudioHelper;
 
+    @Deprecated
     private final static Semaphore STORAGE = new Semaphore(10);
 
     @Override
@@ -237,6 +238,12 @@ public class ReviewServiceImpl implements ReviewService {
     @KiwiCacheKeyPrefix(WordConstants.CACHE_KEY_PREFIX_REVIEW.METHOD_REVIEW_AUDIO)
     @CacheEvict(cacheNames = WordConstants.CACHE_NAMES, keyGenerator = CacheConstants.CACHE_KEY_GENERATOR_BEAN)
     public void evictWordReviewAudio(@KiwiCacheKey(1) Integer sourceId, @KiwiCacheKey(2) Integer type) {
+    }
+
+    @Override
+    public void reGenReviewAudioForParaphrase(Integer sourceId) {
+        removeWordReviewAudio(sourceId);
+        generateTtsVoiceFromParaphraseId(sourceId);
     }
 
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRES_NEW)
@@ -378,6 +385,7 @@ public class ReviewServiceImpl implements ReviewService {
     @Override
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRES_NEW)
     public void cleanReviewVoiceByParaphraseId(Integer paraphraseId) {
+        log.info("cleanReviewVoiceByParaphraseId paraphraseId = {}", paraphraseId);
         ListUtils
                 .emptyIfNull(reviewAudioService
                         .list(Wrappers.<WordReviewAudioDO>lambdaQuery().eq(WordReviewAudioDO::getSourceId, paraphraseId)))
@@ -420,7 +428,8 @@ public class ReviewServiceImpl implements ReviewService {
         log.info("generateTtsVoiceFromParaphraseId beginning, paraphraseId is {}", paraphraseId);
         final ParaphraseDO paraphraseDO = paraphraseMapper.selectById(paraphraseId);
         if (paraphraseDO == null) {
-            log.error("paraphraseDO is null, skip generateTtsVoiceFromParaphraseId, paraphraseId is {}", paraphraseId);
+            log.warn("paraphraseDO is null, skip generateTtsVoiceFromParaphraseId, paraphraseId is {}", paraphraseId);
+            cleanReviewVoiceByParaphraseId(paraphraseId);
             return;
         }
         final CharacterDO characterDO = characterMapper.selectOne(

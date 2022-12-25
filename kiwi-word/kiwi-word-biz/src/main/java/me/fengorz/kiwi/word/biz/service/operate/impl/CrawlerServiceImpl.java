@@ -81,6 +81,7 @@ public class CrawlerServiceImpl implements CrawlerService {
     private final WordFetchQueueService queueService;
     private final ParaphrasePhraseService phraseService;
     private final ParaphraseStarRelService paraphraseStarRelService;
+    private final ReviewAudioService reviewAudioService;
     private final DfsService dfsService;
     private final SeqService seqService;
     private final OperateService operateService;
@@ -360,7 +361,7 @@ public class CrawlerServiceImpl implements CrawlerService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void test_initIeltsWordList() {
+    public void initIeltsWordList() {
         SecurityUtils.buildTestUser(ApiContants.ADMIN_ID, ApiContants.ADMIN_USERNAME);
         Set<String> wordList = WordDataSetupUtils.extractIeltsWordList();
         log.info("extractIeltsWordList size is: {}", wordList.size());
@@ -379,6 +380,32 @@ public class CrawlerServiceImpl implements CrawlerService {
                 paraphrases.forEach(paraphraseDO -> paraphraseStarListService
                         .putIntoStarList(paraphraseDO.getParaphraseId(), listVO.getId()));
             }
+        }
+    }
+
+    @Override
+    public void reGenIncorrectAudioByVoicerss() {
+        try {
+            log.info("Method reGenIncorrectAudioByVoicerss is starting!");
+            if (!ttsService.hasValidApiKey()) {
+                log.info("There is not valid api key!");
+                return;
+            }
+            if (RE_GENERATE_VOICE_BARRIER.tryAcquire(1, 1, TimeUnit.SECONDS)) {
+                List<WordReviewAudioDO> records = reviewAudioService.listIncorrectAudioByVoicerss();
+                log.info("reGenIncorrectAudioByVoicerss records size = {}", records.size());
+                if (CollectionUtils.isEmpty(records)) {
+                    return;
+                }
+
+                records.forEach(wordReviewAudioDO -> {
+                    reviewService.reGenReviewAudioForParaphrase(wordReviewAudioDO.getSourceId());
+                });
+            } else {
+                log.info("Paraphrase is regenerating, RE_GENERATE_VOICE_BARRIER tryAcquire false, skip work.");
+            }
+        } catch (InterruptedException e) {
+            log.error("RE_GENERATE_VOICE_BARRIER tryAcquire failed.");
         }
     }
 
@@ -406,5 +433,6 @@ public class CrawlerServiceImpl implements CrawlerService {
     }
 
     private static final Semaphore GENERATE_VOICE_BARRIER = new Semaphore(1);
+    private static final Semaphore RE_GENERATE_VOICE_BARRIER = new Semaphore(1);
 
 }

@@ -62,6 +62,8 @@ public class CrawlerTest {
     private ChiefSchedulerSetup chiefSchedulerSetup;
     @Autowired
     private ChiefProducerSchedulerSetup chiefProducerSchedulerSetup;
+    @Resource(name = CrawlerConstants.COMPONENT_BEAN_ID.RE_GEN_INCORRECT_AUDIO_BY_VOICERSS_SCHEDULER)
+    private Scheduler reGenIncorrectAudioByVoicerssScheduler;
     @Autowired
     private JsoupService jsoupService;
 
@@ -94,18 +96,20 @@ public class CrawlerTest {
     }
 
     @Test
-    @Disabled
+    // @Disabled
     public void schedulerTest() {
         Assertions.assertDoesNotThrow(() -> {
             // Assertions.assertNotNull(chiefSchedulerSetup);
             // Assertions.assertNotNull(chiefProducerSchedulerSetup);
             // chiefSchedulerSetup.setup();
-            chiefProducerSchedulerSetup.produce();
+            // chiefProducerSchedulerSetup.produce();
             // generateVoiceOnlyCollectedScheduler.schedule();
+            reGenIncorrectAudioByVoicerssScheduler.schedule();
         });
     }
 
     @Test
+    @Disabled
     @SneakyThrows
     public void test_fetchWordInfo() {
         FetchWordResultDTO tuesday = jsoupService.fetchWordInfo(new FetchWordMqDTO().setWord("Tuesday"));

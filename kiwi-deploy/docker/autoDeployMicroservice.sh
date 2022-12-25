@@ -4,7 +4,7 @@
 
 # systemctl restart docker
 
-if [ $1 == "ow" ]
+if [ $1 = "ow" ]
 then
   rm -rf ~/docker/kiwi/word/logs/*
   rm -rf ~/docker/kiwi/word/logs_02/*
@@ -30,7 +30,7 @@ fi
 
 mvn clean install -Dmaven.test.skip=true
 
-if [ $1 == "ow" ]
+if [ $1 = "ow" ]
 then
   mv -f ~/microservice-kiwi/kiwi-word/kiwi-word-biz/docker/biz/Dockerfile ~/docker/kiwi/word/biz
   mv -f ~/microservice-kiwi/kiwi-word/kiwi-word-biz/docker/crawler/Dockerfile ~/docker/kiwi/word/crawler
@@ -46,7 +46,7 @@ else
   mv -f ~/microservice-kiwi/kiwi-gateway/Dockerfile ~/docker/kiwi/gate/
 fi
 
-if [ $1 == "ow" ]
+if [ $1 = "ow" ]
 then
   mv -f ~/.m2/repository/me/fengorz/kiwi-word-biz/1.0/kiwi-word-biz-1.0.jar ~/docker/kiwi/word/
   mv -f ~/.m2/repository/me/fengorz/kiwi-word-crawler/1.0/kiwi-word-crawler-1.0.jar ~/docker/kiwi/crawler/

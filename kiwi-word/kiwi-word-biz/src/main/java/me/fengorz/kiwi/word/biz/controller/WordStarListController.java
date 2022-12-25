@@ -102,7 +102,7 @@ public class WordStarListController extends BaseController {
         return R.success(starListService.getCurrentUserList(SecurityUtils.getCurrentUserId()));
     }
 
-    @PostMapping("/getListItems/{size}/{current}/{listId}")
+    @GetMapping("/getListItems/{size}/{current}/{listId}")
     public R<IPage<WordStarItemVO>> getListItems(@PathVariable @Min(0) Integer current,
         @PathVariable @Range(min = 1, max = 100) Integer size, @PathVariable Integer listId) {
         return R.success(starListService.getListItems(new Page<>(current, size), listId));

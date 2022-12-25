@@ -37,4 +37,6 @@ public interface ReviewAudioService extends IService<WordReviewAudioDO> {
 
     void cleanBySourceIdAndType(Integer sourceId, Integer type);
 
+    List<WordReviewAudioDO> listIncorrectAudioByVoicerss();
+
 }

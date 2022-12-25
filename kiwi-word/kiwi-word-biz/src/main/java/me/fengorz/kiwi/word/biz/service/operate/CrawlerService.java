@@ -35,6 +35,8 @@ public interface CrawlerService {
 
     void generateTtsVoice(ReviseAudioGenerationEnum type);
 
-    void test_initIeltsWordList();
+    void initIeltsWordList();
+
+    void reGenIncorrectAudioByVoicerss();
 
 }

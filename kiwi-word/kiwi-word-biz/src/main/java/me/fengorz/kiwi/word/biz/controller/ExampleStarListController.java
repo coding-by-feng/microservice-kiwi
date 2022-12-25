@@ -73,7 +73,7 @@ public class ExampleStarListController extends BaseController {
      * @return R
      */
     @LogMarker("修改")
-    @PostMapping("/updateById")
+    @PutMapping("/updateById")
     // @PreAuthorize("@pms.hasPermission('api_wordparaphraseexamplelist_edit')")
     public R<Boolean> updateById(ExampleStarListDO exampleStarListDO) {
         return R.success(starListService.updateById(exampleStarListDO));
@@ -86,7 +86,7 @@ public class ExampleStarListController extends BaseController {
      * @return R
      */
     @LogMarker("通过id删除")
-    @PostMapping("/delById/{id}")
+    @DeleteMapping("/delById/{id}")
     // @PreAuthorize("@pms.hasPermission('api_wordparaphraseexamplelist_del')")
     public R<Boolean> delById(@PathVariable Integer id) {
         return R.success(starListService.removeById(id));
@@ -97,21 +97,21 @@ public class ExampleStarListController extends BaseController {
         return R.success(starListService.getCurrentUserList(SecurityUtils.getCurrentUserId()));
     }
 
-    @PostMapping("/putIntoStarList")
+    @PutMapping("/putIntoStarList")
     public R<Boolean> putIntoStarList(@NotNull Integer exampleId, @NotNull Integer listId) {
         starListService.putIntoStarList(exampleId, listId);
         return R.success();
     }
 
-    @PostMapping("/removeExampleStar")
-    public R<Boolean> removeExampleStar(@NotNull Integer exampleId, @NotNull Integer listId) {
+    @DeleteMapping("/removeExampleStar/{exampleId}/{listId}")
+    public R<Boolean> removeExampleStar(@PathVariable("exampleId") Integer exampleId, @PathVariable("listId") Integer listId) {
         starListService.removeOneRel(exampleId, listId);
         return R.success();
     }
 
-    @PostMapping("/getListItems/{size}/{current}")
-    public R<IPage<ExampleStarItemVO>> getListItems(@NotNull Integer listId, @PathVariable @Min(0) Integer current,
-        @PathVariable @Range(min = 1, max = 100) Integer size) {
-        return R.success(starListService.getListItems(new Page(current, size), listId));
+    @GetMapping("/getListItems/{size}/{current}/{listId}")
+    public R<IPage<ExampleStarItemVO>> getListItems(@PathVariable @Min(0) Integer current,
+        @PathVariable @Range(min = 1, max = 100) Integer size, @PathVariable Integer listId) {
+        return R.success(starListService.getListItems(new Page<>(current, size), listId));
     }
 }

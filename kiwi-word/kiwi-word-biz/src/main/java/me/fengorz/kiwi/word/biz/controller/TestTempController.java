@@ -131,7 +131,7 @@ public class TestTempController extends BaseController {
 
     @GetMapping("/setup/ielts/word-list")
     public R<Void> setupIeltsWordList() {
-        crawlerService.test_initIeltsWordList();
+        crawlerService.initIeltsWordList();
         return R.success();
     }
 }

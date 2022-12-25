@@ -13,13 +13,18 @@
 package me.fengorz.kiwi.word.biz.service.base.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.bdf.core.service.SeqService;
 import me.fengorz.kiwi.common.fastdfs.service.DfsService;
+import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
 import me.fengorz.kiwi.common.sdk.exception.dfs.DfsOperateDeleteException;
+import me.fengorz.kiwi.common.tts.enumeration.TtsSourceEnum;
+import me.fengorz.kiwi.word.api.common.enumeration.ReviseAudioTypeEnum;
 import me.fengorz.kiwi.word.api.entity.WordReviewAudioDO;
 import me.fengorz.kiwi.word.biz.mapper.ReviewAudioMapper;
 import me.fengorz.kiwi.word.biz.service.base.ReviewAudioService;
@@ -103,5 +108,17 @@ public class ReviewAudioServiceImpl extends ServiceImpl<ReviewAudioMapper, WordR
                 Wrappers.<WordReviewAudioDO>lambdaQuery().eq(WordReviewAudioDO::getSourceId, sourceId);
         mapper.delete(condition);
         log.info("cleanBySourceIdAndType invoke success, sourceId={}, type={}", sourceId, type);
+    }
+
+    @Override
+    public List<WordReviewAudioDO> listIncorrectAudioByVoicerss() {
+        LambdaQueryWrapper<WordReviewAudioDO> condition =
+                Wrappers.<WordReviewAudioDO>lambdaQuery().eq(WordReviewAudioDO::getSourceUrl, TtsSourceEnum.VOICERSS.getSource())
+                        .eq(WordReviewAudioDO::getType, ReviseAudioTypeEnum.WORD_SPELLING.getType())
+                        .eq(WordReviewAudioDO::getIsDel, GlobalConstants.FLAG_DEL_NO);
+        IPage<WordReviewAudioDO> page = new Page<>(0, 10);
+        List<WordReviewAudioDO> records = mapper.selectPage(page, condition).getRecords();
+        log.info("listIncorrectAudioByVoicerss invoke success, size={}", records.size());
+        return records;
     }
 }

@@ -98,7 +98,7 @@ public interface DictFetchApi {
     @GetMapping(WORD_MAIN + "/query/{wordName}")
     R<WordQueryVO> queryWord(@PathVariable String wordName);
 
-    @GetMapping(WORD_REVIEW + "/createTheDays")
+    @PostMapping(WORD_REVIEW + "/createTheDays")
     void createTheDays();
 
     @GetMapping(WORD_REVIEW + "/refreshAllApiKey")

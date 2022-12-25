@@ -78,7 +78,7 @@ public class WordStarListController extends BaseController {
      * @return R
      */
     @LogMarker("修改单词本")
-    @PostMapping("/updateById")
+    @PutMapping("/updateById")
     // @PreAuthorize("@pms.hasPermission('api_wordstarlist_edit')")
     public R<Boolean> updateById(WordStarListDO wordStarListDO) {
         return R.success(starListService.updateById(wordStarListDO));
@@ -91,7 +91,7 @@ public class WordStarListController extends BaseController {
      * @return R
      */
     @LogMarker("通过id删除单词本")
-    @PostMapping("/del/{id}")
+    @DeleteMapping("/del/{id}")
     // @PreAuthorize("@pms.hasPermission('api_wordstarlist_del')")
     public R<Boolean> del(@PathVariable Integer id) {
         return R.success(starListService.removeById(id));
@@ -102,19 +102,19 @@ public class WordStarListController extends BaseController {
         return R.success(starListService.getCurrentUserList(SecurityUtils.getCurrentUserId()));
     }
 
-    @PostMapping("/getListItems/{size}/{current}")
-    public R<IPage<WordStarItemVO>> getListItems(@NotNull Integer listId, @PathVariable @Min(0) Integer current,
-        @PathVariable @Range(min = 1, max = 100) Integer size) {
+    @PostMapping("/getListItems/{size}/{current}/{listId}")
+    public R<IPage<WordStarItemVO>> getListItems(@PathVariable @Min(0) Integer current,
+        @PathVariable @Range(min = 1, max = 100) Integer size, @PathVariable Integer listId) {
         return R.success(starListService.getListItems(new Page<>(current, size), listId));
     }
 
-    @PostMapping("/putWordStarList")
+    @PutMapping("/putWordStarList")
     public R<Boolean> putWordStarList(@NotNull Integer wordId, @NotNull Integer listId) throws ServiceException {
         starListService.putIntoStarList(wordId, listId);
         return R.success();
     }
 
-    @PostMapping("/removeWordStarList")
+    @DeleteMapping("/removeWordStarList")
     public R<Boolean> removeWordStarList(@NotNull Integer wordId, @NotNull Integer listId) throws ServiceException {
         starListService.removeStarList(wordId, listId);
         return R.success();

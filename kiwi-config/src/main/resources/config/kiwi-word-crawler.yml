@@ -47,7 +47,7 @@ crawler:
       "voice-generate-non-collected": false,
       "cache-word": false,
       "refresh-all-api-key": true,
-      "regen-incorrect-audio-by-voicerss": true
+      "regen-incorrect-audio-by-voicerss": false
     }
 
 my:

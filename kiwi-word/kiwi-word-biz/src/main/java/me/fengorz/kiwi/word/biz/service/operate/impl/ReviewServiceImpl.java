@@ -246,6 +246,12 @@ public class ReviewServiceImpl implements ReviewService {
         generateTtsVoiceFromParaphraseId(sourceId);
     }
 
+    @Override
+    public void reGenReviewAudioForExample(Integer sourceId) throws DfsOperateException, TtsException, DataCheckedException {
+        removeWordReviewAudio(sourceId);
+        generateUseTts(sourceId, ReviseAudioTypeEnum.EXAMPLE_CH, TtsSourceEnum.BAIDU);
+    }
+
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRES_NEW)
     private WordReviewAudioDO generateUseTts(Integer sourceId, ReviseAudioTypeEnum type, TtsSourceEnum sourceType)
             throws DfsOperateException, TtsException, DataCheckedException {
@@ -386,8 +392,7 @@ public class ReviewServiceImpl implements ReviewService {
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRES_NEW)
     public void cleanReviewVoiceByParaphraseId(Integer paraphraseId) {
         log.info("cleanReviewVoiceByParaphraseId paraphraseId = {}", paraphraseId);
-        ListUtils
-                .emptyIfNull(reviewAudioService
+        ListUtils.emptyIfNull(reviewAudioService
                         .list(Wrappers.<WordReviewAudioDO>lambdaQuery().eq(WordReviewAudioDO::getSourceId, paraphraseId)))
                 .forEach(this::cleanReviewAudio);
         List<ParaphraseExampleDO> examples = paraphraseExampleMapper.selectList(

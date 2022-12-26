@@ -122,14 +122,14 @@ public class ReviewAudioServiceImpl extends ServiceImpl<ReviewAudioMapper, WordR
     }
 
     @Override
-    public List<WordReviewAudioDO> listIncorrectAudioByVoicerss() {
+    public List<WordReviewAudioDO> listIncorrectAudioByVoicerss(ReviseAudioTypeEnum type) {
         LambdaQueryWrapper<WordReviewAudioDO> condition =
                 Wrappers.<WordReviewAudioDO>lambdaQuery().eq(WordReviewAudioDO::getSourceUrl, TtsSourceEnum.VOICERSS.getSource())
-                        .eq(WordReviewAudioDO::getType, ReviseAudioTypeEnum.WORD_SPELLING.getType())
+                        .eq(WordReviewAudioDO::getType, type.getType())
                         .eq(WordReviewAudioDO::getIsDel, GlobalConstants.FLAG_DEL_NO);
         IPage<WordReviewAudioDO> page = new Page<>(0, 10);
         List<WordReviewAudioDO> records = mapper.selectPage(page, condition).getRecords();
-        log.info("listIncorrectAudioByVoicerss invoke success, size={}", records.size());
+        log.info("listIncorrectAudioByVoicerss[{}] invoke success, size={}", type.name(), records.size());
         return records;
     }
 }

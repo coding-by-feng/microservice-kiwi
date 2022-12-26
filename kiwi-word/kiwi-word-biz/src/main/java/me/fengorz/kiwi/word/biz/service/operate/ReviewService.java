@@ -65,6 +65,8 @@ public interface ReviewService {
 
     void reGenReviewAudioForParaphrase(Integer sourceId);
 
+    void reGenReviewAudioForExample(Integer sourceId) throws DfsOperateException, TtsException, DataCheckedException;
+
     void initPermanent(boolean isOnlyTest) throws DfsOperateException, TtsException;
 
     void generateTtsVoice() throws DfsOperateException, TtsException, InterruptedException;

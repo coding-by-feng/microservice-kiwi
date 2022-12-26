@@ -45,7 +45,7 @@ crawler:
     enable-scheduler: {
       "voice-generate-only-collected": true,
       "voice-generate-non-collected": false,
-      "cache-word": true,
+      "cache-word": false,
       "refresh-all-api-key": true,
       "regen-incorrect-audio-by-voicerss": true
     }

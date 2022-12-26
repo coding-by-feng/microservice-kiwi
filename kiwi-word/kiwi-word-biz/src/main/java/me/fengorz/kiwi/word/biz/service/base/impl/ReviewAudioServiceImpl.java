@@ -26,14 +26,19 @@ import me.fengorz.kiwi.common.sdk.exception.dfs.DfsOperateDeleteException;
 import me.fengorz.kiwi.common.tts.enumeration.TtsSourceEnum;
 import me.fengorz.kiwi.word.api.common.enumeration.ReviseAudioTypeEnum;
 import me.fengorz.kiwi.word.api.entity.WordReviewAudioDO;
+import me.fengorz.kiwi.word.api.vo.ParaphraseExampleVO;
 import me.fengorz.kiwi.word.biz.mapper.ReviewAudioMapper;
+import me.fengorz.kiwi.word.biz.service.base.ParaphraseExampleService;
 import me.fengorz.kiwi.word.biz.service.base.ReviewAudioService;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.ListUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author zhanShiFeng
@@ -46,6 +51,7 @@ public class ReviewAudioServiceImpl extends ServiceImpl<ReviewAudioMapper, WordR
         implements ReviewAudioService {
 
     private final ReviewAudioMapper mapper;
+    private final ParaphraseExampleService paraphraseExampleService;
     private final SeqService seqService;
     private final DfsService dfsService;
 
@@ -64,8 +70,13 @@ public class ReviewAudioServiceImpl extends ServiceImpl<ReviewAudioMapper, WordR
     @Override
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRES_NEW)
     public void cleanBySourceId(Integer sourceId) {
+        List<Integer> sourceIds = new ArrayList<>();
+        sourceIds.add(sourceId);
+        ListUtils.emptyIfNull(paraphraseExampleService.listExamples(sourceId))
+                .stream().map(ParaphraseExampleVO::getExampleId).collect(Collectors.toCollection(() -> sourceIds));
+
         LambdaQueryWrapper<WordReviewAudioDO> condition =
-                Wrappers.<WordReviewAudioDO>lambdaQuery().eq(WordReviewAudioDO::getSourceId, sourceId);
+                Wrappers.<WordReviewAudioDO>lambdaQuery().in(WordReviewAudioDO::getSourceId, sourceIds);
         List<WordReviewAudioDO> list = mapper.selectList(condition);
         log.info("Method removeWordReviewAudio list size is: {}", list.size());
         if (CollectionUtils.isEmpty(list)) {

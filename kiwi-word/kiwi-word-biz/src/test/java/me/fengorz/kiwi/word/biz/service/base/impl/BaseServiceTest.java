@@ -20,9 +20,11 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.sdk.constant.EnvConstants;
 import me.fengorz.kiwi.common.tts.service.BaiduTtsService;
+import me.fengorz.kiwi.word.api.entity.WordReviewAudioDO;
 import me.fengorz.kiwi.word.biz.WordBizApplication;
 import me.fengorz.kiwi.word.biz.service.base.ParaphraseStarListService;
 import me.fengorz.kiwi.word.biz.service.base.ParaphraseStarRelService;
+import me.fengorz.kiwi.word.biz.service.base.ReviewAudioService;
 import me.fengorz.kiwi.word.biz.service.operate.AudioService;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.FileUtils;
@@ -58,6 +60,8 @@ public class BaseServiceTest {
     @Autowired
     @Qualifier(BAIDU_TTS_SERVICE_IMPL)
     private BaiduTtsService baiduTtsService;
+    @Autowired
+    private ReviewAudioService reviewAudioService;
 
     @Test
     @Disabled
@@ -77,10 +81,19 @@ public class BaseServiceTest {
     }
 
     @SneakyThrows
+    @Disabled
     @Test
     public void test_baidu_tts() {
         byte[] bytes = baiduTtsService.speech("测试一下");
         FileUtils.writeByteArrayToFile(new File("baidu-tts-test.mp3"), bytes);
+    }
+
+    @Test
+    // @Disabled
+    public void test_listIncorrectAudioByVoicerss() {
+        List<WordReviewAudioDO> result = reviewAudioService.listIncorrectAudioByVoicerss();
+        Assertions.assertTrue(CollectionUtils.isNotEmpty(result));
+        log.info("result size={}", result.size());
     }
 
 }

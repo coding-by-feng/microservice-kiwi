@@ -392,15 +392,20 @@ public class CrawlerServiceImpl implements CrawlerService {
                 return;
             }
             if (RE_GENERATE_VOICE_BARRIER.tryAcquire(1, 1, TimeUnit.SECONDS)) {
-                List<WordReviewAudioDO> records = reviewAudioService.listIncorrectAudioByVoicerss();
-                log.info("reGenIncorrectAudioByVoicerss records size = {}", records.size());
-                if (CollectionUtils.isEmpty(records)) {
-                    return;
-                }
+                try {
+                    List<WordReviewAudioDO> records = reviewAudioService.listIncorrectAudioByVoicerss();
+                    log.info("reGenIncorrectAudioByVoicerss records size = {}", records.size());
+                    if (CollectionUtils.isEmpty(records)) {
+                        RE_GENERATE_VOICE_BARRIER.release();
+                        return;
+                    }
 
-                records.forEach(wordReviewAudioDO -> {
-                    reviewService.reGenReviewAudioForParaphrase(wordReviewAudioDO.getSourceId());
-                });
+                    records.forEach(wordReviewAudioDO -> {
+                        reviewService.reGenReviewAudioForParaphrase(wordReviewAudioDO.getSourceId());
+                    });
+                } catch (Exception e) {
+                    log.error("reGenReviewAudioForParaphrase invoke failed, {}", e.getMessage());
+                }
 
                 RE_GENERATE_VOICE_BARRIER.release();
             } else {
@@ -408,6 +413,7 @@ public class CrawlerServiceImpl implements CrawlerService {
             }
         } catch (InterruptedException e) {
             log.error("RE_GENERATE_VOICE_BARRIER tryAcquire failed.");
+            RE_GENERATE_VOICE_BARRIER.release();
         }
     }
 
@@ -435,6 +441,6 @@ public class CrawlerServiceImpl implements CrawlerService {
     }
 
     private static final Semaphore GENERATE_VOICE_BARRIER = new Semaphore(1);
-    private static final Semaphore RE_GENERATE_VOICE_BARRIER = new Semaphore(1);
+    private static final Semaphore RE_GENERATE_VOICE_BARRIER = new Semaphore(2);
 
 }

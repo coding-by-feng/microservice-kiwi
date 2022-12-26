@@ -401,6 +401,8 @@ public class CrawlerServiceImpl implements CrawlerService {
                 records.forEach(wordReviewAudioDO -> {
                     reviewService.reGenReviewAudioForParaphrase(wordReviewAudioDO.getSourceId());
                 });
+
+                RE_GENERATE_VOICE_BARRIER.release();
             } else {
                 log.info("Paraphrase is regenerating, RE_GENERATE_VOICE_BARRIER tryAcquire false, skip work.");
             }

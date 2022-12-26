@@ -23,6 +23,7 @@ import me.fengorz.kiwi.word.api.common.enumeration.ReviseAudioGenerationEnum;
 import me.fengorz.kiwi.word.biz.WordBizApplication;
 import me.fengorz.kiwi.word.biz.service.operate.CrawlerService;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,14 +44,21 @@ public class CrawlerServiceTest {
 
     @Test
     @SneakyThrows
-    // @RepeatedTest(value = 3)
+    @Disabled
     void generateTtsVoice() {
         Assertions.assertDoesNotThrow(() -> crawlerService.generateTtsVoice(ReviseAudioGenerationEnum.ONLY_COLLECTED));
     }
 
-    // @Test
+    @Test
+    @Disabled
     void test_reFetchPronunciation() {
         crawlerService.reFetchPronunciation(3053026);
+    }
+
+    @Test
+    @SneakyThrows
+    void test_reGenIncorrectAudioByVoicerss() {
+        crawlerService.reGenIncorrectAudioByVoicerss();
     }
 
 }

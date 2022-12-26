@@ -41,6 +41,7 @@ import me.fengorz.kiwi.common.tts.service.TtsService;
 import me.fengorz.kiwi.word.api.common.ApiCrawlerConstants;
 import me.fengorz.kiwi.word.api.common.WordConstants;
 import me.fengorz.kiwi.word.api.common.enumeration.ReviseAudioGenerationEnum;
+import me.fengorz.kiwi.word.api.common.enumeration.ReviseAudioTypeEnum;
 import me.fengorz.kiwi.word.api.common.enumeration.WordTypeEnum;
 import me.fengorz.kiwi.word.api.dto.queue.result.*;
 import me.fengorz.kiwi.word.api.entity.*;
@@ -393,18 +394,26 @@ public class CrawlerServiceImpl implements CrawlerService {
             }
             if (RE_GENERATE_VOICE_BARRIER.tryAcquire(1, 1, TimeUnit.SECONDS)) {
                 try {
-                    List<WordReviewAudioDO> records = reviewAudioService.listIncorrectAudioByVoicerss();
-                    log.info("reGenIncorrectAudioByVoicerss records size = {}", records.size());
+                    List<WordReviewAudioDO> records = reviewAudioService.listIncorrectAudioByVoicerss(ReviseAudioTypeEnum.WORD_SPELLING);
                     if (CollectionUtils.isEmpty(records)) {
-                        RE_GENERATE_VOICE_BARRIER.release();
-                        return;
+                        records = reviewAudioService.listIncorrectAudioByVoicerss(ReviseAudioTypeEnum.EXAMPLE_CH);
+                        if (CollectionUtils.isEmpty(records)) {
+                            RE_GENERATE_VOICE_BARRIER.release();
+                            return;
+                        } else {
+                            for (WordReviewAudioDO wordReviewAudioDO : records) {
+                                reviewService.reGenReviewAudioForExample(wordReviewAudioDO.getSourceId());
+                            }
+                            RE_GENERATE_VOICE_BARRIER.release();
+                            return;
+                        }
                     }
 
                     records.forEach(wordReviewAudioDO -> {
                         reviewService.reGenReviewAudioForParaphrase(wordReviewAudioDO.getSourceId());
                     });
                 } catch (Exception e) {
-                    log.error("reGenReviewAudioForParaphrase invoke failed, {}", e.getMessage());
+                    log.error("reGenReviewAudio invoke failed, {}", e.getMessage());
                 }
 
                 RE_GENERATE_VOICE_BARRIER.release();

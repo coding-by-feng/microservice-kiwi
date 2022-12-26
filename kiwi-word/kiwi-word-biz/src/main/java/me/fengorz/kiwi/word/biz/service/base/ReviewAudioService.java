@@ -13,6 +13,7 @@
 package me.fengorz.kiwi.word.biz.service.base;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import me.fengorz.kiwi.word.api.common.enumeration.ReviseAudioTypeEnum;
 import me.fengorz.kiwi.word.api.entity.WordReviewAudioDO;
 
 import java.util.List;
@@ -37,6 +38,5 @@ public interface ReviewAudioService extends IService<WordReviewAudioDO> {
 
     void cleanBySourceIdAndType(Integer sourceId, Integer type);
 
-    List<WordReviewAudioDO> listIncorrectAudioByVoicerss();
-
+    List<WordReviewAudioDO> listIncorrectAudioByVoicerss(ReviseAudioTypeEnum type);
 }

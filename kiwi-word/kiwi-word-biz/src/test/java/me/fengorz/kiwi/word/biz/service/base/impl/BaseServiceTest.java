@@ -20,6 +20,7 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.sdk.constant.EnvConstants;
 import me.fengorz.kiwi.common.tts.service.BaiduTtsService;
+import me.fengorz.kiwi.word.api.common.enumeration.ReviseAudioTypeEnum;
 import me.fengorz.kiwi.word.api.entity.WordReviewAudioDO;
 import me.fengorz.kiwi.word.biz.WordBizApplication;
 import me.fengorz.kiwi.word.biz.service.base.ParaphraseStarListService;
@@ -91,7 +92,7 @@ public class BaseServiceTest {
     @Test
     // @Disabled
     public void test_listIncorrectAudioByVoicerss() {
-        List<WordReviewAudioDO> result = reviewAudioService.listIncorrectAudioByVoicerss();
+        List<WordReviewAudioDO> result = reviewAudioService.listIncorrectAudioByVoicerss(ReviseAudioTypeEnum.EXAMPLE_CH);
         Assertions.assertTrue(CollectionUtils.isNotEmpty(result));
         log.info("result size={}", result.size());
     }

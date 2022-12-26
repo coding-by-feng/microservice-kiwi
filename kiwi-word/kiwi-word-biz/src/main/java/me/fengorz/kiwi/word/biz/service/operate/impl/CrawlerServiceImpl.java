@@ -326,6 +326,7 @@ public class CrawlerServiceImpl implements CrawlerService {
                     log.info("There is not notGeneratedParaphraseId need to generate voice.");
                     if (type.equals(ReviseAudioGenerationEnum.ONLY_COLLECTED)) {
                         log.info("Only generate collected paraphrase, and skip this generation invoke.");
+                        GENERATE_VOICE_BARRIER.release();
                         return;
                     }
                     notGeneratedParaphraseId = paraphraseService.listNotGeneratedAndNotCollectVoice();
@@ -349,14 +350,13 @@ public class CrawlerServiceImpl implements CrawlerService {
                     }
                     log.info("Paraphrase id({}) generation is end!", id);
                 }
+                GENERATE_VOICE_BARRIER.release();
             } else {
                 log.info("Paraphrase is generating, GENERATE_VOICE_BARRIER tryAcquire false, skip work.");
             }
         } catch (InterruptedException e) {
-            log.error("GENERATE_VOICE_BARRIER tryAcquire failed.");
-            return;
+            log.error("GENERATE_VOICE_BARRIER tryAcquire failed.", e);
         }
-        GENERATE_VOICE_BARRIER.release();
     }
 
     @Override

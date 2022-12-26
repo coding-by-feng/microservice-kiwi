@@ -109,12 +109,12 @@ public class ReviewServiceTest {
     private BaiduTtsService baiduTtsService;
 
     @Test
-    @Disabled
+    // @Disabled
     void initPermanent() {
         assertDoesNotThrow(() -> reviewService.initPermanent(false));
     }
 
-    // @Test
+    @Test
     @Disabled
     void generateTtsVoiceFromParaphraseId() {
         assertDoesNotThrow(() -> reviewService.generateTtsVoiceFromParaphraseId(2524421));
@@ -183,7 +183,7 @@ public class ReviewServiceTest {
 
     @SneakyThrows
     @Test
-    // @Disabled
+    @Disabled
     void test_findCharacterReviewAudio() {
         WordReviewAudioDO wordReviewAudio = reviewService.findCharacterReviewAudio("adjective");
         log.info("wordReviewAudio.getSourceText() = {}", wordReviewAudio.getSourceText());

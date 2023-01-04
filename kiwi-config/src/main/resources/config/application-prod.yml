@@ -114,9 +114,9 @@ management:
 tts:
   baidu:
     app-id: "20116041"
-    api-key: ENC(LRqF+xRolKjzizKT5+fnZSvoFNqAG9Ox5/RyAzjr18T2Do1fchNU6g==)
-    secret-key: ENC(NesEO0tI8Xv0t2yYzyMPD1efaRWFWBJrcpcoIkGK24mN9ma+PrUTrCFnZj79OUWj)
-    access-token: ENC(5iq0rrNjP/KEC3o61ydTe4uXiA00BXpCCWEZnd5//BjrYwlbeWSajBkKY8q+36N44ehFQdszi7qOnc3TT5647RgxI0zYCqRQzo2HouYZy1E=)
+    api-key: ENC(BWecLv6Q7+18q1/7nPWy4xVfzimLTmA43+qINyBvMBkOG+1yy7ZYUA==)
+    secret-key: ENC(GSBPIzx8PxYk//yU+nqyZ/SKgXq7SPZDjYCoWXXmtXR/1CgaD+a66qloBuaY8XKx)
+    access-token: ENC(UbiuTbp9lXCPaOl0pQgtYRhOL4DsERujacx8fyH9Zx2GfLVs9zpku+nb7YugSl+LUJtcEMmCg33XP1JDttrZVqtBQH0iY4WuZfo/mI/bFR4=)
   voicerss:
     url: 'https://api.voicerss.org/?key={}&r=-2&hl=en-us&v=Mary&c=MP3&f=16khz_16bit_stereo&src=test'
     api-key-1: '02df0a8f48b641548ec4224c24ebff0e'

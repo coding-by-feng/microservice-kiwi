@@ -51,5 +51,7 @@ public class DailySchedulerSetup {
     public void setupAt6Clock() {
         Optional.of(SpringUtils.getBean(CrawlerConstants.COMPONENT_BEAN_ID.CACHE_WORD_SCHEDULER,
             DailyScheduler.class)).ifPresent(DailyScheduler::schedule);
+        Optional.of(SpringUtils.getBean(CrawlerConstants.COMPONENT_BEAN_ID.REFRESH_ALL_API_KEY_DAILY_SCHEDULER,
+            DailyScheduler.class)).ifPresent(DailyScheduler::schedule);
     }
 }

@@ -35,7 +35,7 @@ public class RefreshAllApiKeyDailyScheduler implements DailyScheduler {
     private final DictFetchApi api;
 
     @Override
-    @ScheduledAwake(key = "refresh-all-api-key")
+    @ScheduledAwake(key = CrawlerConstants.ENABLE_SCHEDULER_KEY.REFRESH_ALL_API_KEY)
     public void schedule() {
         log.info("Daily refresh for all api key is starting.");
         api.refreshAllApiKey();

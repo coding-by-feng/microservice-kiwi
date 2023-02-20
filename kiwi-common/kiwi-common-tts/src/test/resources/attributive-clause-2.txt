@@ -1,4 +1,84 @@
 定语从句第二部分
+关系代词as，as引导非限定性定语从句
+as引导的非限定性定语从句的特点主要有两个：
+1、as所指代的先行词通常都是一个完整的句子；
+2、as引导的定语从句位置很灵活，可以在句首、句中或句末。
+
+as引导的非限定性定语从句可以放在句首，此时as指代后面的整个主句。换句话说，关系代词as的先行词可以出现在as后边。
+这点不同于which及任何其他关系词，因为which及其他关系词所指代的先行词必须出现在它们的前面，因此which引导的非限定性定语从句不能放在句首。
+As is so often pointed out, knowledge is a two-edged weapon which can be used equally for good or evil.
+这是一个放在句首的由as引导的定语从句，此时as所指代的先行词是其后面的完整的主句，即knowledge is a two-edged weapon which can be used equally for good or evil。as在定语从句中作主语。注意：在这里我们不能说“Which is so often pointed out, ...”。
+
+1） 什么什么 is known to us all, the whale is not fish but a mammal.
+2） 什么什么 is known to us all that the whale is not fish but a mammal.
+3） 什么什么 is known to us all is that the whale is not fish but a mammal.
+我们知道，鲸不是鱼类，而是哺乳类动物。
+在例句1）中，两个分句间有逗号分隔，表明这是一个放在句首的非限定性定语从句，此时只能用as。
+在例句2）中，两个分句间多了一个连词that，替换了例句1）中的逗号，表明这是一个主语从句，其基本的结构是“It is+过去分词+that”。
+例句3）与例句2）相比多了一个谓语is，表明is前面的成分是主语，后面的成分是表语。在主语部分is known to us all里又有一个谓语is，这就表明充当主语的应该是一个主语从句，而且空白处填入的连词必须又能在主语从句中作主语，所以只能填What。
+
+as引导的非限定性定语从句可放在句中
+放在句中，往往会分隔主句中的某两个成分，因此在分析句子时要跳过这个as引导的从句，直接将从句的前后两个成分联系起来看，这样才便于理解。尽管as引导的从句放在句中，但as所指代的先行词依然是主句，只不过此时的主句是被as引导的从句分隔成了前后两部分。which引导的非限定性定语从句也可以放在句中，但which的先行词必须出现在其前面。
+Stratford-on-Avon, as we all know, has only one industry—William Shakespeare—but there are two distinctly separate and increasingly hostile branches.
+众所周知，埃文河上的斯特拉特福德镇只有一个产业，即威廉·莎士比亚，但是存在着两个明显不同且日益敌对的分支。
+as引导的定语从句放在句中，隔开了主语Stratford-on- Avon与其谓语has。此时as指代的先行词依然是主句，只不过此时的主句是被as引导的从句分隔成了Stratford-on-Avon和has only one industry— William Shakespeare—but there are two distinctly separate and increasingly hostile branches两部分。as指代这个主句的同时在定语从句中作know的宾语。
+这里若用which替换as，说成which we all know，那么which只能指代Stratford-on-Avon而不能指代整个主句。因此，which表示“我们所知道”的是Stratford-on-Avon这个城市。
+
+There is, as has been suggested, a growing body of research literature in journalism and broadcasting, but very little significant attention has been devoted to the study of the interview itself.
+正如前面已经提及的，对新闻与广播的研究文献越来越多，但是却很少有关注新闻采访本身的研究。
+此时as所指代的先行词依然是主句，只不过此时的主句被as引导的从句分隔成了There is和a growing body of research literature in journalism and broadcasting, but very little significant attention has been devoted to the study of the interview itself两部分。
+这里不能用which代替as，因为定语从句前面只有there is这个结构，它不是一个名词，因而无法作which的先行词。
+
+as引导的非限定性定语从句可放在句末，which引导的非限定性定语从句也常常放在句末。
+
+在as引导的定语从句中，as有“正好……”“就像……”“由……而知”的含义。
+当主句和从句在内容上一致时，或者说从句内容是顺着主句的意思说下来时，通常用as。
+若主句和从句在内容上不一致，或从句的内容对主句的内容起消极作用，即对主句内容起反对、排斥、否定等作用时，则多用which。
+
+例句1） She has married again, as was expected.
+她又结婚了，正如人们所预料的那样。
+例句2） She has married again, which was unexpected.
+她又结婚了，这真出乎人们预料。
+在例句1）中，定语从句中的关键词expected表明定语从句的意思与前面主句的意思是顺接关系，所以用as比较妥当，表示“正如人们所意料的那样”。
+在例句2）中，定语从句中的关键词unexpected表明定语从句的意思与前面主句的意思是否定、排斥的关系，所以用which比较妥当，表示“这是出乎人们意料的”。
+
+She is very careful, as her work shows.
+她很细心，这从她的工作中就可看得出来。
+在该句中，定语从句的意思与前面主句的意思是顺接关系，所以用as比较妥当，表示“正如她的工作所显示的”。
+
+The young man cheated his friend of much money, which was disgraceful.
+这个年轻人骗了他朋友很多钱，这真可耻。
+在该句中，定语从句中的关键词disgraceful表明定语从句的意思与前面主句的意思是否定、排斥的关系，所以用which比较妥当，表示“这真可耻”。
+
+as引导限定性定语从句
+as引导限定性定语从句只能用在一些固定结构中，即只能用在由such, the same, as修饰的先行词的后面。as在定语从句中可以作主语、宾语或表语。as的先行词可以是人，也可以是物。
+as在定语从句中作主语
+He’ll repeat such points as are discussed in the book.
+他将会重复书上讨论过的要点内容。
+这里such...as构成结构上的呼应关系。如果没有such，则不用as引导定语从句，比如可以说成“He’ll repeat the point that are discussed in the book.”。
+
+He is not such a man as would leave his work half done.
+也可以说成“He is not a man who would leave his work half done.”。
+他不是那种会将工作半途而废的人。
+
+The new map of the ocean floor shows the locations of twice as any undersea volcanoes as were previously thought to exist.
+这里as...as构成结构上的呼应关系。如果没有as，则不用as引导定语从句。as的先行词是undersea volcanoes。
+新的洋底地图显示出海底火山的位置，火山数量是人们以前知道的两倍。
+
+as在定语从句中作宾语
+He tried to make as few mistakes as he could avoid.
+他尽量避免犯错误。
+如果没有前面的as，则不用后面的as引导定语从句。as指代先行词mistakes，并且在从句中作avoid的宾语。
+
+He is not the same playboy as we knew.
+他不再是我们所知道的那个花花公子了。
+这里the same...as构成结构上的呼应关系。
+
+as在定语从句中作表语
+He is not such a fool as we would assume him to be.
+他并不像我们想象的那样傻。
+as指代先行词fool，并且在从句中作be的表语。
+
 关系代词than
 - than可作关系代词引导定语从句，在从句中一般作主语（也可作宾语）；
 - than前面的主句需有形容词的比较级形式；

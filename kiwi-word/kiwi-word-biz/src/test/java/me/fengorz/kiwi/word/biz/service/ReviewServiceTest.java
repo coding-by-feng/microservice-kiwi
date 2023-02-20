@@ -109,7 +109,7 @@ public class ReviewServiceTest {
     private BaiduTtsService baiduTtsService;
 
     @Test
-    // @Disabled
+    @Disabled
     void initPermanent() {
         assertDoesNotThrow(() -> reviewService.initPermanent(false));
     }
@@ -286,6 +286,15 @@ public class ReviewServiceTest {
             ParaphraseVO paraphraseVO = test.getCharacterVOList().get(0).getParaphraseVOList().get(0);
             reviewService.removeWordReviewAudio(paraphraseVO.getParaphraseId());
             reviewService.generateTtsVoiceFromParaphraseId(paraphraseVO.getParaphraseId());
+        });
+    }
+
+    @SneakyThrows
+    // @Disabled
+    @Test
+    void test_reGenReviewAudioForParaphrase() {
+        assertDoesNotThrow(() -> {
+            reviewService.reGenReviewAudioForParaphrase(3020173);
         });
     }
 

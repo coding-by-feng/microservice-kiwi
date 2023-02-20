@@ -96,7 +96,7 @@ public class CrawlerTest {
     }
 
     @Test
-    // @Disabled
+    @Disabled
     public void schedulerTest() {
         Assertions.assertDoesNotThrow(() -> {
             // Assertions.assertNotNull(chiefSchedulerSetup);

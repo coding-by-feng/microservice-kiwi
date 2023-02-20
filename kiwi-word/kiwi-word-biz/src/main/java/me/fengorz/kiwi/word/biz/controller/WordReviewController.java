@@ -44,7 +44,7 @@ import java.util.List;
 @RestController
 @AllArgsConstructor
 @RequestMapping("/word/review/")
-public class WordReviewController extends AbstractFileController {
+public class WordReviewController extends AbstractFileController{
 
     private final ReviewService reviewService;
     private final OperateService operateService;

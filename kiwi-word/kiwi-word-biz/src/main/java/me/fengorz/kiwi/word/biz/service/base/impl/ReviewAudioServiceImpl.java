@@ -113,7 +113,7 @@ public class ReviewAudioServiceImpl extends ServiceImpl<ReviewAudioMapper, WordR
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRES_NEW)
+    @Transactional(rollbackFor = Exception.class)
     public void cleanBySourceIdAndType(Integer sourceId, Integer type) {
         LambdaQueryWrapper<WordReviewAudioDO> condition =
                 Wrappers.<WordReviewAudioDO>lambdaQuery().eq(WordReviewAudioDO::getSourceId, sourceId);

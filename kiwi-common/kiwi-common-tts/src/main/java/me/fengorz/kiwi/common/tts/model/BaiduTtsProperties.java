@@ -19,10 +19,6 @@
 
 package me.fengorz.kiwi.common.tts.model;
 
-import java.util.Set;
-
-import org.apache.commons.collections4.SetUtils;
-
 import lombok.Getter;
 import lombok.Setter;
 
@@ -39,9 +35,5 @@ public class BaiduTtsProperties {
     private String apiKey;
     private String secretKey;
     private String accessToken;
-
-    public Set<String> listApiKey() {
-        return SetUtils.unmodifiableSet(apiKey1, apiKey2, apiKey3, apiKey4);
-    }
 
 }

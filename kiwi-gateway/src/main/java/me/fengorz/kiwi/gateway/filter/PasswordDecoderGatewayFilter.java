@@ -31,7 +31,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import reactor.core.publisher.Mono;
 
 import java.net.URI;
-import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @Author zhanshifeng
@@ -55,7 +55,7 @@ public class PasswordDecoderGatewayFilter extends AbstractGatewayFilterFactory {
 
             URI uri = exchange.getRequest().getURI();
             String rawQuery = uri.getRawQuery();
-            HashMap<String, String> decodeParamMap = HttpUtil.decodeParamMap(rawQuery, CharsetUtil.UTF_8);
+            Map<String, String> decodeParamMap = HttpUtil.decodeParamMap(rawQuery, CharsetUtil.CHARSET_UTF_8);
             String password = decodeParamMap.get(SecurityConstants.KEY_PASSWORD);
             if (StrUtil.isNotBlank(password)) {
                 try {

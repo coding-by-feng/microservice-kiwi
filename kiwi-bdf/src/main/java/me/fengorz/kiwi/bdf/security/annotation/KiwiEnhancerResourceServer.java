@@ -16,14 +16,13 @@
 
 package me.fengorz.kiwi.bdf.security.annotation;
 
-import java.lang.annotation.*;
-
+import me.fengorz.kiwi.bdf.security.component.KiwiResourceServerAutoConfiguration;
+import me.fengorz.kiwi.bdf.security.component.KiwiSecurityBeanDefinitionRegistrar;
 import org.springframework.context.annotation.Import;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 
-import me.fengorz.kiwi.bdf.security.component.KiwiResourceServerAutoConfiguration;
-import me.fengorz.kiwi.bdf.security.component.KiwiSecurityBeanDefinitionRegistrar;
+import java.lang.annotation.*;
 
 /**
  * 资源服务注解 @Author zhanshifeng

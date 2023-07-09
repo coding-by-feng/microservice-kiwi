@@ -16,21 +16,14 @@
 
 package me.fengorz.kiwi.gateway.filter;
 
-import java.util.concurrent.TimeUnit;
-
-import org.apache.commons.lang3.StringUtils;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.Ordered;
-import org.springframework.http.CacheControl;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
-
-import cn.hutool.http.Header;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import me.fengorz.kiwi.gateway.property.CacheControlApiProperties;
 import reactor.core.publisher.Mono;
 
 /**
@@ -43,21 +36,28 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 public class GenericHeaderGlobalFilter implements GlobalFilter, Ordered {
 
-    private final CacheControlApiProperties cacheControlApiProperties;
-
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         String path = exchange.getRequest().getURI().getPath();
         log.info("path is: {}", path);
 
         ServerHttpResponse response = exchange.getResponse();
-        if (StringUtils.startsWithAny(path, cacheControlApiProperties.getApi().toArray(new String[0]))) {
-            log.info("Enabled cache-control header.");
-            response.getHeaders().add(Header.CACHE_CONTROL.toString(),
-                CacheControl.maxAge(365, TimeUnit.DAYS).cachePublic().toString());
-        }
+        response.getHeaders().forEach((name, value) -> log.info("Header name: {}, value: {}", name, value));
 
-        return chain.filter(exchange.mutate().response(response).build());
+        // if (StringUtils.startsWithAny(path, cacheControlApiProperties.getApi().toArray(new String[0]))) {
+        // ServerHttpResponse response = exchange.getResponse();
+        // log.info("Enabled cache-control header.");
+        // response.getHeaders().remove(Header.CACHE_CONTROL.toString());
+        // response.getHeaders().remove(Header.PRAGMA.toString());
+        // response.getHeaders().remove(GlobalConstants.HEADERS.HEADER_EXPIRES_UPPER_CASE);
+        // response.getHeaders().remove(GlobalConstants.HEADERS.HEADER_EXPIRES_LOWER_CASE);
+        // response.getHeaders().add(Header.CACHE_CONTROL.toString(),
+        // CacheControl.maxAge(365, TimeUnit.DAYS).cachePublic().toString());
+        //
+        // return chain.filter(exchange.mutate().response(response).build());
+        // }
+
+        return chain.filter(exchange);
     }
 
     @Override

@@ -16,31 +16,25 @@
 
 package me.fengorz.kiwi.word.biz.service.operate.impl;
 
-import java.util.Optional;
-
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.bdf.core.service.SeqService;
 import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
-import me.fengorz.kiwi.common.sdk.constant.MapperConstant;
 import me.fengorz.kiwi.word.api.common.WordConstants;
 import me.fengorz.kiwi.word.api.entity.StarRelHisDO;
 import me.fengorz.kiwi.word.api.entity.WordMainDO;
-import me.fengorz.kiwi.word.biz.service.base.IStarRelHisService;
 import me.fengorz.kiwi.word.biz.service.base.ParaphraseExampleService;
 import me.fengorz.kiwi.word.biz.service.base.ParaphraseService;
+import me.fengorz.kiwi.word.biz.service.base.StarRelHisService;
 import me.fengorz.kiwi.word.biz.service.base.WordMainService;
 import me.fengorz.kiwi.word.biz.service.operate.AsyncArchiveService;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-/**
- * @Author zhanshifeng @Date 2020/9/16 5:26 PM
- */
+import java.util.Optional;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -49,7 +43,7 @@ public class AsyncArchiveServiceImpl implements AsyncArchiveService {
     private final WordMainService mainService;
     private final ParaphraseService paraphraseService;
     private final ParaphraseExampleService exampleService;
-    private final IStarRelHisService relHisService;
+    private final StarRelHisService relHisService;
     private final SeqService seqService;
 
     @Override
@@ -58,7 +52,7 @@ public class AsyncArchiveServiceImpl implements AsyncArchiveService {
     public void archiveWordRel(Integer wordId, Integer listId, Integer userId) {
         Optional.ofNullable(mainService.getById(wordId))
             .ifPresent(word -> relHisService
-                .save(new StarRelHisDO().setId(seqService.genIntSequence(MapperConstant.T_INS_SEQUENCE))
+                .save(new StarRelHisDO().setId(seqService.genCommonIntSequence())
                     .setListId(listId).setWordName(word.getWordName()).setSerialNum(0)
                     .setType(WordConstants.REMEMBER_ARCHIVE_TYPE_WORD).setUserId(userId)));
     }
@@ -87,7 +81,7 @@ public class AsyncArchiveServiceImpl implements AsyncArchiveService {
             if (word == null) {
                 return;
             }
-            relHisService.save(new StarRelHisDO().setId(seqService.genIntSequence(MapperConstant.T_INS_SEQUENCE))
+            relHisService.save(new StarRelHisDO().setId(seqService.genCommonIntSequence())
                 .setListId(listId).setWordName(word.getWordName()).setSerialNum(paraphrase.getSerialNumber())
                 .setType(WordConstants.REMEMBER_ARCHIVE_TYPE_PARAPHRASE).setUserId(userId));
         });
@@ -110,7 +104,7 @@ public class AsyncArchiveServiceImpl implements AsyncArchiveService {
             if (word == null) {
                 return;
             }
-            relHisService.save(new StarRelHisDO().setId(seqService.genIntSequence(MapperConstant.T_INS_SEQUENCE))
+            relHisService.save(new StarRelHisDO().setId(seqService.genCommonIntSequence())
                 .setListId(listId).setWordName(word.getWordName()).setSerialNum(example.getSerialNumber())
                 .setType(WordConstants.REMEMBER_ARCHIVE_TYPE_EXAMPLE).setUserId(userId));
         });

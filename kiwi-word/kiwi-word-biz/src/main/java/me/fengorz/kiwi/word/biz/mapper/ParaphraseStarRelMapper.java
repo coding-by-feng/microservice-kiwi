@@ -15,11 +15,10 @@
  */
 package me.fengorz.kiwi.word.biz.mapper;
 
-import java.util.List;
-
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-
 import me.fengorz.kiwi.word.api.entity.ParaphraseStarRelDO;
+
+import java.util.List;
 
 /**
  * @author zhanshifeng
@@ -28,5 +27,9 @@ import me.fengorz.kiwi.word.api.entity.ParaphraseStarRelDO;
 public interface ParaphraseStarRelMapper extends BaseMapper<ParaphraseStarRelDO> {
 
     List<Integer> listNotGeneratedVoice();
+
+    List<Integer> listNotAllGeneratedVoice(Integer type);
+
+    List<Integer> listNotGeneratedPronunciationVoiceForPhrase(Integer type);
 
 }

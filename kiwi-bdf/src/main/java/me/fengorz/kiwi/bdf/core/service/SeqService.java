@@ -12,4 +12,6 @@ public interface SeqService {
      * @return 整型ID
      */
     Integer genIntSequence(String seqTable);
+
+    Integer genCommonIntSequence();
 }

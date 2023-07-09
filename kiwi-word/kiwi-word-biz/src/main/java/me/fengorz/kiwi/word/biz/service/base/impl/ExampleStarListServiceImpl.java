@@ -15,18 +15,12 @@
  */
 package me.fengorz.kiwi.word.biz.service.base.impl;
 
-import java.util.List;
-
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-
 import lombok.RequiredArgsConstructor;
 import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
 import me.fengorz.kiwi.common.sdk.util.bean.KiwiBeanUtils;
@@ -38,9 +32,13 @@ import me.fengorz.kiwi.word.api.entity.column.WordParaphraseExampleListColumn;
 import me.fengorz.kiwi.word.api.vo.ExampleStarListVO;
 import me.fengorz.kiwi.word.api.vo.star.ExampleStarItemVO;
 import me.fengorz.kiwi.word.biz.mapper.ExampleStarListMapper;
-import me.fengorz.kiwi.word.biz.service.base.IExampleStarListService;
-import me.fengorz.kiwi.word.biz.service.base.IWordExampleStarRelService;
+import me.fengorz.kiwi.word.biz.service.base.ExampleStarListService;
+import me.fengorz.kiwi.word.biz.service.base.ExampleStarRelService;
 import me.fengorz.kiwi.word.biz.service.operate.AsyncArchiveService;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 /**
  * @author zhanshifeng
@@ -49,10 +47,10 @@ import me.fengorz.kiwi.word.biz.service.operate.AsyncArchiveService;
 @Service()
 @RequiredArgsConstructor
 public class ExampleStarListServiceImpl extends ServiceImpl<ExampleStarListMapper, ExampleStarListDO>
-    implements IExampleStarListService {
+    implements ExampleStarListService {
 
     private final ExampleStarListMapper mapper;
-    private final IWordExampleStarRelService relService;
+    private final ExampleStarRelService relService;
     private final AsyncArchiveService archiveService;
 
     @Override
@@ -95,7 +93,7 @@ public class ExampleStarListServiceImpl extends ServiceImpl<ExampleStarListMappe
         LambdaQueryWrapper<ExampleStarRelDO> queryWrapper = new LambdaQueryWrapper<ExampleStarRelDO>()
             .eq(ExampleStarRelDO::getListId, listId).eq(ExampleStarRelDO::getExampleId, exampleId);
         int count = relService.count(queryWrapper);
-        KiwiAssertUtils.serviceNotEmpty(count, "example is not exists!");
+        KiwiAssertUtils.assertNotEmpty(count, "example is not exists!");
         relService.remove(queryWrapper);
         archiveService.invalidArchiveExampleRel(exampleId, listId, SecurityUtils.getCurrentUserId());
     }

@@ -1,0 +1,339 @@
+定语从句第一部分
+在英文中，被定语从句所修饰的对象叫作antecedent，英文中对这个词的解释是a word, phrase, clause, or sentence to which a pronoun refers，即表示“代词所指代的词、短语、从句或句子”，所以先行词可以是一个词、短语、分句或者独立的句子等。
+
+形容词作定语与从句作定语比较
+当要表达复杂的意思时，往往需要借助于定语从句来完成，即要用定语从句来修饰某个名词或名词短语。比如当我们说“我不喜欢懒人”，这时只需要用一个形容词lazy来作定语就可以。
+I don’t like lazy people.
+如果要表达稍微复杂一点的意思，比如说“我不喜欢不守信用的人”，这时，简单地用形容词作定语就无能为力了，就要借助于一个句子来修饰名词，用作名词的定语，对名词进行限制。
+I don’t like people who never keep their word.
+
+定语从句的两个重要概念：先行词和关系词
+被定语从句所修饰的对象称为先行词。
+重复指代先行词、起连接主句和从句的作用，并且在定语从句中充当一定成分的连接词称为关系词。
+关系词有两个作用：
+代词的作用： 重复指代先行词并且在定语从句中充当一定成分。
+连接作用：即连接主句和从句。
+
+先行词的结构特点
+先行词是一个词，可以是一个单词，通常是名词，也可以是代词。主要包括：人称代词he（其他人称代词不可以），指示代词that/those，不定代词one等。
+比如例句：幸福与智慧的区别在于：认为自己最幸福的人，他真的就是最幸福；而认为自己最智慧的人，却往往是最大的傻瓜。
+There is this difference between happiness and wisdom: he who thinks himself the happiest man really is so; but he who thinks himself the wisest is generally the greatest fool.
+再重复读一遍：
+There is this difference between happiness and wisdom: he who thinks himself the happiest man really is so; but he who thinks himself the wisest is generally the greatest fool.
+这里的两个定语从句的先行词都是代词he。注意：这里的he不是具体指某个人，而是表示泛指。一般来讲，人称代词后面是不能接定语从句的，比如我们不能说“We who think ourselves...”，或“You who think yourself...”等等，因为人称代词已经表达了一个完整的意思，不需要任何定语从句来修饰。但人称代词若是表示泛指，则可以接定语从句来进行修饰
+
+只有那些有耐心将简单的事情做得完美的人，才能学会轻松地做好难事的技能。
+Only those who have the patience to do simple things perfectly will acquire the skill to do difficult things easily.
+Only those who have the patience to do simple things perfectly will acquire the skill to do difficult things easily.
+这里的those指人，作先行词，被定语从句who have the patience to do simple things perfectly所修饰。
+
+先行词是一个短语
+In Europe, as elsewhere, multi-media groups have been increasingly successful groups which bring together television, radio, newspapers, magazines and publishing houses that work in relation to one another.
+在欧洲，像在其他地方一样，多媒体集团越来越成功了。这些集团把相互间联系密切的电视台、电台、报纸、杂志以及出版社组合到了一起。
+In Europe, as elsewhere, multi-media groups have been increasingly successful groups which bring together television, radio, newspapers, magazines and publishing houses that work in relation to one another.
+这里的关系词which指代的先行词是successful groups这个名词短语，关系词that指代的先行词是television, radio, newspapers, magazines and publishing houses这个名词短语。
+
+先行词是一个分句
+He said that he had no time, which isn't true.
+他说他没有时间，事实并非如此。
+这里which指代的是一个宾语从句that he had no time。
+
+先行词是一个完整的句子
+My girlfriend likes dancing with other guys, which really drives me crazy.
+我女友喜欢和别的小伙子跳舞，这让我十分恼火。
+先行词是my girlfriend likes dancing with other guys这一完整的句子。
+
+先行词的位置特点
+先行词 加 其他定语 加 定语从句
+这种情形最常见。这是由于先行词同时带有多个定语，定语从句与其他定语相比，一般较长，结构也较复杂，因此，按照英语的“尾重原则（principle of end weight）”，结构复杂的定语从句置于其他定语后边，从而造成与先行词隔离。
+The mineral elements from the soil that are usable by the plant must be dissolved in the soil solution before they can be taken into the root.
+土壤中可供植物利用的矿物质只有先溶解在土壤中，然后才能被植物的根部吸收。
+
+先行词 加 状语 加 定语从句
+造成先行词与关系词被分隔的第二种情形，就是在先行词与关系词之间插入一个状语，这个状语一般是修饰主句的谓语动词的。
+Never leave that until tomorrow which you can do today.
+这里的先行词是that，定语从句是which you can do today。现在二者之间插入了一个时间状语until tomorrow来修饰leave，从而造成先行词与关系词被分隔。
+今日事，今日毕（不要把今天能做的事情留到明天做）。
+
+If there is anything in the world that a young man should be more grateful for than another, it is the poverty which necessitates starting life under very great disadvantage.
+这里的关系代词that在从句中作介词for的宾语。
+对于青年人来说，如果世上真的有什么事物是他最应该感激的，那就是贫穷，因为贫穷能促使他在非常恶劣的环境下开创生活。
+
+作主语的先行词 加 谓语部分 加 定语从句
+先行词与关系词被分隔的第三种情形就是两者被主句谓语隔开。这是因为先行词在主句中作主语，然后它又被一个定语从句所修饰，而定语从句一般都会比主句谓语的结构复杂。因此，按照英语的“尾重原则（principle of end weight）”，结构复杂的定语从句置于主句谓语后边，从而造成关系词与先行词被隔离。
+It can be predicted, however, that from time to time questions will arise which will require specific scientific answers.
+然而，可以预见的是，将来会经常出现一些问题，这些问题需要给出专门的科学的回答。
+
+定语从句中的主谓一致问题
+定语从句的谓语动词是用单数还是用复数，这不取决于关系词，而是由先行词决定的。
+
+Despite much research, there are still certain elements in the life cycle of the insect that 【is】 not fully understood.
+【is】应改为are。
+这里先行词elements与关系词that被分隔，因为elements还有一个后置定语in the life cycle of the insect。显然，这种分隔属于：先行词+其他定语+定语从句。that指代elements，在从句中作主语，所以，谓语动词要用复数形式的are。
+
+关系词在定语从句中充当的成分
+关系词用作从句的主语
+比较简单句和定语从句，看看一个简单句如何变成定语从句。
+The woman is a famous dancer and she lives next door.
+这个句中有一个“重复元素”，这里的she指代 the woman，即两句之间有一个交叉点，而通过这个交叉点建立起两句之间的联系。现在要用she lives next door来作定语修饰the woman，以告诉对方哪位女士是舞蹈演员。而在定语从句中，指代“人”的关系词要用who。
+因此，上句可改写成：
+The woman is a famous dancer who (=and she) lives next door.
+这里的关系词who既取代了代词she也取代了连词and， 即who既具有代词的作用也起着连接的作用。另外，定语从句一般要紧跟在它所修饰的名词后面。因此，上一句又可进一步改写成：
+The woman who lives next door is a famous dancer.
+由此看到，关系词who既指代the woman，同时又在从句中作主语，而且还替换了and，起着连词的作用。
+这位女士是一名著名的舞蹈演员，她就住在我家隔壁。
+
+在变换过程中要注意三点：
+用关系词who代替人称代词（如she或they）后，定语从句里就不能再保留这些代词了。比如不能说：
+The woman who she lives next door is a famous dancer.
+I like guys who they have a good sense of humor.
+事实上，定语从句可以修饰一个主句当中的任何一个名词。但是，我们关注的往往是关系词在定语从句中所充当的成分，不关心定语从句是修饰主句的哪个名词。
+定语从句的谓语动词形式是由关系词所指代的先行词来决定的，而不是取决于关系词本身。定语从句who lives next door中的who指代的woman是单数名词，故谓语用单数的lives；而定语从句who have a good sense of humor中的who指代的guys是复数名词，故谓语用复数的have。
+
+Anger is a thief who steals away the nice moments.
+愤怒就如同一个窃贼，盗取了我们的幸福时光。
+He who is not handsome at twenty, nor strong at thirty, nor rich at forty, nor wise at fifty, will never be handsome, strong, rich, or wise.
+一个人若在20岁时不俊美、30岁时不健康、40岁时不富有、50岁时不明智，那么他将永远不会拥有这些。
+There is this difference between happiness and wisdom: the person who thinks himself the happiest man really is so; but the person who thinks himself the wisest is generally the greatest fool.
+幸福与智慧区别于此：认为自己是最幸福的，他真的就是最幸福的；而认为自己是最有智慧的，他却往往是最大的傻瓜。
+The world is a book, and those who do not travel read only one page.
+世界犹如一本书，而那些从不出门旅行的人仅仅读了这本书的一页。
+Of course I am not talking about easy-come-easy-go friendship. I’m talking about friends who care deeply about each other, who support each other, who make life worth living.
+当然了，我这里所说的友谊不是那种“来得快去得也快”的泛泛之交，而是那种彼此之间能真正互相关心的朋友，能够互相支持的朋友，能够让你的人生更有意义的朋友。
+
+关系词用作从句中动词的宾语
+关系词除了在定语从句中作主语外，还可以在从句中作宾语。而且，还可以进一步区分为从句动词的宾语和从句介词的宾语。
+例句1) I'd really like to find a friend and I can trust him completely.
+例句2) I'd really like to find a friend I can trust who completely.
+在例句1）中，这里的him指代名词短语a friend，可以用关系词who来替代him，充当动词trust的宾语。又因为who有连词的作用，所以此时and就要去掉了，
+如例句2）所示。另一方面，关系词who要置于从句的开头，所以要把who移到I的前面，原句从而变成了下面的例句3）：
+3）I’d really like to find a friend who I can trust completely.
+我想找一个我完全能够信任的人做朋友。
+
+He is the best grammar teacher who I have ever seen.
+他是我见过的最好的语法老师。
+
+It’s hard to have a friend who you can trust completely.
+很难有一个你能完全信任的朋友。
+关系词用作从句中介词的宾语
+例句1) I'm talking about friends and you can share almost everything with them.
+例句2) I'm talking about friends who you can share almost everything with.
+这里的who充当介词with的宾语。
+我这里说的朋友，是指那些你几乎可以把一切与之分享的人。
+
+I hope I never have a boss who I can’t talk to about my problems.
+这里的who充当介词to的宾语。
+我不希望有一个无法与其谈论我的问题的老板。
+
+I’d prefer someone who I have something in common with — who I can talk to easily.
+这里的关系词who分别充当介词with和to的宾语。
+我喜欢那些与我有共同点的人，这样易交流。
+
+作宾语的关系词可以省去
+不论关系词是作动词的宾语还是作介词的宾语都可以省去。比如以上讨论过的相关例句，可以分别改写成：
+I’d really like to find a friend (关系词省略) I can trust completely.
+I hope I never have a boss (关系词省略) I can’t talk to about my problems.
+在从句中作主语的关系词无法省去。比如不能这样说：
+
+I like guys (关系词不能省略) have a good sense of humor.
+
+关系代词与先行词的搭配关系
+先行词指“人”，用关系代词who或whom
+who和whom的区别
+who的前面不能与介词搭配使用
+因为who是主格形式，所以在介词的后面不能用who，比如不说with who，而说with whom。
+I’m talking about friends who you can share almost everything with.
+不能说“I’m talking about friends with who you can share almost everything.”。
+而应该说“I’m talking about friends with whom you can share almost everything.”。
+主格形式的who除了作定语从句的主语外，还可以充当定语从句的宾语或表语。
+whom在定语从句中不能作主语，但可作宾语或表语
+A rich person is not one who has the most, but is one who needs the least.
+一个富有的人，不是因为他拥有的最多，而是因为他需要的最少。
+这里的who作从句的主语，所以不能用whom，不说whom has…。
+
+Only the people who have the patience to do simple things perfectly will acquire the skill to do difficult things easily.
+只有有耐心圆满完成简单工作的人，才能够轻而易举地完成困难的事。
+这里的who作从句的主语，所以不能用whom，不说whom have…。
+总之，who可以作主语，也可以代替whom作宾语或表语，但不能用在介词后面。而因为whom是宾格形式，所以不能作主语。
+
+表示人或物的所有关系，用whose
+whose表示所有关系，其作用就如同物主代词my，your，her，his，their和our，whose的后面要接名词。whose可指人也可指物。“whose+名词”在从句中可作主语、动词的宾语或介词的宾语，whose同that一样，既可以指人，也可以指物。
+I know a friend. His brother is a pop singer.
+I know a friend whose bropther is a pop singer.
+我认识一个朋友，他哥哥是一名流行歌手。
+例句2）里的whose代替了例句1）里的his，指friend，即表示人。
+
+When I looked through the window, I saw a girl whose beauty took my breath away.
+当我朝窗外看去，猛然看见一个美女，其美貌让我惊讶不已。
+这里的whose beauty作从句的主语，whose指人即a girl。
+
+It was a meeting whose importance I did not realize at the time.
+这个会议的重要性当时我并没有意识到。
+这里的whose importance作从句动词realize的宾语，whose指物即a meeting。
+
+先行词指“物”，用关系代词which
+We are studying sentences. They contain adjective clauses.
+We are studying sentences which contain adjective clauses.
+我们正在学习带有定语从句的句子。
+这里的先行词是sentences，表示“物”，因此不能用who。要用which代替they，指代sentences，告诉对方“我们正在学习什么类型的句子”。
+
+关系词which所指代的先行词比较复杂，它除了可以指单个的名词外，还可以指代短语甚至是从句。
+先行词是单个的名词
+Anger is a wind which blows out the lamp of the mind.
+愤怒是吹灭心灵之灯的风。
+先行词是wind，即which指单个的名词。
+
+Perhaps it is human to appreciate little that which we have and to long for that which we have not.
+先行词是that，即which指单个的名词。
+或许，“不惜已获，贪求不得”是人类共同的弱点吧。
+
+先行词是一个短语
+which可以指代一个短语。
+He likes climbing mountains, which is a good exercise.
+先行词是主句中的一个动名词短语climbing mountains。
+他喜欢爬山，这是一项很好的运动。
+先行词是一个句子
+which可以指代前面的整个句子。
+
+He tore up my photo, which upset me.
+他把我的照片给撕了，这让我很生气。
+全句“he tore up my photo”作which的先行词。
+
+that可以指代“人”，也可以指代“物”
+关系代词that的意义和用法主要有以下三点：
+that既可指“人”也可指“物”，指“物”时可以替换which，指“人”时可以替换who；
+that不用在非限制性定语从句中；
+that不能用于介词的后面（同who一样）。
+
+Too many people spend money which they haven’t earned, to buy things which they don’t want, to impress people who they don’t like.
+太多的人花他们还没挣到的钱，买他们不想要的东西，取悦他们不喜欢的人。
+可以用that替换其中的which和who而将这句话改写成“Too many people spend money that they haven’t earned, to buy things that they don’t want, to impress people that they don’t like.”。
+这里that的先行词有“物（money和things）”，也有“人（people）”。
+作宾语的关系词可以省去，因此这句话也可说成“Too many people spend money (省略) they haven’t earned, to buy things (省略) they don’t want, to impress people (省略) they don’t like.”。
+
+that与which和who在用法上的区别：
+- 先行词中同时出现“人”和“物”时，用that
+The writer and his novels that the article deals with are quite familiar to us.
+这篇文章里所说的这个作家以及他的小说，我们都比较熟悉。
+这里的先行词是the writer and his novels，即同时有“人（writer）”和“物（his novels）”，所以要选用that引导定语从句。
+先行词为指“物”的all，little，few，much，none和the first时, 用that
+All that glitters is not gold.
+闪光的并非都是金子。
+这里的先行词是all，所以用that来引导定语从句。另外要注意的是，这里有一个半否定的问题：all什么什么not要译成“并非都是”，不能译成全否定的“所有都不”。
+The book contains little that is useful.
+这本书里几乎没有有用的东西。
+这里的先行词是表示否定意义的代词little（几乎没有什么），所以用that来引导定语从句。
+There is not much that can be done.
+这没有什么可以做的了。
+这里的先行词是代词much，所以用that来引导定语从句。
+As long as you stand up to the difficulties, there are none that cannot be overcome.
+只要你勇敢地去面对困难，就没有什么克服不了的。
+这里的先行词是代词none，所以用that来引导定语从句。
+先行词是不定代词something，anything，nothing和everything时，一般用that
+先行词被any，only，all，every，no，some，much，few，little，序数词，形容词的最高级，the only，the one，the very，the right和the last等成分修饰时，用that
+Tell us all things that you know.
+把你知道的都告诉我们。
+The very problem that I want to solve is like this.
+我想解决的问题就像这个一样。
+He is the only man that can speak four foreign languages in our company.
+他是我们公司唯一一个会说四种外语的人。
+
+that不用在非限制性定语从句中
+I became a single mother overnight, which is nothing like becoming famous overnight.
+我在一夜之间成了单亲妈妈，这跟一夜成名可完全不同。
+不能说“I became a single mother overnight, that is nothing like becoming famous overnight.”。
+that不能用于介词后面
+The world in which we live is made up of matter. 我们所生活的世界是由物质组成的。
+或：The world which we live in is made up of matter.
+或：The world that we live in is made up of matter.
+但不能说“The world in that we live is made up of matter.”。
+
+介词 加 关系代词
+看从句选介词，所用介词须与定语从句中的动词构成固定搭配（最常见）
+这里所说的动词往往是指定语从句中的谓语动词。
+The girl with whom you work is his girlfriend.
+和你一起工作的女孩是他的女朋友。
+关系词whom前面的介词with与定语从句中的谓语动词work构成固定搭配work with，表示“和……一起工作”。
+He is the man on whom I think you can depend.
+他是我认为你可以信赖的人。
+关系词whom前面的介词on与定语从句中的谓语动词depend构成固定搭配depend on，表示“依靠”。
+看从句的形容词：所用介词须与定语从句中的形容词构成搭配（比较常见）
+如果定语从句的谓语不是一个实义动词，而是由be动词与某个形容词构成的，我们则要使用与该形容词搭配的介词。
+He referred me to some reference books with which I am not very familiar.
+他让我参考的几本书我一本也不熟悉。
+关系词which前面的介词with与定语从句谓语部分中的 形容词familiar构成固定搭配be familiar with sth.，表示“对……熟悉”。
+
+They will pass along their fresh impressions to the youth groups in which they are active.
+他们会把自己获得的新鲜印象与他们积极参与的青年团体分享。
+关系词which前面的介词in与定语从句谓语部分中的形容词active构成固定搭配be active in sth.，表示“积极参与”。
+
+看从句的名词：所用介词须与定语从句中的某个名词构成搭配（较少用）
+Many hypersomniacs suffer from narcolepsy, for which the primary symptom is excessive daytime sleepiness.
+许多嗜睡的人都患有发作性嗜睡病，其早期症状就是在白天都极度想睡觉。
+这里的关系词which前面的介词for与定语从句中的名词symptom构成固定搭配symptom for，表示“是……症状”。
+看先行词选介词
+The ease with which Mr. Zhang cracked the complex sentence was unbelievable.
+这个复杂的句子，张老师能够如此轻而易举地分析出来，真是让人难以置信。
+拆分句子如下：
+Mr. Zhang cracked the complex sentence with ease and the ease was unbelievable.
+把the ease was unbelievable作为主句，将Mr.Zhang cracked the complex sentence with ease作为定语从句来修饰the ease，将这两句合并起来就是：
+The ease （Mr. Zhang cracked the complex sentence with ease） was unbelievable.
+先行词是ease，所以我们用关系词which来指代，再将上句改写成：
+The ease （Mr. Zhang cracked the complex sentence with which） was unbelievable.
+关系词which应该放在从句的开头，又因为with which（就相当于 with ease）是一个固定搭配，所以要将with which一同移到句子开头，于是上句就进一步改写成：
+The ease （with which Mr. Zhang cracked the complex sentence） was unbelievable.
+常见的有：with ease, at the rate, in the direction, to the extent, to the degree, at the temperature, by the means, by the mode, in a culture, in practice等等。
+
+at the speed和at the rate，表示“以这种速度”。
+The speed at which an animal lives is determined by measuring the rate at which it uses oxygen.
+通过测定动物消耗氧气的速率可以测定该动物的生长速度。
+
+to the extent，表示“在某种程度上”。
+When television was first introduced, the extent to which it would affect human society could not have been foreseen.
+人们发明电视的时候，并没能预见到它会对人类社会产生多大的影响。
+
+by the means，表示“通过这种方式”。
+Public marches are an effective means by which the people can bring social inequalities to the attention of government officials.
+by which就等于说by the means，表示“通过这种方式”，在定语从句中作状语，修饰从句的谓语。
+公众通过游行示威这种方式，可以有效地让政府官员们注意到不平等的社会现实。
+
+表示所属关系或部分与整体的关系时用介词of
+The company, of which Max Harrison was until recently the chairman, has made loss of three million pounds this year.
+这里的of which相当于of the company，于是整个定语从句相当于Max Harrison was until recently the chairman of the company，所以这里的of表示所属关系，即the chairman是属于这个公司的。原定语从句可以改写为：the chairman of which was Max Harrison until recently。
+这家公司今年亏损达三百万英镑，直到前不久Max Harrison还是它的董事长。
+
+该句型的结构往往是“不定代词/数量词/形容词的比较级或最高级+of which/whom”，用来表示数量或某种特点。具体来讲，在介词of前面常出现的词包括：all, each, both, either, neither, none, little, few, many, much, some, most, any, the majority, half, several, a number, half, none以及数字和形容词的最高级等等。
+值得注意的是，这里of前面的成分都可以后移至定语从句中。
+
+固定的介宾结构
+关系代词前面的介词有时与固定的介宾短语结构有关，比如in this case, in one's honor和with one's help等，它们若出现在定语从句中，则会相应地变成in which case, in whose honor和with whose help。
+He may be late, in which case we should wait for him.
+他可能要迟到，如果是这样，我们就应该等等他。
+这里的in which case就是由短语in this case变过来的，这里which指前面整个句子“he may be late”。
+
+定语从句的倒装结构
+具体的结构就是“介词+关系代词+从句谓语+从句主语”，即一个将整个谓语放在主语前面的全部倒装结构。
+This is the world out of which grows the hope, for the first time in history, of a society where there will be freedom from want and freedom from fear.
+第一个定语从句out of which grows the hope, for the first time in history, of a society修饰world。在这个定语从句里有一个倒装结构和分隔结构。分隔结构是在the hope和of a society中间插入了短语for the first time in history，也就是说，如果没有这个插入语，就是the hope of a society，表示“希望建立这样一个社会”。 整个短语the hope, for the first time in history, of a society就表示“在人类历史上，首次希望建立这样一个社会”，这个名词短语是作定语从句的主语。
+定语从句的谓语是grows，out of which在定语从句中作状语，所以整个定语从句是一个全部倒装结构。正常语序应该是：the hope, for the first time in history, of a society grows out of which （out of the world）。 第二个定语从句where there will be freedom from want and freedom from fear修饰society，说明是什么样的社会。难点是如何翻译freedom from want and freedom from fear这个短语。这里freedom from来自于形容词短语free from，表示“免除，没有”。另外，名词want表示“贫困”。因此，整个短语我们可以译成“摆脱贫困，摆脱恐惧”。
+
+The intellectual process I learned in that class is also life's process, because every life is a great work with all the richness of its gifts and the wealth of its possibilities. When you graduate from here, you exit with thousands of pages of personal text on which are inscribed beliefs and values shaped by years of education, family interactions, relationships, experiences. And buried within those thousands of pages is your personal truth, your essence.
+这段话来自惠普公司总裁在斯坦福大学的一次毕业典礼上对毕业生们的演讲。定语从句on which are inscribed beliefs and values shaped by years of education, family interactions, relationships, experiences修饰名词短语thousands of pages of personal text。该从句的主语是beliefs and values shaped by years of education, family interactions, relationships, experiences，谓语是are inscribed，on which作地点状语。所以，整个定语从句是一个全部倒装结构，正常语序是：beliefs and values shaped by years of education, family interactions, relationships, experiences are inscribed on which （on thousands of pages of personal text）。
+我在那门课中所学的掌握知识的过程，也是生活的过程。因为每种人生都是一部伟大的著作，其中包含丰富的才智和美好的 可能。当你从这里毕业时，你会带着数千页的人生教科书走出校门，在这本教科书里铭刻着经过多年教育、家庭的作用、社会关系以及个人经历所形成的信念和价值观。而真实的你和你的精华就深藏在这数千页记录中。
+
+“介词+关系代词+ to do”结构
+例句1） The farmer used wood to build a house in which he could store grains.
+例句2） The farmer used wood to build a house in which to store grains.
+由1）句简化为2）句，先是把定语从句in which he could store grains中的主语he省去（因为he与主句主语the farmer一致，所以可以省略），然后把情态动词could替换为不定式to（因为不定式具有情态意义），于是便得到in which to store grains。
+这位农夫用一些木材建造了一座房子，在那里储存粮食。
+还可以进一步简化上面的例句2），就是把关系词which去掉，此时就必须把介词in移到句末去。
+例句3） The farmer used wood to build a house to store grains in.
+- 在例句1）中，是一个定语从句（in which he could store grains）作后置定语，修饰house；
+- 在例句2）中，则是一个“半定语从句半不定式”的混合形式（in which to store grains）作后置定语，修饰house；
+- 在例句3）中，则是一个不定式（to store grains in）作后置定语，修饰house。
+
+在使用这一结构时应注意以下几点：
+“介词+关系代词”不能用一个关系副词来替换。比如不能说“The farmer used wood to build a house where to store grains.”。
+有介词、有关系代词时，不能将介词置于句末。比如不能说“The farmer used wood to build a house which to store grains in. ”。
+若没有介词，我们不能采用“半定语从句半不定式”的混合形式作后置定语。比如不能说“I can't think of anybody whom to invite.”。
+而要说“I can't think of anybody to invite.”，或者“I can't think of anybody who I should invite.”。

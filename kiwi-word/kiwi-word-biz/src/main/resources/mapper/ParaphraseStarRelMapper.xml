@@ -31,4 +31,33 @@
         limit 10
     </select>
 
+    <select id="listNotAllGeneratedVoice" resultType="java.lang.Integer" parameterType="java.lang.Integer">
+        select wpsr.paraphrase_id
+        from word_paraphrase_star_rel wpsr
+        left join word_paraphrase wp
+        on wpsr.paraphrase_id = wp.paraphrase_id
+        where not exists(select 1
+        from word_review_audio_generation wrag
+        where wrag.source_id = wpsr.paraphrase_id
+        and wrag.type = #{type}
+        and wrag.is_finish = 1)
+        and wp.is_del = 0
+        order by wpsr.create_time desc
+        limit 10
+    </select>
+
+    <select id="listNotGeneratedPronunciationVoiceForPhrase" resultType="java.lang.Integer" parameterType="java.lang.Integer">
+        select wp.paraphrase_id
+        from word_paraphrase_star_rel wpsr
+        left join word_paraphrase wp on wpsr.paraphrase_id = wp.paraphrase_id
+        where wp.character_id = 0
+        and not exists(select 1
+        from word_review_audio_generation wrag
+        where wrag.source_id = wp.word_id
+        and wrag.type = #{type}
+        and wrag.is_finish = 1)
+        order by wpsr.create_time desc
+        limit 10
+    </select>
+
 </mapper>

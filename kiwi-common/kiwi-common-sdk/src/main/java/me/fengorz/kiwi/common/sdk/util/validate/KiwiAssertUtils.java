@@ -26,24 +26,47 @@ import org.apache.commons.collections4.CollectionUtils;
 import java.util.Collection;
 
 /**
- * @Description 断言工具类
+ * 断言工具类
  * @Author zhanshifeng
  * @Date 2019/11/26 9:38 PM
  */
 public class KiwiAssertUtils extends Assert {
 
+    // 自动生成每个方法的注释，方法参数也要自动备注
+
+    /**
+     * 断言对象不为空，为空则抛出异常
+     * @param object    对象
+     * @param errorMsgTemplate  错误信息模板
+     * @param params    错误信息模板参数
+     * @param <T>    对象类型
+     */
     public static <T> void assertNotNullThrowServiceException(T object, String errorMsgTemplate, Object... params) {
         if (object == null) {
             throw new ServiceException(StrUtil.format(errorMsgTemplate, params));
         }
     }
 
+    /**
+     * 断言对象不为空，为空则抛出异常
+     * @param object    对象
+     * @param errorMsgTemplate  错误信息模板
+     * @param params    错误信息模板参数
+     * @param <T>    对象类型
+     */
     public static <T> void resourceNotNull(T object, String errorMsgTemplate, Object... params) {
         if (object == null) {
             throw new ResourceNotFoundException(StrUtil.format(errorMsgTemplate, params));
         }
     }
 
+    /**
+     * 断言对象不为空，为空则抛出异常
+     * @param object    对象
+     * @param errorMsgTemplate  错误信息模板
+     * @param params    错误信息模板参数
+     * @param <T>    对象类型
+     */
     public static <T> T resourceNotEmpty(T object, String errorMsgTemplate, Object... params) {
         resourceNotNull(object, errorMsgTemplate, params);
         if (object instanceof String) {
@@ -70,6 +93,13 @@ public class KiwiAssertUtils extends Assert {
         return object;
     }
 
+    /**
+     * 断言对象不为空，为空则抛出异常
+     * @param object    对象
+     * @param errorMsgTemplate  错误信息模板
+     * @param params    错误信息模板参数
+     * @param <T>    对象类型
+     */
     public static <T> T assertNotEmpty(T object, String errorMsgTemplate, Object... params) {
         assertNotNullThrowServiceException(object, errorMsgTemplate, params);
         if (object instanceof String) {
@@ -96,6 +126,12 @@ public class KiwiAssertUtils extends Assert {
         return object;
     }
 
+    /**
+     * 断言表达式为true，为false则抛出异常
+     * @param expression    表达式
+     * @param errorMsgTemplate  错误信息模板
+     * @param params    错误信息模板参数
+     */
     public static void isTrue(boolean expression, String errorMsgTemplate, Object... params)
             throws IllegalArgumentException {
         if (!expression) {

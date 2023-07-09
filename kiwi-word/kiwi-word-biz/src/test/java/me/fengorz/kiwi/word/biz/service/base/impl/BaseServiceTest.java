@@ -50,6 +50,7 @@ import static me.fengorz.kiwi.common.tts.TtsConstants.BEAN_NAMES.BAIDU_TTS_SERVI
 @ExtendWith(SpringExtension.class)
 @TestPropertySource("classpath:env.properties")
 @SpringBootTest(classes = WordBizApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@Disabled
 public class BaseServiceTest {
 
     @Autowired

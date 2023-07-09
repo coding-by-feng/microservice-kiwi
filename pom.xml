@@ -22,6 +22,7 @@
         <module>kiwi-gateway</module>
         <module>kiwi-common</module>
         <module>kiwi-visual</module>
+        <module>kiwi-test</module>
     </modules>
 
     <properties>
@@ -34,7 +35,7 @@
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <spring-boot-admin.version>2.1.6</spring-boot-admin.version>
-        <hutool.version>4.6.3</hutool.version>
+        <hutool.version>5.8.12</hutool.version>
         <mybatis-plus.version>3.2.0</mybatis-plus.version>
         <kaptcha.version>0.0.9</kaptcha.version>
         <velocity.version>1.7</velocity.version>
@@ -46,19 +47,21 @@
         <zipkin.version>2.12.2</zipkin.version>
         <zipkin-storage-mysql.version>2.8.4</zipkin-storage-mysql.version>
         <lombok.version>1.18.8</lombok.version>
-        <mysql.version>8.0.17</mysql.version>
+        <mysql.version>8.0.32</mysql.version>
         <jsoup.version>1.12.1</jsoup.version>
         <swagger.version>2.9.2</swagger.version>
         <aspectj-maven-plugin.version>1.11</aspectj-maven-plugin.version>
         <lombok-maven-plugin.version>1.18.12.0</lombok-maven-plugin.version>
         <maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
         <junit.version>4.13</junit.version>
+        <junit-jupiter.version>5.8.2</junit-jupiter.version>
         <mockito.version>4.1.0</mockito.version>
         <redisson.version>3.16.7</redisson.version>
-        <baidu.aip.version>4.16.5</baidu.aip.version>
+        <baidu.aip.version>4.16.13</baidu.aip.version>
         <commons-configuration.version>1.10</commons-configuration.version>
         <freemarker.version>2.3.29</freemarker.version>
         <commons-collections4.version>4.4</commons-collections4.version>
+        <jackson.version>2.15.2</jackson.version>
     </properties>
 
     <dependencies>
@@ -70,13 +73,19 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-annotations</artifactId>
-            <version>${jackson-bom.version}</version>
+            <version>${jackson.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+            <version>${jackson.version}</version>
         </dependency>
 
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>${jackson-bom.version}</version>
+            <version>${jackson.version}</version>
         </dependency>
 
         <!--Lombok-->
@@ -92,8 +101,9 @@
         </dependency>
 
         <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
+            <!-- https://mvnrepository.com/artifact/com.mysql/mysql-connector-j -->
+            <groupId>com.mysql</groupId>
+            <artifactId>mysql-connector-j</artifactId>
             <version>${mysql.version}</version>
         </dependency>
 
@@ -150,7 +160,6 @@
             <version>${mockito.version}</version>
             <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-junit-jupiter</artifactId>
@@ -202,153 +211,5 @@
             </plugins>
         </pluginManagement>
     </build>
-
-    <!--
-        <build>
-            <plugins>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-antrun-plugin</artifactId>
-                    <version>1.8</version>
-                    <executions>
-                        <execution>
-                            <id>unwovenClassesFolder</id>
-                            <phase>generate-resources</phase>
-                            <configuration>
-                                <tasks>
-                                    <delete dir="${project.build.directory}/unwoven-classes"/>
-                                    <mkdir dir="${project.build.directory}/unwoven-classes"/>
-                                </tasks>
-                            </configuration>
-                            <goals>
-                                <goal>run</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                </plugin>
-
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-compiler-plugin</artifactId>
-                    <configuration>
-                        <source>${java.version}</source> &lt;!&ndash; or higher, depending on your project &ndash;&gt;
-                        <target>${java.version}</target> &lt;!&ndash; or higher, depending on your project &ndash;&gt;
-                        <annotationProcessorPaths>
-                            <path>
-                                <groupId>org.projectlombok</groupId>
-                                <artifactId>lombok</artifactId>
-                                <version>${lombok.version}</version>
-                            </path>
-                        </annotationProcessorPaths>
-                        <outputDirectory>${project.build.directory}/classes</outputDirectory>
-                    </configuration>
-    &lt;!&ndash;
-                    <executions>
-                        <execution>
-                            &lt;!&ndash; Modifying output directory of default compile because non-weaved classes must be stored
-                                 in separate folder to not confuse ajc by reweaving already woven classes (which leads to
-                                 to ajc error message like "bad weaverState.Kind: -115") &ndash;&gt;
-                            <id>lombok-package</id>
-                            <phase>package</phase>
-                            <configuration>
-                                <compilerArgs>
-                                    &lt;!&ndash;<arg>${project.build.directory}/unwoven-classes</arg>&ndash;&gt;
-                                    <arg>cvf</arg>
-                                    <arg>${project.build.finalName}.jar</arg>
-                                    <arg>-C ${project.build.directory}/unwoven-classes</arg>
-                                    <arg>.</arg>
-                                </compilerArgs>
-                            </configuration>
-                        </execution>
-                    </executions>
-    &ndash;&gt;
-                </plugin>
-
-                &lt;!&ndash;
-                            <plugin>
-                                <groupId>org.projectlombok</groupId>
-                                <artifactId>lombok-maven-plugin</artifactId>
-                                <version>1.18.12.0</version>
-                                <configuration>
-                                    <sourceDirectory>${project.build.sourceDirectory}</sourceDirectory>
-                                    <outputDirectory>${project.build.directory}/unwoven-classes/</outputDirectory>
-                                </configuration>
-                                <executions>
-                                    <execution>
-                                        <phase>generate-sources</phase>
-                                        <goals>
-                                            <goal>delombok</goal>
-                                        </goals>
-                                    </execution>
-                                </executions>
-                            </plugin>
-                &ndash;&gt;
-
-                &lt;!&ndash;
-                            <plugin>
-                                <groupId>org.springframework.boot</groupId>
-                                <artifactId>spring-boot-maven-plugin</artifactId>
-                                <configuration>
-                                    <skip>true</skip>
-                                    <outputDirectory>${project.build.directory}/unwoven-classes</outputDirectory>
-                                </configuration>
-                                <executions>
-                                    <execution>
-                                        <goals>
-                                            <goal>repackage</goal>
-                                        </goals>
-                                    </execution>
-                                </executions>
-                            </plugin>
-                &ndash;&gt;
-
-                <plugin>
-                    <groupId>org.codehaus.mojo</groupId>
-                    <artifactId>aspectj-maven-plugin</artifactId>
-                    <version>${aspectj-maven-plugin.version}</version>
-                    <configuration>
-                        <forceAjcCompile>true</forceAjcCompile>
-                        <source>${maven.compiler.source}</source>
-                        <target>${maven.compiler.target}</target>
-                        <complianceLevel>${java.version}</complianceLevel>
-                        <aspectLibraries>
-                            <aspectLibrary>
-                                <groupId>org.springframework</groupId>
-                                <artifactId>spring-aspects</artifactId>
-                            </aspectLibrary>
-                        </aspectLibraries>
-                        <weaveDirectories>
-                            <weaveDirectory>${project.build.directory}/classes</weaveDirectory>
-                            &lt;!&ndash;<weaveDirectory>${project.build.directory}/unwoven-classes</weaveDirectory>&ndash;&gt;
-                        </weaveDirectories>
-                    </configuration>
-                    <executions>
-                        <execution>
-                            <phase>process-classes</phase>
-                            <goals>
-                                <goal>compile</goal>
-                                <goal>test-compile</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                    &lt;!&ndash;
-                                    <dependencies>
-                                        <dependency>
-                                            <groupId>org.projectlombok</groupId>
-                                            <artifactId>lombok</artifactId>
-                                            <version>${lombok.version}</version>
-                                        </dependency>
-                                    </dependencies>
-                    &ndash;&gt;
-                </plugin>
-
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-surefire-plugin</artifactId>
-                    <version>${maven-surefire-plugin.version}</version>
-                </plugin>
-            </plugins>
-        </build>
-    -->
 
 </project>

@@ -16,11 +16,10 @@
 
 package me.fengorz.kiwi.dict.crawler.component;
 
-import org.apache.commons.lang3.BooleanUtils;
-import org.springframework.stereotype.Component;
-
 import lombok.RequiredArgsConstructor;
 import me.fengorz.kiwi.dict.crawler.config.properties.CrawlerConfigProperties;
+import org.apache.commons.lang3.BooleanUtils;
+import org.springframework.stereotype.Component;
 
 /**
  * @Description TODO

@@ -16,10 +16,11 @@
 
 package me.fengorz.kiwi.bdf.cache.redis.config;
 
-import java.time.Duration;
-import java.util.Objects;
-
+import lombok.extern.slf4j.Slf4j;
+import me.fengorz.kiwi.bdf.cache.redis.CacheKeyGenerator;
+import me.fengorz.kiwi.common.sdk.constant.CacheConstants;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
@@ -35,9 +36,8 @@ import org.springframework.data.redis.serializer.JdkSerializationRedisSerializer
 import org.springframework.data.redis.serializer.RedisSerializationContext;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
-import lombok.extern.slf4j.Slf4j;
-import me.fengorz.kiwi.bdf.cache.redis.CacheKeyGenerator;
-import me.fengorz.kiwi.common.sdk.constant.CacheConstants;
+import java.time.Duration;
+import java.util.Objects;
 
 /**
  * @Description 缓存配置类
@@ -48,6 +48,7 @@ import me.fengorz.kiwi.common.sdk.constant.CacheConstants;
 @Configuration
 @EnableCaching(mode = AdviceMode.ASPECTJ)
 @AutoConfigureBefore(RedisAutoConfiguration.class)
+@ConditionalOnProperty(value = "my.config.exclude-redis", havingValue = "false")
 public class CacheConfig {
 
     private final RedisConnectionFactory factory;

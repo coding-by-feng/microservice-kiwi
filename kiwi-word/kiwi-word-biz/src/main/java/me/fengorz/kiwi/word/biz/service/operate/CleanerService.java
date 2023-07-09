@@ -16,9 +16,10 @@
 
 package me.fengorz.kiwi.word.biz.service.operate;
 
-import java.util.List;
-
 import me.fengorz.kiwi.word.api.dto.queue.RemovePronunciatioinMqDTO;
+import me.fengorz.kiwi.word.api.entity.WordMainDO;
+
+import java.util.List;
 
 public interface CleanerService {
 
@@ -28,4 +29,6 @@ public interface CleanerService {
     List<RemovePronunciatioinMqDTO> removeWord(Integer queueId);
 
     boolean removePhrase(Integer queueId);
+
+    void evictAll(WordMainDO wordMainDO, String wordName);
 }

@@ -74,9 +74,6 @@ public interface ApiCrawlerConstants {
     String PRONUNCIATION_TYPE_UK = "UK";
     String PRONUNCIATION_TYPE_US = "US";
 
-    int QUEUE_INFO_TYPE_WORD = 1;
-    int QUEUE_INFO_TYPE_PHRASE = 2;
-
     String PHRASE_FETCH_VERBOSE_IDIOM = " idiom";
     int PHRASE_FETCH_VERBOSE_IDIOM_LENGTH = 6;
     String PHRASE_FETCH_VERBOSE_MEAN = "的意思";

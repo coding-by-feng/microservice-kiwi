@@ -43,17 +43,14 @@ crawler:
     queue-capacity: 10
     enable-mq: true
     enable-scheduler: {
-      "voice-generate": true,
-      "cache-word": true,
-      "refresh-all-api-key": true
+      "voice-generate-only-collected": true,
+      "voice-generate-non-collected": true,
+      "cache-word": false,
+      "refresh-all-api-key": true,
+      "regen-incorrect-audio-by-voicerss": false
     }
-
-baidu:
-  tts:
-    app-id: 20116041
-    api-key: lTZsmSq37OtRKj6WDpjeemip
-    secret-key: iQkIhGf6O93FH8Dhe446w8rB3jd2A137
 
 my:
   config:
     exclude-db: true
+    exclude-redis: false

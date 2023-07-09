@@ -19,16 +19,18 @@
  */
 
 import org.jasypt.util.text.BasicTextEncryptor;
+import org.junit.jupiter.api.Test;
 
 public class JasyptTests {
 
-    public static void main(String[] args) {
+    @Test
+    public void main() {
         BasicTextEncryptor textEncryptor = new BasicTextEncryptor();
-        String password = "coding-by-feng";
-        String plainText = "fengORZ123";
+        String password = System.getenv("password");
+        String plainText = "24.6f9a22205b4abf6f9fc171123445a338.2592000.1691484686.282335-35923803";
         textEncryptor.setPassword(password);
         String cipherText = textEncryptor.encrypt(plainText);
-        String decrypt = textEncryptor.decrypt("uxuSI1Bl5AelC8dYvJUvMhsRbasVD4zh");
+        String decrypt = textEncryptor.decrypt("5iq0rrNjP/KEC3o61ydTe4uXiA00BXpCCWEZnd5//BjrYwlbeWSajBkKY8q+36N44ehFQdszi7qOnc3TT5647RgxI0zYCqRQzo2HouYZy1E=");
         System.out.println(cipherText);
         System.out.println(decrypt);
     }

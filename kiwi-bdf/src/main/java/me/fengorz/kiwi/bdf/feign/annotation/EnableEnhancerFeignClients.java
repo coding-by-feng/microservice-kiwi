@@ -16,11 +16,10 @@
 
 package me.fengorz.kiwi.bdf.feign.annotation;
 
-import java.lang.annotation.*;
-
+import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 
-import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
+import java.lang.annotation.*;
 
 /**
  *

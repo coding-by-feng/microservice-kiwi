@@ -15,15 +15,13 @@
  */
 package me.fengorz.kiwi.admin.service.impl;
 
-import java.util.List;
-
-import org.springframework.stereotype.Service;
-
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-
 import me.fengorz.kiwi.admin.api.entity.SysRole;
 import me.fengorz.kiwi.admin.mapper.SysRoleMapper;
 import me.fengorz.kiwi.admin.service.SysRoleService;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * 系统角色表

@@ -1,0 +1,88 @@
+从严格意义上来说，英文里是没有“将来时态”的，而只有现在时态和过去时态这两种时态。
+
+It will rain later. 过一会会下雨。
+我们传统上是把这里的will rain看作是一般将来时态，但实际上这里只是情态动词will表示“推测”或确切地说“预测（prediction）”的一种用法。
+另外，我们还可以用其他情态动词来表示这种预测，比如说：
+It may rain later. 过会可能会下雨。 
+It might rain later. 过会或许会下雨。
+这里的may和might同样可以表示对将来事情的预测，只不过肯定程度是递减的——will比may的把握性大，may比might的把握性大。
+三个概念
+- 预测（prediction）：表示说话人认为将来会发生某件事；
+- 事先计划（future plan）：表示说话人在头脑里已经做出决定将来要做某件事；
+- 意愿（willingness）：表示说话人既不是预计某事将会发生，也不是预先经过考虑决定将做某事，而是在说话的时刻立即做出决断表明他将去做某事。
+
+will表示将来——预测
+I wonder what it will be like in the 21st century. But from the great advances in these past years I assume that we will be entering a new golden age of miracles and wonders. Life will be fantastic in the 21st century.
+不知道到了21世纪我们的生活会是什么样子。但从近几年巨大的发展来看，我猜想我们一定会进入一个全新的充满奇迹的黄金时代。21世纪的生活一定非常美好。
+be going to表示将来——预测
+Look at those black clouds! It's going to rain.
+
+will和be going to的区别
+表示“预测”，be going to比will有更多的证据支持，而且事件发生的时间更近
+With all of these typos in this resumé, you are not going to make a very good impression.（这份简历上有这么多的打字错误，这样恐怕你不会给对方留下好印象的。）
+She is going to dive into the water. 而不能说： She will dive into the water.
+另外，be going to还往往表示当前已有迹象表明说话者无力控制的（uncontrollable）即将发生的行为。比如，如果你不小心失足要掉下去时，你会喊道： 
+Help! I'm going to fall! 不能说： Help! I'll fall.
+
+表示“预测”时，will比较正式，be going to更为不正式，常用于私人谈话中， 所以在口语中很常用，而且be going to在口语交流中常被读成be gonna。
+
+be going to表示“计划”与will表示“意愿”
+我们常用它来表示“计划或打算（a plan）”。此时，说话人在头脑里已经做出决定将来要做某件事，并且往往还含有已经为这一行动做了某些准备的意思。又因为只有人才能有主观的思维意识去对将来的行为做出“计划”，因此， be going to的这个用法主要是用于人称主语（person subject），而不可能用于非人称主语（non-person subject）。
+Close your eyes. I'm going to give you a surprise.
+
+be going to表示“计划”，需要用“人”作主语
+
+be going to可以表示“决心”，具有强烈的感情色彩
+We're going to become the world's leading forwarding company.
+这句话如果是出自一个公司领导之口，就是表明他要把公司发展壮大的决心，翻译时请注意体会，比如它相当于汉语说“我们一定要成为世界上最大的运输公司”。
+
+will可以表示“意愿”的用法。所谓“意愿”，简言之，就是“当机立断（spontaneous decision）”，而不是事先计划好的（unplanned）。具体来说，说话人事先并不知道，而是在得知新的信息之后，在说话的时刻立即做出决断表明他将去做某事，这是一个当机立断的决定。此时，我们只能用will来表达。
+A: The telephone is ringing. B: I'll get it.
+B要去接电话，既不是他预测要有电话打进来，也不是事先计划好要接这个电话。B是在说话的此刻做出的“要去接电话”这个决定。
+
+比较：will表示“意愿”和be going to表示“打算”
+1. be going to表示说话人对未来行动的计划或打算，通常是经过事先考虑并含有已经为这一行动做了某些准备的意思。 
+2. will表示意愿，表示在说话的时刻立即做出决定将去做某事，事先并没有经过考虑，更没有为这一活动做出事先的准备。
+
+现在进行时也可以表示对最近的将来做出计划或安排，但是必须带有表示将来的时间状语，否则就可能会造成现在进行动作与一般将来动作相混淆，下面的例句都是表示将来确定的安排，所以都要用现在进行时：
+I am flying to Beijing next Monday.（表示机票已买好）我下周一要飞往北京。
+I am taking a makeup test tomorrow.（表示学校已安排好明天的补考）我明天要参加一次补考。
+
+现在进行时表将来的这种用法，必须是人称主语，通常是表示说话人已计划安排好的活动，如果不是，则不能这样用。例如不能说： It's raining tomorrow.
+因为像rain, snow或storm等这样的活动是人们无法事先计划好的。
+现在进行时与一般现在时表示将来的区别，一般现在时要比现在进行时听起来更正式，个人主观色彩要淡些。
+
+例句 1） I am leaving tonight.
+例句 2） I leave tonight.
+在例句1）中，进行时态表达的个人主观色彩要浓些，一般含有“我自己决定今晚走”的意味。在例句2）中，一般时态更加客 观，比如可能是“公司安排了我出差，给我安排的是今晚动身”。
+
+所以说“Our shop opens next week.”比“Our shop is opening next week.”要好，显得更正式。
+> 如果是一系列预定的将来的安排，比如旅游行程安排，用进行时态显得较累赘，而用一般时态则较简洁。
+
+We leave Beijing at 9: 00 tomorrow morning, arrive in Kunming around 12: 00 and then we tour the World Horti-Expo Garden.
+我们明天上午9点离开北京，大约12点左右抵达昆明，然后就参观世博园。
+
+总的来说，be doing表达的将来计划要比be going to的计划更确定 （more definite）。
+be going to do更多的是表达一种不确定的未来计划，或者说是一种个人的意图或打算，不过这听起来要比hope to do和 would like to do要更为确定些，综合上述，用be doing谈将来的计划往往比be going to do更确定。
+
+一般现在时表示将来
+A boy was up an apple tree stealing apples. A policeman came along and caught him. He looked up at the boy in the tree and said, “When are you coming down, young man?” “When you go away!” replied the boy.
+这里when are you coming down中的现在进行时态是表示将来的动作。第二个句子when you go away中的一般现在时态是表示将来的动作，即前面讲过的，在when引导的时间状语从句中，要用一般现在时态替将来时。
+
+其他表示将来的句型结构，be to do，表示已安排好要在将来发生的事，是比较正式的用法
+They are to go on a strike on July 8th. 他们定于7月8日举行罢工。
+She is to be married next month. 她预定在下个月结婚。
+The Premier is to visit Australia next month. 总理将在下个月对澳大利亚进行访问。
+
+表示强烈的命令，相当于must, should，如：父母对孩子、上级对下级或法律条文中的规定等
+You are to finish your homework before you go to play. 你出去玩之前一定要把作业完成了。
+These tablets are not to be taken orally. 这些药片禁止口服。
+
+be about to do，这一结构用来表示即将发生的动作（比如通常在5分钟之内就会发生），意思是“正要，马上就要”。
+The train is about to leave. 火车马上就要开了。
+
+be on the point(或者)verge(或者)brink(或者)eve of doing
+这一结构与be about to do的意思差不多，但其动作发生的时间比be about to do还要快一些。
+He was on the point of killing himself when she stepped into his room. 她走进房间时，看见他正要自杀。
+The child was on the verge of laughing, but he held back. 这孩子差一点笑出声来，但还是忍住了。
+

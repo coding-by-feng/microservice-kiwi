@@ -30,8 +30,7 @@ public class WebFluxSecurityConfig {
     @Bean
     public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) {
         // TODO: 2020/4/25 这里应该不能全部放开
-        return http.authorizeExchange().anyExchange().permitAll().and().csrf().disable()
-                .headers()
-                .cache().disable().and().build();
+        return http.authorizeExchange().anyExchange().permitAll().and().csrf().disable().build();
     }
+
 }

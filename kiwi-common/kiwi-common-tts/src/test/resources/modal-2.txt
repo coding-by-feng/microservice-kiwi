@@ -1,0 +1,413 @@
+英语语法之-情态动词第二部分
+
+基本用法（四）：许可
+可以用的情态动词有 may，might，can和could，但多用can或be allowed to do表示许可；
+表示“许可”一般用陈述句（若用疑问句则表示“请求”）
+肯定的陈述表示允许某人做某事；否定的陈述则表示不允许某人做某事。
+
+肯定句——给予许可
+We can borrow these books from the library. 我们可以从图书馆借出这些书。
+相当于“We are allowed to borrow these books from the library.”。
+You can use my car tomorrow. 明天你可以用我的车。
+相当于“You are allowed to use my car tomorrow.”。
+
+也可以用may来表示“许可”。
+May I turn on the TV?
+Yes, of course you may.
+这里may用在疑问句中表示“请求许可”，用在肯定的陈述句中表示“给予许可”。
+You may only register for two classes. 你只能报两门课。
+在口语中，我们更多的还是用can来表达“许可”。而may表示“许可”会用在非常正式的文体中，所以在口语中比较少见。
+can表示“许可”，可以和表示将来的时间状语连用。尽管前面讲过，can可以表示将来的能力，不过此时一般不与表示将来的时间状语连用。
+若有表示将来的时间状语，要说will be able to do。
+You can use my car tomorrow.
+该句中的can是表示“许可”，所以可以与tomorrow连用。
+明天你可以用我的车。
+下面说一个错误的例句：
+You can pass your driving test next time you take it.
+你下次参加驾照考试应该就能通过了。
+因为该句中的can是表示“能力”，所以不宜与表达将来的从句next time you take it连用，最好改为“You will be able to pass your driving test next time you take it.”。
+
+否定句——拒绝许可，甚至禁止
+A说 May I borrow your car?
+B说 No, I’m afraid you may not.
+may用在疑问句中表示“请求许可”，用在否定的陈述句中表示“拒绝许可”。
+You may not smoke in here.
+=You are not allowed to smoke in here.
+这里不让抽烟。
+
+我们还可用must not表示强烈的拒绝许可——禁止，但must not比cannot或may not的语气强烈。比如：
+Students must not take the test papers out of the classroom. 任何学生都不得把试卷带出教室。
+
+could一般不用来表示现在的许可，而表示过去的许可
+表示过去的一般许可，could与was((或者))were allowed to do可以互换。
+I could((或者))was allowed to read what I liked when I was a child.
+我小时候爱看什么书，就看什么书。
+不过，若表示过去允许进行某项特定的活动时，要用was((或者))were allowed to do，这一区别与表示“能力”时的could和was((或者))were able to的区别类似。
+Yesterday evening, Peter was allowed to watch TV for an hour.
+昨晚，彼得被允许看了一个小时电视。
+但不说“Yesterday evening, Peter could watch TV for an hour. ”。
+同理，might在表示“许可”时，也只能是表示过去的一般许可，而不能表达具体场合的某一个活动。不能说“Yesterday evening, Peter might watch TV for an hour. ”。
+
+请比较：
+例句1） They might have a break after lunch.
+那时，他们吃完午饭后是可以休息一会儿的。
+例句2） They were allowed to have a break after lunch.
+那次，他们吃完午饭后被允许休息了一会儿。
+在例句1）中，用might是表示过去一般的许可，所以该句的意思是：他们在过去的一段时期内，是被允许在吃完午饭后休息一会儿的。
+在例句2）中，用were allowed to可以表示过去一般的许可。但若表示过去具体的许可，则该句的意思是：在过去的某一天他们被允许在吃完午饭后休息了一会儿。
+
+基本用法（五）：建议与忠告
+在英语中，表示“建议”与“忠告”的情态动词比较多，比如可以用could, shall和should等。
+could表示“建议”
+could可以表示“推测”（可用于将来、现在及过去时间）、过去的“能力”、过去的“许可”。这里来看could用于表示“建议”，此时，could并不表示过去。比如：
+A说 I’ve been invited to a dinner party at Janet’s. Do you think I should bring something?
+我受邀去珍妮特家参加晚宴，你认为我该带点什么东西去吗？
+B说 You could pick up a cake. Chocolate is her favorite.
+你可以顺便买一份蛋糕嘛，她最喜欢巧克力口味。
+说话人A是在征求B的建议，于是B通过could来提出自己的建议，建议A“买一份蛋糕”。
+It is a nice day. We could go for a walk. 今天天气不错，我们可以出去散散步。
+
+Shall I…? Shall we…?
+shall用于第一人称的一般疑问句中，表示征求对方的“建议”。
+Shall we leave at two? Is that OK? 我们两点钟走如何？怎么样？
+
+may as well, may just as well, might as well, might just as well
+这组情态动词表示“建议换另一种方式做某事”，可译成“倒不如”“不妨”“最好”。
+A说 I’ll go on Monday by train.
+我将在周一坐火车去。
+B说 You might just as well wait till Wednesday and go by plane.
+你不妨等到周三坐飞机去。
+
+We may as well stay here tonight.
+今晚我们最好呆在这里。
+
+另外，may((或者))might as well还有一种多少有些勉强或讥讽的意味，表示“在没有其他更好的选择的情况下，只好为之”之意。
+It’s no use waiting here. We might as well start walking.
+在这里干等没用，我们还不如开始步行回去。
+You might as well tell the truth (as continue to tell lies).
+这里言外之意是“别再继续撒谎了”，相当于“There is no point in your continuing to tell lies.”。
+（与其继续撒谎）你最好实话实说。
+
+should和ought to表示“忠告”
+should最主要的意义和用法就是表示“建议”“忠告”(或者)说“规劝”，表示“某事是应该做的或恰当的（appropriate behavior）”。
+You should brush your teeth twice a day. 你应该每天刷牙两次。
+We should study harder because the finals are near. 快要期末考试了，我们得更用功了。
+此时的should往往也会含有“责任”和“义务”的含义。
+Drivers should obey the speed limit. 司机应该遵守车速限制（的规定）。
+这种“责任”的意味比must要轻。
+Drivers must obey the speed limit. 司机必须遵守车速限制（的规定）。
+表示“责任”的should也常见于疑问句中，表示否定一个“责任”。
+Why should I do what everyone else does? 我为什么非得跟其他人一样啊？
+Why should I go there when I’m quite happy here? 我在这里很快乐，为什么非要去那里啊？
+总之，should的基本含义是表示进行恰当的行为、正确地做事，所以可以用来表示规劝、建议或忠告等等。
+
+另外，上述例句也都可以用ought to，只不过它更多地出现在口语中，而不是书面语中。
+
+should表示“忠告”与could表示“建议”的比较
+should表示强烈的、明确的忠告；could表示建议某事的可能性。
+A说 I need to get to the airport.
+我得去机场。
+B1说 You should take the airport bus. It’s cheaper than a taxi.
+你应该坐机场大巴，比坐出租车便宜。
+B2说 Well, you could take the airport bus. Or you could take a taxi. Maybe Clint could take you. He has a car.
+嗯，你可以坐机场大巴，也可以坐出租车。克林特也许能送你去，他有车。
+总体来说，could比should的语气要弱得多，只是表示提供一种参考意见，听话人可以有多种选择。而should则是表示听话人最好应该采用的一种选择。
+
+had better表示“忠告”
+常用于口语中，后面接动词原形，否定用had better not do。
+We had better study harder, or we’ll probably fail in the exam. 我们最好用功学习，不然就有可能考试不及格。
+需要注意的是，had better在表示“忠告”时，有时会暗含“如果不这么做，就会有不良后果”的意思，而should则更为中性。比如：
+You had better return the book to the library.
+你最好把书还给图书馆。
+这相当于警告对方，如果不及时还书，图书馆就会有惩罚措施，比如罚款。
+
+基本用法（六）：意愿、意图与执意
+will主要有两个意义和用法：预测和意愿。
+A说 The phone’s ringing.
+B1说 That’ll be for me.
+B2说 I’ll get it.
+这里B的第一种回答方式，是表示很确定的预测，即“肯定是我的电话”。而B的第二种回答方式，则是表示自己愿意去接这个电话，是表示意愿，即“我来接”。
+
+意图（intention）
+表示“意图”往往涉及将来准备好的事件。
+I will borrow some money and buy a car.
+这里will表示说话人的意图和打算，而不是在预测或表达意愿。这句话相当于“I intend to borrow some money and buy a car.”。
+如果把“意图”的含义向两个极端——承诺与威胁——延展开来，在表达意图时，如果是希望的行为，则可解释为一种“承诺（promise）”；若是不希望的行为，则解释成为一种“威胁”。
+I will make dinner tomorrow night.
+这里的will表达的是一种承诺。
+明晚我来做晚饭。
+I’ll call the police if you don’t leave.
+这里的will表达的是一种威胁。
+如果你不离开，我就要叫警察了。
+
+执意（insistence）
+will表示“执意”，来源于其表示“意图”的含义，因为当某人坚持自己的“意图”而不愿意改变时，就变成了“执意”。
+此时，肯定的will表示“某人坚持要做某事”，I will相当于I insist；否定的won’t表示“某人坚持不愿意做某事或禁止做某事”，比如说I won’t相当于I refuse、
+If they will pay in cash, we have to accept it although it will cause trouble to both sides.
+如果他们非要坚持用现金支付，那我们也只好接受了，尽管这会给双方都造成麻烦。
+这里if引导的从句中的will就是表示执意。一般来讲，在if引导的条件状语从句中是不能用将来时态will的，但这里will用于if引导的条件状语从句中了。究其原因，就是因为这里的will不是表示将来时态，而是侧重于表示“执意”这样的情态含义。另外，although引导的从句中的will是表示说话人的预测。
+类似上面这个句子，我们可以造一个will not的否定句，来表示说话人拒绝做某事。比如：
+If they will not accept a check, we shall have to pay cash, though it would be much trouble for both sides.
+这里if引导的条件状语从句中，will not就是表示“执意不做某事”，相当于refuse。
+如果他们就是不愿意接受支票，那我们只好付现金了，尽管这会给双方都造成麻烦。
+注意，当will用于表达“执意”这样强烈的感情色彩时，一方面不要缩写成’ll，而要用will；另一方面，will要重读。
+
+will的过去式would也有类似表示“执意”的用法。
+We all tried to stop him smoking in bed but he wouldn’t do it.
+我们大家都尽力阻止他在床上抽烟，但是他就是非得要这么做。
+同理，这里的would不能缩略写成’d，而且要重读。
+
+基本用法（七）：请求
+在日常交往中，我们往往会请求别人为我们做某事，此时，我们当然要表现出礼貌或委婉的态度，而不能直截了当地，甚至是粗鲁地提出“要求”。为了表示礼貌，就需要借助情态动词。
+A Hey, you! Open this door!
+嘿，说你呢，把门打开！
+B It’s locked. Want us to get the key?
+门锁了。想要钥匙？
+A Yeah. Get it. Fast!
+去给我拿，快点！
+这种直接而唐突的表达，显然缺乏礼貌，显得说话人很粗鲁。但是如果借助情态动词及其相关句型，就可以使我们的请求显得客气和委婉。
+A Excuse me, would you please open this door?
+对不起，你能把门打开吗？
+B I’m afraid it’s locked. Shall I get a key?
+恐怕门被锁上了，要我替你把钥匙拿来吗？
+A Please, if you wouldn’t mind, as quickly as you can.
+太好了，那就麻烦你快点去拿，好吗？
+
+用第一人称（I((或者))we）和第二人称（you）来提出请求。当用第一人称时，可以用四个情态动词：can((或者))could和may((或者))might，表示“请求对方允许我们做某事”。
+Can((或者))Could I…?
+May((或者))Might I…?
+“May I…?”和“Could I…?”表示较正式、很礼貌地提出请求。 比如在询问陌生人的姓名时：
+
+May I have your name, please? 请问您怎么称呼？
+Could I see your driving license? 可以给我看看您的驾照吗？
+“Can I…?”是非正式的请求允许，一般用于说话人与对方相当熟悉的情况下。比如和朋友之间的对话：
+
+Can I use your pen? 我能用一下你的钢笔吗？
+“Might I…?”显得过于正式和客气，所以一般很少用。
+
+当用第二人称时，请注意要用的情态动词是：can((或者))could和will((或者))would，这是“请求对方为我们做某事”。
+Can((或者))Could you…?
+Will((或者))Would you…?
+同样要注意这几个词表达不同的礼貌程度，“Would you…?”和“Could you…?”都是用来表示很客气地请求对方，客气程度相同。
+Could you put out your cigarette, please? 请你把烟熄了，好吗？
+“Will you…?”不如“Would you…?”客气，比如较熟悉的朋友之间的对话：
+A说 I am on duty this afternoon. Will you please cover for me? I have a doctor’s appointment.
+今天下午我值班，你能替我一下吗？我得去看医生。
+B说 I am sorry I can’t. My term paper is due tomorrow.
+对不起，我替不了你。我明天得交学期论文。
+“Can you…?”常用于非正式场合、熟人之间。比如，在吃饭时，你对母亲说：
+Can you pass me the salt, Mom? 妈妈，把盐递给我好吗？
+综上所述，在“请求”时，不同人称所使用的情态动词不尽相同。 can(或者)could可以同时用于两个人称，但may((或者))might只能用于第一人称，不能说“May(或者)Might you…? *”，而will(或者)would只能用于第二人称。
+
+在英语中表示“请求”往往都是用一般疑问句式，因为“请求”的含义有三个来源：
+- 询问听话人是否愿意，这就是“Will(或者)Would you…?”表示“请求”
+- 询问听话人是否允许我做某事，这就是“May I…?”或“Could(或者)Can I…?”表示“请求”
+- 询问听话人是否能够帮助，这就是“Could(或者)Can you…?”表示“请求”
+
+表示请求时，在语气上越是不肯定，越是犹豫，就越显得礼貌。所以，由“直截了当”到“极为犹豫不决”，可以用不同的情态动词句型来表达不同程度的礼貌。以下都是表示很礼貌的“请求”句型：
+Could you do…? Could you please do…?
+Could you possibly do…?（注意副词）
+Would you do…?
+Would you please do…?
+Would you kindly do…?（注意副词）
+Would you mind doing…?
+Would you be good(或者)kind enough to do…?
+Would you be so kind as to do…?
+Do you think I could…?
+Do you think you could(或者)would do(或者)would mind doing…?
+
+Excuse me, but would you kindly lend me your mobile phone?
+对不起，你能把手机借我用一下吗？
+
+表示请求的句型通常是一般疑问句。但也可以用wonder的各种陈述句型来表示比上述例句更加礼貌的请求：
+I wonder if I could do…
+I wondered if I could do…
+I was wondering if I could do…
+I wonder if you could(或者)would do(或者)would mind doing…
+I wondered if you could(或者)would do(或者)would mind doing…
+I was wondering if you could(或者)would do(或者)would mind doing…
+比如上面那个借手机的例子。如果你告诉对方你要借他的手机，从中国往美国打一个国际长途，这时你就应该用上述这些更为礼貌的（尤其是最后一个“超级”礼貌的）句型来表达你的这一“过分请求”，以显得你“极为犹豫不决”和不好意思：
+Excuse me, sir, I was wondering if you could possibly lend me your mobile phone, I really need to make a long distance call to America right now.
+对不起，先生，我想您能不能把手机借我用一下，因为我现在急着要往美国打个长途电话。
+
+情态动词第四部分
+
+基本用法（八）：过去习惯
+并不是任何时候只要句中出现了would就是虚拟用法，would在句中的含义要依据上下文的语境而定。有时候的would是表示过去反复发生或习惯性的动作。
+当回顾自己的孩提时代时，我们也许会这样说：
+When I was a child, my mother would read me a story at night before bed.
+小时候，晚上睡觉前妈妈常常会给我讲故事。
+或许小时候我们都有过这样的经历：
+When I was a child, I would take a flashlight to bed with me so that I could read comic books without my parents’ knowing about it.
+小时候，我常常会拿着手电筒在床上看连环画，这样爸妈就不会发觉了。
+When I was a child, I would take a flashlight to bed with me so that I could read comic books without my parents’ knowing about it.
+
+用would表示过去习惯或重复的动作时，还可以指某人一贯的行为。这时，往往用来批评人们的行为或表示对他人的行为怀有某种恼怒的情绪，此时would要重读。
+A说 Jack would get lost, wouldn’t he? 杰克老是迷路，是吧？
+B说 It’s typical. 可不是嘛！
+He was a nice boy, but he would talk about himself all the time.
+他人还不错，但就是老喜欢谈论他自己。
+He was a nice boy, but he would talk about himself all the time.
+
+A说 Bill objected. 当时比尔反对。
+B说 He would! 他老是反对！
+值得注意的是，也可用used to来表示过去习惯的动作。但二者之间的区别是：used to可以表示过去重复的动作，也可以指过去存在的状态，有“现在不再”的含义。would常用来表示过去重复的动作，不表示过去的状态。
+My own mother used to be very busy the whole day.
+以前，我母亲每天总是忙忙碌碌的。
+这里用的是used to，而不是would，因为be very busy是过去存在的一种状态，不是动作。
+Illiteracy is still a problem in my country, but it used to be much worse.
+文盲在我们国家仍然是一个问题，但在过去更为严重。
+Illiteracy is still a problem in my country, but it used to be much worse.
+一般不说it would be much worse，因为be much worse同样表示的是一种状态。
+
+基本用法（九）：should的特殊用法
+should还有另外一些比较特殊的用法，不表示劝告，这时不能译成“应该”，而是表示“竟然”和“万一”。
+用在下列形容词后面的从句中的should，带有一种很“惊奇”的感情色彩，含有“竟然”的意思。比如：It is(或者)was absurd, amazing, annoying, funny, ludicrous, odd, ridiculous, strange, surprising, unthinkable that…等。
+It is ridiculous that we should be short of water in a country where it is always raining.
+在经常下雨的国家里，我们竟然会缺水，这简直是荒谬！
+It is ridiculous that we should be short of water in a country where it is always raining.
+It’s odd that you and I should have the same name.
+很奇怪，我们的名字竟然相同。
+
+should表示“万一”
+should常常用在lest，for fear that和in case引导的从句中，表示“万一”。比如：
+I have brought my umbrella in case it should rain. 我带伞了，以防万一下雨。
+
+基本用法（十）：shall的特殊用法
+用于第一人称的疑问句中：Shall I(或者)we…?
+当shall用于第一人称时，此时的shall可以表示主动提供帮助、提供建议或请求给予指示。
+主动提供帮助
+此时的Shall I…?相当于Would you like me to do sth.?
+Shall I open the window?
+相当于“Would you like me to open the window? 你要不要我把窗户打开？”。
+主动提供建议
+Shall we meet at the theater? 我们在剧院见面好吗？
+相当于Let’s meet at the theater, shall we? 我们在剧院见面吧，好吗？
+表示请求给予指示
+How shall I cook it? 这东西该怎么做着吃？
+Where shall we put this? 我们该把这东西放在哪里？
+用于第三人称的疑问句中
+在表示提供建议或请求给予指示的意思时，shall可以用于第三人称。比如：
+A man wants to see you, sir. Shall he wait outside?
+相当于“Would you like him to wait outside? 你要不要让他在外面等呢？”。
+Shall he come with us?
+相当于“Would you like him to come with us?（你）要不要让他和我们一起去呢？”。
+用于第二、三人称的陈述句中
+表示“命令”
+在法律条文、规章制度中，常用shall表示“命令”，这主要用于第三人称。此时，shall在意思上接近must。
+The license of a person who is arrested for driving while intoxicated shall be suspended.
+因醉酒驾车而被捕的司机，其驾照应该被吊销。
+The license of a person who is arrested for driving while intoxicated shall be suspended.
+The Permit Holder shall comply with all conditions of this Permit.
+许可证持有人必须完全遵守本许可证的全部条件。
+The Permit Holder shall comply with all conditions of this Permit.
+这样使用的shall很正式，若是在不是很正式的场合，可以用must或are to do来代替shall。
+表示说话人的许诺
+shall用于第二、三人称的陈述句中，表示说话人的许诺。
+You shall have the money back next week.
+相当于“I promise you will have the money back next week.
+（我答应）你下周一定能拿回这钱。”。
+The boss has promised that every employee shall have a rise in income.
+老板已经答应给每一位员工涨工资。
+表示说话人强烈的意愿，甚至威胁
+shall用于第二、三人称的陈述句中，表示说话人强烈的意愿，甚至威胁。
+He shall be punished if he disobeys. 若他不服从，定将受到处罚。
+You shall do exactly as I say. 你一定得按我说的去做。
+You shall pay for this. 你一定得为此付出代价！
+
+情态动词的否定
+情态动词否定意义的深层结构——内部否定和外部否定
+A说 The restaurant is always empty.这家餐馆总是很空。
+B1说 It can’t be good.这家餐馆不可能好。
+B2说 It may not be good.这家餐馆可能不好。
+对于“cannot谓语动词”的结构，真正的否定意义的结构是“否定情态动词谓语动词”，即“NOT CAN VERB（不可能）”；而对于“may not谓语动词”的结构，真正的否定意义结构是“情态动词否定谓语动词”，即“MAY NOT VERB（可能不）”。
+以否定词NOT的位置为标准，否定词NOT在外部的“NOT MODAL VERB”称为外部否定；否定词NOT在中间的“MODAL NOT VERB”称为内部否定。
+
+尽管在表层结构上，否定词not都是跟在情态动词的后面，但在深层结构上是不同的。因此，对于某些句子来说，就可能会在外部否定与内部否定这两种结构上产生歧义。比如：
+Paul won’t come.
+如果把该句理解成外部否定，即“Paul NOT will come.”。
+这里被否定的是情态动词will，即“NOT will”，这就表示“保罗不愿意来”。
+如果把该句理解成内部否定，即“Paul will NOT come.”。
+这里被否定的是谓语动词come，即“NOT come”，这就表示“保罗来不了”。
+外部否定：保罗不愿意来。
+内部否定：保罗不会来。
+所以Paul won’t come. 这句话就产生了歧义，比如把该句放在下面两个不同的语境中：
+例句1） Paul won’t come because he doesn’t want to.保罗不愿意来，因为他就是不想来。
+例句2） Paul won’t come because he’s too busy.保罗不会来，因为他太忙。
+在陈述句中，不论是外部否定还是内部否定，not总是要紧跟在情态动词后面。但是，若在疑问句中，就能看出外部否定和内部否定在句子结构上的差别。
+例句1） Could you not come?
+你能不来吗？（不希望你来）
+例句2） Couldn’t you come?
+你不能来吗？（非常希望你能来）
+从句子的结构上来看，例句1）采用的是内部否定，在变成疑问句时，只能把情态动词could提前，而把否定词not留在被否定的谓语动词come之前，这就露出了该句的“庐山真面目”。
+但例句2）采用的是外部否定，在变成疑问句时，要把否定词与被否定的情态动词一起提至句首。
+所以，例句1）否定的是谓语动词，意思是“能不来”；例句2）否定的是情态动词，意思是“不能来”。
+
+Could we not go together?
+我们能不走在一起吗？
+Couldn’t we go together?
+我们难道就不能走在一起吗？
+在这样的疑问句中，如果否定词not没有与情态动词的缩写形式一起被提至句首，而是直接置于谓语动词之前，这时被否定的就是谓语动词，即“某事不应该做”；而当否定词与情态动词的缩写形式放在一起时，被否定的就是情态动词，是用来加强“请求”的情态含义，强调“某事应该做”。
+
+Could you not tell him? 你能不告诉他吗？（不希望你告诉他）
+Couldn’t you tell him? 你难道就不能告诉他吗？（非常希望你告诉他）
+
+内部否定和外部否定的使用规律
+- 推测用法的情态动词，一般是内部否定，即否定的是谓语动作；
+- 基本用法的情态动词，一般是外部否定，即否定的是情态意义。
+
+例句1） You can leave now, but he may not leave.
+你现在可以走了，但他不可以走。
+例句2） Tom will come, but John may not come.
+汤姆会来，但约翰可能不来了。
+在例句1）中，may表示“许可（permission）”，是基本用法，所以may not是外部否定，译成“不可以”。
+在例句2）中，may表示“可能（possibility）”，是推测用法，所以may not是内部否定，译成“可能不”。
+It shouldn’t last long.
+这里should表示推测，所以shouldn’t是内部否定。
+应该不会太久的。
+He won’t help us.
+他不愿意帮我们。
+这里will表示“意愿”，属于基本用法，所以won’t是外部否定。
+You can’t be serious.
+你不可能是当真的吧。
+这里can表示推测，属于推测用法。但这里can’t是外部否定“不可能”，而不是内部否定“可能不”。但按照上面的规律——表示推测用法，应该是内部否定。由此可见，此时can不适用于上述规则。
+同样，对于must，上述规则也不适用。因为must用于推测用法时，本身没有否定，即不能说mustn’t。当must用于基本含义表示“必须”时，其否定形式mustn’t的意思是“千万别做某事”，这里否定的是谓语动作，即一个内部否定，而不是上面规则说的外部否定，即含义为“不必”。must的外部否定“不必”应说成don’t have to。
+
+最后，还有这样特殊的否定句：
+Rachel: (to Ross) I can’t believe you don’t want to know. I mean, I couldn’t not know, I mean, if, if the doctor knows, and Carol knows, and Susan knows…
+这里的couldn’t not是一个双重否定，很像汉语里说的“不能不”。这种否定比较罕见。
+蕾切尔：（对罗斯说）我真不敢相信，你都不想知道。我的意思是说，就是说，既然医生知道了，卡萝尔也知道了，苏珊也知道了，我就不能不知道。
+
+总结：英文情态与中文情态的简单对比
+英文情态动词的委婉表达在汉语中的缺失
+比如汉语里常这样说：
+例句1） 请看一下这篇文章。
+例句2） 我们希望你明天能过来和我们一起吃午饭。
+例句3） 请你过来坐在这儿。
+例句4） 我建议你去和他说一下。
+如果直接生硬地译成英语，则显得并不十分礼貌，比如这些翻译：
+Please read this article.
+We hope that you will come and have lunch with us tomorrow.
+You come and sit here, please.
+I suggest that you have a word with him
+下列表达会显得更自然而礼貌：
+You may like to read this article.
+We were wondering whether you could come and have lunch with us tomorrow.
+Would you come and sit here, please?
+You might want to have a word with him.
+上面这些句子还有其他更多礼貌的表达形式，这时都得使用情态动词。比如，对于最后一句的“提建议”，还可以这样说：
+I would suggest that you have a word with him.
+May I suggest that you have a word with him.
+
+例句1) That’s impossible.
+这是不可能的。
+例句2）Unfortunately that wouldn’t be possible.
+很遗憾，这恐怕不太可能。
+在例句1）中，谓语动词用的是is，显得说话的语气非常直白和生硬，容不得对方商量。这自然就会让对方难以接受。
+在例句2）中，首先是借助would来“软化”生硬的口气。其次，把impossible换成not possible，让人认为有商量的余地。再次，因为是在拒绝对方，所以用副词unfortunately来表达遗憾，给对方以安慰。做了以上三个方面的处理后，语气显得更加委婉、礼貌。
+
+例句1） We need a commitment from you now.
+例句2） We would like some kind of commitment from you now.
+在例句1）中，用need比较直截了当地提出自己的要求。在例句2）中，用would来委婉地说出自己的需要。其次，增添了some kind来缓和语气。
+1） 我们现在就需要你的承诺。
+2） 现在我们想知道你能不能给我们一些承诺。

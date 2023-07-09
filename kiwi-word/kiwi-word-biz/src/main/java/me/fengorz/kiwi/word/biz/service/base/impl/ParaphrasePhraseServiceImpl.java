@@ -12,13 +12,11 @@
  */
 package me.fengorz.kiwi.word.biz.service.base.impl;
 
-import org.springframework.stereotype.Service;
-
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-
 import me.fengorz.kiwi.word.api.entity.ParaphrasePhraseDO;
 import me.fengorz.kiwi.word.biz.mapper.ParaphrasePhraseMapper;
 import me.fengorz.kiwi.word.biz.service.base.ParaphrasePhraseService;
+import org.springframework.stereotype.Service;
 
 /**
  * @author zhanShiFeng

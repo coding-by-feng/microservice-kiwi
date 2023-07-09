@@ -16,11 +16,10 @@
 
 package me.fengorz.kiwi.admin.api.feign.factory;
 
-import org.springframework.stereotype.Component;
-
 import feign.hystrix.FallbackFactory;
 import me.fengorz.kiwi.admin.api.feign.UserApi;
 import me.fengorz.kiwi.admin.api.feign.fallback.UserApiFallback;
+import org.springframework.stereotype.Component;
 
 /**
  * @Author zhanshifeng @Date 2019/10/30 3:19 PM

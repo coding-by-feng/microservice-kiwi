@@ -16,9 +16,8 @@
 
 package me.fengorz.kiwi.common.es.service;
 
-import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
-
 import com.baomidou.mybatisplus.annotation.IdType;
+import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
 
 public interface GenerateMappingService<T, U extends ElasticsearchRepository> {
     /**

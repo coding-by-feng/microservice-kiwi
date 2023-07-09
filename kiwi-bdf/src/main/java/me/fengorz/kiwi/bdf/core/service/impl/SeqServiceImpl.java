@@ -16,14 +16,14 @@
 
 package me.fengorz.kiwi.bdf.core.service.impl;
 
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
-
 import lombok.RequiredArgsConstructor;
 import me.fengorz.kiwi.bdf.core.entity.Sequence;
 import me.fengorz.kiwi.bdf.core.mapper.SeqMapper;
 import me.fengorz.kiwi.bdf.core.service.SeqService;
+import me.fengorz.kiwi.common.sdk.constant.MapperConstant;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @Description 序列生成服务
@@ -44,11 +44,17 @@ public class SeqServiceImpl implements SeqService {
      */
     @Override
     @Transactional(rollbackFor = RuntimeException.class, propagation = Propagation.REQUIRES_NEW)
-    public Integer genIntSequence(String seqTable) {
+    public synchronized Integer genIntSequence(String seqTable) {
+        // TODO ZSF refactor, not use synchronized on method.
         Sequence seq = new Sequence();
         seq.setTableName(seqTable);
         seqMapper.genSequence(seq);
         seqMapper.deleteSequence(seq);
         return seq.getId();
+    }
+
+    @Override
+    public Integer genCommonIntSequence() {
+        return this.genIntSequence(MapperConstant.T_INS_SEQUENCE);
     }
 }

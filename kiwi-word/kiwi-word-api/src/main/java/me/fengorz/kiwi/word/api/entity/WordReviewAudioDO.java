@@ -12,17 +12,17 @@
  */
 package me.fengorz.kiwi.word.api.entity;
 
-import java.time.LocalDateTime;
-
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
-
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
+import java.time.LocalDateTime;
 
 /**
  * 单词复习音频记录
@@ -32,7 +32,6 @@ import lombok.experimental.Accessors;
  */
 @Data
 @ApiModel
-@EqualsAndHashCode(callSuper = true)
 @TableName("word_review_audio")
 @Accessors(chain = true)
 public class WordReviewAudioDO extends Model<WordReviewAudioDO> {
@@ -65,4 +64,23 @@ public class WordReviewAudioDO extends Model<WordReviewAudioDO> {
 
     private Integer isDel;
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        WordReviewAudioDO that = (WordReviewAudioDO)o;
+
+        return new EqualsBuilder().append(id, that.id).isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(17, 37).append(id).toHashCode();
+    }
 }

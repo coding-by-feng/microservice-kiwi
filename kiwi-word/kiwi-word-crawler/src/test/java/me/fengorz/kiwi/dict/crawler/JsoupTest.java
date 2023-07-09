@@ -16,20 +16,19 @@
 
 package me.fengorz.kiwi.dict.crawler;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.select.Elements;
-
 import cn.hutool.core.lang.Assert;
 import me.fengorz.kiwi.word.api.dto.queue.result.FetchParaphraseDTO;
 import me.fengorz.kiwi.word.api.dto.queue.result.FetchParaphraseExampleDTO;
 import me.fengorz.kiwi.word.api.dto.queue.result.FetchWordCodeDTO;
 import me.fengorz.kiwi.word.api.dto.queue.result.FetchWordResultDTO;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 // import me.fengorz.kiwi.common.core.util.JsonPackagedUtil;
 

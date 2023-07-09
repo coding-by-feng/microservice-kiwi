@@ -15,11 +15,10 @@
  */
 package me.fengorz.kiwi.admin.service;
 
-import java.util.List;
-
 import com.baomidou.mybatisplus.extension.service.IService;
-
 import me.fengorz.kiwi.admin.api.entity.SysMenu;
+
+import java.util.List;
 
 /**
  * 菜单权限表

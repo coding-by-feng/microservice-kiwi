@@ -16,8 +16,14 @@
 
 package me.fengorz.kiwi.auth.endpoint;
 
-import java.util.*;
-
+import cn.hutool.core.map.MapUtil;
+import cn.hutool.core.util.StrUtil;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import me.fengorz.kiwi.common.api.R;
+import me.fengorz.kiwi.common.api.entity.EnhancerUser;
+import me.fengorz.kiwi.common.sdk.constant.SecurityConstants;
 import org.springframework.data.redis.core.ConvertingCursor;
 import org.springframework.data.redis.core.Cursor;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -35,15 +41,7 @@ import org.springframework.security.web.authentication.preauth.PreAuthenticatedA
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-
-import cn.hutool.core.map.MapUtil;
-import cn.hutool.core.util.StrUtil;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import me.fengorz.kiwi.common.api.R;
-import me.fengorz.kiwi.common.api.entity.EnhancerUser;
-import me.fengorz.kiwi.common.sdk.constant.SecurityConstants;
+import java.util.*;
 
 @Slf4j
 @RestController

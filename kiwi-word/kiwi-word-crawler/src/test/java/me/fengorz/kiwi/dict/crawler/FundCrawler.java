@@ -16,32 +16,31 @@
 
 package me.fengorz.kiwi.dict.crawler;
 
-import java.io.File;
-import java.util.*;
-
+import lombok.Data;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import lombok.Data;
+import java.io.File;
+import java.util.*;
 
 /**
  * @Author zhanshifeng @Date 2020/4/22 6:16 PM
  */
 public class FundCrawler {
 
-    private Set<Fund> fundCodeSet = new HashSet<>();
-    private Set<Fund> greatCodeSet = new HashSet<>();
-    private Set<Fund> week1FundCodeSet = new HashSet<>();
-    private Set<Fund> month1FundCodeSet = new HashSet<>();
-    private Set<Fund> month2FundCodeSet = new HashSet<>();
-    private Set<Fund> month3FundCodeSet = new HashSet<>();
-    private Set<Fund> month6FundCodeSet = new HashSet<>();
-    private Set<Fund> year1FundCodeSet = new HashSet<>();
-    private Set<Fund> year2FundCodeSet = new HashSet<>();
-    private Set<Fund> year3FundCodeSet = new HashSet<>();
-    private Set<Fund> year5FundCodeSet = new HashSet<>();
+    private final Set<Fund> fundCodeSet = new HashSet<>();
+    private final Set<Fund> greatCodeSet = new HashSet<>();
+    private final Set<Fund> week1FundCodeSet = new HashSet<>();
+    private final Set<Fund> month1FundCodeSet = new HashSet<>();
+    private final Set<Fund> month2FundCodeSet = new HashSet<>();
+    private final Set<Fund> month3FundCodeSet = new HashSet<>();
+    private final Set<Fund> month6FundCodeSet = new HashSet<>();
+    private final Set<Fund> year1FundCodeSet = new HashSet<>();
+    private final Set<Fund> year2FundCodeSet = new HashSet<>();
+    private final Set<Fund> year3FundCodeSet = new HashSet<>();
+    private final Set<Fund> year5FundCodeSet = new HashSet<>();
 
     public static void main(String[] args) throws Exception {
         FundCrawler fundCrawler = new FundCrawler();

@@ -18,6 +18,11 @@ package me.fengorz.kiwi.common.sdk.util;
 
 import lombok.experimental.UtilityClass;
 import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
+import me.fengorz.kiwi.common.sdk.exception.ResourceNotFoundException;
+
+import java.io.File;
+import java.io.InputStream;
+import java.util.Optional;
 
 /**
  * @Author zhanshifeng @Date 2020/1/14 4:48 PM
@@ -31,5 +36,20 @@ public class CommonUtils {
         } else {
             return GlobalConstants.FLAG_N;
         }
+    }
+
+
+    public static String getResourcePath() {
+        return Optional.ofNullable(CommonUtils.class.getResource(File.separator))
+                .orElseThrow(ResourceNotFoundException::new).getPath();
+    }
+
+    public static String getResourceFile(String pathAndFile) {
+        return Optional.ofNullable(CommonUtils.class.getResource(File.separator))
+                .orElseThrow(ResourceNotFoundException::new).getFile() + pathAndFile;
+    }
+
+    public static InputStream getResourceFileInputStream(String pathAndFile) {
+        return CommonUtils.class.getClassLoader().getResourceAsStream(pathAndFile);
     }
 }

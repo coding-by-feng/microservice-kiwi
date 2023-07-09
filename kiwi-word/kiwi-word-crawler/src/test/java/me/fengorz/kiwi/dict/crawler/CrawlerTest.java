@@ -16,8 +16,21 @@
 
 package me.fengorz.kiwi.dict.crawler;
 
-import javax.annotation.Resource;
-
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
+import me.fengorz.kiwi.common.sdk.constant.EnvConstants;
+import me.fengorz.kiwi.common.sdk.util.json.KiwiJsonUtils;
+import me.fengorz.kiwi.common.sdk.util.spring.SpringUtils;
+import me.fengorz.kiwi.dict.crawler.common.CrawlerConstants;
+import me.fengorz.kiwi.dict.crawler.component.Enabler;
+import me.fengorz.kiwi.dict.crawler.component.scheduler.ChiefProducerSchedulerSetup;
+import me.fengorz.kiwi.dict.crawler.component.scheduler.ChiefSchedulerSetup;
+import me.fengorz.kiwi.dict.crawler.component.scheduler.base.DailyScheduler;
+import me.fengorz.kiwi.dict.crawler.component.scheduler.base.Scheduler;
+import me.fengorz.kiwi.dict.crawler.config.properties.CrawlerConfigProperties;
+import me.fengorz.kiwi.dict.crawler.service.JsoupService;
+import me.fengorz.kiwi.word.api.dto.queue.FetchWordMqDTO;
+import me.fengorz.kiwi.word.api.dto.queue.result.FetchWordResultDTO;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -28,13 +41,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import lombok.extern.slf4j.Slf4j;
-import me.fengorz.kiwi.common.sdk.constant.EnvConstants;
-import me.fengorz.kiwi.dict.crawler.component.Enabler;
-import me.fengorz.kiwi.dict.crawler.component.scheduler.ChiefProducerSchedulerSetup;
-import me.fengorz.kiwi.dict.crawler.component.scheduler.ChiefSchedulerSetup;
-import me.fengorz.kiwi.dict.crawler.component.scheduler.base.Scheduler;
-import me.fengorz.kiwi.dict.crawler.config.properties.CrawlerConfigProperties;
+import javax.annotation.Resource;
 
 @Slf4j
 @ActiveProfiles({EnvConstants.DEV})
@@ -47,20 +54,29 @@ public class CrawlerTest {
     private CrawlerConfigProperties crawlerConfigProperties;
     @Autowired
     private Enabler enabler;
-    @Resource(name = "cacheWordScheduler")
+    @Resource(name = CrawlerConstants.COMPONENT_BEAN_ID.CACHE_WORD_SCHEDULER)
     private Scheduler cacheWordScheduler;
+    @Resource(name = CrawlerConstants.COMPONENT_BEAN_ID.GENERATE_VOICE_ONLY_COLLECTED_SCHEDULER)
+    private Scheduler generateVoiceOnlyCollectedScheduler;
     @Autowired
     private ChiefSchedulerSetup chiefSchedulerSetup;
     @Autowired
     private ChiefProducerSchedulerSetup chiefProducerSchedulerSetup;
+    @Resource(name = CrawlerConstants.COMPONENT_BEAN_ID.RE_GEN_INCORRECT_AUDIO_BY_VOICERSS_SCHEDULER)
+    private Scheduler reGenIncorrectAudioByVoicerssScheduler;
+    @Autowired
+    private JsoupService jsoupService;
 
     @Test
     @Disabled
     public void setupTest() {
         Assertions.assertNotNull(crawlerConfigProperties);
         Assertions.assertNotNull(crawlerConfigProperties.getEnableScheduler());
-        Assertions.assertFalse(enabler.isMqEnable());
-        Assertions.assertTrue(crawlerConfigProperties.getEnableScheduler().get("voice-generate"));
+        Assertions.assertTrue(enabler.isMqEnable());
+        Assertions.assertTrue(crawlerConfigProperties.getEnableScheduler()
+            .get(CrawlerConstants.ENABLE_SCHEDULER_KEY.VOICE_GENERATE_ONLY_COLLECTED));
+        Assertions.assertFalse(crawlerConfigProperties.getEnableScheduler()
+            .get(CrawlerConstants.ENABLE_SCHEDULER_KEY.VOICE_GENERATE_NON_COLLECTED));
         log.info("enabler.isMqEnable() is {}", enabler.isMqEnable());
         log.info("crawlerConfigProperties.getSchedulerEnable() is {}", crawlerConfigProperties.getEnableScheduler());
     }
@@ -72,16 +88,33 @@ public class CrawlerTest {
     }
 
     @Test
-    // @Disabled
+    @Disabled
+    public void test_RefreshAllApiKey() {
+        DailyScheduler scheduler =
+            SpringUtils.getBean(CrawlerConstants.COMPONENT_BEAN_ID.CACHE_WORD_SCHEDULER, DailyScheduler.class);
+        scheduler.schedule();
+    }
+
+    @Test
+    @Disabled
     public void schedulerTest() {
-        try {
-            Assertions.assertNotNull(chiefSchedulerSetup);
-            Assertions.assertNotNull(chiefProducerSchedulerSetup);
-            chiefSchedulerSetup.setup();
+        Assertions.assertDoesNotThrow(() -> {
+            // Assertions.assertNotNull(chiefSchedulerSetup);
+            // Assertions.assertNotNull(chiefProducerSchedulerSetup);
+            // chiefSchedulerSetup.setup();
             // chiefProducerSchedulerSetup.produce();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+            // generateVoiceOnlyCollectedScheduler.schedule();
+            reGenIncorrectAudioByVoicerssScheduler.schedule();
+        });
+    }
+
+    @Test
+    @Disabled
+    @SneakyThrows
+    public void test_fetchWordInfo() {
+        FetchWordResultDTO tuesday = jsoupService.fetchWordInfo(new FetchWordMqDTO().setWord("Tuesday"));
+        Assertions.assertNotNull(tuesday);
+        log.info("The result of fetching is: {}", KiwiJsonUtils.toJsonStr(tuesday));
     }
 
 }

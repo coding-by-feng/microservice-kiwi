@@ -15,20 +15,8 @@
  */
 package me.fengorz.kiwi.word.biz.controller;
 
-import static me.fengorz.kiwi.word.api.util.WordApiUtils.decode;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.validation.constraints.NotBlank;
-
-import org.springframework.data.elasticsearch.core.DocumentOperations;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.api.R;
@@ -44,6 +32,16 @@ import me.fengorz.kiwi.word.biz.service.base.WordFetchQueueService;
 import me.fengorz.kiwi.word.biz.service.base.WordMainService;
 import me.fengorz.kiwi.word.biz.service.operate.OperateService;
 import me.fengorz.kiwi.word.biz.service.operate.ReviewService;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.data.elasticsearch.core.DocumentOperations;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.constraints.NotBlank;
+import java.util.ArrayList;
+import java.util.List;
+
+import static me.fengorz.kiwi.word.api.util.WordApiUtils.decode;
 
 /**
  * 单词主表
@@ -64,7 +62,7 @@ public class WordMainController extends BaseController {
     private final ReviewService reviewService;
     private final DocumentOperations documentOperations;
 
-    @GetMapping("/removeByWordName/{wordName}")
+    @DeleteMapping("/removeByWordName/{wordName}")
     // @PreAuthorize("@pms.hasPermission('biz_wordmain_del')")
     public R<Boolean> removeByWordName(@PathVariable String wordName) {
         queueService.startFetchOnAsync(decode(wordName));
@@ -74,7 +72,7 @@ public class WordMainController extends BaseController {
     @PostMapping("/query/gate/{keyword}")
     public R<IPage<WordQueryVO>> queryGate(@PathVariable(name = "keyword") String keyword, Integer current,
         Integer size) {
-        keyword = decode(keyword);
+        keyword = decode(StringUtils.lowerCase(keyword));
         log.info(KiwiStringUtils.format("========>queryGate[{}],[time={}]", keyword, KiwiDateUtils.now()));
         if (KiwiStringUtils.isContainChinese(keyword)) {
             return R.success(operateService.queryWordByCh(keyword, WebTools.deductCurrent(current), size));
@@ -86,8 +84,9 @@ public class WordMainController extends BaseController {
     @LogMarker(isPrintParameter = true)
     @GetMapping("/query/{wordName}")
     public R<IPage<WordQueryVO>> queryWord(@PathVariable(value = "wordName") String wordName) {
-        wordName = decode(wordName);
-        IPage<WordQueryVO> page = new Page<>();
+        wordName = decode(StringUtils.lowerCase(wordName));
+        IPage<WordQueryVO> page;
+        page = new Page<>();
         if (KiwiStringUtils.isNotBlank(wordName)) {
             List<WordQueryVO> list = new ArrayList<>(1);
             list.add(operateService.queryWord(wordName));
@@ -114,6 +113,11 @@ public class WordMainController extends BaseController {
     @GetMapping("/listOverlapAnyway")
     public R<List<String>> listOverlapAnyway() {
         return R.success(mainService.listOverlapAnyway());
+    }
+
+    @PostMapping("/variant/insertVariant/{inputWordName}/{fetchWordName}")
+    public R<Void> insertVariant(@PathVariable String inputWordName, @PathVariable String fetchWordName) {
+        return R.auto(operateService.insertVariant(inputWordName, fetchWordName));
     }
 
 }

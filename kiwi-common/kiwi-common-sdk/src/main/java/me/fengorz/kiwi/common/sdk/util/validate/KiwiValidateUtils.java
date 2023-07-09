@@ -16,13 +16,12 @@
 
 package me.fengorz.kiwi.common.sdk.util.validate;
 
-import java.util.Iterator;
-import java.util.Set;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
-
-import org.apache.commons.lang3.StringUtils;
+import java.util.Iterator;
+import java.util.Set;
 
 /**
  * @Description Util of Java Bean Validation @Author zhanshifeng @Date 2019/11/26 9:03 PM
@@ -38,7 +37,7 @@ public class KiwiValidateUtils {
         if (null != validResult && validResult.size() > 0) {
             StringBuilder sb = new StringBuilder();
             for (Iterator<ConstraintViolation<Object>> iterator = validResult.iterator(); iterator.hasNext();) {
-                ConstraintViolation<Object> constraintViolation = (ConstraintViolation<Object>)iterator.next();
+                ConstraintViolation<Object> constraintViolation = iterator.next();
                 if (StringUtils.isNotBlank(constraintViolation.getMessage())) {
                     sb.append(constraintViolation.getMessage()).append("、");
                 } else {

@@ -22,6 +22,7 @@ package me.fengorz.kiwi.common.api;
 public interface ApiContants {
 
     String ADMIN_USERNAME = "admin";
+    Integer ADMIN_ID = 1;
     String EMPTY = "";
 
     /**

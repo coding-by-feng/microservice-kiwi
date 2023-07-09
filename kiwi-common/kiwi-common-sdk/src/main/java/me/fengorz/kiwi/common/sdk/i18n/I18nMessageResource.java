@@ -16,14 +16,14 @@
 
 package me.fengorz.kiwi.common.sdk.i18n;
 
-import java.text.MessageFormat;
-import java.util.Locale;
-
 import org.springframework.context.NoSuchMessageException;
 import org.springframework.context.ResourceLoaderAware;
 import org.springframework.context.support.AbstractMessageSource;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.ResourceLoader;
+
+import java.text.MessageFormat;
+import java.util.Locale;
 
 /**
  * @Description 国际化消息源配置 @Author zhanshifeng @Date 2020/4/8 4:14 PM

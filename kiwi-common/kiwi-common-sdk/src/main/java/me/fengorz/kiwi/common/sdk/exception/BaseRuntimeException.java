@@ -16,13 +16,12 @@
 
 package me.fengorz.kiwi.common.sdk.exception;
 
-import org.apache.commons.lang3.StringUtils;
-
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 import me.fengorz.kiwi.common.api.ResultCode;
 import me.fengorz.kiwi.common.sdk.util.lang.string.KiwiStringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * @Description 异常基类

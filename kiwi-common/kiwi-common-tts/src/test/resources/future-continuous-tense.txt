@@ -1,0 +1,74 @@
+英语语法之-将来进行时态
+
+将来进行时态的典型用法，就是想象自己或其他人在将来某一特定时刻 (at a particular time in future) 正在做某事。
+比如下面的两个朋友在谈论休假的事：
+A说 When do you leave for Hainan?
+B说 Tomorrow. Just think, two days from now I will be lying on the beach in the sun.
+A说 Sounds great!
+在上文中，说话人B用了will be lying这一动词变化形式，表示想象自己后天就正躺在海滩上的情景，这样的表达很生动。
+
+Don't telephone me after eight tomorrow—I'll be having a meeting.
+明天8点钟以后不要给我打电话，因为那时我正在开会。
+
+在日常的口语中，我们常用will be doing来谈一个将来计划好的事情。
+Professor Smith will be giving a lecture on American literature tomorrow evening.
+这里的将来进行时态表示确定好的安排。
+明晚史密斯教授将会举行有关美国文学的讲座。
+现在进行时态be doing也可以表示计划好的事。比如上面这个句子也可以说成：
+Professor Smith is giving a lecture on American literature tomorrow evening.
+此时，两者的区别不是很大。因此，表示将来安排好的事情，两种时态可以换用。
+
+不过，二者还是有下列两点不同：
+现在进行时只表示最近的将来；而将来进行时既可以表示最近的将来，也可以表示较远的将来。
+
+I am meeting him tomorrow. 我明天要见他。
+I will be meeting him tomorrow 或者 next year. 我明天 或者 明年要见他。
+现在进行时表示最近将来的动作时，必须有确定的表示将来的时间状语；而将来进行时则没有这种限制。
+
+例句 1) He's working in this room next Monday.
+例句 2) He'll be working in this room.
+
+少见用法：表示背景动作——提供另外一个短动作发生的事件背景
+同过去进行时的用法类似，将来进行时可以表示一个背景动作，来描述在这个背景动作下，将会发生的另外一个短暂动作。
+They probably will be watching TV when we get there.
+用将来进行时表示一个长的背景动作，比如“看电视”， 而我们“到达”是在他们看电视的过程中的某一将来的时间点发生的动作。主句的进行时表示动作较长，从句的现在时表示将来的某一短动作。
+等我们一会儿到那里时，他们可能正在看电视。
+Will your friends be waiting for you at the airport when you arrive?
+你一会到达机场时，你的朋友们会在那接你吗？
+
+难点用法1：用在疑问句中，表示客气地询问
+> 许多美国电影和美国人口语中好像爱用进行时态，但动作又似乎并不是正在进行着，这样的表达有什么特别的意义吗？
+如在电影 You've Got Mail［注：这是由汤姆·汉克斯 (Tom Hanks) 和梅格·瑞 安 (Meg Ryan) 主演的一部美国影片，中文译名为《网上情缘》］中， 书店营业员George问Joe付款方式，用的是“How will you be paying for this？”。Joe答Cash。为何不直接用“How will you pay for this？”。这是一种习惯还是一种思维？
+这一问题涉及将来进行时态 (如will be paying) 的意义及其与一般将来时态 (如will pay) 的区别。我们注意到，上面的营业员用的是将来进行时态will be paying来询问顾客的付款方式，而不是一般将来时态will pay。
+这个问题其实引出了“将来进行时态 (will be doing) ”的一种很有用的用法，即我们用它来“礼貌地询问”，显得比一般将来时will do更委婉客气。这是因为will be doing常表示很客观地询问事实，并不想干涉对方的决定；而will do往往带有各种感情色彩，如请求、命令、指示、质问甚至威胁等等。
+will be doing都是出现在服务人员向顾客询问信息的场景中。当然，这种礼貌询问的表达方式不只是出现在公司与客户之间，它同样适用于人与人之间的询问与关心。
+比如，一位演员在问及导演有关角色的分配时，他是这样礼貌地提问的：
+Who will I be acting with?
+这里他同样用了礼貌的提问形式will be acting，表示自己只是在客观地打听事实，而不是要干涉导演的安排，因而这样询问显得委婉礼貌。
+
+will be doing用在疑问句中表示客气地询问。但我们也要注意，这并不是说以后我们就不用will do来提问了，而一律用 will be doing代替will do。will do往往带有各种感情色彩，比如表达“请求”，此时我们就得用will do，而一般不用will be doing。
+比如“你能借给我10美元吗？”这句话，一般不说：
+Will you be lending me ten dollars?
+这里的will不是在客观地询问事实，而是表示一种请求，所以，我们要说：
+Will you lend me ten dollars?
+如果我们是要客观地询问事实，宜用will be doing来提问； 而若是其他语气，比如请求或命令等，我们则要用will do来提问。
+
+例句1) Will you be staying in this evening?
+例句2) Will you stay in this evening?
+在例句1) 中，用will be doing是表示礼貌地、客观地询问，只是想了解你今晚的打算，并没有干涉的意思。所以我们可译成“今晚你不出去吧？”
+在例句2) 中，用will do，含有感情色彩，如请求、指示或命令。所以这句话可以根据说话者的语气译成“今晚你别出去了，好吗？” (请求) ，或者“今晚你不要出去了行不行?!” (命令) 。
+
+难点用法2：用来表示客观的将来，以避免与表示“意愿”的will do混淆
+A说 It's already 10 o'clock. I guess Bob and Amy won't be coming to the party.
+B说 They called at nine to say that they'd been held up.
+上面为什么要用won't be coming这种较为复杂的形式呢？句中为什么不用更为简单的谓语形式won't come呢？可不可以用won't come？
+我们知道，will可以用来表示意愿 (willingness) 和意图 (intention) 等情态语义，所以will do往往表示主观意愿，如will do 有“蓄意为之”的含义，而won't do则有“不愿意为之”的含义。但将来进行时态will be doing则是表示客观的将来时间，侧重于对将来事件的客观陈述，表示在正常情况下预计要发生的事件，而不表达个人意图。总而言之，will be doing较客观，will do较主观，所以我们用will be doing 来表示客观的将来时间，以避免与表示主观意愿的will do混淆。
+说话人用won't be coming是想强调鲍勃和埃米可能是因为其他事情耽误了而“来不了”这一客观事实，而不是主观意愿上的“不愿来”。下文紧接着就说明了他们来不了的原因是they had been held up (他们有事耽误了) 。
+如果说“Bob and Amy won't come to the party.”。因为won't do的意思往往相当于refuse to do，表示“拒绝做，不愿意做”。
+
+will be doing的五种意思
+1. 想象自己或其他人在将来某一特定的时刻正在做某事；
+2. 表示计划好的事；
+3. 表示背景动作，提供另外一个短动作发生的事件背景；
+4. 用在疑问句中，表示客气的询问。这一用法在口语中尤为常见；
+5. 用will be doing来表示客观的将来，以避免与表示“意愿”的will do 混淆。

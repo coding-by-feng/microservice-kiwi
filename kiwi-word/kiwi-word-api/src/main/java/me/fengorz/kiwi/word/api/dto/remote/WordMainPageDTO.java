@@ -16,16 +16,15 @@
 
 package me.fengorz.kiwi.word.api.dto.remote;
 
-import java.io.Serializable;
-
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 import me.fengorz.kiwi.word.api.entity.WordMainDO;
+
+import java.io.Serializable;
 
 /**
  * @Author zhanshifeng @Date 2019/11/2 4:13 PM

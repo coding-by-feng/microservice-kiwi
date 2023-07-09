@@ -12,17 +12,15 @@
  */
 package me.fengorz.kiwi.word.biz.service.base.impl;
 
-import org.springframework.stereotype.Service;
-
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-
 import me.fengorz.kiwi.word.api.entity.StarRelHisDO;
 import me.fengorz.kiwi.word.biz.mapper.StarRelHisMapper;
-import me.fengorz.kiwi.word.biz.service.base.IStarRelHisService;
+import me.fengorz.kiwi.word.biz.service.base.StarRelHisService;
+import org.springframework.stereotype.Service;
 
 /**
  * @author zhanShiFeng
  * @date 2020-09-16 16:56:42
  */
 @Service
-public class StarRelHisServiceImpl extends ServiceImpl<StarRelHisMapper, StarRelHisDO> implements IStarRelHisService {}
+public class StarRelHisServiceImpl extends ServiceImpl<StarRelHisMapper, StarRelHisDO> implements StarRelHisService {}

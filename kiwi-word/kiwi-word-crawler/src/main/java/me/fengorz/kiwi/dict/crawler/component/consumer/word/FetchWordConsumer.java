@@ -16,20 +16,19 @@
 
 package me.fengorz.kiwi.dict.crawler.component.consumer.word;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
-
-import org.springframework.amqp.rabbit.annotation.*;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
-import org.springframework.stereotype.Component;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.dict.crawler.component.consumer.base.AbstractConsumer;
 import me.fengorz.kiwi.dict.crawler.component.consumer.base.IConsumer;
 import me.fengorz.kiwi.dict.crawler.config.properties.CrawlerConfigProperties;
-import me.fengorz.kiwi.dict.crawler.service.IFetchService;
+import me.fengorz.kiwi.dict.crawler.service.FetchService;
 import me.fengorz.kiwi.word.api.dto.queue.FetchWordMqDTO;
+import org.springframework.amqp.rabbit.annotation.*;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+import org.springframework.stereotype.Component;
+
+import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
 
 /**
  * @Author zhanshifeng @Date 2019/10/28 4:25 PM
@@ -43,7 +42,7 @@ import me.fengorz.kiwi.word.api.dto.queue.FetchWordMqDTO;
         key = "${mq.config.wordFromCambridge.fetchRouting}"))
 public class FetchWordConsumer extends AbstractConsumer<FetchWordMqDTO> implements IConsumer<FetchWordMqDTO> {
 
-    private final IFetchService fetchService;
+    private final FetchService fetchService;
     private final CrawlerConfigProperties crawlerConfigProperties;
 
     @Resource(name = "fetchWordThreadExecutor")

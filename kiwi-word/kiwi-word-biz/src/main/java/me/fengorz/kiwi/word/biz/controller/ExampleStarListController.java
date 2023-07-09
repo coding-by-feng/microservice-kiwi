@@ -15,31 +15,27 @@
  */
 package me.fengorz.kiwi.word.biz.controller;
 
-import java.util.List;
-
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
-
-import org.hibernate.validator.constraints.Range;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.bdf.core.service.SeqService;
 import me.fengorz.kiwi.common.api.R;
 import me.fengorz.kiwi.common.sdk.annotation.log.LogMarker;
-import me.fengorz.kiwi.common.sdk.constant.MapperConstant;
 import me.fengorz.kiwi.common.sdk.controller.BaseController;
 import me.fengorz.kiwi.common.sdk.web.security.SecurityUtils;
 import me.fengorz.kiwi.word.api.entity.ExampleStarListDO;
 import me.fengorz.kiwi.word.api.vo.ExampleStarListVO;
 import me.fengorz.kiwi.word.api.vo.star.ExampleStarItemVO;
-import me.fengorz.kiwi.word.biz.service.base.IExampleStarListService;
+import me.fengorz.kiwi.word.biz.service.base.ExampleStarListService;
 import me.fengorz.kiwi.word.biz.service.operate.OperateService;
+import org.hibernate.validator.constraints.Range;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import java.util.List;
 
 /**
  * @author zhanshifeng
@@ -52,7 +48,7 @@ import me.fengorz.kiwi.word.biz.service.operate.OperateService;
 @Slf4j
 public class ExampleStarListController extends BaseController {
 
-    private final IExampleStarListService starListService;
+    private final ExampleStarListService starListService;
     private final OperateService operateService;
     private final SeqService seqService;
 
@@ -66,7 +62,7 @@ public class ExampleStarListController extends BaseController {
     // @PreAuthorize("@pms.hasPermission('api_wordparaphraseexamplelist_add')")
     public R<Boolean> save(ExampleStarListVO vo) {
         vo.setOwner(SecurityUtils.getCurrentUserId());
-        vo.setId(seqService.genIntSequence(MapperConstant.T_INS_SEQUENCE));
+        vo.setId(seqService.genCommonIntSequence());
         return R.success(starListService.save(vo));
     }
 
@@ -77,7 +73,7 @@ public class ExampleStarListController extends BaseController {
      * @return R
      */
     @LogMarker("修改")
-    @PostMapping("/updateById")
+    @PutMapping("/updateById")
     // @PreAuthorize("@pms.hasPermission('api_wordparaphraseexamplelist_edit')")
     public R<Boolean> updateById(ExampleStarListDO exampleStarListDO) {
         return R.success(starListService.updateById(exampleStarListDO));
@@ -90,7 +86,7 @@ public class ExampleStarListController extends BaseController {
      * @return R
      */
     @LogMarker("通过id删除")
-    @PostMapping("/delById/{id}")
+    @DeleteMapping("/delById/{id}")
     // @PreAuthorize("@pms.hasPermission('api_wordparaphraseexamplelist_del')")
     public R<Boolean> delById(@PathVariable Integer id) {
         return R.success(starListService.removeById(id));
@@ -101,21 +97,21 @@ public class ExampleStarListController extends BaseController {
         return R.success(starListService.getCurrentUserList(SecurityUtils.getCurrentUserId()));
     }
 
-    @PostMapping("/putIntoStarList")
+    @PutMapping("/putIntoStarList")
     public R<Boolean> putIntoStarList(@NotNull Integer exampleId, @NotNull Integer listId) {
         starListService.putIntoStarList(exampleId, listId);
         return R.success();
     }
 
-    @PostMapping("/removeExampleStar")
-    public R<Boolean> removeExampleStar(@NotNull Integer exampleId, @NotNull Integer listId) {
+    @DeleteMapping("/removeExampleStar/{exampleId}/{listId}")
+    public R<Boolean> removeExampleStar(@PathVariable("exampleId") Integer exampleId, @PathVariable("listId") Integer listId) {
         starListService.removeOneRel(exampleId, listId);
         return R.success();
     }
 
-    @PostMapping("/getListItems/{size}/{current}")
-    public R<IPage<ExampleStarItemVO>> getListItems(@NotNull Integer listId, @PathVariable @Min(0) Integer current,
-        @PathVariable @Range(min = 1, max = 100) Integer size) {
-        return R.success(starListService.getListItems(new Page(current, size), listId));
+    @GetMapping("/getListItems/{size}/{current}/{listId}")
+    public R<IPage<ExampleStarItemVO>> getListItems(@PathVariable @Min(0) Integer current,
+        @PathVariable @Range(min = 1, max = 100) Integer size, @PathVariable Integer listId) {
+        return R.success(starListService.getListItems(new Page<>(current, size), listId));
     }
 }

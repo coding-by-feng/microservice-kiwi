@@ -16,7 +16,6 @@
 package me.fengorz.kiwi.admin.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-
 import me.fengorz.kiwi.admin.api.entity.SysUser;
 
 /**

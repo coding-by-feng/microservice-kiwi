@@ -16,10 +16,11 @@
 
 package me.fengorz.kiwi.bdf.security.component;
 
-import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.Map;
-
+import lombok.RequiredArgsConstructor;
+import me.fengorz.kiwi.common.api.entity.EnhancerUser;
+import me.fengorz.kiwi.common.sdk.config.FilterIgnorePropertiesConfig;
+import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
+import me.fengorz.kiwi.common.sdk.constant.SecurityConstants;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -27,11 +28,9 @@ import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.oauth2.provider.token.UserAuthenticationConverter;
 import org.springframework.util.StringUtils;
 
-import lombok.RequiredArgsConstructor;
-import me.fengorz.kiwi.common.api.entity.EnhancerUser;
-import me.fengorz.kiwi.common.sdk.config.FilterIgnorePropertiesConfig;
-import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
-import me.fengorz.kiwi.common.sdk.constant.SecurityConstants;
+import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * 根据checktoken 的结果转化用户信息

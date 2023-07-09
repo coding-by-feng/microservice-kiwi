@@ -32,12 +32,14 @@ public class AbstractFallback {
     protected Throwable throwable;
 
     protected <T> R<T> handleError() {
-        log.error(throwable.getCause().getMessage());
+        // log.error(throwable.getCause().getMessage());
+        log.error(throwable.getMessage());
         return R.feignCallFailed(throwable.getMessage());
     }
 
     protected void handleErrorNotReturn() {
-        log.error(throwable.getCause().getMessage());
+        // log.error(throwable.getCause().getMessage());
+        log.error(throwable.getMessage());
         R.feignCallFailed(throwable.getMessage());
     }
 

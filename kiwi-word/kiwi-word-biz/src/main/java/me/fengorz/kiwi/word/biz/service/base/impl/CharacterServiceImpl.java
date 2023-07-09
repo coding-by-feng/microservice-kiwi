@@ -15,10 +15,7 @@
  */
 package me.fengorz.kiwi.word.biz.service.base.impl;
 
-import org.springframework.stereotype.Service;
-
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-
 import me.fengorz.kiwi.common.sdk.annotation.cache.KiwiCacheKeyPrefix;
 import me.fengorz.kiwi.common.sdk.util.bean.KiwiBeanUtils;
 import me.fengorz.kiwi.word.api.common.WordConstants;
@@ -26,6 +23,7 @@ import me.fengorz.kiwi.word.api.entity.CharacterDO;
 import me.fengorz.kiwi.word.api.vo.detail.CharacterVO;
 import me.fengorz.kiwi.word.biz.mapper.CharacterMapper;
 import me.fengorz.kiwi.word.biz.service.base.CharacterService;
+import org.springframework.stereotype.Service;
 
 /**
  * 单词词性表

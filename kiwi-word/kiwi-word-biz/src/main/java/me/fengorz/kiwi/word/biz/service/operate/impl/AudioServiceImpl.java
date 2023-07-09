@@ -16,22 +16,23 @@
 
 package me.fengorz.kiwi.word.biz.service.operate.impl;
 
-import java.io.ByteArrayInputStream;
-
-import org.springframework.stereotype.Service;
-
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.fastdfs.service.DfsService;
 import me.fengorz.kiwi.common.sdk.exception.dfs.DfsOperateException;
 import me.fengorz.kiwi.common.sdk.exception.tts.TtsException;
-import me.fengorz.kiwi.common.tts.model.TtsConfig;
+import me.fengorz.kiwi.common.tts.service.BaiduTtsService;
 import me.fengorz.kiwi.common.tts.service.TtsService;
 import me.fengorz.kiwi.word.api.common.ApiCrawlerConstants;
-import me.fengorz.kiwi.word.api.common.enumeration.ReviewAudioTypeEnum;
+import me.fengorz.kiwi.word.api.common.enumeration.ReviseAudioTypeEnum;
 import me.fengorz.kiwi.word.biz.common.SpeakerFunction;
-import me.fengorz.kiwi.word.biz.mapper.ReviewAudioMapper;
 import me.fengorz.kiwi.word.biz.service.operate.AudioService;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
+
+import java.io.ByteArrayInputStream;
+
+import static me.fengorz.kiwi.common.tts.TtsConstants.BEAN_NAMES.BAIDU_TTS_SERVICE_IMPL;
 
 /**
  * @Description TODO
@@ -40,17 +41,23 @@ import me.fengorz.kiwi.word.biz.service.operate.AudioService;
  */
 @Slf4j
 @Service
-@RequiredArgsConstructor
 public class AudioServiceImpl implements AudioService {
 
     private final TtsService ttsService;
-    private final TtsConfig ttsConfig;
+    private final BaiduTtsService baiduTtsService;
     private final DfsService dfsService;
-    private final ReviewAudioMapper reviewAudioMapper;
+
+    public AudioServiceImpl(TtsService ttsService,
+                            @Qualifier(BAIDU_TTS_SERVICE_IMPL) BaiduTtsService baiduTtsService,
+                            DfsService dfsService) {
+        this.ttsService = ttsService;
+        this.baiduTtsService = baiduTtsService;
+        this.dfsService = dfsService;
+    }
 
     @Override
     public String generateVoice(String text, int type) throws DfsOperateException, TtsException {
-        if (ReviewAudioTypeEnum.isEnglish(type)) {
+        if (ReviseAudioTypeEnum.isEnglish(type)) {
             return generateEnglishVoice(text);
         } else {
             return generateChineseVoice(text);
@@ -71,6 +78,15 @@ public class AudioServiceImpl implements AudioService {
         return dfsService.uploadFile(new ByteArrayInputStream(bytes), bytes.length, ApiCrawlerConstants.EXT_MP3);
     }
 
+    @Override
+    public String generateVoiceUseBaiduTts(String chineseText) throws DfsOperateException, TtsException {
+        if (StringUtils.isBlank(chineseText)) {
+            chineseText = CHINESE_TEXT_MISSING;
+        }
+        byte[] bytes = baiduTtsService.speech(chineseText);
+        return dfsService.uploadFile(new ByteArrayInputStream(bytes), bytes.length, ApiCrawlerConstants.EXT_MP3);
+    }
+
     private byte[] generateBytes(SpeakerFunction<String, byte[]> speaker) throws TtsException {
         byte[] bytes;
         String apiKey = ttsService.autoSelectApiKey();
@@ -82,5 +98,7 @@ public class AudioServiceImpl implements AudioService {
         }
         return bytes;
     }
+
+    private static final String CHINESE_TEXT_MISSING = "中文翻译缺失";
 
 }

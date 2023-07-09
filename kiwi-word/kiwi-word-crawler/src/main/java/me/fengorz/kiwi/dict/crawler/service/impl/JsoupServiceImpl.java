@@ -16,17 +16,6 @@
 
 package me.fengorz.kiwi.dict.crawler.service.impl;
 
-import java.io.IOException;
-import java.util.*;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.Supplier;
-
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
-import org.springframework.stereotype.Service;
-
 import cn.hutool.core.collection.CollUtil;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
@@ -35,7 +24,7 @@ import me.fengorz.kiwi.common.sdk.util.lang.string.KiwiStringUtils;
 import me.fengorz.kiwi.common.sdk.util.validate.KiwiAssertUtils;
 import me.fengorz.kiwi.dict.crawler.common.enumeration.JsoupRootTypeEnum;
 import me.fengorz.kiwi.dict.crawler.constant.CrawlerSourceEnum;
-import me.fengorz.kiwi.dict.crawler.service.IJsoupService;
+import me.fengorz.kiwi.dict.crawler.service.JsoupService;
 import me.fengorz.kiwi.dict.crawler.util.CrawlerAssertUtils;
 import me.fengorz.kiwi.word.api.common.ApiCrawlerConstants;
 import me.fengorz.kiwi.word.api.dto.queue.FetchPhraseMqDTO;
@@ -45,17 +34,27 @@ import me.fengorz.kiwi.word.api.dto.queue.result.*;
 import me.fengorz.kiwi.word.api.exception.JsoupFetchConnectException;
 import me.fengorz.kiwi.word.api.exception.JsoupFetchPronunciationException;
 import me.fengorz.kiwi.word.api.exception.JsoupFetchResultException;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+import org.springframework.stereotype.Service;
+
+import java.io.IOException;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Supplier;
 
 /**
  * @Description 爬虫抓取单词数据服务类 @Author zhanshifeng @Date 2019/10/31 3:24 PM
  */
 @Service
 @Slf4j
-public class JsoupServiceImpl implements IJsoupService {
+public class JsoupServiceImpl implements JsoupService {
 
     private static final String JSOUP_CONNECT_EXCEPTION = "Occurred exception in the jsoup connection, the word is {}";
     private static final String JSOUP_FETCH_IN_CHINESE_EXCEPTION =
-        "Occurred exception in the jsoup fetching in Chinese, the word is {}, Kiwi is trying to fetch in English.";
+            "Occurred exception in the jsoup fetching in Chinese, the word is {}, Kiwi is trying to fetch in English.";
     private static final String KEY_WORD_HEADER = "ti fs fs12 lmb-0 hw";
     private static final String KEY_WORD_HEADER_IN_ENGLISH = "ti fs fs12 lmb-0 hw superentry";
     private static final String KEY_WORD_NAME = "tb ttn";
@@ -107,7 +106,7 @@ public class JsoupServiceImpl implements IJsoupService {
 
     @Override
     public FetchWordResultDTO fetchWordInfo(FetchWordMqDTO dto)
-        throws JsoupFetchResultException, JsoupFetchConnectException, JsoupFetchPronunciationException {
+            throws JsoupFetchResultException, JsoupFetchConnectException, JsoupFetchPronunciationException {
         final String finalWord = dto.getWord();
         FetchWordResultDTO result;
         try {
@@ -131,14 +130,14 @@ public class JsoupServiceImpl implements IJsoupService {
         String wordTmp = dto.getWord();
         if (wordTmp.contains(GlobalConstants.SYMBOL_FORWARD_SLASH)) {
             wordTmp = wordTmp.replaceAll(GlobalConstants.SYMBOL_FORWARD_SLASH, GlobalConstants.SYMBOL_RAIL)
-                .replaceAll(GlobalConstants.SPACING, GlobalConstants.SYMBOL_RAIL);
+                    .replaceAll(GlobalConstants.SPACING, GlobalConstants.SYMBOL_RAIL);
         }
         final String word = wordTmp;
 
         Document doc;
         try {
             doc = Jsoup.connect(ApiCrawlerConstants.URL_CAMBRIDGE_FETCH_CHINESE
-                + word.replaceAll(GlobalConstants.SPACING, GlobalConstants.SYMBOL_RAIL)).get();
+                    + word.replaceAll(GlobalConstants.SPACING, GlobalConstants.SYMBOL_RAIL)).get();
         } catch (IOException e) {
             log.error(JSOUP_CONNECT_EXCEPTION, ApiCrawlerConstants.URL_CAMBRIDGE_FETCH_CHINESE + word);
             throw new JsoupFetchConnectException();
@@ -153,33 +152,33 @@ public class JsoupServiceImpl implements IJsoupService {
             for (Element element : idiomElements) {
                 Optional.ofNullable(element.getElementsByClass("lmb-12")).ifPresent(elements -> {
                     putPhrase(word, phrases, elements, ApiCrawlerConstants.PHRASE_FETCH_VERBOSE_IDIOM,
-                        ApiCrawlerConstants.PHRASE_FETCH_VERBOSE_IDIOM_LENGTH);
+                            ApiCrawlerConstants.PHRASE_FETCH_VERBOSE_IDIOM_LENGTH);
                 });
             }
         });
         /*词组抓取 end*/
         /*习语抓取 begin*/
         Optional.ofNullable(doc.getElementsByClass("xref idioms hax dxref-w lmt-25 lmb-25"))
-            .ifPresent(idiomElements -> {
-                for (Element element : idiomElements) {
-                    Optional.ofNullable(element.getElementsByClass("item lc lc1 lpb-10 lpr-10")).ifPresent(elements -> {
-                        putPhrase(word, phrases, elements, ApiCrawlerConstants.PHRASE_FETCH_VERBOSE_MEAN,
-                            ApiCrawlerConstants.PHRASE_FETCH_VERBOSE_MEAN_LENGTH);
-                    });
-                }
-            });
+                .ifPresent(idiomElements -> {
+                    for (Element element : idiomElements) {
+                        Optional.ofNullable(element.getElementsByClass("item lc lc1 lpb-10 lpr-10")).ifPresent(elements -> {
+                            putPhrase(word, phrases, elements, ApiCrawlerConstants.PHRASE_FETCH_VERBOSE_MEAN,
+                                    ApiCrawlerConstants.PHRASE_FETCH_VERBOSE_MEAN_LENGTH);
+                        });
+                    }
+                });
         /*习语抓取 end*/
         /*短语动词抓取 begin*/
         Optional.ofNullable(doc.getElementsByClass("xref phrasal_verbs hax dxref-w lmt-25 lmb-25"))
-            .ifPresent(idiomElements -> {
-                for (Element element : idiomElements) {
-                    Optional.ofNullable(element.getElementsByClass("item lc lc1 lc-xs6-12 lpb-10 lpr-10"))
-                        .ifPresent(elements -> {
-                            putPhrase(word, relatedWords, elements, ApiCrawlerConstants.PHRASE_FETCH_VERBOSE_MEAN,
-                                ApiCrawlerConstants.PHRASE_FETCH_VERBOSE_MEAN_LENGTH);
-                        });
-                }
-            });
+                .ifPresent(idiomElements -> {
+                    for (Element element : idiomElements) {
+                        Optional.ofNullable(element.getElementsByClass("item lc lc1 lc-xs6-12 lpb-10 lpr-10"))
+                                .ifPresent(elements -> {
+                                    putPhrase(word, relatedWords, elements, ApiCrawlerConstants.PHRASE_FETCH_VERBOSE_MEAN,
+                                            ApiCrawlerConstants.PHRASE_FETCH_VERBOSE_MEAN_LENGTH);
+                                });
+                    }
+                });
         /*短语动词抓取 end*/
 
         // phrases里面要过滤掉relatedWords里面拥有的
@@ -190,18 +189,18 @@ public class JsoupServiceImpl implements IJsoupService {
 
     @Override
     public FetchPhraseResultDTO fetchPhraseInfo(FetchPhraseMqDTO dto)
-        throws JsoupFetchConnectException, JsoupFetchResultException {
+            throws JsoupFetchConnectException, JsoupFetchResultException {
         final String finalPhrase = dto.getPhrase();
         String phrase = dto.getPhrase();
         if (phrase.contains(GlobalConstants.SYMBOL_FORWARD_SLASH)) {
             phrase = phrase.replaceAll(GlobalConstants.SYMBOL_FORWARD_SLASH, GlobalConstants.SYMBOL_RAIL)
-                .replaceAll(GlobalConstants.SPACING, GlobalConstants.SYMBOL_RAIL);
+                    .replaceAll(GlobalConstants.SPACING, GlobalConstants.SYMBOL_RAIL);
         }
 
         Document doc;
         try {
             doc = Jsoup.connect(ApiCrawlerConstants.URL_CAMBRIDGE_FETCH_CHINESE
-                + phrase.replaceAll(GlobalConstants.SPACING, GlobalConstants.SYMBOL_RAIL)).get();
+                    + phrase.replaceAll(GlobalConstants.SPACING, GlobalConstants.SYMBOL_RAIL)).get();
         } catch (IOException e) {
             log.error(JSOUP_CONNECT_EXCEPTION, phrase);
             throw new JsoupFetchConnectException();
@@ -247,23 +246,23 @@ public class JsoupServiceImpl implements IJsoupService {
         Optional.ofNullable(doc.getElementsByClass("pr entry-body__el")).ifPresent(elements -> {
             for (Element element : elements) {
                 Optional.ofNullable(element.getElementsByClass("headword hdb tw-bw dhw dpos-h_hw "))
-                    .ifPresent(singlePhraseElement -> {
-                        String word = singlePhraseElement.text().trim();
-                        if (KiwiStringUtils.equals(word, finalPhrase)) {
-                            return;
-                        }
-                        relatedWords.add(word);
-                    });
+                        .ifPresent(singlePhraseElement -> {
+                            String word = singlePhraseElement.text().trim();
+                            if (KiwiStringUtils.equals(word, finalPhrase)) {
+                                return;
+                            }
+                            relatedWords.add(word);
+                        });
             }
         });
         /*动词词组、形容词词组能要当做单词去抓取 end*/
 
         return result.setFetchParaphraseDTOList(paraphraseDTOs).setPhrase(phrase).setQueueId(dto.getQueueId())
-            .setRelatedWords(relatedWords).setDerivation(dto.getDerivation());
+                .setRelatedWords(relatedWords).setDerivation(dto.getDerivation());
     }
 
     private void putPhrase(String word, Set<String> phrases, Elements phraseElements, String verbose,
-        int verboseLength) {
+                           int verboseLength) {
         if (phraseElements != null && phraseElements.size() > 0) {
             for (Element phraseElement : phraseElements) {
                 Elements href = phraseElement.getElementsByTag("a");
@@ -290,12 +289,12 @@ public class JsoupServiceImpl implements IJsoupService {
     }
 
     private FetchWordResultDTO fetch(String url, String word)
-        throws JsoupFetchConnectException, JsoupFetchResultException, JsoupFetchPronunciationException {
+            throws JsoupFetchConnectException, JsoupFetchResultException, JsoupFetchPronunciationException {
         String queryWord = word;
         String jsoupWord;
         if (queryWord.contains(GlobalConstants.SYMBOL_FORWARD_SLASH)) {
             queryWord = queryWord.replaceAll(GlobalConstants.SYMBOL_FORWARD_SLASH, GlobalConstants.SYMBOL_RAIL)
-                .replaceAll(GlobalConstants.SPACING, GlobalConstants.SYMBOL_RAIL);
+                    .replaceAll(GlobalConstants.SPACING, GlobalConstants.SYMBOL_RAIL);
         }
 
         Document doc;
@@ -324,7 +323,7 @@ public class JsoupServiceImpl implements IJsoupService {
         Elements wordName = requireJsoupElements(wordNameHeader.get(0), () -> KEY_WORD_NAME);
         CrawlerAssertUtils.notEmpty(wordName, FETCH_MAIN_WORD_NAME_EXCEPTION, word);
         jsoupWord = wordName.get(0).text();
-        KiwiAssertUtils.serviceEmpty(jsoupWord, FETCH_MAIN_WORD_NAME_EXCEPTION, word);
+        KiwiAssertUtils.assertNotEmpty(jsoupWord, FETCH_MAIN_WORD_NAME_EXCEPTION, word);
         resultDTO.setWordName(jsoupWord);
 
         AtomicReference<JsoupRootTypeEnum> currentRootType = new AtomicReference<>();
@@ -362,31 +361,31 @@ public class JsoupServiceImpl implements IJsoupService {
                 return KEY_CODE_HEADER;
             });
             if (currentRootType.get() == JsoupRootTypeEnum.IDIOM
-                && codeHeader.hasClass(KEY_CODE_IDIOM_HEADER_UNUSED_PREFIX)) {
+                    && codeHeader.hasClass(KEY_CODE_IDIOM_HEADER_UNUSED_PREFIX)) {
                 codeHeader.remove(0);
             }
             // The number of parts of code and label per main paraphrase block can normally only be 1
             // TODO ZSF 大于0的时候这里要特殊处理，比如：flirt，目前只是抓取主要词性，关联单词没有抓到
             CrawlerAssertUtils.mustBeTrue(codeHeader != null && !codeHeader.isEmpty(), FETCH_CODE_HEADER_EXCEPTION,
-                word);
+                    word);
             // TODO ZSF fetchWordResultDTO 放入爬虫回来的wordName，不是传进来的wordName
             final Element header = codeHeader.get(0);
             Optional.ofNullable(header.getElementsByClass(KEY_HEADER_CODE))
-                .flatMap(element -> Optional.ofNullable(element.text())).ifPresent(codeDTO::setCharacterCode);
+                    .flatMap(element -> Optional.ofNullable(element.text())).ifPresent(codeDTO::setCharacterCode);
             Optional.ofNullable(header.getElementsByClass(KEY_HEADER_LABEL))
-                .flatMap(element -> Optional.ofNullable(element.text())).ifPresent(codeDTO::setTag);
+                    .flatMap(element -> Optional.ofNullable(element.text())).ifPresent(codeDTO::setTag);
 
             try {
                 // fetch UK pronunciation
                 Optional
-                    .ofNullable(subFetchPronunciation(word, block, KEY_UK_PRONUNCIATIOIN,
-                        ApiCrawlerConstants.PRONUNCIATION_TYPE_UK, isAlreadyFetchPronunciation))
-                    .ifPresent(pronunciationDTOList::add);
+                        .ofNullable(subFetchPronunciation(word, block, KEY_UK_PRONUNCIATIOIN,
+                                ApiCrawlerConstants.PRONUNCIATION_TYPE_UK, isAlreadyFetchPronunciation))
+                        .ifPresent(pronunciationDTOList::add);
                 // fetch US pronunciation
                 Optional
-                    .ofNullable(subFetchPronunciation(word, block, KEY_US_PRONUNCIATIOIN,
-                        ApiCrawlerConstants.PRONUNCIATION_TYPE_US, isAlreadyFetchPronunciation))
-                    .ifPresent(pronunciationDTOList::add);
+                        .ofNullable(subFetchPronunciation(word, block, KEY_US_PRONUNCIATIOIN,
+                                ApiCrawlerConstants.PRONUNCIATION_TYPE_US, isAlreadyFetchPronunciation))
+                        .ifPresent(pronunciationDTOList::add);
             } catch (JsoupFetchPronunciationException e) {
                 if (!isAlreadyFetchPronunciation) {
                     throw e;
@@ -402,7 +401,7 @@ public class JsoupServiceImpl implements IJsoupService {
                 boolean singleParaphraseIsNotEmpty = singleParaphrase != null && !singleParaphrase.isEmpty();
                 boolean phrasesIsNotEmpty = phrases != null && !phrases.isEmpty();
                 CrawlerAssertUtils.mustBeTrue(singleParaphraseIsNotEmpty || phrasesIsNotEmpty,
-                    FETCH_SINGLE_PARAPHRASE_EXCEPTION, word);
+                        FETCH_SINGLE_PARAPHRASE_EXCEPTION, word);
 
                 subFetchParaphrase(word, paraphraseDTOList, singleParaphrase, phrases, phrasesIsNotEmpty);
             }
@@ -425,12 +424,12 @@ public class JsoupServiceImpl implements IJsoupService {
      * @param word
      * @param paraphraseDTOList
      * @param paraphraseElements
-     * @param phrases 释义附带的词组
-     * @param phrasesIsEmpty 释义是否附带词组
+     * @param phrases            释义附带的词组
+     * @param phrasesIsEmpty     释义是否附带词组
      * @throws JsoupFetchResultException
      */
     private void subFetchParaphrase(String word, List<FetchParaphraseDTO> paraphraseDTOList,
-        Elements paraphraseElements, Elements phrases, boolean phrasesIsEmpty) throws JsoupFetchResultException {
+                                    Elements paraphraseElements, Elements phrases, boolean phrasesIsEmpty) throws JsoupFetchResultException {
         for (Element paraphrase : paraphraseElements) {
             FetchParaphraseDTO paraphraseDTO = new FetchParaphraseDTO();
 
@@ -460,7 +459,7 @@ public class JsoupServiceImpl implements IJsoupService {
                     for (int i = 0; i < subPhrases.size(); i++) {
                         String phraseDetail = subPhrases.get(i).text();
                         String subPhrasesParaphrase =
-                            subPhrasesParaphrases.get(i).getElementsByClass(KEY_PARAPHRASE_ENGLISH).text();
+                                subPhrasesParaphrases.get(i).getElementsByClass(KEY_PARAPHRASE_ENGLISH).text();
                         if (KiwiStringUtils.equals(subPhrasesParaphrase, paraphraseEnglishText)) {
                             phraseDTOList.add(new FetchPhraseDTO().setPhrase(phraseDetail));
                         }
@@ -497,19 +496,19 @@ public class JsoupServiceImpl implements IJsoupService {
     }
 
     private FetchParaphraseExampleDTO subFetchExamples(List<FetchParaphraseExampleDTO> exampleDTOList,
-        Element sentence) {
+                                                       Element sentence) {
         FetchParaphraseExampleDTO exampleDTO = new FetchParaphraseExampleDTO();
         Optional.ofNullable(sentence.getElementsByClass(KEY_SENTENCE))
-            .ifPresent((Elements elements) -> exampleDTO.setExampleSentence(elements.text()));
+                .ifPresent((Elements elements) -> exampleDTO.setExampleSentence(elements.text()));
         Optional.ofNullable(sentence.getElementsByClass(KEY_SENTENCE_TRANSLATE))
-            .ifPresent(elements -> exampleDTO.setExampleTranslate(elements.text()));
+                .ifPresent(elements -> exampleDTO.setExampleTranslate(elements.text()));
         exampleDTO.setTranslateLanguage(ApiCrawlerConstants.DEFAULT_TRANSLATE_LANGUAGE);
         exampleDTOList.add(exampleDTO);
         return exampleDTO;
     }
 
     private FetchWordPronunciationDTO subFetchPronunciation(String word, Element block, String pronunciationKey,
-        String pronunciationType, boolean isAlreadyFetchPronunciation) throws JsoupFetchPronunciationException {
+                                                            String pronunciationType, boolean isAlreadyFetchPronunciation) throws JsoupFetchPronunciationException {
         Elements pronunciations = block.getElementsByClass(pronunciationKey);
         if (pronunciations == null || pronunciations.isEmpty()) {
             return null;
@@ -531,9 +530,9 @@ public class JsoupServiceImpl implements IJsoupService {
         // TODO ZSF 这里应该增加一个音标缺失语音常量
         String soundMarkSrc = "";
         Elements soundMarkElement = Optional.ofNullable(ukPronunciation.getElementsByClass(KEY_SOUNDMARK))
-            .orElseThrow(JsoupFetchPronunciationException::new);
+                .orElseThrow(JsoupFetchPronunciationException::new);
         Elements soundMarkSrcElement = Optional.ofNullable(ukPronunciation.getElementsByTag(KEY_SOURCE))
-            .orElseThrow(JsoupFetchPronunciationException::new);
+                .orElseThrow(JsoupFetchPronunciationException::new);
         if (!soundMarkElement.isEmpty()) {
             soundMark = soundMarkElement.get(0).text();
         }
@@ -543,6 +542,6 @@ public class JsoupServiceImpl implements IJsoupService {
         }
 
         return pronunciationDTO.setSoundmarkType(pronunciationType).setSoundmark(soundMark)
-            .setVoiceFileUrl(soundMarkSrc);
+                .setVoiceFileUrl(soundMarkSrc);
     }
 }

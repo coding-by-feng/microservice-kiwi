@@ -38,4 +38,8 @@ public class DataCheckedException extends BaseException {
     public DataCheckedException(Throwable cause) {
         super(cause);
     }
+
+    public DataCheckedException(String msg, Object... args) {
+        super(msg, args);
+    }
 }

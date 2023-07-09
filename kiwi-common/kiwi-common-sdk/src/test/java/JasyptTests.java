@@ -27,7 +27,7 @@ public class JasyptTests {
     public void main() {
         BasicTextEncryptor textEncryptor = new BasicTextEncryptor();
         String password = System.getenv("password");
-        String plainText = "24.24d4b24a99036efc1f9a341f14309dfb.2592000.1675433329.282335-29512426";
+        String plainText = "24.6f9a22205b4abf6f9fc171123445a338.2592000.1691484686.282335-35923803";
         textEncryptor.setPassword(password);
         String cipherText = textEncryptor.encrypt(plainText);
         String decrypt = textEncryptor.decrypt("5iq0rrNjP/KEC3o61ydTe4uXiA00BXpCCWEZnd5//BjrYwlbeWSajBkKY8q+36N44ehFQdszi7qOnc3TT5647RgxI0zYCqRQzo2HouYZy1E=");

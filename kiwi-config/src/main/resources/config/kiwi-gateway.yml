@@ -56,21 +56,13 @@ security:
 # 不校验验证码终端
 ignore:
   clients:
-    - test
-    - admin
+    - test:non_auth
+    - test:test
+    - daemon:non_auth
   codeVerifyChannels:
     - /sys/user/oneClickRegister
 
 my:
   config:
     exclude-db: true
-
-cache-control:
-  api:
-    - /word/main/query
-    - /word/main/queryById
-    - /word/main/fuzzyQueryList
-    - /word/main/variant
-    - /word/paraphrase/star/list/getItemDetail
-    - /word/pronunciation/downloadVoice
-    - /word/review/downloadReviewAudio
+    exclude-redis: false

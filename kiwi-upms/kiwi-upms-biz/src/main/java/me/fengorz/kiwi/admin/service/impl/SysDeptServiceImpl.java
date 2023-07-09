@@ -15,13 +15,11 @@
  */
 package me.fengorz.kiwi.admin.service.impl;
 
-import org.springframework.stereotype.Service;
-
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-
 import me.fengorz.kiwi.admin.api.entity.SysDept;
 import me.fengorz.kiwi.admin.mapper.SysDeptMapper;
 import me.fengorz.kiwi.admin.service.SysDeptService;
+import org.springframework.stereotype.Service;
 
 /**
  * 部门管理

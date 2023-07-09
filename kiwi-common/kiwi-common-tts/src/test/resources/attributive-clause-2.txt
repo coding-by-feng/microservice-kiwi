@@ -1,0 +1,509 @@
+定语从句第二部分
+关系代词as，as引导非限定性定语从句
+as引导的非限定性定语从句的特点主要有两个：
+1、as所指代的先行词通常都是一个完整的句子；
+2、as引导的定语从句位置很灵活，可以在句首、句中或句末。
+
+as引导的非限定性定语从句可以放在句首，此时as指代后面的整个主句。换句话说，关系代词as的先行词可以出现在as后边。
+这点不同于which及任何其他关系词，因为which及其他关系词所指代的先行词必须出现在它们的前面，因此which引导的非限定性定语从句不能放在句首。
+As is so often pointed out, knowledge is a two-edged weapon which can be used equally for good or evil.
+这是一个放在句首的由as引导的定语从句，此时as所指代的先行词是其后面的完整的主句，即knowledge is a two-edged weapon which can be used equally for good or evil。as在定语从句中作主语。注意：在这里我们不能说“Which is so often pointed out, ...”。
+
+1） 什么什么 is known to us all, the whale is not fish but a mammal.
+2） 什么什么 is known to us all that the whale is not fish but a mammal.
+3） 什么什么 is known to us all is that the whale is not fish but a mammal.
+我们知道，鲸不是鱼类，而是哺乳类动物。
+在例句1）中，两个分句间有逗号分隔，表明这是一个放在句首的非限定性定语从句，此时只能用as。
+在例句2）中，两个分句间多了一个连词that，替换了例句1）中的逗号，表明这是一个主语从句，其基本的结构是“It is+过去分词+that”。
+例句3）与例句2）相比多了一个谓语is，表明is前面的成分是主语，后面的成分是表语。在主语部分is known to us all里又有一个谓语is，这就表明充当主语的应该是一个主语从句，而且空白处填入的连词必须又能在主语从句中作主语，所以只能填What。
+
+as引导的非限定性定语从句可放在句中
+放在句中，往往会分隔主句中的某两个成分，因此在分析句子时要跳过这个as引导的从句，直接将从句的前后两个成分联系起来看，这样才便于理解。尽管as引导的从句放在句中，但as所指代的先行词依然是主句，只不过此时的主句是被as引导的从句分隔成了前后两部分。which引导的非限定性定语从句也可以放在句中，但which的先行词必须出现在其前面。
+Stratford-on-Avon, as we all know, has only one industry—William Shakespeare—but there are two distinctly separate and increasingly hostile branches.
+众所周知，埃文河上的斯特拉特福德镇只有一个产业，即威廉·莎士比亚，但是存在着两个明显不同且日益敌对的分支。
+as引导的定语从句放在句中，隔开了主语Stratford-on- Avon与其谓语has。此时as指代的先行词依然是主句，只不过此时的主句是被as引导的从句分隔成了Stratford-on-Avon和has only one industry— William Shakespeare—but there are two distinctly separate and increasingly hostile branches两部分。as指代这个主句的同时在定语从句中作know的宾语。
+这里若用which替换as，说成which we all know，那么which只能指代Stratford-on-Avon而不能指代整个主句。因此，which表示“我们所知道”的是Stratford-on-Avon这个城市。
+
+There is, as has been suggested, a growing body of research literature in journalism and broadcasting, but very little significant attention has been devoted to the study of the interview itself.
+正如前面已经提及的，对新闻与广播的研究文献越来越多，但是却很少有关注新闻采访本身的研究。
+此时as所指代的先行词依然是主句，只不过此时的主句被as引导的从句分隔成了There is和a growing body of research literature in journalism and broadcasting, but very little significant attention has been devoted to the study of the interview itself两部分。
+这里不能用which代替as，因为定语从句前面只有there is这个结构，它不是一个名词，因而无法作which的先行词。
+
+as引导的非限定性定语从句可放在句末，which引导的非限定性定语从句也常常放在句末。
+
+在as引导的定语从句中，as有“正好……”“就像……”“由……而知”的含义。
+当主句和从句在内容上一致时，或者说从句内容是顺着主句的意思说下来时，通常用as。
+若主句和从句在内容上不一致，或从句的内容对主句的内容起消极作用，即对主句内容起反对、排斥、否定等作用时，则多用which。
+
+例句1） She has married again, as was expected.
+她又结婚了，正如人们所预料的那样。
+例句2） She has married again, which was unexpected.
+她又结婚了，这真出乎人们预料。
+在例句1）中，定语从句中的关键词expected表明定语从句的意思与前面主句的意思是顺接关系，所以用as比较妥当，表示“正如人们所意料的那样”。
+在例句2）中，定语从句中的关键词unexpected表明定语从句的意思与前面主句的意思是否定、排斥的关系，所以用which比较妥当，表示“这是出乎人们意料的”。
+
+She is very careful, as her work shows.
+她很细心，这从她的工作中就可看得出来。
+在该句中，定语从句的意思与前面主句的意思是顺接关系，所以用as比较妥当，表示“正如她的工作所显示的”。
+
+The young man cheated his friend of much money, which was disgraceful.
+这个年轻人骗了他朋友很多钱，这真可耻。
+在该句中，定语从句中的关键词disgraceful表明定语从句的意思与前面主句的意思是否定、排斥的关系，所以用which比较妥当，表示“这真可耻”。
+
+as引导限定性定语从句
+as引导限定性定语从句只能用在一些固定结构中，即只能用在由such, the same, as修饰的先行词的后面。as在定语从句中可以作主语、宾语或表语。as的先行词可以是人，也可以是物。
+as在定语从句中作主语
+He’ll repeat such points as are discussed in the book.
+他将会重复书上讨论过的要点内容。
+这里such...as构成结构上的呼应关系。如果没有such，则不用as引导定语从句，比如可以说成“He’ll repeat the point that are discussed in the book.”。
+
+He is not such a man as would leave his work half done.
+也可以说成“He is not a man who would leave his work half done.”。
+他不是那种会将工作半途而废的人。
+
+The new map of the ocean floor shows the locations of twice as any undersea volcanoes as were previously thought to exist.
+这里as...as构成结构上的呼应关系。如果没有as，则不用as引导定语从句。as的先行词是undersea volcanoes。
+新的洋底地图显示出海底火山的位置，火山数量是人们以前知道的两倍。
+
+as在定语从句中作宾语
+He tried to make as few mistakes as he could avoid.
+他尽量避免犯错误。
+如果没有前面的as，则不用后面的as引导定语从句。as指代先行词mistakes，并且在从句中作avoid的宾语。
+
+He is not the same playboy as we knew.
+他不再是我们所知道的那个花花公子了。
+这里the same...as构成结构上的呼应关系。
+
+as在定语从句中作表语
+He is not such a fool as we would assume him to be.
+他并不像我们想象的那样傻。
+as指代先行词fool，并且在从句中作be的表语。
+
+关系代词than
+- than可作关系代词引导定语从句，在从句中一般作主语（也可作宾语）；
+- than前面的主句需有形容词的比较级形式；
+- 比较级所修饰的名词即为先行词。
+
+than作主语
+Don't drink more wine than is good for health.
+不要过量饮酒。适量饮酒有益于健康。
+Don't give him more money than is needed, since money will burn a hole in his pocket.
+不要多给他钱，他需要多少就给多少，因为他有钱就花光。
+than作宾语
+He soon found it easy to make more money by thieving than his father had done by a lifetime of honest work.
+这里的more所修饰的名词money即为先行词，than指代money的同时，在从句中作谓语动词had done（即had made）的宾语。
+很快他就发现，通过盗窃所得的钱比他老爸一辈子辛勤劳动挣来的钱要多得多。
+
+## 关系代词but
+对于but用作关系代词的用法特点：
+- 具有否定意义，相当于that...not。因此but后面接的定语从句在形式上是肯定的，但在意义上是否定的。
+- but所修饰的先行词往往会被一个否定词修饰，换句话说，but常与具有否定意义的主句连用。主句中的否定和but本身的否定意义结合起来即构成双重否定，表达肯定意思。
+- but可指人也可指物，在句中作主语或宾语。
+- but通常只引导限定性定语从句。
+
+There is no man but errs.
+该句相当于说“There is no man who doesn't err.”。表示“不犯错误的人是没有的”。关系代词but指代人，在定语从句中作主语。与此句相关的还有一句是“To err is human; to forgive, divine.”。表示“犯错人皆难免，宽恕则属超凡”。这两句话可以连在一起使用。
+人必犯错。
+There are very few but admire his talents.
+该句相当于说“There are very few who don't admire his talents.”。表示“不赞赏他的才能的人几乎没有”。关系代词but指代先行词few，在定语从句中作主语。
+很少有人不赞赏他的才干的。
+
+## 缩合关系代词what
+***what的用法与其他关系代词在结构上有一个重大的区别，那就是what不能指代先行词，即what前面不能有名词，换句话说，what引导的从句并不能修饰主句中的任何先行词。***
+All ______ is a continuous supply of the basic necessities of life.
+A. what is needed
+B. the things needed
+C. for our needs
+D. that is needed
+正确答案D，题干给出的是一个主句结构，其中all要被一个定语从句修饰，即all是先行词，所以不能选择A，因为不能用what来指代主句中的任何词。
+关系代词that指代all，在从句中作主语。此外，若选B，则主语是复数things，与后面的谓语is不搭配。也不能选C，因为没有all for our needs is...这样的句子结构。
+所需要的就是日常生活必需品能够持续供应。
+
+***what在从句中大多数情况下是没有疑问意义的，即不翻译成“什么”，而是理解为the things that, all that或something that。***
+***可以把what看作是一个特殊的关系代词，它是先行词和关系代词的结合体，这就是为什么what被称为“缩合关系代词”。或者说what本身的含义里已经含有一个“隐性”的先行词了，这也就解释了为什么what前面不能再有“显性”的先行词。***
+
+使用关系词what的前提：what的前面不能有先行词
+下面这个句子语法是错误的：
+You can have everything what you like. *
+比较下面两个例句：
+1） Dolphins might be trained to cooperate with fishermen and help them by finding, tracking, herding, or even catching fish—in all of which activities dolphins are expert.
+2） Dolphins might be trained to cooperate with fishermen and help them by finding, tracking, herding, or even catching fish—in all of what activities dolphins are expert. *
+在例句1）中，关系词which后面接了一个名词activities，整个短语which activities显然指的是前面提到的finding, tracking, herding, or even catching fish这一系列“活动”，这个动名词短语就是被关系词which所指代的先行词。因为在主句中有了这个先行词，所以就不能用what引导从句了。
+
+1） Most of the food ______ elephants eat is brought to their mouths by their trunks.
+2） Most of ______ food elephants eat is brought to their mouths by their trunks.
+A. what B. which C. who D. as
+在例句1）中，空格前面有一个名词food，即需要被定语从句修饰的先行词。而有了先行词就不能填入what，所以A不正确。因为food是指物不是指人，所以不能用who。又因为as要与the same, such或as搭配使用，所以也不能填as。故B正确。在例句2）中，空格前面没有任何名词，即没有先行词，所以要填入what。故A正确。
+大象吃的所有食物中的大部分是通过象鼻送到嘴里的。
+
+Beethoven, the great musician, wrote【A】 nine symphonies in his life, most of what【B】 were written after he had lost【C】 his hearing【D】.
+B。应改为：most of which。
+从表面上看来，这里的most of what中的what前面没有名词，但其实这是一个非限定性定语从句，这个定语从句是补充说明先 行词nine symphonies的。因为有先行词，所以不能用what引导从句，而应改成most of which，也就相当于most of the nine symphonies。
+贝多芬这位伟大的音乐家一生中创作了九部交响曲，其中大部分是在他耳朵失聪后完成的。
+
+what单独使用，即其后面可以不接名词
+what可表示物，也可表示人。所以，what在意义上相当于说the thing that 或the person that，此时的what一般不具有“什么”这样的疑问意义。
+She is not what she used to be.
+这里的what后面没有接名词，what用来指人，原句可以改成一个含有定语从句的句子：“She is not the girl that she used to be.”。
+这里的what没有疑问意义，它相当于一个先行词和关系代词的结合体，***从这个意义上来说，what引导的是一个定语从句。但从结构上来说，这里what引导的从句是充当is的表语，即名词从句中的表语从句。可以称之为"What从句"。***
+她不再是以前的她了。
+
+Show me what you have written.
+可以改成一个含有定语从句的句子：“Show me the things that you have written.”。
+***从这个意义上来说，what引导的是一个定语从句。但从结构上来说，这里的what从句是充当show的直接宾语，即名词从句中的宾语从句。***
+
+Today's vessels can find their prey using satellites and sonar, which were not available 50 years ago. That means a higher proportion of what is in the sea is being caught.
+原句可以改成一个含有定语从句的句子：“That means a higher proportion of the fish that is in the sea is being caught.”。
+还要注意断句，不能理解成a higher proportion of what是主语，谓语是is in the sea，而应该理解成是a higher proportion of这个短语后面接了一个从 句what is in the sea，即充当介词of的宾语的不是what这个词，而是what从句what is in the sea。所以，这个短语不是表示“更大比例的鱼类在海洋里”，而是要理解成“海洋里更大比例的鱼类”。
+今天的船只可以利用50年前还没有的卫星和声呐发现猎物，这意味着海洋里更大比例的鱼类正在被捕捉。
+
+what的后面可以接名词
+尽管what的前面不能有名词，但它后面可以接名词。当what后面接名词时，what作关系形容词，其结构是“what+名词”，相当于“all the+名 词+that”，意思为“所有的……，尽可能多的……”。所以，此时的what同样没有疑问含义。这里的what一般表示物，而不表示人。
+Most of what food elephants eat is brought to their mouths by their trunks.
+这里what后面接名词food，what food相当于all the food that，表示“所有食物”，并不表示疑问意义的“什么食物”。于是，most of what food elephants eat相当于most of all the food that elephants eat，表示“大象吃的所有食物中的大部分”，并不表示疑问意义的“大象吃的大部分是什么食物”或“大象大部分吃的是什么食物”。
+大象吃的所有食物中的大部分是通过象鼻送到嘴里的。
+
+What money I have has been given to you.
+what money相当于all the money that，表示“所有的钱”，并不表示疑问意义的“什么钱”。于是，what money I have相当于all the money that I have，表示“我身上所有的钱”，并不表示疑问意义的“我身上有什么钱”。
+我身上所有的钱都给你了。
+
+***在“what+名词”这个结构中，在名词前面还可以添加其他限定词修饰名词，比如little，即“what little+名词”结构，相当于“all the little+名词+that”，表示“仅有的这点东西”。***
+The accident completely wiped out what little sight he had left.
+名词短语little sight相当于说all the little sight that，表示“仅有的这点视力”。what little sight he had left相当于all the little sight that he had left，表示“他所剩下的仅有的这点视力”。
+这次事故使他原本仅有的一点视力也完全丧失了。
+
+what用在一些固定结构中
+what从句常用在一些结构中，比如表示“所谓的”：what is called, what can be called, what we call, what used to call。
+此外还有其他结构，比如：what they described as, what they regarded as, what you may see as等等。这些结构可以作插入语，一般放在动词或介词后面作宾语。
+For Williams, those activities became what he calls “electronic heroin”.
+对威廉斯来说，这些活动成了他所称的“电子海洛因”。
+One difficulty is that almost all of what is called behavioral science continues to trace behavior to states of mind, feelings, traits of character, human nature, and so on.
+难题之一在于，所谓的行为科学几乎全部依然从心态、感情、性格特征、人性等方面去寻求行为的根源。
+In America, the move away from juggling to a simpler, less materialistic lifestyle is a well-established trend. Downshifting—also known in America as “voluntary simplicity”—has, ironically, even bred a new area of what might be termed anticonsumerism.
+在美国，从紧张忙碌的生活隐退到一种较为简单、不太注重物质的生活，这是一个明确的趋势。让人哭笑不得的是，放慢生活节奏——在美国也叫作“自愿返璞归真”——甚至已形成一个可称为“反消费主义”的新领域。
+
+## 关系副词的用法
+when的用法
+先行词指时间
+when可以引导限制性和非限制性定语从句，其先行词必须是表示时间的名词，如day，year或time等。
+I’ll never forget the day when I met you.
+这里的先行词是表示时间的名词day，所以用when引导定语从句。when作从句的时间状语，修饰谓语动词met。
+我永远不会忘记我们见面的那一天。
+
+My favorite season is spring, when the earth seems born again.
+这里是when引导的非限制性定语从句，先行词是表示时间的名词spring。
+到了春天，万物复苏，所以春天是我最喜欢的季节。
+
+We will put off the outing until next week, when we won’t be so busy.
+这里是when引导的非限制性定语从句，先行词是表示时间的短语next week。
+我们要把出游推迟到下周，到时我们就不会这么忙了。
+
+The day may soon come when we don’t bother to go to office but just work at home.
+也许在不久的将来，我们就不必去办公室上班了，而就在家里工作。
+关系副词when在从句中作时间状语（先行词表示时间时，不一定都用when引导定语从句）
+when是在定语从句中作时间状语。换句话说，若定语从句不是缺少状语，而是缺少主语或宾语，那么即使先行词是表示时间的名词，也不能用when而要用which或that来引导定语从句。因为用when来引导定语从句的前提条件是：when必须在其引导的定语从句中作时间状语。
+1） I’ll never forget the time which I spent on campus.
+2） I’ll never forget the day when we first met in the park.
+在例句1）中，由于定语从句中的谓语spent缺宾语，因此关系词要充当这一宾语，故要用which。
+在例句2）中，定语从句不缺主语或宾语，而是缺少时间状语，故关系词用when，这里when作时间状语，修饰met。
+1）我永远不会忘记在大学校园里度过的时光。
+2）我永远不会忘记我们第一次在公园里相遇的那一天。
+
+The day, which began brightly, ended with a violent storm.
+这里的先行词是day，表示时间。由于定语从句缺少主语，所以用关系代词which引导定语从句，which作从句的主语，而不用关系副词when，因为关系副词无法作主语，只能作状语。
+那天，开始的时候还是阳光明媚，后来就下起了暴风雨。
+
+如何区分when引导的定语从句与when引导的时间状语从句
+很多时候，若不区分开when引导的这两类从句，就会导致误解。
+This trend began during the Second World War, when several governments came to the conclusion that the specific demands that a government wants to make of its scientific establishment cannot generally be foreseen in detail.
+![](https://gitee.com/fengorz/oss/raw/master/uPic/fAfJaW.png '')
+这里when的前面有表示时间的名词短语the Second World War，这里的when不是表示“当……时”，而要译成“当时”，这个从句可以译成“当时一些国家的政府得出结论”，而不能译成“当一些国家的政府得出结论的时候”。
+同位语从句的主语部分是the specific demands that a government wants to make of its scientific establishment，谓语部分是cannot generally be foreseen in detail。这个主语部分比较难，因为主语中心词demands后面又带了一个that引导的定语从句that a government wants to make of its scientific establishment。
+这里的that指代先行词demands，在定语从句中作谓语make的宾语，从而构成一个make demands of的搭配，表示“对……提出要求”。
+这种趋势始于第二次世界大战期间，当时一些国家的政府得出结论：政府要向科研机构提出的具体要求通常是无法详尽预见的。
+While even the modestly educated sought an elevated tone when they put pen to paper before the 1960s, even the most well regarded writing since then has sought to capture spoken English on the page.
+这里when引导的是一个时间状语从句，因为其前面没有时间名词作先行词，可以译成“当……时”，所以整个when引导的从句可以译成“当人们伏案写作时”。
+在20世纪60年代之前，当人们伏案写作时，即使受教育不多的人也追求一种高雅的风格，而从那以后，即使是令人景仰的文章作品也在追求一种口语风格。
+While even the modestly educated sought an elevated tone when they put pen to paper before the 1960s, even the most well regarded writing since then has sought to capture spoken English on the page.
+这里when引导的是一个时间状语从句，因为其前面没有时间名词作先行词，可以译成“当……时”，所以整个when引导的从句可以译成“当人们伏案写作时”。
+在20世纪60年代之前，当人们伏案写作时，即使受教育不多的人也追求一种高雅的风格，而从那以后，即使是令人景仰的文章作品也在追求一种口语风格。
+
+总的来说有三个不同点：
+#结构上不同
+- 若when引导定语从句，则when的前面必然有表示时间的名词；
+- 若when引导时间状语从句，则其前面往往没有表示时间的名词。
+
+#作用不同
+- 当when引导定语从句时，此时when是指代表示时间的先行词，在定语从句中作时间状语，修饰从句的谓语。
+- 当when引导时间状语从句时，此时when不在从句中作任何成分，只起连接主句和从句的作用（when引导的时间从句修饰主句的谓语，作主句谓语的时间状语）。
+
+#when的译法不同
+when引导定语从句：
+- 如果从句谓语是过去时，则when表示从句谓语动作发生的过去时间，因而一般译成“当时”、“那时”；
+- 如果从句谓语是表示将来的动作，则when表示从句谓语动作发生的将来时间，因而常译成“到时”、“届时”。
+
+而引导时间状语从句的 when，通常都是译成“当……时候”。
+
+
+#when也可以是一个"缩合关系词"
+To her, the arguments about little things and other obstacles she and her husband face are forgettable when she thinks back to when she first met her husband.
+第一个when引导的从句不难理解，应是一个时间状语从句，所以when可译成“当……时”。而第二个when引导的从句较为特殊，从结构上看，这个从句是作介词to的宾语，所以应该是一个宾语从句。但从when的意义上来看，这个when相当于说the day when，是一个“缩合关系词”，也就是说when本身含有一个“隐性”先行词the day。所以从句when she first met her husband可以改写成一个定语从句the day when she first met her husband，表示“当初第一次认识她丈夫时的那天”。
+对于她来说，当她回忆起初遇丈夫时的情景，就把他们之间的关于生活琐事的争议抛到九霄云外了。
+
+where的用法
+where的先行词指地点
+where引导定语从句，在定语从句中作地点状语，修饰从句谓语动词，其先行词一般是表示地点的名词，如place和house等。
+A: Since you work in the theater, can’t you get me a free ticket now and then?
+B: Certainly if you bring me a few notes now and then from the bank where you work!
+这里的先行词bank表示地点，where在从句中充当地点状语（定语从句中不缺主语或宾语），修饰work。
+A：既然你在剧院工作，那你就不能时常给我弄些免费的票吗？
+B：当然可以，只要你能够从你工作的那家银行里时常给我弄些票子出来。
+
+Literature is the place where the past meets the present to contemplate the future.
+where在从句中充当地点状语（定语从句中不缺少主语或宾语），修饰从句谓语meets。
+在文学作品里，过去与现实交汇，以思考未来。
+
+This is the town where I spent my childhood.
+这就是我度过童年的小镇。
+
+关系副词where在从句中作地点状语
+与when类似，并不是先行词是表示地点的名词时，都得由where来引导定语从句，这得看关系词在从句中充当的成分。若定语从句不是缺少状语，而是缺少主语或宾语，则要用which或that引导定语从句。
+1） This is the town where I spent my childhood.
+2） This is the town which I told you about before.
+在例句1）中，定语从句不缺少主语或宾语，而是缺少地点状语，故关系词用where。where作地点状语，修饰spent。
+在例句2）里，由于定语从句中的谓语部分told you about缺少宾语，因此关系词要充当这一宾语，故要用which。
+1）这就是我度过童年的小城。
+2）这就是我以前告诉过你的小城。
+
+I’ve never been to Beijing, but it’s the place ______.
+A. where I’d like to visit
+B. in which I’d like to visit
+C. I most want to visit
+D. that I want to visit it most
+本题考查定语从句关系词的选择。这句话中尽管先行词是表示地点的名词place，但由于从句中的谓语visit缺少宾语，所以不能选A，而C才是正确答案。这里相当于省去了关系词that或which，因此原句应该是that / which I most want to visit。
+我从未到过北京，但北京却是我最想游览的地方。
+
+In fact, there are now so many deer that some are being sent to places which would like to return this kind of deer to the wild.
+尽管这句的先行词是表示地点的名词places，但由于从句缺少主语，所以我们用关系代词which。
+事实上，现在鹿群数量过多，因此有些鹿被送到那些能将它们送回野外的地方。
+
+where引导定语从句，先行词可以是含有地点意义的其他各种名词
+where引导定语从句，其先行词可以不是表示地点的名词。我们可以把这种不表示地点的名词解释成一种“含有地点意义的名词”，这些名词往往是一些抽象名词，比如dream, case, situation, point等等。
+Cheating is most likely in situations where the vital interests are high and the chances of getting caught are low.
+这里的先行词situations表示“情形，情况”，并非我们习惯意义上表示地点的名词，但这里依然用了where引导定语从句。where在从句中充当地点状语，定语从句中不缺少主语或宾语。
+如果利益重大而且被人发现的可能性又很小，在这种情况下，欺诈行为最有可能发生。
+
+He has reached the point where a change is needed.
+这里的先行词point表示“地步，某一程度”，并非我们习惯意义上的表示地点的名词。
+他已到了需要改弦易辙的地步。
+
+再次强调一下where引导的定语从句的两个特点
+- 先行词可以是除了表示时间的名词（在这种情况下会用when）和表示原因的名词（在这种情况下会用why）以外的任何其他名词；
+- where在从句中作状语，即从句不能缺少主语或宾语，否则不可能用where，而是用which或that。
+
+如何区分where引导的地点状语从句和定语从句
+1） 45 percent of the world's population live where mosquitoes transmit malaria.
+2） Approximately 45 percent of the world's population live in the climate zone where mosquitoes transmit malaria.
+疟疾是由蚊子传播的，全球有大约45％的人口生活在疟疾肆虐的区域。
+
+where引导的这两种从句有如下两点不同：
+- 结构上的不同:
+    - 若where引导定语从句，则where的前面必然有表示地点的名词；
+    - 若where引导地点状语从句，则其前面往往没有表示地点的名词。
+- 作用不同：
+    - 当where引导定语从句时，指代表示地点的先行词在定语从句中作地点状语，修饰从句的谓语。
+    - 当where引导地点状语从句时，不在从句中充当任何成分，只起连接主句和从句的作用。
+
+> 定语从句中的where才能转换成“介词+which”的结构，而地点状语从句的where不能。
+
+1） Would you please put the book where it belongs?
+2） Would you please put the book to which it belongs? *
+请把书放回原处。
+
+where作为“缩合关系词”
+We stopped for a minute to walk out to where we had seen George Mills work in the mud the night before.
+从结构上看，这里的where引导的从句是作介词to的宾语，所以应该是一个宾语从句。但从where的意义上来看，这里的where相当于说the place where，是一个“缩合关系词”，也就是说where本身含有一个“隐性”的先行词the place。
+所以从句where we had seen George Mills work in the mud the night before可以改写成一个定语从句the place where we had seen George Mills work in the mud the night before。
+我们停留了片刻，出来走到我们曾经看到乔治·米尔斯前一天晚上在泥里工作的地方。
+
+why的用法
+why在定语从句中作原因状语，修饰从句的谓语动词，用来表示原因，只引导限制性定语从句，先行词是reason等表示原因的名词。
+This is the reason why I didn’t come here.
+此处的why相当于for which。
+这就是我没来的原因。
+
+关系副词有how吗？
+how不可以作为表示方式的关系副词。表示方式的四种句型：
+- the way+从句
+- the way that+从句
+- the way in which+从句
+- the manner that+从句
+
+You know the old golden rule, “Care for others the way you would like them to care for you.”
+这里the way后面的关系词省去了。
+要记住这样一个真理——以希望别人对待你的方式来对待别人（己所不欲，勿施于人）。
+> 在英语中没有“the way how+从句”这样的表达。
+
+## 限制性与非限制性定语从句
+在限制性定语从句中，先行词和关系词之间不用逗号隔开，而非限制性定语从句则需要逗号隔开。
+限制性定语从句——不用逗号隔开
+限制性定语从句是用来对一个名词提供必要的信息（a defining relative clause defines or gives essential information about a noun），以说明定语从句所修饰的先行词的身份或性质，或用来限制先行词所指的范围。若去掉限制性定语从句，则主句部分的含义不明确，或意义不完整，所以不能用逗号来分隔先行词和定语从句。
+比如“I don’t like people.”，这句话的意思不明确，句意不完整，因此其后面必须加一个限制性定语从句，才能使句意完整。比如：
+I don’t like people who are never on time. 我不喜欢不守时的人。
+I don’t like people who never keep their word. 我不喜欢不守信用的人。
+以上句子黑体部分的定语从句都用来说明people的性质，是必不可少的信息，因此不能加逗号将其变为非限制性定语从句。
+
+There are two factors which determine an individual’s intelligence.
+这里若只是说“There are two factors.”，则句意不够完整，现在有了限制性定语从句which determine an individual’s intelligence来限制、修饰名词factors，就使得句意更明确。
+决定人的智力的因素有两个。
+
+He is a man who is of value to the people.
+这里若只是说“He is a man.”，则句意不完整，现在有了限制性定语从句who is of value to the people来限制修饰名词man，就使得句意完整而明确。
+他是一个有利于人民的人。
+非限制性定语从句——用逗号隔开
+非限制性定语从句用来提供附加的而非必要的信息，只是对先行词做进一步的解释、补充或说明（a non-defining relative clause gives optional information about a noun）。若去掉此定语从句，整个主句的意义一样很明确，不会引起误解和歧义。
+专有名词
+如果定语从句修饰一个专有名词，一般要用逗号分隔先行词与定语从句，也就是说要使用非限制性定语从句。这是因为专有名词本身的意思已经很完整，不需要限制，用定语从句只是对它进行补充说明。
+My mother, who is 50 this year , lives with me now.
+这里的先行词my mother就是一个专有名词，其后的定语从句who is 50 this year只能是作为非限制性的定语从句来提供附加信息，不能使用限制性定语从句。若说“My mother who is 50 this year lives with me now.”，则言外之意为“我有好几个母亲，目前和我住在一起的是今年50岁的那位母亲”。
+我母亲今年50岁了，现在和我生活在一起。
+
+I asked my mother, who is 80 , whether she’d ever seen snow in Iraq before, and her answer was no.
+我问我已经80岁的妈妈，她以前在伊拉克是否见过雪，她回答说没见过。
+
+Einstein, who was a great Jewish scientist, created the theory of relativity.
+爱因斯坦这位伟大的犹太科学家创立了相对论。
+
+Hawaii, which consists of eight principal islands, is a favorite vacation spot.
+夏威夷包含八个主要岛屿，是一个度假胜地。
+类指名词
+普通名词若是用来表示类指，即表示的是一类事物，而非具体的某一个事物，此时，其后也宜用非限制性定语从句。
+1） An elephant, which is the earth’s largest land mammal , has few natural enemies other than human beings.
+2） One of the elephants which we saw at the zoo had only one tusk.
+例句1）中的an elephant是类指或泛指，即表示“大象”这类动物，而不是指称具体的某一头大象。
+例句2）中的one of the elephants则不是类指概念，而是具体指代某一头大象，即“我们在动物园看到的那头大象”。
+1）大象作为陆地上体形最大的哺乳类动物，很少有天敌，除了人类之外。
+2）我们在动物园看到有一头大象只有一颗象牙。
+
+用或不用逗号，句意有差别
+还有一类句子，用限制性或非限制性定语从句都可以，但强调的意义不一样，即句意不同。
+1） He has a daughter who works in a hospital.
+2） He has a daughter, who works in a hospital.
+
+1） The cab drivers who knew about the traffic jam took another road.
+2） The cab drivers, who knew about the traffic jam, took another road.
+例句1）的言外之意是“不知道的司机则没有换路线，只有部分司机换行驶路线了”。
+例句2）的言外之意是“全部司机都知道，都换了行驶路线”。
+1）知道那里堵车的出租车司机换了另一条路。
+2）出租车司机知道那里堵车了，他们都换了另一条路。
+非限制性定语从句的翻译
+限制性定语从句一般翻译成定语的形式“……的”，而非限制性定语从句往往会译成各种状语形式。
+The food, which wasn’t in the fridge , all went off.
+食物都坏了，因为没有放在冰箱里。（译成原因状语从句）
+
+The Ambassador gave a dinner to the scientists, with whom he especially wished to talk.
+大使宴请了那些科学家，因为他特别想与他们交谈一下。（译成原因状语从句）
+
+The people were desperate for work, any work, which could support their family.
+人们急于找到工作，什么工作都行，只要能养家糊口。（译成条件状语从句）
+
+The millionaire had another house built, which he didn’t need at all.
+那位百万富翁又建了一幢房子，尽管他并不需要。（译成让步状语从句）
+
+They tried to stamp out the revolt, which spread all the more furiously throughout the country.
+起义依然声势浩大地遍布全国，尽管他们试图镇压。（译成让步状语从句）
+
+## 定语从句与同位语从句的区分
+二者在结构上有相似性，都是“名词that从句”，这里的名词都称作先行词。
+从结构上区分：that是否作成分
+that在定语从句中要充当成分，比如作从句的主语或宾语；而that在同位语从句中不充当任何成分，仅起连词的作用。
+换句话说，定语从句的结构是“名词+that+不完整的句子”，而同位语从句的结构是“名词that+完整的陈述句”。
+1） The rumor that he spread everywhere turned out to be untrue.
+2） The rumor that Tom was a thief turned out to be untrue.
+例句 1）中的that在从句中充当spread的宾语，故此处为定语从句。
+例句2）中 的that在从句中不充当任何成分，因为从句“Tom was a thief”是一个完整的句子，不缺少任何成分。故其为同位语从句，作the rumor的同位语，补充说明the rumor的具体内容。
+1）他到处散布的那个谣言，结果证明是假的。
+2）有谣传说汤姆是小偷，结果证明是假的。
+
+1） The fact that we talked about is very important.
+2） The fact that he succeeded in the experiment pleased everybody.
+例句1）中的that作talked about的宾语，故此处为定语从句。
+例句2）中的that不充当成分，因为“he succeeded in the experiment”是一个完整的陈述句，故其为同位语从句。
+1）我们讨论的这些情况很重要。
+2）他的实验取得了成功，这让大家很高兴。
+
+从意义上区分：that引导的从句的意义不同
+定语从句相当于形容词, 对先行词起修饰、描述和限制的作用；同位语从句相当于一个名词，是对其前面名词内容的具体表述，二者是同位关系。
+1） The news that you heard is not true.
+2） The news that Lincoln was murdered at a theater is true.
+例句1）中的定语从句that you heard并不是表示news的内容，只是在限制news所指的范围，即“你听到的那个消息”。
+例句2）中的同位语从句that Lincoln was murdered at a theater是表示news的具体 内容，在意义上与news构成同位关系。
+1）你听到的那个消息并不是真实的。
+2）有消息说林肯是在一个剧院被刺杀的，这是真的。
+
+1） The fact that you pointed out made me interested.
+2） The fact that there are no lives on the moon is known to us all.
+例句1）中的定语从句that you pointed out并不是表示fact的内容，只是在限制fact的所指范围，即“你指出的这个事实”。
+例句2）中的同位语从句that there are no lives on the moon是表示fact的具体内容，在意义上与fact构成同位关系。
+1）你指出的这一点，我很感兴趣。
+2）众所周知，月球上并没有生命存在。
+
+## 带有插入语的定语从句
+定语从句的关系词后面插入一个主谓结构
+定语从句的关系词后面插入的往往是一些表达个人主观观点的主谓结构，如they think, he said, they believe, he claimed, they assume等等。这些主谓结构紧跟在关系代词后面。
+
+作主语的关系词+插入语+定语从句的谓语部分
+Many students face problems when they have to study a subject that they think is difficult.
+这里的定语从句本身的结构是that...is difficult，但现在关系代词that后面紧跟了一个插入语they think，定语从句的主语that和谓语部分is difficult被they think这个插入语分隔。
+很多学生如果必须学一门他们认为很难的课程时，就会遇到很多问题。
+
+Sometimes the very things that we think are holding us down are the things that are helping us fly. That is what discipline is all about.
+定语从句的主语that和谓语部分are holding us down被 we think这个插入语分隔。
+有时候我们认为正在拖我们后腿的东西其实正是帮助我们飞翔的东西，那就是纪律的含义所在。
+
+作宾语的关系词+插入语+定语从句的主谓部分
+The millionaire had a very ugly girl who I could not have dreamed many boys fell in love with.
+定语从句的宾语who和定语从句的主谓语many boys fell in love with被I could not have dreamed这个插入语分隔。
+这个百万富翁有一个十分丑陋的女儿，可是让我难以想象的是，竟然有很多男孩子在追求她。
+
+What is harder to establish is whether the productivity revolution that businessmen assume they are presiding over is for real.
+定语从句的宾语that和定语从句的主谓语they are presiding over被businessmen assume这个插入语分隔。
+商界人士自以为他们正在进行一场生产力革命，但这是否是真正意义上的生产力革命，对此更加难以证实。
+> 插入语是不影响定语从句本身的结构的，所以不能在这种特殊的定语从句中随便添加连词，比如上面定语从句不能改成that businessmen assume that they are presiding over is for real*。
+> 这里over是缺少宾语的，从句不是一个完整的结构，无法构成名词从句。
+
+They pointed out【A】 the damage which【B】 they supposed that【C】 had been done by last night's【D】 storm.
+这里的定语从句本身的结构应该是which...had been done by last night's storm，修饰前面的名词damage。但现在关系代词which后面紧跟了一个插入语they supposed
+他们指出了这些损坏，认为这是由昨晚的暴风雪造成的。
+
+what引导的从句中带一个主谓结构的插入语
+There was a very interesting remark in a book by an Englishman that I read recently giving what he thought was a reason for this American characteristic.
+我最近看过一本书，它是由一个英国人写的，我还记得书里有一句十分有趣的话，作者认为这句话说明了美国人为什么是这种性格。
+![](https://gitee.com/fengorz/oss/raw/master/uPic/3cBypA.png '')
+分词短语的结构图示：
+![](https://gitee.com/fengorz/oss/raw/master/uPic/tzs6BO.png '')
+我最近看过一本书，它是由一个英国人写的，我还记得书里有一句十分有趣的话，作者认为这句话说明了美国人为什么是这种性格。
+
+定语从句的关系词后面插入一个其他成分
+Real friends are those who, when you’ve made a fool of yourself, don't feel that you’ve done a permanent job.
+![](https://gitee.com/fengorz/oss/raw/master/uPic/OVN2TR.png '')
+真正的朋友就是，即使你出了洋相，他们也不会认为你以后还会这样。
+
+Our limited thinking prevents us from progress. There was a fisherman who, every time he caught a big fish, would throw it back into the river, keeping only the smaller ones. A man watching this unusual behavior asked the fisherman why he was doing this. The fisherman replied: “Because I have a small frying pan.”Most people never make it in life because they are carrying a small frying pan. That is limited thinking.
+我们局限性的思维会阻碍我们进步。比如，有个渔夫，每次捕到大鱼时都会把它丢回河里，而只把个头比较小的鱼留下。有个人看到了渔夫这种不寻常的行为，就问他为什么这样做。渔夫回答说：“因为我家只有一只很小的平底锅。”大部分人在生活中不能成功就是因为他们只带着一只小平底锅。这就是局限性的思维。
+
+## 并列定语从句
+所谓并列定语从句，是指两个或两个以上的定语从句，通过and, but, or等并列连词连接共同修饰一个先行词。
+The errors occurring in the exam often result from the things that you don't know or that you think you know.
+两个定语从句that you don't know 和that you think you know由连词or连接，修饰同一个先行词the things。
+考试中所犯的错误，往往是因为某些知识点你不知道或者你认为自己知道（但实际上你不知道）。
+
+这样的定语从句不是并列定语从句：
+He found a dollar bill that he had forgotten in a suit that he was sending to the cleaner.
+两个定语从句that he had forgotten in a suit和that he was sending to the cleaner的先行词各不相同，前者的先行词是a dollar bill，后者的先行词是a suit。
+他在那件正要送到洗衣店去的西服里找到了他忘记的一美元。
+
+## 双层定语从句
+He is the only person that we know who speaks so many foreign languages.
+第一层定语从句that we know的先行词为the only person；第二层定语从句who speaks so many foreign languages的先行词为the only person that we know。
+他是我们所认识的人当中唯一一位会说这么多外语的人。

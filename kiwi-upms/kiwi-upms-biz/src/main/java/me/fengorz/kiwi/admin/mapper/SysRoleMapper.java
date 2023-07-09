@@ -15,11 +15,10 @@
  */
 package me.fengorz.kiwi.admin.mapper;
 
-import java.util.List;
-
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-
 import me.fengorz.kiwi.admin.api.entity.SysRole;
+
+import java.util.List;
 
 /**
  * 系统角色表

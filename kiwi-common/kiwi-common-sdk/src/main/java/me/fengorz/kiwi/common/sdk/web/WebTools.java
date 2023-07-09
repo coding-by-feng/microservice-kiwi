@@ -16,24 +16,22 @@
 
 package me.fengorz.kiwi.common.sdk.web;
 
-import java.io.DataInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
-
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.lang3.CharEncoding;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.server.reactive.ServerHttpRequest;
-import org.springframework.web.util.WebUtils;
-
 import cn.hutool.core.codec.Base64;
 import cn.hutool.core.util.StrUtil;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.sdk.constant.SecurityConstants;
 import me.fengorz.kiwi.common.sdk.exception.AuthException;
+import me.fengorz.kiwi.common.sdk.exception.ResourceNotFoundException;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.server.reactive.ServerHttpRequest;
+import org.springframework.web.util.WebUtils;
+
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
+import java.io.DataInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 
 /**
  * @Author zhanshifeng @Date 2019-09-07 21:11
@@ -59,7 +57,7 @@ public class WebTools extends WebUtils {
         byte[] decoded;
 
         try {
-            byte[] authorizationBytes = authorization.substring(6).getBytes(CharEncoding.UTF_8);
+            byte[] authorizationBytes = authorization.substring(6).getBytes(StandardCharsets.UTF_8);
             decoded = Base64.decode(authorizationBytes);
         } catch (Exception e) {
             throw new AuthException("Failed to decode basic authentication token");
@@ -69,12 +67,17 @@ public class WebTools extends WebUtils {
     }
 
     public static void downloadResponseAndClose(HttpServletResponse response, InputStream inputStream) {
+        downloadResponseAndClose(response, inputStream, false);
+    }
+
+    public static void downloadResponseAndClose(HttpServletResponse response, InputStream inputStream, boolean isCountLength) {
         if (inputStream == null) {
-            return;
+            throw new ResourceNotFoundException("inputStream cannot be null!");
         }
 
         ServletOutputStream temps = null;
         DataInputStream in = null;
+        int readLengthTotal = 0;
         try {
             temps = response.getOutputStream();
             in = new DataInputStream(inputStream);
@@ -84,6 +87,7 @@ public class WebTools extends WebUtils {
             int readLength;
             do {
                 readLength = in.read(b);
+                readLengthTotal += readLength;
                 if (readLength > 0 && readLength < IN_READ_BYTES_LENGTH) {
                     byte[] minB = new byte[readLength];
                     System.arraycopy(b, 0, minB, 0, readLength);
@@ -95,6 +99,12 @@ public class WebTools extends WebUtils {
                 }
                 temps.flush();
             } while (readLength == IN_READ_BYTES_LENGTH);
+
+            if (isCountLength) {
+                response.addHeader(CONTENT_TYPE, AUDIO_MPEG);
+                response.addHeader(ACCEPT_RANGES, BYTES);
+                response.addHeader(CONTENT_LENGTH, String.valueOf(readLengthTotal));
+            }
         } catch (IOException e) {
             log.error("WebTools downloadResponse occurred error, cause of the error is {}", e.getMessage());
         } finally {
@@ -126,4 +136,11 @@ public class WebTools extends WebUtils {
         }
         return 0;
     }
+
+    public static final String CONTENT_TYPE = "Content-Type";
+    public static final String AUDIO_MPEG = "audio/mpeg";
+    public static final String ACCEPT_RANGES = "Accept-Ranges";
+    public static final String BYTES = "bytes";
+    public static final String CONTENT_LENGTH = "Content-Length";
+
 }

@@ -16,61 +16,124 @@
 
 package me.fengorz.kiwi.common.sdk.util.validate;
 
-import java.util.Collection;
-
 import cn.hutool.core.lang.Assert;
 import cn.hutool.core.util.StrUtil;
 import me.fengorz.kiwi.common.sdk.exception.ResourceNotFoundException;
 import me.fengorz.kiwi.common.sdk.exception.ServiceException;
 import me.fengorz.kiwi.common.sdk.util.lang.string.KiwiStringUtils;
+import org.apache.commons.collections4.CollectionUtils;
+
+import java.util.Collection;
 
 /**
- * @Description 断言工具类 @Author zhanshifeng @Date 2019/11/26 9:38 PM
+ * 断言工具类
+ * @Author zhanshifeng
+ * @Date 2019/11/26 9:38 PM
  */
 public class KiwiAssertUtils extends Assert {
 
-    public static <T> T serviceNotNull(T object, String errorMsgTemplate, Object... params) {
+    // 自动生成每个方法的注释，方法参数也要自动备注
+
+    /**
+     * 断言对象不为空，为空则抛出异常
+     * @param object    对象
+     * @param errorMsgTemplate  错误信息模板
+     * @param params    错误信息模板参数
+     * @param <T>    对象类型
+     */
+    public static <T> void assertNotNullThrowServiceException(T object, String errorMsgTemplate, Object... params) {
         if (object == null) {
             throw new ServiceException(StrUtil.format(errorMsgTemplate, params));
         }
-        return object;
     }
 
-    public static <T> T resourceNotNull(T object, String errorMsgTemplate, Object... params) {
+    /**
+     * 断言对象不为空，为空则抛出异常
+     * @param object    对象
+     * @param errorMsgTemplate  错误信息模板
+     * @param params    错误信息模板参数
+     * @param <T>    对象类型
+     */
+    public static <T> void resourceNotNull(T object, String errorMsgTemplate, Object... params) {
         if (object == null) {
             throw new ResourceNotFoundException(StrUtil.format(errorMsgTemplate, params));
         }
+    }
+
+    /**
+     * 断言对象不为空，为空则抛出异常
+     * @param object    对象
+     * @param errorMsgTemplate  错误信息模板
+     * @param params    错误信息模板参数
+     * @param <T>    对象类型
+     */
+    public static <T> T resourceNotEmpty(T object, String errorMsgTemplate, Object... params) {
+        resourceNotNull(object, errorMsgTemplate, params);
+        if (object instanceof String) {
+            if (KiwiStringUtils.isBlank(object.toString())) {
+                throw new ResourceNotFoundException(StrUtil.format(errorMsgTemplate, params));
+            } else {
+                return object;
+            }
+        }
+        if (object instanceof Collection) {
+            if (CollectionUtils.isEmpty((Collection<?>) object)) {
+                throw new ResourceNotFoundException(StrUtil.format(errorMsgTemplate, params));
+            } else {
+                return object;
+            }
+        }
+        if (object instanceof Integer) {
+            if (object.equals(0)) {
+                throw new ResourceNotFoundException(StrUtil.format(errorMsgTemplate, params));
+            } else {
+                return object;
+            }
+        }
         return object;
     }
 
-    public static <T> T serviceEmpty(T object, String errorMsgTemplate, Object... params) {
-        serviceNotNull(object, errorMsgTemplate, params);
-        if (object instanceof String && KiwiStringUtils.isBlank(object.toString())) {
-            throw new ServiceException(StrUtil.format(errorMsgTemplate, params));
+    /**
+     * 断言对象不为空，为空则抛出异常
+     * @param object    对象
+     * @param errorMsgTemplate  错误信息模板
+     * @param params    错误信息模板参数
+     * @param <T>    对象类型
+     */
+    public static <T> T assertNotEmpty(T object, String errorMsgTemplate, Object... params) {
+        assertNotNullThrowServiceException(object, errorMsgTemplate, params);
+        if (object instanceof String) {
+            if (KiwiStringUtils.isBlank(object.toString())) {
+                throw new ServiceException(StrUtil.format(errorMsgTemplate, params));
+            } else {
+                return object;
+            }
         }
-
-        if (object instanceof Collection && !((Collection)object).isEmpty()) {
-            throw new ServiceException(StrUtil.format(errorMsgTemplate, params));
+        if (object instanceof Collection) {
+            if (CollectionUtils.isEmpty((Collection<?>) object)) {
+                throw new ServiceException(StrUtil.format(errorMsgTemplate, params));
+            } else {
+                return object;
+            }
         }
-        if ((object instanceof Integer) && !object.equals(0)) {
-            throw new ServiceException(StrUtil.format(errorMsgTemplate, params));
+        if (object instanceof Integer) {
+            if (object.equals(0)) {
+                throw new ServiceException(StrUtil.format(errorMsgTemplate, params));
+            } else {
+                return object;
+            }
         }
         return object;
     }
 
-    public static <T> T serviceNotEmpty(T object, String errorMsgTemplate, Object... params) {
-        serviceNotNull(object, errorMsgTemplate, params);
-        if (object instanceof Collection && ((Collection)object).isEmpty()) {
-            throw new ServiceException(StrUtil.format(errorMsgTemplate, params));
-        }
-        if ((object instanceof Integer) && ((Integer)object).equals(0)) {
-            throw new ServiceException(StrUtil.format(errorMsgTemplate, params));
-        }
-        return object;
-    }
-
+    /**
+     * 断言表达式为true，为false则抛出异常
+     * @param expression    表达式
+     * @param errorMsgTemplate  错误信息模板
+     * @param params    错误信息模板参数
+     */
     public static void isTrue(boolean expression, String errorMsgTemplate, Object... params)
-        throws IllegalArgumentException {
+            throws IllegalArgumentException {
         if (!expression) {
             throw new ServiceException(StrUtil.format(errorMsgTemplate, params));
         }

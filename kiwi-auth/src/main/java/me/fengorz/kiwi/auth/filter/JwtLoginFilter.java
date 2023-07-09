@@ -16,14 +16,8 @@
 
 package me.fengorz.kiwi.auth.filter;
 
-import java.io.IOException;
-import java.util.Collection;
-
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
+import me.fengorz.kiwi.common.api.entity.EnhancerUser;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -31,9 +25,12 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import me.fengorz.kiwi.common.api.entity.EnhancerUser;
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.Collection;
 
 /**
  * @Description TODO @Author zhanshifeng @Date 2021/11/20 12:58 PM

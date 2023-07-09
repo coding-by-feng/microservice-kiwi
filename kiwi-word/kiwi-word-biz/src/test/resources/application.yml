@@ -25,6 +25,13 @@ ignore:
     - /word/main/variant/**
     - /word/main/listOverlapAnyway
     - /word/review/createTheDays
+    - /word/review/refreshAllApiKey
+    - /word/review/downloadReviewAudio/**
+    - /word/review/character/downloadReviewAudio/**
+    - /word/review/generateTtsVoice/**
+    - /word/review/generateTtsVoiceFromParaphraseId/**
+    - /grammar/mp3/**
+    - /grammar/srt/**
   userNames:
     - admin
 
@@ -42,8 +49,13 @@ async:
 my:
   config:
     exclude-db: false
+    exclude-redis: false
 
 tts:
+  baidu:
+    app-id: "20116041"
+    api-key: "lTZsmSq37OtRKj6WDpjeemip"
+    secret-key: "iQkIhGf6O93FH8Dhe446w8rB3jd2A137"
   voicerss:
     url: 'https://api.voicerss.org/?key={}&r=-2&hl=en-us&v=Mary&c=MP3&f=16khz_16bit_stereo&src=test'
     api-key-1: '02df0a8f48b641548ec4224c24ebff0e'
@@ -67,3 +79,12 @@ tts:
     api-key-19: '3744309a79ff48588fc1b63928c68c91'
     api-key-20: 'd2f5e9a0fbf14318a475d808c0dddc62'
 
+cache-control:
+  need-cache-api:
+    - /word/main/query
+    - /word/main/queryById
+    - /word/paraphrase/star/list/getItemDetail
+    - /word/pronunciation/downloadVoice
+    - /word/review/downloadReviewAudio
+    - /word/review/character/downloadReviewAudio
+    - /grammar/mp3

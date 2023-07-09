@@ -15,14 +15,14 @@
  */
 package me.fengorz.kiwi.word.biz.service.operate;
 
-import java.util.List;
-
 import me.fengorz.kiwi.common.sdk.exception.DataCheckedException;
 import me.fengorz.kiwi.common.sdk.exception.dfs.DfsOperateException;
 import me.fengorz.kiwi.common.sdk.exception.tts.TtsException;
 import me.fengorz.kiwi.word.api.entity.WordBreakpointReviewDO;
 import me.fengorz.kiwi.word.api.entity.WordReviewAudioDO;
 import me.fengorz.kiwi.word.api.vo.WordReviewDailyCounterVO;
+
+import java.util.List;
 
 /**
  * @author zhanShiFeng
@@ -51,15 +51,28 @@ public interface ReviewService {
      */
     void recordReviewPageNumber(int listId, Long pageNumber, int type, Integer userId);
 
-    WordReviewAudioDO findWordReviewAudio(Integer sourceId, Integer type) throws DfsOperateException, TtsException, DataCheckedException;
+    WordReviewAudioDO generateWordReviewAudio(Integer sourceId, Integer type)
+            throws DfsOperateException, TtsException, DataCheckedException;
 
-    WordReviewAudioDO generateWordReviewAudio(boolean isReplace, Integer sourceId, Integer type) throws DfsOperateException, TtsException, DataCheckedException;
+    WordReviewAudioDO findWordReviewAudio(Integer sourceId, Integer type)
+        throws DfsOperateException, TtsException, DataCheckedException;
 
-    void initPermanent(boolean isReplace, boolean isOnlyTest) throws DfsOperateException, TtsException;
+    WordReviewAudioDO findCharacterReviewAudio(String characterCode);
 
-    void generateTtsVoice(boolean isReplace) throws DfsOperateException, TtsException, InterruptedException;
+    void removeWordReviewAudio(Integer sourceId);
 
-    void generateTtsVoiceFromParaphraseId(Integer paraphraseId) throws DfsOperateException, TtsException, DataCheckedException;
+    void evictWordReviewAudio(Integer sourceId, Integer type);
+
+    void reGenReviewAudioForParaphrase(Integer sourceId);
+
+    void reGenReviewAudioForExample(Integer sourceId) throws DfsOperateException, TtsException, DataCheckedException;
+
+    void initPermanent(boolean isOnlyTest) throws DfsOperateException, TtsException;
+
+    void generateTtsVoice() throws DfsOperateException, TtsException, InterruptedException;
+
+    void generateTtsVoiceFromParaphraseId(Integer paraphraseId)
+        throws DfsOperateException, TtsException, DataCheckedException;
 
     void cleanReviewVoiceByParaphraseId(Integer paraphraseId);
 

@@ -16,16 +16,6 @@
 
 package me.fengorz.kiwi.dict.crawler.component.producer.word.async;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
-
-import org.apache.commons.collections4.ListUtils;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.stereotype.Component;
-
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.sdk.annotation.log.LogMarker;
 import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
@@ -34,9 +24,20 @@ import me.fengorz.kiwi.dict.crawler.component.producer.base.AbstractProducer;
 import me.fengorz.kiwi.dict.crawler.component.producer.base.MqProducer;
 import me.fengorz.kiwi.dict.crawler.component.producer.base.MqSender;
 import me.fengorz.kiwi.word.api.common.ApiCrawlerConstants;
+import me.fengorz.kiwi.word.api.common.enumeration.CrawlerStatusEnum;
+import me.fengorz.kiwi.word.api.common.enumeration.WordTypeEnum;
 import me.fengorz.kiwi.word.api.entity.FetchQueueDO;
 import me.fengorz.kiwi.word.api.feign.DictFetchApi;
 import me.fengorz.kiwi.word.api.util.WordApiUtils;
+import org.apache.commons.collections4.ListUtils;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * 爬虫异常重启-消息队列生产者 @Author zhanshifeng @Date 2019/10/30 10:33 AM
@@ -47,14 +48,16 @@ public class ErrorResumeProducer extends AbstractProducer implements MqProducer 
 
     public ErrorResumeProducer(DictFetchApi dictFetchApi, MqSender mqSender) {
         super(dictFetchApi, mqSender);
-        this.infoType = ApiCrawlerConstants.QUEUE_INFO_TYPE_WORD;
+        this.infoType = WordTypeEnum.WORD.getType();
     }
 
     @Override
     public void produce() {
         // SpringUtils.getBean(ErrorResumeProducer.class).resumeDelPronunciationError();
         // SpringUtils.getBean(ErrorResumeProducer.class).resumeOverlap();
+        log.info("ErrorResumeProducer produce method is starting");
         this.resumeDelPronunciationError();
+        log.info("ErrorResumeProducer produce method has ended");
         // this.resumeOverlap();
     }
 
@@ -63,12 +66,12 @@ public class ErrorResumeProducer extends AbstractProducer implements MqProducer 
         List<FetchQueueDO> list = new ArrayList<>();
         List<FetchQueueDO> delPronunciationFailList =
             dictFetchApi.pageQueue(ApiCrawlerConstants.STATUS_DEL_PRONUNCIATION_FAIL, 0, 20,
-                ApiCrawlerConstants.QUEUE_INFO_TYPE_WORD).getData();
+                WordTypeEnum.WORD.getType()).getData();
         if (KiwiCollectionUtils.isNotEmpty(delPronunciationFailList)) {
             list.addAll(delPronunciationFailList);
         }
         List<FetchQueueDO> delBaseFailList = (dictFetchApi.pageQueue(ApiCrawlerConstants.STATUS_DEL_BASE_FAIL, 0, 20,
-            ApiCrawlerConstants.QUEUE_INFO_TYPE_WORD)).getData();
+            WordTypeEnum.WORD.getType())).getData();
         if (KiwiCollectionUtils.isNotEmpty(delBaseFailList)) {
             list.addAll(delBaseFailList);
         }
@@ -116,7 +119,7 @@ public class ErrorResumeProducer extends AbstractProducer implements MqProducer 
     @Override
     protected void execute(FetchQueueDO queue) {
         queue.setIsLock(GlobalConstants.FLAG_YES);
-        queue.setFetchStatus(ApiCrawlerConstants.STATUS_TO_FETCH);
+        queue.setFetchStatus(CrawlerStatusEnum.STATUS_TO_FETCH.getStatus());
         dictFetchApi.updateQueueById(queue);
     }
 }

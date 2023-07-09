@@ -17,15 +17,18 @@ ignore:
     - /word/main/queryById/**
     - /word/main/fuzzyQueryList/**
     - /word/pronunciation/downloadVoice/**
-    - /word/main/query/**•
+    - /word/main/query/**
     - /word/fetch/**
     - /word/main/variant/**
     - /word/main/listOverlapAnyway
     - /word/review/createTheDays
     - /word/review/refreshAllApiKey
     - /word/review/downloadReviewAudio/**
+    - /word/review/character/downloadReviewAudio/**
     - /word/review/generateTtsVoice/**
     - /word/review/generateTtsVoiceFromParaphraseId/**
+    - /grammar/mp3/**
+    - /grammar/srt/**
   userNames:
     - admin
 
@@ -43,3 +46,14 @@ async:
 my:
   config:
     exclude-db: false
+    exclude-redis: false
+
+cache-control:
+  need-cache-api:
+    - /word/main/query
+    - /word/main/queryById
+    - /word/paraphrase/star/list/getItemDetail
+    - /word/pronunciation/downloadVoice
+    - /word/review/downloadReviewAudio
+    - /word/review/character/downloadReviewAudio
+    - /grammar/mp3

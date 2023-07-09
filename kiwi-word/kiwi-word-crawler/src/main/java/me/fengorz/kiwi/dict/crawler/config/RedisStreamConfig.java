@@ -16,8 +16,7 @@
 
 package me.fengorz.kiwi.dict.crawler.config;
 
-import java.time.Duration;
-
+import me.fengorz.kiwi.dict.crawler.redismq.ListenerMessage;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.stream.Consumer;
 import org.springframework.data.redis.connection.stream.MapRecord;
@@ -26,7 +25,7 @@ import org.springframework.data.redis.connection.stream.StreamOffset;
 import org.springframework.data.redis.stream.StreamMessageListenerContainer;
 import org.springframework.data.redis.stream.Subscription;
 
-import me.fengorz.kiwi.dict.crawler.redismq.ListenerMessage;
+import java.time.Duration;
 
 /**
  * @Description Redis MQ configuration.

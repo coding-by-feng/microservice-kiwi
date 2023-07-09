@@ -16,11 +16,6 @@
 
 package me.fengorz.kiwi.word.api.feign;
 
-import java.util.List;
-
-import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.*;
-
 import me.fengorz.kiwi.common.api.R;
 import me.fengorz.kiwi.common.sdk.constant.EnvConstants;
 import me.fengorz.kiwi.word.api.dto.queue.RemovePronunciatioinMqDTO;
@@ -30,6 +25,10 @@ import me.fengorz.kiwi.word.api.dto.queue.result.FetchWordResultDTO;
 import me.fengorz.kiwi.word.api.entity.FetchQueueDO;
 import me.fengorz.kiwi.word.api.feign.factory.BizApiFallbackFactory;
 import me.fengorz.kiwi.word.api.vo.detail.WordQueryVO;
+import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * @Author zhanshifeng
@@ -55,11 +54,11 @@ public interface DictFetchApi {
         @PathVariable Integer size, @PathVariable Integer infoType);
 
     @GetMapping(WORD_FETCH_QUEUE + "/listNotIntoCache")
-    public R<List<FetchQueueDO>> listNotIntoCache();
+    R<List<FetchQueueDO>> listNotIntoCache();
 
     @GetMapping(WORD_FETCH_QUEUE + "/pageQueueLockIn/{status}/{current}/{size}/{infoType}")
-    R<List<FetchQueueDO>> pageQueueLockIn(@PathVariable Integer status, @PathVariable Integer current,
-        @PathVariable Integer size, @PathVariable Integer infoType);
+    R<List<FetchQueueDO>> pageQueueInLock(@PathVariable Integer status, @PathVariable Integer current,
+                                          @PathVariable Integer size, @PathVariable Integer infoType);
 
     @PostMapping(WORD_FETCH_QUEUE + "/updateById")
     R<Boolean> updateQueueById(@RequestBody FetchQueueDO queueDO);
@@ -99,12 +98,16 @@ public interface DictFetchApi {
     @GetMapping(WORD_MAIN + "/query/{wordName}")
     R<WordQueryVO> queryWord(@PathVariable String wordName);
 
-    @GetMapping(WORD_REVIEW + "/createTheDays")
+    @PostMapping(WORD_REVIEW + "/createTheDays")
     void createTheDays();
 
     @GetMapping(WORD_REVIEW + "/refreshAllApiKey")
     void refreshAllApiKey();
 
-    @GetMapping(WORD_FETCH_QUEUE + "/generateTtsVoice")
-    void generateTtsVoice();
+    @PutMapping(WORD_FETCH_QUEUE + "/generateTtsVoice/{type}")
+    void generateTtsVoice(@PathVariable("type") Integer type);
+
+    @PutMapping(WORD_FETCH_QUEUE + "/reGenIncorrectAudioByVoicerss")
+    void reGenIncorrectAudioByVoicerss();
+
 }

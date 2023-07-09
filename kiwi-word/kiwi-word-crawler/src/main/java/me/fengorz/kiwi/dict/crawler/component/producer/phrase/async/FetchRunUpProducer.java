@@ -16,20 +16,20 @@
 
 package me.fengorz.kiwi.dict.crawler.component.producer.phrase.async;
 
-import java.util.List;
-
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.stereotype.Component;
-
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.sdk.util.lang.string.KiwiStringUtils;
 import me.fengorz.kiwi.dict.crawler.component.producer.base.AbstractProducer;
 import me.fengorz.kiwi.dict.crawler.component.producer.base.MqProducer;
 import me.fengorz.kiwi.dict.crawler.component.producer.base.MqSender;
 import me.fengorz.kiwi.word.api.common.ApiCrawlerConstants;
+import me.fengorz.kiwi.word.api.common.enumeration.WordTypeEnum;
 import me.fengorz.kiwi.word.api.dto.queue.FetchPhraseRunUpMqDTO;
 import me.fengorz.kiwi.word.api.entity.FetchQueueDO;
 import me.fengorz.kiwi.word.api.feign.DictFetchApi;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 /**
  * 抓取词组基本信息-消息队列生产者 @Author zhanshifeng @Date 2019/10/30 10:33 AM
@@ -40,7 +40,7 @@ public class FetchRunUpProducer extends AbstractProducer implements MqProducer {
 
     public FetchRunUpProducer(DictFetchApi dictFetchApi, MqSender MQSender) {
         super(dictFetchApi, MQSender);
-        this.infoType = ApiCrawlerConstants.QUEUE_INFO_TYPE_WORD;
+        this.infoType = WordTypeEnum.WORD.getType();
     }
 
     @Override
@@ -50,7 +50,9 @@ public class FetchRunUpProducer extends AbstractProducer implements MqProducer {
 
     @Override
     public void produce() {
+        log.info("FetchRunUpProducer produce method is starting");
         super.produce(ApiCrawlerConstants.STATUS_ALL_SUCCESS);
+        log.info("FetchRunUpProducer produce method has ended");
     }
 
     @Async

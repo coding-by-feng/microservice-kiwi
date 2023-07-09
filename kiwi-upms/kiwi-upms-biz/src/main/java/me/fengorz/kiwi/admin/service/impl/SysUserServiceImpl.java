@@ -15,22 +15,11 @@
  */
 package me.fengorz.kiwi.admin.service.impl;
 
-import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.StrUtil;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.RequiredArgsConstructor;
 import me.fengorz.kiwi.admin.api.dto.UserFullInfoDTO;
 import me.fengorz.kiwi.admin.api.entity.SysMenu;
@@ -42,7 +31,15 @@ import me.fengorz.kiwi.admin.service.SysRoleService;
 import me.fengorz.kiwi.admin.service.SysUserRoleRelService;
 import me.fengorz.kiwi.admin.service.SysUserService;
 import me.fengorz.kiwi.bdf.core.service.SeqService;
-import me.fengorz.kiwi.common.sdk.constant.MapperConstant;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * 用户表
@@ -84,7 +81,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
     @Transactional(rollbackFor = Exception.class)
     public SysUser oneClickRegister() {
         SysUser sysUser = new SysUser();
-        sysUser.setUserId(seqService.genIntSequence(MapperConstant.T_INS_SEQUENCE));
+        sysUser.setUserId(seqService.genCommonIntSequence());
         sysUser.setUsername(this.randomUserName());
         sysUser.setCreateTime(LocalDateTime.now());
         sysUser.setPassword(new BCryptPasswordEncoder().encode("123456"));

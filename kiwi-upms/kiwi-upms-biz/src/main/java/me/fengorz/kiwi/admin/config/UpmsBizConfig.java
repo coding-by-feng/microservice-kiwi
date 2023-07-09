@@ -16,10 +16,9 @@
 
 package me.fengorz.kiwi.admin.config;
 
+import me.fengorz.kiwi.bdf.core.config.CoreConfig;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
-
-import me.fengorz.kiwi.bdf.core.config.CoreConfig;
 
 /**
  * @Author zhanshifeng @Date 2019-09-20 09:28

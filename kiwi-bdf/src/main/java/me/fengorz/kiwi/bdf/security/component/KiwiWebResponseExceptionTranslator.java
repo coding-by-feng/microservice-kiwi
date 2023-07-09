@@ -16,6 +16,9 @@
 
 package me.fengorz.kiwi.bdf.security.component;
 
+import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import me.fengorz.kiwi.bdf.security.exception.*;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,10 +34,6 @@ import org.springframework.security.oauth2.provider.error.WebResponseExceptionTr
 import org.springframework.security.web.util.ThrowableAnalyzer;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 
-import lombok.NoArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import me.fengorz.kiwi.bdf.security.exception.*;
-
 /**
  * 异常处理,重写oauth 默认实现
  */
@@ -42,7 +41,7 @@ import me.fengorz.kiwi.bdf.security.exception.*;
 @NoArgsConstructor
 public class KiwiWebResponseExceptionTranslator implements WebResponseExceptionTranslator {
 
-    private ThrowableAnalyzer throwableAnalyzer = new DefaultThrowableAnalyzer();
+    private final ThrowableAnalyzer throwableAnalyzer = new DefaultThrowableAnalyzer();
 
     @Override
     public ResponseEntity<OAuth2Exception> translate(Exception e) {

@@ -16,11 +16,10 @@
 
 package me.fengorz.kiwi.dict.crawler;
 
-import org.springframework.boot.SpringApplication;
-
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.dict.crawler.component.MqMQSender;
 import me.fengorz.kiwi.dict.crawler.component.scheduler.ChiefProducerSchedulerSetup;
+import org.springframework.boot.SpringApplication;
 
 /**
  * @Author zhanshifeng @Date 2019/10/28 10:21 AM

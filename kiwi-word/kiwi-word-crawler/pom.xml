@@ -18,6 +18,12 @@
             <groupId>me.fengorz</groupId>
             <artifactId>kiwi-word-api</artifactId>
             <version>${kiwi.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.baidu.aip</groupId>
+                    <artifactId>java-sdk</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>me.fengorz</groupId>
@@ -29,11 +35,6 @@
             <groupId>org.jsoup</groupId>
             <artifactId>jsoup</artifactId>
             <version>${jsoup.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.baidu.aip</groupId>
-            <artifactId>java-sdk</artifactId>
-            <version>${baidu.aip.version}</version>
         </dependency>
     </dependencies>
 

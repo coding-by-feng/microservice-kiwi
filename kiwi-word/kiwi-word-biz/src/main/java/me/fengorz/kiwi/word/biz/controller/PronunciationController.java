@@ -15,26 +15,23 @@
  */
 package me.fengorz.kiwi.word.biz.controller;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-
-import javax.servlet.http.HttpServletResponse;
-
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.fastdfs.service.DfsService;
 import me.fengorz.kiwi.common.sdk.annotation.log.LogMarker;
-import me.fengorz.kiwi.common.sdk.controller.AbstractDfsController;
+import me.fengorz.kiwi.common.sdk.controller.AbstractFileController;
 import me.fengorz.kiwi.common.sdk.exception.dfs.DfsOperateException;
 import me.fengorz.kiwi.common.sdk.web.WebTools;
 import me.fengorz.kiwi.word.api.entity.PronunciationDO;
 import me.fengorz.kiwi.word.biz.service.base.PronunciationService;
 import me.fengorz.kiwi.word.biz.service.operate.CrawlerService;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import javax.servlet.http.HttpServletResponse;
+import java.io.InputStream;
 
 /**
  * 单词例句表
@@ -46,7 +43,7 @@ import me.fengorz.kiwi.word.biz.service.operate.CrawlerService;
 @RequiredArgsConstructor
 @RequestMapping("/word/pronunciation")
 @Slf4j
-public class PronunciationController extends AbstractDfsController {
+public class PronunciationController extends AbstractFileController {
 
     private final PronunciationService wordPronunciationService;
     private final DfsService dfsService;
@@ -65,17 +62,14 @@ public class PronunciationController extends AbstractDfsController {
         InputStream inputStream = null;
         try {
             byte[] bytes =
-                this.dfsService.downloadFile(wordPronunciation.getGroupName(), wordPronunciation.getVoiceFilePath());
+                    this.dfsService.downloadFile(wordPronunciation.getGroupName(), wordPronunciation.getVoiceFilePath());
             log.info("Required wordPronunciation bytes download success.");
-            inputStream = new ByteArrayInputStream(bytes);
-            response.addHeader(CONTENT_TYPE, AUDIO_MPEG);
-            response.addHeader(ACCEPT_RANGES, BYTES);
-            response.addHeader(CONTENT_LENGTH, String.valueOf(bytes.length));
+            inputStream = buildInputStream(response, bytes);
         } catch (DfsOperateException e) {
             log.error("downloadVoice exception, pronunciationId={}, re-fetching now!", pronunciationId, e);
             crawlerService.reFetchPronunciation(pronunciationId);
         }
-        WebTools.downloadResponseAndClose(response, inputStream);
+        WebTools.downloadResponseAndClose(response, inputStream, true);
         log.info("Method downloadResponse for wordPronunciation invoked success.");
     }
 }

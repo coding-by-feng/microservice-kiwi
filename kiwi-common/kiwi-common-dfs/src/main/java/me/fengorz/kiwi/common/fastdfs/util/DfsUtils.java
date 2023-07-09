@@ -24,10 +24,22 @@ import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
  */
 public class DfsUtils {
 
-    public static String getGroupName(String fastFileId) {
-        if (StrUtil.isBlank(fastFileId)) {
-            return GlobalConstants.EMPTY;
+    public static String getGroupName(String uploadResult) {
+        if (StrUtil.isNotBlank(uploadResult)) {
+            return uploadResult.substring(0, uploadResult.indexOf("/"));
         }
-        return fastFileId.substring(0, fastFileId.indexOf("/"));
+        return GlobalConstants.EMPTY;
     }
+
+    public static String getUploadVoiceFilePath(String uploadResult) {
+        if (StrUtil.isNotBlank(uploadResult)) {
+            return uploadResult.substring(uploadResult.indexOf("/") + 1);
+        }
+        return GlobalConstants.EMPTY;
+    }
+
+    public static String getFileName(String url) {
+        return url.substring(url.lastIndexOf("/"));
+    }
+
 }

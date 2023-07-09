@@ -16,12 +16,12 @@
 
 package me.fengorz.kiwi.word.api.vo.star;
 
-import java.io.Serializable;
-import java.util.List;
-
 import lombok.Data;
 import lombok.ToString;
 import lombok.experimental.Accessors;
+
+import java.io.Serializable;
+import java.util.List;
 
 /**
  * @Author zhanshifeng @Date 2020/1/4 9:24 PM

@@ -15,13 +15,13 @@ package com; /*
               *
               */
 
+import com.vocabulary.enhancer.word.biz.config.TransactionalTestConfig;
+import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
-
-import com.vocabulary.enhancer.word.biz.config.TransactionalTestConfig;
-
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * @Description 测试一下事务注解的一些特性 @Author zhanshifeng @Date 2019/11/24 9:24 PM
@@ -29,12 +29,13 @@ import lombok.extern.slf4j.Slf4j;
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = TransactionalTestConfig.class)
 @Slf4j
+@Disabled
 public class TransactionalTest {
 
     // @Autowired
     // private TestService testService;
 
-    // @Test
+    @Test
     public void test() {
 
         // log.debug(EnhancedLogUtils.getClassName() + GlobalConstants.DOT +

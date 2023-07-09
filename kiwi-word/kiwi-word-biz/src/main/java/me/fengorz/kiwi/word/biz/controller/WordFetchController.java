@@ -15,22 +15,14 @@
  */
 package me.fengorz.kiwi.word.biz.controller;
 
-import java.time.LocalDateTime;
-import java.util.List;
-
-import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
-
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
+import cn.hutool.core.util.EnumUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.api.R;
 import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
 import me.fengorz.kiwi.common.sdk.controller.BaseController;
+import me.fengorz.kiwi.word.api.common.enumeration.ReviseAudioGenerationEnum;
 import me.fengorz.kiwi.word.api.dto.queue.RemovePronunciatioinMqDTO;
 import me.fengorz.kiwi.word.api.dto.queue.result.FetchPhraseResultDTO;
 import me.fengorz.kiwi.word.api.dto.queue.result.FetchPhraseRunUpResultDTO;
@@ -41,6 +33,13 @@ import me.fengorz.kiwi.word.biz.service.base.WordFetchQueueService;
 import me.fengorz.kiwi.word.biz.service.operate.CleanerService;
 import me.fengorz.kiwi.word.biz.service.operate.CrawlerService;
 import me.fengorz.kiwi.word.biz.service.operate.OperateService;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
+import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * 单词待抓取列表
@@ -155,9 +154,15 @@ public class WordFetchController extends BaseController {
         return R.success(cleanerService.removePhrase(queueId));
     }
 
-    @GetMapping("/generateTtsVoice")
-    public R<Void> generateTtsVoice() {
-        crawlerService.generateTtsVoice();
+    @PutMapping("/generateTtsVoice/{type}")
+    public R<Void> generateTtsVoice(@PathVariable("type") Integer type) {
+        crawlerService.generateTtsVoice(EnumUtil.likeValueOf(ReviseAudioGenerationEnum.class, type));
+        return R.success();
+    }
+
+    @PutMapping("/reGenIncorrectAudioByVoicerss")
+    public R<Void> reGenIncorrectAudioByVoicerss() {
+        crawlerService.reGenIncorrectAudioByVoicerss();
         return R.success();
     }
 

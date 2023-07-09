@@ -16,10 +16,6 @@
 
 package me.fengorz.kiwi.word.api.feign.fallback;
 
-import java.util.List;
-
-import org.springframework.stereotype.Component;
-
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.api.R;
 import me.fengorz.kiwi.common.api.feign.AbstractFallback;
@@ -31,6 +27,9 @@ import me.fengorz.kiwi.word.api.dto.queue.result.FetchWordResultDTO;
 import me.fengorz.kiwi.word.api.entity.FetchQueueDO;
 import me.fengorz.kiwi.word.api.feign.DictFetchApi;
 import me.fengorz.kiwi.word.api.vo.detail.WordQueryVO;
+import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 /**
  * @Author zhanshifeng @Date 2019/10/30 3:20 PM
@@ -71,7 +70,7 @@ public class DictFetchApiFallback extends AbstractFallback implements DictFetchA
 
     @Override
     @LogMarker(isPrintParameter = true)
-    public R<List<FetchQueueDO>> pageQueueLockIn(Integer status, Integer current, Integer size, Integer infoType) {
+    public R<List<FetchQueueDO>> pageQueueInLock(Integer status, Integer current, Integer size, Integer infoType) {
         return handleError();
     }
 
@@ -160,7 +159,12 @@ public class DictFetchApiFallback extends AbstractFallback implements DictFetchA
     }
 
     @Override
-    public void generateTtsVoice() {
+    public void generateTtsVoice(Integer type) {
+        handleErrorNotReturn();
+    }
+
+    @Override
+    public void reGenIncorrectAudioByVoicerss() {
         handleErrorNotReturn();
     }
 }

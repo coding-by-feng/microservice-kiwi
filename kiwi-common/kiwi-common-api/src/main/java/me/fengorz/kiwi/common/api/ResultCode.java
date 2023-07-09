@@ -16,11 +16,11 @@
 
 package me.fengorz.kiwi.common.api;
 
-import static me.fengorz.kiwi.common.api.ApiContants.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.util.function.Supplier;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import static me.fengorz.kiwi.common.api.ApiContants.*;
 
 /**
  * @Author zhanshifeng @Date 2020/5/23 1:28 PM

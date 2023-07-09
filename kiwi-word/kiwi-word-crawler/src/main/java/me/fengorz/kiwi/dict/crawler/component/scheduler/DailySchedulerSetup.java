@@ -16,17 +16,16 @@
 
 package me.fengorz.kiwi.dict.crawler.component.scheduler;
 
-import java.util.Optional;
-
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
-
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.sdk.util.spring.SpringUtils;
 import me.fengorz.kiwi.dict.crawler.common.CrawlerConstants;
 import me.fengorz.kiwi.dict.crawler.component.Enabler;
 import me.fengorz.kiwi.dict.crawler.component.scheduler.base.DailyScheduler;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
+
+import java.util.Optional;
 
 @Slf4j
 @Component
@@ -50,6 +49,8 @@ public class DailySchedulerSetup {
      */
     @Scheduled(cron = "0 0 6 */1 * ?")
     public void setupAt6Clock() {
+        Optional.of(SpringUtils.getBean(CrawlerConstants.COMPONENT_BEAN_ID.CACHE_WORD_SCHEDULER,
+            DailyScheduler.class)).ifPresent(DailyScheduler::schedule);
         Optional.of(SpringUtils.getBean(CrawlerConstants.COMPONENT_BEAN_ID.REFRESH_ALL_API_KEY_DAILY_SCHEDULER,
             DailyScheduler.class)).ifPresent(DailyScheduler::schedule);
     }

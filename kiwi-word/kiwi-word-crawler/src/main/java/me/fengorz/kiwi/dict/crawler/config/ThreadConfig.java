@@ -16,13 +16,12 @@
 
 package me.fengorz.kiwi.dict.crawler.config;
 
+import lombok.RequiredArgsConstructor;
+import me.fengorz.kiwi.dict.crawler.config.properties.CrawlerConfigProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
-
-import lombok.RequiredArgsConstructor;
-import me.fengorz.kiwi.dict.crawler.config.properties.CrawlerConfigProperties;
 
 @Configuration
 @EnableScheduling

@@ -16,15 +16,14 @@
 
 package me.fengorz.kiwi.bdf.core.config;
 
+import me.fengorz.kiwi.bdf.core.mapper.SeqMapper;
+import me.fengorz.kiwi.bdf.core.service.SeqService;
+import me.fengorz.kiwi.common.sdk.config.UtilsBeanConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration;
 import org.springframework.context.annotation.*;
-
-import me.fengorz.kiwi.bdf.core.mapper.SeqMapper;
-import me.fengorz.kiwi.bdf.core.service.SeqService;
-import me.fengorz.kiwi.common.sdk.config.UtilsBeanConfiguration;
 
 /**
  * @Description 排除DB的配置类

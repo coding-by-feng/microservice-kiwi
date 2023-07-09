@@ -16,11 +16,9 @@
 
 package me.fengorz.kiwi.bdf.core.config;
 
-import java.time.Duration;
-import java.time.Instant;
-import java.util.HashMap;
-import java.util.Map;
-
+import lombok.extern.slf4j.Slf4j;
+import me.fengorz.kiwi.common.sdk.annotation.log.LogMarker;
+import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
 import org.apache.commons.lang3.ArrayUtils;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -30,9 +28,10 @@ import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.CodeSignature;
 import org.aspectj.lang.reflect.MethodSignature;
 
-import lombok.extern.slf4j.Slf4j;
-import me.fengorz.kiwi.common.sdk.annotation.log.LogMarker;
-import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
+import java.time.Duration;
+import java.time.Instant;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @Description 日志切面配置
@@ -48,26 +47,27 @@ public class LogAspectConfig {
     }
 
     @Pointcut("@annotation(me.fengorz.kiwi.common.sdk.annotation.log.LogMarker) && within(me.fengorz.kiwi..*)")
-    public void pointcut() {}
+    public void pointcut() {
+    }
 
     @Around("pointcut()")
     public Object logMethodAround(ProceedingJoinPoint point) throws Throwable {
-        MethodSignature signature = (MethodSignature)point.getSignature();
+        MethodSignature signature = (MethodSignature) point.getSignature();
         LogMarker logMarker = signature.getMethod().getAnnotation(LogMarker.class);
         Instant before = Instant.now();
         Object result = point.proceed();
         String methodName =
-            point.getTarget().getClass().getSimpleName() + GlobalConstants.SYMBOL_DOT + signature.getMethod().getName();
-        log.info("===> [log marker] method path: {}, params: {}, took {} ms, result is {}", methodName,
-            logMarker.isPrintParameter() ? getParameters(point) : LOG_METHOD_RESULT_DISABLE,
-            logMarker.isPrintExecutionTime() ? Duration.between(before, Instant.now()).toMillis()
-                : LOG_METHOD_RESULT_DISABLE,
-            logMarker.isPrintReturnValue() ? result : LOG_METHOD_RESULT_DISABLE);
+                point.getTarget().getClass().getSimpleName() + GlobalConstants.SYMBOL_DOT + signature.getMethod().getName();
+        log.info("===> [log marker] ({}) method path: {}, params: {}, took {} ms, result is {}", logMarker.value(), methodName,
+                logMarker.isPrintParameter() ? getParameters(point) : LOG_METHOD_RESULT_DISABLE,
+                logMarker.isPrintExecutionTime() ? Duration.between(before, Instant.now()).toMillis()
+                        : LOG_METHOD_RESULT_DISABLE,
+                logMarker.isPrintReturnValue() ? result : LOG_METHOD_RESULT_DISABLE);
         return result;
     }
 
     private Map<String, Object> getParameters(JoinPoint joinPoint) {
-        CodeSignature signature = (CodeSignature)joinPoint.getSignature();
+        CodeSignature signature = (CodeSignature) joinPoint.getSignature();
         String[] parameterNames = signature.getParameterNames();
         if (ArrayUtils.isEmpty(parameterNames)) {
             return null;

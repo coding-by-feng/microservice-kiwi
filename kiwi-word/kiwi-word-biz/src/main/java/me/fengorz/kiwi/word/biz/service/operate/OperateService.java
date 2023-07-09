@@ -16,15 +16,14 @@
 
 package me.fengorz.kiwi.word.biz.service.operate;
 
-import java.util.Set;
-
 import com.baomidou.mybatisplus.core.metadata.IPage;
-
 import me.fengorz.kiwi.word.api.dto.queue.result.FetchWordReplaceDTO;
 import me.fengorz.kiwi.word.api.entity.WordMainDO;
 import me.fengorz.kiwi.word.api.request.ParaphraseRequest;
 import me.fengorz.kiwi.word.api.vo.detail.ParaphraseVO;
 import me.fengorz.kiwi.word.api.vo.detail.WordQueryVO;
+
+import java.util.Set;
 
 /**
  * @Author zhanshifeng

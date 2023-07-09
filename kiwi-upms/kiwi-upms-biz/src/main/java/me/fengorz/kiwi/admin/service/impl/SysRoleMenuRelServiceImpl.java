@@ -15,13 +15,11 @@
  */
 package me.fengorz.kiwi.admin.service.impl;
 
-import org.springframework.stereotype.Service;
-
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-
 import me.fengorz.kiwi.admin.api.entity.SysRoleMenuRel;
 import me.fengorz.kiwi.admin.mapper.SysRoleMenuRelMapper;
 import me.fengorz.kiwi.admin.service.SysRoleMenuRelService;
+import org.springframework.stereotype.Service;
 
 /**
  * 角色菜单表

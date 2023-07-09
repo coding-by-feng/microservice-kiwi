@@ -15,18 +15,10 @@
  */
 package me.fengorz.kiwi.word.biz.service.base.impl;
 
-import java.io.Serializable;
-import java.util.List;
-
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.stereotype.Service;
-
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.sdk.annotation.cache.KiwiCacheKey;
@@ -36,15 +28,21 @@ import me.fengorz.kiwi.common.sdk.constant.CacheConstants;
 import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
 import me.fengorz.kiwi.common.sdk.exception.ServiceException;
 import me.fengorz.kiwi.common.sdk.util.bean.KiwiBeanUtils;
-import me.fengorz.kiwi.word.api.common.ApiCrawlerConstants;
 import me.fengorz.kiwi.word.api.common.WordConstants;
 import me.fengorz.kiwi.word.api.common.enumeration.ErrorCodeEnum;
+import me.fengorz.kiwi.word.api.common.enumeration.WordTypeEnum;
 import me.fengorz.kiwi.word.api.dto.mapper.out.FuzzyQueryResultDTO;
 import me.fengorz.kiwi.word.api.entity.WordMainDO;
 import me.fengorz.kiwi.word.api.vo.WordMainVO;
 import me.fengorz.kiwi.word.biz.mapper.WordMainMapper;
 import me.fengorz.kiwi.word.biz.service.base.WordFetchQueueService;
 import me.fengorz.kiwi.word.biz.service.base.WordMainService;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.stereotype.Service;
+
+import java.io.Serializable;
+import java.util.List;
 
 /**
  * 单词主表
@@ -84,9 +82,9 @@ public class WordMainServiceImpl extends ServiceImpl<WordMainMapper, WordMainDO>
             // 如果指定infoType直接指定查询，如果不指定默认查询单词
             boolean isNotSpecialize = infoType == null || infoType.length == 0;
             WordMainDO one = this.getOne(query.clone().eq(WordMainDO::getInfoType,
-                isNotSpecialize ? ApiCrawlerConstants.QUEUE_INFO_TYPE_WORD : infoType[0]));
+                isNotSpecialize ? WordTypeEnum.WORD.getType() : infoType[0]));
             if (one == null && isNotSpecialize) {
-                one = this.getOne(query.eq(WordMainDO::getInfoType, ApiCrawlerConstants.QUEUE_INFO_TYPE_PHRASE));
+                one = this.getOne(query.eq(WordMainDO::getInfoType, WordTypeEnum.PHRASE.getType()));
             }
             return KiwiBeanUtils.convertFrom(one, WordMainVO.class);
         } catch (Exception e) {
@@ -119,7 +117,9 @@ public class WordMainServiceImpl extends ServiceImpl<WordMainMapper, WordMainDO>
     @Override
     @KiwiCacheKeyPrefix(WordConstants.CACHE_KEY_PREFIX_WORD_MAIN.METHOD_ID)
     @CacheEvict(cacheNames = WordConstants.CACHE_NAMES, keyGenerator = CacheConstants.CACHE_KEY_GENERATOR_BEAN)
-    public void evictById(@KiwiCacheKey Integer id) {}
+    public void evictById(@KiwiCacheKey Integer id) {
+        log.info("evictById[id={}]", id);
+    }
 
     @Override
     public List<WordMainDO> list(String wordName, Integer infoType) {

@@ -16,23 +16,22 @@
 
 package me.fengorz.kiwi.word.biz.config;
 
-import java.util.List;
-
-import javax.annotation.Resource;
-
+import com.google.common.collect.Lists;
+import lombok.extern.slf4j.Slf4j;
+import me.fengorz.kiwi.word.api.common.WordConstants;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import com.google.common.collect.Lists;
-
-import me.fengorz.kiwi.word.api.common.WordConstants;
+import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * @Description TODO
  * @Author zhanshifeng
  * @Date 2022/9/25 09:05
  */
+@Slf4j
 // @Configuration
 public class WebAppConfig implements WebMvcConfigurer {
 
@@ -41,12 +40,13 @@ public class WebAppConfig implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
+        log.info("InterceptorRegistry is adding interceptor.");
         registry.addInterceptor(responseHandlerInterceptor).addPathPatterns(PATH_PATTERNS);
     }
 
     private static final List<String> PATH_PATTERNS =
-        Lists.newArrayList("/word/main/query", "/word/main/queryById", "/word/main/fuzzyQueryList",
-            "/word/main/variant", "/word/paraphrase/star/list/getItemDetail",
-            "/word/pronunciation/downloadVoice", "/word/review/downloadReviewAudio");
+        Lists.newArrayList("/word/main/query/**", "/word/main/queryById/**", "/word/main/fuzzyQueryList/**",
+            "/word/main/variant/**", "/word/paraphrase/star/list/getItemDetail/**",
+            "/word/pronunciation/downloadVoice/**", "/word/review/downloadReviewAudio/**");
 
 }

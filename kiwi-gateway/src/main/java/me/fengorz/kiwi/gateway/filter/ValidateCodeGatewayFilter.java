@@ -16,18 +16,9 @@
 
 package me.fengorz.kiwi.gateway.filter;
 
-import org.springframework.cloud.gateway.filter.GatewayFilter;
-import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.server.reactive.ServerHttpRequest;
-import org.springframework.http.server.reactive.ServerHttpResponse;
-import org.springframework.stereotype.Component;
-
+import cn.hutool.core.util.StrUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import cn.hutool.core.util.StrUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.api.R;
@@ -35,6 +26,13 @@ import me.fengorz.kiwi.common.sdk.config.FilterIgnorePropertiesConfig;
 import me.fengorz.kiwi.common.sdk.constant.SecurityConstants;
 import me.fengorz.kiwi.common.sdk.exception.AuthException;
 import me.fengorz.kiwi.common.sdk.web.WebTools;
+import org.springframework.cloud.gateway.filter.GatewayFilter;
+import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.server.reactive.ServerHttpRequest;
+import org.springframework.http.server.reactive.ServerHttpResponse;
+import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
 /**
@@ -98,7 +96,6 @@ public class ValidateCodeGatewayFilter extends AbstractGatewayFilterFactory {
             throw new AuthException("验证码不能为空");
         }
 
-        // TODO 这个randomStr的作用是？应该是redis存储验证码的key
         String randomStr = request.getQueryParams().getFirst("randomStr");
         if (StrUtil.isBlank(randomStr)) {
             randomStr = request.getQueryParams().getFirst(SecurityConstants.KEY_MOBILE);

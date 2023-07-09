@@ -16,10 +16,10 @@
 
 package me.fengorz.kiwi.dict.crawler.util;
 
-import java.util.Collection;
-
 import cn.hutool.core.util.StrUtil;
 import me.fengorz.kiwi.word.api.exception.JsoupFetchResultException;
+
+import java.util.Collection;
 
 /**
  * @Author zhanshifeng

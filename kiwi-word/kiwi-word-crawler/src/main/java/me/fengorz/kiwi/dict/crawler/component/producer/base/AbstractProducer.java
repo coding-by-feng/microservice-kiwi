@@ -16,17 +16,20 @@
 
 package me.fengorz.kiwi.dict.crawler.component.producer.base;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Optional;
-import java.util.concurrent.Semaphore;
-
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
 import me.fengorz.kiwi.common.sdk.util.lang.collection.KiwiCollectionUtils;
 import me.fengorz.kiwi.word.api.common.ApiCrawlerConstants;
+import me.fengorz.kiwi.word.api.common.enumeration.CrawlerStatusEnum;
 import me.fengorz.kiwi.word.api.entity.FetchQueueDO;
 import me.fengorz.kiwi.word.api.feign.DictFetchApi;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.Semaphore;
+import java.util.stream.Collectors;
 
 /**
  * @Author zhanshifeng
@@ -52,16 +55,21 @@ public abstract class AbstractProducer implements MqProducer {
     }
 
     protected List<FetchQueueDO> getQueueDO(Integer status) {
-        return dictFetchApi.pageQueueLockIn(status, 0, 20, infoType).getData();
+        return dictFetchApi.pageQueueInLock(status, 0, 20, infoType).getData();
     }
 
     protected void produce(Integer... status) {
         try {
             barrier.acquire(1);
-            List<FetchQueueDO> list = new LinkedList<>();
+            List<FetchQueueDO> list = new ArrayList<>();
             for (Integer temp : status) {
                 Optional.ofNullable(this.getQueueDO(temp)).ifPresent(list::addAll);
             }
+
+            log.info("Fetching queue size is:{}, status is: {}", list.size(),
+                    Arrays.stream(status).map(CrawlerStatusEnum::fromStatus).map(CrawlerStatusEnum::name)
+                            .collect(Collectors.joining(GlobalConstants.SYMBOL_COMMA)));
+
             if (KiwiCollectionUtils.isEmpty(list)) {
                 return;
             }

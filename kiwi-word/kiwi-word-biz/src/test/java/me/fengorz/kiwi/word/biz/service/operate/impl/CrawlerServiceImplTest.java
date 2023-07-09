@@ -14,8 +14,14 @@
  *
  */
 
-package me.fengorz.kiwi.word.biz.service.operate.impl;
+package me.fengorz.kiwi.word.biz.service;
 
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
+import me.fengorz.kiwi.common.sdk.constant.EnvConstants;
+import me.fengorz.kiwi.word.api.common.enumeration.ReviseAudioGenerationEnum;
+import me.fengorz.kiwi.word.biz.WordBizApplication;
+import me.fengorz.kiwi.word.biz.service.operate.CrawlerService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -26,32 +32,34 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
-import me.fengorz.kiwi.common.sdk.constant.EnvConstants;
-import me.fengorz.kiwi.word.biz.WordBizApplication;
-import me.fengorz.kiwi.word.biz.service.operate.CrawlerService;
-
 @Slf4j
 @ActiveProfiles({EnvConstants.DEV, EnvConstants.BASE})
 @ExtendWith(SpringExtension.class)
 @TestPropertySource("classpath:env.properties")
 @SpringBootTest(classes = WordBizApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class CrawlerServiceImplTest {
+@Disabled
+public class CrawlerServiceTest {
 
     @Autowired
     private CrawlerService crawlerService;
 
     @Test
     @SneakyThrows
-    // @RepeatedTest(value = 3)
     @Disabled
     void generateTtsVoice() {
-        Assertions.assertDoesNotThrow(() -> crawlerService.generateTtsVoice());
+        Assertions.assertDoesNotThrow(() -> crawlerService.generateTtsVoice(ReviseAudioGenerationEnum.ONLY_COLLECTED));
     }
 
     @Test
+    @Disabled
     void test_reFetchPronunciation() {
         crawlerService.reFetchPronunciation(3053026);
     }
+
+    @Test
+    @SneakyThrows
+    void test_reGenIncorrectAudioByVoicerss() {
+        crawlerService.reGenIncorrectAudioByVoicerss();
+    }
+
 }

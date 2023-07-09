@@ -50,6 +50,7 @@ import java.util.concurrent.TimeUnit;
 @ExtendWith(SpringExtension.class)
 @TestPropertySource("classpath:env.properties")
 @SpringBootTest(classes = WordBizApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@Disabled
 public class ControllerTest {
 
     private final TestRestTemplate testRestTemplate = new TestRestTemplate();

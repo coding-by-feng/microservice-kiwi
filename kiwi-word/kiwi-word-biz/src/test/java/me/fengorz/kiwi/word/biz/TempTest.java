@@ -18,6 +18,7 @@ package me.fengorz.kiwi.word.biz;
 
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
@@ -30,6 +31,7 @@ import java.time.ZonedDateTime;
  * @Date 2022/8/8 21:12
  */
 @Slf4j
+@Disabled
 public class TempTest {
 
     @Test

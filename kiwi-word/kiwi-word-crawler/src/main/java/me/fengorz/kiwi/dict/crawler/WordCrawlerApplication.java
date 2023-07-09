@@ -16,10 +16,9 @@
 
 package me.fengorz.kiwi.dict.crawler;
 
+import me.fengorz.kiwi.bdf.feign.annotation.EnableEnhancerFeignClients;
 import org.springframework.boot.SpringApplication;
 import org.springframework.cloud.client.SpringCloudApplication;
-
-import me.fengorz.kiwi.bdf.feign.annotation.EnableEnhancerFeignClients;
 
 /**
  * @Author zhanshifeng

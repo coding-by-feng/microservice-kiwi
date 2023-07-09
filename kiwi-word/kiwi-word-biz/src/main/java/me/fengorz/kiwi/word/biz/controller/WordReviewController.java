@@ -12,32 +12,29 @@
  */
 package me.fengorz.kiwi.word.biz.controller;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.util.List;
-
-import javax.servlet.http.HttpServletResponse;
-
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.api.R;
 import me.fengorz.kiwi.common.fastdfs.service.DfsService;
-import me.fengorz.kiwi.common.sdk.controller.AbstractDfsController;
+import me.fengorz.kiwi.common.sdk.controller.AbstractFileController;
 import me.fengorz.kiwi.common.sdk.exception.DataCheckedException;
+import me.fengorz.kiwi.common.sdk.exception.ResourceNotFoundException;
 import me.fengorz.kiwi.common.sdk.exception.dfs.DfsOperateException;
 import me.fengorz.kiwi.common.sdk.exception.tts.TtsException;
 import me.fengorz.kiwi.common.sdk.web.WebTools;
 import me.fengorz.kiwi.common.sdk.web.security.SecurityUtils;
 import me.fengorz.kiwi.common.tts.service.TtsService;
+import me.fengorz.kiwi.word.api.common.enumeration.ReviseAudioTypeEnum;
 import me.fengorz.kiwi.word.api.entity.WordReviewAudioDO;
 import me.fengorz.kiwi.word.api.vo.WordReviewDailyCounterVO;
 import me.fengorz.kiwi.word.biz.service.operate.OperateService;
 import me.fengorz.kiwi.word.biz.service.operate.ReviewService;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
 
 /**
  * @author zhanShiFeng
@@ -47,7 +44,7 @@ import me.fengorz.kiwi.word.biz.service.operate.ReviewService;
 @RestController
 @AllArgsConstructor
 @RequestMapping("/word/review/")
-public class WordReviewController extends AbstractDfsController {
+public class WordReviewController extends AbstractFileController{
 
     private final ReviewService reviewService;
     private final OperateService operateService;
@@ -59,7 +56,7 @@ public class WordReviewController extends AbstractDfsController {
         return R.success(reviewService.getReviewBreakpointPageNumber(listId));
     }
 
-    @GetMapping("/createTheDays")
+    @PostMapping("/createTheDays")
     public R<Void> createTheDays() {
         reviewService.createTheDays(SecurityUtils.getCurrentUserId());
         return R.success();
@@ -81,9 +78,11 @@ public class WordReviewController extends AbstractDfsController {
         return R.success(reviewService.listReviewCounterVO(SecurityUtils.getCurrentUserId()));
     }
 
+    @SuppressWarnings("ConstantConditions")
     @GetMapping("/downloadReviewAudio/{sourceId}/{type}")
     public void downloadReviewAudio(HttpServletResponse response, @PathVariable("sourceId") Integer sourceId,
-        @PathVariable("type") Integer type) {
+                                    @PathVariable("type") Integer type) {
+        log.info("downloadReviewAudio, sourceId={}, type={}", sourceId, type);
         WordReviewAudioDO wordReviewAudio = null;
         try {
             wordReviewAudio = this.reviewService.findWordReviewAudio(sourceId, type);
@@ -93,36 +92,65 @@ public class WordReviewController extends AbstractDfsController {
         if (wordReviewAudio == null) {
             log.error("=========> Required wordReviewAudio must not be null!");
             return;
-        } else {
-            log.info("Required wordReviewAudio is found.");
+        }
+        InputStream inputStream = null;
+        try {
+            inputStream = prepareInputStream(response, sourceId, type, wordReviewAudio);
+        } catch (DfsOperateException e) {
+            log.error("downloadReviewAudio exception, sourceId={}, type={}, {}", sourceId, ReviseAudioTypeEnum.fromValue(type).name(), e.getMessage());
+            try {
+                if (inputStream != null) {
+                    inputStream.close();
+                }
+            } catch (IOException ex) {
+                log.error("Input stream close failed, {}", ex.getMessage());
+            }
+            try {
+                wordReviewAudio = this.reviewService.generateWordReviewAudio(sourceId, type);
+                inputStream = prepareInputStream(response, sourceId, type, wordReviewAudio);
+            } catch (DfsOperateException | TtsException | DataCheckedException ex) {
+                try {
+                    if (inputStream != null) {
+                        inputStream.close();
+                    }
+                } catch (IOException exc) {
+                    log.error("Input stream close failed.", exc);
+                }
+                throw new ResourceNotFoundException("Revise audio resource acquire failed.");
+            }
+        }
+        WebTools.downloadResponseAndClose(response, inputStream);
+        log.info("Method downloadResponse for wordReviewAudio invoked success, sourceId={}, type={}", sourceId, type);
+    }
+
+    private InputStream prepareInputStream(HttpServletResponse response, Integer sourceId, Integer type, WordReviewAudioDO wordReviewAudio) throws DfsOperateException {
+        byte[] bytes = this.dfsService.downloadFile(wordReviewAudio.getGroupName(), wordReviewAudio.getFilePath());
+        log.info("Required wordReviewAudio bytes download success, sourceId={}, type={}", sourceId, type);
+        return buildInputStream(response, bytes);
+    }
+
+    @GetMapping("/character/downloadReviewAudio/{characterCode}")
+    public void downloadCharacterReviewAudio(HttpServletResponse response,
+                                             @PathVariable("characterCode") String characterCode) {
+        log.info("downloadCharacterReviewAudio, characterCode={}", characterCode);
+        WordReviewAudioDO wordReviewAudio = this.reviewService.findCharacterReviewAudio(characterCode);
+        if (wordReviewAudio == null) {
+            log.error("=========> Required wordReviewAudio must not be null!");
+            return;
         }
         InputStream inputStream = null;
         try {
             byte[] bytes = this.dfsService.downloadFile(wordReviewAudio.getGroupName(), wordReviewAudio.getFilePath());
-            log.info("Required wordReviewAudio bytes download success.");
-            inputStream = new ByteArrayInputStream(bytes);
-            response.addHeader(CONTENT_TYPE, AUDIO_MPEG);
-            response.addHeader(ACCEPT_RANGES, BYTES);
-            response.addHeader(CONTENT_LENGTH, String.valueOf(bytes.length));
+            log.info("Required wordReviewAudio bytes download success, characterCode={}, bytes length={}", characterCode, bytes.length);
+            inputStream = buildInputStream(response, bytes);
         } catch (DfsOperateException e) {
-            log.error("downloadReviewAudio exception, sourceId={}, type={}!", sourceId, type, e);
+            log.error("downloadReviewAudio exception, characterCode={}!", characterCode, e);
         }
         WebTools.downloadResponseAndClose(response, inputStream);
-        log.info("Method downloadResponse for wordReviewAudio invoked success.");
     }
 
-    @GetMapping("/generateTtsVoice/{isReplace}")
-    public R<Void> generateTtsVoice(@PathVariable("isReplace") Boolean isReplace) {
-        try {
-            reviewService.generateTtsVoice(isReplace);
-            return R.success();
-        } catch (Exception e) {
-            log.error("generateTtsVoice error!", e);
-        }
-        return R.error();
-    }
-
-    @GetMapping("/generateTtsVoiceFromParaphraseId/{paraphraseId}")
+    @Deprecated
+    @PostMapping("/generateTtsVoiceFromParaphraseId/{paraphraseId}")
     public R<Void> generateTtsVoiceFromParaphraseId(@PathVariable("paraphraseId") Integer paraphraseId) {
         try {
             reviewService.generateTtsVoiceFromParaphraseId(paraphraseId);
@@ -133,7 +161,7 @@ public class WordReviewController extends AbstractDfsController {
         return R.success();
     }
 
-    @GetMapping("/increaseCounter/{type}")
+    @PutMapping("/increaseCounter/{type}")
     public R<Void> increaseCounter(@PathVariable("type") Integer type) {
         reviewService.increase(type, SecurityUtils.getCurrentUserId());
         return R.success();
@@ -144,15 +172,32 @@ public class WordReviewController extends AbstractDfsController {
         return R.success(ttsService.autoSelectApiKey());
     }
 
-    @GetMapping("/increaseApiKeyUsedTime/{apiKey}")
+    @PutMapping("/increaseApiKeyUsedTime/{apiKey}")
     public R<Void> increaseApiKeyUsedTime(@PathVariable("apiKey") String apiKey) {
         ttsService.increaseApiKeyUsedTime(apiKey);
         return R.success();
     }
 
-    @GetMapping("/deprecateApiKeyToday/{apiKey}")
+    @PutMapping("/deprecateApiKeyToday/{apiKey}")
     public R<Void> deprecateApiKeyToday(@PathVariable("apiKey") String apiKey) {
         ttsService.deprecateApiKeyToday(apiKey);
+        return R.success();
+    }
+
+    @DeleteMapping("/deprecate-review-audio/{sourceId}")
+    public R<Void> deprecateReviewAudio(@PathVariable("sourceId") Integer sourceId) {
+        reviewService.removeWordReviewAudio(sourceId);
+        return R.success();
+    }
+
+    @DeleteMapping("/reGenReviewAudio/{sourceId}")
+    public R<Void> reGenReviewAudioForParaphrase(@PathVariable("sourceId") Integer sourceId) {
+        try {
+            reviewService.reGenReviewAudioForParaphrase(sourceId);
+        } catch (Exception e) {
+            log.error("reGenReviewAudio exception, sourceId={}!", sourceId, e);
+            return R.failed();
+        }
         return R.success();
     }
 

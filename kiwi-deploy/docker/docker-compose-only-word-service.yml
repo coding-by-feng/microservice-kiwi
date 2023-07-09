@@ -1,0 +1,27 @@
+version: '3.8'
+services:
+  kiwi-word-biz:
+    image: kiwi-word-biz:1.0
+    #    ports:
+    #      - '5001:5001'
+    volumes:
+      - /root/docker/kiwi/word/logs:/logs
+      - /root/docker/kiwi/word/bizTmp:/wordTmp
+    network_mode: "host"
+  kiwi-crawler:
+    image: kiwi-crawler:1.0
+    #    ports:
+    #      - '6001:6001'
+    volumes:
+      - /root/docker/kiwi/crawler/logs:/logs
+      - /root/docker/kiwi/crawler/tmp:/crawlerTmp
+    network_mode: "host"
+    depends_on:
+      - kiwi-word-biz
+#    deploy:
+#      resources:
+#        limits:
+#          memory: 200M  # 设置该容器最多只能使用 200M 的内存空间
+#    command: sh -c './wait-for.sh kiwi-microservice-local:5001/actuator/info -- echo kiwi-word-biz already started'
+
+

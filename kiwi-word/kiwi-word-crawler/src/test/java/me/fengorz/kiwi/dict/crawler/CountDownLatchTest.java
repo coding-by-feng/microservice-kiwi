@@ -16,11 +16,11 @@
 
 package me.fengorz.kiwi.dict.crawler;
 
+import me.fengorz.kiwi.dict.crawler.component.MqMQSender;
+
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
-import me.fengorz.kiwi.dict.crawler.component.MqMQSender;
 
 /**
  * @Author zhanshifeng @Date 2019/10/29 3:19 PM

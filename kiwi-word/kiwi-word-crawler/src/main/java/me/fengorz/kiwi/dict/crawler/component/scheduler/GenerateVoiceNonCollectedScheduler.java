@@ -40,9 +40,9 @@ public class GenerateVoiceNonCollectedScheduler implements Scheduler {
     @Override
     @ScheduledAwake(key = CrawlerConstants.ENABLE_SCHEDULER_KEY.VOICE_GENERATE_NON_COLLECTED)
     public void schedule() {
-        log.info("Voice generation is starting.");
+        log.info("Voice[non-collected] generation is starting.");
         dictFetchApi.generateTtsVoice(ReviseAudioGenerationEnum.NON_COLLECTED.getType());
-        log.info("Voice generation has ended.");
+        log.info("Voice[non-collected] generation has ended.");
     }
 
 }

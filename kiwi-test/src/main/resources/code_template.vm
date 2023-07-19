@@ -1,0 +1,4 @@
+$dtoClass.getSimpleName() dto = new $dtoClass.getSimpleName()();
+#foreach($field in $fields)
+dto.set$field($field);
+#end

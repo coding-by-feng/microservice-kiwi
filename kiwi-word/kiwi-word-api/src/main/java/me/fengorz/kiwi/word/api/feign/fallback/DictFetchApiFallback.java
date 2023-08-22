@@ -167,4 +167,10 @@ public class DictFetchApiFallback extends AbstractFallback implements DictFetchA
     public void reGenIncorrectAudioByVoicerss() {
         handleErrorNotReturn();
     }
+
+    @Override
+    public void generateTtsVoice() {
+        log.error(throwable.getCause().getMessage());
+        R.feignCallFailed(throwable.getMessage());
+    }
 }

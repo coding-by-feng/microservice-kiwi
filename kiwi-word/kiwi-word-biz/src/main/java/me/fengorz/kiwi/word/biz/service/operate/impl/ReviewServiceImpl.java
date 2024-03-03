@@ -138,7 +138,6 @@ public class ReviewServiceImpl implements ReviewService {
         }
     }
 
-    @Async
     @Override
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRES_NEW)
     public void increase(int type, Integer userId) {

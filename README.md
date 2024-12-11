@@ -1,7 +1,7 @@
-# CenterOS 7 以上
+# CenterOS 7 and Above
 
-[腾讯云618秒杀价](https://cloud.tencent.com/act/618party?fromSource=gwzcw.3621912.3621912.3621912&utm_medium=cpc&utm_id=gwzcw.3621912.3621912.3621912&from=console&cps_key=28653b30444ff81cf593422221fb1ba3 "")
-注意云服务的安全网络组要放开端口禁用
+[Tencent Cloud 618 Flash Sale Price](https://cloud.tencent.com/act/618party?fromSource=gwzcw.3621912.3621912.3621912&utm_medium=cpc&utm_id=gwzcw.3621912.3621912.3621912&from=console&cps_key=28653b30444ff81cf593422221fb1ba3 "")
+Note that the security network group of the cloud service should open ports and disable restrictions.
 
 # docker
 
@@ -11,7 +11,7 @@ yum update
 
 [https://www.runoob.com/docker/centos-docker-install.html](https://www.runoob.com/docker/centos-docker-install.html "")
 
-## 创建docker配置文件
+## Create Docker Configuration File
 
 ```
 mkdir /etc/docker
@@ -24,19 +24,19 @@ vim /etc/docker/daemon.json
 
 # 安装docker-compose
 
-[参考](https://www.runoob.com/docker/docker-compose.html "")
-建议本机下载包，再手动上传到服务器，不然可能会出现莫名其妙的问题
+[Reference](https://www.runoob.com/docker/docker-compose.html "")
+It is recommended to download the package locally and then manually upload it to the server, as otherwise unexpected issues may arise.
 
 ```
 sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
 ```
 
-## 本地上传安装
+## Local Upload Installation
 
 [docker-compose下载链接](https://github-releases.githubusercontent.com/15045751/e1ef3000-b16e-11eb-9df7-091c00bdf356?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIWNJYAX4CSVEH53A%2F20210612%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20210612T054621Z&X-Amz-Expires=300&X-Amz-Signature=4da20a27a079cd195b024bafc9f6c6200c02e47b9e45cbf862a3f00d25227ae7&X-Amz-SignedHeaders=host&actor_id=22954596&key_id=0&repo_id=15045751&response-content-disposition=attachment%3B%20filename%3Ddocker-compose-Linux-x86_64&response-content-type=application%2Foctet-stream "")
 
 ```
-# 先下载
+# First download
 sshpass -p fenxxx210 scp -r ~/Downloads/docker-compose-Linux-x86_64 root@119.29.200.130:/usr/local/bin
 mv docker-compose-Linux-x86_64 docker-compose
 chmod +x /usr/local/bin/docker-compose
@@ -44,7 +44,7 @@ ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
 docker-compose --version
 ```
 
-## yum安装
+## Install yum
 
 ```
 yum install docker-compose
@@ -83,12 +83,13 @@ git pull
 vi /etc/hosts
 ```
 
-将一下映射增加到hosts文件末尾
+Add the following mappings to the end of the hosts file:
 
 ```
 127.0.0.1                                       fastdfs.fengorz.me
 127.0.0.1                                       kiwi-microservice-local
 127.0.0.1                                       kiwi-microservice
+127.0.0.1                                       kiwi-ui
 127.0.0.1                                       kiwi-eureka
 127.0.0.1                                       kiwi-redis
 127.0.0.1                                       kiwi-rabbitmq
@@ -100,7 +101,7 @@ your_dfs_ip                                     kiwi-fastdfs
 127.0.0.1                                     kiwi-gate
 ```
 
-注意将上面your_ecs_ip替换成fastdfs所在云服务器的外网ip
+Be sure to replace your_ecs_ip with the external IP address of the cloud server where fastdfs is located.
 
 # mysql
 
@@ -111,7 +112,7 @@ sudo docker exec -it kiwi-mysql bash
 mysql -h localhost -u root -p
 create database kiwi_db;
 exit
-# 迁移Mysql的kiwi_db表
+# Migrate the kiwi_db table from MySQL
 mysqldump --host=cdb-0bhxucw9.gz.tencentcdb.com --port=10069 -uroot -pfengORZ123 -C --databases kiwi_db |mysql --host=localhost -uroot -pfengORZ123 kiwi_db
 mysql -h localhost -u root -p
 use kiwi_db
@@ -124,8 +125,8 @@ exit
 
 ```
 docker pull redis:latest
-docker run -itd --name kiwi-redis -p 6379:6379 redis --requirepass "fengORZ123"
-# 测试
+docker run -itd --name kiwi-redis -p 6379:6379 redis --requirepass "Xxxxxxx"
+# Test
 docker exec -it kiwi-redis /bin/bash
 redis-cli
 keys *
@@ -159,23 +160,21 @@ apt-get update
 apt-get install vim
 
 vi /fdfs_conf/storage.conf
-# 按?进入命令搜索模式，输入tracker_server，按回车，将后面的ip地址改成kiwi-fastdfs
+
+Enter command search mode by pressing ?, search for tracker_server, press Enter, and change the following IP address to kiwi-fastdfs
+
 exit
 
 docker container restart `docker ps -a| grep storage | awk '{print $1}' `
 ```
 
-# maven 安装
+# maven installation
 
 ```
 yum install maven
 ```
 
-安装之后再项目根目录执行`mvn clean install -Dmaven.test.skip=true`
-
-- ~~先注释掉microservice-kiwi和kiwi-cloud-service的pom.xml所有子模块依赖，然后分别执行mvn clean install -Dmaven.test.skip=true~~
-- ~~再放开所有注释在microservice-kiwi和kiwi-cloud-service下mvn clean install -Dmaven.test.skip=true~~
-- ~~分别在kiwi-common、kiwi-bdf、kiwi-upms、kiwi-word执行mvn clean install -Dmaven.test.skip=true（如果报错同样需要先注释子模块依赖）~~
+After installation, run`mvn clean install -Dmaven.test.skip=true`
 
 ## maven settings.xml
 
@@ -250,7 +249,7 @@ vi settings.xml
 </settings>
 ```
 
-# 自动部署
+# Automitic deployment
 
 ```
 cd ~/microservice-kiwi/kiwi-deploy/docker
@@ -264,7 +263,7 @@ chmod 777 deployKiwi.sh
 ```
 docker run -d -p 9200:9200 -p 9300:9300 --hostname kiwi-es -e "discovery.type=single-node" -e "xpack.security.enabled=true" -e "ES_JAVA_OPTS=-Xms512m -Xmx512m" --name kiwi-es -v es_config:/usr/share/elasticsearch/config  -v es_data:/usr/share/elasticsearch/data elasticsearch:7.16.1
  
-#进入容器
+#Enter container
 /elasticsearch-setup-passwords auto
  
 docker pull docker.elastic.co/elasticsearch/elasticsearch:7.6.2
@@ -281,36 +280,36 @@ curl -XPUT -u xxsuperuser:xxxxx http://xxxxx:9200/_xpack/security/user/xxxxxxxus
 
 ```
 
-安装完了注意创建index，名为`kiwi_vocabulary`
+Create index`kiwi_vocabulary`
 
-## kibana安装
+## kibana installation
 
-[Docker 官方](https://www.elastic.co/guide/en/kibana/current/docker.html#docker "")
+[Docker official link](https://www.elastic.co/guide/en/kibana/current/docker.html#docker "")
 
 ```
 docker pull docker.elastic.co/kibana/kibana:7.6.2
 docker run -d --link kiwi-es -p 5601:5601 docker.elastic.co/kibana/kibana:7.6.2
 ```
 
-## 安装ik分词器
+## Installing IK Tokenizer
 
 ```
 sudo docker exec -it kiwi-es bash
-# elasticsearch的版本和ik分词器的版本需要保持一致，不然在重启的时候会失败。
+# The Elasticsearch version and the IK tokenizer version must be consistent, otherwise it will fail upon restart.
 elasticsearch-plugin install https://github.com/medcl/elasticsearch-analysis-ik/releases/download/v7.6.2/elasticsearch-analysis-ik-7.6.2.zip
 exit
 docker restart kiwi-es 
 ```
 
-# nginx运行前端项目
+# Running Frontend Project with Nginx
 
-## 现将前端项目编译好上传到准备部署的目录
+## Compile the frontend project and upload it to the directory ready for deployment
 
 ```
 sshpass -p PASSWORD scp -r LOCAL_UI_PROJECT_BUILD_PATH root@x.x.x.x:~/docker/ui/
 ```
 
-## 准备nginx环境
+## Prepare Nginx Environment
 
 ```
 docker pull nginx
@@ -318,75 +317,104 @@ docker build -f ~/microservice-kiwi/kiwi-deploy/kiwi-ui/Dockerfile -t kiwi-ui:1.
 docker run -d -v ~/docker/ui/dist/:/usr/share/nginx/html --net=host --name=kiwi-ui -it kiwi-ui:1.0
 ```
 
-## 更改kiwi-ui的nginx配置文件
+## Modify the Nginx Configuration File for Kiwi-UI
 
 ```
 sudo docker exec -it kiwi-ui bash
-cp /etc/nginx/conf.d/default.conf /usr/share/nginx/html/
+cp /etc/nginx/nginx.conf /usr/share/nginx/html/
 exit
-vi docker/ui/dist/default.conf
+vi docker/ui/dist/nginx.conf
 ```
 
-在
+Then
 
 ```
-server {
-    listen 80;
-    server_name www.kiwidict.com;
-    rewrite ^(.*) https://$server_name$1 permanent;
+user  nginx;
+worker_processes  auto;
+
+error_log  /var/log/nginx/error.log notice;
+pid        /var/run/nginx.pid;
+
+events {
+    worker_connections  1024;
 }
 
-server {
-    listen 443 ssl;
-    server_name  www.kiwidict.com;
-    ssl_certificate 1_kiwidict.com_bundle.crt;
-    ssl_certificate_key 2_kiwidict.com.key;
-    ssl_session_timeout 5m;
-    ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
-    ssl_ciphers ECDHE-RSA-AES128-GCM-SHA256:HIGH:!aNULL:!MD5:!RC4:!DHE;
-    ssl_prefer_server_ciphers on;
+http {
+    include       /etc/nginx/mime.types;
+    default_type  application/octet-stream;
 
-    access_log  /var/log/nginx/host.access.log  main;
+    log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
+                      '$status $body_bytes_sent "$http_referer" '
+                      '"$http_user_agent" "$http_x_forwarded_for"';
 
-    location / {
-        root   /usr/share/nginx/html;
-        index  index.html index.htm;
+    access_log  /var/log/nginx/access.log  main;
+
+    sendfile        on;
+    #tcp_nopush     on;
+
+    keepalive_timeout  65;
+
+    #gzip  on;
+
+    #include /etc/nginx/conf.d/*.conf;
+
+    server {
+        listen 80;
+        server_name www.kiwidict.com;
+        rewrite ^(.*) https://$server_name$1 permanent;
+    }
+
+    server {
+        listen 443 ssl;
+        server_name  www.kiwidict.com;
+        ssl_certificate www.kiwidict.com_bundle.crt;
+        ssl_certificate_key www.kiwidict.com.key;
+        ssl_session_timeout 5m;
+        ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+        ssl_ciphers ECDHE-RSA-AES128-GCM-SHA256:HIGH:!aNULL:!MD5:!RC4:!DHE;
+        ssl_prefer_server_ciphers on;
+
+        access_log  /var/log/nginx/host.access.log;
+
+        location / {
+            root   /usr/share/nginx/html;
+            index  index.html index.htm;
+        }
+
+        location ~* ^.+\.(css|js|ico|gif|jpg|jpeg|png|otf|woff|woff2)$ {
+            log_not_found off;
+            access_log off;
+            proxy_redirect off;
+            proxy_set_header Host $host;
+            expires 365d;
+            root /usr/share/nginx/html;
+        }
+
+        location /auth {
+            proxy_pass http://kiwi-microservice:9991;
+        }
+
+        location /wordBiz {
+            proxy_pass http://kiwi-microservice:9991;
+        }
+
+        location /code {
+            proxy_pass http://kiwi-microservice:9991;
+        }
+
+        location /admin {
+            proxy_pass http://kiwi-microservice:9991;
+        }
     }
 }
 ```
 
-下面增加配置：
-
-```
-    location /auth {
-        proxy_pass http://kiwi-microservice:9991;
-    }
-
-    location /wordBiz {
-        proxy_pass http://kiwi-microservice:9991;
-    }
-
-    location /code {
-        proxy_pass http://kiwi-microservice:9991;
-    }
-
-    location /admin {
-        proxy_pass http://kiwi-microservice:9991;
-    }
-```
-
-打开nginx请求日志记录：
-
-```
-access_log  /var/log/nginx/host.access.log  main;
-```
-
-保存之后覆盖原来的default.conf重启kiwi-ui容器
+After saving, overwrite the original default.conf and restart the kiwi-ui container:
 
 ```
 sudo docker exec -it kiwi-ui bash
 mv /usr/share/nginx/html/default.conf /etc/nginx/conf.d/default.conf
-# 验证nginx配置
+# Verify Nginx configuration
 # /usr/sbin/nginx -tc /etc/nginx/conf.d/default.conf
 # /sbin/nginx -t
 /usr/sbin/nginx -t
@@ -395,14 +423,9 @@ exit
 docker container restart `docker ps -a| grep kiwi-ui | awk '{print $1}'`
 ```
 
-## 上传Vue编译后的项目
+Upload the compiled Vue project(dist directory) to nginx html directory
 
-WebStorm执行编译命令生成静态文件。
-
-## ssl证书免费申请、https协议配置
+## Apply for a free SSL certificate and configure HTTPS protocol
 
 [https://cloud.tencent.com/document/product/400/35244](https://cloud.tencent.com/document/product/400/35244 "")
 
-## 首页加载提速
-
-[前端项目时因chunk-vendors过大导致首屏加载太慢的优化](https://blog.csdn.net/qq_31677507/article/details/102742196 "")

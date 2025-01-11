@@ -1,6 +1,7 @@
 FROM openjdk:8-jdk-alpine
 #FROM blackbelt/oraclejdk8
 ENV KIWI_ENC_PASSWORD=coding-by-feng
+ENV DB_IP=kiwi-db
 
 # RUN apk add --no-cache tini
 # Tini is now available at /sbin/tini

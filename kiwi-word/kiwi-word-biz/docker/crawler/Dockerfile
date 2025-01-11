@@ -1,5 +1,5 @@
-FROM openjdk:8-jdk-alpine
-#FROM blackbelt/oraclejdk8
+#FROM openjdk:8-jdk-alpine
+FROM blackbelt/oraclejdk8
 ENV KIWI_ENC_PASSWORD=coding-by-feng
 ENV DB_IP=kiwi-db
 

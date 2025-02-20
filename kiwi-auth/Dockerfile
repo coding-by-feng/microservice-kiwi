@@ -1,6 +1,6 @@
 FROM openjdk:8-jdk-alpine
 ENV KIWI_ENC_PASSWORD=coding-by-feng
-ENV DB_IP=172.17.0.2
+ENV DB_IP=kiwi-db
 RUN mkdir /logs
 ADD kiwi-auth-1.0.jar app.jar
 EXPOSE 3001

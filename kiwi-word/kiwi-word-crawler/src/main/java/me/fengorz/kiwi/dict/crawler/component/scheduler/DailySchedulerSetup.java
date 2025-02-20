@@ -38,7 +38,7 @@ public class DailySchedulerSetup {
     /**
      * Runs every day at 0 o'clock in the morning.
      */
-    @Scheduled(cron = "0 0 0 */1 * ?")
+    @Scheduled(cron = "0 0 0 * * ?")
     public void setupAt0Clock() {
         Optional.of(SpringUtils.getBean(CrawlerConstants.COMPONENT_BEAN_ID.GENERATE_REVIEW_RECORD_DAILY_SCHEDULER,
             DailyScheduler.class)).ifPresent(DailyScheduler::schedule);
@@ -47,7 +47,7 @@ public class DailySchedulerSetup {
     /**
      * Runs every day at 6 o'clock in the morning.
      */
-    @Scheduled(cron = "0 0 6 */1 * ?")
+    @Scheduled(cron = "0 0 6 * * ?")
     public void setupAt6Clock() {
         Optional.of(SpringUtils.getBean(CrawlerConstants.COMPONENT_BEAN_ID.CACHE_WORD_SCHEDULER,
             DailyScheduler.class)).ifPresent(DailyScheduler::schedule);

@@ -50,7 +50,7 @@
         <mysql.version>8.0.32</mysql.version>
         <jsoup.version>1.12.1</jsoup.version>
         <swagger.version>2.9.2</swagger.version>
-        <aspectj-maven-plugin.version>1.11</aspectj-maven-plugin.version>
+        <aspectj-maven-plugin.version>1.14.0</aspectj-maven-plugin.version>
         <lombok-maven-plugin.version>1.18.12.0</lombok-maven-plugin.version>
         <maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
         <junit.version>4.13</junit.version>

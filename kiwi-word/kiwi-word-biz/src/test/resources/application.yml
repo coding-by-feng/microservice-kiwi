@@ -1,0 +1,90 @@
+server:
+  port: 8081
+
+security:
+  oauth2:
+    client:
+      client-id: ENC(wORgugqWfXlIuzbal/3pjXTNXij/RSpo)
+      client-secret: ENC(rMd1buB3iI+si+W99eB+QFa3QburIEmY)
+      scope: server
+
+# 数据源
+spring:
+  main:
+    allow-bean-definition-overriding: true
+
+ignore:
+  urls:
+    - /test/**
+    - /word/main/query/**
+    - /word/main/queryById/**
+    - /word/main/fuzzyQueryList/**
+    - /word/pronunciation/downloadVoice/**
+    - /word/main/query/**
+    - /word/fetch/**
+    - /word/main/variant/**
+    - /word/main/listOverlapAnyway
+    - /word/review/createTheDays
+    - /word/review/refreshAllApiKey
+    - /word/review/downloadReviewAudio/**
+    - /word/review/character/downloadReviewAudio/**
+    - /word/review/generateTtsVoice/**
+    - /word/review/generateTtsVoiceFromParaphraseId/**
+    - /grammar/mp3/**
+    - /grammar/srt/**
+  userNames:
+    - admin
+
+async:
+  config:
+    core:
+      pool:
+        size: 5
+    max:
+      pool:
+        size: 10
+    queue:
+      capacity: 5
+
+my:
+  config:
+    exclude-db: false
+    exclude-redis: false
+
+tts:
+  baidu:
+    app-id: "20116041"
+    api-key: "changeme"
+    secret-key: "changeme"
+  voicerss:
+    url: 'https://api.voicerss.org/?key={}&r=-2&hl=en-us&v=Mary&c=MP3&f=16khz_16bit_stereo&src=test'
+    api-key-1: 'changeme'
+    api-key-2: 'changeme'
+    api-key-3: 'changeme'
+    api-key-4: 'changeme'
+    api-key-5: 'changeme'
+    api-key-6: 'changeme'
+    api-key-7: 'changeme'
+    api-key-8: 'changeme'
+    api-key-9: 'changeme'
+    api-key-10: 'changeme'
+    api-key-11: 'changeme'
+    api-key-12: 'changeme'
+    api-key-13: '05df621e8aae400ba2129ef154446119'
+    api-key-14: 'changeme'
+    api-key-15: 'changeme'
+    api-key-16: 'changeme'
+    api-key-17: 'changeme'
+    api-key-18: '3744309a79ff48588fc1b63928c68c91'
+    api-key-19: '3744309a79ff48588fc1b63928c68c91'
+    api-key-20: 'd2f5e9a0fbf14318a475d808c0dddc62'
+
+cache-control:
+  need-cache-api:
+    - /word/main/query
+    - /word/main/queryById
+    - /word/paraphrase/star/list/getItemDetail
+    - /word/pronunciation/downloadVoice
+    - /word/review/downloadReviewAudio
+    - /word/review/character/downloadReviewAudio
+    - /grammar/mp3

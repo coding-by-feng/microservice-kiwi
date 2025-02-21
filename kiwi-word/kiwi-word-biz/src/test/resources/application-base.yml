@@ -1,0 +1,116 @@
+# 加解密根密码
+jasypt:
+  encryptor:
+    password: ${KIWI_ENC_PASSWORD}
+    poolSize: 2
+
+spring:
+  redis:
+    host: 159.75.107.124
+    password: ENC(lP0tXFIClnyKAm534LBq0h0FBirDfHqC)
+    port: 6379
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 10MB
+      max-request-size: 20MB
+  rabbitmq:
+    host: kiwi-rabbitmq
+    port: 5672
+    username: ENC(K6oRfaFZN7XSXbmJrXHiXQ==)
+    password: ENC(cvON8OapdxM7/Tq88I5JuA==)
+  elasticsearch:
+    rest:
+      uris: kiwi-es:9200
+      username: ENC(NKy6wa5SuHBhQmfLWf6Zv8wf8sPMaE0b)
+      password: ENC(oj9wNYu52oQH1d9T0zHeGDLz7P7em71u)
+  main:
+    allow-bean-definition-overriding: true
+#  sleuth:
+#    web:
+#      client:
+#        enabled: true
+#    sampler:
+#      # 默认的采样比率为0.1，不能看到所有请求数据
+#      # 更改采样比率为1，就能看到所有的请求数据了，但是这样会增加接口调用延迟
+#      probability: 1.0
+
+
+# feign 配置
+feign:
+  hystrix:
+    enabled: true
+  okhttp:
+    enabled: true
+  httpclient:
+    enabled: false
+  client:
+    config:
+      default:
+        connectTimeout: 60000
+        readTimeout: 60000
+
+# hystrix 配置
+hystrix:
+  threadpool:
+    default:
+      # 配置线程池
+      coreSize: 100
+      queueSizeRejectionThreshold: 120
+  command:
+    default:
+      circuitBreaker:
+        requestVolumeThreshold: 150
+      execution:
+        isolation:
+          strategy: SEMAPHORE
+          semaphore:
+            maxConcurrentRequests: 120
+          thread:
+            timeoutInMilliseconds: 100000
+  shareSecurityContext: true
+
+
+#请求处理的超时时间
+ribbon:
+  ReadTimeout: 100000
+  ConnectTimeout: 100000
+
+# mybaits-plus配置
+mybatis-plus:
+  mapper-locations: classpath*:mapper/**/*Mapper.xml
+  global-config:
+    banner: false
+    db-config:
+      id-type: id_worker
+      table-underline: true
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+      select-strategy: NOT_EMPTY
+  configuration:
+    map-underscore-to-camel-case: true
+#    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+# spring security 配置
+security:
+  oauth2:
+    resource:
+      loadBalanced: true
+      token-info-uri: http://kiwi-auth/oauth/check_token
+
+fdfs:
+  connect-timeout: 30000
+  so-timeout: 60000
+  thumb-image:
+    width: 150
+    height: 150
+  tracker-list: kiwi-fastdfs:22122
+
+# 避免 Elasticsearch health check failed 异常
+management:
+  health:
+    elasticsearch:
+      enabled: false
+
+db:
+  ip: ENC(jCAktjuyxSXGqPJuOqNWCURUDfjqRu+0)

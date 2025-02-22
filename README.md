@@ -71,11 +71,13 @@ yum install git
 cd ~/microservice-kiwi/
 git init
 git pull https://github.com/coding-by-feng/microservice-kiwi.git/
-git remote add gitee https://gitee.com/fengorz/microservice-kiwi.git
+git remote add origin https://github.com/coding-by-feng/microservice-kiwi.git
 git fetch --all
-git reset --hard gitee/master
+git reset --hard origin/master
 git pull
 ```
+
+
 
 # host
 

@@ -8,7 +8,13 @@
 ```
 yum update
 yum install docker
+
+vi ~/.bashrc
+alias docker='podman'
+source ~/.bashrc
+sudo touch /etc/containers/nodocker
 ```
+
 Create a command shortcut that represent docker ps on CentOS
 
 # 安装docker-compose
@@ -34,6 +40,26 @@ docker-compose --version
 
 ```
 yum install docker-compose
+```
+
+# Install Python
+```
+sudo yum install -y epel-release
+sudo dnf install -y python3 python3-pip
+pip3 --version
+```
+
+# Install podman-compose
+```
+git clone https://github.com/containers/podman-compose.git
+cd podman-compose
+pip3 install -r requirements.txt
+python3 setup.py install --user
+podman-compose --version
+
+alias docker-compose='podman-compose'
+echo "alias docker-compose='podman-compose'" >> ~/.bashrc
+source ~/.bashrc
 ```
 
 # directory

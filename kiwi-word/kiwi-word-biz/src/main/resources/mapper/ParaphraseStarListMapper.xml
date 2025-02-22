@@ -23,7 +23,7 @@
 
 <mapper namespace="me.fengorz.kiwi.word.biz.mapper.ParaphraseStarListMapper">
 
-    <select id="selectItems" resultType="me.fengorz.kiwi.word.api.vo.star.ParaphraseStarItemVO">
+    <select id="selectItems" resultType="me.fengorz.kiwi.word.api.vo.star.ParaphraseStarItemVO" useCache="false">
         select temp.*, wm.word_name
         from (select wp.paraphrase_id,
         wp.word_id,
@@ -41,7 +41,7 @@
         order by temp.create_time desc
     </select>
 
-    <select id="selectRecentItems" resultType="me.fengorz.kiwi.word.api.vo.star.ParaphraseStarItemVO">
+    <select id="selectRecentItems" resultType="me.fengorz.kiwi.word.api.vo.star.ParaphraseStarItemVO" useCache="false">
         select temp.*, wm.word_name
         from (select wp.paraphrase_id,
         wp.word_id,
@@ -59,7 +59,7 @@
         order by temp.create_time desc
     </select>
 
-    <select id="selectReviewItems" resultType="me.fengorz.kiwi.word.api.vo.star.ParaphraseStarItemVO">
+    <select id="selectReviewItems" resultType="me.fengorz.kiwi.word.api.vo.star.ParaphraseStarItemVO" useCache="false">
         select temp.*, wm.word_name
         from (select wp.paraphrase_id,
         wp.word_id,
@@ -78,7 +78,7 @@
         order by temp.create_time desc
     </select>
 
-    <select id="selectRecentReviewItems" resultType="me.fengorz.kiwi.word.api.vo.star.ParaphraseStarItemVO">
+    <select id="selectRecentReviewItems" resultType="me.fengorz.kiwi.word.api.vo.star.ParaphraseStarItemVO" useCache="false">
         select temp.*, wm.word_name
         from (select wp.paraphrase_id,
         wp.word_id,
@@ -97,7 +97,7 @@
         order by temp.create_time desc
     </select>
 
-    <select id="selectRememberItems" resultType="me.fengorz.kiwi.word.api.vo.star.ParaphraseStarItemVO">
+    <select id="selectRememberItems" resultType="me.fengorz.kiwi.word.api.vo.star.ParaphraseStarItemVO" useCache="false">
         select temp.*, wm.word_name
         from (select wp.paraphrase_id,
         wp.word_id,
@@ -117,7 +117,7 @@
         order by temp.create_time desc
     </select>
 
-    <select id="selectRecentRememberItems" resultType="me.fengorz.kiwi.word.api.vo.star.ParaphraseStarItemVO">
+    <select id="selectRecentRememberItems" resultType="me.fengorz.kiwi.word.api.vo.star.ParaphraseStarItemVO" useCache="false">
         select temp.*, wm.word_name
         from (select wp.paraphrase_id,
         wp.word_id,

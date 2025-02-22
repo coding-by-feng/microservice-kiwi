@@ -319,39 +319,43 @@ public class CrawlerServiceImpl implements CrawlerService {
                 return;
             }
             if (GENERATE_VOICE_BARRIER.tryAcquire(1, 1, TimeUnit.SECONDS)) {
-                List<Integer> notGeneratedParaphraseId = paraphraseStarRelService.listNotAllGeneratedVoice();
-                if (CollectionUtils.isEmpty(notGeneratedParaphraseId)) {
-                    notGeneratedParaphraseId = paraphraseStarRelService.listNotGeneratedPronunciationVoiceForPhrase();
-                }
-                if (CollectionUtils.isEmpty(notGeneratedParaphraseId)) {
-                    log.info("There is not notGeneratedParaphraseId need to generate voice.");
-                    if (type.equals(ReviseAudioGenerationEnum.ONLY_COLLECTED)) {
-                        log.info("Only generate collected paraphrase, and skip this generation invoke.");
-                        GENERATE_VOICE_BARRIER.release();
-                        return;
-                    }
-                    notGeneratedParaphraseId = paraphraseService.listNotGeneratedAndNotCollectVoice();
+                try {
+                    List<Integer> notGeneratedParaphraseId = paraphraseStarRelService.listNotAllGeneratedVoice();
                     if (CollectionUtils.isEmpty(notGeneratedParaphraseId)) {
-                        log.info("There is not notGeneratedAndNotCollectVoice need to generate voice.");
-                        GENERATE_VOICE_BARRIER.release();
-                        return;
+                        notGeneratedParaphraseId = paraphraseStarRelService.listNotGeneratedPronunciationVoiceForPhrase();
                     }
-                }
-                for (Integer id : notGeneratedParaphraseId) {
-                    try {
-                        reviewService.generateTtsVoiceFromParaphraseId(id);
-                    } catch (Exception e) {
-                        log.error(e.getMessage(), e);
-                        reviewService.cleanReviewVoiceByParaphraseId(id);
-                        GENERATE_VOICE_BARRIER.release();
-                        log.error(
-                                "Paraphrase id({}) generation failed, Data has cleaned, GENERATE_VOICE_BARRIER has released",
-                                id);
-                        return;
+                    if (CollectionUtils.isEmpty(notGeneratedParaphraseId)) {
+                        log.info("There is not notGeneratedParaphraseId need to generate voice.");
+                        if (type.equals(ReviseAudioGenerationEnum.ONLY_COLLECTED)) {
+                            log.info("Only generate collected paraphrase, and skip this generation invoke.");
+                            GENERATE_VOICE_BARRIER.release();
+                            return;
+                        }
+                        notGeneratedParaphraseId = paraphraseService.listNotGeneratedAndNotCollectVoice();
+                        if (CollectionUtils.isEmpty(notGeneratedParaphraseId)) {
+                            log.info("There is not notGeneratedAndNotCollectVoice need to generate voice.");
+                            GENERATE_VOICE_BARRIER.release();
+                            return;
+                        }
                     }
-                    log.info("Paraphrase id({}) generation is end!", id);
+                    for (Integer id : notGeneratedParaphraseId) {
+                        try {
+                            reviewService.generateTtsVoiceFromParaphraseId(id);
+                        } catch (Exception e) {
+                            log.error(e.getMessage(), e);
+                            reviewService.cleanReviewVoiceByParaphraseId(id);
+                            GENERATE_VOICE_BARRIER.release();
+                            log.error("Paraphrase id({}) generation failed, Data has cleaned, GENERATE_VOICE_BARRIER has released", id);
+                            return;
+                        }
+                        log.info("Paraphrase id({}) generation is end!", id);
+                    }
+                    GENERATE_VOICE_BARRIER.release();
+                } catch (Exception e) {
+                    log.error(e.getMessage(), e);
+                    GENERATE_VOICE_BARRIER.release();
+                    log.error("Paraphrase voice generation failed, GENERATE_VOICE_BARRIER has released");
                 }
-                GENERATE_VOICE_BARRIER.release();
             } else {
                 log.info("Paraphrase is generating, GENERATE_VOICE_BARRIER tryAcquire false, skip work.");
             }

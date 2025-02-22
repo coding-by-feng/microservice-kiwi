@@ -1,4 +1,3 @@
-version: '3.8'
 services:
   kiwi-gate:
     image: kiwi-gate:1.0

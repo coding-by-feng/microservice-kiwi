@@ -1,4 +1,3 @@
-version: '3'
 services:
   kiwi-eureka:
     image: kiwi-eureka:1.0

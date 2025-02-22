@@ -7,25 +7,11 @@
 
 ```
 yum update
+yum install docker
 ```
-
-[https://www.runoob.com/docker/centos-docker-install.html](https://www.runoob.com/docker/centos-docker-install.html "")
-
-## 创建docker配置文件
-
-```
-mkdir /etc/docker
-vim /etc/docker/daemon.json
-{
-        "exec-opts": ["native.cgroupdriver=systemd"],
-        "registry-mirrors": ["https://zggyaen3.mirror.aliyuncs.com"]
-}
-```
+Create a command shortcut that represent docker ps on CentOS
 
 # 安装docker-compose
-
-[参考](https://www.runoob.com/docker/docker-compose.html "")
-建议本机下载包，再手动上传到服务器，不然可能会出现莫名其妙的问题
 
 ```
 sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
@@ -148,22 +134,16 @@ docker run -d --hostname kiwi-rabbit -v ~/docker/rabbitmq:/tmp --name kiwi-rabbi
 ```
 docker run -ti -d --name tracker -v ~/tracker_data:/fastdfs/tracker/data --net=host season/fastdfs tracker
 
-docker run -ti -d --name storage -v ~/storage_data:/fastdfs/storage/data -v ~/store_path:/fastdfs/store_path --net=host -e TRACKER_SERVER:192.168.1.2:22122 season/fastdfs storage
+docker run -ti -d --name storage -v ~/storage_data:/fastdfs/storage/data -v ~/store_path:/fastdfs/store_path --net=host -e TRACKER_SERVER:kiwi-fastdfs:22122 season/fastdfs storage
 
-sudo docker exec -it storage bash
+# sudo docker exec -it storage bash
 
-mv /etc/apt/sources.list /etc/apt/sources.list.bak && \
-    echo "deb http://mirrors.163.com/debian/ jessie main non-free contrib" >/etc/apt/sources.list && \
-    echo "deb http://mirrors.163.com/debian/ jessie-proposed-updates main non-free contrib" >>/etc/apt/sources.list && \
-    echo "deb-src http://mirrors.163.com/debian/ jessie main non-free contrib" >>/etc/apt/sources.list && \
-    echo "deb-src http://mirrors.163.com/debian/ jessie-proposed-updates main non-free contrib" >>/etc/apt/sources.list
-    
-apt-get update
-apt-get install vim
+# apt-get update
+# apt-get install vim
 
-vi /fdfs_conf/storage.conf
+# vi /fdfs_conf/storage.conf
 # 按?进入命令搜索模式，输入tracker_server，按回车，将后面的ip地址改成kiwi-fastdfs
-exit
+# exit
 
 docker container restart `docker ps -a| grep storage | awk '{print $1}' `
 ```

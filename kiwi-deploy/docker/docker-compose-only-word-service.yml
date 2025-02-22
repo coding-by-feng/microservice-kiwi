@@ -1,4 +1,3 @@
-version: '3.8'
 services:
   kiwi-word-biz:
     image: kiwi-word-biz:1.0

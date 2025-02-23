@@ -5,7 +5,7 @@ services:
       - '8762:8762'
     volumes:
       - /root/docker/kiwi/eureka/logs:/logs
-  #    network_mode: "host"
+    network_mode: "host"
   #    deploy:
   #      resources:
   #        limits:
@@ -16,7 +16,7 @@ services:
       - '7771:7771'
     volumes:
       - /root/docker/kiwi/config/logs:/logs
-    #    network_mode: "host"
+    network_mode: "host"
     depends_on:
       - kiwi-eureka
 #    deploy:

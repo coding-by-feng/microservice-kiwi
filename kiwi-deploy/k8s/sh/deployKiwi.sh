@@ -48,6 +48,5 @@ docker build -f ~/docker/kiwi/upms/Dockerfile -t kiwi-upms:1.0 ~/docker/kiwi/upm
 docker build -f ~/docker/kiwi/auth/Dockerfile -t kiwi-auth:1.0 ~/docker/kiwi/auth/
 docker build -f ~/docker/kiwi/gate/Dockerfile -t kiwi-gate:1.0 ~/docker/kiwi/gate/
 docker build -f ~/docker/kiwi/word/biz/Dockerfile -t kiwi-word-biz:1.0 ~/docker/kiwi/word/
-docker build -f ~/docker/kiwi/word/crawler/Dockerfile -t kiwi-word-biz-crawler:1.0 ~/docker/kiwi/word/
 docker build -f ~/docker/kiwi/crawler/Dockerfile -t kiwi-crawler:1.0 ~/docker/kiwi/crawler/
 

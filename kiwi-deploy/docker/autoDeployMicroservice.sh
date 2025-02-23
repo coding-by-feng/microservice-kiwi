@@ -26,7 +26,7 @@ else
   rm -rf ~/docker/kiwi/crawler/logs/*
 fi
 
-mvn clean install -Dmaven.test.skip=true
+mvn clean install -Dmaven.test.skip=true -B
 
 if [ "$1" == "ow" ]
 then

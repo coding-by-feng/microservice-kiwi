@@ -2,8 +2,6 @@
 
 ~/microservice-kiwi/kiwi-deploy/docker/stopAll.sh
 
-# systemctl restart docker
-
 if [ "$1" == "ow" ]
 then
   rm -rf ~/docker/kiwi/word/logs/*

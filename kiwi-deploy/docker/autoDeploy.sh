@@ -5,17 +5,17 @@ echo "delete container beginning"
 
 if [ "$1" == "ow" ]
 then
-  docker rm   `docker ps -a| grep kiwi-word-biz | awk '{print $1}' `
-  docker rm   `docker ps -a| grep kiwi-word-biz-crawler | awk '{print $1}' `
-  docker rm   `docker ps -a| grep kiwi-crawler | awk '{print $1}' `
+  docker rm -f  `docker ps -a| grep kiwi-word-biz | awk '{print $1}' `
+  docker rm -f  `docker ps -a| grep kiwi-word-biz-crawler | awk '{print $1}' `
+  docker rm -f  `docker ps -a| grep kiwi-crawler | awk '{print $1}' `
 else
-  docker rm   `docker ps -a| grep kiwi-eureka | awk '{print $1}' `
-  docker rm   `docker ps -a| grep kiwi-config | awk '{print $1}' `
-  docker rm   `docker ps -a| grep kiwi-upms | awk '{print $1}' `
-  docker rm   `docker ps -a| grep kiwi-auth | awk '{print $1}' `
-  docker rm   `docker ps -a| grep kiwi-word-biz | awk '{print $1}' `
-  docker rm   `docker ps -a| grep kiwi-word-biz-crawler | awk '{print $1}' `
-  docker rm   `docker ps -a| grep kiwi-crawler | awk '{print $1}' `
+  docker rm -f  `docker ps -a| grep kiwi-eureka | awk '{print $1}' `
+  docker rm -f  `docker ps -a| grep kiwi-config | awk '{print $1}' `
+  docker rm -f  `docker ps -a| grep kiwi-upms | awk '{print $1}' `
+  docker rm -f  `docker ps -a| grep kiwi-auth | awk '{print $1}' `
+  docker rm -f  `docker ps -a| grep kiwi-word-biz | awk '{print $1}' `
+  docker rm -f  `docker ps -a| grep kiwi-word-biz-crawler | awk '{print $1}' `
+  docker rm -f  `docker ps -a| grep kiwi-crawler | awk '{print $1}' `
 fi
 
 echo "delete image beginning"

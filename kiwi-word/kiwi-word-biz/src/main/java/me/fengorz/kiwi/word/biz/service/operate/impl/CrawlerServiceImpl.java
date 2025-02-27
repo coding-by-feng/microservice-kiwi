@@ -58,6 +58,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.Resource;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -83,7 +84,8 @@ public class CrawlerServiceImpl implements CrawlerService {
     private final ParaphrasePhraseService phraseService;
     private final ParaphraseStarRelService paraphraseStarRelService;
     private final ReviewAudioService reviewAudioService;
-    private final DfsService dfsService;
+    @Resource(name = "googleCloudStorageService")
+    private DfsService dfsService;
     private final SeqService seqService;
     private final OperateService operateService;
     private final TtsService ttsService;

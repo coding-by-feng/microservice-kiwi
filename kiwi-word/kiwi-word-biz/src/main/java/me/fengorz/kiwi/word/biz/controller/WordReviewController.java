@@ -31,6 +31,7 @@ import me.fengorz.kiwi.word.biz.service.operate.OperateService;
 import me.fengorz.kiwi.word.biz.service.operate.ReviewService;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
@@ -48,7 +49,8 @@ public class WordReviewController extends AbstractFileController{
 
     private final ReviewService reviewService;
     private final OperateService operateService;
-    private final DfsService dfsService;
+    @Resource(name = "googleCloudStorageService")
+    private DfsService dfsService;
     private final TtsService ttsService;
 
     @GetMapping("/getReviewBreakpointPageNumber/{listId}")

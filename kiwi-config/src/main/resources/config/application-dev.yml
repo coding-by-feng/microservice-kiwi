@@ -29,7 +29,7 @@ spring:
   cloud:
     gcp:
       credentials:
-        location: /Users/zhanshifeng/gcp-credentials.json
+        location: ENC(SKTDak156J1xoFO0cQdB7lDhUtDqbM/BUrKo6etGEAfvPkevmscWBkr10CE2i55nXlenU7dNjq8=)
 
 # feign 配置
 feign:

@@ -29,13 +29,13 @@ spring:
   cloud:
     gcp:
       credentials:
-        location: /Users/zhanshifeng/gcp-credentials.json
+        location: ENC(SKTDak156J1xoFO0cQdB7lDhUtDqbM/BUrKo6etGEAfvPkevmscWBkr10CE2i55nXlenU7dNjq8=)
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: ENC(2PE/BMMoNPbRCEaIyGfcSw==)
     password: ENC(zF1rDpn+u8RZX5OTor7BpHzprZyrH+3P)
-    url: jdbc:mysql://${DB_IP}:3306/kiwi_db?useUnicode=true&characterEncoding=UTF-8&useSSL=false&autoReconnect=true&serverTimezone=Asia/Shanghai
+    url: jdbc:mysql://kiwi-db:3306/kiwi_db?useUnicode=true&characterEncoding=UTF-8&useSSL=false&autoReconnect=true&serverTimezone=Asia/Shanghai
     hikari:
       max-lifetime: 60000
       connection-timeout: 60000

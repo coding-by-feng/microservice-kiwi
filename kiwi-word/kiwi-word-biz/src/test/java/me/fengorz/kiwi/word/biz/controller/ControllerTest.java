@@ -34,7 +34,6 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.*;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.io.File;
@@ -48,7 +47,6 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 @ActiveProfiles({EnvConstants.DEV, EnvConstants.BASE})
 @ExtendWith(SpringExtension.class)
-@TestPropertySource("classpath:env.properties")
 @SpringBootTest(classes = WordBizApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Disabled
 public class ControllerTest {

@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.io.File;
@@ -28,7 +27,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @Slf4j
 @ExtendWith(SpringExtension.class)
-@TestPropertySource("classpath:env.properties")
 @SpringBootTest(classes = DfsTestApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class GoogleCloudStorageServiceImplTest {
 

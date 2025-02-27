@@ -40,7 +40,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
- * 爬虫异常重启-消息队列生产者 @Author zhanshifeng @Date 2019/10/30 10:33 AM
+ * 爬虫异常重启-消息队列生产者 @Author Kason Zhan @Date 2019/10/30 10:33 AM
  */
 @Slf4j
 @Component

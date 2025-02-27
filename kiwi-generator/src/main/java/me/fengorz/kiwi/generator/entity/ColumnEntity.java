@@ -19,7 +19,7 @@ package me.fengorz.kiwi.generator.entity;
 import lombok.Data;
 
 /**
- * @Author zhanshifeng @Date 2019-09-10 19:15
+ * @Author Kason Zhan @Date 2019-09-10 19:15
  */
 @Data
 public class ColumnEntity {

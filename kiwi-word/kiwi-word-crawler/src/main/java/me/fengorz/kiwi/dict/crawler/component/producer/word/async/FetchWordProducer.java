@@ -34,7 +34,7 @@ import org.springframework.stereotype.Component;
 import java.util.Optional;
 
 /**
- * 抓取单词基本信息-消息队列生产者 @Author zhanshifeng @Date 2019/10/30 10:33 AM
+ * 抓取单词基本信息-消息队列生产者 @Author Kason Zhan @Date 2019/10/30 10:33 AM
  */
 @Component
 @Slf4j

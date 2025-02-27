@@ -20,8 +20,8 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.bdf.core.service.SeqService;
-import me.fengorz.kiwi.common.fastdfs.service.DfsService;
-import me.fengorz.kiwi.common.fastdfs.util.DfsUtils;
+import me.fengorz.kiwi.common.dfs.DfsService;
+import me.fengorz.kiwi.common.dfs.fastdfs.util.DfsUtils;
 import me.fengorz.kiwi.common.sdk.annotation.cache.KiwiCacheKey;
 import me.fengorz.kiwi.common.sdk.annotation.cache.KiwiCacheKeyPrefix;
 import me.fengorz.kiwi.common.sdk.annotation.log.LogMarker;
@@ -66,6 +66,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.Resource;
 import java.io.ByteArrayInputStream;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -94,7 +95,8 @@ public class ReviewServiceImpl implements ReviewService {
     private final WordMainMapper wordMainMapper;
     private final CharacterMapper characterMapper;
     private final ParaphraseStarRelMapper paraphraseStarRelMapper;
-    private final DfsService dfsService;
+    @Resource(name = "googleCloudStorageService")
+    private DfsService dfsService;
     private final AudioService audioService;
     private final TtsProperties ttsProperties;
     private final TtsService ttsService;

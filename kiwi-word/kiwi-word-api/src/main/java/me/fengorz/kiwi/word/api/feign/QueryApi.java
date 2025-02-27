@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 /**
- * @Author zhanshifeng
+ * @Author Kason Zhan
  * @date 2020-05-24 01:40:36
  */
 @FeignClient(contextId = "queryApi", value = EnvConstants.APPLICATION_NAME_KIWI_WORD_BIZ,

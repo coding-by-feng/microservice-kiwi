@@ -23,7 +23,7 @@ import me.fengorz.kiwi.common.sdk.exception.tts.TtsException;
 
 /**
  * @Description TODO
- * @Author zhanshifeng
+ * @Author Kason Zhan
  * @Date 2022/10/1 11:22
  */
 public interface BaiduTtsService {

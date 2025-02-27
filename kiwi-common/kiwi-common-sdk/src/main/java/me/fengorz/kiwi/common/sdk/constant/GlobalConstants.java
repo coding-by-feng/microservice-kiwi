@@ -21,7 +21,7 @@ import me.fengorz.kiwi.common.api.ApiContants;
 import java.time.format.DateTimeFormatter;
 
 /**
- * @Author zhanshifeng @Date 2019-09-19 10:42
+ * @Author Kason Zhan @Date 2019-09-19 10:42
  */
 public interface GlobalConstants extends ApiContants {
 

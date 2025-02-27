@@ -19,7 +19,7 @@ package me.fengorz.kiwi.common.sdk.exception;
 import me.fengorz.kiwi.common.api.ResultCode;
 
 /**
- * @Description 操作资源不存在异常 @Author zhanshifeng @Date 2020/5/24 12:38 PM
+ * @Description 操作资源不存在异常 @Author Kason Zhan @Date 2020/5/24 12:38 PM
  */
 public class ResourceNotFoundException extends BaseRuntimeException {
 

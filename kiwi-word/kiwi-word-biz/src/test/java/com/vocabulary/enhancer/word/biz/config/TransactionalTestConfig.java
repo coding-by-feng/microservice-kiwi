@@ -28,7 +28,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import javax.sql.DataSource;
 
 /**
- * @Author zhanshifeng @Date 2019/11/25 9:55 AM
+ * @Author Kason Zhan @Date 2019/11/25 9:55 AM
  */
 // @Configuration
 // @MapperScan("me.fengorz.kiwi.crawler.biz.mapper")

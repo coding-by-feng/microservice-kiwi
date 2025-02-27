@@ -21,7 +21,7 @@ import cn.hutool.core.util.URLUtil;
 import cn.hutool.http.HttpUtil;
 
 /**
- * @Author zhanshifeng @Date 2019/11/4 4:37 PM
+ * @Author Kason Zhan @Date 2019/11/4 4:37 PM
  */
 public class HttpTest {
 

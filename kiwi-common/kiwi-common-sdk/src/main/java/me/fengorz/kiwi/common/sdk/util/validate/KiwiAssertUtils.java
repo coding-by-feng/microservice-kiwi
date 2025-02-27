@@ -27,7 +27,7 @@ import java.util.Collection;
 
 /**
  * 断言工具类
- * @Author zhanshifeng
+ * @Author Kason Zhan
  * @Date 2019/11/26 9:38 PM
  */
 public class KiwiAssertUtils extends Assert {

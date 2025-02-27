@@ -33,7 +33,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 /**
- * 授权拒绝处理器，覆盖默认的OAuth2AccessDeniedHandler 包装失败信息到PigDeniedException @Author zhanshifeng
+ * 授权拒绝处理器，覆盖默认的OAuth2AccessDeniedHandler 包装失败信息到PigDeniedException @Author Kason Zhan
  */
 @Slf4j
 @Component

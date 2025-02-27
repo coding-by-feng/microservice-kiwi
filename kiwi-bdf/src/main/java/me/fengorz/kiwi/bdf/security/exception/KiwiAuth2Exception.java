@@ -22,7 +22,7 @@ import me.fengorz.kiwi.bdf.security.component.KiwiAuth2ExceptionSerializer;
 import org.springframework.security.oauth2.common.exceptions.OAuth2Exception;
 
 /**
- * 自定义OAuth2Exception @Author zhanshifeng
+ * 自定义OAuth2Exception @Author Kason Zhan
  */
 @JsonSerialize(using = KiwiAuth2ExceptionSerializer.class)
 public class KiwiAuth2Exception extends OAuth2Exception {

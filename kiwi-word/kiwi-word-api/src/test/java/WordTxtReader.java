@@ -17,7 +17,7 @@
 import java.io.*;
 
 /**
- * @Author zhanshifeng @Date 2019/11/27 4:32 PM
+ * @Author Kason Zhan @Date 2019/11/27 4:32 PM
  */
 public class WordTxtReader {
 

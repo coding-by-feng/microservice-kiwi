@@ -24,7 +24,7 @@ import me.fengorz.kiwi.common.api.feign.AbstractFallback;
 
 /**
  * @Description TODO
- * @Author zhanshifeng
+ * @Author Kason Zhan
  * @Date 2022/9/18 10:25
  */
 @Slf4j

@@ -24,7 +24,7 @@ import java.util.Iterator;
 import java.util.Set;
 
 /**
- * @Description Util of Java Bean Validation @Author zhanshifeng @Date 2019/11/26 9:03 PM
+ * @Description Util of Java Bean Validation @Author Kason Zhan @Date 2019/11/26 9:03 PM
  */
 public class KiwiValidateUtils {
 

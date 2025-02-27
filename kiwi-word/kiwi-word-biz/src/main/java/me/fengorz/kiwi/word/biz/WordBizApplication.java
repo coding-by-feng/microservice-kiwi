@@ -22,7 +22,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.cloud.client.SpringCloudApplication;
 
 /**
- * @Author zhanshifeng
+ * @Author Kason Zhan
  * @Date 2019/10/30 3:02 PM
  */
 @KiwiEnhancerResourceServer

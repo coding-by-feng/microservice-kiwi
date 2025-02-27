@@ -3,11 +3,11 @@ package com;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.URLUtil;
 import cn.hutool.http.HttpUtil;
-import me.fengorz.kiwi.common.fastdfs.util.DfsUtils;
+import me.fengorz.kiwi.common.dfs.fastdfs.util.DfsUtils;
 import me.fengorz.kiwi.word.api.common.ApiCrawlerConstants;
 
 /**
- * @Author zhanshifeng @Date 2019/11/4 4:37 PM
+ * @Author Kason Zhan @Date 2019/11/4 4:37 PM
  */
 public class HttpTest {
 

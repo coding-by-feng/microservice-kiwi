@@ -113,8 +113,6 @@ your_dfs_ip                                     kiwi-fastdfs
 127.0.0.1                                     kiwi-auth
 127.0.0.1                                     kiwi-upms
 127.0.0.1                                     kiwi-gate
-127.0.0.1                                     kiwi-db
-127.0.0.1                                     kiwi-es
 ```
 
 注意将上面your_ecs_ip替换成fastdfs所在云服务器的外网ip
@@ -294,23 +292,6 @@ curl -XPUT -u xxsuperuser:xxxxx http://xxxxx:9200/_xpack/security/user/xxxxxxxus
 
 安装完了注意创建index，名为`kiwi_vocabulary`
 
-```
-# delete old
-curl -u kiwi-es-zsf-fyy:kiwi-es-zsf-fyy -X POST "http://localhost:9200/_aliases" -H "Content-Type: application/json" -d '{
-  "actions": [
-    {
-      "remove": {
-        "index": ".security-7",
-        "alias": "kiwi_vocabulary"
-      }
-    }
-  ]
-}'
-```
-
-Install Chrome elasticsearch extension:
-https://chromewebstore.google.com/detail/elasticvue/hkedbapjpblbodpgbajblpnlpenaebaa
-
 ## kibana安装
 
 [Docker 官方](https://www.elastic.co/guide/en/kibana/current/docker.html#docker "")
@@ -355,133 +336,7 @@ exit
 vi docker/ui/dist/default.conf
 ```
 
-```
-user nginx;
-worker_processes auto;
-
-error_log /var/log/nginx/error.log debug;
-pid /var/run/nginx.pid;
-
-events {
-    worker_connections 1024;
-}
-
-http {
-    include /etc/nginx/mime.types;
-    default_type application/octet-stream;
-
-    log_format main '$remote_addr - $remote_user [$time_local] "$request" '
-                    '$status $body_bytes_sent "$http_referer" '
-                    '"$http_user_agent" "$http_x_forwarded_for"';
-
-    access_log /var/log/nginx/access.log main;
-
-    sendfile on;
-    #tcp_nopush on;
-
-    keepalive_timeout 65;
-
-    gzip on;
-    gzip_types text/plain text/css application/json application/javascript;
-    gzip_min_length 256;
-
-    include /etc/nginx/conf.d/*.conf;
-
-    server {
-        listen 80 default_server;
-        server_name _;
-
-        location / {
-            root /usr/share/nginx/html;
-            index index.html index.htm;
-        }
-
-        location /auth {
-            proxy_pass http://kiwi-microservice:9991;
-            proxy_set_header Host $host;
-            proxy_set_header X-Real-IP $remote_addr;
-            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-            proxy_set_header X-Forwarded-Proto $scheme;
-        }
-
-        location /wordBiz {
-            proxy_pass http://kiwi-microservice:9991;
-            proxy_set_header Host $host;
-            proxy_set_header X-Real-IP $remote_addr;
-            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-            proxy_set_header X-Forwarded-Proto $scheme;
-        }
-
-        location /code {
-            proxy_pass http://kiwi-microservice:9991;
-            proxy_set_header Host $host;
-            proxy_set_header X-Real-IP $remote_addr;
-            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-            proxy_set_header X-Forwarded-Proto $scheme;
-        }
-
-        location /admin {
-            proxy_pass http://kiwi-microservice:9991;
-            proxy_set_header Host $host;
-            proxy_set_header X-Real-IP $remote_addr;
-            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-            proxy_set_header X-Forwarded-Proto $scheme;
-        }
-    }
-}
-```
-
-```
-server {
-    listen 80;
-    server_name www.kiwidict.com;
-    rewrite ^(.*) https://$server_name$1 permanent;
-}
-
-server {
-    listen 443 ssl;
-    server_name  www.kiwidict.com;
-    ssl_certificate 1_kiwidict.com_bundle.crt;
-    ssl_certificate_key 2_kiwidict.com.key;
-    ssl_session_timeout 5m;
-    ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
-    ssl_ciphers ECDHE-RSA-AES128-GCM-SHA256:HIGH:!aNULL:!MD5:!RC4:!DHE;
-    ssl_prefer_server_ciphers on;
-
-    access_log  /var/log/nginx/host.access.log  main;
-
-    location / {
-        root   /usr/share/nginx/html;
-        index  index.html index.htm;
-    }
-}
-```
-
-下面增加配置：
-
-```
-    location /auth {
-        proxy_pass http://kiwi-microservice:9991;
-    }
-
-    location /wordBiz {
-        proxy_pass http://kiwi-microservice:9991;
-    }
-
-    location /code {
-        proxy_pass http://kiwi-microservice:9991;
-    }
-
-    location /admin {
-        proxy_pass http://kiwi-microservice:9991;
-    }
-```
-
-打开nginx请求日志记录：
-
-```
-access_log  /var/log/nginx/host.access.log  main;
-```
+在
 
 保存之后覆盖原来的default.conf重启kiwi-ui容器
 

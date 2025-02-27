@@ -14,15 +14,14 @@
  *
  */
 
-package me.fengorz.kiwi.common.fastdfs.constant;
+package me.fengorz.kiwi.test.dfs;
 
-/**
- * @Author zhanshifeng @Date 2020/5/24 11:52 AM
- */
-public class DfsConstants {
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-    public static final String DELETE_FILE_EXCEPTION = "dfsService delete file exception!";
-    public static final String UPLOAD_FILE_EXCEPTION = "dfsService upload file exception";
-    public static final String DOWNLOAD_STREAM_FILE_EXCEPTION = "dfsService download stream of file exception";
-    public static final String DOWNLOAD_FILE_EXCEPTION = "dfsService download of file exception";
+@SpringBootApplication
+public class DfsTestApplication {
+    public static void main(String[] args) {
+        SpringApplication.run(DfsTestApplication.class, args);
+    }
 }

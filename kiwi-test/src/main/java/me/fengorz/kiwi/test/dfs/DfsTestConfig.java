@@ -14,20 +14,20 @@
  *
  */
 
-package me.fengorz.kiwi.common.fastdfs.config;
+package me.fengorz.kiwi.test.dfs;
 
-import com.github.tobato.fastdfs.FdfsClientConfig;
-import org.springframework.context.annotation.ComponentScan;
+import lombok.extern.slf4j.Slf4j;
+import me.fengorz.kiwi.common.dfs.fastdfs.config.DfsConfig;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.EnableMBeanExport;
 import org.springframework.context.annotation.Import;
-import org.springframework.jmx.support.RegistrationPolicy;
 
-/**
- * @Author zhanshifeng @Date 2019/11/4 10:51 AM
- */
+@Slf4j
 @Configuration
-@ComponentScan("me.fengorz.kiwi.common.fastdfs")
-@Import(FdfsClientConfig.class)
-@EnableMBeanExport(registration = RegistrationPolicy.IGNORE_EXISTING)
-public class DfsConfig {}
+@Import({DfsConfig.class})
+public class DfsTestConfig {
+
+    public DfsTestConfig() {
+        log.info("DfsTestConfig...");
+    }
+
+}

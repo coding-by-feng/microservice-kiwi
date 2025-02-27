@@ -16,7 +16,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import me.fengorz.kiwi.word.api.entity.WordMainVariantDO;
 
 /**
- * @Author zhanshifeng
+ * @Author Kason Zhan
  * @date 2020-05-24 01:17:58
  */
 public interface WordMainVariantMapper extends BaseMapper<WordMainVariantDO> {}

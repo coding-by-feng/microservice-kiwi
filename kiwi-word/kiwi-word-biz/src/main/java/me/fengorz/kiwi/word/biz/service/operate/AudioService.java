@@ -21,7 +21,7 @@ import me.fengorz.kiwi.common.sdk.exception.tts.TtsException;
 
 /**
  * @Description TODO
- * @Author zhanshifeng
+ * @Author Kason Zhan
  * @Date 2022/7/13 20:29
  */
 public interface AudioService {

@@ -27,7 +27,7 @@ import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 
 /**
- * @Author zhanshifeng @Date 2019-09-06 15:49
+ * @Author Kason Zhan @Date 2019-09-06 15:49
  */
 public class KiwiDecodeUtils {
 

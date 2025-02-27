@@ -19,7 +19,7 @@ package me.fengorz.kiwi.dict.crawler.config.properties;
 import lombok.Data;
 
 /**
- * @Author zhanshifeng @Date 2020/10/15 8:33 PM
+ * @Author Kason Zhan @Date 2020/10/15 8:33 PM
  */
 @Data
 public class MqExchange {

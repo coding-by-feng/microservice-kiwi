@@ -21,7 +21,7 @@ import java.io.File;
 import lombok.Data;
 
 /**
- * @Author zhanshifeng @Date 2019-09-12 16:50
+ * @Author Kason Zhan @Date 2019-09-12 16:50
  */
 @Data
 public class FileOutEntity {

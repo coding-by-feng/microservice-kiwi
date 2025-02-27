@@ -25,7 +25,7 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import me.fengorz.kiwi.common.fastdfs.service.DfsService;
+import me.fengorz.kiwi.common.dfs.DfsService;
 import me.fengorz.kiwi.common.sdk.annotation.cache.KiwiCacheKey;
 import me.fengorz.kiwi.common.sdk.annotation.cache.KiwiCacheKeyPrefix;
 import me.fengorz.kiwi.common.sdk.annotation.log.LogMarker;
@@ -63,6 +63,7 @@ import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilde
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.Resource;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -71,7 +72,7 @@ import static org.elasticsearch.index.query.QueryBuilders.matchPhraseQuery;
 
 /**
  * @Description 单词相关业务的复杂逻辑解耦
- * @Author zhanshifeng
+ * @Author Kason Zhan
  * @Date 2019/11/25 3:13 PM
  */
 @Slf4j
@@ -96,7 +97,8 @@ public class OperateServiceImpl implements OperateService {
     private final WordMainVariantService mainVariantService;
     private final ParaphrasePhraseService phraseService;
     private final ReviewService reviewService;
-    private final DfsService dfsService;
+    @Resource(name = "googleCloudStorageService")
+    private DfsService dfsService;
     private final SearchOperations searchOperations;
     private final DocumentOperations documentOperations;
 

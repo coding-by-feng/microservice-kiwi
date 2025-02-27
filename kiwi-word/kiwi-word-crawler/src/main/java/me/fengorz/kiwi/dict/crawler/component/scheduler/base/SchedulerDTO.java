@@ -19,7 +19,7 @@ package me.fengorz.kiwi.dict.crawler.component.scheduler.base;
 import java.io.Serializable;
 
 /**
- * @Author zhanshifeng @Date 2020/9/17 6:21 PM
+ * @Author Kason Zhan @Date 2020/9/17 6:21 PM
  */
 public class SchedulerDTO implements Serializable {
     private static final long serialVersionUID = 715543986832412592L;

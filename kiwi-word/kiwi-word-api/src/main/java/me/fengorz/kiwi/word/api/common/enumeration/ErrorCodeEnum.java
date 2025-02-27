@@ -24,7 +24,7 @@ import me.fengorz.kiwi.common.api.ResultCode;
 
 /**
  * @Description 定义所有异常的Error Code
- * @Author zhanshifeng
+ * @Author Kason Zhan
  * @Date 2022/4/17 14:37
  */
 @AllArgsConstructor

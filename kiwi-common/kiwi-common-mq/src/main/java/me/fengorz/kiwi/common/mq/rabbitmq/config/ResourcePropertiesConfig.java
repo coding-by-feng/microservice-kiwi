@@ -23,7 +23,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * @Author zhanshifeng @Date 2019-09-07 14:42
+ * @Author Kason Zhan @Date 2019-09-07 14:42
  */
 @Data
 @Configuration

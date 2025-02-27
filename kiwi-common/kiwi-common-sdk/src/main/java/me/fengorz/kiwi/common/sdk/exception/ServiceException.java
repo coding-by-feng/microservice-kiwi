@@ -20,7 +20,7 @@ import lombok.NoArgsConstructor;
 import me.fengorz.kiwi.common.api.ResultCode;
 
 /**
- * @Author zhanshifeng @Date 2019/11/26 9:47 PM
+ * @Author Kason Zhan @Date 2019/11/26 9:47 PM
  */
 @NoArgsConstructor
 public class ServiceException extends BaseRuntimeException {

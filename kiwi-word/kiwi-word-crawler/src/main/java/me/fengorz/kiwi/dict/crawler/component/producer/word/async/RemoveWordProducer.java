@@ -33,7 +33,7 @@ import org.springframework.stereotype.Component;
 import java.util.Optional;
 
 /**
- * 老旧单词数据清除--消息队列生产者 @Author zhanshifeng @Date 2019/10/30 10:33 AM
+ * 老旧单词数据清除--消息队列生产者 @Author Kason Zhan @Date 2019/10/30 10:33 AM
  */
 @Component
 @Slf4j

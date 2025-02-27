@@ -22,7 +22,7 @@ import org.apache.commons.lang3.text.WordUtils;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
 
 /**
- * @Author zhanshifeng
+ * @Author Kason Zhan
  */
 public class ToolBeanUtils {
 

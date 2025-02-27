@@ -19,7 +19,7 @@ package me.fengorz.kiwi.bdf.security.exception;
 import lombok.NoArgsConstructor;
 
 /**
- * 403 授权拒绝 @Author zhanshifeng
+ * 403 授权拒绝 @Author Kason Zhan
  */
 @NoArgsConstructor
 public class KiwiDeniedException extends RuntimeException {

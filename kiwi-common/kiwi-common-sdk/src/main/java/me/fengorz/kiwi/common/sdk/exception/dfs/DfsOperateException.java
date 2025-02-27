@@ -20,7 +20,7 @@ import me.fengorz.kiwi.common.api.ResultCode;
 import me.fengorz.kiwi.common.sdk.exception.BaseException;
 
 /**
- * @Description Dfs文件操作异常 @Author zhanshifeng @Date 2019/11/7 11:38 PM
+ * @Description Dfs文件操作异常 @Author Kason Zhan @Date 2019/11/7 11:38 PM
  */
 public class DfsOperateException extends BaseException {
 

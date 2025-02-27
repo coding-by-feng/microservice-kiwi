@@ -26,7 +26,7 @@ import java.io.IOException;
 import static me.fengorz.kiwi.common.api.ApiContants.RESULT_CODE_SERVICE_ERROR;
 
 /**
- * OAuth2 异常格式化 @Author zhanshifeng
+ * OAuth2 异常格式化 @Author Kason Zhan
  */
 public class KiwiAuth2ExceptionSerializer extends StdSerializer<KiwiAuth2Exception> {
     private static final long serialVersionUID = 6776883623606657402L;

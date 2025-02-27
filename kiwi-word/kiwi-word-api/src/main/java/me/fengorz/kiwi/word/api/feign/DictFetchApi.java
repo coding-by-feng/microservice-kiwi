@@ -31,7 +31,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /**
- * @Author zhanshifeng
+ * @Author Kason Zhan
  */
 @FeignClient(contextId = "dictFetchApi", value = EnvConstants.APPLICATION_NAME_KIWI_WORD_BIZ, fallbackFactory = BizApiFallbackFactory.class)
 public interface DictFetchApi {

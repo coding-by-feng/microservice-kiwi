@@ -17,7 +17,7 @@
 package me.fengorz.kiwi.dict.crawler;
 
 /**
- * @Author zhanshifeng @Date 2019/10/25 10:06 AM
+ * @Author Kason Zhan @Date 2019/10/25 10:06 AM
  */
 public class JacksonTest {
 

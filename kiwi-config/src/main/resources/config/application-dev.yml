@@ -6,7 +6,7 @@ jasypt:
 
 spring:
   redis:
-    host: 159.75.107.124
+    host: kiwi-redis
     password: ENC(H2wp5eUHhX+b3JrwEtcBEl1/0b3IyoIf)
     port: 6379
   servlet:
@@ -26,15 +26,10 @@ spring:
       password: ENC(oj9wNYu52oQH1d9T0zHeGDLz7P7em71u)
   main:
     allow-bean-definition-overriding: true
-#  sleuth:
-#    web:
-#      client:
-#        enabled: true
-#    sampler:
-#      # 默认的采样比率为0.1，不能看到所有请求数据
-#      # 更改采样比率为1，就能看到所有的请求数据了，但是这样会增加接口调用延迟
-#      probability: 1.0
-
+  cloud:
+    gcp:
+      credentials:
+        location: /Users/zhanshifeng/gcp-credentials.json
 
 # feign 配置
 feign:
@@ -105,6 +100,10 @@ fdfs:
     width: 150
     height: 150
   tracker-list: kiwi-fastdfs:22122
+
+dfs:
+  gcp:
+    bucket-name: kiwidict-bucket
 
 # 避免 Elasticsearch health check failed 异常
 management:

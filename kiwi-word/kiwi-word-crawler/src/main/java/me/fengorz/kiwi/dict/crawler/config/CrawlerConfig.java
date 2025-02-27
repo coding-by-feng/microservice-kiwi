@@ -18,14 +18,14 @@ package me.fengorz.kiwi.dict.crawler.config;
 
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.bdf.core.config.CoreExcludeDBConfig;
-import me.fengorz.kiwi.common.fastdfs.config.DfsConfig;
+import me.fengorz.kiwi.common.dfs.fastdfs.config.DfsConfig;
 import me.fengorz.kiwi.common.mq.rabbitmq.config.CommonMQConfig;
 import me.fengorz.kiwi.common.sdk.config.UtilsBeanConfiguration;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
 /**
- * @Author zhanshifeng
+ * @Author Kason Zhan
  * @Date 2019/10/30 3:45 PM
  */
 @Slf4j

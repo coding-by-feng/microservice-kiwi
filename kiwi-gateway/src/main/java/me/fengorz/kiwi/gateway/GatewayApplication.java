@@ -23,7 +23,7 @@ import org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerA
 import org.springframework.cloud.client.SpringCloudApplication;
 
 /**
- * @Author zhanshifeng
+ * @Author Kason Zhan
  * @Date 2019-09-19 15:22
  */
 @SpringCloudApplication

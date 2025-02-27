@@ -22,7 +22,7 @@ package me.fengorz.kiwi.word.api.common.enumeration;
 import lombok.Getter;
 
 /**
- * @Author zhanshifeng
+ * @Author Kason Zhan
  * @Date 2021/8/21 8:11 PM
  */
 public enum ReviseDailyCounterTypeEnum {

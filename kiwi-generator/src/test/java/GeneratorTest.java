@@ -1,7 +1,7 @@
 import me.fengorz.kiwi.common.sdk.util.bean.KiwiBeanUtils;
 
 /**
- * @Author zhanshifeng @Date 2019-09-10 14:19
+ * @Author Kason Zhan @Date 2019-09-10 14:19
  */
 public class GeneratorTest {
     public static void main(String[] args) {

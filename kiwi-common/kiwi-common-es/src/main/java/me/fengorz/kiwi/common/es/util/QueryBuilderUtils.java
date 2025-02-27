@@ -22,7 +22,7 @@ import org.springframework.lang.NonNull;
 import java.lang.reflect.Field;
 
 /**
- * @Author zhanshifeng @Date 2020/6/11 11:05 AM
+ * @Author Kason Zhan @Date 2020/6/11 11:05 AM
  */
 public class QueryBuilderUtils {
 

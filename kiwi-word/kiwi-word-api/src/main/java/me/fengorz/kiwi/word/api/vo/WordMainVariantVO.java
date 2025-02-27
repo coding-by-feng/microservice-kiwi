@@ -15,7 +15,7 @@ package me.fengorz.kiwi.word.api.vo;
 import me.fengorz.kiwi.word.api.entity.WordMainVariantDO;
 
 /**
- * 自动生成实体类VO @Author zhanshifeng
+ * 自动生成实体类VO @Author Kason Zhan
  *
  * @date 2020-05-24 00:36:15
  */

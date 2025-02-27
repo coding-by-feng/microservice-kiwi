@@ -17,7 +17,7 @@
 package me.fengorz.finance;
 
 /**
- * @Author zhanshifeng @Date 2020/8/3 10:55 AM
+ * @Author Kason Zhan @Date 2020/8/3 10:55 AM
  */
 public class App {
 

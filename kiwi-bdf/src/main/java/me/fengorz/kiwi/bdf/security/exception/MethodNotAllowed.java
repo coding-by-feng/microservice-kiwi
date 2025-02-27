@@ -21,7 +21,7 @@ import me.fengorz.kiwi.bdf.security.component.KiwiAuth2ExceptionSerializer;
 import org.springframework.http.HttpStatus;
 
 /**
- * @Author zhanshifeng
+ * @Author Kason Zhan
  */
 @JsonSerialize(using = KiwiAuth2ExceptionSerializer.class)
 public class MethodNotAllowed extends KiwiAuth2Exception {

@@ -23,7 +23,7 @@ import java.lang.annotation.Target;
 
 /**
  * @Description 标记响应的方法是和MQ相关的，用于决定是否开启MQ
- * @Author zhanshifeng
+ * @Author Kason Zhan
  * @Date 2022/8/29 22:43
  */
 @Target({ElementType.METHOD})

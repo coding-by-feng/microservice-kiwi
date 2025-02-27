@@ -35,7 +35,7 @@ import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.generator.entity.FileOutEntity;
 
 /**
- * 自定义的代码生成器 @Author zhanshifeng @Date 2019-09-10 14:14
+ * 自定义的代码生成器 @Author Kason Zhan @Date 2019-09-10 14:14
  */
 @Slf4j
 @UtilityClass

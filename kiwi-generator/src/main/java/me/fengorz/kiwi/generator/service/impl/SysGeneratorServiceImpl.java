@@ -26,7 +26,7 @@ import me.fengorz.kiwi.generator.mapper.SysGeneratorMapper;
 import me.fengorz.kiwi.generator.service.SysGeneratorService;
 
 /**
- * @Author zhanshifeng @Date 2019-09-16 16:51
+ * @Author Kason Zhan @Date 2019-09-16 16:51
  */
 @Service
 @RequiredArgsConstructor

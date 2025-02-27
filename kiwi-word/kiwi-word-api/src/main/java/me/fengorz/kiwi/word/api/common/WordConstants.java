@@ -17,7 +17,7 @@
 package me.fengorz.kiwi.word.api.common;
 
 /**
- * @Description word服务静态变量 @Author zhanshifeng @Date 2020/5/17 11:19 PM
+ * @Description word服务静态变量 @Author Kason Zhan @Date 2020/5/17 11:19 PM
  */
 public class WordConstants {
 

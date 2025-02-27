@@ -14,13 +14,13 @@
  *
  */
 
-package me.fengorz.kiwi.common.fastdfs.util;
+package me.fengorz.kiwi.common.dfs.fastdfs.util;
 
 import cn.hutool.core.util.StrUtil;
 import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
 
 /**
- * @Author zhanshifeng @Date 2019/11/4 3:56 PM
+ * @Author Kason Zhan @Date 2019/11/4 3:56 PM
  */
 public class DfsUtils {
 

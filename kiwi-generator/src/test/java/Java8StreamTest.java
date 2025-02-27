@@ -10,7 +10,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 
 /**
- * @Author zhanshifeng @Date 2019-09-12 14:29
+ * @Author Kason Zhan @Date 2019-09-12 14:29
  */
 public class Java8StreamTest {
 

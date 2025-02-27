@@ -19,7 +19,7 @@ package me.fengorz.kiwi.common.sdk.util.lang.object;
 import org.springframework.util.ObjectUtils;
 
 /**
- * @Author zhanshifeng @Date 2020/5/17 12:24 PM
+ * @Author Kason Zhan @Date 2020/5/17 12:24 PM
  */
 public class KiwiObjectUtils extends ObjectUtils {
 

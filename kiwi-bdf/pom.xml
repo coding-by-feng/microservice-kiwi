@@ -24,14 +24,14 @@
     <parent>
         <groupId>me.fengorz</groupId>
         <artifactId>kiwi-cloud-service</artifactId>
-        <version>1.0</version>
+        <version>2.0</version>
         <!-- 不指定相对路径的话会报错，因为kiwi-word模块的绝对路径不在kiwi-cloud-service下面 -->
         <relativePath>../kiwi-cloud-service</relativePath>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
     <artifactId>kiwi-bdf</artifactId>
-    <version>1.0</version>
+    <version>2.0</version>
     <packaging>jar</packaging>
 
     <dependencies>

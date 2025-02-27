@@ -14,7 +14,7 @@
  *
  */
 
-package me.fengorz.kiwi.common.fastdfs.service.impl;
+package me.fengorz.kiwi.common.dfs.fastdfs;
 
 import com.github.tobato.fastdfs.domain.fdfs.MetaData;
 import com.github.tobato.fastdfs.domain.fdfs.StorePath;
@@ -23,8 +23,8 @@ import com.github.tobato.fastdfs.service.AppendFileStorageClient;
 import com.github.tobato.fastdfs.service.FastFileStorageClient;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import me.fengorz.kiwi.common.fastdfs.constant.DfsConstants;
-import me.fengorz.kiwi.common.fastdfs.service.DfsService;
+import me.fengorz.kiwi.common.dfs.DfsConstants;
+import me.fengorz.kiwi.common.dfs.DfsService;
 import me.fengorz.kiwi.common.sdk.exception.dfs.DfsOperateDeleteException;
 import me.fengorz.kiwi.common.sdk.exception.dfs.DfsOperateException;
 import org.springframework.stereotype.Service;
@@ -35,13 +35,13 @@ import java.util.Set;
 
 /**
  * @Description Dfs分布式文件服务类
- * @Author zhanshifeng
+ * @Author Kason Zhan
  * @Date 2019/11/4 10:58 AM
  */
-@Service
+@Service("fastDfsService")
 @Slf4j
 @RequiredArgsConstructor
-public class DfsServiceImpl implements DfsService {
+public class FastDfsServiceImpl implements DfsService {
 
     /**
      * 面向普通应用的文件操作接口

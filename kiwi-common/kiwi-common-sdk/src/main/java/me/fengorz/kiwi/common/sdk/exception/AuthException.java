@@ -19,7 +19,7 @@ package me.fengorz.kiwi.common.sdk.exception;
 import lombok.NoArgsConstructor;
 
 /**
- * @Author zhanshifeng @Date 2019-09-07 23:53
+ * @Author Kason Zhan @Date 2019-09-07 23:53
  */
 @NoArgsConstructor
 public class AuthException extends BaseRuntimeException {

@@ -17,6 +17,6 @@
 package me.fengorz.kiwi.common.sdk.annotation.lock;
 
 /**
- * @Description TODO @Author zhanshifeng @Date 2022/1/2 10:59 PM
+ * @Description TODO @Author Kason Zhan @Date 2022/1/2 10:59 PM
  */
 public @interface DistributedLock {}

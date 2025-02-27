@@ -14,7 +14,7 @@
  *
  */
 
-package me.fengorz.kiwi.common.fastdfs.service;
+package me.fengorz.kiwi.common.dfs;
 
 import com.github.tobato.fastdfs.domain.fdfs.MetaData;
 import me.fengorz.kiwi.common.sdk.exception.dfs.DfsOperateDeleteException;

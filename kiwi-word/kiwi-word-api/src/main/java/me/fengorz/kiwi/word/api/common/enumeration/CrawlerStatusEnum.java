@@ -25,7 +25,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * @Author zhanshifeng
+ * @Author Kason Zhan
  * @Date 2022/6/29 15:39
  */
 public enum CrawlerStatusEnum {

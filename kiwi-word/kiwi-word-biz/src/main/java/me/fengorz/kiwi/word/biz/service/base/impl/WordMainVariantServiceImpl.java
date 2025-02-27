@@ -41,7 +41,7 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
- * 单词时态、单复数等的变化 @Author zhanshifeng
+ * 单词时态、单复数等的变化 @Author Kason Zhan
  *
  * @date 2020-05-24 01:20:49
  */

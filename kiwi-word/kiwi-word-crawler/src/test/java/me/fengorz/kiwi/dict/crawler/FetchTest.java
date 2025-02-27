@@ -26,7 +26,7 @@ import me.fengorz.kiwi.word.api.exception.JsoupFetchPronunciationException;
 import me.fengorz.kiwi.word.api.exception.JsoupFetchResultException;
 
 /**
- * @Author zhanshifeng @Date 2019/11/4 3:01 PM
+ * @Author Kason Zhan @Date 2019/11/4 3:01 PM
  */
 public class FetchTest {
 

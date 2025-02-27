@@ -28,7 +28,7 @@ import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 /**
- * 单词时态、单复数等的变化 @Author zhanshifeng
+ * 单词时态、单复数等的变化 @Author Kason Zhan
  *
  * @date 2020-05-24 00:24:38
  */

@@ -21,7 +21,7 @@ import cn.hutool.core.collection.CollectionUtil;
 import java.util.Map;
 
 /**
- * @Description 集合工具类 @Author zhanshifeng @Date 2020/5/17 9:31 AM
+ * @Description 集合工具类 @Author Kason Zhan @Date 2020/5/17 9:31 AM
  */
 public class KiwiCollectionUtils extends CollectionUtil {
 

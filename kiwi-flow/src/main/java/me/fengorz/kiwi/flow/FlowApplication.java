@@ -25,7 +25,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.cloud.client.SpringCloudApplication;
 
 /**
- * @Author zhanshifeng @Date 2019-09-02 14:56
+ * @Author Kason Zhan @Date 2019-09-02 14:56
  */
 @SpringCloudApplication
 public class FlowApplication {

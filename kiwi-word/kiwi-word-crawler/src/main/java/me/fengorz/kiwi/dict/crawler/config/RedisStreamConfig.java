@@ -29,7 +29,7 @@ import java.time.Duration;
 
 /**
  * @Description Redis MQ configuration.
- * @Author zhanshifeng
+ * @Author Kason Zhan
  * @Date 2022/8/28 10:40
  */
 // @Component

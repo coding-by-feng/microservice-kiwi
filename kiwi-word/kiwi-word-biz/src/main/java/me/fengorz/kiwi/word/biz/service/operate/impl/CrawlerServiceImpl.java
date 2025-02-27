@@ -25,8 +25,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.bdf.core.service.SeqService;
 import me.fengorz.kiwi.common.api.ApiContants;
-import me.fengorz.kiwi.common.fastdfs.service.DfsService;
-import me.fengorz.kiwi.common.fastdfs.util.DfsUtils;
+import me.fengorz.kiwi.common.dfs.DfsService;
+import me.fengorz.kiwi.common.dfs.fastdfs.util.DfsUtils;
 import me.fengorz.kiwi.common.sdk.annotation.log.LogMarker;
 import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
 import me.fengorz.kiwi.common.sdk.exception.ResourceNotFoundException;
@@ -66,7 +66,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
- * @Description 爬虫服务 @Author zhanshifeng @Date 2020/7/28 8:03 PM
+ * @Description 爬虫服务 @Author Kason Zhan @Date 2020/7/28 8:03 PM
  */
 @Slf4j
 @Service

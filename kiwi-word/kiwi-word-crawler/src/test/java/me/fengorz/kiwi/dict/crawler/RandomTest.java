@@ -19,7 +19,7 @@ package me.fengorz.kiwi.dict.crawler;
 import java.util.Random;
 
 /**
- * @Author zhanshifeng @Date 2019/10/29 3:24 PM
+ * @Author Kason Zhan @Date 2019/10/29 3:24 PM
  */
 public class RandomTest {
     public static void main(String[] args) {

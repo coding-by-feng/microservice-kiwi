@@ -19,7 +19,7 @@ package me.fengorz.kiwi.common.sdk.constant;
 import lombok.experimental.UtilityClass;
 
 /**
- * @Author zhanshifeng @Date 2019-09-26 16:54
+ * @Author Kason Zhan @Date 2019-09-26 16:54
  */
 @UtilityClass
 public class ServiceNameConstants {

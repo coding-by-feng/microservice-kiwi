@@ -26,7 +26,7 @@ import java.io.Serializable;
 /**
  * 响应体
  *
- * @param <T> @Author zhanshifeng
+ * @param <T> @Author Kason Zhan
  */
 @ToString
 @Data

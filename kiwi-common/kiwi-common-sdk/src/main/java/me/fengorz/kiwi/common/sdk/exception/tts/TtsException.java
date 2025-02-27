@@ -24,7 +24,7 @@ import me.fengorz.kiwi.common.sdk.exception.BaseException;
 
 /**
  * @Description TODO
- * @Author zhanshifeng
+ * @Author Kason Zhan
  * @Date 2022/7/5 22:53
  */
 public class TtsException extends BaseException {

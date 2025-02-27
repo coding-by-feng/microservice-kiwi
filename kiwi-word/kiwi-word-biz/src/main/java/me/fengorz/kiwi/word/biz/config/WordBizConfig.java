@@ -20,8 +20,8 @@ import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.bdf.cache.redis.config.CacheConfig;
 import me.fengorz.kiwi.bdf.core.config.CoreConfig;
 import me.fengorz.kiwi.bdf.core.config.LogAspectConfig;
+import me.fengorz.kiwi.common.dfs.fastdfs.config.DfsConfig;
 import me.fengorz.kiwi.common.es.config.ESConfig;
-import me.fengorz.kiwi.common.fastdfs.config.DfsConfig;
 import me.fengorz.kiwi.common.sdk.config.UtilsBeanConfiguration;
 import me.fengorz.kiwi.common.tts.config.TtsConfig;
 import me.fengorz.kiwi.common.tts.enumeration.TtsSourceEnum;
@@ -37,7 +37,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @Author zhanshifeng
+ * @Author Kason Zhan
  * @Date 2019/10/30 3:45 PM
  */
 @Slf4j

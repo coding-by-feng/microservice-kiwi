@@ -22,7 +22,7 @@ import me.fengorz.kiwi.word.api.feign.fallback.DictFetchApiFallback;
 import org.springframework.stereotype.Component;
 
 /**
- * @Author zhanshifeng @Date 2019/10/30 3:19 PM
+ * @Author Kason Zhan @Date 2019/10/30 3:19 PM
  */
 @Component
 public class BizApiFallbackFactory implements FallbackFactory<DictFetchApi> {

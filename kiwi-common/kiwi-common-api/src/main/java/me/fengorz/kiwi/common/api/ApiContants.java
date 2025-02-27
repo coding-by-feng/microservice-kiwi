@@ -17,7 +17,7 @@
 package me.fengorz.kiwi.common.api;
 
 /**
- * @Author zhanshifeng @Date 2021/12/27 10:35 PM
+ * @Author Kason Zhan @Date 2021/12/27 10:35 PM
  */
 public interface ApiContants {
 

@@ -19,7 +19,7 @@ package me.fengorz.kiwi.common.sdk.constant;
 import lombok.experimental.UtilityClass;
 
 /**
- * @Author zhanshifeng @Date 2019-09-06 15:06
+ * @Author Kason Zhan @Date 2019-09-06 15:06
  */
 @UtilityClass
 public class SecurityConstants {

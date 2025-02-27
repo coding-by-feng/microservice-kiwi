@@ -22,7 +22,7 @@ import me.fengorz.kiwi.word.api.exception.JsoupFetchResultException;
 import java.util.Collection;
 
 /**
- * @Author zhanshifeng
+ * @Author Kason Zhan
  * @Date 2019/10/31 3:58 PM
  */
 public class CrawlerAssertUtils {

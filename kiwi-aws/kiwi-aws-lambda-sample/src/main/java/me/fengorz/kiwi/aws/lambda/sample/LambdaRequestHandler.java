@@ -24,7 +24,7 @@ import com.amazonaws.services.lambda.runtime.RequestHandler;
 
 /**
  * @Description TODO
- * @Author zhanshifeng
+ * @Author Kason Zhan
  * @Date 2022/12/29 20:48
  */
 public class LambdaRequestHandler implements RequestHandler<String, String> {

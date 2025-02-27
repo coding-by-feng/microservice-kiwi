@@ -22,7 +22,7 @@ import org.apache.commons.lang3.StringUtils;
 import static java.lang.Character.UnicodeBlock.*;
 
 /**
- * @Author zhanshifeng @Date 2020/5/17 12:39 PM
+ * @Author Kason Zhan @Date 2020/5/17 12:39 PM
  */
 public class KiwiStringUtils extends StrUtil {
 

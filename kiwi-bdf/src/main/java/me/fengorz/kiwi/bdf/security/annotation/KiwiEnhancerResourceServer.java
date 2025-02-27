@@ -25,7 +25,7 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.E
 import java.lang.annotation.*;
 
 /**
- * 资源服务注解 @Author zhanshifeng
+ * 资源服务注解 @Author Kason Zhan
  */
 @Documented
 @Inherited

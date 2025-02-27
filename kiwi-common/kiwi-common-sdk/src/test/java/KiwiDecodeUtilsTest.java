@@ -20,7 +20,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 /**
- * @Author zhanshifeng @Date 2020/6/3 12:10 AM
+ * @Author Kason Zhan @Date 2020/6/3 12:10 AM
  */
 public class KiwiDecodeUtilsTest {
 

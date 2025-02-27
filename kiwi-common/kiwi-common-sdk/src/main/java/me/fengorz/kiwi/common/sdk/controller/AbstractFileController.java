@@ -23,7 +23,7 @@ import java.io.InputStream;
 import static me.fengorz.kiwi.common.sdk.web.WebTools.*;
 
 /**
- * @Description 抽象控制层基类 @Author zhanshifeng @Date 2020/4/21 7:28 PM
+ * @Description 抽象控制层基类 @Author Kason Zhan @Date 2020/4/21 7:28 PM
  */
 public abstract class AbstractFileController extends BaseController {
 

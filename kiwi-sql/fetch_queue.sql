@@ -1,11 +1,11 @@
 update word_fetch_queue
 set
-#     fetch_status= 0,
-#     fetch_time=0,
-#     fetch_result='',
-#     is_lock=1,
+     fetch_status= 0,
+     fetch_time=0,
+     fetch_result='',
+     is_lock=1,
     is_into_cache = 0
-# where fetch_status <> 666;
+ where fetch_status = 666;
 # where word_name = 'postcode';
 # where fetch_time > 100;
 #   and fetch_status <> 666

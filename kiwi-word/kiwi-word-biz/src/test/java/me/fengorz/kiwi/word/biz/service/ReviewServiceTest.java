@@ -24,7 +24,7 @@ import me.fengorz.kiwi.admin.api.feign.UserApi;
 import me.fengorz.kiwi.bdf.core.service.SeqService;
 import me.fengorz.kiwi.common.api.ApiContants;
 import me.fengorz.kiwi.common.api.R;
-import me.fengorz.kiwi.common.fastdfs.service.DfsService;
+import me.fengorz.kiwi.common.dfs.DfsService;
 import me.fengorz.kiwi.common.sdk.constant.EnvConstants;
 import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
 import me.fengorz.kiwi.common.sdk.util.json.KiwiJsonUtils;

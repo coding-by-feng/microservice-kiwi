@@ -24,7 +24,7 @@ import me.fengorz.kiwi.word.api.feign.DictFetchApi;
 import org.springframework.stereotype.Component;
 
 /**
- * @Description Daily generation of review count records @Author zhanshifeng @Date 2021/8/19 8:54 PM
+ * @Description Daily generation of review count records @Author Kason Zhan @Date 2021/8/19 8:54 PM
  */
 @Slf4j
 @Component(CrawlerConstants.COMPONENT_BEAN_ID.GENERATE_REVIEW_RECORD_DAILY_SCHEDULER)

@@ -35,7 +35,7 @@ import static org.springframework.cloud.gateway.support.ServerWebExchangeUtils.G
 import static org.springframework.cloud.gateway.support.ServerWebExchangeUtils.addOriginalRequestUrl;
 
 /**
- * @Author zhanshifeng @Date 2019-09-06 14:54
+ * @Author Kason Zhan @Date 2019-09-06 14:54
  */
 @Component
 public class GenericRequestGlobalFilter implements GlobalFilter, Ordered {

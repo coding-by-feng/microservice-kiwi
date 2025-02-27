@@ -19,7 +19,7 @@ package me.fengorz.kiwi.common.sdk.exception;
 import lombok.NoArgsConstructor;
 
 /**
- * @Author zhanshifeng
+ * @Author Kason Zhan
  * @Date 2019-09-10 14:48
  */
 @NoArgsConstructor

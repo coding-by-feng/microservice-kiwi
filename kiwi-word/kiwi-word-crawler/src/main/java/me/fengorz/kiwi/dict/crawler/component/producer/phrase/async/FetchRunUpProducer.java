@@ -32,7 +32,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 /**
- * 抓取词组基本信息-消息队列生产者 @Author zhanshifeng @Date 2019/10/30 10:33 AM
+ * 抓取词组基本信息-消息队列生产者 @Author Kason Zhan @Date 2019/10/30 10:33 AM
  */
 @Component
 @Slf4j

@@ -22,7 +22,7 @@ import me.fengorz.kiwi.dict.crawler.component.scheduler.ChiefProducerSchedulerSe
 import org.springframework.boot.SpringApplication;
 
 /**
- * @Author zhanshifeng @Date 2019/10/28 10:21 AM
+ * @Author Kason Zhan @Date 2019/10/28 10:21 AM
  */
 // @RunWith(SpringRunner.class)
 // @SpringBootTest(classes = {RabbitMQConfig.class, QueueConfig.class})

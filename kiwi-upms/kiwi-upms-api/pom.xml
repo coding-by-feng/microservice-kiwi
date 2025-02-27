@@ -5,7 +5,7 @@
     <parent>
         <artifactId>kiwi-cloud-service</artifactId>
         <groupId>me.fengorz</groupId>
-        <version>1.0</version>
+        <version>2.0</version>
         <relativePath>../../kiwi-cloud-service</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -16,7 +16,7 @@
         <dependency>
             <groupId>me.fengorz</groupId>
             <artifactId>kiwi-common-sdk</artifactId>
-            <version>1.0</version>
+            <version>2.0</version>
         </dependency>
     </dependencies>
 

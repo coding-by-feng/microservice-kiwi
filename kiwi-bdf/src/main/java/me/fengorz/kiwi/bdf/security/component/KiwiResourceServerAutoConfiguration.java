@@ -28,7 +28,7 @@ import org.springframework.web.client.RestTemplate;
 import java.io.IOException;
 
 /**
- * @Author zhanshifeng
+ * @Author Kason Zhan
  */
 @ComponentScan("me.fengorz.kiwi.bdf.security")
 public class KiwiResourceServerAutoConfiguration {

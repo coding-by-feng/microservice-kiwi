@@ -34,7 +34,7 @@ import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
 /**
- * 自动将所有未入缓存的单词纳入缓存 @Author zhanshifeng @Date 2020/9/17 6:14 PM
+ * 自动将所有未入缓存的单词纳入缓存 @Author Kason Zhan @Date 2020/9/17 6:14 PM
  */
 @Slf4j
 @Component(CrawlerConstants.COMPONENT_BEAN_ID.CACHE_WORD_SCHEDULER)

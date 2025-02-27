@@ -20,7 +20,7 @@ import lombok.Data;
 import me.fengorz.kiwi.admin.api.entity.SysUser;
 
 /**
- * @Description 用户的全部信息数据 @Author zhanshifeng @Date 2019-09-26 10:52
+ * @Description 用户的全部信息数据 @Author Kason Zhan @Date 2019-09-26 10:52
  */
 @Data
 public class UserFullInfoDTO {

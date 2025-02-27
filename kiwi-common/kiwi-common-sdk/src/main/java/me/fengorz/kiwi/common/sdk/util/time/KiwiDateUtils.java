@@ -19,7 +19,7 @@ package me.fengorz.kiwi.common.sdk.util.time;
 import cn.hutool.core.date.DateUtil;
 
 /**
- * @Description 公共时间日期工具类 @Author zhanshifeng @Date 2020/4/21 8:07 PM
+ * @Description 公共时间日期工具类 @Author Kason Zhan @Date 2020/4/21 8:07 PM
  */
 public class KiwiDateUtils extends DateUtil {
 

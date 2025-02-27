@@ -19,7 +19,7 @@ package me.fengorz.kiwi.dict.crawler.service;
 import me.fengorz.kiwi.word.api.dto.queue.*;
 
 /**
- * @Author zhanshifeng
+ * @Author Kason Zhan
  */
 public interface FetchService {
 

@@ -31,7 +31,7 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 /**
- * @Description Bean工具类 @Author zhanshifeng @Date 2019/11/2 4:46 PM
+ * @Description Bean工具类 @Author Kason Zhan @Date 2019/11/2 4:46 PM
  */
 @Slf4j
 public class KiwiBeanUtils extends BeanUtils {

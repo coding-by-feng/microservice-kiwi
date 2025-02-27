@@ -26,7 +26,7 @@ import java.text.MessageFormat;
 import java.util.Locale;
 
 /**
- * @Description 国际化消息源配置 @Author zhanshifeng @Date 2020/4/8 4:14 PM
+ * @Description 国际化消息源配置 @Author Kason Zhan @Date 2020/4/8 4:14 PM
  */
 public class I18nMessageResource extends AbstractMessageSource implements ResourceLoaderAware {
     private ResourceLoader resourceLoader;

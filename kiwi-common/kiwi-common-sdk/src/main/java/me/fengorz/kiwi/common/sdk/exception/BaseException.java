@@ -21,7 +21,7 @@ import org.apache.commons.lang3.StringUtils;
 
 
 /**
- * @Description 异常基类 @Author zhanshifeng @Date 2020/4/8 4:32 PM
+ * @Description 异常基类 @Author Kason Zhan @Date 2020/4/8 4:32 PM
  */
 public abstract class BaseException extends Exception {
 

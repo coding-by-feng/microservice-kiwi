@@ -30,7 +30,7 @@ import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.web.client.RestTemplate;
 
 /**
- * 1. 支持remoteTokenServices 负载均衡 2. 支持 获取用户全部信息 @Author zhanshifeng
+ * 1. 支持remoteTokenServices 负载均衡 2. 支持 获取用户全部信息 @Author Kason Zhan
  */
 @Slf4j
 public class KiwiResourceServerConfigurerAdapter extends ResourceServerConfigurerAdapter {

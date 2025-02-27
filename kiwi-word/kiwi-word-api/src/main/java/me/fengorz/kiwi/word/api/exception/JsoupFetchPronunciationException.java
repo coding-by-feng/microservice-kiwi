@@ -19,7 +19,7 @@ package me.fengorz.kiwi.word.api.exception;
 import me.fengorz.kiwi.common.sdk.exception.BaseException;
 
 /**
- * @Author zhanshifeng @Date 2019/10/31 4:01 PM
+ * @Author Kason Zhan @Date 2019/10/31 4:01 PM
  */
 public class JsoupFetchPronunciationException extends BaseException {
     private static final long serialVersionUID = 8760741479684447224L;

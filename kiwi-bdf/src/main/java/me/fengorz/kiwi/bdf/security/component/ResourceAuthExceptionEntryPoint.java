@@ -33,7 +33,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 /**
- * 客户端异常处理 1. 可以根据 AuthenticationException 不同细化异常处理 @Author zhanshifeng
+ * 客户端异常处理 1. 可以根据 AuthenticationException 不同细化异常处理 @Author Kason Zhan
  */
 @Slf4j
 @Component

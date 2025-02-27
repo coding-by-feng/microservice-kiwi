@@ -5,18 +5,18 @@
     <parent>
         <artifactId>microservice-kiwi</artifactId>
         <groupId>me.fengorz</groupId>
-        <version>1.0</version>
+        <version>2.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <packaging>jar</packaging>
     <artifactId>kiwi-gateway</artifactId>
-    <version>1.0</version>
+    <version>2.0</version>
 
     <dependencies>
         <dependency>
             <groupId>me.fengorz</groupId>
             <artifactId>kiwi-common-sdk</artifactId>
-            <version>1.0</version>
+            <version>2.0</version>
         </dependency>
 
         <!--启用eureka client-->

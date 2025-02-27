@@ -21,7 +21,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
 /**
- * @Author zhanshifeng @Date 2019-09-20 09:28
+ * @Author Kason Zhan @Date 2019-09-20 09:28
  */
 @Configuration
 @Import({CoreConfig.class})

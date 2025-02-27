@@ -20,7 +20,7 @@ import org.flowable.engine.delegate.TaskListener;
 import org.flowable.task.service.delegate.DelegateTask;
 
 /**
- * @Author zhanshifeng @Date 2019/12/2 11:09 AM
+ * @Author Kason Zhan @Date 2019/12/2 11:09 AM
  */
 public class BossTaskHandler implements TaskListener {
     @Override

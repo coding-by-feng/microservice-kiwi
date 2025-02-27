@@ -24,7 +24,7 @@
     <parent>
         <artifactId>kiwi-common</artifactId>
         <groupId>me.fengorz</groupId>
-        <version>1.0</version>
+        <version>2.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>kiwi-common-tts</artifactId>
@@ -39,7 +39,7 @@
         <dependency>
             <groupId>voicerss</groupId>
             <artifactId>tts</artifactId>
-            <version>1.0</version>
+            <version>2.0</version>
             <scope>system</scope>
             <systemPath>${project.basedir}/lib/voicerss_tts.jar</systemPath>
         </dependency>

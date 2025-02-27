@@ -19,7 +19,7 @@ package me.fengorz.kiwi.dict.crawler.service.impl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.api.R;
-import me.fengorz.kiwi.common.fastdfs.service.DfsService;
+import me.fengorz.kiwi.common.dfs.DfsService;
 import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
 import me.fengorz.kiwi.common.sdk.exception.dfs.DfsOperateDeleteException;
 import me.fengorz.kiwi.common.sdk.util.lang.collection.KiwiCollectionUtils;
@@ -44,12 +44,13 @@ import me.fengorz.kiwi.word.api.feign.DictFetchApi;
 import me.fengorz.kiwi.word.api.feign.QueryApi;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
 /**
- * @Author zhanshifeng @Date 2020/5/20 11:54 PM
+ * @Author Kason Zhan @Date 2020/5/20 11:54 PM
  */
 @Slf4j
 @Service
@@ -60,7 +61,8 @@ public class FetchServiceImpl implements FetchService {
     private final DictFetchApi dictFetchApi;
     private final QueryApi queryApi;
     private final MqSender MQSender;
-    private final DfsService dfsService;
+    @Resource(name = "googleCloudStorageService")
+    private DfsService dfsService;
 
     @Override
     public void handle(FetchWordMqDTO messageDTO) {

@@ -6,7 +6,7 @@ jasypt:
 
 spring:
   redis:
-    host: 159.75.107.124
+    host: 34.31.195.227
     password: ENC(lP0tXFIClnyKAm534LBq0h0FBirDfHqC)
     port: 6379
   servlet:

@@ -21,7 +21,7 @@ package me.fengorz.kiwi.dict.crawler.component.scheduler.base;
 
 /**
  * @Description TODO
- * @Author zhanshifeng
+ * @Author Kason Zhan
  * @Date 2022/9/7 23:04
  */
 public interface Setup {

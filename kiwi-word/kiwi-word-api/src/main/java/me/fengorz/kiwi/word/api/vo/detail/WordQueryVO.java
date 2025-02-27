@@ -30,7 +30,7 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
- * @Description A view of the word query results @Author zhanshifeng @Date 2019/11/25 10:57 PM
+ * @Description A view of the word query results @Author Kason Zhan @Date 2019/11/25 10:57 PM
  */
 @Data
 @ToString

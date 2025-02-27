@@ -27,7 +27,7 @@ import org.springframework.context.annotation.*;
 
 /**
  * @Description 排除DB的配置类
- * @Author zhanshifeng
+ * @Author Kason Zhan
  * @Date 2022/4/24 23:07
  */
 @Configuration

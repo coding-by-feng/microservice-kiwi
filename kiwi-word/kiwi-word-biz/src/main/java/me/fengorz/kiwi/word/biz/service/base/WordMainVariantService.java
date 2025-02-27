@@ -25,7 +25,7 @@ import me.fengorz.kiwi.word.api.vo.WordMainVariantVO;
 import java.util.List;
 
 /**
- * 服务类 @Author zhanshifeng
+ * 服务类 @Author Kason Zhan
  *
  * @date 2020-05-24 01:40:36
  */

@@ -17,7 +17,7 @@
 package me.fengorz.kiwi.word.biz.service.operate.impl;
 
 import lombok.extern.slf4j.Slf4j;
-import me.fengorz.kiwi.common.fastdfs.service.DfsService;
+import me.fengorz.kiwi.common.dfs.DfsService;
 import me.fengorz.kiwi.common.sdk.exception.dfs.DfsOperateException;
 import me.fengorz.kiwi.common.sdk.exception.tts.TtsException;
 import me.fengorz.kiwi.common.tts.service.BaiduTtsService;
@@ -36,7 +36,7 @@ import static me.fengorz.kiwi.common.tts.TtsConstants.BEAN_NAMES.BAIDU_TTS_SERVI
 
 /**
  * @Description TODO
- * @Author zhanshifeng
+ * @Author Kason Zhan
  * @Date 2022/7/13 20:30
  */
 @Slf4j

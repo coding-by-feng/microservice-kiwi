@@ -34,7 +34,7 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
 /**
- * @Author zhanshifeng @Date 2019-09-07 21:11
+ * @Author Kason Zhan @Date 2019-09-07 21:11
  */
 @Slf4j
 public class WebTools extends WebUtils {

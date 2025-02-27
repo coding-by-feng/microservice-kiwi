@@ -20,7 +20,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * @Author zhanshifeng @Date 2020/1/3 9:47 AM
+ * @Author Kason Zhan @Date 2020/1/3 9:47 AM
  */
 public class VolatileTest {
     private static final int THREADS_COUNT = 100;

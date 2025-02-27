@@ -25,7 +25,7 @@ import java.nio.charset.Charset;
 import me.fengorz.kiwi.generator.common.ToolConstants;
 
 /**
- * @Author zhanshifeng @Date 2020/2/24 1:16 PM
+ * @Author Kason Zhan @Date 2020/2/24 1:16 PM
  */
 public class ToolIOUtils {
 

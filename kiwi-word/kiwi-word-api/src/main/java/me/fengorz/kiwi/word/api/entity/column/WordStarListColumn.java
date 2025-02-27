@@ -17,7 +17,7 @@
 package me.fengorz.kiwi.word.api.entity.column;
 
 /**
- * @Author zhanshifeng @Date 2020/1/2 3:42 PM
+ * @Author Kason Zhan @Date 2020/1/2 3:42 PM
  */
 public class WordStarListColumn {
 

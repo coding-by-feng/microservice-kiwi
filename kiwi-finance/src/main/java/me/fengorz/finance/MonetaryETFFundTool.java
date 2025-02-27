@@ -19,7 +19,7 @@ package me.fengorz.finance;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * @Author zhanshifeng @Date 2020/8/3 10:08 AM
+ * @Author Kason Zhan @Date 2020/8/3 10:08 AM
  */
 @Slf4j
 public class MonetaryETFFundTool {

@@ -25,7 +25,7 @@ import lombok.experimental.Accessors;
 import java.io.Serializable;
 
 /**
- * @Author zhanshifeng @Date 2019/11/26 10:01 AM
+ * @Author Kason Zhan @Date 2019/11/26 10:01 AM
  */
 @Data
 @ToString

@@ -17,7 +17,7 @@ import me.fengorz.kiwi.generator.entity.GenerateConfig;
 import me.fengorz.kiwi.generator.service.SysGeneratorService;
 
 /**
- * @Author zhanshifeng @Date 2019-09-16 16:33
+ * @Author Kason Zhan @Date 2019-09-16 16:33
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = MybatisPlusConfigurer.class)

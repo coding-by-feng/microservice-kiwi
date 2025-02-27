@@ -25,7 +25,7 @@ import org.springframework.data.elasticsearch.client.RestClients;
 import org.springframework.data.elasticsearch.config.AbstractElasticsearchConfiguration;
 
 /**
- * @Author zhanshifeng @Date 2020/11/16 8:35 PM
+ * @Author Kason Zhan @Date 2020/11/16 8:35 PM
  */
 @Configuration
 public class ESConfig extends AbstractElasticsearchConfiguration {

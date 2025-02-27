@@ -28,7 +28,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 
 /**
  * @Description TODO
- * @Author zhanshifeng
+ * @Author Kason Zhan
  * @Date 2022/9/18 10:15
  */
 @FeignClient(contextId = "userApi", value = EnvConstants.APPLICATION_NAME_KIWI_UPMS,

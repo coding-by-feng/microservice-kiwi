@@ -23,7 +23,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
- * @Author zhanshifeng @Date 2019/10/29 3:19 PM
+ * @Author Kason Zhan @Date 2019/10/29 3:19 PM
  */
 // @RunWith(SpringRunner.class)
 // @SpringBootTest(classes = {RabbitMQConfig.class, QueueConfig.class})

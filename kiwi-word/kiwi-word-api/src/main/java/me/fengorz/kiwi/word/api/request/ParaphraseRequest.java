@@ -24,7 +24,7 @@ import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 /**
- * @Author zhanshifeng @Date 2021/8/7 5:28 PM
+ * @Author Kason Zhan @Date 2021/8/7 5:28 PM
  */
 @Data
 @Accessors(chain = true)

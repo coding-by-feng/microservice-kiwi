@@ -46,7 +46,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 
 /**
- * @Description 爬虫抓取单词数据服务类 @Author zhanshifeng @Date 2019/10/31 3:24 PM
+ * @Description 爬虫抓取单词数据服务类 @Author Kason Zhan @Date 2019/10/31 3:24 PM
  */
 @Service
 @Slf4j

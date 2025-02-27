@@ -15,7 +15,7 @@ package me.fengorz.kiwi.word.api.dto;
 import me.fengorz.kiwi.word.api.entity.WordMainVariantDO;
 
 /**
- * 自动生成实体类DTO @Author zhanshifeng
+ * 自动生成实体类DTO @Author Kason Zhan
  *
  * @date 2020-05-24 01:32:16
  */

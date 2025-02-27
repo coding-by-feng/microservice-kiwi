@@ -29,7 +29,7 @@ import org.springframework.security.oauth2.provider.client.JdbcClientDetailsServ
 import javax.sql.DataSource;
 
 /**
- * @Author zhanshifeng
+ * @Author Kason Zhan
  */
 @Slf4j
 public class KiwiClientDetailsService extends JdbcClientDetailsService {

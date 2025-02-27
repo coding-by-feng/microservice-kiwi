@@ -20,7 +20,7 @@ import me.fengorz.kiwi.common.sdk.util.lang.collection.KiwiCollectionUtils;
 import me.fengorz.kiwi.word.api.dto.queue.result.FetchPhraseResultDTO;
 
 /**
- * @Author zhanshifeng
+ * @Author Kason Zhan
  * @Date 2020/11/9 4:27 PM
  */
 public class CrawlerUtils {

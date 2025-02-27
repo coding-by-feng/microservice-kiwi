@@ -21,7 +21,7 @@ package me.fengorz.kiwi.common.sdk.constant;
 
 /**
  * @Description Dedicated to environment variables.
- * @Author zhanshifeng
+ * @Author Kason Zhan
  * @Date 2022/6/29 11:30
  */
 public interface EnvConstants {

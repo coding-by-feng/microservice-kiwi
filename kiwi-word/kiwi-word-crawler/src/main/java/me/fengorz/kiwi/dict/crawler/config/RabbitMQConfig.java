@@ -26,7 +26,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * @Author zhanshifeng
+ * @Author Kason Zhan
  * @Date 2019/10/26 7:56 PM
  */
 @Configuration

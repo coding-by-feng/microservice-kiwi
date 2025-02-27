@@ -27,7 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @Description 序列生成服务
- * @Author zhanshifeng
+ * @Author Kason Zhan
  * @Date 2020/5/31 10:57 AM
  */
 @Service

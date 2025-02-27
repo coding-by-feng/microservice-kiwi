@@ -24,7 +24,7 @@ import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
 import org.springframework.core.type.AnnotationMetadata;
 
 /**
- * @Author zhanshifeng
+ * @Author Kason Zhan
  */
 @Slf4j
 public class KiwiSecurityBeanDefinitionRegistrar implements ImportBeanDefinitionRegistrar {

@@ -17,7 +17,7 @@ package me.fengorz.kiwi.word.biz.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import me.fengorz.kiwi.common.fastdfs.service.DfsService;
+import me.fengorz.kiwi.common.dfs.DfsService;
 import me.fengorz.kiwi.common.sdk.annotation.log.LogMarker;
 import me.fengorz.kiwi.common.sdk.controller.AbstractFileController;
 import me.fengorz.kiwi.common.sdk.exception.dfs.DfsOperateException;
@@ -30,6 +30,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import java.io.InputStream;
 
@@ -46,7 +47,8 @@ import java.io.InputStream;
 public class PronunciationController extends AbstractFileController {
 
     private final PronunciationService wordPronunciationService;
-    private final DfsService dfsService;
+    @Resource(name = "googleCloudStorageService")
+    private DfsService dfsService;
     private final CrawlerService crawlerService;
 
     @LogMarker("下载播放单词发音音频")

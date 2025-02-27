@@ -41,7 +41,7 @@ import me.fengorz.kiwi.generator.util.ToolBeanUtils;
 import me.fengorz.kiwi.generator.util.ToolIOUtils;
 
 /**
- * @Author zhanshifeng @Date 2019-09-16 16:33
+ * @Author Kason Zhan @Date 2019-09-16 16:33
  */
 public class CustomCodeGenerator {
 

@@ -15,7 +15,7 @@ package me.fengorz.kiwi.word.biz.controller;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.api.R;
-import me.fengorz.kiwi.common.fastdfs.service.DfsService;
+import me.fengorz.kiwi.common.dfs.DfsService;
 import me.fengorz.kiwi.common.sdk.controller.AbstractFileController;
 import me.fengorz.kiwi.common.sdk.exception.DataCheckedException;
 import me.fengorz.kiwi.common.sdk.exception.ResourceNotFoundException;

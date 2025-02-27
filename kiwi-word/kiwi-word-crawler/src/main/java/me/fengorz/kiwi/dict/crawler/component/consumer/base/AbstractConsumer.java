@@ -26,7 +26,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
- * @Author zhanshifeng @Date 2020/7/29 4:34 PM
+ * @Author Kason Zhan @Date 2020/7/29 4:34 PM
  */
 @Slf4j
 public abstract class AbstractConsumer<T extends MqDTO> {

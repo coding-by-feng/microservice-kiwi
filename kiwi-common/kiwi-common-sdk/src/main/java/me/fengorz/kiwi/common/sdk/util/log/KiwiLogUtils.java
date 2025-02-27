@@ -17,7 +17,7 @@
 package me.fengorz.kiwi.common.sdk.util.log;
 
 /**
- * @Description 打印日志的辅助性工具 @Author zhanshifeng @Date 2019/11/24 11:05 PM
+ * @Description 打印日志的辅助性工具 @Author Kason Zhan @Date 2019/11/24 11:05 PM
  */
 public class KiwiLogUtils {
 

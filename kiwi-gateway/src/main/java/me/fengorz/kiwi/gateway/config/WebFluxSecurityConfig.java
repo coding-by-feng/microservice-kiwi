@@ -22,7 +22,7 @@ import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 
 /**
- * @Author zhanshifeng @Date 2020/4/25 11:08 PM
+ * @Author Kason Zhan @Date 2020/4/25 11:08 PM
  */
 @EnableWebFluxSecurity
 public class WebFluxSecurityConfig {

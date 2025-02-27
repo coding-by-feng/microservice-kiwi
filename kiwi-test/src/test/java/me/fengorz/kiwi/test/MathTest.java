@@ -25,7 +25,7 @@ import static java.lang.System.out;
 
 /**
  * @Description TODO
- * @Author zhanshifeng
+ * @Author Kason Zhan
  * @Date 2022/12/16 12:53
  */
 public class MathTest {

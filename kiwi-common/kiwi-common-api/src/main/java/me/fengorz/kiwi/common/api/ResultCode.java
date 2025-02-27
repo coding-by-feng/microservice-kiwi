@@ -23,7 +23,7 @@ import java.util.function.Supplier;
 import static me.fengorz.kiwi.common.api.ApiContants.*;
 
 /**
- * @Author zhanshifeng @Date 2020/5/23 1:28 PM
+ * @Author Kason Zhan @Date 2020/5/23 1:28 PM
  */
 public interface ResultCode {
 

@@ -20,7 +20,7 @@ import me.fengorz.kiwi.common.sdk.exception.tts.TtsException;
 
 /**
  * @Description TODO
- * @Author zhanshifeng
+ * @Author Kason Zhan
  * @Date 2022/7/14 23:13
  */
 @FunctionalInterface

@@ -18,7 +18,7 @@ package me.fengorz.kiwi.dict.crawler.common.enumeration;
 
 /**
  * @Description TODO
- * @Author zhanshifeng
+ * @Author Kason Zhan
  * @Date 2022/6/26 10:47
  */
 public enum JsoupRootTypeEnum {

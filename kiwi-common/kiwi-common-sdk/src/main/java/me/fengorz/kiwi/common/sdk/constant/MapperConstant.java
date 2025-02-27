@@ -17,7 +17,7 @@
 package me.fengorz.kiwi.common.sdk.constant;
 
 /**
- * @Author zhanshifeng @Date 2020/1/8 4:51 PM
+ * @Author Kason Zhan @Date 2020/1/8 4:51 PM
  */
 public class MapperConstant {
 

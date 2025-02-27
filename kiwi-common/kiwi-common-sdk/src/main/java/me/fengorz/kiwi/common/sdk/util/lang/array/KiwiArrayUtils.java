@@ -22,7 +22,7 @@ import java.nio.ByteBuffer;
 import java.util.stream.Stream;
 
 /**
- * @Author zhanshifeng @Date 2020/5/17 12:31 PM
+ * @Author Kason Zhan @Date 2020/5/17 12:31 PM
  */
 public class KiwiArrayUtils extends ArrayUtils {
 

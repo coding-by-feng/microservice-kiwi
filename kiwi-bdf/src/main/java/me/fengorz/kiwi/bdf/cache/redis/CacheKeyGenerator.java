@@ -34,7 +34,7 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 /**
- * @Description 自定义redis key的生成器 @Author zhanshifeng @Date 2020/5/17 11:20 AM
+ * @Description 自定义redis key的生成器 @Author Kason Zhan @Date 2020/5/17 11:20 AM
  */
 @NoArgsConstructor
 public class CacheKeyGenerator extends SimpleKeyGenerator {

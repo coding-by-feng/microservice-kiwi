@@ -24,7 +24,7 @@ import java.io.IOException;
 import java.util.concurrent.TimeoutException;
 
 /**
- * @Author zhanshifeng @Date 2020/4/25 7:14 PM
+ * @Author Kason Zhan @Date 2020/4/25 7:14 PM
  */
 public class RabbitMQReceiveTest {
     private static final String userName = "guest";

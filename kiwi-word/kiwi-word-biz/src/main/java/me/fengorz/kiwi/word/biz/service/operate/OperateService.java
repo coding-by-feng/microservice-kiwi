@@ -26,7 +26,7 @@ import me.fengorz.kiwi.word.api.vo.detail.WordQueryVO;
 import java.util.Set;
 
 /**
- * @Author zhanshifeng
+ * @Author Kason Zhan
  */
 public interface OperateService {
 

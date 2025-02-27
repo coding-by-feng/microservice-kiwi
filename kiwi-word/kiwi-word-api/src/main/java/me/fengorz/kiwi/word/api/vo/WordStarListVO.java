@@ -22,7 +22,7 @@ import lombok.ToString;
 import me.fengorz.kiwi.word.api.entity.WordStarListDO;
 
 /**
- * @Author zhanshifeng @Date 2020/5/31 12:51 PM
+ * @Author Kason Zhan @Date 2020/5/31 12:51 PM
  */
 @ToString
 @Data

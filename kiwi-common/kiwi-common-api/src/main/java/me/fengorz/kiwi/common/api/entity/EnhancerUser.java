@@ -26,7 +26,7 @@ import java.util.Collection;
 import static me.fengorz.kiwi.common.api.ApiContants.ADMIN_USERNAME;
 
 /**
- * @Author zhanshifeng @Date 2019-09-25 10:41
+ * @Author Kason Zhan @Date 2019-09-25 10:41
  */
 public class EnhancerUser extends User implements InitializingBean {
 

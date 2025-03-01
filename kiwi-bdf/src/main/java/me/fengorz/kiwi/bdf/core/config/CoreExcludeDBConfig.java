@@ -33,7 +33,7 @@ import org.springframework.context.annotation.*;
 @Configuration
 @ImportAutoConfiguration(
     exclude = {DataSourceAutoConfiguration.class, DataSourceTransactionManagerAutoConfiguration.class})
-@ComponentScan(basePackages = {"me.fengorz.kiwi"},
+@ComponentScan(basePackages = {"me.fengorz.kiwi.bdf.**"},
     excludeFilters = {
         @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, value = {SeqService.class, SeqMapper.class})})
 @Import({UtilsBeanConfiguration.class})

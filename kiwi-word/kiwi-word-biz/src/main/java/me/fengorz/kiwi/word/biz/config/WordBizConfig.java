@@ -20,7 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.bdf.cache.redis.config.CacheConfig;
 import me.fengorz.kiwi.bdf.core.config.CoreConfig;
 import me.fengorz.kiwi.bdf.core.config.LogAspectConfig;
-import me.fengorz.kiwi.common.dfs.fastdfs.config.DfsConfig;
+import me.fengorz.kiwi.common.dfs.DfsConfig;
 import me.fengorz.kiwi.common.es.config.ESConfig;
 import me.fengorz.kiwi.common.sdk.config.UtilsBeanConfiguration;
 import me.fengorz.kiwi.common.tts.config.TtsConfig;
@@ -30,6 +30,7 @@ import me.fengorz.kiwi.word.api.model.ParaphraseTtsGenerationPayload;
 import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
@@ -42,6 +43,7 @@ import java.util.List;
  */
 @Slf4j
 @Configuration
+@ComponentScan("me.fengorz.kiwi.word.**")
 @Import({CoreConfig.class, UtilsBeanConfiguration.class, LogAspectConfig.class, CacheConfig.class, DfsConfig.class,
         ESConfig.class, TtsConfig.class})
 public class WordBizConfig {

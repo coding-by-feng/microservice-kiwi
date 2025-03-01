@@ -17,6 +17,7 @@
 package me.fengorz.kiwi.dict.crawler.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
+import me.fengorz.kiwi.crawler.service.impl.JsoupServiceImpl;
 import me.fengorz.kiwi.word.api.dto.queue.FetchPhraseMqDTO;
 import me.fengorz.kiwi.word.api.dto.queue.FetchPhraseRunUpMqDTO;
 import me.fengorz.kiwi.word.api.dto.queue.FetchWordMqDTO;

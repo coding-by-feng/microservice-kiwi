@@ -1,8 +1,3 @@
-# CenterOS 7 以上
-
-[腾讯云618秒杀价](https://cloud.tencent.com/act/618party?fromSource=gwzcw.3621912.3621912.3621912&utm_medium=cpc&utm_id=gwzcw.3621912.3621912.3621912&from=console&cps_key=28653b30444ff81cf593422221fb1ba3 "")
-注意云服务的安全网络组要放开端口禁用
-
 # docker
 
 ```
@@ -107,7 +102,7 @@ vi /etc/hosts
 127.0.0.1                                       kiwi-eureka
 127.0.0.1                                       kiwi-redis
 127.0.0.1                                       kiwi-rabbitmq
-127.0.0.1                                       kiwi-db
+127.0.0.1                                       ${DB_IP}
 127.0.0.1                                       kiwi-es
 
 127.0.0.1                                     kiwi-config
@@ -199,83 +194,6 @@ yum install maven
 
 安装之后再项目根目录执行`mvn clean install -Dmaven.test.skip=true`
 
-- ~~先注释掉microservice-kiwi和kiwi-cloud-service的pom.xml所有子模块依赖，然后分别执行mvn clean install -Dmaven.test.skip=true~~
-- ~~再放开所有注释在microservice-kiwi和kiwi-cloud-service下mvn clean install -Dmaven.test.skip=true~~
-- ~~分别在kiwi-common、kiwi-bdf、kiwi-upms、kiwi-word执行mvn clean install -Dmaven.test.skip=true（如果报错同样需要先注释子模块依赖）~~
-
-## maven settings.xml
-
-```
-cd ~/.m2
-vi settings.xml
-```
-
-```
-<?xml version="1.0" encoding="UTF-8"?>
-<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0" 
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-    xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd">
-    
-    <pluginGroups />
-    <proxies />
-    <servers />
-    
-    <localRepository>/root/.m2/repository</localRepository>
-    
-    <mirrors>
-        <mirror>
-            <id>alimaven</id>
-            <mirrorOf>central</mirrorOf>
-            <name>aliyun maven</name>
-            <url>http://maven.aliyun.com/nexus/content/repositories/central/</url>
-        </mirror>
-        <mirror>
-            <id>alimaven</id>
-            <name>aliyun maven</name>
-            <url>http://maven.aliyun.com/nexus/content/groups/public/</url>
-            <mirrorOf>central</mirrorOf>
-        </mirror>
-        <mirror>
-            <id>central</id>
-            <name>Maven Repository Switchboard</name>
-            <url>http://repo1.maven.org/maven2/</url>
-            <mirrorOf>central</mirrorOf>
-        </mirror>
-        <mirror>
-            <id>repo2</id>
-            <mirrorOf>central</mirrorOf>
-            <name>Human Readable Name for this Mirror.</name>
-            <url>http://repo2.maven.org/maven2/</url>
-        </mirror>
-        <mirror>
-            <id>ibiblio</id>
-            <mirrorOf>central</mirrorOf>
-            <name>Human Readable Name for this Mirror.</name>
-            <url>http://mirrors.ibiblio.org/pub/mirrors/maven2/</url>
-        </mirror>
-        <mirror>
-            <id>jboss-public-repository-group</id>
-            <mirrorOf>central</mirrorOf>
-            <name>JBoss Public Repository Group</name>
-            <url>http://repository.jboss.org/nexus/content/groups/public</url>
-        </mirror>
-        <mirror>
-            <id>google-maven-central</id>
-            <name>Google Maven Central</name>
-            <url>https://maven-central.storage.googleapis.com
-            </url>
-            <mirrorOf>central</mirrorOf>
-        </mirror>
-        <mirror>
-            <id>maven.net.cn</id>
-            <name>oneof the central mirrors in china</name>
-            <url>http://maven.net.cn/content/groups/public/</url>
-            <mirrorOf>central</mirrorOf>
-        </mirror>
-    </mirrors>
-</settings>
-```
-
 # 自动部署
 
 ```
@@ -306,6 +224,8 @@ curl -XPUT -u xxsuperuser:xxxxx http://xxxxx:9200/_xpack/security/user/xxxxxxxus
 }'
 
 ```
+
+Install Chrome Elasticvue plugin and login to Elasticsearch server
 
 安装完了注意创建index，名为`kiwi_vocabulary`
 

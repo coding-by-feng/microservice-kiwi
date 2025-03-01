@@ -3,6 +3,7 @@ services:
     image: kiwi-gate:1.0
     environment:
       - KIWI_ENC_PASSWORD=${KIWI_ENC_PASSWORD}
+      - DB_IP=${DB_IP}
     volumes:
       - /root/docker/kiwi/gate/logs:/logs
     network_mode: "host"
@@ -10,6 +11,7 @@ services:
     image: kiwi-upms:1.0
     environment:
       - KIWI_ENC_PASSWORD=${KIWI_ENC_PASSWORD}
+      - DB_IP=${DB_IP}
     volumes:
       - /root/docker/kiwi/upms/logs:/logs
     network_mode: "host"
@@ -17,6 +19,7 @@ services:
     image: kiwi-auth:1.0
     environment:
       - KIWI_ENC_PASSWORD=${KIWI_ENC_PASSWORD}
+      - DB_IP=${DB_IP}
     volumes:
       - /root/docker/kiwi/auth/logs:/logs
     network_mode: "host"
@@ -24,6 +27,7 @@ services:
     image: kiwi-word-biz:1.0
     environment:
       - KIWI_ENC_PASSWORD=${KIWI_ENC_PASSWORD}
+      - DB_IP=${DB_IP}
     volumes:
       - /root/docker/kiwi/word/logs:/logs
       - /root/docker/kiwi/word/bizTmp:/wordTmp
@@ -34,6 +38,7 @@ services:
     image: kiwi-crawler:1.0
     environment:
       - KIWI_ENC_PASSWORD=${KIWI_ENC_PASSWORD}
+      - DB_IP=${DB_IP}
     volumes:
       - /root/docker/kiwi/crawler/logs:/logs
       - /root/docker/kiwi/crawler/tmp:/crawlerTmp

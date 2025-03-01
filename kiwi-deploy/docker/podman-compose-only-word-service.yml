@@ -1,12 +1,16 @@
 services:
   kiwi-word-biz:
     image: kiwi-word-biz:1.0
+    environment:
+      - KIWI_ENC_PASSWORD=${KIWI_ENC_PASSWORD}
     volumes:
       - /root/docker/kiwi/word/logs:/logs
       - /root/docker/kiwi/word/bizTmp:/wordTmp
     network_mode: "host"
   kiwi-crawler:
     image: kiwi-crawler:1.0
+    environment:
+      - KIWI_ENC_PASSWORD=${KIWI_ENC_PASSWORD}
     volumes:
       - /root/docker/kiwi/crawler/logs:/logs
       - /root/docker/kiwi/crawler/tmp:/crawlerTmp

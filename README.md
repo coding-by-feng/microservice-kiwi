@@ -107,7 +107,8 @@ vi /etc/hosts
 127.0.0.1                                       kiwi-eureka
 127.0.0.1                                       kiwi-redis
 127.0.0.1                                       kiwi-rabbitmq
-your_dfs_ip                                     kiwi-fastdfs
+127.0.0.1                                       kiwi-db
+127.0.0.1                                       kiwi-es
 
 127.0.0.1                                     kiwi-config
 127.0.0.1                                     kiwi-auth
@@ -117,17 +118,32 @@ your_dfs_ip                                     kiwi-fastdfs
 
 注意将上面your_ecs_ip替换成fastdfs所在云服务器的外网ip
 
+# Setup Environment Variables
+For Linux:
+```
+export KIWI_ENC_PASSWORD="xxxx"
+source ~/.bashrc
+```
+For My Mac:
+```
+vi ~/.zshrc 
+export KIWI_ENC_PASSWORD="xxxx"
+source ~/.zshrc
+```
+
 # mysql
 
 ```
 docker pull mysql:5.7.34
-docker run -itd --name kiwi-mysql -p 3306:3306 -v /root/docker/mysql:/mysql_tmp -e MYSQL_ROOT_PASSWORD=fengORZ123 --net=host mysql:5.7.34
+# replace the wildcard(My_Password) with my password
+docker run -itd --name kiwi-mysql -p 3306:3306 -v /root/docker/mysql:/mysql_tmp -e MYSQL_ROOT_PASSWORD=My_Password --net=host mysql:5.7.34
 sudo docker exec -it kiwi-mysql bash
 mysql -h localhost -u root -p
 create database kiwi_db;
 exit
 # 迁移Mysql的kiwi_db表
-mysqldump --host=cdb-0bhxucw9.gz.tencentcdb.com --port=10069 -uroot -pfengORZ123 -C --databases kiwi_db |mysql --host=localhost -uroot -pfengORZ123 kiwi_db
+# replace the wildcard(My_Password) with my password
+mysqldump --host=cdb-0bhxucw9.gz.tencentcdb.com --port=10069 -uroot -pMy_Password -C --databases kiwi_db |mysql --host=localhost -uroot -pMy_Password kiwi_db
 mysql -h localhost -u root -p
 use kiwi_db
 select * from star_rel_his limit 0, 100;
@@ -139,7 +155,8 @@ exit
 
 ```
 docker pull redis:latest
-docker run -itd --name kiwi-redis -p 6379:6379 redis --requirepass "fengORZ123"
+# replace the wildcard(My_Password) with my password
+docker run -itd --name kiwi-redis -p 6379:6379 redis --requirepass "My_Password"
 # 测试
 docker exec -it kiwi-redis /bin/bash
 redis-cli
@@ -331,9 +348,7 @@ docker run -d -v ~/docker/ui/dist/:/usr/share/nginx/html --net=host --name=kiwi-
 
 ```
 sudo docker exec -it kiwi-ui bash
-cp /etc/nginx/conf.d/default.conf /usr/share/nginx/html/
 exit
-vi docker/ui/dist/default.conf
 ```
 
 在
@@ -342,24 +357,108 @@ vi docker/ui/dist/default.conf
 
 ```
 sudo docker exec -it kiwi-ui bash
-mv /usr/share/nginx/html/default.conf /etc/nginx/conf.d/default.conf
-# 验证nginx配置
-# /usr/sbin/nginx -tc /etc/nginx/conf.d/default.conf
-# /sbin/nginx -t
-/usr/sbin/nginx -t
+# check nginx configuration and apt-get install vi to setup the configuration
+nginx -t
+# nginx: the configuration file /etc/nginx/nginx.conf syntax is ok
+# nginx: configuration file /etc/nginx/nginx.conf test is successful
+
+# configuration begin
+user nginx;
+worker_processes auto;
+
+error_log /var/log/nginx/error.log debug;
+pid /var/run/nginx.pid;
+
+events {
+    worker_connections 1024;
+}
+
+http {
+    include /etc/nginx/mime.types;
+    default_type application/octet-stream;
+
+    log_format main '$remote_addr - $remote_user [$time_local] "$request" '
+                    '$status $body_bytes_sent "$http_referer" '
+                    '"$http_user_agent" "$http_x_forwarded_for"';
+
+    access_log /var/log/nginx/access.log main;
+
+    sendfile on;
+    #tcp_nopush on;
+
+    keepalive_timeout 65;
+
+    gzip on;
+    gzip_types text/plain text/css application/json application/javascript;
+    gzip_min_length 256;
+
+    include /etc/nginx/conf.d/*.conf;
+
+    server {
+        server_name dict.fengorz.me; # managed by Certbot
+
+        location / {
+            root /usr/share/nginx/html;
+            index index.html index.htm;
+        }
+
+        location /auth {
+            proxy_pass http://kiwi-microservice:9991;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+        }
+
+        location /wordBiz {
+            proxy_pass http://kiwi-microservice:9991;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+        }
+
+        location /code {
+            proxy_pass http://kiwi-microservice:9991;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+        }
+
+        location /admin {
+            proxy_pass http://kiwi-microservice:9991;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+        }
+
+        listen 443 ssl; # managed by Certbot
+        ssl_certificate /etc/letsencrypt/live/dict.fengorz.me/fullchain.pem; # managed by Certbot
+        ssl_certificate_key /etc/letsencrypt/live/dict.fengorz.me/privkey.pem; # managed by Certbot
+        include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
+        ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
+    }
+
+    server {
+        if ($host = dict.fengorz.me) {
+                return 301 https://$host$request_uri;
+        } # managed by Certbot
+
+        listen 80 ;
+        server_name dict.fengorz.me;
+        return 404; # managed by Certbot
+    }
+}
+# configuration end
+
 exit
 
 docker container restart `docker ps -a| grep kiwi-ui | awk '{print $1}'`
 ```
 
-## 上传Vue编译后的项目
-
-WebStorm执行编译命令生成静态文件。
 
 ## ssl证书免费申请、https协议配置
 
-[https://cloud.tencent.com/document/product/400/35244](https://cloud.tencent.com/document/product/400/35244 "")
-
-## 首页加载提速
-
-[前端项目时因chunk-vendors过大导致首屏加载太慢的优化](https://blog.csdn.net/qq_31677507/article/details/102742196 "")
+https://pentagonal-icecream-1a5.notion.site/Free-SSL-Certificate-on-Nginx-Godaddy-1a5a4b6391df803b98aae953c17cd1fa?pvs=4

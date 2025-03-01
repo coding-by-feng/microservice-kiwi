@@ -28,8 +28,9 @@ spring:
     allow-bean-definition-overriding: true
   cloud:
     gcp:
+      project-id: ENC(k7DNqSwGcdkrFmiR+jB0BL00OB3QhJ0K0tRDkM7VZSd80hQW0wcktA==)
       credentials:
-        location: ENC(lv45mPT0Ou/M9Yxipd7illnIXtbmdKwCvnxzVNegj399qd0wlpTrrw==)
+        location: ENC(2wUISgeOdeJrFOe+LTi9a+Fmnlwt1HeDqaUmxmAOM83OL/b3Y79u0Q==)
 
 # feign 配置
 feign:
@@ -130,7 +131,7 @@ tts:
     api-key-10: 'b5c1a89b9f8a4ddf877dbe324ed6dc31'
     api-key-11: 'bb264a8707224eb3bd6016be38ac79f4'
     api-key-12: 'e99c0f6ed10a4413944d5e38c11af71f'
-    api-key-13: '05df621e8aae400ba2129ef154446119'
+    api-key-13: '69e101571e4d42508421749987557d00'
     api-key-14: '43b6b8d3ea0148e6bc0bfe3023b15a76'
     api-key-15: 'c73302b470154c31b6da9b40e3ae37f1'
     api-key-16: '1d6ad4ecb6a941d28d24647e9c01e004'

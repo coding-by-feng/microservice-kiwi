@@ -21,9 +21,9 @@
 
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="me.fengorz.kiwi.admin.mapper.SysUserRoleRelMapper">
+<mapper namespace="me.fengorz.kiwi.upms.mapper.SysUserRoleRelMapper">
 
-    <resultMap id="sysUserRoleRelMap" type="me.fengorz.kiwi.admin.api.entity.SysUserRoleRel">
+    <resultMap id="sysUserRoleRelMap" type="me.fengorz.kiwi.upms.api.entity.SysUserRoleRel">
         <id property="userId" column="user_id"/>
         <result property="roleId" column="role_id"/>
     </resultMap>

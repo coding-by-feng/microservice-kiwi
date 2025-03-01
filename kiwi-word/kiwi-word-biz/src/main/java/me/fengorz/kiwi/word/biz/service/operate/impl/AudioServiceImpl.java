@@ -27,7 +27,6 @@ import me.fengorz.kiwi.word.api.common.enumeration.ReviseAudioTypeEnum;
 import me.fengorz.kiwi.word.biz.common.SpeakerFunction;
 import me.fengorz.kiwi.word.biz.service.operate.AudioService;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -44,18 +43,11 @@ import static me.fengorz.kiwi.common.tts.TtsConstants.BEAN_NAMES.BAIDU_TTS_SERVI
 @Service
 public class AudioServiceImpl implements AudioService {
 
-    private final TtsService ttsService;
-    private final BaiduTtsService baiduTtsService;
+    private TtsService ttsService;
+    @Resource(name = BAIDU_TTS_SERVICE_IMPL)
+    private BaiduTtsService baiduTtsService;
     @Resource(name = "googleCloudStorageService")
     private DfsService dfsService;
-
-    public AudioServiceImpl(TtsService ttsService,
-                            @Qualifier(BAIDU_TTS_SERVICE_IMPL) BaiduTtsService baiduTtsService,
-                            @Qualifier("googleCloudStorageService") DfsService dfsService) {
-        this.ttsService = ttsService;
-        this.baiduTtsService = baiduTtsService;
-        this.dfsService = dfsService;
-    }
 
     @Override
     public String generateVoice(String text, int type) throws DfsOperateException, TtsException {

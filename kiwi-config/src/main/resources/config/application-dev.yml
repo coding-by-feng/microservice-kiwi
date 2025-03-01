@@ -9,6 +9,12 @@ spring:
     host: kiwi-redis
     password: ENC(H2wp5eUHhX+b3JrwEtcBEl1/0b3IyoIf)
     port: 6379
+    lettuce:
+      pool:
+        max-active: 8  # Maximum number of active connections (total connections in the pool)
+        max-idle: 8     # Maximum number of idle connections
+        min-idle: 0     # Minimum number of idle connections
+        time-between-eviction-runs: 30000  # Time between pool eviction runs (in milliseconds)
   servlet:
     multipart:
       enabled: true
@@ -28,8 +34,9 @@ spring:
     allow-bean-definition-overriding: true
   cloud:
     gcp:
+      project-id: ENC(k7DNqSwGcdkrFmiR+jB0BL00OB3QhJ0K0tRDkM7VZSd80hQW0wcktA==)
       credentials:
-        location: ENC(SKTDak156J1xoFO0cQdB7lDhUtDqbM/BUrKo6etGEAfvPkevmscWBkr10CE2i55nXlenU7dNjq8=)
+        location: ENC(cicvoPPUGdVt01NMX91FN2X7ud3c6Fiu5CchvC8LDYEFENPuURkzAL0TXBJSBpaqs1w2Gbv5nZg=)
 
 # feign 配置
 feign:
@@ -111,8 +118,6 @@ management:
     elasticsearch:
       enabled: false
 
-db:
-  ip: ENC(jCAktjuyxSXGqPJuOqNWCURUDfjqRu+0)
 
 tts:
   baidu:
@@ -147,7 +152,7 @@ tts:
     # feng_kiwi_tts_3
     api-key-12: 'e99c0f6ed10a4413944d5e38c11af71f'
     # feng_kiwi_tts_4
-    api-key-13: '05df621e8aae400ba2129ef154446119'
+    api-key-13: '69e101571e4d42508421749987557d00'
     # feng_kiwi_tts_5
     api-key-14: '43b6b8d3ea0148e6bc0bfe3023b15a76'
     # feng_kiwi_tts_6

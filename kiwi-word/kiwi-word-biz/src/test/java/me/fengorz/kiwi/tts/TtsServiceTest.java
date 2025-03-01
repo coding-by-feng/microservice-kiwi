@@ -21,7 +21,6 @@ import cn.hutool.http.HttpUtil;
 import com.baidu.aip.util.Util;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import me.fengorz.kiwi.common.sdk.constant.EnvConstants;
 import me.fengorz.kiwi.common.tts.TtsConstants;
 import me.fengorz.kiwi.common.tts.model.TtsProperties;
 import me.fengorz.kiwi.common.tts.service.BaiduTtsService;
@@ -34,7 +33,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.io.IOException;
@@ -42,7 +40,6 @@ import java.io.IOException;
 import static me.fengorz.kiwi.common.tts.TtsConstants.BEAN_NAMES.BAIDU_TTS_SERVICE_IMPL;
 
 @Slf4j
-@ActiveProfiles({EnvConstants.DEV, EnvConstants.BASE})
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = WordBizApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class TtsServiceTest {
@@ -97,15 +94,15 @@ public class TtsServiceTest {
     @Test
     @Disabled
     void queryTtsApiKeyUsed() {
-        Assertions.assertEquals(ttsService.queryTtsApiKeyUsed(ttsProperties.getApiKey10()), 0);
+        Assertions.assertEquals(0, ttsService.queryTtsApiKeyUsed(ttsProperties.getApiKey10()));
     }
 
     @Test
     @Disabled
     void deprecateApiKeyToday() {
         Assertions.assertDoesNotThrow(() -> ttsService.deprecateApiKeyToday(ttsProperties.getApiKey1()));
-        Assertions.assertEquals(ttsService.queryTtsApiKeyUsed(ttsProperties.getApiKey1()),
-                TtsConstants.API_KEY_MAX_USE_TIME);
+        Assertions.assertEquals(TtsConstants.API_KEY_MAX_USE_TIME,
+                ttsService.queryTtsApiKeyUsed(ttsProperties.getApiKey1()));
     }
 
     @Test
@@ -130,7 +127,7 @@ public class TtsServiceTest {
     }
 
     @Test
-    @Disabled
+//    @Disabled
     void queryAllTtsApiKeyUsed() {
         log.info("queryTtsApiKeyUsed [total] used times is {}",
                 ttsService.queryTtsApiKeyUsed(TtsConstants.CACHE_KEY_PREFIX_TTS.TOTAL_API_KEY));
@@ -156,7 +153,7 @@ public class TtsServiceTest {
 
     @SneakyThrows
     @Test
-    // @Disabled
+    @Disabled
     public void testBaiduTts() {
         byte[] data = baiduTtsService.speech(
                 " A。R。E。F。E。R。L。a way of discovering, by questions or practical activities, what someone knows, or what someone or something can do or is like");

@@ -33,13 +33,13 @@ import java.util.concurrent.Executor;
 public class AsyncConfig implements AsyncConfigurer {
 
     @Value("${async.config.core.pool.size}")
-    private int corePoolSize;
+    private Integer corePoolSize;
 
     @Value("${async.config.max.pool.size}")
-    private int maxPoolSize;
+    private Integer maxPoolSize;
 
     @Value("${async.config.queue.capacity}")
-    private int queueCapacity;
+    private Integer queueCapacity;
 
     @Override
     public Executor getAsyncExecutor() {

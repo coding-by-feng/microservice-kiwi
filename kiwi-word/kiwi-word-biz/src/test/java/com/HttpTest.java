@@ -3,7 +3,7 @@ package com;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.URLUtil;
 import cn.hutool.http.HttpUtil;
-import me.fengorz.kiwi.common.dfs.fastdfs.util.DfsUtils;
+import me.fengorz.kiwi.common.dfs.DfsUtils;
 import me.fengorz.kiwi.word.api.common.ApiCrawlerConstants;
 
 /**

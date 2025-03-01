@@ -1,0 +1,10 @@
+jasypt:
+  encryptor:
+    password: ${KIWI_ENC_PASSWORD}
+    poolSize: 2
+
+spring:
+  application:
+    name: kiwi-word-biz
+  profiles:
+    active: test

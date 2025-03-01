@@ -12,7 +12,7 @@
  */
 package me.fengorz.kiwi.word.biz.controller;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.api.R;
 import me.fengorz.kiwi.common.dfs.DfsService;
@@ -27,7 +27,6 @@ import me.fengorz.kiwi.common.tts.service.TtsService;
 import me.fengorz.kiwi.word.api.common.enumeration.ReviseAudioTypeEnum;
 import me.fengorz.kiwi.word.api.entity.WordReviewAudioDO;
 import me.fengorz.kiwi.word.api.vo.WordReviewDailyCounterVO;
-import me.fengorz.kiwi.word.biz.service.operate.OperateService;
 import me.fengorz.kiwi.word.biz.service.operate.ReviewService;
 import org.springframework.web.bind.annotation.*;
 
@@ -43,15 +42,14 @@ import java.util.List;
  */
 @Slf4j
 @RestController
-@AllArgsConstructor
+@RequiredArgsConstructor
 @RequestMapping("/word/review/")
-public class WordReviewController extends AbstractFileController{
+public class WordReviewController extends AbstractFileController {
 
     private final ReviewService reviewService;
-    private final OperateService operateService;
+    private final TtsService ttsService;
     @Resource(name = "googleCloudStorageService")
     private DfsService dfsService;
-    private final TtsService ttsService;
 
     @GetMapping("/getReviewBreakpointPageNumber/{listId}")
     public R<Integer> getReviewBreakpointPageNumber(@PathVariable Integer listId) {

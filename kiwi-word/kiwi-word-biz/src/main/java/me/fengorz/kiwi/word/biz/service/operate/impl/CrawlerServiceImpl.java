@@ -26,7 +26,7 @@ import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.bdf.core.service.SeqService;
 import me.fengorz.kiwi.common.api.ApiContants;
 import me.fengorz.kiwi.common.dfs.DfsService;
-import me.fengorz.kiwi.common.dfs.fastdfs.util.DfsUtils;
+import me.fengorz.kiwi.common.dfs.DfsUtils;
 import me.fengorz.kiwi.common.sdk.annotation.log.LogMarker;
 import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
 import me.fengorz.kiwi.common.sdk.exception.ResourceNotFoundException;

@@ -21,6 +21,7 @@ import me.fengorz.kiwi.common.tts.model.BaiduTtsProperties;
 import me.fengorz.kiwi.common.tts.model.TtsProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
 /**
@@ -29,6 +30,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @Slf4j
 @Configuration
+@ComponentScan("me.fengorz.kiwi.common.tts.**")
 public class TtsConfig {
 
     public TtsConfig() {
@@ -36,8 +38,8 @@ public class TtsConfig {
     }
 
     /**
-     * @Bean 会用方法名作为默认的bean name注入到Spring Context.
      * @return
+     * @Bean 会用方法名作为默认的bean name注入到Spring Context.
      */
     @Bean
     @ConfigurationProperties(prefix = "tts.voicerss")

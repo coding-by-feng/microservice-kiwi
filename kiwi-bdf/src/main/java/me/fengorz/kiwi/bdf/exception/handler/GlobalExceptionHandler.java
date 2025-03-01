@@ -16,7 +16,6 @@
 
 package me.fengorz.kiwi.bdf.exception.handler;
 
-import com.github.tobato.fastdfs.exception.FdfsServerException;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.api.R;
 import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
@@ -34,9 +33,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.Objects;
 
-/**
- * @Description 全局的异常处理器 @Author Kason Zhan @Date 2019/11/26 3:28 PM
- */
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -44,15 +40,15 @@ public class GlobalExceptionHandler {
     private static String getLogMessage(MethodArgumentNotValidException e) {
         FieldError fieldError = Objects.requireNonNull(e.getBindingResult().getFieldError());
         return fieldError.getObjectName() + GlobalConstants.SYMBOL_DOT + fieldError.getField()
-            + GlobalConstants.SYMBOL_SQUARE_BRACKET_LEFT + fieldError.getDefaultMessage()
-            + GlobalConstants.SYMBOL_SQUARE_BRACKET_RIGHT;
+                + GlobalConstants.SYMBOL_SQUARE_BRACKET_LEFT + fieldError.getDefaultMessage()
+                + GlobalConstants.SYMBOL_SQUARE_BRACKET_RIGHT;
     }
 
     private static String getLogMessage(BindException e) {
         FieldError fieldError = Objects.requireNonNull(e.getBindingResult().getFieldError());
         return fieldError.getObjectName() + GlobalConstants.SYMBOL_DOT + fieldError.getField()
-            + GlobalConstants.SYMBOL_SQUARE_BRACKET_LEFT + fieldError.getDefaultMessage()
-            + GlobalConstants.SYMBOL_SQUARE_BRACKET_RIGHT;
+                + GlobalConstants.SYMBOL_SQUARE_BRACKET_LEFT + fieldError.getDefaultMessage()
+                + GlobalConstants.SYMBOL_SQUARE_BRACKET_RIGHT;
     }
 
     @ExceptionHandler({Exception.class})
@@ -88,13 +84,6 @@ public class GlobalExceptionHandler {
     public R<String> handleResourceNotFoundException(ResourceNotFoundException e) {
         log.error("global ResourceNotFoundException:{}", e.getMessage());
         return R.error(e.getResultCode());
-    }
-
-    @ExceptionHandler({FdfsServerException.class})
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public R<String> handleFdfsServerException(FdfsServerException e) {
-        log.error("global FdfsServerException:{}", e.getMessage(), e);
-        return R.failed(e.getMessage());
     }
 
     @ExceptionHandler({MethodArgumentNotValidException.class})

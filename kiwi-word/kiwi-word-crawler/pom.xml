@@ -30,6 +30,16 @@
             <artifactId>kiwi-bdf</artifactId>
             <version>${kiwi.version}</version>
         </dependency>
+        <dependency>
+            <groupId>me.fengorz</groupId>
+            <artifactId>kiwi-common-tts</artifactId>
+            <version>${kiwi.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>me.fengorz</groupId>
+            <artifactId>kiwi-common-dfs</artifactId>
+            <version>${kiwi.version}</version>
+        </dependency>
         <!--myself end-->
         <dependency>
             <groupId>org.jsoup</groupId>

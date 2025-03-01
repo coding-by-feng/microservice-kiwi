@@ -17,8 +17,8 @@
 package me.fengorz.kiwi.dict.crawler;
 
 import me.fengorz.kiwi.common.sdk.util.json.KiwiJsonUtils;
-import me.fengorz.kiwi.dict.crawler.service.JsoupService;
-import me.fengorz.kiwi.dict.crawler.service.impl.JsoupServiceImpl;
+import me.fengorz.kiwi.crawler.service.JsoupService;
+import me.fengorz.kiwi.crawler.service.impl.JsoupServiceImpl;
 import me.fengorz.kiwi.word.api.dto.queue.FetchPhraseRunUpMqDTO;
 import me.fengorz.kiwi.word.api.dto.queue.result.FetchPhraseRunUpResultDTO;
 import me.fengorz.kiwi.word.api.exception.JsoupFetchConnectException;

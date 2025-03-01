@@ -17,11 +17,11 @@ package me.fengorz.kiwi.word.biz.service.operate.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.bdf.core.service.SeqService;
 import me.fengorz.kiwi.common.dfs.DfsService;
-import me.fengorz.kiwi.common.dfs.fastdfs.util.DfsUtils;
+import me.fengorz.kiwi.common.dfs.DfsUtils;
 import me.fengorz.kiwi.common.sdk.annotation.cache.KiwiCacheKey;
 import me.fengorz.kiwi.common.sdk.annotation.cache.KiwiCacheKeyPrefix;
 import me.fengorz.kiwi.common.sdk.annotation.log.LogMarker;
@@ -39,7 +39,6 @@ import me.fengorz.kiwi.common.sdk.util.lang.collection.KiwiCollectionUtils;
 import me.fengorz.kiwi.common.sdk.util.validate.KiwiAssertUtils;
 import me.fengorz.kiwi.common.sdk.web.security.SecurityUtils;
 import me.fengorz.kiwi.common.tts.enumeration.TtsSourceEnum;
-import me.fengorz.kiwi.common.tts.model.TtsProperties;
 import me.fengorz.kiwi.common.tts.service.TtsService;
 import me.fengorz.kiwi.word.api.common.ApiCrawlerConstants;
 import me.fengorz.kiwi.word.api.common.WordConstants;
@@ -82,7 +81,7 @@ import java.util.concurrent.Semaphore;
  */
 @Slf4j
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class ReviewServiceImpl implements ReviewService {
 
     private final BreakpointReviewMapper breakpointReviewMapper;
@@ -98,7 +97,6 @@ public class ReviewServiceImpl implements ReviewService {
     @Resource(name = "googleCloudStorageService")
     private DfsService dfsService;
     private final AudioService audioService;
-    private final TtsProperties ttsProperties;
     private final TtsService ttsService;
     private final ParaphraseTtsGenerationPayload paraphraseTtsGenerationPayload;
     private final RevisePermanentAudioHelper revisePermanentAudioHelper;

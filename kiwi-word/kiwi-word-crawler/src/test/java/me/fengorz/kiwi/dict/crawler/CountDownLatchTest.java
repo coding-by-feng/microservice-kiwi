@@ -16,7 +16,7 @@
 
 package me.fengorz.kiwi.dict.crawler;
 
-import me.fengorz.kiwi.dict.crawler.component.MqMQSender;
+import me.fengorz.kiwi.crawler.component.MqMQSender;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;

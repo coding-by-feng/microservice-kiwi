@@ -28,7 +28,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @Slf4j
 @Configuration
 @MapperScan("me.fengorz.kiwi.**.mapper")
-@ComponentScan("me.fengorz.kiwi")
+@ComponentScan("me.fengorz.kiwi.bdf.**")
 @EnableTransactionManagement(mode = AdviceMode.ASPECTJ)
 @Import({UtilsBeanConfiguration.class})
 @EnableAspectJAutoProxy(proxyTargetClass = true, exposeProxy = true)

@@ -10,20 +10,20 @@ source ~/.bashrc
 sudo touch /etc/containers/nodocker
 ```
 
-Create a command shortcut that represent docker ps on CentOS
+Create a command shortcut that represents docker ps on CentOS
 
-# 安装docker-compose
+# Install docker-compose
 
 ```
 sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
 ```
 
-## 本地上传安装
+## Local upload installation
 
-[docker-compose下载链接](https://github-releases.githubusercontent.com/15045751/e1ef3000-b16e-11eb-9df7-091c00bdf356?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIWNJYAX4CSVEH53A%2F20210612%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20210612T054621Z&X-Amz-Expires=300&X-Amz-Signature=4da20a27a079cd195b024bafc9f6c6200c02e47b9e45cbf862a3f00d25227ae7&X-Amz-SignedHeaders=host&actor_id=22954596&key_id=0&repo_id=15045751&response-content-disposition=attachment%3B%20filename%3Ddocker-compose-Linux-x86_64&response-content-type=application%2Foctet-stream "")
+[docker-compose download link](https://github-releases.githubusercontent.com/15045751/e1ef3000-b16e-11eb-9df7-091c00bdf356?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIWNJYAX4CSVEH53A%2F20210612%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20210612T054621Z&X-Amz-Expires=300&X-Amz-Signature=4da20a27a079cd195b024bafc9f6c6200c02e47b9e45cbf862a3f00d25227ae7&X-Amz-SignedHeaders=host&actor_id=22954596&key_id=0&repo_id=15045751&response-content-disposition=attachment%3B%20filename%3Ddocker-compose-Linux-x86_64&response-content-type=application%2Foctet-stream "")
 
 ```
-# 先下载
+# Download first
 sshpass -p fenxxx210 scp -r ~/Downloads/docker-compose-Linux-x86_64 root@119.29.200.130:/usr/local/bin
 mv docker-compose-Linux-x86_64 docker-compose
 chmod +x /usr/local/bin/docker-compose
@@ -31,7 +31,7 @@ ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
 docker-compose --version
 ```
 
-## yum安装
+## yum installation
 
 ```
 yum install docker-compose
@@ -84,15 +84,13 @@ git reset --hard origin/master
 git pull
 ```
 
-
-
 # host
 
 ```
 vi /etc/hosts
 ```
 
-将一下映射增加到hosts文件末尾
+Add the following mappings to the end of the hosts file
 
 ```
 127.0.0.1                                       fastdfs.fengorz.me
@@ -111,7 +109,7 @@ vi /etc/hosts
 127.0.0.1                                     kiwi-gate
 ```
 
-注意将上面your_ecs_ip替换成fastdfs所在云服务器的外网ip
+Note: Replace "your_ecs_ip" above with the public IP of the cloud server where fastdfs is located
 
 # Setup Environment Variables
 For Linux:
@@ -136,7 +134,7 @@ sudo docker exec -it kiwi-mysql bash
 mysql -h localhost -u root -p
 create database kiwi_db;
 exit
-# 迁移Mysql的kiwi_db表
+# Migrate the kiwi_db table in MySQL
 # replace the wildcard(My_Password) with my password
 mysqldump --host=cdb-0bhxucw9.gz.tencentcdb.com --port=10069 -uroot -pMy_Password -C --databases kiwi_db |mysql --host=localhost -uroot -pMy_Password kiwi_db
 mysql -h localhost -u root -p
@@ -152,7 +150,7 @@ exit
 docker pull redis:latest
 # replace the wildcard(My_Password) with my password
 docker run -itd --name kiwi-redis -p 6379:6379 redis --requirepass "My_Password"
-# 测试
+# Test
 docker exec -it kiwi-redis /bin/bash
 redis-cli
 keys *
@@ -167,7 +165,7 @@ docker pull rabbitmq:management
 docker run -d --hostname kiwi-rabbit -v ~/docker/rabbitmq:/tmp --name kiwi-rabbit --net=host rabbitmq:management
 ```
 
-# fastdfs（season/fastdfs）
+# fastdfs (season/fastdfs)
 
 ```
 docker run -ti -d --name tracker -v ~/tracker_data:/fastdfs/tracker/data --net=host season/fastdfs tracker
@@ -180,21 +178,21 @@ docker run -ti -d --name storage -v ~/storage_data:/fastdfs/storage/data -v ~/st
 # apt-get install vim
 
 # vi /fdfs_conf/storage.conf
-# 按?进入命令搜索模式，输入tracker_server，按回车，将后面的ip地址改成kiwi-fastdfs
+# Press ? to enter command search mode, type tracker_server, press Enter, change the IP address behind it to kiwi-fastdfs
 # exit
 
 docker container restart `docker ps -a| grep storage | awk '{print $1}' `
 ```
 
-# maven 安装
+# Install Maven
 
 ```
 yum install maven
 ```
 
-安装之后再项目根目录执行`mvn clean install -Dmaven.test.skip=true`
+After installation, execute `mvn clean install -Dmaven.test.skip=true` in the project root directory
 
-# 自动部署
+# Automatic Deployment
 
 ```
 cd ~/microservice-kiwi/kiwi-deploy/docker
@@ -208,7 +206,7 @@ chmod 777 deployKiwi.sh
 ```
 docker run -d -p 9200:9200 -p 9300:9300 --hostname kiwi-es -e "discovery.type=single-node" -e "xpack.security.enabled=true" -e "ES_JAVA_OPTS=-Xms512m -Xmx512m" --name kiwi-es -v es_config:/usr/share/elasticsearch/config  -v es_data:/usr/share/elasticsearch/data elasticsearch:7.16.1
  
-#进入容器
+# Enter the container
 /elasticsearch-setup-passwords auto
  
 docker pull docker.elastic.co/elasticsearch/elasticsearch:7.6.2
@@ -227,36 +225,36 @@ curl -XPUT -u xxsuperuser:xxxxx http://xxxxx:9200/_xpack/security/user/xxxxxxxus
 
 Install Chrome Elasticvue plugin and login to Elasticsearch server
 
-安装完了注意创建index，名为`kiwi_vocabulary`
+After installation, remember to create an index named `kiwi_vocabulary`
 
-## kibana安装
+## Install Kibana
 
-[Docker 官方](https://www.elastic.co/guide/en/kibana/current/docker.html#docker "")
+[Docker Official](https://www.elastic.co/guide/en/kibana/current/docker.html#docker "")
 
 ```
 docker pull docker.elastic.co/kibana/kibana:7.6.2
 docker run -d --link kiwi-es -p 5601:5601 docker.elastic.co/kibana/kibana:7.6.2
 ```
 
-## 安装ik分词器
+## Install IK Tokenizer
 
 ```
 sudo docker exec -it kiwi-es bash
-# elasticsearch的版本和ik分词器的版本需要保持一致，不然在重启的时候会失败。
+# The version of Elasticsearch and the IK tokenizer must match, otherwise it will fail on restart.
 elasticsearch-plugin install https://github.com/medcl/elasticsearch-analysis-ik/releases/download/v7.6.2/elasticsearch-analysis-ik-7.6.2.zip
 exit
 docker restart kiwi-es 
 ```
 
-# nginx运行前端项目
+# Run the frontend project with Nginx
 
-## 现将前端项目编译好上传到准备部署的目录
+## First compile the frontend project and upload it to the directory prepared for deployment
 
 ```
 sshpass -p PASSWORD scp -r LOCAL_UI_PROJECT_BUILD_PATH root@x.x.x.x:~/docker/ui/
 ```
 
-## 准备nginx环境
+## Prepare the Nginx environment
 
 ```
 docker pull nginx
@@ -264,16 +262,14 @@ docker build -f ~/microservice-kiwi/kiwi-deploy/kiwi-ui/Dockerfile -t kiwi-ui:1.
 docker run -d -v ~/docker/ui/dist/:/usr/share/nginx/html --net=host --name=kiwi-ui -it kiwi-ui:1.0
 ```
 
-## 更改kiwi-ui的nginx配置文件
+## Modify the Nginx configuration file for kiwi-ui
 
 ```
 sudo docker exec -it kiwi-ui bash
 exit
 ```
 
-在
-
-保存之后覆盖原来的default.conf重启kiwi-ui容器
+Save it and overwrite the original default.conf, then restart the kiwi-ui container
 
 ```
 sudo docker exec -it kiwi-ui bash
@@ -378,7 +374,6 @@ exit
 docker container restart `docker ps -a| grep kiwi-ui | awk '{print $1}'`
 ```
 
-
-## ssl证书免费申请、https协议配置
+## Free SSL certificate application and HTTPS protocol configuration
 
 https://pentagonal-icecream-1a5.notion.site/Free-SSL-Certificate-on-Nginx-Godaddy-1a5a4b6391df803b98aae953c17cd1fa?pvs=4

@@ -17,8 +17,8 @@
 package me.fengorz.kiwi.dict.crawler;
 
 import lombok.extern.slf4j.Slf4j;
-import me.fengorz.kiwi.dict.crawler.component.MqMQSender;
-import me.fengorz.kiwi.dict.crawler.component.scheduler.ChiefProducerSchedulerSetup;
+import me.fengorz.kiwi.crawler.component.MqMQSender;
+import me.fengorz.kiwi.crawler.component.scheduler.ChiefProducerSchedulerSetup;
 import org.springframework.boot.SpringApplication;
 
 /**

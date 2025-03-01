@@ -29,6 +29,7 @@ public interface EnvConstants {
     String DEV = "dev";
     String BASE = "base";
     String PROD = "prod";
+    String TEST = "test";
 
     String APPLICATION_NAME_KIWI_WORD_BIZ = "kiwi-word-biz";
     String APPLICATION_NAME_KIWI_WORD_BIZ_CRAWLER = "kiwi-word-biz-crawler";

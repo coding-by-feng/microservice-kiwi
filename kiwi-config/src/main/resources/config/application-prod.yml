@@ -28,8 +28,9 @@ spring:
     allow-bean-definition-overriding: true
   cloud:
     gcp:
+      project-id: ENC(k7DNqSwGcdkrFmiR+jB0BL00OB3QhJ0K0tRDkM7VZSd80hQW0wcktA==)
       credentials:
-        location: ENC(lv45mPT0Ou/M9Yxipd7illnIXtbmdKwCvnxzVNegj399qd0wlpTrrw==)
+        location: ENC(2wUISgeOdeJrFOe+LTi9a+Fmnlwt1HeDqaUmxmAOM83OL/b3Y79u0Q==)
 
 # feign 配置
 feign:
@@ -130,7 +131,7 @@ tts:
     api-key-10: 'changeme'
     api-key-11: 'changeme'
     api-key-12: 'changeme'
-    api-key-13: '05df621e8aae400ba2129ef154446119'
+    api-key-13: 'changeme'
     api-key-14: 'changeme'
     api-key-15: 'changeme'
     api-key-16: 'changeme'

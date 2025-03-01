@@ -17,7 +17,7 @@
 package me.fengorz.kiwi.test.dfs;
 
 import lombok.extern.slf4j.Slf4j;
-import me.fengorz.kiwi.common.dfs.fastdfs.config.DfsConfig;
+import me.fengorz.kiwi.common.dfs.DfsConfig;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 

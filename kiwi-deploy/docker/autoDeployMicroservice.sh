@@ -2,7 +2,7 @@
 
 ~/microservice-kiwi/kiwi-deploy/docker/stopAll.sh
 
-if [ "$1" == "ow" ]
+if [ "$1" == "-ow" ]
 then
   rm -rf ~/docker/kiwi/word/logs/*
   rm -rf ~/docker/kiwi/word/logs_02/*
@@ -26,9 +26,13 @@ else
   rm -rf ~/docker/kiwi/crawler/logs/*
 fi
 
-mvn clean install -Dmaven.test.skip=true -B
+# Check if -skip-mvn parameter is provided, if not, run mvn clean install 
+if [ "$2" != "-skip-mvn" ] 
+then 
+  mvn clean install -Dmaven.test.skip=true -B 
+fi
 
-if [ "$1" == "ow" ]
+if [ "$1" == "-ow" ]
 then
   mv -f ~/microservice-kiwi/kiwi-word/kiwi-word-biz/docker/biz/Dockerfile ~/docker/kiwi/word/biz
   mv -f ~/microservice-kiwi/kiwi-word/kiwi-word-biz/docker/crawler/Dockerfile ~/docker/kiwi/word/crawler
@@ -44,7 +48,7 @@ else
   mv -f ~/microservice-kiwi/kiwi-gateway/Dockerfile ~/docker/kiwi/gate/
 fi
 
-if [ "$1" == "ow" ]
+if [ "$1" == "-ow" ]
 then
   mv -f ~/.m2/repository/me/fengorz/kiwi-word-biz/2.0/kiwi-word-biz-2.0.jar ~/docker/kiwi/word/
   mv -f ~/.m2/repository/me/fengorz/kiwi-word-crawler/2.0/kiwi-word-crawler-2.0.jar ~/docker/kiwi/crawler/

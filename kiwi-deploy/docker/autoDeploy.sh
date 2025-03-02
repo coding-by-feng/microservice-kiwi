@@ -3,7 +3,7 @@
 
 echo "delete container beginning"
 
-if [ "$1" == "ow" ]
+if [ "$1" == "-ow" ]
 then
   docker rm -f  `docker ps -a| grep kiwi-word-biz | awk '{print $1}' `
   docker rm -f  `docker ps -a| grep kiwi-crawler | awk '{print $1}' `
@@ -19,7 +19,7 @@ fi
 
 echo "delete image beginning"
 
-if [ "$1" == "ow" ]
+if [ "$1" == "-ow" ]
 then
   docker rmi kiwi-word-biz:2.0
   docker rmi kiwi-crawler:2.0
@@ -35,7 +35,7 @@ fi
 
 echo "docker build beginning"
 
-if [ "$1" == "ow" ]
+if [ "$1" == "-ow" ]
 then
   docker build -f ~/docker/kiwi/word/biz/Dockerfile -t kiwi-word-biz:2.0 ~/docker/kiwi/word/
   docker build -f ~/docker/kiwi/crawler/Dockerfile -t kiwi-crawler:2.0 ~/docker/kiwi/crawler/
@@ -51,7 +51,7 @@ fi
 
 echo "podman-compose base beginning"
 
-if [ "$1" == "ow" ]
+if [ "$1" == "-ow" ]
 then
   echo "podman-compose only-word-service starting"
   podman-compose -f ~/microservice-kiwi/kiwi-deploy/docker/podman-compose-only-word-service.yml up -d

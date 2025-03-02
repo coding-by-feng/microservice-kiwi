@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
       - name: kiwi-eureka
-        image: kiwi-eureka:1.0
+        image: kiwi-eureka:2.0
         ports:
         - containerPort: 8762
         resources: {}

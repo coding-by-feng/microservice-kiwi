@@ -3,10 +3,13 @@ jasypt:
     password: ${KIWI_ENC_PASSWORD}
     poolSize: 2
 
+logging:
+  level:
+    org.springframework.boot: DEBUG
+    me.fengorz.kiwi.*: INFO
+
 server:
-  # 动态获取端口
   port: ${PORT:0}
-#  port: 5001
 
 spring:
   application:

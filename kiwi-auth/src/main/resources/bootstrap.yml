@@ -3,6 +3,11 @@ jasypt:
     password: ${KIWI_ENC_PASSWORD}
     poolSize: 2
 
+logging:
+  level:
+    org.springframework.boot: DEBUG
+    me.fengorz.kiwi.*: INFO
+
 server:
   port: 3001
 

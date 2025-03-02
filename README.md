@@ -192,6 +192,16 @@ yum install maven
 
 After installation, execute `mvn clean install -Dmaven.test.skip=true` in the project root directory
 
+```
+cd ~/microservice-kiwi/kiwi-common-tts/lib
+mvn install:install-file \
+    -Dfile=voicerss_tts.jar \
+    -DgroupId=voicerss \
+    -DartifactId=tts \
+    -Dversion=2.0 \
+    -Dpackaging=jar
+```
+
 # Automatic Deployment
 
 ```

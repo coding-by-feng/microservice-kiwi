@@ -18,12 +18,6 @@
             <groupId>me.fengorz</groupId>
             <artifactId>kiwi-word-api</artifactId>
             <version>${kiwi.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.baidu.aip</groupId>
-                    <artifactId>java-sdk</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>me.fengorz</groupId>

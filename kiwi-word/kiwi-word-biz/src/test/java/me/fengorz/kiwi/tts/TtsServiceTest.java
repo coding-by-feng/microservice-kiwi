@@ -33,6 +33,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.core.env.Environment;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.io.IOException;
@@ -54,7 +55,11 @@ public class TtsServiceTest {
     @Qualifier(BAIDU_TTS_SERVICE_IMPL)
     private BaiduTtsService baiduTtsService;
 
-    @Test
+    @Autowired
+    private Environment env;
+
+    // @Test
+
     @Disabled
     void autoSelectApiKey() {
         String apiKey = ttsService.autoSelectApiKey();
@@ -63,13 +68,14 @@ public class TtsServiceTest {
         log.info("autoSelectApiKey >>>> {}", apiKey);
     }
 
-    @Test
+    // @Test
     @Disabled
     void increaseApiKeyUsedTime() {
         Assertions.assertDoesNotThrow(() -> ttsService.increaseApiKeyUsedTime("d2f5e9a0fbf14318a475d808c0dddc62"));
     }
 
-    @Test
+    // @Test
+
     @Disabled
     void useTtsApiKey() {
         Assertions.assertDoesNotThrow(() -> {
@@ -91,13 +97,15 @@ public class TtsServiceTest {
         });
     }
 
-    @Test
+    // @Test
+
     @Disabled
     void queryTtsApiKeyUsed() {
         Assertions.assertEquals(0, ttsService.queryTtsApiKeyUsed(ttsProperties.getApiKey10()));
     }
 
-    @Test
+    // @Test
+
     @Disabled
     void deprecateApiKeyToday() {
         Assertions.assertDoesNotThrow(() -> ttsService.deprecateApiKeyToday(ttsProperties.getApiKey1()));
@@ -105,7 +113,8 @@ public class TtsServiceTest {
                 ttsService.queryTtsApiKeyUsed(ttsProperties.getApiKey1()));
     }
 
-    @Test
+    // @Test
+
     @Disabled
     void queryApiKeyUsed() {
         log.info("queryTtsApiKeyUsed [{}] used times is {}", ttsProperties.getApiKey10(),
@@ -120,13 +129,14 @@ public class TtsServiceTest {
                 ttsService.queryTtsApiKeyUsed(ttsProperties.getApiKey14()));
     }
 
-    @Test
+    // @Test
+
     @Disabled
     void refreshAllApiKey() {
         Assertions.assertDoesNotThrow(() -> ttsService.refreshAllApiKey());
     }
 
-    @Test
+     @Test
 //    @Disabled
     void queryAllTtsApiKeyUsed() {
         log.info("queryTtsApiKeyUsed [total] used times is {}",
@@ -136,7 +146,8 @@ public class TtsServiceTest {
         }
     }
 
-    @Test
+    // @Test
+
     @Disabled
     void assertTtsApiKeyNotNull() {
         for (String apiKey : ttsProperties.listApiKey()) {
@@ -144,7 +155,8 @@ public class TtsServiceTest {
         }
     }
 
-    @Test
+    // @Test
+
     @Disabled
     void testVoiceRssUrl() {
         log.info("testVoiceRssUrl response is {}",
@@ -152,7 +164,8 @@ public class TtsServiceTest {
     }
 
     @SneakyThrows
-    @Test
+    // @Test
+
     @Disabled
     public void testBaiduTts() {
         byte[] data = baiduTtsService.speech(
@@ -166,7 +179,8 @@ public class TtsServiceTest {
     }
 
     @SneakyThrows
-    @Test
+    // @Test
+
     @Disabled
     public void testVoiceRssTts() {
         byte[] data = ttsService.speechEnglish(ttsService.autoSelectApiKey(), "test voice rss");

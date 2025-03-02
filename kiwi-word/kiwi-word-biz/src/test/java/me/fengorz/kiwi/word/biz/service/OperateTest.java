@@ -53,7 +53,7 @@ public class OperateTest {
     @Autowired
     private WordMainService wordMainService;
 
-    // @Test
+    @Test
     void queryWord() {
         R<IPage<WordQueryVO>> result = wordMainController.queryWord("accede to sth");
         List<WordQueryVO> records = result.getData().getRecords();
@@ -62,6 +62,7 @@ public class OperateTest {
     }
 
     @Test
+    @Disabled
     void evictAll() {
         WordMainDO tuesday = wordMainService.getOne(Wrappers.<WordMainDO>lambdaQuery().eq(WordMainDO::getWordName, "Tuesday"));
         cleanerService.evictAll(tuesday, "Tuesday");

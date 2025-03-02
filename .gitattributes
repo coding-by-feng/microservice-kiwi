@@ -1,4 +1,4 @@
-kiwi-word/kiwi-word-biz/kiwi-word-biz-1.0.jar filter=lfs diff=lfs merge=lfs -text
+kiwi-word/kiwi-word-biz/kiwi-word-biz-2.0.jar filter=lfs diff=lfs merge=lfs -text
 kiwi-word/kiwi-word-biz/src/test/resources/grammar/modal-1.mp3 filter=lfs diff=lfs merge=lfs -text
 kiwi-word/kiwi-word-biz/src/test/resources/grammar/the-present-perfect.mp3 filter=lfs diff=lfs merge=lfs -text
 kiwi-word/kiwi-word-biz/src/main/resources/grammar/modal-1.mp3 filter=lfs diff=lfs merge=lfs -text

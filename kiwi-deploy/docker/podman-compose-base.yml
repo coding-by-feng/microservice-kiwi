@@ -1,6 +1,7 @@
 services:
   kiwi-eureka:
     image: kiwi-eureka:2.0
+    container_name: kiwi-eureka-2
     environment:
       - KIWI_ENC_PASSWORD=${KIWI_ENC_PASSWORD}
       - DB_IP=${DB_IP}
@@ -11,6 +12,7 @@ services:
     network_mode: "host"
   kiwi-config:
     image: kiwi-config:2.0
+    container_name: kiwi-config-2
     environment:
       - KIWI_ENC_PASSWORD=${KIWI_ENC_PASSWORD}
       - DB_IP=${DB_IP}

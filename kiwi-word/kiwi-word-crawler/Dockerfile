@@ -11,7 +11,7 @@ RUN mkdir /crawlerTmp
 #RUN apt-get -q update && apt-get -qy install netcat
 
 ADD kiwi-word-crawler-2.0.jar app.jar
-ADD /root/gcp-credentials.json /root/gcp-credentials.json
+COPY gcp-credentials.json /root/gcp-credentials.json
 
 #EXPOSE 6001
 # ENTRYPOINT java -jar -Xmx256m -Dspring.profiles.active=prod -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5006,suspend=n /app.jar > /logs/crawler.log

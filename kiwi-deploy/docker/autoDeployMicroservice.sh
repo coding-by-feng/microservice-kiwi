@@ -46,16 +46,16 @@ fi
 
 if [ "$1" == "ow" ]
 then
-  mv -f ~/.m2/repository/me/fengorz/kiwi-word-biz/1.0/kiwi-word-biz-2.0.jar ~/docker/kiwi/word/
-  mv -f ~/.m2/repository/me/fengorz/kiwi-word-crawler/1.0/kiwi-word-crawler-2.0.jar ~/docker/kiwi/crawler/
+  mv -f ~/.m2/repository/me/fengorz/kiwi-word-biz/2.0/kiwi-word-biz-2.0.jar ~/docker/kiwi/word/
+  mv -f ~/.m2/repository/me/fengorz/kiwi-word-crawler/2.0/kiwi-word-crawler-2.0.jar ~/docker/kiwi/crawler/
 else
-  mv -f ~/.m2/repository/me/fengorz/kiwi-eureka/1.0/kiwi-eureka-2.0.jar ~/docker/kiwi/eureka/
-  mv -f ~/.m2/repository/me/fengorz/kiwi-config/1.0/kiwi-config-2.0.jar ~/docker/kiwi/config/
-  mv -f ~/.m2/repository/me/fengorz/kiwi-upms-biz/1.0/kiwi-upms-biz-2.0.jar ~/docker/kiwi/upms/
-  mv -f ~/.m2/repository/me/fengorz/kiwi-auth/1.0/kiwi-auth-2.0.jar ~/docker/kiwi/auth/
-  mv -f ~/.m2/repository/me/fengorz/kiwi-gateway/1.0/kiwi-gateway-2.0.jar ~/docker/kiwi/gate/
-  mv -f ~/.m2/repository/me/fengorz/kiwi-word-biz/1.0/kiwi-word-biz-2.0.jar ~/docker/kiwi/word/
-  mv -f ~/.m2/repository/me/fengorz/kiwi-word-crawler/1.0/kiwi-word-crawler-2.0.jar ~/docker/kiwi/crawler/
+  mv -f ~/.m2/repository/me/fengorz/kiwi-eureka/2.0/kiwi-eureka-2.0.jar ~/docker/kiwi/eureka/
+  mv -f ~/.m2/repository/me/fengorz/kiwi-config/2.0/kiwi-config-2.0.jar ~/docker/kiwi/config/
+  mv -f ~/.m2/repository/me/fengorz/kiwi-upms-biz/2.0/kiwi-upms-biz-2.0.jar ~/docker/kiwi/upms/
+  mv -f ~/.m2/repository/me/fengorz/kiwi-auth/2.0/kiwi-auth-2.0.jar ~/docker/kiwi/auth/
+  mv -f ~/.m2/repository/me/fengorz/kiwi-gateway/2.0/kiwi-gateway-2.0.jar ~/docker/kiwi/gate/
+  mv -f ~/.m2/repository/me/fengorz/kiwi-word-biz/2.0/kiwi-word-biz-2.0.jar ~/docker/kiwi/word/
+  mv -f ~/.m2/repository/me/fengorz/kiwi-word-crawler/2.0/kiwi-word-crawler-2.0.jar ~/docker/kiwi/crawler/
 fi
 
 ~/microservice-kiwi/kiwi-deploy/docker/autoDeploy.sh $1

@@ -1,6 +1,6 @@
 services:
   kiwi-eureka:
-    image: kiwi-eureka:1.0
+    image: kiwi-eureka:2.0
     environment:
       - KIWI_ENC_PASSWORD=${KIWI_ENC_PASSWORD}
       - DB_IP=${DB_IP}
@@ -10,7 +10,7 @@ services:
       - /root/docker/kiwi/eureka/logs:/logs
     network_mode: "host"
   kiwi-config:
-    image: kiwi-config:1.0
+    image: kiwi-config:2.0
     environment:
       - KIWI_ENC_PASSWORD=${KIWI_ENC_PASSWORD}
       - DB_IP=${DB_IP}

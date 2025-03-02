@@ -19,7 +19,7 @@ spec:
         app: kiwi-config
     spec:
       containers:
-      - image: kiwi-config:1.0
+      - image: kiwi-config:2.0
         name: kiwi-config
         ports:
         - containerPort: 7771

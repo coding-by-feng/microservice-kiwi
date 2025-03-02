@@ -1,19 +1,17 @@
-# 加解密根密码
 jasypt:
   encryptor:
     password: ${KIWI_ENC_PASSWORD}
     poolSize: 2
+
+logging:
+  level:
+    org.springframework.boot: DEBUG
+    me.fengorz.kiwi.*: INFO
 
 server:
   port: 5003
 spring:
   application:
     name: kiwi-generator
-  datasource:
-    url: jdbc:mysql://rm-2ze1069p422u9507gso.mysql.rds.aliyuncs.com:3306/kiwi_db
-    username: fengorz
-    password: ENC(lP0tXFIClnyKAm534LBq0h0FBirDfHqC)
-    type: com.zaxxer.hikari.HikariDataSource
-    driver-class-name: com.mysql.cj.jdbc.Driver
 
 

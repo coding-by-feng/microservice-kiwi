@@ -3,8 +3,191 @@ jasypt:
     password: ${KIWI_ENC_PASSWORD}
     poolSize: 2
 
+logging:
+  level:
+    org.springframework.boot: DEBUG
+    me.fengorz.kiwi.*: INFO
+
+security:
+  oauth2:
+    client:
+      client-id: ENC(wORgugqWfXlIuzbal/3pjXTNXij/RSpo)
+      client-secret: ENC(rMd1buB3iI+si+W99eB+QFa3QburIEmY)
+      scope: server
+
 spring:
   application:
     name: kiwi-word-biz
   profiles:
     active: test
+  cloud:
+    config:
+      enabled: false
+    gcp:
+      project-id: ENC(k7DNqSwGcdkrFmiR+jB0BL00OB3QhJ0K0tRDkM7VZSd80hQW0wcktA==)
+      credentials:
+        location: file:/Users/zhanshifeng/gcp-credentials.json
+  oauth2:
+    resource:
+      token-info-uri: https://test-auth-server/oauth/check_token
+      user-info-uri: https://test-auth-server/oauth/userinfo
+      jwt:
+        key-uri: https://your-auth-server/.well-known/jwks.json  # Replace with your OAuth2 server’s JWKS endpoint
+      client:
+        client-id: test-client
+        client-secret: test-secret
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: ENC(2PE/BMMoNPbRCEaIyGfcSw==)
+    password: ENC(zF1rDpn+u8RZX5OTor7BpHzprZyrH+3P)
+    url: jdbc:mysql://${DB_IP}:3306/kiwi_db?useUnicode=true&characterEncoding=UTF-8&useSSL=false&autoReconnect=true&serverTimezone=Asia/Shanghai
+    hikari:
+      max-lifetime: 60000
+      connection-timeout: 60000
+      maximum-pool-size: 4
+      minimum-idle: 1
+  redis:
+    host: kiwi-redis
+    password: ENC(lP0tXFIClnyKAm534LBq0h0FBirDfHqC)
+    port: 6379
+    lettuce:
+      pool:
+        max-active: 4  # Maximum number of active connections (total connections in the pool)
+        max-idle: 2     # Maximum number of idle connections
+        min-idle: 0     # Minimum number of idle connections
+        time-between-eviction-runs: 30000  # Time between pool eviction runs (in milliseconds)
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 10MB
+      max-request-size: 20MB
+  rabbitmq:
+    host: kiwi-rabbitmq
+    port: 5672
+    username: ENC(K6oRfaFZN7XSXbmJrXHiXQ==)
+    password: ENC(cvON8OapdxM7/Tq88I5JuA==)
+  elasticsearch:
+    rest:
+      uris: kiwi-es:9200
+      username: ENC(NKy6wa5SuHBhQmfLWf6Zv8wf8sPMaE0b)
+      password: ENC(oj9wNYu52oQH1d9T0zHeGDLz7P7em71u)
+  main:
+    allow-bean-definition-overriding: true
+  autoconfigure:
+    exclude: org.springframework.boot.autoconfigure.amqp.RabbitAutoConfiguration,org.springframework.boot.autoconfigure.security.oauth2.OAuth2AutoConfiguration,org.springframework.boot.autoconfigure.security.oauth2.resource.servlet.OAuth2ResourceServerAutoConfiguration
+
+mybatis-plus:
+  mapper-locations: classpath*:mapper/**/*Mapper.xml
+  global-config:
+    banner: false
+    db-config:
+      id-type: id_worker
+      table-underline: true
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+      select-strategy: NOT_EMPTY
+  configuration:
+    map-underscore-to-camel-case: true
+
+ignore:
+  urls:
+    - /test/**
+    - /word/main/query/**
+    - /word/main/queryById/**
+    - /word/main/fuzzyQueryList/**
+    - /word/pronunciation/downloadVoice/**
+    - /word/main/query/**
+    - /word/fetch/**
+    - /word/main/variant/**
+    - /word/main/listOverlapAnyway
+    - /word/review/createTheDays
+    - /word/review/refreshAllApiKey
+    - /word/review/downloadReviewAudio/**
+    - /word/review/character/downloadReviewAudio/**
+    - /word/review/generateTtsVoice/**
+    - /word/review/generateTtsVoiceFromParaphraseId/**
+    - /grammar/mp3/**
+    - /grammar/srt/**
+  userNames:
+    - admin
+
+async:
+  config:
+    core:
+      pool:
+        size: 10
+    max:
+      pool:
+        size: 10
+    queue:
+      capacity: 5
+
+my:
+  config:
+    exclude-db: false
+    exclude-redis: false
+
+tts:
+  baidu:
+    app-id: "20116041"
+    api-key: "changeme"
+    secret-key: "changeme"
+  voicerss:
+    url: 'https://api.voicerss.org/?key={}&r=-2&hl=en-us&v=Mary&c=MP3&f=16khz_16bit_stereo&src=test'
+    api-key-1: 'changeme'
+    api-key-2: 'changeme'
+    api-key-3: 'changeme'
+    api-key-4: 'changeme'
+    api-key-5: 'changeme'
+    api-key-6: 'changeme'
+    api-key-7: 'changeme'
+    api-key-8: 'changeme'
+    api-key-9: 'changeme'
+    api-key-10: 'changeme'
+    api-key-11: 'changeme'
+    api-key-12: 'changeme'
+    api-key-13: 'changeme'
+    api-key-14: 'changeme'
+    api-key-15: 'changeme'
+    api-key-16: 'changeme'
+    api-key-17: 'changeme'
+    api-key-18: '3744309a79ff48588fc1b63928c68c91'
+    api-key-19: '3744309a79ff48588fc1b63928c68c91'
+    api-key-20: 'd2f5e9a0fbf14318a475d808c0dddc62'
+
+cache-control:
+  need-cache-api:
+    - /word/main/query
+    - /word/main/queryById
+    - /word/paraphrase/star/list/getItemDetail
+    - /word/pronunciation/downloadVoice
+    - /word/review/downloadReviewAudio
+    - /word/review/character/downloadReviewAudio
+    - /grammar/mp3
+
+
+fdfs:
+  connect-timeout: 30000
+  so-timeout: 60000
+  thumb-image:
+    width: 150
+    height: 150
+  tracker-list: kiwi-fastdfs:22122
+
+# 避免 Elasticsearch health check failed 异常
+management:
+  health:
+    elasticsearch:
+      enabled: false
+
+me:
+  fengorz:
+    file:
+      crawler:
+        voice:
+          tmpPath: "/Users/zhanshifeng/Documents/myDocument/temp/microSerivceVocabularyEnhancer"
+      vocabulary:
+        word:
+          list:
+            path: "/Users/zhanshifeng/Downloads"

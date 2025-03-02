@@ -21,7 +21,6 @@
         <module>kiwi-config</module>
         <module>kiwi-gateway</module>
         <module>kiwi-common</module>
-        <module>kiwi-visual</module>
         <module>kiwi-test</module>
     </modules>
 
@@ -142,6 +141,12 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.vaadin.external.google</groupId>
+                    <artifactId>android-json</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>

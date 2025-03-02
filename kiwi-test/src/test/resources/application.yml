@@ -39,7 +39,7 @@ spring:
     hikari:
       max-lifetime: 60000
       connection-timeout: 60000
-      maximum-pool-size: 100
+      maximum-pool-size: 4
 
 # feign 配置
 feign:

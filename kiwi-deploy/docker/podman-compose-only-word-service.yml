@@ -1,6 +1,6 @@
 services:
   kiwi-word-biz:
-    image: kiwi-word-biz:1.0
+    image: kiwi-word-biz:2.0
     environment:
       - KIWI_ENC_PASSWORD=${KIWI_ENC_PASSWORD}
       - DB_IP=${DB_IP}
@@ -9,7 +9,7 @@ services:
       - /root/docker/kiwi/word/bizTmp:/wordTmp
     network_mode: "host"
   kiwi-crawler:
-    image: kiwi-crawler:1.0
+    image: kiwi-crawler:2.0
     environment:
       - KIWI_ENC_PASSWORD=${KIWI_ENC_PASSWORD}
       - DB_IP=${DB_IP}

@@ -1,6 +1,11 @@
 server:
   port: 5002
 
+logging:
+  level:
+    org.springframework.boot: DEBUG
+    me.fengorz.kiwi.*: INFO
+
 spring:
   application:
     name: kiwi-flow

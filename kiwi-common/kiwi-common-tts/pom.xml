@@ -40,13 +40,17 @@
             <groupId>voicerss</groupId>
             <artifactId>tts</artifactId>
             <version>2.0</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/voicerss_tts.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>com.baidu.aip</groupId>
             <artifactId>java-sdk</artifactId>
             <version>${baidu.aip.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-simple</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>me.fengorz</groupId>
@@ -62,7 +66,7 @@
         <dependency>
             <groupId>com.squareup.okhttp3</groupId>
             <artifactId>okhttp</artifactId>
-            <version>4.9.3</version>
+            <version>${okhttp.version}</version>
         </dependency>
 
     </dependencies>

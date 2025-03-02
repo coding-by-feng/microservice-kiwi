@@ -13,6 +13,7 @@ import me.fengorz.kiwi.common.sdk.exception.dfs.DfsOperateException;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayInputStream;
@@ -27,6 +28,7 @@ import java.util.Set;
  * @Date 26/02/2025 3:04pm
  */
 @Slf4j
+@Primary
 @Service("googleCloudStorageService")
 public class GoogleCloudStorageServiceImpl implements DfsService {
 

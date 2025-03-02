@@ -3,23 +3,26 @@
 
 echo "delete container beginning"
 
-docker rm -f  `docker ps -a| grep kiwi-eureka | awk '{print $1}' `
-docker rm -f  `docker ps -a| grep kiwi-config | awk '{print $1}' `
-docker rm -f  `docker ps -a| grep kiwi-gate | awk '{print $1}' `
-docker rm -f  `docker ps -a| grep kiwi-upms | awk '{print $1}' `
-docker rm -f  `docker ps -a| grep kiwi-auth | awk '{print $1}' `
-docker rm -f  `docker ps -a| grep kiwi-word-biz | awk '{print $1}' `
-docker rm -f  `docker ps -a| grep kiwi-crawler | awk '{print $1}' `
+# Force remove containers if they exist
+for container in $(podman ps -a | grep -E "kiwi-eureka|kiwi-config|kiwi-gate|kiwi-upms|kiwi-auth|kiwi-word-biz|kiwi-crawler" | awk '{print $1}'); do
+    [ -n "$container" ] && podman rm -f "$container"
+done
+
+# Clean up any Docker containers as well (since you're mixing Docker and Podman)
+for container in $(docker ps -a | grep -E "kiwi-eureka|kiwi-config|kiwi-gate|kiwi-upms|kiwi-auth|kiwi-word-biz|kiwi-crawler" | awk '{print $1}'); do
+    [ -n "$container" ] && docker rm -f "$container"
+done
 
 echo "delete image beginning"
 
-docker rmi kiwi-eureka:2.0
-docker rmi kiwi-config:2.0
-docker rmi kiwi-upms:2.0
-docker rmi kiwi-auth:2.0
-docker rmi kiwi-gate:2.0
-docker rmi kiwi-word-biz:2.0
-docker rmi kiwi-crawler:2.0
+# Remove images with Podman and Docker
+podman rmi -f kiwi-eureka:2.0 2>/dev/null || true
+podman rmi -f kiwi-config:2.0 2>/dev/null || true
+podman rmi -f kiwi-upms:2.0 2>/dev/null || true
+podman rmi -f kiwi-auth:2.0 2>/dev/null || true
+podman rmi -f kiwi-gate:2.0 2>/dev/null || true
+podman rmi -f kiwi-word-biz:2.0 2>/dev/null || true
+podman rmi -f kiwi-crawler:2.0 2>/dev/null || true
 
 echo "docker build beginning"
 
@@ -33,12 +36,19 @@ docker build -f ~/docker/kiwi/crawler/Dockerfile -t kiwi-crawler:2.0 ~/docker/ki
 
 echo "podman-compose base beginning"
 
-podman-compose -f ~/microservice-kiwi/kiwi-deploy/docker/podman-compose-base.yml up -d
+# Ensure images are available to Podman (tag Docker-built images for Podman)
+for image in kiwi-eureka:2.0 kiwi-config:2.0 kiwi-upms:2.0 kiwi-auth:2.0 kiwi-gate:2.0 kiwi-word-biz:2.0 kiwi-crawler:2.0; do
+    docker tag "$image" "localhost/$image"
+done
+
+podman-compose -f ~/microservice-kiwi/kiwi-deploy/docker/podman-compose-base.yml up -d --force-recreate --remove-orphans
 echo "success wait 100s"
 sleep 100s
 echo "podman-compose service beginning"
-podman-compose -f ~/microservice-kiwi/kiwi-deploy/docker/podman-compose-service.yml up -d
+podman-compose -f ~/microservice-kiwi/kiwi-deploy/docker/podman-compose-service.yml up -d --force-recreate --remove-orphans
 
-docker stop `docker ps -a| grep kiwi-crawler | awk '{print $1}' `
+# Stop crawler using Podman (since we're using podman-compose)
+crawler_id=$(podman ps -a | grep kiwi-crawler | awk '{print $1}')
+[ -n "$crawler_id" ] && podman stop "$crawler_id"
 
 echo "crawler service was stopped, other service have finished, good job!"

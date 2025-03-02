@@ -85,6 +85,7 @@ git remote add origin https://github.com/coding-by-feng/microservice-kiwi.git
 git fetch --all
 git reset --hard origin/master
 git pull
+ln -s microservice-kiwi/kiwi-deploy/docker/deployKiwi.sh ~/easy-deploy
 ```
 
 # host

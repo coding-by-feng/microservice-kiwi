@@ -28,15 +28,16 @@ git pull
 
 chmod 777 ~/microservice-kiwi/kiwi-deploy/docker/*.sh
 
-rm -rf ~/docker/kiwi/eureka/logs/*
-rm -rf ~/docker/kiwi/config/logs/*
-rm -rf ~/docker/kiwi/upms/logs/*
-rm -rf ~/docker/kiwi/auth/logs/*
-rm -rf ~/docker/kiwi/gate/logs/*
-rm -rf ~/docker/kiwi/word/logs/*
-rm -rf ~/docker/kiwi/word/crawlerTmp/*
-rm -rf ~/docker/kiwi/word/bizTmp/*
-rm -rf ~/docker/kiwi/crawler/logs/*
+# Replace rm -rf with find -delete to handle large numbers of files
+find ~/docker/kiwi/eureka/logs/ -type f -delete
+find ~/docker/kiwi/config/logs/ -type f -delete
+find ~/docker/kiwi/upms/logs/ -type f -delete
+find ~/docker/kiwi/auth/logs/ -type f -delete
+find ~/docker/kiwi/gate/logs/ -type f -delete
+find ~/docker/kiwi/word/logs/ -type f -delete
+find ~/docker/kiwi/word/crawlerTmp/ -type f -delete
+find ~/docker/kiwi/word/bizTmp/ -type f -delete
+find ~/docker/kiwi/crawler/logs/ -type f -delete
 
 # Check if -skip-mvn parameter is provided, if not, run mvn clean install
 if [ "$1" != "-skip-mvn" ]

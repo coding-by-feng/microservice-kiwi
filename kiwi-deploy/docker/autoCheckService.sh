@@ -8,7 +8,7 @@ do
         if [ $crawlerCode != $runningCode ]
         then
                 time=$(date "+%Y-%m-%d %H:%M:%S")
-                docker container start `docker ps -a| grep docker_kiwi-crawler_1 | awk '{print $1}' `
+                docker container start `docker ps -a| grep docker_kiwi-crawler | awk '{print $1}' `
                 echo $time Word-Crawler Service has run just now, sleep
                 sleep 60s
         else

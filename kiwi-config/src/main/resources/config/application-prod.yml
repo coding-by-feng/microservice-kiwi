@@ -30,7 +30,7 @@ spring:
     gcp:
       project-id: ENC(k7DNqSwGcdkrFmiR+jB0BL00OB3QhJ0K0tRDkM7VZSd80hQW0wcktA==)
       credentials:
-        location: ENC(2wUISgeOdeJrFOe+LTi9a+Fmnlwt1HeDqaUmxmAOM83OL/b3Y79u0Q==)
+        location: ENC(AV6a8RCHaKt/P9qGX+jthL1KSo3jtcsvJRVg7Op+60hXNakLsJqDAg==)
 
 # feign 配置
 feign:

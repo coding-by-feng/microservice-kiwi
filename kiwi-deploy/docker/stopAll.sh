@@ -1,15 +1,15 @@
 #!/bin/bash
 
-killall autoCheckService.sh
+# Stop autoCheckService if running
+if pgrep -f "autoCheckService.sh" >/dev/null; then
+  echo "Stopping autoCheckService..."
+  pkill -f "autoCheckService.sh"
+fi
 
-echo "stop container beginning"
+echo "Stopping containers..."
 
-docker stop $(docker ps -a| grep kiwi-crawler | awk '{print $1}' )
-docker stop $(docker ps -a| grep kiwi-word-biz | awk '{print $1}' )
-docker stop $(docker ps -a| grep kiwi-upms | awk '{print $1}' )
-docker stop $(docker ps -a| grep kiwi-auth | awk '{print $1}' )
-docker stop $(docker ps -a| grep kiwi-gate | awk '{print $1}' )
-docker stop $(docker ps -a| grep kiwi-config | awk '{print $1}' )
-docker stop $(docker ps -a| grep kiwi-eureka | awk '{print $1}' )
+# Stop all kiwi-* containers with one command
+docker stop $(docker ps -a -q --filter "name=kiwi-") 2>/dev/null || true
+podman stop $(podman ps -a -q --filter "name=kiwi-") 2>/dev/null || true
 
-echo "stop container success"
+echo "Containers stopped successfully"

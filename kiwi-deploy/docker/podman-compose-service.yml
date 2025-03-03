@@ -1,7 +1,6 @@
 services:
   kiwi-gate:
     image: kiwi-gate:2.0
-    container_name: kiwi-gate-2
     environment:
       - KIWI_ENC_PASSWORD=${KIWI_ENC_PASSWORD}
       - DB_IP=${DB_IP}
@@ -10,7 +9,6 @@ services:
     network_mode: "host"
   kiwi-upms:
     image: kiwi-upms:2.0
-    container_name: kiwi-upms-2
     environment:
       - KIWI_ENC_PASSWORD=${KIWI_ENC_PASSWORD}
       - DB_IP=${DB_IP}
@@ -19,7 +17,6 @@ services:
     network_mode: "host"
   kiwi-auth:
     image: kiwi-auth:2.0
-    container_name: kiwi-auth-2
     environment:
       - KIWI_ENC_PASSWORD=${KIWI_ENC_PASSWORD}
       - DB_IP=${DB_IP}
@@ -28,7 +25,6 @@ services:
     network_mode: "host"
   kiwi-word-biz:
     image: kiwi-word-biz:2.0
-    container_name: kiwi-word-biz-2
     environment:
       - KIWI_ENC_PASSWORD=${KIWI_ENC_PASSWORD}
       - DB_IP=${DB_IP}
@@ -40,7 +36,6 @@ services:
       - kiwi-gate
   kiwi-crawler:
     image: kiwi-crawler:2.0
-    container_name: kiwi-crawler-2
     environment:
       - KIWI_ENC_PASSWORD=${KIWI_ENC_PASSWORD}
       - DB_IP=${DB_IP}

@@ -71,7 +71,7 @@ cd ../ui
 mkdir dist nginx
 # download gcp key json on root directory
 cp /root/gcp-credentials.json ~/docker/kiwi/word/
-cp /root/gcp-credentials.json ~/docker/kiwi/cralwer/
+cp /root/gcp-credentials.json ~/docker/kiwi/crawler/
 ```
 
 # git pull
@@ -85,6 +85,7 @@ git remote add origin https://github.com/coding-by-feng/microservice-kiwi.git
 git fetch --all
 git reset --hard origin/master
 git pull
+ln -s microservice-kiwi/kiwi-deploy/docker/deployKiwi.sh ~/easy-deploy
 ```
 
 # host
@@ -117,13 +118,16 @@ Note: Replace "your_ecs_ip" above with the public IP of the cloud server where f
 # Setup Environment Variables
 For Linux:
 ```
+vi ~/.bashrc
 export KIWI_ENC_PASSWORD="xxxx"
+export DB_IP="xxx.xxx.xxx.xxx"
 source ~/.bashrc
 ```
 For My Mac:
 ```
 vi ~/.zshrc 
 export KIWI_ENC_PASSWORD="xxxx"
+export DB_IP="xxx.xxx.xxx.xxx"
 source ~/.zshrc
 ```
 
@@ -139,12 +143,12 @@ create database kiwi_db;
 exit
 # Migrate the kiwi_db table in MySQL
 # replace the wildcard(My_Password) with my password
-mysqldump --host=cdb-0bhxucw9.gz.tencentcdb.com --port=10069 -uroot -pMy_Password -C --databases kiwi_db |mysql --host=localhost -uroot -pMy_Password kiwi_db
-mysql -h localhost -u root -p
-use kiwi_db
-select * from star_rel_his limit 0, 100;
-exit
-exit
+
+[//]: # (mysqldump --host=cdb-0bhxucw9.gz.tencentcdb.com --port=10069 -uroot -pMy_Password -C --databases kiwi_db |mysql --host=localhost -uroot -pMy_Password kiwi_db&#41;)
+[//]: # (mysql -h localhost -u root -p)
+[//]: # (use kiwi_db)
+[//]: # (select * from star_rel_his limit 0, 100;)
+[//]: # (exit)
 ```
 
 # redis
@@ -220,19 +224,11 @@ chmod 777 deployKiwi.sh
 docker run -d -p 9200:9200 -p 9300:9300 --hostname kiwi-es -e "discovery.type=single-node" -e "xpack.security.enabled=true" -e "ES_JAVA_OPTS=-Xms512m -Xmx512m" --name kiwi-es -v es_config:/usr/share/elasticsearch/config  -v es_data:/usr/share/elasticsearch/data elasticsearch:7.16.1
  
 # Enter the container
-/elasticsearch-setup-passwords auto
+docker exec -it kiwi-es bash
  
-docker pull docker.elastic.co/elasticsearch/elasticsearch:7.6.2
-docker run -d --name kiwi-es -p 9200:9200 -p 9300:9300 -e "discovery.type=single-node" docker.elastic.co/elasticsearch/elasticsearch:7.6.2
-curl http://localhost:9200
+elasticsearch-users useradd root -r superuser
 
-elasticsearch-users useradd xxsuperuser -r superuser
-
-curl -XPUT -u xxsuperuser:xxxxx http://xxxxx:9200/_xpack/security/user/xxxxxxxusername/_password -H 
-"Content-Type: application/json" -d '
-{
-  "password": "xxxx"
-}'
+curl -XPUT -u root:xxxxx http://xxxxx:9200/_xpack/security/user/xxxxxxxusername/_password -H "Content-Type: application/json" -d ' { "password": "xxxx" }'
 
 ```
 
@@ -254,7 +250,7 @@ docker run -d --link kiwi-es -p 5601:5601 docker.elastic.co/kibana/kibana:7.6.2
 ```
 sudo docker exec -it kiwi-es bash
 # The version of Elasticsearch and the IK tokenizer must match, otherwise it will fail on restart.
-elasticsearch-plugin install https://github.com/medcl/elasticsearch-analysis-ik/releases/download/v7.6.2/elasticsearch-analysis-ik-7.6.2.zip
+elasticsearch-plugin install https://github.com/medcl/elasticsearch-analysis-ik/releases/download/v6.3.0/elasticsearch-analysis-ik-6.3.0.zip
 exit
 docker restart kiwi-es 
 ```

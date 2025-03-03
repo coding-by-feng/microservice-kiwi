@@ -9,7 +9,8 @@ fi
 echo "Stopping containers..."
 
 # Stop all kiwi-* containers with one command
-docker stop $(docker ps -a -q --filter "name=kiwi-") 2>/dev/null || true
-podman stop $(podman ps -a -q --filter "name=kiwi-") 2>/dev/null || true
+for container in $(podman ps -a | grep -E "kiwi-crawler|kiwi-word-biz|kiwi-upms|kiwi-auth|kiwi-gate|kiwi-config|kiwi-eureka" | awk '{print $1}'); do
+    [ -n "$container" ] && podman stop "$container"
+done
 
 echo "Containers stopped successfully"

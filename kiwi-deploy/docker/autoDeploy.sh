@@ -3,13 +3,19 @@
 echo "delete container beginning"
 
 # Force remove containers if they exist
-for container in $(podman ps -a | grep -E "kiwi-eureka|kiwi-config|kiwi-gate|kiwi-upms|kiwi-auth|kiwi-word-biz|kiwi-crawler" | awk '{print $1}'); do
-    [ -n "$container" ] && podman rm -f "$container"
-done
+for container_id in $(podman ps -a | grep -E "kiwi-crawler|kiwi-word-biz|kiwi-upms|kiwi-auth|kiwi-gate|kiwi-config|kiwi-eureka" | awk '{print $1}'); do
+    if [ -n "$container_id" ]; then
+        # Get the container name
+        container_name=$(podman inspect --format '{{.Name}}' "$container_id" 2>/dev/null)
 
-# Clean up any Docker containers as well (since you're mixing Docker and Podman)
-for container in $(docker ps -a | grep -E "kiwi-eureka|kiwi-config|kiwi-gate|kiwi-upms|kiwi-auth|kiwi-word-biz|kiwi-crawler" | awk '{print $1}'); do
-    [ -n "$container" ] && docker rm -f "$container"
+        # Print container ID and name
+        echo "Removing container ID: $container_id, Name: $container_name"
+
+        # Remove the container
+        podman rm -f "$container_id"
+
+        echo "Removed"
+    fi
 done
 
 echo "docker build beginning"
@@ -28,8 +34,8 @@ for image in kiwi-{eureka,config,upms,auth,gate,word-biz,crawler}:2.0; do
 done
 
 echo "podman-compose base beginning"
-podman-compose --project-name kiwi-base -f ~/microservice-kiwi/kiwi-deploy/docker/podman-compose-base.yml up -d --force-recreate --remove-orphans --build || { echo "Base compose failed"; exit 1; }
-podman-compose --project-name kiwi-base -f ~/microservice-kiwi/kiwi-deploy/docker/podman-compose-base.yml up -d --force-recreate --remove-orphans --build 2>/dev/null || { echo "Base compose failed"; exit 1; }
+podman-compose --project-name kiwi-base -f ~/microservice-kiwi/kiwi-deploy/docker/podman-compose-base.yml up -d --remove-orphans --build || { echo "Base compose failed"; exit 1; }
+podman-compose --project-name kiwi-base -f ~/microservice-kiwi/kiwi-deploy/docker/podman-compose-base.yml up -d --remove-orphans --build 2>/dev/null || { echo "Base compose failed"; exit 1; }
 echo "Success, waiting 100s..."
 sleep 100s
 

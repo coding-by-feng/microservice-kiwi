@@ -2,8 +2,6 @@
 
 echo "delete container beginning"
 
-echo "delete container beginning"
-
 # Stop and remove all pods first to handle dependencies
 podman pod stop -a 2>/dev/null || true
 podman pod rm -f -a 2>/dev/null || true
@@ -21,11 +19,13 @@ done
 
 echo "docker build beginning"
 
-# Build all images in one go
-for service in eureka config upms auth gate "word/biz" crawler; do
-  echo "Building $service..."
-  docker build -f ~/docker/kiwi/${service/Dockerfile/Dockerfile} -t kiwi-${service//\//-}:2.0 ~/docker/kiwi/${service%/*}/ || { echo "Build failed for $service"; exit 1; }
-done
+docker build -f ~/docker/kiwi/eureka/Dockerfile -t kiwi-eureka:2.0 ~/docker/kiwi/eureka/
+docker build -f ~/docker/kiwi/config/Dockerfile -t kiwi-config:2.0 ~/docker/kiwi/config/
+docker build -f ~/docker/kiwi/upms/Dockerfile -t kiwi-upms:2.0 ~/docker/kiwi/upms/
+docker build -f ~/docker/kiwi/auth/Dockerfile -t kiwi-auth:2.0 ~/docker/kiwi/auth/
+docker build -f ~/docker/kiwi/gate/Dockerfile -t kiwi-gate:2.0 ~/docker/kiwi/gate/
+docker build -f ~/docker/kiwi/word/biz/Dockerfile -t kiwi-word-biz:2.0 ~/docker/kiwi/word/
+docker build -f ~/docker/kiwi/crawler/Dockerfile -t kiwi-crawler:2.0 ~/docker/kiwi/crawler/
 
 # Tag images for Podman
 for image in kiwi-{eureka,config,upms,auth,gate,word-biz,crawler}:2.0; do

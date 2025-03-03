@@ -3,6 +3,10 @@
 
 echo "delete container beginning"
 
+# Stop and remove all pods first to handle dependencies
+podman pod stop -a 2>/dev/null || true
+podman pod rm -f -a 2>/dev/null || true
+
 # Force remove containers if they exist
 for container in $(podman ps -a | grep -E "kiwi-eureka|kiwi-config|kiwi-gate|kiwi-upms|kiwi-auth|kiwi-word-biz|kiwi-crawler" | awk '{print $1}'); do
     [ -n "$container" ] && podman rm -f "$container"

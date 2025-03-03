@@ -2,11 +2,6 @@
 
 echo "delete container beginning"
 
-# Stop and remove all pods first to handle dependencies
-podman pod stop -a 2>/dev/null || true
-podman pod rm -f -a 2>/dev/null || true
-podman rm -f -a 2>/dev/null || true  # Remove all Podman containers
-
 # Force remove containers if they exist
 for container in $(podman ps -a | grep -E "kiwi-eureka|kiwi-config|kiwi-gate|kiwi-upms|kiwi-auth|kiwi-word-biz|kiwi-crawler" | awk '{print $1}'); do
     [ -n "$container" ] && podman rm -f "$container"
@@ -34,6 +29,7 @@ done
 
 echo "podman-compose base beginning"
 podman-compose --project-name kiwi-base -f ~/microservice-kiwi/kiwi-deploy/docker/podman-compose-base.yml up -d --force-recreate --remove-orphans --build || { echo "Base compose failed"; exit 1; }
+podman-compose --project-name kiwi-base -f ~/microservice-kiwi/kiwi-deploy/docker/podman-compose-base.yml up -d --force-recreate --remove-orphans --build 2>/dev/null || { echo "Base compose failed"; exit 1; }
 echo "Success, waiting 100s..."
 sleep 100s
 

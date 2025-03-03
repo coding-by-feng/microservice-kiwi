@@ -8,9 +8,29 @@ fi
 
 echo "Stopping containers..."
 
-# Stop all kiwi-* containers with one command
-for container in $(podman ps -a | grep -E "kiwi-crawler|kiwi-word-biz|kiwi-upms|kiwi-auth|kiwi-gate|kiwi-config|kiwi-eureka" | awk '{print $1}'); do
-    [ -n "$container" ] && podman stop "$container"
+# Define the desired stop order
+desired_order=("kiwi-crawler" "kiwi-word-biz" "kiwi-upms" "kiwi-auth" "kiwi-gate" "kiwi-config" "kiwi-eureka")
+
+# Stop containers in the specified order
+for name in "${desired_order[@]}"; do
+    container_id=$(podman ps -a --filter "name=$name" --format "{{.ID}}")
+    if [ -n "$container_id" ]; then
+        echo "Stopping container: $name"
+        podman stop "$container_id"
+    fi
 done
 
 echo "Containers stopped successfully"
+
+echo "delete container beginning"
+
+# Force remove containers if they exist
+for name in "${desired_order[@]}"; do
+    container_id=$(podman ps -a --filter "name=$name" --format "{{.ID}}")
+    if [ -n "$container_id" ]; then
+        echo "Removing container: $name with ID: $container_id"
+        podman rm -f "$container_id"
+        echo "Removed"
+    fi
+done
+

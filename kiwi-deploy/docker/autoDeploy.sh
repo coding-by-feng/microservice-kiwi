@@ -1,23 +1,5 @@
 #!/bin/bash
 
-echo "delete container beginning"
-
-# Force remove containers if they exist
-for container_id in $(podman ps -a | grep -E "kiwi-crawler|kiwi-word-biz|kiwi-upms|kiwi-auth|kiwi-gate|kiwi-config|kiwi-eureka" | awk '{print $1}'); do
-    if [ -n "$container_id" ]; then
-        # Get the container name
-        container_name=$(podman inspect --format '{{.Name}}' "$container_id" 2>/dev/null)
-
-        # Print container ID and name
-        echo "Removing container ID: $container_id, Name: $container_name"
-
-        # Remove the container
-        podman rm -f "$container_id"
-
-        echo "Removed"
-    fi
-done
-
 echo "docker build beginning"
 
 docker build -f ~/docker/kiwi/eureka/Dockerfile -t kiwi-eureka:2.0 ~/docker/kiwi/eureka/

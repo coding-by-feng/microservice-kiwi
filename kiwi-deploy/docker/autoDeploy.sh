@@ -1,26 +1,5 @@
 #!/bin/bash
 
-
-echo "delete container beginning"
-
-docker rm -f  `docker ps -a| grep kiwi-eureka | awk '{print $1}' `
-docker rm -f  `docker ps -a| grep kiwi-config | awk '{print $1}' `
-docker rm -f  `docker ps -a| grep kiwi-gate | awk '{print $1}' `
-docker rm -f  `docker ps -a| grep kiwi-upms | awk '{print $1}' `
-docker rm -f  `docker ps -a| grep kiwi-auth | awk '{print $1}' `
-docker rm -f  `docker ps -a| grep kiwi-word-biz | awk '{print $1}' `
-docker rm -f  `docker ps -a| grep kiwi-crawler | awk '{print $1}' `
-
-echo "delete image beginning"
-
-docker rmi kiwi-eureka:2.0
-docker rmi kiwi-config:2.0
-docker rmi kiwi-upms:2.0
-docker rmi kiwi-auth:2.0
-docker rmi kiwi-gate:2.0
-docker rmi kiwi-word-biz:2.0
-docker rmi kiwi-crawler:2.0
-
 echo "docker build beginning"
 
 docker build -f ~/docker/kiwi/eureka/Dockerfile -t kiwi-eureka:2.0 ~/docker/kiwi/eureka/
@@ -31,14 +10,22 @@ docker build -f ~/docker/kiwi/gate/Dockerfile -t kiwi-gate:2.0 ~/docker/kiwi/gat
 docker build -f ~/docker/kiwi/word/biz/Dockerfile -t kiwi-word-biz:2.0 ~/docker/kiwi/word/
 docker build -f ~/docker/kiwi/crawler/Dockerfile -t kiwi-crawler:2.0 ~/docker/kiwi/crawler/
 
+# Tag images for Podman
+for image in kiwi-{eureka,config,upms,auth,gate,word-biz,crawler}:2.0; do
+  docker tag "$image" "localhost/$image"
+done
+
 echo "podman-compose base beginning"
-
-podman-compose -f ~/microservice-kiwi/kiwi-deploy/docker/podman-compose-base.yml up -d
-echo "success wait 100s"
+podman-compose --project-name kiwi-base -f ~/microservice-kiwi/kiwi-deploy/docker/podman-compose-base.yml up -d --remove-orphans --build || { echo "Base compose failed"; exit 1; }
+podman-compose --project-name kiwi-base -f ~/microservice-kiwi/kiwi-deploy/docker/podman-compose-base.yml up -d --remove-orphans --build 2>/dev/null || { echo "Base compose failed"; exit 1; }
+echo "Success, waiting 100s..."
 sleep 100s
+
 echo "podman-compose service beginning"
-podman-compose -f ~/microservice-kiwi/kiwi-deploy/docker/podman-compose-service.yml up -d
+podman-compose --project-name kiwi-service -f ~/microservice-kiwi/kiwi-deploy/docker/podman-compose-service.yml up -d --force-recreate --remove-orphans --build || { echo "Service compose failed"; exit 1; }
 
-docker stop `docker ps -a| grep kiwi-crawler | awk '{print $1}' `
+# Stop crawler
+crawler_id=$(podman ps -a -q --filter "name=kiwi-crawler")
+[ -n "$crawler_id" ] && podman stop "$crawler_id" && echo "Crawler stopped"
 
-echo "crawler service was stopped, other service have finished, good job!"
+echo "Deployment completed successfully!"

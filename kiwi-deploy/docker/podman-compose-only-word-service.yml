@@ -1,7 +1,6 @@
 services:
   kiwi-word-biz:
     image: kiwi-word-biz:2.0
-    container_name: kiwi-word-biz-2
     environment:
       - KIWI_ENC_PASSWORD=${KIWI_ENC_PASSWORD}
       - DB_IP=${DB_IP}
@@ -11,7 +10,6 @@ services:
     network_mode: "host"
   kiwi-crawler:
     image: kiwi-crawler:2.0
-    container_name: kiwi-crawler-2
     restart: always
     environment:
       - KIWI_ENC_PASSWORD=${KIWI_ENC_PASSWORD}

@@ -80,7 +80,7 @@ cp -f ~/.m2/repository/me/fengorz/kiwi-gateway/2.0/kiwi-gateway-2.0.jar ~/docker
 cp -f ~/.m2/repository/me/fengorz/kiwi-word-biz/2.0/kiwi-word-biz-2.0.jar ~/docker/kiwi/word/
 cp -f ~/.m2/repository/me/fengorz/kiwi-word-crawler/2.0/kiwi-word-crawler-2.0.jar ~/docker/kiwi/crawler/
 
-# Run autoDeploy with parameter
+~/microservice-kiwi/kiwi-deploy/docker/stopAll.sh "$MODE"
 ~/microservice-kiwi/kiwi-deploy/docker/autoDeploy.sh "$MODE"
 
 echo "Sleeping for 200 seconds..."

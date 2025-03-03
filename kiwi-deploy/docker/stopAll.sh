@@ -16,7 +16,7 @@ for name in "${desired_order[@]}"; do
     container_id=$(podman ps -a --filter "name=$name" --format "{{.ID}}")
     if [ -n "$container_id" ]; then
         echo "Stopping container: $name"
-        podman stop "$container_id"
+        podman stop --time=30 "$container_id"
     fi
 done
 

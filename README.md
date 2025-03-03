@@ -86,6 +86,7 @@ git fetch --all
 git reset --hard origin/master
 git pull
 ln -s microservice-kiwi/kiwi-deploy/docker/deployKiwi.sh ~/easy-deploy
+ln -s ~/microservice-kiwi/kiwi-deploy/docker/stopAll.sh ~/easy-stop
 ```
 
 # host

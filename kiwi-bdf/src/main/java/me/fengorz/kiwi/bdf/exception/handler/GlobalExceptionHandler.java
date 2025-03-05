@@ -33,6 +33,9 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.Objects;
 
+/**
+ * @Description 全局的异常处理器 @Author zhanshifeng @Date 2019/11/26 3:28 PM
+ */
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {

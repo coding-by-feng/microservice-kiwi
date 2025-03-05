@@ -18,7 +18,7 @@ package me.fengorz.kiwi.word.biz.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import me.fengorz.kiwi.common.sdk.constant.MapperConstant;
+import me.fengorz.kiwi.common.db.MapperConstant;
 import me.fengorz.kiwi.word.api.dto.mapper.in.CountEntityIsCollectDTO;
 import me.fengorz.kiwi.word.api.dto.mapper.out.SelectWordStarListResultDTO;
 import me.fengorz.kiwi.word.api.entity.WordStarListDO;

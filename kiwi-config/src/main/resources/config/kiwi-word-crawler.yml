@@ -50,7 +50,7 @@ crawler:
       "regen-incorrect-audio-by-voicerss": false
     }
 
-my:
+ms:
   config:
     exclude-db: true
-    exclude-redis: false
+    exclude-cache: false

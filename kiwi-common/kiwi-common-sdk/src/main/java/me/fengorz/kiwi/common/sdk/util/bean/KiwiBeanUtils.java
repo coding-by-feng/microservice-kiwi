@@ -16,8 +16,6 @@
 
 package me.fengorz.kiwi.common.sdk.util.bean;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
@@ -31,7 +29,9 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 /**
- * @Description Bean工具类 @Author Kason Zhan @Date 2019/11/2 4:46 PM
+ * @Description Bean工具类
+ * @Author Kason Zhan
+ * @Date 2019/11/2 4:46 PM
  */
 @Slf4j
 public class KiwiBeanUtils extends BeanUtils {
@@ -146,12 +146,12 @@ public class KiwiBeanUtils extends BeanUtils {
                 var5.printStackTrace();
             }
 
-            return (T)target;
+            return (T) target;
         }
     }
 
     public static <T, E> T convertFrom(E source, Class<T> requiredType, Consumer<T> consumer,
-        String... ignoreProperties) {
+                                       String... ignoreProperties) {
         if (source == null) {
             return null;
         } else {
@@ -160,12 +160,12 @@ public class KiwiBeanUtils extends BeanUtils {
             try {
                 target = requiredType.newInstance();
                 copyProperties(source, target, ignoreProperties);
-                consumer.accept((T)target);
+                consumer.accept((T) target);
             } catch (IllegalAccessException | InstantiationException var6) {
                 var6.printStackTrace();
             }
 
-            return (T)target;
+            return (T) target;
         }
     }
 
@@ -185,7 +185,7 @@ public class KiwiBeanUtils extends BeanUtils {
     }
 
     public static <T, E> List<T> convertFrom(List<E> sourceList, Class<T> requiredType, Consumer<T> consumer,
-        String... ignoreProperties) {
+                                             String... ignoreProperties) {
         if (sourceList == null) {
             return null;
         } else {
@@ -200,23 +200,4 @@ public class KiwiBeanUtils extends BeanUtils {
         }
     }
 
-    public static <T, E> IPage<T> convertFrom(IPage<E> sourcePage, Class<T> requiredType) {
-        if (sourcePage == null) {
-            return null;
-        } else {
-            IPage<T> page = new Page(sourcePage.getCurrent(), sourcePage.getSize(), sourcePage.getTotal());
-            page.setRecords(convertFrom(sourcePage.getRecords(), requiredType));
-            return page;
-        }
-    }
-
-    public static <T, E> IPage<T> convertFrom(IPage<E> sourcePage, Class<T> requiredType, Consumer<T> consumer) {
-        if (sourcePage == null) {
-            return null;
-        } else {
-            IPage<T> page = new Page(sourcePage.getCurrent(), sourcePage.getSize(), sourcePage.getTotal());
-            page.setRecords(convertFrom(sourcePage.getRecords(), requiredType, consumer));
-            return page;
-        }
-    }
 }

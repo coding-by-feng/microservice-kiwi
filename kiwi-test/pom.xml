@@ -50,6 +50,7 @@
             <groupId>me.fengorz</groupId>
             <artifactId>kiwi-common-dfs</artifactId>
             <version>${kiwi.version}</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
@@ -66,6 +67,11 @@
             <groupId>org.apache.velocity</groupId>
             <artifactId>velocity-engine-core</artifactId>
             <version>2.3</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.fppt</groupId>
+            <artifactId>jedis-mock</artifactId>
+            <version>1.1.9</version>
         </dependency>
     </dependencies>
 

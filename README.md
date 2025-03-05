@@ -387,3 +387,17 @@ docker container restart `docker ps -a| grep kiwi-ui | awk '{print $1}'`
 ## Free SSL certificate application and HTTPS protocol configuration
 
 https://pentagonal-icecream-1a5.notion.site/Free-SSL-Certificate-on-Nginx-Godaddy-1a5a4b6391df803b98aae953c17cd1fa?pvs=4
+
+# AI Setup
+## My Mac OS
+```
+vi ~/.zshrc
+export Grok_API_KEY="xxxx"
+source ~/.zshrc
+```
+## Linux
+```
+vi ~/.bashrc
+export Grok_API_Key="xxxx"
+source ~/.bashrc
+```

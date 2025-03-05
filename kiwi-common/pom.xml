@@ -15,21 +15,13 @@
 
     <modules>
         <module>kiwi-common-api</module>
+        <module>kiwi-common-db</module>
         <module>kiwi-common-dfs</module>
         <module>kiwi-common-es</module>
         <module>kiwi-common-mq</module>
         <module>kiwi-common-sdk</module>
         <module>kiwi-common-tts</module>
+        <module>kiwi-common-cache</module>
     </modules>
-
-    <dependencies>
-        <!--mybatis-plus-->
-        <dependency>
-            <groupId>com.baomidou</groupId>
-            <artifactId>mybatis-plus-boot-starter</artifactId>
-            <version>${mybatis-plus.version}</version>
-        </dependency>
-    </dependencies>
-
 
 </project>

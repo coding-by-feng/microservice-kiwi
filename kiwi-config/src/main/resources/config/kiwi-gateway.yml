@@ -62,7 +62,7 @@ ignore:
   codeVerifyChannels:
     - /sys/user/oneClickRegister
 
-my:
+ms:
   config:
     exclude-db: true
-    exclude-redis: false
+    exclude-cache: false

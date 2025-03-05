@@ -17,10 +17,10 @@
 package me.fengorz.kiwi.crawler.config;
 
 import lombok.extern.slf4j.Slf4j;
-import me.fengorz.kiwi.bdf.core.config.CoreExcludeDBConfig;
+import me.fengorz.kiwi.bdf.config.CoreConfig;
+import me.fengorz.kiwi.common.db.config.DbConfig;
 import me.fengorz.kiwi.common.dfs.DfsConfig;
 import me.fengorz.kiwi.common.mq.rabbitmq.config.CommonMQConfig;
-import me.fengorz.kiwi.common.sdk.config.UtilsBeanConfiguration;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -32,8 +32,8 @@ import org.springframework.context.annotation.Import;
 @Slf4j
 @Configuration
 @ComponentScan("me.fengorz.kiwi.crawler.**")
-@Import({CoreExcludeDBConfig.class, DfsConfig.class, UtilsBeanConfiguration.class, EnablerAspectConfig.class,
-    CommonMQConfig.class})
+@Import({CoreConfig.class, DbConfig.class, DfsConfig.class, EnablerAspectConfig.class,
+        CommonMQConfig.class})
 public class CrawlerConfig {
 
     public CrawlerConfig() {

@@ -13,7 +13,7 @@ spring:
   main:
     allow-bean-definition-overriding: true
 
-my:
+ms:
   config:
     exclude-db: false
-    exclude-redis: false
+    exclude-cache: false

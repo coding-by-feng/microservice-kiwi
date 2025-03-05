@@ -6,7 +6,7 @@ jasypt:
 logging:
   level:
     org.springframework.boot: DEBUG
-    me.fengorz.kiwi.*: INFO
+    me.fengorz.kiwi.*: DEBUG
 
 security:
   oauth2:
@@ -123,11 +123,11 @@ async:
     queue:
       capacity: 5
 
-my:
+ms:
   config:
     exclude-db: false
-    exclude-redis: false
-
+    exclude-cache: false
+    
 tts:
   baidu:
     app-id: "20116041"

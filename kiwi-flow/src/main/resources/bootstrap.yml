@@ -4,7 +4,7 @@ server:
 logging:
   level:
     org.springframework.boot: DEBUG
-    me.fengorz.kiwi.*: INFO
+    me.fengorz.kiwi.*: DEBUG
 
 spring:
   application:

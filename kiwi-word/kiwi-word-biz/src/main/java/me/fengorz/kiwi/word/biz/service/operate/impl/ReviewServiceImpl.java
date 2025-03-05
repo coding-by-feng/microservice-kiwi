@@ -19,7 +19,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import me.fengorz.kiwi.bdf.core.service.SeqService;
+import me.fengorz.kiwi.common.db.service.SeqService;
 import me.fengorz.kiwi.common.dfs.DfsService;
 import me.fengorz.kiwi.common.dfs.DfsUtils;
 import me.fengorz.kiwi.common.sdk.annotation.cache.KiwiCacheKey;

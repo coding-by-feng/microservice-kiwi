@@ -1,0 +1,2 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  me.fengorz.kiwi.bdf.security.service.KiwiUserDetailServiceImpl

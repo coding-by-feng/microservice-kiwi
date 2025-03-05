@@ -18,7 +18,8 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.RequiredArgsConstructor;
-import me.fengorz.kiwi.bdf.core.service.SeqService;
+import me.fengorz.kiwi.common.db.service.SeqService;
+import me.fengorz.kiwi.common.db.util.DbUtils;
 import me.fengorz.kiwi.common.sdk.annotation.cache.KiwiCacheKeyPrefix;
 import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
 import me.fengorz.kiwi.common.sdk.util.bean.KiwiBeanUtils;
@@ -60,8 +61,7 @@ public class WordMainVariantServiceImpl extends ServiceImpl<WordMainVariantMappe
     public IPage<WordMainVariantVO> page(int current, int size, WordMainVariantDTO dto) {
         IPage<WordMainVariantDO> page =
             wordMainVariantMapper.selectPage(new Page<>(current, size), Wrappers.query(dto));
-        return KiwiBeanUtils.convertFrom(page, WordMainVariantVO.class, vo -> {
-        });
+        return DbUtils.convertFrom(page, WordMainVariantVO.class, vo -> {});
     }
 
     @Override
@@ -143,7 +143,7 @@ public class WordMainVariantServiceImpl extends ServiceImpl<WordMainVariantMappe
     }
 
     @Transactional(rollbackFor = Exception.class)
-    private boolean insertOne(Integer wordId, String variantName, Integer type) {
+    public boolean insertOne(Integer wordId, String variantName, Integer type) {
         WordMainVariantDO entity =
             new WordMainVariantDO().setId(seqService.genCommonIntSequence()).setWordId(wordId)
                 .setVariantName(variantName).setType(WordConstants.VARIANT_TYPE_UNKNOWN)

@@ -1,0 +1,37 @@
+jasypt:
+  encryptor:
+    password: ${KIWI_ENC_PASSWORD}
+    poolSize: 2
+
+logging:
+  level:
+    org.springframework.boot: DEBUG
+    me.fengorz.kiwi.*: DEBUG
+
+server:
+  port: ${PORT:0}
+
+spring:
+  application:
+    name: kiwi-ai
+  profiles:
+    active: dev,prod
+  cloud:
+    config:
+      fail-fast: true
+      name: ${spring.application.name}
+      profile: ${spring.profiles.active}
+      discovery:
+        enabled: true
+        service-id: kiwi-config
+
+eureka:
+  instance:
+    instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
+    prefer-ip-address: true
+  client:
+    service-url:
+      defaultZone: http://${eureka.security.username}:${eureka.security.password}@kiwi-eureka:8762/eureka
+  security:
+    username: ENC(SKdYEg+E1hatfznKqx4LcBiqYnYDcXW7)
+    password: ENC(ceDAameujB+jXutTPYZUe7NW7P8WoRsm)

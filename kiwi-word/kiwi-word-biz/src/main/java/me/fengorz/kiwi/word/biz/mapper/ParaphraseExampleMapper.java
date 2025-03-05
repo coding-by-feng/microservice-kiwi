@@ -16,7 +16,7 @@
 package me.fengorz.kiwi.word.biz.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import me.fengorz.kiwi.common.sdk.constant.MapperConstant;
+import me.fengorz.kiwi.common.db.MapperConstant;
 import me.fengorz.kiwi.word.api.dto.mapper.in.SelectEntityIsCollectDTO;
 import me.fengorz.kiwi.word.api.entity.ParaphraseExampleDO;
 import me.fengorz.kiwi.word.api.vo.ParaphraseExampleVO;

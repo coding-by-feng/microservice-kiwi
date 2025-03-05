@@ -23,6 +23,11 @@
             <artifactId>kiwi-upms-api</artifactId>
             <version>${kiwi.version}</version>
         </dependency>
+        <dependency>
+            <groupId>me.fengorz</groupId>
+            <artifactId>kiwi-common-db</artifactId>
+            <version>${kiwi.version}</version>
+        </dependency>
     </dependencies>
 
     <build>

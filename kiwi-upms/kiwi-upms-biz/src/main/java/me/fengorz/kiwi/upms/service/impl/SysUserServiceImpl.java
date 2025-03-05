@@ -21,7 +21,7 @@ import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.RequiredArgsConstructor;
-import me.fengorz.kiwi.bdf.core.service.SeqService;
+import me.fengorz.kiwi.common.db.service.SeqService;
 import me.fengorz.kiwi.upms.api.dto.UserFullInfoDTO;
 import me.fengorz.kiwi.upms.api.entity.SysMenu;
 import me.fengorz.kiwi.upms.api.entity.SysRole;
@@ -29,7 +29,6 @@ import me.fengorz.kiwi.upms.api.entity.SysUser;
 import me.fengorz.kiwi.upms.mapper.SysUserMapper;
 import me.fengorz.kiwi.upms.service.SysMenuService;
 import me.fengorz.kiwi.upms.service.SysRoleService;
-import me.fengorz.kiwi.upms.service.SysUserRoleRelService;
 import me.fengorz.kiwi.upms.service.SysUserService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -52,7 +51,6 @@ import java.util.stream.Collectors;
 public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> implements SysUserService {
 
     private final SysRoleService sysRoleService;
-    private final SysUserRoleRelService sysUserRoleRelService;
     private final SysMenuService sysMenuService;
     private final SeqService seqService;
 
@@ -62,14 +60,14 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         userFullInfoDTO.setSysUser(sysUser);
 
         List<Integer> roleIdList = sysRoleService.listRolesByUserId(sysUser.getUserId()).stream()
-            .map(SysRole::getRoleId).collect(Collectors.toList());
+                .map(SysRole::getRoleId).collect(Collectors.toList());
         userFullInfoDTO.setRoles(ArrayUtil.toArray(roleIdList, Integer.class));
 
         Set<String> permissionSet = new HashSet<>();
         roleIdList.forEach(roleId -> {
             List<String> permissionList = sysMenuService.listMenusByRoleId(roleId).stream()
-                .filter(sysMenu -> StrUtil.isNotBlank(sysMenu.getPermission())).map(SysMenu::getPermission)
-                .collect(Collectors.toList());
+                    .filter(sysMenu -> StrUtil.isNotBlank(sysMenu.getPermission())).map(SysMenu::getPermission)
+                    .collect(Collectors.toList());
             permissionSet.addAll(permissionList);
         });
         userFullInfoDTO.setPermissions(ArrayUtil.toArray(permissionSet, String.class));

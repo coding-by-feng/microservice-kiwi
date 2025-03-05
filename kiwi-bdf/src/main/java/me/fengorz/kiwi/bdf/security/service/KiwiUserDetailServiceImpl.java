@@ -26,6 +26,7 @@ import me.fengorz.kiwi.common.sdk.constant.SecurityConstants;
 import me.fengorz.kiwi.upms.api.dto.UserFullInfoDTO;
 import me.fengorz.kiwi.upms.api.entity.SysUser;
 import me.fengorz.kiwi.upms.api.feign.UserApi;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.security.core.GrantedAuthority;
@@ -46,6 +47,7 @@ import java.util.Set;
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@ConditionalOnProperty(name = "ms.config.exclude-cache", havingValue = "false")
 public class KiwiUserDetailServiceImpl implements UserDetailsService {
     private final CacheManager cacheManager;
     private final UserApi userApi;
@@ -54,7 +56,7 @@ public class KiwiUserDetailServiceImpl implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) {
         Cache cache = cacheManager.getCache("user_details");
         if (cache != null && cache.get(username) != null) {
-            return (EnhancerUser)cache.get(username).get();
+            return (EnhancerUser) cache.get(username).get();
         }
         R<UserFullInfoDTO> info = userApi.info(username, SecurityConstants.FROM_IN);
         UserDetails userDetails = getUserDetails(info);
@@ -79,11 +81,11 @@ public class KiwiUserDetailServiceImpl implements UserDetailsService {
         }
 
         Collection<? extends GrantedAuthority> authorities =
-            AuthorityUtils.createAuthorityList(dbAuthsSet.toArray(new String[0]));
+                AuthorityUtils.createAuthorityList(dbAuthsSet.toArray(new String[0]));
         SysUser user = info.getSysUser();
 
         return new EnhancerUser(user.getUserId(), user.getDeptId(), user.getUsername(),
-            SecurityConstants.BCRYPT + user.getPassword(), GlobalConstants.FLAG_DEL_NO == user.getDelFlag(), true, true,
-            true, authorities);
+                SecurityConstants.BCRYPT + user.getPassword(), GlobalConstants.FLAG_DEL_NO == user.getDelFlag(), true, true,
+                true, authorities);
     }
 }

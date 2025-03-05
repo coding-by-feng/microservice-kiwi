@@ -24,6 +24,6 @@ import org.springframework.context.annotation.Configuration;
  * @Date 2019/11/4 10:51 AM
  */
 @Configuration
-@ComponentScan("me.fengorz.kiwi.common.dfs")
+@ComponentScan("me.fengorz.kiwi.common.dfs.**")
 public class DfsConfig {
 }

@@ -19,7 +19,7 @@ package me.fengorz.kiwi.word.biz.service.operate.impl;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import me.fengorz.kiwi.bdf.core.service.SeqService;
+import me.fengorz.kiwi.common.db.service.SeqService;
 import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
 import me.fengorz.kiwi.word.api.common.WordConstants;
 import me.fengorz.kiwi.word.api.entity.StarRelHisDO;

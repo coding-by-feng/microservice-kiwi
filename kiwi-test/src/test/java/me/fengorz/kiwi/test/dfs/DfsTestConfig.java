@@ -14,7 +14,7 @@
  *
  */
 
-package me.fengorz.kiwi.test;
+package me.fengorz.kiwi.test.dfs;
 
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.dfs.DfsConfig;

@@ -2,6 +2,7 @@ package me.fengorz.kiwi.ai.api.service;
 
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.ai.api.AiApplication;
+import me.fengorz.kiwi.ai.api.config.grok.service.GrokApiService;
 import me.fengorz.kiwi.common.sdk.constant.EnvConstants;
 import me.fengorz.kiwi.test.EmbeddedRedisInitiator;
 import org.junit.jupiter.api.AfterAll;

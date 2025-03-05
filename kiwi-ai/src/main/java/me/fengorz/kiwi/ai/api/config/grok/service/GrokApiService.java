@@ -1,9 +1,9 @@
-package me.fengorz.kiwi.ai.api.service;
+package me.fengorz.kiwi.ai.api.config.grok.service;
 
 import lombok.extern.slf4j.Slf4j;
-import me.fengorz.kiwi.ai.api.model.ChatRequest;
-import me.fengorz.kiwi.ai.api.model.GrokApiModel;
-import me.fengorz.kiwi.ai.api.model.Message;
+import me.fengorz.kiwi.ai.api.config.grok.model.ChatRequest;
+import me.fengorz.kiwi.ai.api.config.grok.model.GrokApiModel;
+import me.fengorz.kiwi.ai.api.config.grok.model.Message;
 import me.fengorz.kiwi.common.sdk.exception.ai.GrokAiException;
 import me.fengorz.kiwi.common.sdk.util.json.KiwiJsonUtils;
 import org.springframework.beans.factory.annotation.Qualifier;

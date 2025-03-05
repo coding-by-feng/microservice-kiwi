@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.dfs.DfsService;
 import me.fengorz.kiwi.common.sdk.exception.dfs.DfsOperateDeleteException;
 import me.fengorz.kiwi.common.sdk.exception.dfs.DfsOperateException;
-import me.fengorz.kiwi.test.dfs.DfsTestApplication;
+import me.fengorz.kiwi.test.DfsTestApplication;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

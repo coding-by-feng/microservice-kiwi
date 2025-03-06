@@ -9,7 +9,7 @@ docker build -f ~/docker/kiwi/auth/Dockerfile -t kiwi-auth:2.0 ~/docker/kiwi/aut
 docker build -f ~/docker/kiwi/gate/Dockerfile -t kiwi-gate:2.0 ~/docker/kiwi/gate/
 docker build -f ~/docker/kiwi/word/biz/Dockerfile -t kiwi-word-biz:2.0 ~/docker/kiwi/word/
 docker build -f ~/docker/kiwi/crawler/Dockerfile -t kiwi-crawler:2.0 ~/docker/kiwi/crawler/
-docker build -f ~/docker/kiwi/ai/Dockerfile -t kiwi-ai:2.0 ~/docker/kiwi/ai/
+docker build -f ~/docker/kiwi/ai/Dockerfile -t kiwi-ai-biz:2.0 ~/docker/kiwi/ai/
 
 # Tag images for Podman
 for image in kiwi-{eureka,config,upms,auth,gate,word-biz,crawler,ai}:2.0; do
@@ -17,7 +17,6 @@ for image in kiwi-{eureka,config,upms,auth,gate,word-biz,crawler,ai}:2.0; do
 done
 
 echo "podman-compose base beginning"
-podman-compose --project-name kiwi-base -f ~/microservice-kiwi/kiwi-deploy/docker/podman-compose-base.yml up -d --remove-orphans --build || { echo "Base compose failed"; exit 1; }
 podman-compose --project-name kiwi-base -f ~/microservice-kiwi/kiwi-deploy/docker/podman-compose-base.yml up -d --remove-orphans --build 2>/dev/null || { echo "Base compose failed"; exit 1; }
 echo "Success, waiting 100s..."
 sleep 100s

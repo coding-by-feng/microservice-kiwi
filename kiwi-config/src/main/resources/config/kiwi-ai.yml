@@ -3,13 +3,8 @@ spring:
   main:
     allow-bean-definition-overriding: true
 
-# 直接放行URL
 ignore:
   urls:
-    - /actuator/**
-    - /sys/user/info/*
-    - /log/**
-    - /sys/user/oneClickRegister
 
 ms:
   config:

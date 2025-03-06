@@ -12,7 +12,7 @@ docker build -f ~/docker/kiwi/crawler/Dockerfile -t kiwi-crawler:2.0 ~/docker/ki
 docker build -f ~/docker/kiwi/ai/Dockerfile -t kiwi-ai-biz:2.0 ~/docker/kiwi/ai/
 
 # Tag images for Podman
-for image in kiwi-{eureka,config,upms,auth,gate,word-biz,crawler,ai}:2.0; do
+for image in kiwi-{eureka,config,upms,auth,gate,word-biz,crawler,ai-biz}:2.0; do
   docker tag "$image" "localhost/$image"
 done
 

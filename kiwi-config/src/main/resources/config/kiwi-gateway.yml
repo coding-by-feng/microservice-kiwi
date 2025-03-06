@@ -43,8 +43,8 @@ spring:
                 name: default
                 fallbackUri: 'forward:/fallback'
 
-        - id: kiwi-ai
-          uri: lb://kiwi-ai
+        - id: kiwi-ai-biz
+          uri: lb://kiwi-ai-biz
           predicates:
             - Path=/ai-biz/**
           filters:

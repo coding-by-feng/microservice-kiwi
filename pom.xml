@@ -22,7 +22,6 @@
         <module>kiwi-gateway</module>
         <module>kiwi-common</module>
         <module>kiwi-test</module>
-        <module>kiwi-ai</module>
     </modules>
 
     <properties>

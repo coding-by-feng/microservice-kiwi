@@ -19,6 +19,7 @@ package me.fengorz.kiwi.bdf.exception.handler;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.api.R;
 import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
+import me.fengorz.kiwi.common.sdk.exception.BadRequestException;
 import me.fengorz.kiwi.common.sdk.exception.BaseRuntimeException;
 import me.fengorz.kiwi.common.sdk.exception.ResourceNotFoundException;
 import me.fengorz.kiwi.common.sdk.exception.ServiceException;
@@ -33,9 +34,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.Objects;
 
-/**
- * @Description 全局的异常处理器 @Author zhanshifeng @Date 2019/11/26 3:28 PM
- */
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -70,8 +68,15 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler({ServiceException.class})
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public R<String> handleServiceRuntimeException(ServiceException e) {
+    public R<String> handleServiceException(ServiceException e) {
         log.error("global ServiceException:{}", e.getMessage());
+        return R.error(e.getResultCode());
+    }
+
+    @ExceptionHandler({BadRequestException.class})
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public R<String> handleBadRequestException(BadRequestException e) {
+        log.error("global BadRequestException:{}", e.getMessage());
         return R.error(e.getResultCode());
     }
 

@@ -34,6 +34,17 @@ services:
     network_mode: "host"
     depends_on:
       - kiwi-gate
+  kiwi-ai-biz:
+    image: kiwi-ai-biz:2.0
+    environment:
+      - KIWI_ENC_PASSWORD=${KIWI_ENC_PASSWORD}
+      - DB_IP=${DB_IP}
+    volumes:
+      - /root/docker/kiwi/ai/logs:/logs
+      - /root/docker/kiwi/ai/tmp:/ai-tmp
+    network_mode: "host"
+    depends_on:
+      - kiwi-gate
   kiwi-crawler:
     image: kiwi-crawler:2.0
     environment:

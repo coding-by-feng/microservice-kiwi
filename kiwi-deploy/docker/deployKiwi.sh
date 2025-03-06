@@ -52,6 +52,7 @@ rm -rf ~/docker/kiwi/word/logs/*
 rm -rf ~/docker/kiwi/word/crawlerTmp/*
 rm -rf ~/docker/kiwi/word/bizTmp/*
 rm -rf ~/docker/kiwi/crawler/logs/*
+rm -rf ~/docker/kiwi/ai/logs/*
 
 # Maven build
 if [ "$SKIP_MAVEN" = false ]; then
@@ -71,6 +72,7 @@ cp -f ~/microservice-kiwi/kiwi-word/kiwi-word-biz/docker/crawler/Dockerfile ~/do
 cp -f ~/microservice-kiwi/kiwi-word/kiwi-word-crawler/Dockerfile ~/docker/kiwi/crawler/
 cp -f ~/microservice-kiwi/kiwi-auth/Dockerfile ~/docker/kiwi/auth/
 cp -f ~/microservice-kiwi/kiwi-gateway/Dockerfile ~/docker/kiwi/gate/
+cp -f ~/microservice-kiwi/kiwi-ai/kiwi-ai-biz/docker/Dockerfile ~/docker/kiwi/ai/
 
 cp -f ~/.m2/repository/me/fengorz/kiwi-eureka/2.0/kiwi-eureka-2.0.jar ~/docker/kiwi/eureka/
 cp -f ~/.m2/repository/me/fengorz/kiwi-config/2.0/kiwi-config-2.0.jar ~/docker/kiwi/config/
@@ -79,6 +81,7 @@ cp -f ~/.m2/repository/me/fengorz/kiwi-auth/2.0/kiwi-auth-2.0.jar ~/docker/kiwi/
 cp -f ~/.m2/repository/me/fengorz/kiwi-gateway/2.0/kiwi-gateway-2.0.jar ~/docker/kiwi/gate/
 cp -f ~/.m2/repository/me/fengorz/kiwi-word-biz/2.0/kiwi-word-biz-2.0.jar ~/docker/kiwi/word/
 cp -f ~/.m2/repository/me/fengorz/kiwi-word-crawler/2.0/kiwi-word-crawler-2.0.jar ~/docker/kiwi/crawler/
+cp -f ~/.m2/repository/me/fengorz/kiwi-ai-biz/2.0/kiwi-ai-biz-2.0.jar ~/docker/kiwi/ai/
 
 ~/microservice-kiwi/kiwi-deploy/docker/stopAll.sh "$MODE"
 ~/microservice-kiwi/kiwi-deploy/docker/autoDeploy.sh "$MODE"

@@ -1,29 +1,128 @@
-/*
- *
- * Copyright [2019~2025] [zhanshifeng]
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
- *
- *
- */
-
 package me.fengorz.kiwi.common.sdk.util.json;
 
 import cn.hutool.json.JSONUtil;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import lombok.experimental.UtilityClass;
+import me.fengorz.kiwi.common.sdk.exception.ServiceException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.text.SimpleDateFormat;
+import java.util.TimeZone;
 
 /**
- * @Author Kason Zhan @Date 2019/10/25 11:17 AM
+ * Utility class for JSON-Object conversion using Jackson JSON.
+ *
+ * @Author Kason Zhan
+ * @Date 06/03/2025
  */
-public final class KiwiJsonUtils {
+@UtilityClass
+public class KiwiJsonUtils {
+
+    private static final Logger logger = LoggerFactory.getLogger(KiwiJsonUtils.class);
+    private static final ObjectMapper OBJECT_MAPPER;
+
+    static {
+        OBJECT_MAPPER = new ObjectMapper();
+        // Custom configurations for the ObjectMapper
+        OBJECT_MAPPER.setSerializationInclusion(JsonInclude.Include.NON_NULL);  // Ignore null fields in serialization
+        OBJECT_MAPPER.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);  // Ignore unknown properties
+        OBJECT_MAPPER.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);  // Allow serialization of empty beans
+        OBJECT_MAPPER.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);  // Write dates as ISO strings
+        OBJECT_MAPPER.setDateFormat(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));  // Custom date format
+        OBJECT_MAPPER.setTimeZone(TimeZone.getTimeZone("UTC"));  // Use UTC timezone
+    }
 
     public static String toJsonStr(Object obj) {
         return JSONUtil.toJsonStr(obj);
+    }
+
+    /**
+     * Converts a Java object to a JSON string.
+     *
+     * @param object The Java object to convert.
+     * @return The JSON string representation of the object.
+     * @throws ServiceException If serialization fails.
+     */
+    public static String toJson(Object object) throws ServiceException {
+        if (object == null) {
+            return null;
+        }
+        try {
+            return OBJECT_MAPPER.writeValueAsString(object);
+        } catch (JsonProcessingException e) {
+            logger.error("Failed to serialize object to JSON: {}", object, e);
+            throw new ServiceException("Failed to convert object to JSON: " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Converts a Java object to a pretty-printed JSON string.
+     *
+     * @param object The Java object to convert.
+     * @return The pretty-printed JSON string representation of the object.
+     * @throws ServiceException If serialization fails.
+     */
+    public static String toJsonPretty(Object object) throws ServiceException {
+        if (object == null) {
+            return null;
+        }
+        try {
+            return OBJECT_MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(object);
+        } catch (JsonProcessingException e) {
+            logger.error("Failed to serialize object to pretty JSON: {}", object, e);
+            throw new ServiceException("Failed to convert object to pretty JSON: " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Converts a JSON string to a Java object.
+     *
+     * @param json  The JSON string to convert.
+     * @param clazz The target class of the Java object.
+     * @param <T>   The type of the target object.
+     * @return The deserialized Java object.
+     * @throws ServiceException If deserialization fails.
+     */
+    public static <T> T fromJson(String json, Class<T> clazz) throws ServiceException {
+        if (json == null || json.trim().isEmpty()) {
+            return null;
+        }
+        try {
+            return OBJECT_MAPPER.readValue(json, clazz);
+        } catch (JsonProcessingException e) {
+            logger.error("Failed to deserialize JSON to object of type {}: {}", clazz.getName(), json, e);
+            throw new ServiceException("Failed to convert JSON to object: " + e.getMessage(), e);
+        }
+    }
+
+    public static <T> T fromObjectToJson(Object object, Class<T> clazz) throws ServiceException {
+        return fromJson(KiwiJsonUtils.toJson(object), clazz);
+    }
+
+    /**
+     * Converts a JSON string to a Java object using a TypeReference (for generic types).
+     *
+     * @param json          The JSON string to convert.
+     * @param typeReference The TypeReference of the target object.
+     * @param <T>           The type of the target object.
+     * @return The deserialized Java object.
+     * @throws ServiceException If deserialization fails.
+     */
+    public static <T> T fromJson(String json, TypeReference<T> typeReference) throws ServiceException {
+        if (json == null || json.trim().isEmpty()) {
+            return null;
+        }
+        try {
+            return OBJECT_MAPPER.readValue(json, typeReference);
+        } catch (JsonProcessingException e) {
+            logger.error("Failed to deserialize JSON to object with TypeReference {}: {}", typeReference.getType(), json, e);
+            throw new ServiceException("Failed to convert JSON to object: " + e.getMessage(), e);
+        }
     }
 }

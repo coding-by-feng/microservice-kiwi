@@ -1,6 +1,6 @@
 /*
  *
- * Copyright [2019~2025] [codingByFeng]
+ * Copyright [2019~2025] [zhanshifeng]
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -14,15 +14,14 @@
  *
  */
 
-package me.fengorz.kiwi.bdf.config;
+package me.fengorz.kiwi.test;
 
-import me.fengorz.kiwi.common.sdk.config.UtilsBeanConfiguration;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-@Configuration
-@ComponentScan("me.fengorz.kiwi.bdf.**")
-@Import({UtilsBeanConfiguration.class})
-public class CoreConfig {
+@SpringBootApplication
+public class DfsTestApplication {
+    public static void main(String[] args) {
+        SpringApplication.run(DfsTestApplication.class, args);
+    }
 }

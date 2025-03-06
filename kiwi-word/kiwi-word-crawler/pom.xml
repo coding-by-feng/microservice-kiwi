@@ -31,6 +31,11 @@
         </dependency>
         <dependency>
             <groupId>me.fengorz</groupId>
+            <artifactId>kiwi-common-cache</artifactId>
+            <version>${kiwi.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>me.fengorz</groupId>
             <artifactId>kiwi-common-mq</artifactId>
             <version>${kiwi.version}</version>
         </dependency>

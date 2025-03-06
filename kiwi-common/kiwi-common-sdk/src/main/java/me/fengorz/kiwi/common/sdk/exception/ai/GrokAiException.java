@@ -20,12 +20,12 @@
 package me.fengorz.kiwi.common.sdk.exception.ai;
 
 import me.fengorz.kiwi.common.api.ResultCode;
-import me.fengorz.kiwi.common.sdk.exception.BaseException;
+import me.fengorz.kiwi.common.sdk.exception.BaseRuntimeException;
 
 /**
  * @Author Kason Zhan
  */
-public class GrokAiException extends BaseException {
+public class GrokAiException extends BaseRuntimeException {
 
     private static final long serialVersionUID = -4427505576163765302L;
 

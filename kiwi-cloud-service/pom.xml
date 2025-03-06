@@ -41,6 +41,8 @@
         <module>../kiwi-word/kiwi-word-crawler</module>
         <module>../kiwi-auth</module>
         <module>../kiwi-flow</module>
+        <module>../kiwi-ai/kiwi-ai-api</module>
+        <module>../kiwi-ai/kiwi-ai-biz</module>
     </modules>
 
     <dependencies>

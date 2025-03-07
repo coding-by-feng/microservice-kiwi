@@ -11,6 +11,7 @@ import me.fengorz.kiwi.common.sdk.enumeration.AiPromptModeEnum;
 import me.fengorz.kiwi.common.sdk.enumeration.LanguageEnum;
 import me.fengorz.kiwi.common.sdk.exception.ai.GrokAiException;
 import me.fengorz.kiwi.common.sdk.util.json.KiwiJsonUtils;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -46,7 +47,7 @@ public class GrokAiService implements AiChatService {
         headers.put("Authorization", Collections.singletonList("Bearer " + grokApiProperties.getKey()));
 
         ChatRequest chatRequest = new ChatRequest(
-                Arrays.asList(new Message("system", String.format(modeProperties.getMode().get(promptMode.getMode()), language.getName())),
+                Arrays.asList(new Message("system", buildPrompt(promptMode, language)),
                         new Message("user", prompt)), grokApiProperties.getModel());
 
         // Hypothetical request body (similar to OpenAI’s format)
@@ -62,6 +63,15 @@ public class GrokAiService implements AiChatService {
             log.error("Grok API call failed: status code: {}; body: {}", response.getStatusCode(), response.getBody());
             throw new GrokAiException("Grok API call failed: " + response.getStatusCode());
         }
+    }
+
+    @NotNull
+    private String buildPrompt(AiPromptModeEnum promptMode, LanguageEnum language) {
+        String lang = language.getName();
+        if (AiPromptModeEnum.VOCABULARY_EXPLANATION.equals(promptMode)) {
+            return String.format(modeProperties.getMode().get(promptMode.getMode()), lang, lang, lang);
+        }
+        return String.format(modeProperties.getMode().get(promptMode.getMode()), lang);
     }
 
 }

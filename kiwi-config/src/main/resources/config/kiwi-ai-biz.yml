@@ -26,7 +26,7 @@ ai:
       model: "grok-2-latest"
   mode:
     directly-translation: "Directly Translate my prompt to %s language."
-    translation-and-explanation: "Directly Translate my prompt to %s language first, and provide an explanation of the translation."
+    translation-and-explanation: "Directly Translate my prompt to %s language first, and provide an explanation of the translation, and translate the explanation to destination language."
     grammar-explanation: "Translate my prompt to %s language, and provide an explanation of the grammar."
     grammar-correction: "Translate my prompt to %s language, and provide an explanation of the grammar correction."
     vocabulary-explanation: "Explain the vocabulary in %s language, please provide the paraphrase in English and %s of the vocabulary in different vocabulary classes, for example, verb, noun, adverb, etc. and also provide the sentences that use this vocabulary with its translation in %s language of each class."

@@ -39,7 +39,7 @@ spring:
 ai:
   grok:
     api:
-      key: ${Grok_API_Key}  # Replace with the actual API key
+      key: ${GROK_API_KEY}  # Replace with the actual API key
       endpoint: https://api.x.ai/v1/chat/completions  # Hypothetical endpoint
       model: "grok-2-latest"
   mode:

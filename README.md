@@ -399,6 +399,6 @@ source ~/.zshrc
 ## Linux
 ```
 vi ~/.bashrc
-export Grok_API_Key="xxxx"
+export GROK_API_KEY="xxxx"
 source ~/.bashrc
 ```

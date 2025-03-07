@@ -1,4 +1,4 @@
-package me.fengorz.kiwi.ai.api.service;
+package me.fengorz.kiwi.ai.service;
 
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.ai.AiApplication;
@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = AiApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Disabled
-class GrokAiServiceTest {
+class GrokAiChatServiceTest {
 
     @Autowired
     private GrokAiService service;
@@ -45,13 +45,13 @@ class GrokAiServiceTest {
     }
 
     @Test
-    void translate() {
+    void call() {
         assertDoesNotThrow(() -> {
             log.info("{} response of Grok AI is: {}", AiPromptModeEnum.DIRECTLY_TRANSLATION.name(),
-                    service.translate("Hope is a good thing, maybe the best of things!",
+                    service.call("Hope is a good thing, maybe the best of things!",
                             AiPromptModeEnum.DIRECTLY_TRANSLATION, LanguageEnum.ZH_CN));
             log.info("{} response of Grok AI is: {}", AiPromptModeEnum.TRANSLATION_AND_EXPLANATION.name(),
-                    service.translate("希望是一件好事，也许是最好的事!",
+                    service.call("希望是一件好事，也许是最好的事!",
                             AiPromptModeEnum.TRANSLATION_AND_EXPLANATION, LanguageEnum.EN));
         });
     }

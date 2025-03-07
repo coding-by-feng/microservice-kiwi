@@ -1,7 +1,7 @@
 package me.fengorz.kiwi.ai.grok.service;
 
 import lombok.extern.slf4j.Slf4j;
-import me.fengorz.kiwi.ai.AiService;
+import me.fengorz.kiwi.ai.AiChatService;
 import me.fengorz.kiwi.ai.config.AiModeProperties;
 import me.fengorz.kiwi.ai.grok.GrokApiProperties;
 import me.fengorz.kiwi.ai.grok.model.request.ChatRequest;
@@ -25,7 +25,7 @@ import java.util.Objects;
 
 @Slf4j
 @Service
-public class GrokAiService implements AiService {
+public class GrokAiService implements AiChatService {
 
     private final RestTemplate restTemplate;
     private final GrokApiProperties grokApiProperties;
@@ -40,7 +40,7 @@ public class GrokAiService implements AiService {
 
 
     @Override
-    public String translate(String prompt, AiPromptModeEnum promptMode, LanguageEnum language) {
+    public String call(String prompt, AiPromptModeEnum promptMode, LanguageEnum language) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.put("Authorization", Collections.singletonList("Bearer " + grokApiProperties.getKey()));

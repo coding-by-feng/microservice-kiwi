@@ -7,8 +7,8 @@ import me.fengorz.kiwi.common.sdk.enumeration.LanguageEnum;
  * @Author Kason Zhan
  * @Date 06/03/2025 06/03/2025
  */
-public interface AiService {
+public interface AiChatService {
 
-    String translate(String prompt, AiPromptModeEnum promptMode, LanguageEnum language);
+    String call(String prompt, AiPromptModeEnum promptMode, LanguageEnum language);
 
 }

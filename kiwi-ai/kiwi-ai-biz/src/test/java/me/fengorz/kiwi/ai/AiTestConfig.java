@@ -1,4 +1,4 @@
-package me.fengorz.kiwi.ai.api;
+package me.fengorz.kiwi.ai;
 
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.test.config.TestSecurityConfig;

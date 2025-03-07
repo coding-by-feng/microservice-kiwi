@@ -12,7 +12,7 @@ cd ~/microservice-kiwi/ || { echo "Failed to cd to ~/microservice-kiwi"; exit 1;
 echo "Checking for previous easy-deploy process..."
 PREV_PID=$(pgrep -f "easy-deploy")
 if [ -n "$PREV_PID" ]; then
-  echo "Found previous easy-deploy process with PID: $PREV_PID. Killing it..."
+  echo "Found previous easy-deploy process with PID: $PREV_PID Killing it..."
   kill -9 "$PREV_PID" || { echo "Failed to kill previous easy-deploy process with PID: $PREV_PID"; exit 1; }
   echo "Previous easy-deploy process killed."
 else

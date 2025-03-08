@@ -41,7 +41,7 @@ ai:
     api:
       key: ${GROK_API_KEY}  # Replace with the actual API key
       endpoint: https://api.x.ai/v1/chat/completions  # Hypothetical endpoint
-      model: "grok-2-latest"
+      model: "grok-beta"
   openai:
     api:
       key: ${OPENAI_API_KEY}

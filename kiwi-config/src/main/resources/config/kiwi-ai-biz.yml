@@ -23,7 +23,7 @@ ai:
     api:
       key: ${GROK_API_KEY}  # Replace with the actual API key
       endpoint: https://api.x.ai/v1/chat/completions  # Hypothetical endpoint
-      model: "grok-2-latest"
+      model: "grok-beta"
   mode:
     directly-translation: "Directly Translate my prompt to %s language."
     translation-and-explanation: "Directly Translate my prompt to %s language first, and provide an explanation of the translation, and translate the explanation to destination language."

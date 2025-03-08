@@ -6,7 +6,6 @@ import me.fengorz.kiwi.common.api.R;
 import me.fengorz.kiwi.common.sdk.constant.EnvConstants;
 import me.fengorz.kiwi.common.sdk.enumeration.LanguageEnum;
 import me.fengorz.kiwi.common.sdk.util.json.KiwiJsonUtils;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,7 +61,6 @@ public class AiControllerIntegrationTest {
     }
 
     @Test
-    @Disabled
     void testDirectlyTranslation_InvalidLanguage() {
         // Test data
         String originalText = "Hello, world!";
@@ -102,7 +100,6 @@ public class AiControllerIntegrationTest {
     }
 
     @Test
-    @Disabled
     void testTranslationAndExplanation_InvalidLanguage() {
         // Test data
         String originalText = "Hello, world!";
@@ -144,7 +141,6 @@ public class AiControllerIntegrationTest {
     }
 
     @Test
-    @Disabled
     void testGrammarExplanation_InvalidLanguage() {
         // Test data
         String originalText = "I is happy.";
@@ -186,7 +182,6 @@ public class AiControllerIntegrationTest {
     }
 
     @Test
-    @Disabled
     void testGrammarCorrection_InvalidLanguage() {
         // Test data
         String originalText = "I is happy.";
@@ -228,7 +223,6 @@ public class AiControllerIntegrationTest {
     }
 
     @Test
-    @Disabled
     void testVocabularyExplanation_InvalidLanguage() {
         // Test data
         String originalText = "Hope";

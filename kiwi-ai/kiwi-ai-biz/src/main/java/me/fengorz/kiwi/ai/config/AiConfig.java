@@ -33,7 +33,10 @@ import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.retry.backoff.FixedBackOffPolicy;
 import org.springframework.retry.policy.SimpleRetryPolicy;
 import org.springframework.retry.support.RetryTemplate;
+import org.springframework.security.web.firewall.DefaultHttpFirewall;
+import org.springframework.security.web.firewall.HttpFirewall;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UrlPathHelper;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
@@ -93,6 +96,21 @@ public class AiConfig {
         requestFactory.setReadTimeout(restTemplateProperties.getRequestFactory().getReadTimeout());
 
         return new RestTemplate(requestFactory);
+    }
+
+    @Bean
+    public UrlPathHelper urlPathHelper() {
+        UrlPathHelper helper = new UrlPathHelper();
+        helper.setUrlDecode(false); // Prevent double-decoding issues
+        helper.setRemoveSemicolonContent(false);
+        return helper;
+    }
+
+    @Bean
+    public HttpFirewall allowUrlEncodedSlashHttpFirewall() {
+        DefaultHttpFirewall firewall = new DefaultHttpFirewall();
+        firewall.setAllowUrlEncodedSlash(true);
+        return firewall;
     }
 
     private static TrustManager[] buildTrustAllCerts() {

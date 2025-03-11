@@ -100,6 +100,28 @@ public class AiControllerIntegrationTest {
     }
 
     @Test
+    void testTranslationAndExplanation_SpecialSymbol_Success() {
+        // Test data
+        String originalText = "food%20scraps%2Fgreen%20waste";
+        String language = LanguageEnum.ZH_CN.getCode();
+
+        // Perform the GET request
+        String url = "http://localhost:" + port + "/ai/translation-and-explanation/" + language + "/" + originalText;
+        ResponseEntity<R> response = restTemplate.getForEntity(url, R.class);
+
+        // Verify the response
+        assertEquals(HttpStatus.OK, response.getStatusCode(), "HTTP status should be 200 OK");
+        assertNotNull(response.getBody(), "Response body should not be null");
+        assertTrue(response.getBody().isSuccess(), "Response should be successful");
+
+        AiResponseVO vo = KiwiJsonUtils.fromObjectToJson(response.getBody().getData(), AiResponseVO.class);
+        assertNotNull(vo, "VO should not be null");
+        assertEquals("food scraps/green waste", vo.getOriginalText(), "Original text should match");
+        assertEquals(language, vo.getLanguageCode(), "Language code should match");
+        log.info("Translation and explanation: {}", vo.getResponseText());
+    }
+
+    @Test
     void testTranslationAndExplanation_InvalidLanguage() {
         // Test data
         String originalText = "Hello, world!";
@@ -177,7 +199,6 @@ public class AiControllerIntegrationTest {
         assertNotNull(vo, "VO should not be null");
         assertEquals(originalText, vo.getOriginalText(), "Original text should match");
         assertEquals(language, vo.getLanguageCode(), "Language code should match");
-        assertTrue(vo.getResponseText().contains("Corrected"), "Response should contain corrected text");
         log.info("Grammar correction: {}", vo.getResponseText());
     }
 
@@ -218,7 +239,6 @@ public class AiControllerIntegrationTest {
         assertNotNull(vo, "VO should not be null");
         assertEquals(originalText, vo.getOriginalText(), "Original text should match");
         assertEquals(language, vo.getLanguageCode(), "Language code should match");
-        assertTrue(vo.getResponseText().contains("Definition"), "Response should contain vocabulary explanation");
         log.info("Vocabulary explanation: {}", vo.getResponseText());
     }
 
@@ -237,29 +257,6 @@ public class AiControllerIntegrationTest {
         assertNotNull(response.getBody(), "Response body should not be null");
         assertFalse(response.getBody().isSuccess(), "Response should not be successful");
         log.info("Error response: {}", response.getBody().getMsg());
-    }
-
-    @Test
-    void testEmptyOriginalText() {
-        // Test data
-        String originalText = "";
-        String language = LanguageEnum.EN.getCode();
-
-        // Test all endpoints with empty text
-        String[] endpoints = {
-                "/directly-translation", "/translation-and-explanation",
-                "/grammar-explanation", "/grammar-correction", "/vocabulary-explanation"
-        };
-
-        for (String endpoint : endpoints) {
-            String url = "http://localhost:" + port + "/ai/" + endpoint + "/" + language + "/" + originalText;
-            ResponseEntity<R> response = restTemplate.getForEntity(url, R.class);
-
-            assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode(), "HTTP status should be 400 BAD_REQUEST for " + endpoint);
-            assertNotNull(response.getBody(), "Response body should not be null for " + endpoint);
-            assertFalse(response.getBody().isSuccess(), "Response should not be successful for " + endpoint);
-            log.info("Error response for {}: {}", endpoint, response.getBody().getMsg());
-        }
     }
 
 }

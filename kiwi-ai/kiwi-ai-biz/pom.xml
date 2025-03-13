@@ -26,12 +26,22 @@
         </dependency>
         <dependency>
             <groupId>me.fengorz</groupId>
+            <artifactId>kiwi-common-ytb</artifactId>
+            <version>${kiwi.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>me.fengorz</groupId>
             <artifactId>kiwi-bdf</artifactId>
             <version>${kiwi.version}</version>
         </dependency>
         <dependency>
             <groupId>me.fengorz</groupId>
             <artifactId>kiwi-common-db</artifactId>
+            <version>${kiwi.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>me.fengorz</groupId>
+            <artifactId>kiwi-common-cache</artifactId>
             <version>${kiwi.version}</version>
         </dependency>
         <dependency>

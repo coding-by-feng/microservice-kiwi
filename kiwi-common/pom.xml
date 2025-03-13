@@ -22,6 +22,7 @@
         <module>kiwi-common-sdk</module>
         <module>kiwi-common-tts</module>
         <module>kiwi-common-cache</module>
+        <module>kiwi-common-ytb</module>
     </modules>
 
 </project>

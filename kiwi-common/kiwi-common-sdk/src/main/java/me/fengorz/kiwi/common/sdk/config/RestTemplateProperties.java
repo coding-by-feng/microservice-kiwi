@@ -1,4 +1,4 @@
-package me.fengorz.kiwi.ai.config;
+package me.fengorz.kiwi.common.sdk.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;

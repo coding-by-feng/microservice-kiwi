@@ -124,6 +124,9 @@ vi ~/.bashrc
 export KIWI_ENC_PASSWORD="xxxx"
 export DB_IP="xxx.xxx.xxx.xxx"
 export GOOGLE_APPLICATION_CREDENTIALS="xxx/xxx/credentials.json"
+export GCP_API_KEY="xxx"
+export YTB_OAUTH_CLIENT_SECRETS_FILE="xxx/xxx/client_secrets.json"
+export YTB_OAUTH_ACCESS_TOKEN="xxx"
 source ~/.bashrc
 ```
 For My Mac:
@@ -132,6 +135,9 @@ vi ~/.zshrc
 export KIWI_ENC_PASSWORD="xxxx"
 export DB_IP="xxx.xxx.xxx.xxx"
 export GOOGLE_APPLICATION_CREDENTIALS="xxx/xxx/credentials.json"
+export GCP_API_KEY="xxx"
+export YTB_OAUTH_CLIENT_SECRETS_FILE="xxx/xxx/client_secrets.json"
+export YTB_OAUTH_ACCESS_TOKEN="xxx"
 source ~/.zshrc
 ```
 

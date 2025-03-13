@@ -65,8 +65,8 @@ mkdir microservice-kiwi docker storage_data store_path tracker_data
 cd docker/
 mkdir kiwi ui rabbitmq mysql
 cd kiwi
-mkdir auth config crawler eureka gate upms word
-mkdir auth/logs config/logs crawler/logs crawler/tmp eureka/logs gate/logs upms/logs word/logs word/bizTmp word/crawlerTmp word/biz word/crawler
+mkdir auth config crawler eureka gate upms word ai
+mkdir auth/logs config/logs crawler/logs crawler/tmp eureka/logs gate/logs upms/logs word/logs word/bizTmp word/crawlerTmp word/biz word/crawler ai/logs ai/tmp
 cd ../ui
 mkdir dist nginx
 # download gcp key json on root directory
@@ -112,6 +112,7 @@ Add the following mappings to the end of the hosts file
 127.0.0.1                                     kiwi-auth
 127.0.0.1                                     kiwi-upms
 127.0.0.1                                     kiwi-gate
+127.0.0.1                                     kiwi-ai
 ```
 
 Note: Replace "your_ecs_ip" above with the public IP of the cloud server where fastdfs is located
@@ -122,6 +123,10 @@ For Linux:
 vi ~/.bashrc
 export KIWI_ENC_PASSWORD="xxxx"
 export DB_IP="xxx.xxx.xxx.xxx"
+export GOOGLE_APPLICATION_CREDENTIALS="xxx/xxx/credentials.json"
+export GCP_API_KEY="xxx"
+export YTB_OAUTH_CLIENT_SECRETS_FILE="xxx/xxx/client_secrets.json"
+export YTB_OAUTH_ACCESS_TOKEN="xxx"
 source ~/.bashrc
 ```
 For My Mac:
@@ -129,6 +134,10 @@ For My Mac:
 vi ~/.zshrc 
 export KIWI_ENC_PASSWORD="xxxx"
 export DB_IP="xxx.xxx.xxx.xxx"
+export GOOGLE_APPLICATION_CREDENTIALS="xxx/xxx/credentials.json"
+export GCP_API_KEY="xxx"
+export YTB_OAUTH_CLIENT_SECRETS_FILE="xxx/xxx/client_secrets.json"
+export YTB_OAUTH_ACCESS_TOKEN="xxx"
 source ~/.zshrc
 ```
 
@@ -398,6 +407,6 @@ source ~/.zshrc
 ## Linux
 ```
 vi ~/.bashrc
-export Grok_API_Key="xxxx"
+export GROK_API_KEY="xxxx"
 source ~/.bashrc
 ```

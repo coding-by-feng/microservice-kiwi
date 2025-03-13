@@ -26,12 +26,22 @@
         </dependency>
         <dependency>
             <groupId>me.fengorz</groupId>
+            <artifactId>kiwi-common-ytb</artifactId>
+            <version>${kiwi.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>me.fengorz</groupId>
             <artifactId>kiwi-bdf</artifactId>
             <version>${kiwi.version}</version>
         </dependency>
         <dependency>
             <groupId>me.fengorz</groupId>
             <artifactId>kiwi-common-db</artifactId>
+            <version>${kiwi.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>me.fengorz</groupId>
+            <artifactId>kiwi-common-cache</artifactId>
             <version>${kiwi.version}</version>
         </dependency>
         <dependency>
@@ -48,6 +58,10 @@
             <artifactId>opencensus-impl-lite</artifactId>
             <version>0.24.0</version>
             <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-websocket</artifactId>
         </dependency>
     </dependencies>
 

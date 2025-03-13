@@ -39,9 +39,15 @@ spring:
 ai:
   grok:
     api:
-      key: ${Grok_API_Key}  # Replace with the actual API key
+      key: ${GROK_API_KEY}  # Replace with the actual API key
       endpoint: https://api.x.ai/v1/chat/completions  # Hypothetical endpoint
-      model: "grok-2-latest"
+      model: "grok-beta"
+  openai:
+    api:
+      key: ${OPENAI_API_KEY}
+      stt-endpoint: https://api.openai.com/v1/audio/transcriptions
+      model: "whisper-1"
+
   mode:
     directly-translation: "Directly Translate my prompt to %s language."
     translation-and-explanation: "Directly Translate my prompt to %s language first, and provide an explanation of the translation."
@@ -73,3 +79,11 @@ ignore:
     - /ai/**
   userNames:
     - admin
+
+youtube:
+  oauth:
+    client-secrets-file: ${YTB_OAUTH_CLIENT_SECRETS_FILE}
+    access-token: ${YTB_OAUTH_ACCESS_TOKEN}
+  video:
+    download:
+      path: ENC(6MovVGMc/hsrID5qMQQxJx8yxkHvzUU7DQij+0bDKHWFCwoGwO/ZC9BTVvl+ZHJt)

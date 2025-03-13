@@ -40,7 +40,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 public class TtsTest {
 
-    private final TtsService ttsService = new TtsServiceImpl(null);
+    private final TtsService voiceRssTtsService = new VoiceRssTtsServiceImpl(null);
 
     private static final Set<String> FILES = Sets.newHashSet(
             // "article.txt",
@@ -82,7 +82,7 @@ public class TtsTest {
     @Test
     @SneakyThrows
     public void test_CH() {
-        byte[] bytes = ttsService.speechChinese("3744309a79ff48588fc1b63928c68c91", "a。b。p。d。u。p。a");
+        byte[] bytes = voiceRssTtsService.speechChinese( "a。b。p。d。u。p。a");
         FileUtils.writeByteArrayToFile(new File("testCh.mp3"), bytes);
     }
 
@@ -99,28 +99,8 @@ public class TtsTest {
                 })
                 .filter(Objects::nonNull)
                 .collect(Collectors.joining(";"));
-        byte[] bytes = ttsService.speechChinese("3744309a79ff48588fc1b63928c68c91", lines);
+        byte[] bytes = voiceRssTtsService.speechChinese(lines);
         FileUtils.writeByteArrayToFile(new File(file.replaceAll("\\.txt", ".mp3")), bytes);
-    }
-
-    @SneakyThrows
-    public void SSML_test() {
-        String ssml = "<speak version=\"1.0\" xmlns=\"http://www.w3.org/2001/10/synthesis\"\n" +
-                "       xmlns:mstts=\"https://www.w3.org/2001/mstts\" xml:lang=\"en-US\">\n" +
-                "    <voice name=\"en-US-JennyMultilingualNeural\">\n" +
-                "        <lang xml:lang=\"es-MX\">\n" +
-                "            ¡Esperamos trabajar con usted!\n" +
-                "        </lang>\n" +
-                "        <lang xml:lang=\"en-US\">\n" +
-                "           We look forward to working with you!\n" +
-                "        </lang>\n" +
-                "        <lang xml:lang=\"fr-FR\">\n" +
-                "            Nous avons hâte de travailler avec vous!\n" +
-                "        </lang>\n" +
-                "    </voice>\n" +
-                "</speak>";
-        byte[] bytes = ttsService.speechEnglish("3744309a79ff48588fc1b63928c68c91", ssml);
-        FileUtils.writeByteArrayToFile(new File("ssml-test.mp3"), bytes);
     }
 
 }

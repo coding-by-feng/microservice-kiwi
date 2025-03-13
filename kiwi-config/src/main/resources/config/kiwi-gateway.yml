@@ -43,6 +43,17 @@ spring:
                 name: default
                 fallbackUri: 'forward:/fallback'
 
+        - id: kiwi-ai-biz
+          uri: lb://kiwi-ai-biz
+          predicates:
+            - Path=/ai-biz/**
+          filters:
+            # 降级配置
+            - name: Hystrix
+              args:
+                name: default
+                fallbackUri: 'forward:/fallback'
+
       discovery:
         locator:
           enabled: true

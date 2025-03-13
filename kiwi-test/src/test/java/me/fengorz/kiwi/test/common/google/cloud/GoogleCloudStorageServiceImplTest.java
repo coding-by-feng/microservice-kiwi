@@ -6,10 +6,10 @@ import me.fengorz.kiwi.common.dfs.DfsService;
 import me.fengorz.kiwi.common.sdk.exception.dfs.DfsOperateDeleteException;
 import me.fengorz.kiwi.common.sdk.exception.dfs.DfsOperateException;
 import me.fengorz.kiwi.test.DfsTestApplication;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = DfsTestApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class GoogleCloudStorageServiceImplTest {
 
-    @javax.annotation.Resource(name = "googleCloudStorageService")
+    @Qualifier("googleCloudStorageService")
     private DfsService dfsService;
 
     @Autowired
@@ -55,7 +55,6 @@ class GoogleCloudStorageServiceImplTest {
     }
 
     @Test
-    @Disabled
     @SneakyThrows
     public void testUploadAndDownloadFile() throws IOException {
         if (skipIfDownloadedFileExists()) {

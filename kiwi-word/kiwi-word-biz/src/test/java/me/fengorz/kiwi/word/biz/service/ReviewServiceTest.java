@@ -71,7 +71,7 @@ import static me.fengorz.kiwi.common.tts.TtsConstants.BEAN_NAMES.BAIDU_TTS_SERVI
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 @Slf4j
-@ActiveProfiles({EnvConstants.DEV, EnvConstants.BASE})
+@ActiveProfiles({EnvConstants.TEST})
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = WordBizApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Disabled

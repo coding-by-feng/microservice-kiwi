@@ -54,6 +54,7 @@ public class AiControllerIntegrationTest {
         log.info("HTTP body is: {}", response.getBody());
 
         AiResponseVO vo = KiwiJsonUtils.fromObjectToJson(response.getBody().getData(), AiResponseVO.class);
+
         assertNotNull(vo, "VO should not be null");
         assertEquals(originalText, vo.getOriginalText(), "Original text should match");
         assertEquals(language, vo.getLanguageCode(), "Language code should match");
@@ -68,6 +69,7 @@ public class AiControllerIntegrationTest {
 
         // Perform the GET request using TestRestTemplate
         String url = "http://localhost:" + port + "/ai/directly-translation/" + language + "/" + originalText;
+
         ResponseEntity<R> response = restTemplate.getForEntity(url, R.class);
 
         // Verify the response

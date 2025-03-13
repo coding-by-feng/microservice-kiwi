@@ -40,32 +40,27 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
-/**
- * @Description TODO
- * @Author Kason Zhan
- * @Date 2022/7/5 22:35
- */
 @Slf4j
-@Service
 @RequiredArgsConstructor
-public class TtsServiceImpl implements TtsService {
+@Service("voiceRssTtsService")
+public class VoiceRssTtsServiceImpl implements TtsService {
 
     private final TtsProperties ttsProperties;
 
     @Override
-    public byte[] speechEnglish(String apiKey, String text) throws TtsException {
+    public byte[] speechEnglish(String text) throws TtsException {
         if (StringUtils.isBlank(text)) {
-            return speech(Languages.Chinese_China, apiKey, ENGLISH_PARAPHRASE_MISSING);
+            return speech(Languages.Chinese_China, this.autoSelectApiKey(), ENGLISH_PARAPHRASE_MISSING);
         }
-        return speech(Languages.English_UnitedStates, apiKey, text);
+        return speech(Languages.English_UnitedStates, this.autoSelectApiKey(), text);
     }
 
     @Override
-    public byte[] speechChinese(String apiKey, String text) throws TtsException {
+    public byte[] speechChinese(String text) throws TtsException {
         if (StringUtils.isBlank(text)) {
-            return speech(Languages.Chinese_China, apiKey, CHINESE_PARAPHRASE_MISSING);
+            return speech(Languages.Chinese_China, this.autoSelectApiKey(), CHINESE_PARAPHRASE_MISSING);
         }
-        return speech(Languages.Chinese_China, apiKey, this.replaceEllipsis(text));
+        return speech(Languages.Chinese_China, this.autoSelectApiKey(), this.replaceEllipsis(text));
     }
 
     @Override

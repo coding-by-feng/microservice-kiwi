@@ -123,6 +123,7 @@ For Linux:
 vi ~/.bashrc
 export KIWI_ENC_PASSWORD="xxxx"
 export DB_IP="xxx.xxx.xxx.xxx"
+export GOOGLE_APPLICATION_CREDENTIALS="xxx/xxx/credentials.json"
 source ~/.bashrc
 ```
 For My Mac:
@@ -130,6 +131,7 @@ For My Mac:
 vi ~/.zshrc 
 export KIWI_ENC_PASSWORD="xxxx"
 export DB_IP="xxx.xxx.xxx.xxx"
+export GOOGLE_APPLICATION_CREDENTIALS="xxx/xxx/credentials.json"
 source ~/.zshrc
 ```
 

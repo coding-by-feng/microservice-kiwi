@@ -3,11 +3,12 @@ FROM blackbelt/oraclejdk8
 RUN mkdir /logs
 RUN mkdir /ai-tmp
 
-# Install Python and dependencies using yum
-RUN yum install -y epel-release && \
-    yum install -y python3 python3-pip ffmpeg && \
+# Install Python and dependencies
+RUN apt-get update && \
+    apt-get install -y python3 python3-pip ffmpeg && \
     ln -s /usr/bin/python3 /usr/bin/python && \
-    yum clean all
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
 # Install yt-dlp
 RUN pip3 install --no-cache-dir yt-dlp

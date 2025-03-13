@@ -17,6 +17,7 @@
 package me.fengorz.kiwi.upms;
 
 import me.fengorz.kiwi.bdf.feign.annotation.EnableEnhancerFeignClients;
+import me.fengorz.kiwi.bdf.security.annotation.KiwiResourceSecurityServer;
 import org.springframework.boot.SpringApplication;
 import org.springframework.cloud.client.SpringCloudApplication;
 
@@ -24,6 +25,7 @@ import org.springframework.cloud.client.SpringCloudApplication;
  * @Author Kason Zhan
  * @Date 2019-09-19 17:09
  */
+@KiwiResourceSecurityServer
 @EnableEnhancerFeignClients
 @SpringCloudApplication
 public class UpmsApplication {

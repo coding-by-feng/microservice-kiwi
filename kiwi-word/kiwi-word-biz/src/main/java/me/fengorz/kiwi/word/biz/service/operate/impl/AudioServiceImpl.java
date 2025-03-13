@@ -24,10 +24,8 @@ import me.fengorz.kiwi.common.tts.service.BaiduTtsService;
 import me.fengorz.kiwi.common.tts.service.TtsService;
 import me.fengorz.kiwi.word.api.common.ApiCrawlerConstants;
 import me.fengorz.kiwi.word.api.common.enumeration.ReviseAudioTypeEnum;
-import me.fengorz.kiwi.word.biz.common.SpeakerFunction;
 import me.fengorz.kiwi.word.biz.service.operate.AudioService;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -44,8 +42,8 @@ import static me.fengorz.kiwi.common.tts.TtsConstants.BEAN_NAMES.BAIDU_TTS_SERVI
 @Service
 public class AudioServiceImpl implements AudioService {
 
-    @Autowired
-    private TtsService ttsService;
+    @Resource(name = "googleTtsService")
+    private TtsService googleTtsService;
     @Resource(name = BAIDU_TTS_SERVICE_IMPL)
     private BaiduTtsService baiduTtsService;
     @Resource(name = "googleCloudStorageService")
@@ -62,15 +60,13 @@ public class AudioServiceImpl implements AudioService {
 
     @Override
     public String generateEnglishVoice(String englishText) throws DfsOperateException, TtsException {
-        byte[] bytes;
-        bytes = generateBytes(apiKey -> ttsService.speechEnglish(apiKey, englishText));
+        byte[] bytes = googleTtsService.speechEnglish(englishText);
         return dfsService.uploadFile(new ByteArrayInputStream(bytes), bytes.length, ApiCrawlerConstants.EXT_MP3);
     }
 
     @Override
     public String generateChineseVoice(String chineseText) throws DfsOperateException, TtsException {
-        byte[] bytes;
-        bytes = generateBytes(apiKey -> ttsService.speechChinese(apiKey, chineseText));
+        byte[] bytes = googleTtsService.speechChinese(chineseText);
         return dfsService.uploadFile(new ByteArrayInputStream(bytes), bytes.length, ApiCrawlerConstants.EXT_MP3);
     }
 
@@ -81,18 +77,6 @@ public class AudioServiceImpl implements AudioService {
         }
         byte[] bytes = baiduTtsService.speech(chineseText);
         return dfsService.uploadFile(new ByteArrayInputStream(bytes), bytes.length, ApiCrawlerConstants.EXT_MP3);
-    }
-
-    private byte[] generateBytes(SpeakerFunction<String, byte[]> speaker) throws TtsException {
-        byte[] bytes;
-        String apiKey = ttsService.autoSelectApiKey();
-        try {
-            bytes = speaker.speech(apiKey);
-        } catch (Exception e) {
-            log.error("tts api key {} is invalid!", apiKey);
-            throw new TtsException();
-        }
-        return bytes;
     }
 
     private static final String CHINESE_TEXT_MISSING = "中文翻译缺失";

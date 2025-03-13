@@ -12,7 +12,6 @@
  */
 package me.fengorz.kiwi.word.biz.controller;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.api.R;
 import me.fengorz.kiwi.common.dfs.DfsService;
@@ -28,6 +27,7 @@ import me.fengorz.kiwi.word.api.common.enumeration.ReviseAudioTypeEnum;
 import me.fengorz.kiwi.word.api.entity.WordReviewAudioDO;
 import me.fengorz.kiwi.word.api.vo.WordReviewDailyCounterVO;
 import me.fengorz.kiwi.word.biz.service.operate.ReviewService;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -42,14 +42,19 @@ import java.util.List;
  */
 @Slf4j
 @RestController
-@RequiredArgsConstructor
 @RequestMapping("/word/review/")
 public class WordReviewController extends AbstractFileController {
 
     private final ReviewService reviewService;
-    private final TtsService ttsService;
+    private final TtsService voiceRssTtsService;
     @Resource(name = "googleCloudStorageService")
     private DfsService dfsService;
+
+    public WordReviewController(ReviewService reviewService,
+                                @Qualifier("voiceRssTtsService") TtsService voiceRssTtsService) {
+        this.reviewService = reviewService;
+        this.voiceRssTtsService = voiceRssTtsService;
+    }
 
     @GetMapping("/getReviewBreakpointPageNumber/{listId}")
     public R<Integer> getReviewBreakpointPageNumber(@PathVariable Integer listId) {
@@ -64,7 +69,7 @@ public class WordReviewController extends AbstractFileController {
 
     @GetMapping("/refreshAllApiKey")
     public R<Void> refreshAllApiKey() {
-        ttsService.refreshAllApiKey();
+        voiceRssTtsService.refreshAllApiKey();
         return R.success();
     }
 
@@ -169,18 +174,18 @@ public class WordReviewController extends AbstractFileController {
 
     @GetMapping("/autoSelectApiKey")
     public R<String> autoSelectApiKey() {
-        return R.success(ttsService.autoSelectApiKey());
+        return R.success(voiceRssTtsService.autoSelectApiKey());
     }
 
     @PutMapping("/increaseApiKeyUsedTime/{apiKey}")
     public R<Void> increaseApiKeyUsedTime(@PathVariable("apiKey") String apiKey) {
-        ttsService.increaseApiKeyUsedTime(apiKey);
+        voiceRssTtsService.increaseApiKeyUsedTime(apiKey);
         return R.success();
     }
 
     @PutMapping("/deprecateApiKeyToday/{apiKey}")
     public R<Void> deprecateApiKeyToday(@PathVariable("apiKey") String apiKey) {
-        ttsService.deprecateApiKeyToday(apiKey);
+        voiceRssTtsService.deprecateApiKeyToday(apiKey);
         return R.success();
     }
 

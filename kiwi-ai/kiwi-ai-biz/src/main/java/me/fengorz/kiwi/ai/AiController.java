@@ -2,17 +2,22 @@ package me.fengorz.kiwi.ai;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import me.fengorz.kiwi.ai.api.vo.DirectlyTranslationVO;
+import me.fengorz.kiwi.ai.api.vo.AiResponseVO;
 import me.fengorz.kiwi.common.api.R;
 import me.fengorz.kiwi.common.sdk.annotation.log.LogMarker;
 import me.fengorz.kiwi.common.sdk.controller.BaseController;
 import me.fengorz.kiwi.common.sdk.enumeration.AiPromptModeEnum;
 import me.fengorz.kiwi.common.sdk.enumeration.LanguageEnum;
+import me.fengorz.kiwi.common.sdk.exception.ServiceException;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 
 /**
  * @Author Kason Zhan
@@ -25,14 +30,59 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/ai")
 public class AiController extends BaseController {
 
-    private final AiService aiService;
+    private final AiChatService aiService;
 
     @LogMarker(isPrintParameter = true)
-    @GetMapping("/directly-translate/{language}/{originalText}")
-    public R<DirectlyTranslationVO> directlyTranslate(@PathVariable(value = "originalText") String originalText,
-                                                      @PathVariable(value = "language") String language) {
-        return R.success(PojoBuilder.buildDirectlyTranslationVO(originalText, LanguageConvertor.convertLanguageToEnum(language),
-                aiService.translate(originalText, AiPromptModeEnum.DIRECTLY_TRANSLATION, LanguageEnum.LANGUAGE_MAP.get(language))));
+    @GetMapping("/directly-translation/{language}/{originalText}")
+    public R<AiResponseVO> directlyTranslation(@PathVariable(value = "originalText") String originalText,
+                                               @PathVariable(value = "language") String language) {
+        String decodedOriginalText = getDecodedOriginalText(originalText);
+        return R.success(PojoBuilder.buildDirectlyTranslationVO(decodedOriginalText, LanguageConvertor.convertLanguageToEnum(language),
+                aiService.call(decodedOriginalText, AiPromptModeEnum.DIRECTLY_TRANSLATION, LanguageEnum.LANGUAGE_MAP.get(language))));
+    }
+
+    @LogMarker(isPrintParameter = true)
+    @GetMapping("/translation-and-explanation/{language}/{originalText}")
+    public R<AiResponseVO> translationAndExplanation(@PathVariable(value = "originalText") String originalText,
+                                                     @PathVariable(value = "language") String language) {
+        String decodedOriginalText = getDecodedOriginalText(originalText);
+        return R.success(PojoBuilder.buildDirectlyTranslationVO(decodedOriginalText, LanguageConvertor.convertLanguageToEnum(language),
+                aiService.call(decodedOriginalText, AiPromptModeEnum.TRANSLATION_AND_EXPLANATION, LanguageEnum.LANGUAGE_MAP.get(language))));
+    }
+
+    @LogMarker(isPrintParameter = true)
+    @GetMapping("/grammar-explanation/{language}/{originalText}")
+    public R<AiResponseVO> grammarExplanation(@PathVariable(value = "originalText") String originalText,
+                                              @PathVariable(value = "language") String language) {
+        String decodedOriginalText = getDecodedOriginalText(originalText);
+        return R.success(PojoBuilder.buildDirectlyTranslationVO(decodedOriginalText, LanguageConvertor.convertLanguageToEnum(language),
+                aiService.call(decodedOriginalText, AiPromptModeEnum.GRAMMAR_EXPLANATION, LanguageEnum.LANGUAGE_MAP.get(language))));
+    }
+
+    @LogMarker(isPrintParameter = true)
+    @GetMapping("/grammar-correction/{language}/{originalText}")
+    public R<AiResponseVO> grammarCorrection(@PathVariable(value = "originalText") String originalText,
+                                             @PathVariable(value = "language") String language) {
+        String decodedOriginalText = getDecodedOriginalText(originalText);
+        return R.success(PojoBuilder.buildDirectlyTranslationVO(decodedOriginalText, LanguageConvertor.convertLanguageToEnum(language),
+                aiService.call(decodedOriginalText, AiPromptModeEnum.GRAMMAR_CORRECTION, LanguageEnum.LANGUAGE_MAP.get(language))));
+    }
+
+    @LogMarker(isPrintParameter = true)
+    @GetMapping("/vocabulary-explanation/{language}/{originalText}")
+    public R<AiResponseVO> vocabularyExplanation(@PathVariable(value = "originalText") String originalText,
+                                                 @PathVariable(value = "language") String language) {
+        String decodedOriginalText = getDecodedOriginalText(originalText);
+        return R.success(PojoBuilder.buildDirectlyTranslationVO(decodedOriginalText, LanguageConvertor.convertLanguageToEnum(language),
+                aiService.call(decodedOriginalText, AiPromptModeEnum.VOCABULARY_EXPLANATION, LanguageEnum.LANGUAGE_MAP.get(language))));
+    }
+
+    private static String getDecodedOriginalText(String originalText) {
+        try {
+            return URLDecoder.decode(originalText, String.valueOf(StandardCharsets.UTF_8));
+        } catch (UnsupportedEncodingException e) {
+            throw new ServiceException("Unable to decode original text", e);
+        }
     }
 
 }

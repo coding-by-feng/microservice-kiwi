@@ -5,8 +5,9 @@ set
      fetch_result='',
      is_lock=1,
     is_into_cache = 0
- where fetch_status = 666;
-# where word_name = 'postcode';
+#  where fetch_status = 666;
+    where is_valid = 'N';
+# where word_name = 'abandon';
 # where fetch_time > 100;
 #   and fetch_status <> 666
 #   and in_time > '2020-10-14';
@@ -136,3 +137,9 @@ group by wm.word_name
 having count(wm.word_name) > 1
 order by wm.word_name
 limit 10;
+
+update word_fetch_queue set is_valid='N';
+
+select count(1)
+# select *
+from word_fetch_queue where fetch_status = 666;

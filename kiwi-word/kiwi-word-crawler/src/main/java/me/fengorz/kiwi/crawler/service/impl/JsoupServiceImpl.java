@@ -378,13 +378,13 @@ public class JsoupServiceImpl implements JsoupService {
             try {
                 // fetch UK pronunciation
                 Optional
-                        .ofNullable(subFetchPronunciation(word, block, KEY_UK_PRONUNCIATIOIN,
-                                ApiCrawlerConstants.PRONUNCIATION_TYPE_UK, isAlreadyFetchPronunciation))
+                        .ofNullable(subFetchPronunciation(block, KEY_UK_PRONUNCIATIOIN,
+                                ApiCrawlerConstants.PRONUNCIATION_TYPE_UK))
                         .ifPresent(pronunciationDTOList::add);
                 // fetch US pronunciation
                 Optional
-                        .ofNullable(subFetchPronunciation(word, block, KEY_US_PRONUNCIATIOIN,
-                                ApiCrawlerConstants.PRONUNCIATION_TYPE_US, isAlreadyFetchPronunciation))
+                        .ofNullable(subFetchPronunciation(block, KEY_US_PRONUNCIATIOIN,
+                                ApiCrawlerConstants.PRONUNCIATION_TYPE_US))
                         .ifPresent(pronunciationDTOList::add);
             } catch (JsoupFetchPronunciationException e) {
                 if (!isAlreadyFetchPronunciation) {
@@ -507,19 +507,12 @@ public class JsoupServiceImpl implements JsoupService {
         return exampleDTO;
     }
 
-    private FetchWordPronunciationDTO subFetchPronunciation(String word, Element block, String pronunciationKey,
-                                                            String pronunciationType, boolean isAlreadyFetchPronunciation) throws JsoupFetchPronunciationException {
+    private FetchWordPronunciationDTO subFetchPronunciation(Element block, String pronunciationKey,
+                                                            String pronunciationType) throws JsoupFetchPronunciationException {
         Elements pronunciations = block.getElementsByClass(pronunciationKey);
         if (pronunciations == null || pronunciations.isEmpty()) {
             return null;
         }
-
-        // try {
-        // CrawlerAssertUtils.mustBeTrue(pronunciations != null && pronunciations.size() == 1,
-        // FETCH_PRONUNCIATION_EXCEPTION, word);
-        // } catch (JsoupFetchResultException e) {
-        // throw new JsoupFetchPronunciationException(e);
-        // }
 
         Element ukPronunciation = pronunciations.get(0);
 

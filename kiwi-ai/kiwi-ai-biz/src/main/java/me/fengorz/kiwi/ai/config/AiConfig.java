@@ -18,6 +18,10 @@ package me.fengorz.kiwi.ai.config;
 
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.bdf.config.CoreConfig;
+import me.fengorz.kiwi.bdf.config.SslConfig;
+import me.fengorz.kiwi.common.cache.redis.config.CacheConfig;
+import me.fengorz.kiwi.common.db.config.DbConfig;
+import me.fengorz.kiwi.common.sdk.config.RestTemplateProperties;
 import me.fengorz.kiwi.common.db.config.DbConfig;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
@@ -29,6 +33,18 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.retry.backoff.FixedBackOffPolicy;
+import org.springframework.retry.policy.SimpleRetryPolicy;
+import org.springframework.retry.support.RetryTemplate;
+import org.springframework.security.web.firewall.DefaultHttpFirewall;
+import org.springframework.security.web.firewall.HttpFirewall;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UrlPathHelper;
+
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+import java.util.HashMap;
+import java.util.Map;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.retry.backoff.FixedBackOffPolicy;
 import org.springframework.retry.policy.SimpleRetryPolicy;
@@ -51,69 +67,33 @@ import java.util.concurrent.TimeUnit;
  */
 @Slf4j
 @Configuration
-@ComponentScan("me.fengorz.kiwi.ai.**")
+@ComponentScan("me.fengorz.kiwi.**")
 @Import({CoreConfig.class, DbConfig.class, CacheConfig.class})
-public class AiConfig {
+public class AiConfig extends SslConfig {
 
     public AiConfig(RestTemplateProperties restTemplateProperties) {
+        super(restTemplateProperties);
         log.info("AiConfig...");
-        this.restTemplateProperties = restTemplateProperties;
     }
-
-    private final RestTemplateProperties restTemplateProperties;
 
     @Bean(name = "aiRestTemplate")
     public RestTemplate aiRestTemplate() throws NoSuchAlgorithmException, KeyManagementException {
-        PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager();
-        connectionManager.setMaxTotal(restTemplateProperties.getHttpClient().getMaxTotalConnections());
-        connectionManager.setDefaultMaxPerRoute(restTemplateProperties.getHttpClient().getMaxConnectionsPerRoute());
-        connectionManager.setValidateAfterInactivity(restTemplateProperties.getHttpClient().getValidateAfterInactivity());
-
-        // Create SSL context that trusts all certificates
-        // Create a custom TrustManager that trusts all certificates
-        TrustManager[] trustAllCerts = buildTrustAllCerts();
-        SSLContext sslContext = SSLContext.getInstance("TLS");
-        sslContext.init(null, trustAllCerts, new SecureRandom());
-        // Create SSL socket factory with no hostname verification
-        SSLConnectionSocketFactory sslSocketFactory = new SSLConnectionSocketFactory(
-                sslContext,
-                NoopHostnameVerifier.INSTANCE
-        );
-
-        CloseableHttpClient httpClient = HttpClients.custom()
-                .setSSLSocketFactory(sslSocketFactory)
-                .setConnectionManager(connectionManager)
-                .setConnectionTimeToLive(restTemplateProperties.getHttpClient().getConnectionTimeToLive(), TimeUnit.SECONDS)
-                .setMaxConnTotal(restTemplateProperties.getHttpClient().getMaxConnTotal())
-                .setMaxConnPerRoute(restTemplateProperties.getHttpClient().getMaxConnPerRoute())
-                .build();
-
-        HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory(httpClient);
-        requestFactory.setConnectTimeout(restTemplateProperties.getRequestFactory().getConnectTimeout());
-        requestFactory.setReadTimeout(restTemplateProperties.getRequestFactory().getReadTimeout());
-
-        return new RestTemplate(requestFactory);
+        return this.sslRestTemplate();
     }
 
-    private static TrustManager[] buildTrustAllCerts() {
-        return new TrustManager[]{
-                new X509TrustManager() {
-                    @Override
-                    public void checkServerTrusted(X509Certificate[] chain, String authType) {
-                        // Trust all server certificates
-                    }
+    @Bean
+    public UrlPathHelper urlPathHelper() {
+        UrlPathHelper helper = new UrlPathHelper();
+        helper.setUrlDecode(false); // Prevent double-decoding issues
+        helper.setRemoveSemicolonContent(false);
+        return helper;
+    }
 
-                    @Override
-                    public void checkClientTrusted(X509Certificate[] chain, String authType) {
-
-                    }
-
-                    @Override
-                    public X509Certificate[] getAcceptedIssuers() {
-                        return new X509Certificate[0];
-                    }
-                }
-        };
+    @Bean
+    public HttpFirewall allowUrlEncodedSlashHttpFirewall() {
+        DefaultHttpFirewall firewall = new DefaultHttpFirewall();
+        firewall.setAllowUrlEncodedSlash(true);
+        return firewall;
     }
 
     @Bean

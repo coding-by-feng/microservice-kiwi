@@ -16,6 +16,7 @@
 
 package me.fengorz.kiwi.word.biz.controller;
 
+import me.fengorz.kiwi.common.sdk.constant.EnvConstants;
 import me.fengorz.kiwi.word.api.request.ParaphraseRequest;
 import me.fengorz.kiwi.word.biz.service.base.ParaphraseService;
 import org.junit.jupiter.api.Disabled;
@@ -27,6 +28,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -34,6 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
+@ActiveProfiles({EnvConstants.TEST})
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(ParaphraseController.class)
 @Disabled
@@ -61,4 +64,5 @@ class ParaphraseControllerTest {
         assertEquals(HttpStatus.OK.value(), response.getStatus());
         assertEquals("expectedResponse", response.getContentAsString());
     }
+
 }

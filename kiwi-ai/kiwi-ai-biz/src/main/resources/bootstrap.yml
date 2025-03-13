@@ -13,7 +13,7 @@ server:
 
 spring:
   application:
-    name: kiwi-ai
+    name: kiwi-ai-biz
   profiles:
     active: dev,prod
   cloud:

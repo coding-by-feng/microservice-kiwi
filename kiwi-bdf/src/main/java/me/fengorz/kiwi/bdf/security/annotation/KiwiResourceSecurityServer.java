@@ -34,4 +34,4 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 @Import({KiwiResourceServerAutoConfiguration.class, KiwiSecurityBeanDefinitionRegistrar.class})
-public @interface KiwiEnhancerResourceServer {}
+public @interface KiwiResourceSecurityServer {}

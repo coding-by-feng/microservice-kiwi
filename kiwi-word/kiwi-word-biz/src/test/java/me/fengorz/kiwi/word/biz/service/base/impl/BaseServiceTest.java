@@ -45,7 +45,7 @@ import java.util.List;
 import static me.fengorz.kiwi.common.tts.TtsConstants.BEAN_NAMES.BAIDU_TTS_SERVICE_IMPL;
 
 @Slf4j
-@ActiveProfiles({EnvConstants.DEV, EnvConstants.BASE})
+@ActiveProfiles({EnvConstants.TEST})
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = WordBizApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Disabled

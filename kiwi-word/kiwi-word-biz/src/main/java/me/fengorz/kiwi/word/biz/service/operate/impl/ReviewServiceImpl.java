@@ -97,7 +97,8 @@ public class ReviewServiceImpl implements ReviewService {
     @Resource(name = "googleCloudStorageService")
     private DfsService dfsService;
     private final AudioService audioService;
-    private final TtsService ttsService;
+    @Resource(name = "voiceRssTtsService")
+    private TtsService voiceRssTtsService;
     private final ParaphraseTtsGenerationPayload paraphraseTtsGenerationPayload;
     private final RevisePermanentAudioHelper revisePermanentAudioHelper;
 
@@ -143,7 +144,7 @@ public class ReviewServiceImpl implements ReviewService {
     public void increase(int type, Integer userId) {
         if (ReviseDailyCounterTypeEnum.REVIEW_AUDIO_VOICERSS_TTS_COUNTER.getType() == type) {
             synchronized (BARRIER) {
-                ttsService.voiceRssGlobalIncreaseCounter();
+                voiceRssTtsService.voiceRssGlobalIncreaseCounter();
             }
         }
         WordReviewDailyCounterDO counter = findReviewCounterDO(userId, type);

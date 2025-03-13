@@ -54,6 +54,11 @@
             <artifactId>kiwi-common-tts</artifactId>
             <version>${kiwi.version}</version>
         </dependency>
+        <dependency>
+            <groupId>me.fengorz</groupId>
+            <artifactId>kiwi-test</artifactId>
+            <version>${kiwi.version}</version>
+        </dependency>
     </dependencies>
 
     <build>

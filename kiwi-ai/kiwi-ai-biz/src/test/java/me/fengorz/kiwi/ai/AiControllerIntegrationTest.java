@@ -1,7 +1,7 @@
 package me.fengorz.kiwi.ai;
 
 import lombok.extern.slf4j.Slf4j;
-import me.fengorz.kiwi.ai.api.vo.DirectlyTranslationVO;
+import me.fengorz.kiwi.ai.api.vo.AiResponseVO;
 import me.fengorz.kiwi.common.api.R;
 import me.fengorz.kiwi.common.sdk.constant.EnvConstants;
 import me.fengorz.kiwi.common.sdk.enumeration.LanguageEnum;
@@ -36,14 +36,14 @@ public class AiControllerIntegrationTest {
     private TestRestTemplate restTemplate;
 
     @Test
-    void testDirectlyTranslate_Success() {
+    void testDirectlyTranslation_Success() {
         // Test data
         String originalText = "Hello, world!";
         String language = LanguageEnum.EN.getCode();
         String translatedText = "你好，世界！";
 
         // Perform the GET request using TestRestTemplate
-        String url = "http://localhost:" + port + "/ai/directly-translate/" + language + "/" + originalText;
+        String url = "http://localhost:" + port + "/ai/directly-translation/" + language + "/" + originalText;
         ResponseEntity<R> response = restTemplate.getForEntity(url, R.class);
 
         // Verify the response
@@ -53,7 +53,8 @@ public class AiControllerIntegrationTest {
 
         log.info("HTTP body is: {}", response.getBody());
 
-        DirectlyTranslationVO vo = KiwiJsonUtils.fromObjectToJson(response.getBody().getData(), DirectlyTranslationVO.class);
+        AiResponseVO vo = KiwiJsonUtils.fromObjectToJson(response.getBody().getData(), AiResponseVO.class);
+
         assertNotNull(vo, "VO should not be null");
         assertEquals(originalText, vo.getOriginalText(), "Original text should match");
         assertEquals(language, vo.getLanguageCode(), "Language code should match");
@@ -61,17 +62,203 @@ public class AiControllerIntegrationTest {
     }
 
     @Test
-    void testDirectlyTranslate_InvalidLanguage() {
+    void testDirectlyTranslation_InvalidLanguage() {
         // Test data
         String originalText = "Hello, world!";
         String language = "INVALID";
 
         // Perform the GET request using TestRestTemplate
-        String url = "http://localhost:" + port + "/ai/directly-translate/" + language + "/" + originalText;
+        String url = "http://localhost:" + port + "/ai/directly-translation/" + language + "/" + originalText;
+
         ResponseEntity<R> response = restTemplate.getForEntity(url, R.class);
 
         // Verify the response
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode(), "HTTP status should be 400 BAD_REQUEST");
+    }
+
+    @Test
+    void testTranslationAndExplanation_Success() {
+        // Test data
+        String originalText = "Hello, world!";
+        String language = LanguageEnum.ZH_CN.getCode();
+        String expectedResponse = "Translation: 你好，世界！\nExplanation: ..."; // Example response
+
+        // Perform the GET request
+        String url = "http://localhost:" + port + "/ai/translation-and-explanation/" + language + "/" + originalText;
+        ResponseEntity<R> response = restTemplate.getForEntity(url, R.class);
+
+        // Verify the response
+        assertEquals(HttpStatus.OK, response.getStatusCode(), "HTTP status should be 200 OK");
+        assertNotNull(response.getBody(), "Response body should not be null");
+        assertTrue(response.getBody().isSuccess(), "Response should be successful");
+
+        AiResponseVO vo = KiwiJsonUtils.fromObjectToJson(response.getBody().getData(), AiResponseVO.class);
+        assertNotNull(vo, "VO should not be null");
+        assertEquals(originalText, vo.getOriginalText(), "Original text should match");
+        assertEquals(language, vo.getLanguageCode(), "Language code should match");
+        assertTrue(vo.getResponseText().contains("Translation") && vo.getResponseText().contains("Explanation"),
+                "Response should contain translation and explanation");
+        log.info("Translation and explanation: {}", vo.getResponseText());
+    }
+
+    @Test
+    void testTranslationAndExplanation_SpecialSymbol_Success() {
+        // Test data
+        String originalText = "food%20scraps%2Fgreen%20waste";
+        String language = LanguageEnum.ZH_CN.getCode();
+
+        // Perform the GET request
+        String url = "http://localhost:" + port + "/ai/translation-and-explanation/" + language + "/" + originalText;
+        ResponseEntity<R> response = restTemplate.getForEntity(url, R.class);
+
+        // Verify the response
+        assertEquals(HttpStatus.OK, response.getStatusCode(), "HTTP status should be 200 OK");
+        assertNotNull(response.getBody(), "Response body should not be null");
+        assertTrue(response.getBody().isSuccess(), "Response should be successful");
+
+        AiResponseVO vo = KiwiJsonUtils.fromObjectToJson(response.getBody().getData(), AiResponseVO.class);
+        assertNotNull(vo, "VO should not be null");
+        assertEquals("food scraps/green waste", vo.getOriginalText(), "Original text should match");
+        assertEquals(language, vo.getLanguageCode(), "Language code should match");
+        log.info("Translation and explanation: {}", vo.getResponseText());
+    }
+
+    @Test
+    void testTranslationAndExplanation_InvalidLanguage() {
+        // Test data
+        String originalText = "Hello, world!";
+        String language = "INVALID";
+
+        // Perform the GET request
+        String url = "http://localhost:" + port + "/ai/translation-and-explanation/" + language + "/" + originalText;
+        ResponseEntity<R> response = restTemplate.getForEntity(url, R.class);
+
+        // Verify the response
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode(), "HTTP status should be 400 BAD_REQUEST");
+        assertNotNull(response.getBody(), "Response body should not be null");
+        assertFalse(response.getBody().isSuccess(), "Response should not be successful");
+        log.info("Error response: {}", response.getBody().getMsg());
+    }
+
+    @Test
+    void testGrammarExplanation_Success() {
+        // Test data
+        String originalText = "I is happy.";
+        String language = LanguageEnum.EN.getCode();
+        String expectedResponse = "Explanation: The correct sentence should be 'I am happy' because..."; // Example
+
+        // Perform the GET request
+        String url = "http://localhost:" + port + "/ai/grammar-explanation/" + language + "/" + originalText;
+        ResponseEntity<R> response = restTemplate.getForEntity(url, R.class);
+
+        // Verify the response
+        assertEquals(HttpStatus.OK, response.getStatusCode(), "HTTP status should be 200 OK");
+        assertNotNull(response.getBody(), "Response body should not be null");
+        assertTrue(response.getBody().isSuccess(), "Response should be successful");
+
+        AiResponseVO vo = KiwiJsonUtils.fromObjectToJson(response.getBody().getData(), AiResponseVO.class);
+        assertNotNull(vo, "VO should not be null");
+        assertEquals(originalText, vo.getOriginalText(), "Original text should match");
+        assertEquals(language, vo.getLanguageCode(), "Language code should match");
+        assertTrue(vo.getResponseText().contains("Explanation"), "Response should contain grammar explanation");
+        log.info("Grammar explanation: {}", vo.getResponseText());
+    }
+
+    @Test
+    void testGrammarExplanation_InvalidLanguage() {
+        // Test data
+        String originalText = "I is happy.";
+        String language = "INVALID";
+
+        // Perform the GET request
+        String url = "http://localhost:" + port + "/ai/grammar-explanation/" + language + "/" + originalText;
+        ResponseEntity<R> response = restTemplate.getForEntity(url, R.class);
+
+        // Verify the response
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode(), "HTTP status should be 400 BAD_REQUEST");
+        assertNotNull(response.getBody(), "Response body should not be null");
+        assertFalse(response.getBody().isSuccess(), "Response should not be successful");
+        log.info("Error response: {}", response.getBody().getMsg());
+    }
+
+    @Test
+    void testGrammarCorrection_Success() {
+        // Test data
+        String originalText = "I is happy.";
+        String language = LanguageEnum.EN.getCode();
+        String expectedResponse = "Corrected: I am happy."; // Example
+
+        // Perform the GET request
+        String url = "http://localhost:" + port + "/ai/grammar-correction/" + language + "/" + originalText;
+        ResponseEntity<R> response = restTemplate.getForEntity(url, R.class);
+
+        // Verify the response
+        assertEquals(HttpStatus.OK, response.getStatusCode(), "HTTP status should be 200 OK");
+        assertNotNull(response.getBody(), "Response body should not be null");
+        assertTrue(response.getBody().isSuccess(), "Response should be successful");
+
+        AiResponseVO vo = KiwiJsonUtils.fromObjectToJson(response.getBody().getData(), AiResponseVO.class);
+        assertNotNull(vo, "VO should not be null");
+        assertEquals(originalText, vo.getOriginalText(), "Original text should match");
+        assertEquals(language, vo.getLanguageCode(), "Language code should match");
+        log.info("Grammar correction: {}", vo.getResponseText());
+    }
+
+    @Test
+    void testGrammarCorrection_InvalidLanguage() {
+        // Test data
+        String originalText = "I is happy.";
+        String language = "INVALID";
+
+        // Perform the GET request
+        String url = "http://localhost:" + port + "/ai/grammar-correction/" + language + "/" + originalText;
+        ResponseEntity<R> response = restTemplate.getForEntity(url, R.class);
+
+        // Verify the response
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode(), "HTTP status should be 400 BAD_REQUEST");
+        assertNotNull(response.getBody(), "Response body should not be null");
+        assertFalse(response.getBody().isSuccess(), "Response should not be successful");
+        log.info("Error response: {}", response.getBody().getMsg());
+    }
+
+    @Test
+    void testVocabularyExplanation_Success() {
+        // Test data
+        String originalText = "Hope";
+        String language = LanguageEnum.EN.getCode();
+        String expectedResponse = "Definition: A feeling of expectation..."; // Example
+
+        // Perform the GET request
+        String url = "http://localhost:" + port + "/ai/vocabulary-explanation/" + language + "/" + originalText;
+        ResponseEntity<R> response = restTemplate.getForEntity(url, R.class);
+
+        // Verify the response
+        assertEquals(HttpStatus.OK, response.getStatusCode(), "HTTP status should be 200 OK");
+        assertNotNull(response.getBody(), "Response body should not be null");
+        assertTrue(response.getBody().isSuccess(), "Response should be successful");
+
+        AiResponseVO vo = KiwiJsonUtils.fromObjectToJson(response.getBody().getData(), AiResponseVO.class);
+        assertNotNull(vo, "VO should not be null");
+        assertEquals(originalText, vo.getOriginalText(), "Original text should match");
+        assertEquals(language, vo.getLanguageCode(), "Language code should match");
+        log.info("Vocabulary explanation: {}", vo.getResponseText());
+    }
+
+    @Test
+    void testVocabularyExplanation_InvalidLanguage() {
+        // Test data
+        String originalText = "Hope";
+        String language = "INVALID";
+
+        // Perform the GET request
+        String url = "http://localhost:" + port + "/ai/vocabulary-explanation/" + language + "/" + originalText;
+        ResponseEntity<R> response = restTemplate.getForEntity(url, R.class);
+
+        // Verify the response
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode(), "HTTP status should be 400 BAD_REQUEST");
+        assertNotNull(response.getBody(), "Response body should not be null");
+        assertFalse(response.getBody().isSuccess(), "Response should not be successful");
+        log.info("Error response: {}", response.getBody().getMsg());
     }
 
 }

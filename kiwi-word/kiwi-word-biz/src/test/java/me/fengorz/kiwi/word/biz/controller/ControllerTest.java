@@ -45,7 +45,7 @@ import java.util.concurrent.TimeUnit;
  * @Date 2022/9/23 09:36
  */
 @Slf4j
-@ActiveProfiles({EnvConstants.DEV, EnvConstants.BASE})
+@ActiveProfiles({EnvConstants.TEST})
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = WordBizApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Disabled

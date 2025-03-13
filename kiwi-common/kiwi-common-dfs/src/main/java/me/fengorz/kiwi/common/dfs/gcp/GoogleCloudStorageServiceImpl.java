@@ -5,13 +5,13 @@ import com.google.cloud.storage.Blob;
 import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.Storage;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.dfs.DfsService;
 import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
 import me.fengorz.kiwi.common.sdk.exception.dfs.DfsOperateDeleteException;
 import me.fengorz.kiwi.common.sdk.exception.dfs.DfsOperateException;
 import org.apache.commons.io.IOUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
@@ -29,11 +29,11 @@ import java.util.Set;
  */
 @Slf4j
 @Primary
+@RequiredArgsConstructor
 @Service("googleCloudStorageService")
 public class GoogleCloudStorageServiceImpl implements DfsService {
 
-    @Autowired
-    private Storage storage;
+    private final Storage storage;
     @Value("${dfs.gcp.bucket-name:kiwidict-bucket}")
     private String defaultBucketName;
 

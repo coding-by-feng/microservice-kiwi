@@ -32,7 +32,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @Slf4j
-@ActiveProfiles({EnvConstants.DEV, EnvConstants.BASE})
+@ActiveProfiles({EnvConstants.TEST})
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = WordBizApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Disabled

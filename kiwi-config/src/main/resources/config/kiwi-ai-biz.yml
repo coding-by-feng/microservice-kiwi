@@ -1,0 +1,51 @@
+security:
+  oauth2:
+    client:
+      client-id: ENC(wORgugqWfXlIuzbal/3pjXTNXij/RSpo)
+      client-secret: ENC(rMd1buB3iI+si+W99eB+QFa3QburIEmY)
+      scope: server
+
+# 数据源
+spring:
+  main:
+    allow-bean-definition-overriding: true
+
+ignore:
+  urls:
+
+ms:
+  config:
+    exclude-db: true
+    exclude-cache: true
+
+ai:
+  grok:
+    api:
+      key: ${GROK_API_KEY}  # Replace with the actual API key
+      endpoint: https://api.x.ai/v1/chat/completions  # Hypothetical endpoint
+      model: "grok-beta"
+  mode:
+    directly-translation: "Directly Translate my prompt to %s language."
+    translation-and-explanation: "Directly Translate my prompt to %s language first, and provide an explanation of the translation, and translate the explanation to destination language."
+    grammar-explanation: "Translate my prompt to %s language, and provide an explanation of the grammar."
+    grammar-correction: "Translate my prompt to %s language, and provide an explanation of the grammar correction."
+    vocabulary-explanation: "Explain the vocabulary in %s language, please provide the paraphrase in English and %s of the vocabulary in different vocabulary classes, for example, verb, noun, adverb, etc. and also provide the sentences that use this vocabulary with its translation in %s language of each class."
+
+youtube:
+  oauth:
+    client-secrets-file: ${YTB_OAUTH_CLIENT_SECRETS_FILE}
+    access-token: ${YTB_OAUTH_ACCESS_TOKEN}
+
+rest-template:
+  http-client:
+    max-total-connections: 20  # Lower for tests to reduce resource usage
+    max-connections-per-route: 10
+    validate-after-inactivity: 500
+    connection-time-to-live: 10
+  request-factory:
+    connect-timeout: 10000  # Faster timeouts for tests
+    read-timeout: 20000
+  retry:
+    max-attempts: 2  # Fewer retries for faster tests
+    retryable-exceptions: "org.springframework.web.client.HttpServerErrorException,java.net.SocketTimeoutException"
+    backoff-period: 500  # Faster backoff for tests

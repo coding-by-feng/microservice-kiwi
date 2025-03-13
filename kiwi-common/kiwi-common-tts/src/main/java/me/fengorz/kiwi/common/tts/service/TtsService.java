@@ -16,34 +16,47 @@
 
 package me.fengorz.kiwi.common.tts.service;
 
-import me.fengorz.kiwi.common.sdk.exception.tts.TtsException;
+import me.fengorz.kiwi.common.sdk.exception.ServiceException;
 
 /**
  * @Description TODO
  * @Author Kason Zhan
  * @Date 2022/7/5 22:33
  */
-public interface TtsService {
+public interface TtsService extends TtsBaseService {
 
-    byte[] speechEnglish(String apiKey, String text) throws TtsException;
+    default String autoSelectApiKey(){
+        throw new ServiceException("Method autoSelectApiKey is not supported.");
+    }
 
-    byte[] speechChinese(String apiKey, String text) throws TtsException;
 
-    String autoSelectApiKey();
+    default void increaseApiKeyUsedTime(String apiKey){
+        throw new ServiceException("Method increaseApiKeyUsedTime is not supported.");
+    }
 
-    void increaseApiKeyUsedTime(String apiKey);
-
-    Integer queryTtsApiKeyUsed(String apiKey);
+    default Integer queryTtsApiKeyUsed(String apiKey){
+        throw new ServiceException("Method queryTtsApiKeyUsed is not supported.");
+    }
 
     @SuppressWarnings("UnusedReturnValue")
-    int useTtsApiKey(String apiKey, int time);
+    default int useTtsApiKey(String apiKey, int time){
+        throw new ServiceException("Method useTtsApiKey is not supported.");
+    }
 
-    void deprecateApiKeyToday(String apiKey);
+    default void deprecateApiKeyToday(String apiKey){
+        throw new ServiceException("Method deprecateApiKeyToday is not supported.");
+    }
 
-    void voiceRssGlobalIncreaseCounter();
+    default void voiceRssGlobalIncreaseCounter(){
+        throw new ServiceException("Method voiceRssGlobalIncreaseCounter is not supported.");
+    }
 
-    boolean hasValidApiKey();
+    default boolean hasValidApiKey(){
+        throw new ServiceException("Method hasValidApiKey is not supported.");
+    }
 
-    void refreshAllApiKey();
+    default void refreshAllApiKey(){
+        throw new ServiceException("Method refreshAllApiKey is not supported.");
+    }
 
 }

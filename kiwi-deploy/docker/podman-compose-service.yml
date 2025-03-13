@@ -28,9 +28,23 @@ services:
     environment:
       - KIWI_ENC_PASSWORD=${KIWI_ENC_PASSWORD}
       - DB_IP=${DB_IP}
+      - GCP_API_KEY=${GCP_API_KEY}
+      - GOOGLE_APPLICATION_CREDENTIALS=${GOOGLE_APPLICATION_CREDENTIALS}
     volumes:
       - /root/docker/kiwi/word/logs:/logs
       - /root/docker/kiwi/word/bizTmp:/wordTmp
+    network_mode: "host"
+    depends_on:
+      - kiwi-gate
+  kiwi-ai-biz:
+    image: kiwi-ai-biz:2.0
+    environment:
+      - KIWI_ENC_PASSWORD=${KIWI_ENC_PASSWORD}
+      - DB_IP=${DB_IP}
+      - GROK_API_KEY=${GROK_API_KEY}
+    volumes:
+      - /root/docker/kiwi/ai/logs:/logs
+      - /root/docker/kiwi/ai/tmp:/ai-tmp
     network_mode: "host"
     depends_on:
       - kiwi-gate
@@ -39,6 +53,8 @@ services:
     environment:
       - KIWI_ENC_PASSWORD=${KIWI_ENC_PASSWORD}
       - DB_IP=${DB_IP}
+      - GCP_API_KEY=${GCP_API_KEY}
+      - GOOGLE_APPLICATION_CREDENTIALS=${GOOGLE_APPLICATION_CREDENTIALS}
     volumes:
       - /root/docker/kiwi/crawler/logs:/logs
       - /root/docker/kiwi/crawler/tmp:/crawlerTmp

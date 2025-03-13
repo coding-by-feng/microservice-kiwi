@@ -1,7 +1,7 @@
 package me.fengorz.kiwi.ai;
 
 import lombok.experimental.UtilityClass;
-import me.fengorz.kiwi.ai.api.vo.DirectlyTranslationVO;
+import me.fengorz.kiwi.ai.api.vo.AiResponseVO;
 import me.fengorz.kiwi.common.sdk.enumeration.LanguageEnum;
 
 /**
@@ -11,24 +11,24 @@ import me.fengorz.kiwi.common.sdk.enumeration.LanguageEnum;
 public class PojoBuilder {
 
     /**
-     * Builds a DirectlyTranslationVO from the translate method's parameters and response.
+     * Builds a AiResponseVO from the translate method's parameters and response.
      *
      * @param prompt      The original text to translate.
      * @param language    The target language (LanguageEnum).
      * @param translatedText The translated text returned by the translate method.
-     * @return A DirectlyTranslationVO with the original text, language code, and translated text.
+     * @return A AiResponseVO with the original text, language code, and translated text.
      * @throws IllegalArgumentException If language is null.
      */
-    public DirectlyTranslationVO buildDirectlyTranslationVO(String prompt,
-                                                            LanguageEnum language, String translatedText) {
+    public AiResponseVO buildDirectlyTranslationVO(String prompt,
+                                                   LanguageEnum language, String translatedText) {
         if (language == null) {
             throw new IllegalArgumentException("LanguageEnum cannot be null");
         }
 
-        DirectlyTranslationVO vo = new DirectlyTranslationVO();
+        AiResponseVO vo = new AiResponseVO();
         vo.setOriginalText(prompt);
         vo.setLanguageCode(language.getCode());
-        vo.setTranslatedText(translatedText);
+        vo.setResponseText(translatedText);
         return vo;
     }
 }

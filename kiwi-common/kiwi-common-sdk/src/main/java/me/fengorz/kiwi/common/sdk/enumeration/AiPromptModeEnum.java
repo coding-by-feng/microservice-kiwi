@@ -12,30 +12,42 @@ public enum AiPromptModeEnum {
     /**
      * "Directly Translate my prompt to %s language."
      */
-    DIRECTLY_TRANSLATION("directly-translation"),
+    DIRECTLY_TRANSLATION("directly-translation", 1),
     /**
      * "Directly Translate my prompt to %s language first, and provide an explanation of the translation."
      */
-    TRANSLATION_AND_EXPLANATION("translation-and-explanation"),
+    TRANSLATION_AND_EXPLANATION("translation-and-explanation", 1),
     /**
      * "Translate my prompt to %s language, and provide an explanation of the grammar."
      */
-    GRAMMAR_EXPLANATION("grammar-explanation"),
+    GRAMMAR_EXPLANATION("grammar-explanation", 1),
     /**
      * "Translate my prompt to %s language, and provide an explanation of the grammar correction."
      */
-    GRAMMAR_CORRECTION("grammar-correction"),
+    GRAMMAR_CORRECTION("grammar-correction", 1),
     /**
      * "Explain the vocabulary in %s language, please provide the paraphrase in English and %s of the vocabulary in different vocabulary classes,
      * for example, verb, noun, adverb, etc. and also provide the sentences that use this vocabulary with its translation in %s language of each class."
      */
-    VOCABULARY_EXPLANATION("vocabulary-explanation"),
+    VOCABULARY_EXPLANATION("vocabulary-explanation", 3),
+    /**
+     * "Provide the synonym for the given word, please provide the paraphrase in English and %s of the synonym,
+     * and also provide the sentences that use this synonym with its translation in %s language."
+     */
+    SYNONYM("synonym", 2),
+    /**
+     * "Provide the antonym for the given word, please provide the paraphrase in English and %s of the antonym,
+     * and also provide the sentences that use this antonym with its translation in %s language."
+     */
+    ANTONYM("antonym", 2),
     ;
 
     private final String mode;
+    private final int languageWildcardCounts;
 
-    AiPromptModeEnum(String mode) {
+    AiPromptModeEnum(String mode, int languageWildcardCounts) {
         this.mode = mode;
+        this.languageWildcardCounts = languageWildcardCounts;
     }
 
 }

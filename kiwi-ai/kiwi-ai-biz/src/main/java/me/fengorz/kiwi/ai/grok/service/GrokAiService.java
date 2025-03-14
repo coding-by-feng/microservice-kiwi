@@ -67,11 +67,11 @@ public class GrokAiService implements AiChatService {
 
     @NotNull
     private String buildPrompt(AiPromptModeEnum promptMode, LanguageEnum language) {
-        String lang = language.getName();
-        if (AiPromptModeEnum.VOCABULARY_EXPLANATION.equals(promptMode)) {
-            return String.format(modeProperties.getMode().get(promptMode.getMode()), lang, lang, lang);
+        Object[] languageWildcards = new Object[promptMode.getLanguageWildcardCounts()];
+        for (int i = 0; i < promptMode.getLanguageWildcardCounts(); i++) {
+            languageWildcards[i] = language.getCode();
         }
-        return String.format(modeProperties.getMode().get(promptMode.getMode()), lang);
+        return String.format(modeProperties.getMode().get(promptMode.getMode()), languageWildcards);
     }
 
 }

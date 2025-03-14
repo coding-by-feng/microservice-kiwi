@@ -8,7 +8,7 @@ services:
     ports:
       - '8762:8762'
     volumes:
-      - /root/docker/kiwi/eureka/logs:/logs
+      - /root/docker/kiwi/eureka/logs:/logs:Z
     network_mode: "host"
   kiwi-config:
     image: kiwi-config:2.0
@@ -19,7 +19,7 @@ services:
     ports:
       - '7771:7771'
     volumes:
-      - /root/docker/kiwi/config/logs:/logs
+      - /root/docker/kiwi/config/logs:/logs:Z
     network_mode: "host"
     depends_on:
       - kiwi-eureka

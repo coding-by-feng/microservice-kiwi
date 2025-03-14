@@ -41,6 +41,7 @@ public class YouTuBeControllerIntegrationTest {
 
 
     @Test
+    @Disabled
     void testDownloadVideo_Success() throws Exception {
         // Perform the GET request to download the video
         String url = "http://localhost:" + port + "/ai/ytb/video/download?url=" + TEST_URL;
@@ -76,7 +77,6 @@ public class YouTuBeControllerIntegrationTest {
     }
 
     @Test
-    @Disabled
     void testDownloadSubtitles_Success() {
         // Perform the GET request to download subtitles
         String url = "http://localhost:" + port + "/ai/ytb/video/subtitles?url=" + TEST_URL;

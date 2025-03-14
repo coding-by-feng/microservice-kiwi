@@ -20,12 +20,12 @@ RUN curl -fsSL https://pyenv.run | bash \
 
 # Install Python via Pyenv
 RUN /bin/bash -c "source /root/.bashrc && pyenv install -v 3.9.21"
+RUN pyenv global 3.9
 
 # Install yt-dlp
-# RUN apk add --no-cache wget ca-certificates \
-#    && wget https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp -O /usr/local/bin/yt-dlp \
-#    && chmod +x /usr/local/bin/yt-dlp \
-#    && yt-dlp --version
+ADD yt-dlp_linux yt-dlp_linux
+
+RUN chmod 777 yt-dlp_linux
 
 # Add application JAR file
 ADD kiwi-ai-biz-2.0.jar app.jar

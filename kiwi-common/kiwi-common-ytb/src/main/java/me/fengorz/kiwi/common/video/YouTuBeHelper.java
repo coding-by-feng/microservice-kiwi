@@ -82,7 +82,7 @@ public class YouTuBeHelper {
             }
             log.info("Subtitles downloaded successfully: {}", fileName);
 
-            File subtitleFile = new File(downloadPath, fileName);
+            File subtitleFile = new File(getDownloadPath(), fileName);
             StringBuilder subtitlesContent = new StringBuilder();
             try (BufferedReader reader = Files.newBufferedReader(subtitleFile.toPath(), StandardCharsets.UTF_8)) {
                 String line;
@@ -145,7 +145,7 @@ public class YouTuBeHelper {
     }
 
     private String getLatestSubtitleFileName() {
-        File dir = new File(downloadPath);
+        File dir = new File(getDownloadPath());
         File[] files = dir.listFiles((d, name) -> name.endsWith(".vtt") || name.endsWith(".srt"));
         if (files == null || files.length == 0) {
             return null;
@@ -160,6 +160,7 @@ public class YouTuBeHelper {
     private static final ThreadLocal<String> DOWNLOAD_DIRECTORY;
 
     static {
+        // Create a unique directory for each download
         DOWNLOAD_DIRECTORY = ThreadLocal.withInitial(() -> UUID.randomUUID().toString());
     }
 

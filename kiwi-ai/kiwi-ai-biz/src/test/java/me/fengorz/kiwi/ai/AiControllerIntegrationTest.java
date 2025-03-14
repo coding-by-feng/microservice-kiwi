@@ -261,4 +261,84 @@ public class AiControllerIntegrationTest {
         log.info("Error response: {}", response.getBody().getMsg());
     }
 
+    @Test
+    void testAntonym_Success() {
+        // Test data
+        String originalText = "Happy";
+        String language = LanguageEnum.EN.getCode();
+        String expectedResponse = "Antonyms: Sad, Unhappy"; // Example response
+
+        // Perform the GET request
+        String url = "http://localhost:" + port + "/ai/antonym/" + language + "/" + originalText;
+        ResponseEntity<R> response = restTemplate.getForEntity(url, R.class);
+
+        // Verify the response
+        assertEquals(HttpStatus.OK, response.getStatusCode(), "HTTP status should be 200 OK");
+        assertNotNull(response.getBody(), "Response body should not be null");
+        assertTrue(response.getBody().isSuccess(), "Response should be successful");
+
+        AiResponseVO vo = KiwiJsonUtils.fromObjectToJson(response.getBody().getData(), AiResponseVO.class);
+        assertNotNull(vo, "VO should not be null");
+        assertEquals(originalText, vo.getOriginalText(), "Original text should match");
+        assertEquals(language, vo.getLanguageCode(), "Language code should match");
+        log.info("Antonym response: {}", vo.getResponseText());
+    }
+
+    @Test
+    void testAntonym_InvalidLanguage() {
+        // Test data
+        String originalText = "Happy";
+        String language = "INVALID";
+
+        // Perform the GET request
+        String url = "http://localhost:" + port + "/ai/antonym/" + language + "/" + originalText;
+        ResponseEntity<R> response = restTemplate.getForEntity(url, R.class);
+
+        // Verify the response
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode(), "HTTP status should be 400 BAD_REQUEST");
+        assertNotNull(response.getBody(), "Response body should not be null");
+        assertFalse(response.getBody().isSuccess(), "Response should not be successful");
+        log.info("Error response: {}", response.getBody().getMsg());
+    }
+
+    @Test
+    void testSynonym_Success() {
+        // Test data
+        String originalText = "Happy";
+        String language = LanguageEnum.EN.getCode();
+        String expectedResponse = "Synonyms: Joyful, Glad"; // Example response
+
+        // Perform the GET request
+        String url = "http://localhost:" + port + "/ai/synonym/" + language + "/" + originalText;
+        ResponseEntity<R> response = restTemplate.getForEntity(url, R.class);
+
+        // Verify the response
+        assertEquals(HttpStatus.OK, response.getStatusCode(), "HTTP status should be 200 OK");
+        assertNotNull(response.getBody(), "Response body should not be null");
+        assertTrue(response.getBody().isSuccess(), "Response should be successful");
+
+        AiResponseVO vo = KiwiJsonUtils.fromObjectToJson(response.getBody().getData(), AiResponseVO.class);
+        assertNotNull(vo, "VO should not be null");
+        assertEquals(originalText, vo.getOriginalText(), "Original text should match");
+        assertEquals(language, vo.getLanguageCode(), "Language code should match");
+        log.info("Synonym response: {}", vo.getResponseText());
+    }
+
+    @Test
+    void testSynonym_InvalidLanguage() {
+        // Test data
+        String originalText = "Happy";
+        String language = "INVALID";
+
+        // Perform the GET request
+        String url = "http://localhost:" + port + "/ai/synonym/" + language + "/" + originalText;
+        ResponseEntity<R> response = restTemplate.getForEntity(url, R.class);
+
+        // Verify the response
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode(), "HTTP status should be 400 BAD_REQUEST");
+        assertNotNull(response.getBody(), "Response body should not be null");
+        assertFalse(response.getBody().isSuccess(), "Response should not be successful");
+        log.info("Error response: {}", response.getBody().getMsg());
+    }
+
 }

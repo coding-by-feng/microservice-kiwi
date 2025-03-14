@@ -87,5 +87,6 @@ youtube:
     client-secrets-file: ${YTB_OAUTH_CLIENT_SECRETS_FILE}
     access-token: ${YTB_OAUTH_ACCESS_TOKEN}
   video:
+    command: yt-dlp
     download:
       path: ENC(6MovVGMc/hsrID5qMQQxJx8yxkHvzUU7DQij+0bDKHWFCwoGwO/ZC9BTVvl+ZHJt)

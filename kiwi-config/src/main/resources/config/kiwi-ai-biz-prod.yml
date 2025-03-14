@@ -1,0 +1,5 @@
+youtube:
+  video:
+    command: ./yt-dlp_linux
+    download:
+      path: ENC(8ZJ3rI1uzmeliVVmWQwG8w==)

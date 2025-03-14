@@ -18,10 +18,13 @@ public class YouTuBeHelper {
     @Value("${youtube.video.download.path}")
     private String downloadPath;
 
+    @Value("${youtube.video.command}")
+    private String command;
+
     public FileInputStream downloadVideo(String videoUrl) {
         try {
             List<String> command = new ArrayList<>();
-            command.add("yt-dlp");
+            command.add(this.command);
             command.add("-o");
             command.add(getDownloadPath() + "/%(title)s.%(ext)s");
             command.add(videoUrl);
@@ -57,7 +60,7 @@ public class YouTuBeHelper {
     public String downloadSubtitles(String videoUrl) {
         try {
             List<String> command = new ArrayList<>();
-            command.add("yt-dlp");
+            command.add(this.command);
             command.add("--write-subs");
             command.add("--sub-lang");
             command.add("en"); // Default to English subtitles; can be parameterized
@@ -98,7 +101,7 @@ public class YouTuBeHelper {
     public String getVideoTitle(String videoUrl) {
         try {
             List<String> command = new ArrayList<>();
-            command.add("yt-dlp");
+            command.add(this.command);
             command.add("--get-title");
             command.add(videoUrl);
 

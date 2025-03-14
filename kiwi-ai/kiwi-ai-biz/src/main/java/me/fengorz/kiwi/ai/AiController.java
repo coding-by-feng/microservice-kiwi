@@ -77,6 +77,24 @@ public class AiController extends BaseController {
                 aiService.call(decodedOriginalText, AiPromptModeEnum.VOCABULARY_EXPLANATION, LanguageEnum.LANGUAGE_MAP.get(language))));
     }
 
+    @LogMarker(isPrintParameter = true)
+    @GetMapping("/synonym/{language}/{originalText}")
+    public R<AiResponseVO> synonym(@PathVariable(value = "originalText") String originalText,
+                                                 @PathVariable(value = "language") String language) {
+        String decodedOriginalText = getDecodedOriginalText(originalText);
+        return R.success(PojoBuilder.buildDirectlyTranslationVO(decodedOriginalText, LanguageConvertor.convertLanguageToEnum(language),
+                aiService.call(decodedOriginalText, AiPromptModeEnum.SYNONYM, LanguageEnum.LANGUAGE_MAP.get(language))));
+    }
+
+    @LogMarker(isPrintParameter = true)
+    @GetMapping("/antonym/{language}/{originalText}")
+    public R<AiResponseVO> antonym(@PathVariable(value = "originalText") String originalText,
+                                                 @PathVariable(value = "language") String language) {
+        String decodedOriginalText = getDecodedOriginalText(originalText);
+        return R.success(PojoBuilder.buildDirectlyTranslationVO(decodedOriginalText, LanguageConvertor.convertLanguageToEnum(language),
+                aiService.call(decodedOriginalText, AiPromptModeEnum.ANTONYM, LanguageEnum.LANGUAGE_MAP.get(language))));
+    }
+
     private static String getDecodedOriginalText(String originalText) {
         try {
             return URLDecoder.decode(originalText, String.valueOf(StandardCharsets.UTF_8));

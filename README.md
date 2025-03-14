@@ -141,6 +141,10 @@ export YTB_OAUTH_ACCESS_TOKEN="xxx"
 source ~/.zshrc
 ```
 
+# Upload Runnable Scripts
+
+- upload yt-dlp_linux that is saved in `kiwi-deploy/ytb` to `~/docker/kiwi/ai`
+
 # mysql
 
 ```

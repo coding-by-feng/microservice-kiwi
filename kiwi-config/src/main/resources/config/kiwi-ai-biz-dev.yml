@@ -1,0 +1,5 @@
+youtube:
+  video:
+    command: yt-dlp
+    download:
+      path: ENC(6MovVGMc/hsrID5qMQQxJx8yxkHvzUU7DQij+0bDKHWFCwoGwO/ZC9BTVvl+ZHJt)

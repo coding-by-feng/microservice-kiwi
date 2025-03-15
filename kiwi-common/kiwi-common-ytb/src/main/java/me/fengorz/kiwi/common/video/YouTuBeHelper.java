@@ -63,6 +63,7 @@ public class YouTuBeHelper {
             List<String> command = new ArrayList<>();
             command.add(this.command);
             command.add("--write-subs");
+            command.add("--write-auto-sub");
             command.add("--sub-lang");
             command.add("en"); // Default to English subtitles; can be parameterized
             command.add("--skip-download");

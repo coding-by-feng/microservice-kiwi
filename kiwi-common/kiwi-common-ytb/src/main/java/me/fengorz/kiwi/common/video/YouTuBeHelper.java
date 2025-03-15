@@ -1,6 +1,7 @@
 package me.fengorz.kiwi.common.video;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -86,19 +87,63 @@ public class YouTuBeHelper {
             log.info("Subtitles downloaded successfully: {}", fileName);
 
             File subtitleFile = new File(currentDownloadPath, fileName);
-            StringBuilder subtitlesContent = new StringBuilder();
-            try (BufferedReader reader = Files.newBufferedReader(subtitleFile.toPath(), StandardCharsets.UTF_8)) {
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    subtitlesContent.append(line).append("\n");
-                }
-            }
-            log.info("Subtitles content retrieved: {}", subtitlesContent);
-            return subtitlesContent.toString();
+            return processSubtitleFile(subtitleFile);
         } catch (Exception e) {
             log.error("Error downloading subtitles for URL: {}", videoUrl, e);
             throw new RuntimeException("Failed to download subtitles: " + e.getMessage(), e);
         }
+    }
+
+    /**
+     * Process the subtitle file, removing duplicates and formatting
+     *
+     * @param subtitleFile The VTT or SRT file to process
+     * @return Cleaned subtitle content
+     * @throws IOException If there's an error reading the file
+     */
+    public String processSubtitleFile(File subtitleFile) throws IOException {
+        StringBuilder subtitlesContent = new StringBuilder();
+        String previousLine = null;
+
+        try (BufferedReader reader = Files.newBufferedReader(subtitleFile.toPath(), StandardCharsets.UTF_8)) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                // Skip empty lines
+                if (line.trim().isEmpty()) {
+                    continue;
+                }
+
+                if (StringUtils.contains(previousLine, "-->") && StringUtils.contains(line, "-->")) {
+                    continue;
+                }
+
+                if (line.contains("<c") && line.contains("c>")) {
+                    continue;
+                }
+
+                // Check if this is a timestamp line
+                if (line.matches("\\d{2}:\\d{2}:\\d{2}\\.\\d{3}\\s+-->\\s+\\d{2}:\\d{2}:\\d{2}\\.\\d{3}.*")) {
+                    // Remove position formatting
+                    String cleanSubtitleLine = cleanSubtitleLine(line);
+                    subtitlesContent.append(cleanSubtitleLine).append("\n");
+                    previousLine = cleanSubtitleLine;
+                    continue;
+                }
+
+                // Clean the subtitle line
+                String cleanedLine = cleanSubtitleLine(line);
+                // Skip if this is a duplicate of the previous line
+                if (StringUtils.equals(previousLine, cleanedLine)) {
+                    continue;
+                }
+
+                subtitlesContent.append(cleanedLine).append("\n");
+                previousLine = cleanedLine;
+            }
+        }
+
+        log.info("Subtitles content retrieved and cleaned");
+        return subtitlesContent.toString();
     }
 
     public String getVideoTitle(String videoUrl) {
@@ -158,6 +203,26 @@ public class YouTuBeHelper {
 
     private String getDownloadPath() {
         return downloadPath + "/" + UUID.randomUUID();
+    }
+
+    /**
+     * Cleans subtitle line by removing HTML entities and returns null if the line
+     * contains formatting tags or timestamps.
+     *
+     * @param line The raw subtitle line to clean
+     * @return The cleaned subtitle text or null if line contains formatting tags or timestamps
+     */
+    private String cleanSubtitleLine(String line) {
+        // Check if line contains formatting tags or timestamps
+        // Remove all HTML entities
+        String result = line;
+        result = result.replaceAll("&nbsp;", "")
+                .replaceAll("\\s+align:start position:0%$", "");
+
+        // Clean up multiple spaces and trim the result
+        result = result.replaceAll("\\s+", " ").trim();
+
+        return result;
     }
 
 }

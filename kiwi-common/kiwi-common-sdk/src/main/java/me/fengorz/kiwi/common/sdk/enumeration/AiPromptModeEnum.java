@@ -16,7 +16,7 @@ public enum AiPromptModeEnum {
     /**
      * "Directly Translate my prompt to %s language first, and provide an explanation of the translation."
      */
-    TRANSLATION_AND_EXPLANATION("translation-and-explanation", 1),
+    TRANSLATION_AND_EXPLANATION("translation-and-explanation", 2),
     /**
      * "Translate my prompt to %s language, and provide an explanation of the grammar."
      */

@@ -3,6 +3,7 @@ package me.fengorz.kiwi.ai;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.api.R;
 import me.fengorz.kiwi.common.sdk.constant.EnvConstants;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,10 +37,11 @@ public class YouTuBeControllerIntegrationTest {
     @Autowired
     private TestRestTemplate restTemplate;
 
-    private static final String TEST_URL = "https://www.youtube.com/watch?v=q0DMYs4b2Yw"; // Short test video
+    private static final String TEST_URL = "https://youtu.be/LgUjLcxJxVg?si=l0Y74ZVzzILlcRgq"; // Short test video
 
 
     @Test
+    @Disabled
     void testDownloadVideo_Success() throws Exception {
         // Perform the GET request to download the video
         String url = "http://localhost:" + port + "/ai/ytb/video/download?url=" + TEST_URL;

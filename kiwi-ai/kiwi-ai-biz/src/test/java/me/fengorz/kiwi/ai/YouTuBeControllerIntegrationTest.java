@@ -3,7 +3,6 @@ package me.fengorz.kiwi.ai;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.api.R;
 import me.fengorz.kiwi.common.sdk.constant.EnvConstants;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +40,6 @@ public class YouTuBeControllerIntegrationTest {
 
 
     @Test
-    @Disabled
     void testDownloadVideo_Success() throws Exception {
         // Perform the GET request to download the video
         String url = "http://localhost:" + port + "/ai/ytb/video/download?url=" + TEST_URL;
@@ -93,7 +91,6 @@ public class YouTuBeControllerIntegrationTest {
     }
 
     @Test
-    @Disabled
     void testGetVideoTitle_Success() {
         // Perform the GET request to get the video title
         String url = "http://localhost:" + port + "/ai/ytb/video/title?url=" + TEST_URL;
@@ -111,7 +108,6 @@ public class YouTuBeControllerIntegrationTest {
     }
 
     @Test
-    @Disabled
     void testDownloadVideo_InvalidUrl() {
         // Test with an invalid URL
         String invalidUrl = "https://invalid-url";

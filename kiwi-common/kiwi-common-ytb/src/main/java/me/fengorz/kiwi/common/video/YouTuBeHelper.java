@@ -26,7 +26,8 @@ public class YouTuBeHelper {
             List<String> command = new ArrayList<>();
             command.add(this.command);
             command.add("-o");
-            command.add(getDownloadPath() + "/%(title)s.%(ext)s");
+            String currentDownloadPath = getDownloadPath();
+            command.add(currentDownloadPath + "/%(title)s.%(ext)s");
             command.add(videoUrl);
 
             Process process = prepareProcess(command);
@@ -37,13 +38,13 @@ public class YouTuBeHelper {
             }
 
             // Get the latest downloaded file
-            String fileName = getLatestFileName();
+            String fileName = getLatestFileName(currentDownloadPath);
             if (fileName == null) {
                 throw new RuntimeException("No file downloaded for URL: " + videoUrl);
             }
 
             log.info("Video downloaded successfully: {}", fileName);
-            File downloadedFile = new File(getDownloadPath(), fileName);
+            File downloadedFile = new File(currentDownloadPath, fileName);
             return new FileInputStream(downloadedFile);
         } catch (Exception e) {
             log.error("Error downloading video for URL: {}", videoUrl, e);
@@ -66,7 +67,8 @@ public class YouTuBeHelper {
             command.add("en"); // Default to English subtitles; can be parameterized
             command.add("--skip-download");
             command.add("-o");
-            command.add(getDownloadPath() + "/%(title)s.%(ext)s");
+            String currentDownloadPath = getDownloadPath();
+            command.add(currentDownloadPath + "/%(title)s.%(ext)s");
             command.add(videoUrl);
 
             Process process = prepareProcess(command);
@@ -76,13 +78,13 @@ public class YouTuBeHelper {
                 throw new RuntimeException("Failed to download subtitles, exit code: " + exitCode);
             }
 
-            String fileName = getLatestSubtitleFileName();
+            String fileName = getLatestSubtitleFileName(currentDownloadPath);
             if (fileName == null) {
                 throw new RuntimeException("No subtitles downloaded for URL: " + videoUrl);
             }
             log.info("Subtitles downloaded successfully: {}", fileName);
 
-            File subtitleFile = new File(getDownloadPath(), fileName);
+            File subtitleFile = new File(currentDownloadPath, fileName);
             StringBuilder subtitlesContent = new StringBuilder();
             try (BufferedReader reader = Files.newBufferedReader(subtitleFile.toPath(), StandardCharsets.UTF_8)) {
                 String line;
@@ -135,8 +137,8 @@ public class YouTuBeHelper {
         return output;
     }
 
-    private String getLatestFileName() {
-        File dir = new File(getDownloadPath());
+    private String getLatestFileName(String currentDownloadPath) {
+        File dir = new File(currentDownloadPath);
         File[] files = dir.listFiles((d, name) -> name.endsWith(".mp4") || name.endsWith(".webm"));
         if (files == null || files.length == 0) {
             return null;
@@ -144,8 +146,8 @@ public class YouTuBeHelper {
         return files[0].getName(); // Return the latest file (simplistic approach)
     }
 
-    private String getLatestSubtitleFileName() {
-        File dir = new File(getDownloadPath());
+    private String getLatestSubtitleFileName(String currentDownloadPath) {
+        File dir = new File(currentDownloadPath);
         File[] files = dir.listFiles((d, name) -> name.endsWith(".vtt") || name.endsWith(".srt"));
         if (files == null || files.length == 0) {
             return null;
@@ -154,14 +156,7 @@ public class YouTuBeHelper {
     }
 
     private String getDownloadPath() {
-        return downloadPath + "/" + DOWNLOAD_DIRECTORY.get();
-    }
-
-    private static final ThreadLocal<String> DOWNLOAD_DIRECTORY;
-
-    static {
-        // Create a unique directory for each download
-        DOWNLOAD_DIRECTORY = ThreadLocal.withInitial(() -> UUID.randomUUID().toString());
+        return downloadPath + "/" + UUID.randomUUID();
     }
 
 }

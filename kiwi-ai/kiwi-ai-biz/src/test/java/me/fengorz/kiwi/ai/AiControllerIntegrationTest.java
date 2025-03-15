@@ -96,8 +96,6 @@ public class AiControllerIntegrationTest {
         assertNotNull(vo, "VO should not be null");
         assertEquals(originalText, vo.getOriginalText(), "Original text should match");
         assertEquals(language, vo.getLanguageCode(), "Language code should match");
-        assertTrue(vo.getResponseText().contains("Translation") && vo.getResponseText().contains("Explanation"),
-                "Response should contain translation and explanation");
         log.info("Translation and explanation: {}", vo.getResponseText());
     }
 

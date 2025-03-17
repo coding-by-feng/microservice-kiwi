@@ -58,11 +58,12 @@ public class YouTuBeController {
 
     @GetMapping("/subtitles")
     public R<String> downloadSubtitles(@RequestParam("url") String videoUrl, @RequestParam(value = "language", required = false) String language) {
-        String subtitles = youTuBeHelper.downloadSubtitles(videoUrl);
         if (language == null || "null".equals(language)) {
+            String subtitles = youTuBeHelper.downloadSubtitles(videoUrl, false);
             return R.success(subtitles);
         }
-        return R.success(grokAiService.call(subtitles, AiPromptModeEnum.SUBTITLE_TRANSLATOR, LanguageConvertor.convertLanguageToEnum(language)));
+        return R.success(grokAiService.batchCall(youTuBeHelper.downloadSubtitles(videoUrl, true),
+                AiPromptModeEnum.SUBTITLE_TRANSLATOR, LanguageConvertor.convertLanguageToEnum(language)));
     }
 
     @GetMapping("/title")

@@ -87,7 +87,11 @@ public class YouTuBeHelper {
             log.info("Subtitles downloaded successfully: {}", fileName);
 
             File subtitleFile = new File(currentDownloadPath, fileName);
-            return processSubtitleFile(subtitleFile);
+            String subtitles = processSubtitleFile(subtitleFile);
+            if (StringUtils.startsWith(subtitles, "WEBVTT")) {
+                return VttFileCleaner.cleanVtt(subtitles);
+            }
+            return subtitles;
         } catch (Exception e) {
             log.error("Error downloading subtitles for URL: {}", videoUrl, e);
             throw new RuntimeException("Failed to download subtitles: " + e.getMessage(), e);

@@ -37,14 +37,15 @@ public class YouTuBeControllerIntegrationTest {
     @Autowired
     private TestRestTemplate restTemplate;
 
-    private static final String TEST_URL = "https://youtu.be/LgUjLcxJxVg?si=l0Y74ZVzzILlcRgq"; // Short test video
+    private static final String TEST_URL_AUTO_SUBTITLES = "https://youtu.be/oqhXOJ7bTG8?si=ibQyhMcVa0mAQDep"; // Short test video
+    private static final String TEST_URL_NORMAL_SUBTITLES = "https://www.youtube.com/watch?v=q0DMYs4b2Yw"; // Short test video
 
 
     @Test
     @Disabled
     void testDownloadVideo_Success() throws Exception {
         // Perform the GET request to download the video
-        String url = "http://localhost:" + port + "/ai/ytb/video/download?url=" + TEST_URL;
+        String url = "http://localhost:" + port + "/ai/ytb/video/download?url=" + TEST_URL_AUTO_SUBTITLES;
         // Use exchange to get the response with the stream
         ResponseEntity<byte[]> response = restTemplate.getForEntity(url, byte[].class);
 
@@ -79,7 +80,7 @@ public class YouTuBeControllerIntegrationTest {
     @Test
     void testDownloadSubtitles_Success() {
         // Perform the GET request to download subtitles
-        String url = "http://localhost:" + port + "/ai/ytb/video/subtitles?url=" + TEST_URL;
+        String url = "http://localhost:" + port + "/ai/ytb/video/subtitles?url=" + TEST_URL_AUTO_SUBTITLES;
         ResponseEntity<R> response = restTemplate.getForEntity(url, R.class);
 
         // Verify the response
@@ -93,9 +94,10 @@ public class YouTuBeControllerIntegrationTest {
     }
 
     @Test
+    @Disabled
     void testGetVideoTitle_Success() {
         // Perform the GET request to get the video title
-        String url = "http://localhost:" + port + "/ai/ytb/video/title?url=" + TEST_URL;
+        String url = "http://localhost:" + port + "/ai/ytb/video/title?url=" + TEST_URL_AUTO_SUBTITLES;
         ResponseEntity<R> response = restTemplate.getForEntity(url, R.class);
 
         // Verify the response

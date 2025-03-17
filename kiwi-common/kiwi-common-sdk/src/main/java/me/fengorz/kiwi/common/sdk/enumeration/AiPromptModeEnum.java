@@ -40,6 +40,7 @@ public enum AiPromptModeEnum {
      * and also provide the sentences that use this antonym with its translation in %s language."
      */
     ANTONYM("antonym", 2),
+    SUBTITLE_TRANSLATOR("subtitle-translator", 1),
     ;
 
     private final String mode;

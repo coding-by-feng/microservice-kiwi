@@ -25,7 +25,7 @@ import java.util.Collections;
 import java.util.Objects;
 
 @Slf4j
-@Service
+@Service("grokAiService")
 public class GrokAiService implements AiChatService {
 
     private final RestTemplate restTemplate;

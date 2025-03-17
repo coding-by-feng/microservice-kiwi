@@ -56,6 +56,7 @@ ai:
     vocabulary-explanation: "Explain the vocabulary in %s language, please provide the paraphrase in English and %s of the vocabulary in different vocabulary classes, for example, verb, noun, adverb, etc. and also provide the sentences that use this vocabulary with its translation in %s language of each class."
     synonym: "List the synonym for the given word, please provide the paraphrase in English and %s of the synonym, and also provide the sentences that use this synonym with its translation in %s language."
     antonym: "List the antonym for the given word, please provide the paraphrase in English and %s of the antonym, and also provide the sentences that use this antonym with its translation in %s language."
+    subtitle-translator: "You are a professional subtitles translator. Please help me to retouch this subtitles, but don't change the timestamps, please add the %s translation of the previous sentence after the punctuation in the subtitles."
 
 ms:
   config:
@@ -69,8 +70,8 @@ rest-template:
     validate-after-inactivity: 500
     connection-time-to-live: 10
   request-factory:
-    connect-timeout: 10000  # Faster timeouts for tests
-    read-timeout: 20000
+    connect-timeout: 60000  # Faster timeouts for tests
+    read-timeout: 60000
   retry:
     max-attempts: 2  # Fewer retries for faster tests
     retryable-exceptions: "org.springframework.web.client.HttpServerErrorException,java.net.SocketTimeoutException"

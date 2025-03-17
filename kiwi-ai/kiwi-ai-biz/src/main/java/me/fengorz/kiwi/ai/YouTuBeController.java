@@ -3,7 +3,7 @@ package me.fengorz.kiwi.ai;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.api.R;
 import me.fengorz.kiwi.common.sdk.enumeration.AiPromptModeEnum;
-import me.fengorz.kiwi.common.video.YouTuBeHelper;
+import me.fengorz.kiwi.common.ytb.YouTuBeHelper;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;

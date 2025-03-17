@@ -1,4 +1,4 @@
-package me.fengorz.kiwi.common.video;
+package me.fengorz.kiwi.common.ytb;
 
 import org.jetbrains.annotations.NotNull;
 

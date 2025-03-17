@@ -19,4 +19,10 @@ public class GrokApiProperties implements Serializable {
 
     private String model;
 
+    private Integer threadPromptsLineSize = 50;
+
+    private Integer threadPoolSize;
+
+    private Integer threadTimeoutSecs;
+
 }

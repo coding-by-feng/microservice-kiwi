@@ -30,7 +30,7 @@ public class VttFileCleaner {
         return linesList;
     }
 
-    public static String cleanVtt(String subtitles) {
+    public static <T> T cleanVtt(String subtitles, Class<T> clazz) {
         // Read the file
         List<String> lines = subtitleToLines(subtitles);
 
@@ -41,7 +41,11 @@ public class VttFileCleaner {
 
         List<String> reModifiedLines = modifySubtitles(distinctModifiedLines);
 
-        return String.join("\n", reModifiedLines);
+        if (List.class.equals(clazz)) {
+            return clazz.cast(reModifiedLines);
+        }
+
+        return clazz.cast(String.join("\n", reModifiedLines));
     }
 
     @NotNull

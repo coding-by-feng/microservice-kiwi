@@ -7,6 +7,7 @@ import me.fengorz.kiwi.ai.grok.GrokApiProperties;
 import me.fengorz.kiwi.ai.grok.model.request.ChatRequest;
 import me.fengorz.kiwi.ai.grok.model.request.Message;
 import me.fengorz.kiwi.ai.grok.model.response.ChatCompletionResponse;
+import me.fengorz.kiwi.ai.model.BatchResult;
 import me.fengorz.kiwi.common.sdk.enumeration.AiPromptModeEnum;
 import me.fengorz.kiwi.common.sdk.enumeration.LanguageEnum;
 import me.fengorz.kiwi.common.sdk.exception.ai.GrokAiException;
@@ -20,9 +21,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Objects;
+import java.util.*;
+import java.util.concurrent.*;
 
 @Slf4j
 @Service("grokAiService")
@@ -65,8 +65,132 @@ public class GrokAiService implements AiChatService {
         }
     }
 
+    @Override
+    public String batchCall(List<String> prompts, AiPromptModeEnum promptMode, LanguageEnum language) {
+        // Get batch size from properties (default to 50 if not specified)
+        int batchSize = grokApiProperties.getThreadPromptsLineSize();
+
+        // Get thread pool size from properties (default to available processors)
+        int threadPoolSize = grokApiProperties.getThreadPoolSize() != null ?
+                grokApiProperties.getThreadPoolSize() : Runtime.getRuntime().availableProcessors();
+
+        // Calculate total number of batches
+        int totalBatches = (int) Math.ceil((double) prompts.size() / batchSize);
+
+        // Create array to store results in order
+        String[] results = new String[totalBatches];
+
+        // Create thread pool
+        ExecutorService executorService = Executors.newFixedThreadPool(threadPoolSize);
+
+        // List to keep track of futures
+        List<Future<BatchResult>> futures = new ArrayList<>();
+
+        // Submit batch tasks
+        for (int i = 0; i < prompts.size(); i += batchSize) {
+            final int batchIndex = i / batchSize;
+            final int startIndex = i;
+            final int endIndex = Math.min(i + batchSize, prompts.size());
+
+            futures.add(executorService.submit(() -> {
+                try {
+                    // Get current batch of prompts
+                    List<String> batchPrompts = prompts.subList(startIndex, endIndex);
+
+                    // Process batch and return result with index for ordering
+                    return new BatchResult(batchIndex, processBatch(batchPrompts, promptMode, language));
+                } catch (Exception e) {
+                    log.error("Error processing batch {}: {}", batchIndex, e.getMessage(), e);
+                    throw new GrokAiException("Error processing batch " + batchIndex + ": " + e.getMessage(), e);
+                }
+            }));
+        }
+
+        // Collect results while maintaining order
+        for (Future<BatchResult> future : futures) {
+            try {
+                BatchResult result = future.get();
+                results[result.getBatchIndex()] = result.getContent();
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                throw new GrokAiException("Batch processing was interrupted", e);
+            } catch (ExecutionException e) {
+                throw new GrokAiException("Error executing batch: " + e.getCause().getMessage(), e.getCause());
+            }
+        }
+
+        // Shutdown executor
+        executorService.shutdown();
+        try {
+            if (!executorService.awaitTermination(this.grokApiProperties.getThreadTimeoutSecs(), TimeUnit.SECONDS)) {
+                executorService.shutdownNow();
+            }
+        } catch (InterruptedException e) {
+            executorService.shutdownNow();
+            Thread.currentThread().interrupt();
+        }
+
+        // Combine results in order
+        StringBuilder finalResult = new StringBuilder();
+        for (String result : results) {
+            if (result != null) {
+                finalResult.append(result).append("\n\n");
+            }
+        }
+
+        return finalResult.toString().trim();
+    }
+
+    /**
+     * Process a single batch of prompts
+     *
+     * @param batchPrompts List of prompts to process in this batch
+     * @param promptMode   The prompt mode to use
+     * @param language     The language to use
+     * @return The processed result
+     */
+    private String processBatch(List<String> batchPrompts, AiPromptModeEnum promptMode, LanguageEnum language) {
+        // Create thread-local headers for safety
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.put("Authorization", Collections.singletonList("Bearer " + grokApiProperties.getKey()));
+
+        // Process each prompt in the batch and collect into a single string
+        StringBuilder batchContent = new StringBuilder();
+        for (String prompt : batchPrompts) {
+            batchContent.append(prompt).append("\n\n");
+        }
+
+        // Build request with system prompt and combined user prompt
+        ChatRequest chatRequest = new ChatRequest(
+                Arrays.asList(new Message("system", buildPrompt(promptMode, language)),
+                        new Message("user", batchContent.toString())), grokApiProperties.getModel());
+
+        // Convert request to JSON
+        String requestBody = KiwiJsonUtils.toJsonStr(chatRequest);
+
+        // Create HTTP entity with headers and body
+        HttpEntity<String> entity = new HttpEntity<>(requestBody, headers);
+
+        // Make API call
+        log.debug("Calling Grok API for batch with {} prompts", batchPrompts.size());
+        ResponseEntity<ChatCompletionResponse> response = restTemplate.postForEntity(
+                grokApiProperties.getEndpoint(), entity, ChatCompletionResponse.class);
+
+        // Process response
+        if (response.getStatusCode().is2xxSuccessful()) {
+            return Objects.requireNonNull(response.getBody()).getChoices().get(0).getMessage().getContent();
+        } else {
+            log.error("Grok API batch call failed: status code: {}; body: {}", response.getStatusCode(), response.getBody());
+            throw new GrokAiException("Grok API batch call failed: " + response.getStatusCode());
+        }
+    }
+
     @NotNull
     private String buildPrompt(AiPromptModeEnum promptMode, LanguageEnum language) {
+        if (promptMode.getLanguageWildcardCounts() == 0) {
+            return modeProperties.getMode().get(promptMode.getMode());
+        }
         Object[] languageWildcards = new Object[promptMode.getLanguageWildcardCounts()];
         for (int i = 0; i < promptMode.getLanguageWildcardCounts(); i++) {
             languageWildcards[i] = language.getCode();

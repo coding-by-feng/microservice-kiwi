@@ -19,4 +19,12 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
+    <dependencies>
+        <dependency>
+            <groupId>me.fengorz</groupId>
+            <artifactId>kiwi-common-sdk</artifactId>
+            <version>${kiwi.version}</version>
+        </dependency>
+    </dependencies>
+
 </project>

@@ -44,7 +44,7 @@ ai:
       model: "grok-beta"
       thread-prompts-line-size: 200
       thread-pool-size: 2
-      thread-timeout-secs: 70
+      thread-timeout-secs: 110
   openai:
     api:
       key: ${OPENAI_API_KEY}
@@ -73,8 +73,8 @@ rest-template:
     validate-after-inactivity: 500
     connection-time-to-live: 20
   request-factory:
-    connect-timeout: 60000  # Faster timeouts for tests
-    read-timeout: 60000
+    connect-timeout: 100000  # Faster timeouts for tests
+    read-timeout: 100000
   retry:
     max-attempts: 2  # Fewer retries for faster tests
     retryable-exceptions: "org.springframework.web.client.HttpServerErrorException,java.net.SocketTimeoutException"

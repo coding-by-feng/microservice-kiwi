@@ -1,10 +1,13 @@
 package me.fengorz.kiwi.common.video;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class VttFileCleaner {
 
@@ -32,6 +35,17 @@ public class VttFileCleaner {
         List<String> lines = subtitleToLines(subtitles);
 
         // Define headers
+        List<String> modifiedLines = modifySubtitles(lines);
+
+        List<String> distinctModifiedLines = modifiedLines.stream().distinct().collect(Collectors.toList());
+
+        List<String> reModifiedLines = modifySubtitles(distinctModifiedLines);
+
+        return String.join("\n", reModifiedLines);
+    }
+
+    @NotNull
+    private static List<String> modifySubtitles(List<String> lines) {
         List<String> headers = Arrays.asList("WEBVTT", "Kind: captions", "Language: en");
         List<String> modifiedLines = new ArrayList<>();
         String prevLine = "";
@@ -78,8 +92,7 @@ public class VttFileCleaner {
             // Update previous line
             prevLine = strippedLine;
         }
-
-        return String.join("\n", modifiedLines);
+        return modifiedLines;
     }
 
 }

@@ -2,18 +2,23 @@ package me.fengorz.kiwi.ai.grok.service;
 
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.ai.AiChatService;
+import me.fengorz.kiwi.ai.AiConstants;
 import me.fengorz.kiwi.ai.config.AiModeProperties;
 import me.fengorz.kiwi.ai.grok.GrokApiProperties;
 import me.fengorz.kiwi.ai.grok.model.request.ChatRequest;
 import me.fengorz.kiwi.ai.grok.model.request.Message;
 import me.fengorz.kiwi.ai.grok.model.response.ChatCompletionResponse;
 import me.fengorz.kiwi.ai.model.BatchResult;
+import me.fengorz.kiwi.common.sdk.annotation.cache.KiwiCacheKey;
+import me.fengorz.kiwi.common.sdk.annotation.cache.KiwiCacheKeyPrefix;
+import me.fengorz.kiwi.common.sdk.constant.CacheConstants;
 import me.fengorz.kiwi.common.sdk.enumeration.AiPromptModeEnum;
 import me.fengorz.kiwi.common.sdk.enumeration.LanguageEnum;
 import me.fengorz.kiwi.common.sdk.exception.ai.GrokAiException;
 import me.fengorz.kiwi.common.sdk.util.json.KiwiJsonUtils;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -26,6 +31,7 @@ import java.util.concurrent.*;
 
 @Slf4j
 @Service("grokAiService")
+@KiwiCacheKeyPrefix(AiConstants.CACHE_KEY_PREFIX_GROK.CLASS)
 public class GrokAiService implements AiChatService {
 
     private final RestTemplate restTemplate;
@@ -38,7 +44,6 @@ public class GrokAiService implements AiChatService {
         this.grokApiProperties = grokApiProperties;
         this.modeProperties = modeProperties;
     }
-
 
     @Override
     public String call(String prompt, AiPromptModeEnum promptMode, LanguageEnum language) {
@@ -139,6 +144,14 @@ public class GrokAiService implements AiChatService {
         }
 
         return finalResult.toString().trim();
+    }
+
+    @Override
+    @KiwiCacheKeyPrefix(AiConstants.CACHE_KEY_PREFIX_GROK.SUBTITLE_TRANSLATION)
+    @Cacheable(cacheNames = AiConstants.CACHE_NAMES, keyGenerator = CacheConstants.CACHE_KEY_GENERATOR_BEAN,
+            unless = "#result == null")
+    public String batchCallForYtb(@KiwiCacheKey String ytbUrl, List<String> prompt, AiPromptModeEnum promptMode, @KiwiCacheKey LanguageEnum language) {
+        return batchCall(prompt, promptMode, language);
     }
 
     /**

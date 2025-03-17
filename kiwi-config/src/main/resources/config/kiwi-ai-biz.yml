@@ -15,8 +15,8 @@ ignore:
 
 ms:
   config:
-    exclude-db: true
-    exclude-cache: true
+    exclude-db: false
+    exclude-cache: false
 
 ai:
   grok:
@@ -51,8 +51,8 @@ rest-template:
     validate-after-inactivity: 500
     connection-time-to-live: 10
   request-factory:
-    connect-timeout: 60000  # Faster timeouts for tests
-    read-timeout: 60000
+    connect-timeout: 100000  # Faster timeouts for tests
+    read-timeout: 100000
   retry:
     max-attempts: 2  # Fewer retries for faster tests
     retryable-exceptions: "org.springframework.web.client.HttpServerErrorException,java.net.SocketTimeoutException"

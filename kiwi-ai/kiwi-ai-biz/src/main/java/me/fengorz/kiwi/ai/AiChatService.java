@@ -15,4 +15,6 @@ public interface AiChatService {
 
     String batchCall(List<String> prompt, AiPromptModeEnum promptMode, LanguageEnum language);
 
+    String batchCallForYtb(String ytbUrl, List<String> prompt, AiPromptModeEnum promptMode, LanguageEnum language);
+
 }

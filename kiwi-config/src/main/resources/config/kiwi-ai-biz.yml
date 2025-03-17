@@ -23,7 +23,10 @@ ai:
     api:
       key: ${GROK_API_KEY}  # Replace with the actual API key
       endpoint: https://api.x.ai/v1/chat/completions  # Hypothetical endpoint
-      model: "grok-beta"
+      model: "grok-2-1212"
+      thread-prompts-line-size: 200
+      thread-pool-size: 7
+      thread-timeout-secs: 110
   mode:
     directly-translation: "Directly Translate my prompt to %s language."
     translation-and-explanation: "Translate the prompt in %s language first, please provide the %s explanation as thorough as possible in different aspects if it has, and translate the explanation to English."

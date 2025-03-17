@@ -1,9 +1,13 @@
-package me.fengorz.kiwi.common.video;
+package me.fengorz.kiwi.common.ytb;
 
 import lombok.extern.slf4j.Slf4j;
+import me.fengorz.kiwi.common.sdk.annotation.cache.KiwiCacheKey;
+import me.fengorz.kiwi.common.sdk.annotation.cache.KiwiCacheKeyPrefix;
+import me.fengorz.kiwi.common.sdk.constant.CacheConstants;
 import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
@@ -15,6 +19,7 @@ import java.util.UUID;
 
 @Slf4j
 @Service
+@KiwiCacheKeyPrefix(YtbConstants.CACHE_KEY_PREFIX_YTB.CLASS)
 public class YouTuBeHelper {
 
     @Value("${youtube.video.download.path}")
@@ -64,7 +69,10 @@ public class YouTuBeHelper {
      * @param needTranslation if true, the result will be List<String>, else the result will be String
      */
     @SuppressWarnings("unchecked")
-    public <T> T downloadSubtitles(String videoUrl, boolean needTranslation) {
+    @KiwiCacheKeyPrefix(YtbConstants.CACHE_KEY_PREFIX_YTB.SUBTITLES)
+    @Cacheable(cacheNames = YtbConstants.CACHE_NAMES, keyGenerator = CacheConstants.CACHE_KEY_GENERATOR_BEAN,
+            unless = "#result == null")
+    public <T> T downloadSubtitles(@KiwiCacheKey String videoUrl,@KiwiCacheKey boolean needTranslation) {
         try {
             List<String> command = new ArrayList<>();
             command.add(this.command);
@@ -120,7 +128,7 @@ public class YouTuBeHelper {
      * @return Cleaned subtitle content
      * @throws IOException If there's an error reading the file
      */
-    public List<String> processSubtitleFile(File subtitleFile) throws IOException {
+    private List<String> processSubtitleFile(File subtitleFile) throws IOException {
         List<String> lines = new ArrayList<>();
         String previousLine = null;
 

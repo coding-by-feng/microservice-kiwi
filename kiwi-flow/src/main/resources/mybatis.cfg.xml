@@ -36,7 +36,7 @@
             <dataSource type="UNPOOLED">
                 <!-- 配置具体参数 -->
                 <property name="driver" value="com.mysql.cj.jdbc.Driver"/>
-                <property name="url" value="jdbc:mysql://47.92.107.191:3306/vocabulary_enhancer_db?characterEncoding=utf8&amp;zeroDateTimeBehavior=convertToNull&amp;useSSL=false&amp;allowMultiQueries=true&amp;useJDBCCompliantTimezoneShift=true&amp;useLegacyDatetimeCode=false&amp;serverTimezone=Asia/Shanghai"/>
+                <property name="url" value="jdbc:mysql://47.92.107.191:3306/vocabulary_enhancer_db?characterEncoding=utf8&amp;zeroDateTimeBehavior=convertToNull&amp;useSSL=false&amp;allowMultiQueries=true&amp;useJDBCCompliantTimezoneShift=true&amp;useLegacyDatetimeCode=false&amp;serverTimezone=Pacific/Auckland"/>
                 <property name="username" value="root"/>
                 <property name="password" value="raubbhWy"/>
             </dataSource>

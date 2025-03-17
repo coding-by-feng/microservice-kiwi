@@ -4,7 +4,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: ENC(KH/GJ05cpFBSAV5u8IruRw==)
     password: ENC(Dh6vV+rX9HyZgiOP83BIiQAZ1+9KOGVh)
-    url: jdbc:mysql://172.17.0.2:3306/kiwi_db?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&useSSL=false&serverTimezone=Asia/Shanghai
+    url: jdbc:mysql://${DB_IP}:3306/kiwi_db?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&useSSL=false&serverTimezone=Pacific/Auckland
     hikari:
       max-lifetime: 60000
       connection-timeout: 60000

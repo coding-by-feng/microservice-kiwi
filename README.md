@@ -113,6 +113,7 @@ Add the following mappings to the end of the hosts file
 127.0.0.1                                     kiwi-upms
 127.0.0.1                                     kiwi-gate
 127.0.0.1                                     kiwi-ai
+127.0.0.1                                     kiwi-crawler
 ```
 
 Note: Replace "your_ecs_ip" above with the public IP of the cloud server where fastdfs is located

@@ -62,7 +62,7 @@ public class YouTuBeController {
             String subtitles = youTuBeHelper.downloadSubtitles(videoUrl, false);
             return R.success(subtitles);
         }
-        return R.success(grokAiService.batchCall(youTuBeHelper.downloadSubtitles(videoUrl, true),
+        return R.success(grokAiService.batchCallForYtb(videoUrl, youTuBeHelper.downloadSubtitles(videoUrl, true),
                 AiPromptModeEnum.SUBTITLE_TRANSLATOR, LanguageConvertor.convertLanguageToEnum(language)));
     }
 

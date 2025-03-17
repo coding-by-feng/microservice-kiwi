@@ -37,7 +37,7 @@ public class YouTuBeControllerIntegrationTest {
     @Autowired
     private TestRestTemplate restTemplate;
 
-    private static final String TEST_URL_AUTO_SUBTITLES = "https://youtu.be/oqhXOJ7bTG8?si=ibQyhMcVa0mAQDep"; // Short test video
+    private static final String TEST_URL_AUTO_SUBTITLES = "https://youtu.be/oqhXOJ7bTG8?si=Td7zGpmu7E0MEqaD"; // Short test video
     private static final String TEST_URL_NORMAL_SUBTITLES = "https://www.youtube.com/watch?v=q0DMYs4b2Yw"; // Short test video
 
 

@@ -3,6 +3,7 @@ package me.fengorz.kiwi.ai;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.api.R;
 import me.fengorz.kiwi.common.sdk.constant.EnvConstants;
+import me.fengorz.kiwi.common.sdk.enumeration.LanguageEnum;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -81,6 +82,23 @@ public class YouTuBeControllerIntegrationTest {
     void testDownloadSubtitles_Success() {
         // Perform the GET request to download subtitles
         String url = "http://localhost:" + port + "/ai/ytb/video/subtitles?url=" + TEST_URL_AUTO_SUBTITLES;
+        ResponseEntity<R> response = restTemplate.getForEntity(url, R.class);
+
+        // Verify the response
+        assertEquals(HttpStatus.OK, response.getStatusCode(), "HTTP status should be 200 OK");
+        assertNotNull(response.getBody(), "Response body should not be null");
+        assertTrue(response.getBody().isSuccess(), "Response should be successful");
+
+        String subtitles = (String) response.getBody().getData();
+        assertNotNull(subtitles, "File name should not be null");
+        log.info("Downloaded subtitles : {}", subtitles);
+    }
+
+    @Test
+    void testDownloadSubtitlesWithLanguage_Success() {
+        // Perform the GET request to download subtitles
+        String url = "http://localhost:" + port + "/ai/ytb/video/subtitles?language=" + LanguageEnum.ZH_CN.getCode() +
+                "&url=" + TEST_URL_AUTO_SUBTITLES;
         ResponseEntity<R> response = restTemplate.getForEntity(url, R.class);
 
         // Verify the response

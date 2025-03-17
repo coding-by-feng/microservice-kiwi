@@ -1,9 +1,10 @@
 package me.fengorz.kiwi.ai;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.api.R;
+import me.fengorz.kiwi.common.sdk.enumeration.AiPromptModeEnum;
 import me.fengorz.kiwi.common.video.YouTuBeHelper;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -20,10 +21,16 @@ import java.util.UUID;
 @Slf4j
 @RestController
 @RequestMapping("/ai/ytb/video")
-@RequiredArgsConstructor
 public class YouTuBeController {
 
     private final YouTuBeHelper youTuBeHelper;
+    private final AiChatService grokAiService;
+
+    public YouTuBeController(YouTuBeHelper youTuBeHelper,
+                             @Qualifier("grokAiService") AiChatService grokAiService) {
+        this.youTuBeHelper = youTuBeHelper;
+        this.grokAiService = grokAiService;
+    }
 
     @GetMapping("/download")
     public ResponseEntity<StreamingResponseBody> downloadVideo(@RequestParam("url") String videoUrl) {
@@ -50,9 +57,12 @@ public class YouTuBeController {
     }
 
     @GetMapping("/subtitles")
-    public R<String> downloadSubtitles(@RequestParam("url") String videoUrl) {
-        String fileName = youTuBeHelper.downloadSubtitles(videoUrl);
-        return R.success(fileName);
+    public R<String> downloadSubtitles(@RequestParam("url") String videoUrl, @RequestParam(value = "language", required = false) String language) {
+        String subtitles = youTuBeHelper.downloadSubtitles(videoUrl);
+        if (language == null || "null".equals(language)) {
+            return R.success(subtitles);
+        }
+        return R.success(grokAiService.call(subtitles, AiPromptModeEnum.SUBTITLE_TRANSLATOR, LanguageConvertor.convertLanguageToEnum(language)));
     }
 
     @GetMapping("/title")

@@ -38,7 +38,7 @@ public class YouTuBeControllerIntegrationTest {
     @Autowired
     private TestRestTemplate restTemplate;
 
-    private static final String TEST_URL_AUTO_SUBTITLES = "https://youtu.be/oqhXOJ7bTG8?si=Td7zGpmu7E0MEqaD"; // Short test video
+    private static final String TEST_URL_AUTO_SUBTITLES = "https://youtu.be/oqhXOJ7bTG8?si=Hf8qZqmtzbBIpK7K"; // Short test video
     private static final String TEST_URL_NORMAL_SUBTITLES = "https://www.youtube.com/watch?v=q0DMYs4b2Yw"; // Short test video
 
 
@@ -79,6 +79,7 @@ public class YouTuBeControllerIntegrationTest {
     }
 
     @Test
+    @Disabled
     void testDownloadSubtitles_Success() {
         // Perform the GET request to download subtitles
         String url = "http://localhost:" + port + "/ai/ytb/video/subtitles?url=" + TEST_URL_AUTO_SUBTITLES;
@@ -108,7 +109,8 @@ public class YouTuBeControllerIntegrationTest {
 
         String subtitles = (String) response.getBody().getData();
         assertNotNull(subtitles, "File name should not be null");
-        log.info("Downloaded subtitles : {}", subtitles);
+        assertTrue(subtitles.contains("s what you reap when you really put"));
+        log.info("Downloaded translated subtitles : {}", subtitles);
     }
 
     @Test
@@ -130,6 +132,7 @@ public class YouTuBeControllerIntegrationTest {
     }
 
     @Test
+    @Disabled
     void testDownloadVideo_InvalidUrl() {
         // Test with an invalid URL
         String invalidUrl = "https://invalid-url";

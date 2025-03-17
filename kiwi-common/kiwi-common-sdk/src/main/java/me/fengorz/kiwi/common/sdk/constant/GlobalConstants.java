@@ -40,6 +40,7 @@ public interface GlobalConstants extends ApiContants {
     String SYMBOL_ENGLISH_ELLIPSIS = "…";
     String SYMBOL_CHINESE_ELLIPSIS = "...";
     String SYMBOL_HASHTAG = "#";
+    String SYMBOL_LINE= "\n";
 
     String FLAG_Y = "Y";
     String FLAG_N = "N";

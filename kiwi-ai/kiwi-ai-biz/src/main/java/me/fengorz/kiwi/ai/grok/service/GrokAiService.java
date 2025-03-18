@@ -3,11 +3,11 @@ package me.fengorz.kiwi.ai.grok.service;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.ai.AiChatService;
 import me.fengorz.kiwi.ai.AiConstants;
+import me.fengorz.kiwi.ai.api.model.request.ChatRequest;
+import me.fengorz.kiwi.ai.api.model.request.Message;
+import me.fengorz.kiwi.ai.api.model.response.ChatCompletionResponse;
 import me.fengorz.kiwi.ai.config.AiModeProperties;
 import me.fengorz.kiwi.ai.grok.GrokApiProperties;
-import me.fengorz.kiwi.ai.grok.model.request.ChatRequest;
-import me.fengorz.kiwi.ai.grok.model.request.Message;
-import me.fengorz.kiwi.ai.grok.model.response.ChatCompletionResponse;
 import me.fengorz.kiwi.ai.model.BatchResult;
 import me.fengorz.kiwi.common.sdk.annotation.cache.KiwiCacheKey;
 import me.fengorz.kiwi.common.sdk.annotation.cache.KiwiCacheKeyPrefix;
@@ -150,8 +150,16 @@ public class GrokAiService implements AiChatService {
     @KiwiCacheKeyPrefix(AiConstants.CACHE_KEY_PREFIX_GROK.SUBTITLE_TRANSLATION)
     @Cacheable(cacheNames = AiConstants.CACHE_NAMES, keyGenerator = CacheConstants.CACHE_KEY_GENERATOR_BEAN,
             unless = "#result == null")
-    public String batchCallForYtb(@KiwiCacheKey String ytbUrl, List<String> prompt, AiPromptModeEnum promptMode, @KiwiCacheKey LanguageEnum language) {
+    public String batchCallForYtbAndCache(@KiwiCacheKey(1) String ytbUrl, List<String> prompt, @KiwiCacheKey(2) AiPromptModeEnum promptMode, @KiwiCacheKey(3) LanguageEnum language) {
         return batchCall(prompt, promptMode, language);
+    }
+
+    @Override
+    @KiwiCacheKeyPrefix(AiConstants.CACHE_KEY_PREFIX_GROK.SUBTITLE_RETOUCH)
+    @Cacheable(cacheNames = AiConstants.CACHE_NAMES, keyGenerator = CacheConstants.CACHE_KEY_GENERATOR_BEAN,
+            unless = "#result == null")
+    public String callForYtbAndCache(@KiwiCacheKey(1) String ytbUrl, String prompt, @KiwiCacheKey(2) AiPromptModeEnum promptMode, @KiwiCacheKey(3) LanguageEnum language) {
+        return call(prompt, promptMode, language);
     }
 
     /**
@@ -201,7 +209,7 @@ public class GrokAiService implements AiChatService {
 
     @NotNull
     private String buildPrompt(AiPromptModeEnum promptMode, LanguageEnum language) {
-        if (promptMode.getLanguageWildcardCounts() == 0) {
+        if (promptMode.getLanguageWildcardCounts() == 0 || LanguageEnum.NONE.equals(language)) {
             return modeProperties.getMode().get(promptMode.getMode());
         }
         Object[] languageWildcards = new Object[promptMode.getLanguageWildcardCounts()];

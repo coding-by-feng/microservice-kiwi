@@ -1,56 +1,18 @@
 package me.fengorz.kiwi.common.ytb;
 
-import org.jetbrains.annotations.NotNull;
+import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class VttFileCleaner {
 
-    private static final String TIMESTAMP_FLAG = " --> ";
-
-    /**
-     * Converts a subtitle string to a list of individual lines
-     *
-     * @param subtitles The subtitle string with line breaks
-     * @return A List of individual lines
-     */
-    private static List<String> subtitleToLines(String subtitles) {
-        // Split the subtitles by line break
-        String[] linesArray = subtitles.split("\\r?\\n");
-
-        // Convert to ArrayList
-        List<String> linesList = new ArrayList<>();
-        Collections.addAll(linesList, linesArray);
-
-        return linesList;
-    }
-
-    public static <T> T cleanVtt(String subtitles, Class<T> clazz) {
-        // Read the file
-        List<String> lines = subtitleToLines(subtitles);
-
-        // Define headers
-        List<String> modifiedLines = modifySubtitles(lines);
-
-        List<String> distinctModifiedLines = modifiedLines.stream().distinct().collect(Collectors.toList());
-
-        List<String> reModifiedLines = modifySubtitles(distinctModifiedLines);
-
-        if (List.class.equals(clazz)) {
-            return clazz.cast(reModifiedLines);
-        }
-
-        return clazz.cast(String.join("\n", reModifiedLines));
-    }
-
-    @NotNull
-    private static List<String> modifySubtitles(List<String> lines) {
-        List<String> headers = Arrays.asList("WEBVTT", "Kind: captions", "Language: en");
+    public static List<String> cleanDuplicatedLines(List<String> lines) {
+        List<String> headers = Arrays.asList("WEBVTT", "Kind: captions");
         List<String> modifiedLines = new ArrayList<>();
         String prevLine = "";
 
@@ -58,7 +20,7 @@ public class VttFileCleaner {
         Pattern timestampPattern = Pattern.compile("\\d{2}:\\d{2}:\\d{2}\\.\\d{3} --> \\d{2}:\\d{2}:\\d{2}\\.\\d{3}.*");
         Pattern timeTagPattern = Pattern.compile("<[^>]*>");
 
-        for (String line : lines) {
+        for (String line : lines.stream().distinct().collect(Collectors.toList())) {
             if (line.trim().isEmpty()) {
                 continue;
             }
@@ -72,8 +34,8 @@ public class VttFileCleaner {
             // Skip timestamp lines and blank lines
             if (timestampPattern.matcher(line).matches()) {
                 if (timestampPattern.matcher(prevLine).matches()) {
-                    String prefix = prevLine.substring(0, prevLine.indexOf(" --> "));
-                    String suffix = line.substring(line.indexOf(" --> ") + 5);
+                    String prefix = prevLine.substring(0, prevLine.indexOf(TIMESTAMP_FLAG));
+                    String suffix = line.substring(line.indexOf(TIMESTAMP_FLAG) + 5);
                     modifiedLines.remove(modifiedLines.size() - 1);
                     String newLine = prefix + TIMESTAMP_FLAG + suffix;
                     modifiedLines.add(newLine);
@@ -98,5 +60,42 @@ public class VttFileCleaner {
         }
         return modifiedLines;
     }
+
+    public static List<String> cleanTimestamp(List<String> lines) {
+        List<String> headers = Arrays.asList("WEBVTT", "Kind: captions");
+        List<String> modifiedLines = new ArrayList<>();
+
+        // Compile regex patterns for better performance
+        Pattern timestampPattern = Pattern.compile("\\d{2}:\\d{2}:\\d{2}\\.\\d{3} --> \\d{2}:\\d{2}:\\d{2}\\.\\d{3}.*");
+
+        String previousLine = GlobalConstants.EMPTY;
+        for (String line : lines.stream().distinct().collect(Collectors.toList())) {
+            String trimLine = line.trim();
+            if (trimLine.isEmpty()) {
+                continue;
+            }
+            // Skip headers
+            // Skip headers
+            if (headers.contains(line.trim())) {
+                continue;
+            }
+
+            // Skip timestamp lines and blank lines
+            if (timestampPattern.matcher(line).matches()) {
+                continue;
+            }
+
+            if (StringUtils.equals(trimLine, previousLine.trim())) {
+                continue;
+            }
+
+            modifiedLines.add(line);
+            previousLine = line;
+        }
+
+        return modifiedLines;
+    }
+
+    private static final String TIMESTAMP_FLAG = " --> ";
 
 }

@@ -20,15 +20,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration;
-import org.springframework.cache.annotation.EnableCaching;
-import org.springframework.context.annotation.AdviceMode;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
 @Slf4j
 @Configuration
-@ComponentScan("me.fengorz.kiwi.common.cache.**")
-@EnableCaching(mode = AdviceMode.ASPECTJ)
 @ImportAutoConfiguration(exclude = {RedisAutoConfiguration.class})
 @ConditionalOnProperty(value = "ms.config.exclude-cache", havingValue = "true")
 public class CacheExcludeConfig {

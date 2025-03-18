@@ -39,6 +39,7 @@ ai:
     subtitle-retouch: "Please help me to add corresponding correct punctuation, notice that don't give me other non-subtitles information, keep the original subtitles content, and you must complete all the subtitle lines."
     subtitle-retouch-translator: "Please help me to add corresponding correct punctuation, put the %s translation  on the position that after the punctuation, and keep each sentence in different lines, notice that keep the original content, don't give me other information(any markdown format, other tips, or hints), and you must complete the translation of all content."
 
+
 youtube:
   oauth:
     client-secrets-file: ${YTB_OAUTH_CLIENT_SECRETS_FILE}

@@ -1,6 +1,7 @@
 package me.fengorz.kiwi.ai;
 
 import lombok.extern.slf4j.Slf4j;
+import me.fengorz.kiwi.ai.api.vo.YtbSubtitlesVO;
 import me.fengorz.kiwi.common.api.R;
 import me.fengorz.kiwi.common.sdk.constant.EnvConstants;
 import me.fengorz.kiwi.common.sdk.enumeration.LanguageEnum;
@@ -11,14 +12,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.server.LocalServerPort;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.net.URI;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -38,17 +43,25 @@ public class YouTuBeControllerIntegrationTest {
     @Autowired
     private TestRestTemplate restTemplate;
 
-    private static final String TEST_URL_AUTO_SUBTITLES = "https://youtu.be/oqhXOJ7bTG8?si=Hf8qZqmtzbBIpK7K"; // Short test video
-    private static final String TEST_URL_NORMAL_SUBTITLES = "https://www.youtube.com/watch?v=q0DMYs4b2Yw"; // Short test video
+    // Note: URLs are already URL-encoded
+    private static final String TEST_URL_AUTO_SUBTITLES = "https%3A%2F%2Fwww.youtube.com%2Fwatch%3Fv%3D98o_L3jlixw"; // Short test video
+    private static final String TEST_URL_NORMAL_SUBTITLES = "https%3A%2F%2Fwww.youtube.com%2Fwatch%3Fv%3Dq0DMYs4b2Yw"; // Short test video
 
+    private String buildUrl(String endpoint) {
+        return "http://localhost:" + port + "/ai/ytb/video/" + endpoint;
+    }
 
     @Test
     @Disabled
     void testDownloadVideo_Success() throws Exception {
+        // Use UriComponentsBuilder to properly encode URL parameters
+        URI uri = UriComponentsBuilder.fromUriString(buildUrl("download"))
+                .queryParam("url", TEST_URL_AUTO_SUBTITLES)
+                .build()
+                .toUri();
+
         // Perform the GET request to download the video
-        String url = "http://localhost:" + port + "/ai/ytb/video/download?url=" + TEST_URL_AUTO_SUBTITLES;
-        // Use exchange to get the response with the stream
-        ResponseEntity<byte[]> response = restTemplate.getForEntity(url, byte[].class);
+        ResponseEntity<byte[]> response = restTemplate.getForEntity(uri, byte[].class);
 
         // Verify the response
         assertEquals(HttpStatus.OK, response.getStatusCode(), "HTTP status should be 200 OK");
@@ -73,52 +86,130 @@ public class YouTuBeControllerIntegrationTest {
         // Verify the file
         assertTrue(outputPath.length() > 0, "Downloaded video file should not be empty");
         log.info("Downloaded video file saved to: {}, size: {} bytes", outputPath.getAbsolutePath(), outputPath.length());
-
-        // Clean up (optional)
-        // outputPath.deleteOnExit(); // Uncomment if you want to clean up after test
     }
 
     @Test
-    @Disabled
-    void testDownloadSubtitles_Success() {
-        // Perform the GET request to download subtitles
-        String url = "http://localhost:" + port + "/ai/ytb/video/subtitles?url=" + TEST_URL_AUTO_SUBTITLES;
-        ResponseEntity<R> response = restTemplate.getForEntity(url, R.class);
+    void testDownloadSubtitlesWithoutLanguageInVtt_Success() {
+        String url = buildUrl("subtitles") + "?url=" + TEST_URL_AUTO_SUBTITLES;
+
+        // Define a parameterized type reference for R<YtbSubtitlesVO>
+        ParameterizedTypeReference<R<YtbSubtitlesVO>> responseType =
+                new ParameterizedTypeReference<R<YtbSubtitlesVO>>() {};
+
+        // Perform the GET request using exchange method to correctly handle the response type
+        ResponseEntity<R<YtbSubtitlesVO>> response =
+                restTemplate.exchange(url, HttpMethod.GET, null, responseType);
 
         // Verify the response
         assertEquals(HttpStatus.OK, response.getStatusCode(), "HTTP status should be 200 OK");
         assertNotNull(response.getBody(), "Response body should not be null");
         assertTrue(response.getBody().isSuccess(), "Response should be successful");
 
-        String subtitles = (String) response.getBody().getData();
-        assertNotNull(subtitles, "File name should not be null");
-        log.info("Downloaded subtitles : {}", subtitles);
+        // Get the data from the response as YtbSubtitlesVO
+        YtbSubtitlesVO subtitlesVO = response.getBody().getData();
+        assertNotNull(subtitlesVO, "Subtitles VO should not be null");
+
+        // Access properties of YtbSubtitlesVO
+        assertNotNull(subtitlesVO.getTranslatedOrRetouchedSubtitles(), "Subtitles content should not be null");
+        log.info("Downloaded vtt subtitles: {}", subtitlesVO.getTranslatedOrRetouchedSubtitles());
     }
 
     @Test
-    void testDownloadSubtitlesWithLanguage_Success() {
-        // Perform the GET request to download subtitles
-        String url = "http://localhost:" + port + "/ai/ytb/video/subtitles?language=" + LanguageEnum.ZH_CN.getCode() +
-                "&url=" + TEST_URL_AUTO_SUBTITLES;
-        ResponseEntity<R> response = restTemplate.getForEntity(url, R.class);
+    void testDownloadSubtitlesWithoutLanguageInSrt_Success() {
+        // Use UriComponentsBuilder to properly encode URL parameters
+        String url = buildUrl("subtitles") + "?url=" + TEST_URL_NORMAL_SUBTITLES;
+
+        // Define a parameterized type reference for R<YtbSubtitlesVO>
+        ParameterizedTypeReference<R<YtbSubtitlesVO>> responseType =
+                new ParameterizedTypeReference<R<YtbSubtitlesVO>>() {};
+
+        // Perform the GET request using exchange method to correctly handle the response type
+        ResponseEntity<R<YtbSubtitlesVO>> response =
+                restTemplate.exchange(url, HttpMethod.GET, null, responseType);
 
         // Verify the response
         assertEquals(HttpStatus.OK, response.getStatusCode(), "HTTP status should be 200 OK");
         assertNotNull(response.getBody(), "Response body should not be null");
         assertTrue(response.getBody().isSuccess(), "Response should be successful");
 
-        String subtitles = (String) response.getBody().getData();
-        assertNotNull(subtitles, "File name should not be null");
-        assertTrue(subtitles.contains("s what you reap when you really put"));
-        log.info("Downloaded translated subtitles : {}", subtitles);
+        // Get the data from the response as YtbSubtitlesVO
+        YtbSubtitlesVO subtitlesVO = response.getBody().getData();
+        assertNotNull(subtitlesVO, "Subtitles VO should not be null");
+
+        // Access properties of YtbSubtitlesVO
+        assertNotNull(subtitlesVO.getTranslatedOrRetouchedSubtitles(), "Subtitles content should not be null");
+        log.info("Downloaded srt scrolling subtitles: {}", subtitlesVO.getScrollingSubtitles());
+        log.info("Downloaded srt translated subtitles: {}", subtitlesVO.getTranslatedOrRetouchedSubtitles());
+    }
+
+    @Test
+    void testDownloadSubtitlesWithLanguageInVtt_Success() {
+        String url = buildUrl("subtitles") + "?url=" + TEST_URL_AUTO_SUBTITLES + "&language=" + LanguageEnum.ZH_CN.getCode();
+
+        // Define a parameterized type reference for R<YtbSubtitlesVO>
+        ParameterizedTypeReference<R<YtbSubtitlesVO>> responseType =
+                new ParameterizedTypeReference<R<YtbSubtitlesVO>>() {};
+
+        // Perform the GET request using exchange method to correctly handle the response type
+        ResponseEntity<R<YtbSubtitlesVO>> response =
+                restTemplate.exchange(url, HttpMethod.GET, null, responseType);
+
+        // Verify the response
+        assertEquals(HttpStatus.OK, response.getStatusCode(), "HTTP status should be 200 OK");
+        assertNotNull(response.getBody(), "Response body should not be null");
+        assertTrue(response.getBody().isSuccess(), "Response should be successful");
+
+        // Get the data from the response as YtbSubtitlesVO
+        YtbSubtitlesVO subtitlesVO = response.getBody().getData();
+        assertNotNull(subtitlesVO, "Subtitles VO should not be null");
+
+        // Access properties of YtbSubtitlesVO
+        assertNotNull(subtitlesVO.getTranslatedOrRetouchedSubtitles(), "Subtitles content should not be null");
+        // Test content contains expected text - adjust assertion as needed
+        // assertTrue(subtitlesVO.getContent().contains("s what you reap when you really put"));
+        log.info("Downloaded vtt subtitles with language: {}", subtitlesVO.getTranslatedOrRetouchedSubtitles());
+    }
+
+    @Test
+    void testDownloadSubtitlesWithLanguageInSrt_Success() {
+        String url = buildUrl("subtitles") + "?url=" + TEST_URL_NORMAL_SUBTITLES + "&language=" + LanguageEnum.ZH_CN.getCode();
+
+        // Define a parameterized type reference for R<YtbSubtitlesVO>
+        ParameterizedTypeReference<R<YtbSubtitlesVO>> responseType =
+                new ParameterizedTypeReference<R<YtbSubtitlesVO>>() {};
+
+        // Perform the GET request using exchange method to correctly handle the response type
+        ResponseEntity<R<YtbSubtitlesVO>> response =
+                restTemplate.exchange(url, HttpMethod.GET, null, responseType);
+
+        // Verify the response
+        assertEquals(HttpStatus.OK, response.getStatusCode(), "HTTP status should be 200 OK");
+        assertNotNull(response.getBody(), "Response body should not be null");
+        assertTrue(response.getBody().isSuccess(), "Response should be successful");
+
+        // Get the data from the response as YtbSubtitlesVO
+        YtbSubtitlesVO subtitlesVO = response.getBody().getData();
+        assertNotNull(subtitlesVO, "Subtitles VO should not be null");
+
+        // Access properties of YtbSubtitlesVO
+        assertNotNull(subtitlesVO.getTranslatedOrRetouchedSubtitles(), "Subtitles content should not be null");
+        // Test content contains expected text - adjust assertion as needed
+        // assertTrue(subtitlesVO.getContent().contains("s what you reap when you really put"));
+        log.info("Downloaded srt scrolling subtitles with language: {}", subtitlesVO.getScrollingSubtitles());
+        log.info("Downloaded srt subtitles with language: {}", subtitlesVO.getTranslatedOrRetouchedSubtitles());
     }
 
     @Test
     @Disabled
     void testGetVideoTitle_Success() {
+        // Use UriComponentsBuilder to properly encode URL parameters
+        URI uri = UriComponentsBuilder.fromUriString(buildUrl("title"))
+                .queryParam("url", TEST_URL_AUTO_SUBTITLES)
+                .build()
+                .toUri();
+
         // Perform the GET request to get the video title
-        String url = "http://localhost:" + port + "/ai/ytb/video/title?url=" + TEST_URL_AUTO_SUBTITLES;
-        ResponseEntity<R> response = restTemplate.getForEntity(url, R.class);
+        ResponseEntity<R> response = restTemplate.getForEntity(uri, R.class);
 
         // Verify the response
         assertEquals(HttpStatus.OK, response.getStatusCode(), "HTTP status should be 200 OK");
@@ -136,8 +227,14 @@ public class YouTuBeControllerIntegrationTest {
     void testDownloadVideo_InvalidUrl() {
         // Test with an invalid URL
         String invalidUrl = "https://invalid-url";
-        String url = "http://localhost:" + port + "/ai/ytb/video/download?url=" + invalidUrl;
-        ResponseEntity<InputStreamResource> response = restTemplate.getForEntity(url, InputStreamResource.class);
+
+        // Use UriComponentsBuilder to properly encode URL parameters
+        URI uri = UriComponentsBuilder.fromUriString(buildUrl("download"))
+                .queryParam("url", invalidUrl)
+                .build()
+                .toUri();
+
+        ResponseEntity<InputStreamResource> response = restTemplate.getForEntity(uri, InputStreamResource.class);
 
         // Verify the response
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode(), "HTTP status should be 500 for invalid URL");

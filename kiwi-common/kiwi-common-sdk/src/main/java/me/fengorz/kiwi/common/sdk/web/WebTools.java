@@ -22,6 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.sdk.constant.SecurityConstants;
 import me.fengorz.kiwi.common.sdk.exception.AuthException;
 import me.fengorz.kiwi.common.sdk.exception.ResourceNotFoundException;
+import me.fengorz.kiwi.common.sdk.exception.ServiceException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.web.util.WebUtils;
@@ -31,6 +32,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 
 /**
@@ -136,6 +139,15 @@ public class WebTools extends WebUtils {
         }
         return 0;
     }
+
+    public static String decode(String originalText) {
+        try {
+            return URLDecoder.decode(originalText, String.valueOf(StandardCharsets.UTF_8));
+        } catch (UnsupportedEncodingException e) {
+            throw new ServiceException("Unable to decode original text", e);
+        }
+    }
+
 
     public static final String CONTENT_TYPE = "Content-Type";
     public static final String AUDIO_MPEG = "audio/mpeg";

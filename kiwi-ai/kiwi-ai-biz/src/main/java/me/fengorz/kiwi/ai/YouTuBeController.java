@@ -1,9 +1,14 @@
 package me.fengorz.kiwi.ai;
 
 import lombok.extern.slf4j.Slf4j;
+import me.fengorz.kiwi.ai.api.vo.YtbSubtitlesVO;
 import me.fengorz.kiwi.common.api.R;
+import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
 import me.fengorz.kiwi.common.sdk.enumeration.AiPromptModeEnum;
+import me.fengorz.kiwi.common.sdk.enumeration.LanguageEnum;
+import me.fengorz.kiwi.common.sdk.web.WebTools;
 import me.fengorz.kiwi.common.ytb.YouTuBeHelper;
+import me.fengorz.kiwi.common.ytb.YtbSubtitlesResult;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -16,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
 import java.io.InputStream;
+import java.util.List;
 import java.util.UUID;
 
 @Slf4j
@@ -35,7 +41,7 @@ public class YouTuBeController {
     @GetMapping("/download")
     public ResponseEntity<StreamingResponseBody> downloadVideo(@RequestParam("url") String videoUrl) {
         try {
-            InputStream inputStream = youTuBeHelper.downloadVideo(videoUrl);
+            InputStream inputStream = youTuBeHelper.downloadVideo(WebTools.decode(videoUrl));
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
             headers.setContentDispositionFormData("attachment", UUID.randomUUID().toString());
@@ -57,18 +63,54 @@ public class YouTuBeController {
     }
 
     @GetMapping("/subtitles")
-    public R<String> downloadSubtitles(@RequestParam("url") String videoUrl, @RequestParam(value = "language", required = false) String language) {
-        if (language == null || "null".equals(language)) {
-            String subtitles = youTuBeHelper.downloadSubtitles(videoUrl, false);
-            return R.success(subtitles);
+    public R<YtbSubtitlesVO> downloadSubtitles(@RequestParam("url") String videoUrl, @RequestParam(value = "language", required = false) String language) {
+        String decodedUrl = WebTools.decode(videoUrl);
+        return R.success(buildYtbSubtitlesVoWithTranslation(decodedUrl, language, youTuBeHelper.downloadSubtitles(decodedUrl)));
+    }
+
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    private YtbSubtitlesVO buildYtbSubtitlesVoWithTranslation(String decodedUrl, String language, YtbSubtitlesResult ytbSubtitlesResult) {
+        log.info("ytbSubtitlesResult: =" + ytbSubtitlesResult);
+        YtbSubtitlesVO result = null;
+        boolean ifNeedTranslation = language != null && !"null".equals(language);
+        LanguageEnum lang = ifNeedTranslation ? LanguageConvertor.convertLanguageToEnum(language) : LanguageEnum.NONE;
+        switch (ytbSubtitlesResult.getType()) {
+            case SMALL_AUTO_GENERATED_VTT_RETURN_STRING: {
+                String translatedOrRetouchedSubtitles = ifNeedTranslation ? grokAiService.callForYtbAndCache(decodedUrl, (String) ytbSubtitlesResult.getPendingToBeTranslatedOrRetouchedSubtitles(),
+                        AiPromptModeEnum.SUBTITLE_RETOUCH_TRANSLATOR, lang) : grokAiService.callForYtbAndCache(decodedUrl,
+                        (String) ytbSubtitlesResult.getPendingToBeTranslatedOrRetouchedSubtitles(), AiPromptModeEnum.SUBTITLE_RETOUCH, lang);
+                result = PojoBuilder.buildYtbSubtitlesVO(translatedOrRetouchedSubtitles,
+                        ytbSubtitlesResult.getScrollingSubtitles(), ytbSubtitlesResult.getType().getValue());
+                break;
+            }
+            case LARGE_AUTO_GENERATED_VTT_RETURN_LIST: {
+                String translatedOrRetouchedSubtitles = ifNeedTranslation ? grokAiService.batchCallForYtbAndCache(decodedUrl, (List) ytbSubtitlesResult.getPendingToBeTranslatedOrRetouchedSubtitles(),
+                        AiPromptModeEnum.SUBTITLE_RETOUCH_TRANSLATOR, lang) : grokAiService.batchCallForYtbAndCache(decodedUrl,
+                        (List) ytbSubtitlesResult.getPendingToBeTranslatedOrRetouchedSubtitles(), AiPromptModeEnum.SUBTITLE_RETOUCH, lang);
+                result = PojoBuilder.buildYtbSubtitlesVO(translatedOrRetouchedSubtitles,
+                        ytbSubtitlesResult.getScrollingSubtitles(), ytbSubtitlesResult.getType().getValue());
+                break;
+            }
+            case SMALL_PROFESSIONAL_SRT_RETURN_STRING:
+                result = PojoBuilder.buildYtbSubtitlesVO(
+                        ifNeedTranslation ? grokAiService.callForYtbAndCache(decodedUrl,
+                                (String) ytbSubtitlesResult.getPendingToBeTranslatedOrRetouchedSubtitles(), AiPromptModeEnum.SUBTITLE_TRANSLATOR, lang) : GlobalConstants.EMPTY,
+                        ytbSubtitlesResult.getScrollingSubtitles(),
+                        ytbSubtitlesResult.getType().getValue());
+                break;
+            case LARGE_PROFESSIONAL_SRT_RETURN_LIST:
+                result = PojoBuilder.buildYtbSubtitlesVO(ifNeedTranslation ? grokAiService.batchCallForYtbAndCache(decodedUrl,
+                                (List) ytbSubtitlesResult.getPendingToBeTranslatedOrRetouchedSubtitles(), AiPromptModeEnum.SUBTITLE_TRANSLATOR, lang) : GlobalConstants.EMPTY,
+                        ytbSubtitlesResult.getScrollingSubtitles(),
+                        ytbSubtitlesResult.getType().getValue());
+                break;
         }
-        return R.success(grokAiService.batchCallForYtb(videoUrl, youTuBeHelper.downloadSubtitles(videoUrl, true),
-                AiPromptModeEnum.SUBTITLE_TRANSLATOR, LanguageConvertor.convertLanguageToEnum(language)));
+        return result;
     }
 
     @GetMapping("/title")
     public R<String> getVideoTitle(@RequestParam("url") String videoUrl) {
-        String title = youTuBeHelper.getVideoTitle(videoUrl);
+        String title = youTuBeHelper.getVideoTitle(WebTools.decode(videoUrl));
         return R.success(title);
     }
 }

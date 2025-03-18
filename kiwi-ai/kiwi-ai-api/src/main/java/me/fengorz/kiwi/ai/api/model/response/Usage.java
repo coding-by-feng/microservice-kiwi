@@ -1,4 +1,4 @@
-package me.fengorz.kiwi.ai.grok.model.response;
+package me.fengorz.kiwi.ai.api.model.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;

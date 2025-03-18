@@ -28,6 +28,9 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface KiwiCacheKey {
 
+    /**
+     * Must be unique and required
+     */
     int value() default 0;
 
     boolean nullable() default true;

@@ -3,6 +3,7 @@ package me.fengorz.kiwi.ai;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.ai.api.vo.YtbSubtitlesVO;
 import me.fengorz.kiwi.common.api.R;
+import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
 import me.fengorz.kiwi.common.sdk.enumeration.AiPromptModeEnum;
 import me.fengorz.kiwi.common.sdk.enumeration.LanguageEnum;
 import me.fengorz.kiwi.common.sdk.web.WebTools;
@@ -75,31 +76,36 @@ public class YouTuBeController {
         LanguageEnum lang = ifNeedTranslation ? LanguageConvertor.convertLanguageToEnum(language) : LanguageEnum.NONE;
         switch (ytbSubtitlesResult.getType()) {
             case SMALL_AUTO_GENERATED_RETURN_STRING: {
-                String translatedOrRetouchedSubtitles = ifNeedTranslation ? grokAiService.callForYtbAndCache(decodedUrl, (String) ytbSubtitlesResult.getPendingToBeTranslatedOrRetouchedSubtitles(),
+                String pendingToBeTranslatedOrRetouchedSubtitles = (String) ytbSubtitlesResult.getPendingToBeTranslatedOrRetouchedSubtitles();
+                String translatedOrRetouchedSubtitles = ifNeedTranslation ? grokAiService.callForYtbAndCache(decodedUrl, pendingToBeTranslatedOrRetouchedSubtitles,
                         AiPromptModeEnum.SUBTITLE_RETOUCH_TRANSLATOR, lang) : grokAiService.callForYtbAndCache(decodedUrl,
-                        (String) ytbSubtitlesResult.getPendingToBeTranslatedOrRetouchedSubtitles(), AiPromptModeEnum.SUBTITLE_RETOUCH, lang);
+                        pendingToBeTranslatedOrRetouchedSubtitles, AiPromptModeEnum.SUBTITLE_RETOUCH, lang);
                 result = PojoBuilder.buildYtbSubtitlesVO(translatedOrRetouchedSubtitles,
                         ytbSubtitlesResult.getScrollingSubtitles(), ytbSubtitlesResult.getType().getValue());
                 break;
             }
             case LARGE_AUTO_GENERATED_RETURN_LIST: {
-                String translatedOrRetouchedSubtitles = ifNeedTranslation ? grokAiService.batchCallForYtbAndCache(decodedUrl, (List) ytbSubtitlesResult.getPendingToBeTranslatedOrRetouchedSubtitles(),
+                List<String> pendingToBeTranslatedOrRetouchedSubtitlesList = (List) ytbSubtitlesResult.getPendingToBeTranslatedOrRetouchedSubtitles();
+                String translatedOrRetouchedSubtitles = ifNeedTranslation ? grokAiService.batchCallForYtbAndCache(decodedUrl, pendingToBeTranslatedOrRetouchedSubtitlesList,
                         AiPromptModeEnum.SUBTITLE_RETOUCH_TRANSLATOR, lang) : grokAiService.batchCallForYtbAndCache(decodedUrl,
-                        (List) ytbSubtitlesResult.getPendingToBeTranslatedOrRetouchedSubtitles(), AiPromptModeEnum.SUBTITLE_RETOUCH, lang);
+                        pendingToBeTranslatedOrRetouchedSubtitlesList, AiPromptModeEnum.SUBTITLE_RETOUCH, lang);
                 result = PojoBuilder.buildYtbSubtitlesVO(translatedOrRetouchedSubtitles,
                         ytbSubtitlesResult.getScrollingSubtitles(), ytbSubtitlesResult.getType().getValue());
                 break;
             }
             case SMALL_PROFESSIONAL_RETURN_STRING:
+                String pendingToBeTranslatedOrRetouchedSubtitles = (String) ytbSubtitlesResult.getPendingToBeTranslatedOrRetouchedSubtitles();
                 result = PojoBuilder.buildYtbSubtitlesVO(
                         ifNeedTranslation ? grokAiService.callForYtbAndCache(decodedUrl,
-                                (String) ytbSubtitlesResult.getPendingToBeTranslatedOrRetouchedSubtitles(), AiPromptModeEnum.SUBTITLE_TRANSLATOR, lang) : ytbSubtitlesResult.getScrollingSubtitles(),
+                                pendingToBeTranslatedOrRetouchedSubtitles, AiPromptModeEnum.SUBTITLE_TRANSLATOR, lang) : pendingToBeTranslatedOrRetouchedSubtitles,
                         ytbSubtitlesResult.getScrollingSubtitles(),
                         ytbSubtitlesResult.getType().getValue());
                 break;
             case LARGE_PROFESSIONAL_RETURN_LIST:
+                List<String> pendingToBeTranslatedOrRetouchedSubtitlesList = (List) ytbSubtitlesResult.getPendingToBeTranslatedOrRetouchedSubtitles();
                 result = PojoBuilder.buildYtbSubtitlesVO(ifNeedTranslation ? grokAiService.batchCallForYtbAndCache(decodedUrl,
-                                (List) ytbSubtitlesResult.getPendingToBeTranslatedOrRetouchedSubtitles(), AiPromptModeEnum.SUBTITLE_TRANSLATOR, lang) : ytbSubtitlesResult.getScrollingSubtitles(),
+                                pendingToBeTranslatedOrRetouchedSubtitlesList, AiPromptModeEnum.SUBTITLE_TRANSLATOR, lang)
+                                : String.join(GlobalConstants.SYMBOL_LINE, pendingToBeTranslatedOrRetouchedSubtitlesList),
                         ytbSubtitlesResult.getScrollingSubtitles(),
                         ytbSubtitlesResult.getType().getValue());
                 break;

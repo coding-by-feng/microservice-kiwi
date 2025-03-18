@@ -41,8 +41,8 @@ ai:
       key: ${GROK_API_KEY}  # Replace with the actual API key
       endpoint: https://api.x.ai/v1/chat/completions  # Hypothetical endpoint
       model: "grok-2-1212"
-      thread-prompts-line-size: 300
-      thread-pool-size: 8
+      thread-prompts-line-size: 200
+      thread-pool-size: 7
       thread-timeout-secs: 110
   openai:
     api:

@@ -1,10 +1,10 @@
-package me.fengorz.kiwi.ai.grok.model.response;
+package me.fengorz.kiwi.ai.api.model.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import me.fengorz.kiwi.ai.grok.model.request.Message;
+import me.fengorz.kiwi.ai.api.model.request.Message;
 
 @Data
 @NoArgsConstructor

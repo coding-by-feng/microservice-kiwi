@@ -7,7 +7,6 @@ jasypt:
 spring:
   redis:
     host: kiwi-redis
-    password: ENC(H2wp5eUHhX+b3JrwEtcBEl1/0b3IyoIf)
     port: 6379
     lettuce:
       pool:

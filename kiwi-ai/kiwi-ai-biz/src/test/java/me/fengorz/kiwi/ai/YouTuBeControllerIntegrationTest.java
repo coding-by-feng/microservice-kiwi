@@ -44,7 +44,7 @@ public class YouTuBeControllerIntegrationTest {
     private TestRestTemplate restTemplate;
 
     // Note: URLs are already URL-encoded
-    private static final String TEST_URL_AUTO_SUBTITLES = "https%3A%2F%2Fwww.youtube.com%2Fwatch%3Fv%3D98o_L3jlixw"; // Short test video
+    private static final String TEST_URL_AUTO_SUBTITLES = "https%3A%2F%2Fyoutu.be%2F98o_L3jlixw%3Fsi%3DtI5xIUVoQzUEK5yV"; // Short test video
     private static final String TEST_URL_NORMAL_SUBTITLES = "https%3A%2F%2Fwww.youtube.com%2Fwatch%3Fv%3Dq0DMYs4b2Yw"; // Short test video
 
     private String buildUrl(String endpoint) {
@@ -112,6 +112,8 @@ public class YouTuBeControllerIntegrationTest {
         // Access properties of YtbSubtitlesVO
         assertNotNull(subtitlesVO.getTranslatedOrRetouchedSubtitles(), "Subtitles content should not be null");
         log.info("Downloaded vtt subtitles: {}", subtitlesVO.getTranslatedOrRetouchedSubtitles());
+        assertTrue(subtitlesVO.getScrollingSubtitles().contains("thanks and see"));
+        assertTrue(subtitlesVO.getTranslatedOrRetouchedSubtitles().contains("thanks and see"));
     }
 
     @Test
@@ -168,6 +170,8 @@ public class YouTuBeControllerIntegrationTest {
         // Test content contains expected text - adjust assertion as needed
         // assertTrue(subtitlesVO.getContent().contains("s what you reap when you really put"));
         log.info("Downloaded vtt subtitles with language: {}", subtitlesVO.getTranslatedOrRetouchedSubtitles());
+        assertTrue(subtitlesVO.getScrollingSubtitles().contains("thanks and see"));
+        assertTrue(subtitlesVO.getTranslatedOrRetouchedSubtitles().contains("thanks and see"));
     }
 
     @Test

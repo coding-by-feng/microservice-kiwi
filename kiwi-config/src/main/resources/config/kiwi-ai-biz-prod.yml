@@ -4,4 +4,4 @@ youtube:
     download:
       path: ENC(8ZJ3rI1uzmeliVVmWQwG8w==)
     large-subtitles:
-      threshold: 10000
+      threshold: 1000

@@ -111,10 +111,10 @@ public class YouTuBeHelper {
                         .build();
                 if (subtitles.size() > this.largeSubtitlesThreshold) {
                     result.setType(SubtitleTypeEnum.LARGE_PROFESSIONAL_RETURN_LIST);
-                    result.setPendingToBeTranslatedOrRetouchedSubtitles(subtitles);
+                    result.setPendingToBeTranslatedOrRetouchedSubtitles(VttFileCleaner.cleanTimestamp(subtitles));
                 } else {
                     result.setType(SubtitleTypeEnum.SMALL_PROFESSIONAL_RETURN_STRING);
-                    result.setPendingToBeTranslatedOrRetouchedSubtitles(String.join(GlobalConstants.SYMBOL_LINE, subtitles));
+                    result.setPendingToBeTranslatedOrRetouchedSubtitles(String.join(GlobalConstants.SYMBOL_LINE, VttFileCleaner.cleanTimestamp(subtitles)));
                 }
                 return result;
             }

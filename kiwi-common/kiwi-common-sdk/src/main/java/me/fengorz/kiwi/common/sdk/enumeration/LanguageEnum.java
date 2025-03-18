@@ -57,7 +57,7 @@ public enum LanguageEnum {
     AZ("AZ", "Azerbaijani"),
     BS("BS", "Bosnian"),
     CA("CA", "Catalan"),
-    ;
+    NONE("NONE", "NONE");
 
     private final String code;
     private final String name;
@@ -67,6 +67,6 @@ public enum LanguageEnum {
         this.name = name;
     }
 
-    public static Map<String, LanguageEnum> LANGUAGE_MAP = EnumToMapConverter.enumToMap(LanguageEnum.class, "code");
+    public static final Map<String, LanguageEnum> LANGUAGE_MAP = EnumToMapConverter.enumToMap(LanguageEnum.class, "code");
 
 }

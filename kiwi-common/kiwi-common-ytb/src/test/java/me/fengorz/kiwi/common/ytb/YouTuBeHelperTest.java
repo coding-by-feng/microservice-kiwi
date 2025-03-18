@@ -1,26 +1,10 @@
 package me.fengorz.kiwi.common.ytb;
 
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-
-import java.io.File;
-import java.io.IOException;
 
 @Slf4j
 class YouTuBeHelperTest {
-
-
-    @Test
-    @Disabled
-    void testProcessSubtitleFile() throws IOException {
-
-        // Process the file
-        String result = new YouTuBeHelper().processSubtitleFile(new File("/Users/zhanshifeng/test.vtt"));
-
-        // Expected result after processing
-        log.info(result);
-    }
 
     // Example usage
     @Test
@@ -115,8 +99,8 @@ class YouTuBeHelperTest {
                 "00:01:34.950 --> 00:01:34.960\n" +
                 "this well it's a long story it started";
 
-        String retouched = VttFileCleaner.cleanVtt(subtitles);
-        System.out.println(retouched);
+//        String retouched = VttFileCleaner.cleanTimestamp(Arrays.stream(subtitles.split("\n")).collect(Collectors.toList()));
+//        System.out.println(retouched);
     }
 
 }

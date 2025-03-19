@@ -65,8 +65,6 @@ public class VttFileCleaner {
         List<String> headers = Arrays.asList("WEBVTT", "Kind: captions");
         List<String> modifiedLines = new ArrayList<>();
 
-        // Compile regex patterns for better performance
-        Pattern timestampPattern = Pattern.compile("\\d{2}:\\d{2}:\\d{2}\\.\\d{3} --> \\d{2}:\\d{2}:\\d{2}\\.\\d{3}.*");
 
         String previousLine = GlobalConstants.EMPTY;
         for (String line : lines.stream().distinct().collect(Collectors.toList())) {
@@ -81,7 +79,7 @@ public class VttFileCleaner {
             }
 
             // Skip timestamp lines and blank lines
-            if (timestampPattern.matcher(line).matches()) {
+            if (line.contains(TIMESTAMP_FLAG)) {
                 continue;
             }
 

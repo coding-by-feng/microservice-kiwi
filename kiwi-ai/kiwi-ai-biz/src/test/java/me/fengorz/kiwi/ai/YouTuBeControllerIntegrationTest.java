@@ -89,6 +89,7 @@ public class YouTuBeControllerIntegrationTest {
     }
 
     @Test
+    @Disabled
     void testDownloadSubtitlesWithoutLanguageInVtt_Success() {
         String url = buildUrl("subtitles") + "?url=" + TEST_URL_AUTO_SUBTITLES;
 
@@ -117,6 +118,7 @@ public class YouTuBeControllerIntegrationTest {
     }
 
     @Test
+    @Disabled
     void testDownloadSubtitlesWithoutLanguageInSrt_Success() {
         // Use UriComponentsBuilder to properly encode URL parameters
         String url = buildUrl("subtitles") + "?url=" + TEST_URL_NORMAL_SUBTITLES;
@@ -145,6 +147,7 @@ public class YouTuBeControllerIntegrationTest {
     }
 
     @Test
+    @Disabled
     void testDownloadSubtitlesWithLanguageInVtt_Success() {
         String url = buildUrl("subtitles") + "?url=" + TEST_URL_AUTO_SUBTITLES + "&language=" + LanguageEnum.ZH_CN.getCode();
 

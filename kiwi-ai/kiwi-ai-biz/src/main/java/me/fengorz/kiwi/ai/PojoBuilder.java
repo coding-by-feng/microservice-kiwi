@@ -2,7 +2,6 @@ package me.fengorz.kiwi.ai;
 
 import lombok.experimental.UtilityClass;
 import me.fengorz.kiwi.ai.api.vo.AiResponseVO;
-import me.fengorz.kiwi.ai.api.vo.YtbSubtitlesVO;
 import me.fengorz.kiwi.common.sdk.enumeration.LanguageEnum;
 
 /**
@@ -30,18 +29,6 @@ public class PojoBuilder {
         vo.setOriginalText(prompt);
         vo.setLanguageCode(language.getCode());
         vo.setResponseText(translatedText);
-        return vo;
-    }
-
-    public YtbSubtitlesVO buildYtbSubtitlesVO(String translatedOrRetouchedSubtitles, String scrollingSubtitles, String type) {
-        if (translatedOrRetouchedSubtitles == null || translatedOrRetouchedSubtitles.trim().isEmpty()) {
-            throw new IllegalArgumentException("Subtitles content cannot be null or empty");
-        }
-
-        YtbSubtitlesVO vo = new YtbSubtitlesVO();
-        vo.setTranslatedOrRetouchedSubtitles(translatedOrRetouchedSubtitles);
-        vo.setScrollingSubtitles(scrollingSubtitles);
-        vo.setType(type);
         return vo;
     }
 

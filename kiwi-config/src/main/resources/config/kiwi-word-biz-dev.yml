@@ -6,9 +6,12 @@ spring:
     password: ENC(zF1rDpn+u8RZX5OTor7BpHzprZyrH+3P)
     url: jdbc:mysql://${DB_IP}:3306/kiwi_db?useUnicode=true&characterEncoding=UTF-8&useSSL=false&autoReconnect=true&serverTimezone=Pacific/Auckland
     hikari:
-      max-lifetime: 60000
+      connection-test-query: SELECT 1
+      max-lifetime: 1800000
       connection-timeout: 60000
-      maximum-pool-size: 10
+      initialization-fail-timeout: 60000
+      maximum-pool-size: 20
+      minimum-idle: 10
 
 me:
   fengorz:

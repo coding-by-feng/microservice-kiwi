@@ -28,7 +28,8 @@ import lombok.Getter;
  */
 public enum TtsSourceEnum {
 
-    VOICERSS("voicerss"), BAIDU("baidu"), COMBO("combo");
+    VOICERSS("voicerss"), BAIDU("baidu"), COMBO("combo"),
+    GCP("gcp");
 
     @Getter
     private final String source;

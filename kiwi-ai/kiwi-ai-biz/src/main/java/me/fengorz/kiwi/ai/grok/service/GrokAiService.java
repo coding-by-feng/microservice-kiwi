@@ -18,6 +18,7 @@ import me.fengorz.kiwi.common.sdk.exception.ai.GrokAiException;
 import me.fengorz.kiwi.common.sdk.util.json.KiwiJsonUtils;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -155,11 +156,24 @@ public class GrokAiService implements AiChatService {
     }
 
     @Override
+    @KiwiCacheKeyPrefix(AiConstants.CACHE_KEY_PREFIX_GROK.SUBTITLE_TRANSLATION)
+    @CacheEvict(cacheNames = AiConstants.CACHE_NAMES, keyGenerator = CacheConstants.CACHE_KEY_GENERATOR_BEAN)
+    public void cleanBatchCallForYtbAndCache(@KiwiCacheKey(1) String ytbUrl, @KiwiCacheKey(2) AiPromptModeEnum promptMode, @KiwiCacheKey(3) LanguageEnum language) {
+
+    }
+
+    @Override
     @KiwiCacheKeyPrefix(AiConstants.CACHE_KEY_PREFIX_GROK.SUBTITLE_RETOUCH)
     @Cacheable(cacheNames = AiConstants.CACHE_NAMES, keyGenerator = CacheConstants.CACHE_KEY_GENERATOR_BEAN,
             unless = "#result == null")
     public String callForYtbAndCache(@KiwiCacheKey(1) String ytbUrl, String prompt, @KiwiCacheKey(2) AiPromptModeEnum promptMode, @KiwiCacheKey(3) LanguageEnum language) {
         return call(prompt, promptMode, language);
+    }
+
+    @Override
+    @KiwiCacheKeyPrefix(AiConstants.CACHE_KEY_PREFIX_GROK.SUBTITLE_RETOUCH)
+    @CacheEvict(cacheNames = AiConstants.CACHE_NAMES, keyGenerator = CacheConstants.CACHE_KEY_GENERATOR_BEAN)
+    public void cleanCallForYtbAndCache(@KiwiCacheKey(1) String ytbUrl, @KiwiCacheKey(2) AiPromptModeEnum promptMode, @KiwiCacheKey(3) LanguageEnum language) {
     }
 
     /**

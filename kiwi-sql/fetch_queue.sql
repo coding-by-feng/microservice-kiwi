@@ -4,9 +4,10 @@ set
      fetch_time=0,
      fetch_result='',
      is_lock=1,
-    is_into_cache = 0
-#  where fetch_status = 666;
-    where is_valid = 'N';
+    is_into_cache = 0,
+    is_valid='Y'
+ where fetch_status = 666;
+#     where is_valid = 'N';
 # where word_name = 'abandon';
 # where fetch_time > 100;
 #   and fetch_status <> 666
@@ -129,7 +130,6 @@ select wfq.*
 from word_fetch_queue wfq
 order by wfq.in_time desc;
 
-
 select wm.word_name
 from word_main wm
          left join word_fetch_queue wfq on wm.word_name = wfq.word_name
@@ -142,4 +142,7 @@ update word_fetch_queue set is_valid='N';
 
 select count(1)
 # select *
-from word_fetch_queue where fetch_status = 666;
+from word_fetch_queue where fetch_status <> 666;
+
+select *
+from word_fetch_queue where word_name='geocentric';

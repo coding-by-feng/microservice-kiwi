@@ -7,6 +7,8 @@ logging:
   level:
     org.springframework.boot: DEBUG
     me.fengorz.kiwi.*: DEBUG
+    com.zaxxer.hikari: DEBUG
+
 
 security:
   oauth2:

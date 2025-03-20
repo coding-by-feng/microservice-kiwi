@@ -18,13 +18,20 @@ package me.fengorz.kiwi.word.biz.service.initialing;
 
 import cn.hutool.core.map.MapUtil;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import me.fengorz.kiwi.common.dfs.DfsService;
+import me.fengorz.kiwi.common.dfs.DfsUtils;
+import me.fengorz.kiwi.common.sdk.exception.dfs.DfsOperateException;
+import me.fengorz.kiwi.common.sdk.exception.tts.TtsException;
 import me.fengorz.kiwi.common.tts.enumeration.TtsSourceEnum;
 import me.fengorz.kiwi.word.api.common.enumeration.RevisePermanentAudioEnum;
 import me.fengorz.kiwi.word.api.entity.WordReviewAudioDO;
 import me.fengorz.kiwi.word.biz.service.base.ReviewAudioService;
+import me.fengorz.kiwi.word.biz.service.operate.AudioService;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.SpringApplication;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -39,10 +46,11 @@ import java.util.Set;
  */
 @Slf4j
 @Service
-@RequiredArgsConstructor
 public class RevisePermanentAudioHelper implements InitializingBean {
 
     private final ReviewAudioService reviewAudioService;
+    private final DfsService dfsService;
+    private final AudioService audioService;
     @Getter
     private Map<String, RevisePermanentAudioEnum> permanentAudioEnumMap;
     @Getter
@@ -51,6 +59,17 @@ public class RevisePermanentAudioHelper implements InitializingBean {
     private Map<RevisePermanentAudioEnum, WordReviewAudioDO> cacheStoreWithEnumKey;
     @Getter
     private Map<String, WordReviewAudioDO> cacheStoreWithStringKey;
+    private final ApplicationContext applicationContext;
+
+    public RevisePermanentAudioHelper(ReviewAudioService reviewAudioService,
+                                      @Qualifier("googleCloudStorageService") DfsService dfsService,
+                                      AudioService audioService,
+                                      ApplicationContext applicationContext) {
+        this.reviewAudioService = reviewAudioService;
+        this.dfsService = dfsService;
+        this.audioService = audioService;
+        this.applicationContext = applicationContext;
+    }
 
     @Override
     public void afterPropertiesSet() throws Exception {
@@ -81,6 +100,31 @@ public class RevisePermanentAudioHelper implements InitializingBean {
         this.permanentAudioEnumMap.forEach((k, v) -> {
             this.permanentAudioEnums.add(v);
             WordReviewAudioDO audio = reviewAudioService.selectOne(v.getSourceId(), v.getType());
+            if (audio == null) {
+                log.warn("Could not find Audio for key: {}, value: {}", k, v);
+            }
+            log.info("Permanent Audio key: {}, value: {}, audio: {}", k, v, audio);
+
+            try {
+                byte[] bytes = this.dfsService.downloadFile(audio.getGroupName(), audio.getFilePath());
+                log.info("Required wordReviewAudio bytes download success, characterCode={}, bytes length={}", k, bytes.length);
+            } catch (DfsOperateException e) {
+                log.error("downloadReviewAudio exception, characterCode={}!", k, e);
+                try {
+                    String uploadResult = audioService.generateChineseVoice(v.getText());
+                    audio.setGroupName(DfsUtils.getGroupName(uploadResult));
+                    audio.setFilePath(DfsUtils.getUploadVoiceFilePath(uploadResult));
+                    reviewAudioService.updateById(audio);
+                    log.info("Updated audio, characterCode={}, audio: {}", k, audio);
+                } catch (DfsOperateException | TtsException ex) {
+                    log.error("Generate Chinese voice exception, characterCode={}, audio={}!", k, audio, ex);
+                    log.error("Critical error occurred, shutting down application", e);
+                    // Exit with a non-zero status code (indicating abnormal termination)
+                    int exitCode = SpringApplication.exit(applicationContext, () -> 1);
+                    System.exit(exitCode);
+                }
+            }
+
             this.cacheStoreWithEnumKey.put(v, audio);
             this.cacheStoreWithStringKey.put(k, audio);
         });

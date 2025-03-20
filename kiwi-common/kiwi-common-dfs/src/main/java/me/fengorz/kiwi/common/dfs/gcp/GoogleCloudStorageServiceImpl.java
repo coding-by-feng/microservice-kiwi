@@ -87,46 +87,35 @@ public class GoogleCloudStorageServiceImpl implements DfsService {
 
     @Override
     public void deleteFile(String groupName, String path) throws DfsOperateDeleteException {
-        try {
-            // Use groupName as the bucket name and path as the object name
-            BlobId blobId = BlobId.of(groupName, path);
-            // Attempt to delete the blob
-            boolean deleted = storage.delete(blobId);
-            if (!deleted) {
-                throw new DfsOperateDeleteException("Failed to delete file from Google Cloud Storage: " + path);
-            }
-        } catch (Exception e) {
-            throw new DfsOperateDeleteException("Error deleting file from Google Cloud Storage", e);
+        // Use groupName as the bucket name and path as the object name
+        BlobId blobId = BlobId.of(groupName, path);
+        // Attempt to delete the blob
+        boolean deleted = storage.delete(blobId);
+        if (!deleted) {
+            throw new DfsOperateDeleteException("Failed to delete file from Google Cloud Storage: " + path);
         }
     }
 
     @Override
     public InputStream downloadStream(String groupName, String path) throws DfsOperateException {
-        try {
-            // Use groupName as the bucket name and path as the object name
-            Blob blob = storage.get(BlobId.of(groupName, path));
-            if (blob == null) {
-                throw new DfsOperateException("File not found in Google Cloud Storage: " + path);
-            }
-            // Return a stream to read the file content
-            return new ByteArrayInputStream(blob.getContent());
-        } catch (Exception e) {
-            throw new DfsOperateException("Failed to download file stream from Google Cloud Storage", e);
+        // Use groupName as the bucket name and path as the object name
+        Blob blob = storage.get(BlobId.of(groupName, path));
+        if (blob == null) {
+            log.error("File not found in Google Cloud Storage: {}", path);
+            throw new DfsOperateException("File not found in Google Cloud Storage: " + path);
         }
+        // Return a stream to read the file content
+        return new ByteArrayInputStream(blob.getContent());
     }
 
     @Override
     public byte[] downloadFile(String groupName, String path) throws DfsOperateException {
-        try {
-            // Use groupName as the bucket name and path as the object name
-            Blob blob = storage.get(BlobId.of(groupName, path));
-            if (blob == null) {
-                throw new DfsOperateException("File not found in Google Cloud Storage: " + path);
-            }
-            // Return the file content as a byte array
-            return blob.getContent();
-        } catch (Exception e) {
-            throw new DfsOperateException("Failed to download file from Google Cloud Storage", e);
+        // Use groupName as the bucket name and path as the object name
+        Blob blob = storage.get(BlobId.of(groupName, path));
+        if (blob == null) {
+            throw new DfsOperateException("File not found in Google Cloud Storage: " + path);
         }
+        // Return the file content as a byte array
+        return blob.getContent();
     }
 }

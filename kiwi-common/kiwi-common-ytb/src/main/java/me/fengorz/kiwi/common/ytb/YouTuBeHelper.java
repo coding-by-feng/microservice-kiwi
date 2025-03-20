@@ -7,6 +7,7 @@ import me.fengorz.kiwi.common.sdk.constant.CacheConstants;
 import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
@@ -66,6 +67,11 @@ public class YouTuBeHelper {
         processBuilder.redirectErrorStream(true);
         log.info("Executing command: {}", String.join(" ", command));
         return processBuilder.start();
+    }
+
+    @KiwiCacheKeyPrefix(YtbConstants.CACHE_KEY_PREFIX_YTB.SUBTITLES)
+    @CacheEvict(cacheNames = YtbConstants.CACHE_NAMES, keyGenerator = CacheConstants.CACHE_KEY_GENERATOR_BEAN)
+    public void cleanSubtitles(@KiwiCacheKey(1) String videoUrl) {
     }
 
     @SuppressWarnings("unchecked")

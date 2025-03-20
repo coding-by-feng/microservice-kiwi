@@ -26,6 +26,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.retry.annotation.EnableRetry;
 import org.springframework.retry.backoff.FixedBackOffPolicy;
 import org.springframework.retry.policy.SimpleRetryPolicy;
 import org.springframework.retry.support.RetryTemplate;
@@ -46,6 +47,7 @@ import java.util.Map;
 @Configuration
 @ComponentScan("me.fengorz.kiwi.**")
 @Import({CoreConfig.class, DbConfig.class, CacheConfig.class})
+@EnableRetry
 public class AiConfig extends SslConfig {
 
     public AiConfig(RestTemplateProperties restTemplateProperties) {
@@ -73,7 +75,7 @@ public class AiConfig extends SslConfig {
         return firewall;
     }
 
-    @Bean
+    @Bean("aiRetryTemplate")
     @SuppressWarnings("unchecked")
     public RetryTemplate retryTemplate() {
         RetryTemplate retryTemplate = new RetryTemplate();

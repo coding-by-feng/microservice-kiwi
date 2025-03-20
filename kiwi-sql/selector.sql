@@ -7,6 +7,14 @@ where word_id = 1287623;
 # where t.word_name like '% %';
 # where in_time > '2020-10-09';
 
+select *
+from word_main where word_name='geocentric';
+select *
+from word_paraphrase where word_id=5201598;
+select *
+from word_review_audio where source_id=2;
+
+
 select wm.word_name, count(wm.word_name)
 from word_main wm
 group by wm.word_name

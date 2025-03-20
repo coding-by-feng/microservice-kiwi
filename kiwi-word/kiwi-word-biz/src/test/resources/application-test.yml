@@ -2,9 +2,8 @@ spring:
   autoconfigure:
     exclude: org.springframework.boot.autoconfigure.amqp.RabbitAutoConfiguration,org.springframework.boot.autoconfigure.security.oauth2.OAuth2AutoConfiguration,org.springframework.boot.autoconfigure.security.oauth2.resource.servlet.OAuth2ResourceServerAutoConfiguration
   cloud:
-    cloud:
-      config:
-        enabled: false
+    config:
+      enabled: false
     gcp:
       project-id: ENC(k7DNqSwGcdkrFmiR+jB0BL00OB3QhJ0K0tRDkM7VZSd80hQW0wcktA==)
       credentials:
@@ -24,13 +23,14 @@ spring:
     password: ENC(zF1rDpn+u8RZX5OTor7BpHzprZyrH+3P)
     url: jdbc:mysql://${DB_IP}:3306/kiwi_db?useUnicode=true&characterEncoding=UTF-8&useSSL=false&autoReconnect=true&serverTimezone=Pacific/Auckland
     hikari:
-      max-lifetime: 60000
+      connection-test-query: SELECT 1
+      max-lifetime: 1800000
       connection-timeout: 60000
+      initialization-fail-timeout: 60000
       maximum-pool-size: 4
-      minimum-idle: 1
+      minimum-idle: 2
   redis:
     host: kiwi-redis
-    password: ENC(lP0tXFIClnyKAm534LBq0h0FBirDfHqC)
     port: 6379
     lettuce:
       pool:

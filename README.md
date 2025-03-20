@@ -87,6 +87,7 @@ git reset --hard origin/master
 git pull
 ln -s microservice-kiwi/kiwi-deploy/docker/deployKiwi.sh ~/easy-deploy
 ln -s ~/microservice-kiwi/kiwi-deploy/docker/stopAll.sh ~/easy-stop
+ln -s microservice-kiwi/kiwi-deploy/kiwi-ui/auto_deploy_ui.sh ~/easy-deploy-ui
 ```
 
 # host
@@ -140,6 +141,13 @@ export GCP_API_KEY="xxx"
 export YTB_OAUTH_CLIENT_SECRETS_FILE="xxx/xxx/client_secrets.json"
 export YTB_OAUTH_ACCESS_TOKEN="xxx"
 source ~/.zshrc
+```
+
+# Install yt-dlp
+on Mac
+```
+brew install yt-dlp
+# down
 ```
 
 # Upload Runnable Scripts

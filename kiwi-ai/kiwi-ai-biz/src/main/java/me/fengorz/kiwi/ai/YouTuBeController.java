@@ -14,10 +14,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.retry.annotation.Retryable;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
 import java.io.InputStream;
@@ -68,9 +66,25 @@ public class YouTuBeController {
         return R.success(buildYtbSubtitlesVoWithTranslation(decodedUrl, language, youTuBeHelper.downloadSubtitles(decodedUrl)));
     }
 
+    @DeleteMapping("/subtitles")
+    public R<Void> cleanSubtitles(@RequestParam("url") String videoUrl, @RequestParam(value = "language", required = false) String language) {
+        String decodedVideoUrl = WebTools.decode(videoUrl);
+        boolean ifNeedTranslation = language != null && !"null".equals(language);
+        LanguageEnum lang = ifNeedTranslation ? LanguageConvertor.convertLanguageToEnum(language) : LanguageEnum.NONE;
+        youTuBeHelper.cleanSubtitles(decodedVideoUrl);
+        grokAiService.cleanBatchCallForYtbAndCache(decodedVideoUrl, AiPromptModeEnum.SUBTITLE_RETOUCH_TRANSLATOR, lang);
+        grokAiService.cleanBatchCallForYtbAndCache(decodedVideoUrl, AiPromptModeEnum.SUBTITLE_RETOUCH, lang);
+        grokAiService.cleanBatchCallForYtbAndCache(decodedVideoUrl, AiPromptModeEnum.SUBTITLE_TRANSLATOR, lang);
+        grokAiService.cleanCallForYtbAndCache(decodedVideoUrl, AiPromptModeEnum.SUBTITLE_RETOUCH_TRANSLATOR, lang);
+        grokAiService.cleanCallForYtbAndCache(decodedVideoUrl, AiPromptModeEnum.SUBTITLE_TRANSLATOR, lang);
+        grokAiService.cleanCallForYtbAndCache(decodedVideoUrl, AiPromptModeEnum.SUBTITLE_RETOUCH, lang);
+        return R.success();
+    }
+
+    @Retryable(maxAttempts = 2, value = Exception.class)
     @SuppressWarnings({"rawtypes", "unchecked"})
     private YtbSubtitlesVO buildYtbSubtitlesVoWithTranslation(String decodedUrl, String language, YtbSubtitlesResult ytbSubtitlesResult) {
-        log.info("ytbSubtitlesResult: =" + ytbSubtitlesResult);
+        log.info("ytbSubtitlesResult: {}", ytbSubtitlesResult);
         YtbSubtitlesVO result = null;
         boolean ifNeedTranslation = language != null && !"null".equals(language);
         LanguageEnum lang = ifNeedTranslation ? LanguageConvertor.convertLanguageToEnum(language) : LanguageEnum.NONE;

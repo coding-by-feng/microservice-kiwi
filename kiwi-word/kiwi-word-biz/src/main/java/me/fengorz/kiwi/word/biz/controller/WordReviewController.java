@@ -18,6 +18,7 @@ import me.fengorz.kiwi.common.dfs.DfsService;
 import me.fengorz.kiwi.common.sdk.controller.AbstractFileController;
 import me.fengorz.kiwi.common.sdk.exception.DataCheckedException;
 import me.fengorz.kiwi.common.sdk.exception.ResourceNotFoundException;
+import me.fengorz.kiwi.common.sdk.exception.ServiceException;
 import me.fengorz.kiwi.common.sdk.exception.dfs.DfsOperateException;
 import me.fengorz.kiwi.common.sdk.exception.tts.TtsException;
 import me.fengorz.kiwi.common.sdk.web.WebTools;
@@ -95,8 +96,8 @@ public class WordReviewController extends AbstractFileController {
             log.error("findWordReviewAudio exception, sourceId={}, type={}!", sourceId, type, e);
         }
         if (wordReviewAudio == null) {
-            log.error("=========> Required wordReviewAudio must not be null!");
-            return;
+            log.error("=========> Required word review audio must not be null!");
+            throw new ServiceException();
         }
         InputStream inputStream = null;
         try {
@@ -140,8 +141,8 @@ public class WordReviewController extends AbstractFileController {
         log.info("downloadCharacterReviewAudio, characterCode={}", characterCode);
         WordReviewAudioDO wordReviewAudio = this.reviewService.findCharacterReviewAudio(characterCode);
         if (wordReviewAudio == null) {
-            log.error("=========> Required wordReviewAudio must not be null!");
-            return;
+            log.error("=========> Required character eeview audio must not be null!");
+            throw new ServiceException();
         }
         InputStream inputStream = null;
         try {

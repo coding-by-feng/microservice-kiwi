@@ -2,7 +2,9 @@
 show open tables where in_use > 0;
 
 # 查询是否开启自动提交事务
-SHOW VARIABLES LIKE 'AUTOCOMMIT';
+SHOW VARIABLES LIKE '%timeout%';
+SHOW VARIABLES LIKE 'max_lifetime';
+SET GLOBAL connect_timeout = 60;
 select @@AUTOCOMMIT;
 
 # mysql会把当前正在运行的mysql线程信息实时更新到processlist表
@@ -112,4 +114,7 @@ ALTER TABLE word_review_audio
     DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 
 SHOW CHARACTER SET;
+
+
+SHOW STATUS LIKE 'Threads_connected';
 

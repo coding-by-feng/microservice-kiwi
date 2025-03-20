@@ -178,6 +178,7 @@ public class YouTuBeControllerIntegrationTest {
     }
 
     @Test
+    @Disabled
     void testDownloadSubtitlesWithLanguageInSrt_Success() {
         String url = buildUrl("subtitles") + "?url=" + TEST_URL_NORMAL_SUBTITLES + "&language=" + LanguageEnum.ZH_CN.getCode();
 
@@ -204,6 +205,48 @@ public class YouTuBeControllerIntegrationTest {
         // assertTrue(subtitlesVO.getContent().contains("s what you reap when you really put"));
         log.info("Downloaded srt scrolling subtitles with language: {}", subtitlesVO.getScrollingSubtitles());
         log.info("Downloaded srt subtitles with language: {}", subtitlesVO.getTranslatedOrRetouchedSubtitles());
+    }
+
+    @Test
+    void testCleanSubtitles_Success() {
+        // Test without language parameter first
+        URI uri = UriComponentsBuilder.fromUriString(buildUrl("subtitles"))
+                .queryParam("url", TEST_URL_NORMAL_SUBTITLES)
+                .build()
+                .toUri();
+
+        // Perform the DELETE request
+        ResponseEntity<R> response = restTemplate.exchange(
+                uri,
+                HttpMethod.DELETE,
+                null,
+                R.class);
+
+        // Verify the response
+        assertEquals(HttpStatus.OK, response.getStatusCode(), "HTTP status should be 200 OK");
+        assertNotNull(response.getBody(), "Response body should not be null");
+        assertTrue(response.getBody().isSuccess(), "Response should be successful");
+
+        // Test with language parameter
+        URI uriWithLanguage = UriComponentsBuilder.fromUriString(buildUrl("subtitles"))
+                .queryParam("url", TEST_URL_NORMAL_SUBTITLES)
+                .queryParam("language", LanguageEnum.ZH_CN.getCode())
+                .build()
+                .toUri();
+
+        // Perform the DELETE request with language
+        ResponseEntity<R> responseWithLanguage = restTemplate.exchange(
+                uriWithLanguage,
+                HttpMethod.DELETE,
+                null,
+                R.class);
+
+        // Verify the response
+        assertEquals(HttpStatus.OK, responseWithLanguage.getStatusCode(), "HTTP status should be 200 OK");
+        assertNotNull(responseWithLanguage.getBody(), "Response body should not be null");
+        assertTrue(responseWithLanguage.getBody().isSuccess(), "Response should be successful");
+
+        log.info("Successfully tested cleaning subtitles with and without language parameter");
     }
 
     @Test

@@ -23,7 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.api.R;
 import me.fengorz.kiwi.common.sdk.constant.EnvConstants;
 import me.fengorz.kiwi.common.sdk.util.json.KiwiJsonUtils;
-import me.fengorz.kiwi.word.biz.WordBizApplication;
+import me.fengorz.kiwi.word.biz.WordBizTestApplication;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
@@ -47,8 +47,7 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 @ActiveProfiles({EnvConstants.TEST})
 @ExtendWith(SpringExtension.class)
-@SpringBootTest(classes = WordBizApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@Disabled
+@SpringBootTest(classes = WordBizTestApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class ControllerTest {
 
     private final TestRestTemplate testRestTemplate = new TestRestTemplate();
@@ -95,13 +94,12 @@ public class ControllerTest {
         testRestTemplate.delete(String.format("http://localhost:%d/word/review/deprecate-review-audio/2350782", port));
     }
 
-    @Disabled
     @Test
     void test_downloadReviewAudio() {
-        String url = String.format("http://localhost:%d/word/review/downloadReviewAudio/%d/%d", port, 2979284, 1);
+        String url = String.format("http://localhost:%d/word/review/downloadReviewAudio/%d/%d", port, 5201617, 2);
         File file = testRestTemplate.execute(url, HttpMethod.GET, null, clientHttpResponse -> {
             Assertions.assertFalse(clientHttpResponse.getStatusCode().isError());
-            File ret = File.createTempFile("2979284", ".mp3", new File("/Users/zhanshifeng/Documents/temp"));
+            File ret = File.createTempFile("test_kason", ".mp3", new File("/Users/zhanshifeng/Documents/temp"));
             FileUtils.copyInputStreamToFile(clientHttpResponse.getBody(), ret);
             HttpHeaders headers = clientHttpResponse.getHeaders();
             headers.forEach((k, v) -> {
@@ -114,11 +112,12 @@ public class ControllerTest {
 
     @Test
     void test_downloadCharacterReviewAudio() {
-        String url = String.format("http://localhost:%d/word/review/character/downloadReviewAudio/%s", port, "adjective");
+        String character = "adjective";
+        String url = String.format("http://localhost:%d/word/review/character/downloadReviewAudio/%s", port, character);
         File file = testRestTemplate.execute(url, HttpMethod.GET, null, clientHttpResponse -> {
             Assertions.assertFalse(clientHttpResponse.getStatusCode().isError());
-            File ret = File.createTempFile("2979284", ".mp3", new File("/Users/zhanshifeng/Documents/temp"));
-            FileUtil.writeFromStream(clientHttpResponse.getBody(), "/Users/zhanshifeng/Documents/temp/test_adjective.mp3");
+            File ret = File.createTempFile(String.format("character_%s_", character), ".mp3", new File("/Users/zhanshifeng/Documents/temp"));
+            FileUtil.writeFromStream(clientHttpResponse.getBody(), ret);
             HttpHeaders headers = clientHttpResponse.getHeaders();
             headers.forEach((k, v) -> {
                 log.info("header name is: {}, value is: {}", k, v);

@@ -1,4 +1,4 @@
-package me.fengorz.kiwi.ai.grok;
+package me.fengorz.kiwi.ai.service.grok;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;

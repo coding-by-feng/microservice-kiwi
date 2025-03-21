@@ -1,8 +1,7 @@
-package me.fengorz.kiwi.ai.openai.service;
+package me.fengorz.kiwi.ai.service.openai;
 
 import lombok.extern.slf4j.Slf4j;
-import me.fengorz.kiwi.ai.AiAudioService;
-import me.fengorz.kiwi.ai.openai.OpenaiApiProperties;
+import me.fengorz.kiwi.ai.service.AiAudioService;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.*;

@@ -1,4 +1,4 @@
-package me.fengorz.kiwi.ai;
+package me.fengorz.kiwi.ai.service;
 
 /**
  * @Author Kason Zhan

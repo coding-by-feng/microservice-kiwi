@@ -2,7 +2,7 @@ package me.fengorz.kiwi.ai.service;
 
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.ai.AiApplication;
-import me.fengorz.kiwi.ai.grok.service.GrokAiService;
+import me.fengorz.kiwi.ai.service.grok.GrokAiService;
 import me.fengorz.kiwi.common.sdk.constant.EnvConstants;
 import me.fengorz.kiwi.common.sdk.enumeration.AiPromptModeEnum;
 import me.fengorz.kiwi.common.sdk.enumeration.LanguageEnum;

@@ -1,4 +1,4 @@
-package me.fengorz.kiwi.ai;
+package me.fengorz.kiwi.ai.util;
 
 public class AiConstants {
 

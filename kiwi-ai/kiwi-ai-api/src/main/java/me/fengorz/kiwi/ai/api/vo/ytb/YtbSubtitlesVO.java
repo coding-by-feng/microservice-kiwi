@@ -1,4 +1,4 @@
-package me.fengorz.kiwi.ai.api.vo;
+package me.fengorz.kiwi.ai.api.vo.ytb;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

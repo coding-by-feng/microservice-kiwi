@@ -146,3 +146,7 @@ from word_fetch_queue where fetch_status <> 666;
 
 select *
 from word_fetch_queue where word_name='geocentric';
+
+select *
+from sys_user
+where username = 'admin';

@@ -1,4 +1,4 @@
-package me.fengorz.kiwi.ai;
+package me.fengorz.kiwi.ai.service;
 
 import me.fengorz.kiwi.common.sdk.enumeration.AiPromptModeEnum;
 import me.fengorz.kiwi.common.sdk.enumeration.LanguageEnum;

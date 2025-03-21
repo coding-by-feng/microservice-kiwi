@@ -1,4 +1,4 @@
-package me.fengorz.kiwi.ai;
+package me.fengorz.kiwi.ai.util;
 
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;

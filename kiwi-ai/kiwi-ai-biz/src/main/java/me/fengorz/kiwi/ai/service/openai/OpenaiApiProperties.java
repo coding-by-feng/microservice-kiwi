@@ -1,4 +1,4 @@
-package me.fengorz.kiwi.ai.openai;
+package me.fengorz.kiwi.ai.service.openai;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;

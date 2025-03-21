@@ -18,6 +18,19 @@ spring:
         enabled: false
         service-id: kiwi-config
       enabled: false
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: ENC(2PE/BMMoNPbRCEaIyGfcSw==)
+    password: ENC(zF1rDpn+u8RZX5OTor7BpHzprZyrH+3P)
+    url: jdbc:mysql://${DB_IP}:3306/kiwi_db?useUnicode=true&characterEncoding=UTF-8&useSSL=false&autoReconnect=true&serverTimezone=Pacific/Auckland
+    hikari:
+      connection-test-query: SELECT 1
+      max-lifetime: 1800000
+      connection-timeout: 60000
+      initialization-fail-timeout: 60000
+      maximum-pool-size: 20
+      minimum-idle: 10
   redis:
     host: kiwi-redis
     port: 6379
@@ -34,6 +47,13 @@ spring:
       token-info-uri: http://localhost:8080/dummy-uri  # Dummy URI to bypass remote token validation
       client-id: dummy-client
       client-secret: dummy-secret
+  task:
+    execution:
+      pool:
+        core-size: 1
+        max-size: 1
+        queue-capacity: 100
+      thread-name-prefix: YTB-subtitles-thread-
 
 ai:
   grok:
@@ -64,7 +84,7 @@ ai:
 
 ms:
   config:
-    exclude-db: true
+    exclude-db: false
     exclude-cache: false
 
 rest-template:
@@ -97,3 +117,14 @@ youtube:
       path: ENC(6MovVGMc/hsrID5qMQQxJx8yxkHvzUU7DQij+0bDKHWFCwoGwO/ZC9BTVvl+ZHJt)
     large-subtitles:
       threshold: 1000
+
+
+# Custom async executor configuration
+async:
+  executor:
+    single-thread:
+      core-pool-size: 1
+      max-pool-size: 1
+      queue-capacity: 100
+      thread-name-prefix: YTB-subtitles-thread-
+      rejected-execution-policy: CALLER_RUNS  # Options: ABORT, CALLER_RUNS, DISCARD, DISCARD_OLDEST

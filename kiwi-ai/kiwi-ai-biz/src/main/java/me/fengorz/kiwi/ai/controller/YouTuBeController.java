@@ -1,7 +1,9 @@
-package me.fengorz.kiwi.ai;
+package me.fengorz.kiwi.ai.controller;
 
 import lombok.extern.slf4j.Slf4j;
-import me.fengorz.kiwi.ai.api.vo.YtbSubtitlesVO;
+import me.fengorz.kiwi.ai.api.vo.ytb.YtbSubtitlesVO;
+import me.fengorz.kiwi.ai.service.AiChatService;
+import me.fengorz.kiwi.ai.util.LanguageConvertor;
 import me.fengorz.kiwi.common.api.R;
 import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
 import me.fengorz.kiwi.common.sdk.enumeration.AiPromptModeEnum;

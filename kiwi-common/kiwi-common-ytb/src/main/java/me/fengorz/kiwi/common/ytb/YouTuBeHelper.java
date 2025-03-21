@@ -5,7 +5,9 @@ import me.fengorz.kiwi.common.sdk.annotation.cache.KiwiCacheKey;
 import me.fengorz.kiwi.common.sdk.annotation.cache.KiwiCacheKeyPrefix;
 import me.fengorz.kiwi.common.sdk.constant.CacheConstants;
 import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
+import me.fengorz.kiwi.common.sdk.exception.ServiceException;
 import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -17,6 +19,7 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
+@SuppressWarnings("LoggingSimilarMessage")
 @Slf4j
 @Service
 @KiwiCacheKeyPrefix(YtbConstants.CACHE_KEY_PREFIX_YTB.CLASS)
@@ -69,12 +72,12 @@ public class YouTuBeHelper {
         return processBuilder.start();
     }
 
+    @SuppressWarnings("unused")
     @KiwiCacheKeyPrefix(YtbConstants.CACHE_KEY_PREFIX_YTB.SUBTITLES)
     @CacheEvict(cacheNames = YtbConstants.CACHE_NAMES, keyGenerator = CacheConstants.CACHE_KEY_GENERATOR_BEAN)
     public void cleanSubtitles(@KiwiCacheKey(1) String videoUrl) {
     }
 
-    @SuppressWarnings("unchecked")
     @KiwiCacheKeyPrefix(YtbConstants.CACHE_KEY_PREFIX_YTB.SUBTITLES)
     @Cacheable(cacheNames = YtbConstants.CACHE_NAMES, keyGenerator = CacheConstants.CACHE_KEY_GENERATOR_BEAN,
             unless = "#result == null")
@@ -223,7 +226,11 @@ public class YouTuBeHelper {
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
             String line;
             while ((line = reader.readLine()) != null) {
-                output.append(line).append("\n");
+                // Skip warning lines and empty lines
+                if (line.startsWith("WARNING:") || line.trim().isEmpty()) {
+                    continue;
+                }
+                output.append(line);
             }
         }
         return output;
@@ -282,6 +289,127 @@ public class YouTuBeHelper {
         result = result.replaceAll("\\s+", " ").trim();
 
         return result;
+    }
+
+    /**
+     * Extract channel name using yt-dlp command-line tool
+     *
+     * @param channelUrl YouTube channel URL
+     * @return Channel name
+     * @throws ServiceException If extraction fails
+     */
+    public String extractChannelNameWithYtDlp(String channelUrl) throws ServiceException {
+        ProcessBuilder processBuilder = new ProcessBuilder(
+                "yt-dlp",
+                "--skip-download",
+                "--print", "channel",
+                "--playlist-items", "1",
+                channelUrl
+        );
+
+        processBuilder.redirectErrorStream(true);
+
+        try {
+            Process process = processBuilder.start();
+
+            StringBuilder output = extractChannelName(process);
+
+            // Wait for the process to complete
+            int exitCode = process.waitFor();
+
+            if (exitCode == 0) {
+                String channelName = output.toString().trim();
+                log.info("Successfully extracted channel name using yt-dlp: {}", channelName);
+                return channelName;
+            } else {
+                log.error("yt-dlp exited with code {}: {}", exitCode, output);
+                throw new ServiceException("Failed to extract channel name: yt-dlp exited with code " + exitCode);
+            }
+
+        } catch (IOException | InterruptedException e) {
+            log.error("Error executing yt-dlp", e);
+            throw new ServiceException("Failed to extract channel name using yt-dlp", e);
+        }
+    }
+
+    @NotNull
+    private static StringBuilder extractChannelName(Process process) throws IOException {
+        StringBuilder output = new StringBuilder();
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                // Skip any line that starts with "WARNING:"
+                if (line.startsWith("WARNING:")) {
+                    continue;
+                }
+
+                // Skip empty lines
+                if (line.trim().isEmpty()) {
+                    continue;
+                }
+
+                // Found a non-warning, non-empty line (likely the channel name)
+                output.append(line.trim());
+                // Don't break here - continue reading to drain the process output
+                // but we'll only keep the first valid line
+            }
+        }
+        return output;
+    }
+
+    /**
+     * Extract all video links from a YouTube channel
+     *
+     * @param channelLink YouTube channel URL
+     * @return List of unique video URLs from the channel
+     * @throws ServiceException If extraction fails
+     */
+    public List<String> extractAllVideoLinks(String channelLink) throws ServiceException {
+        List<String> videoLinks = new ArrayList<>();
+
+        ProcessBuilder processBuilder = new ProcessBuilder(
+                "yt-dlp",
+                "--flat-playlist",
+                "--get-id",
+                channelLink
+        );
+
+        processBuilder.redirectErrorStream(true);
+
+        try {
+            Process process = processBuilder.start();
+
+            // Read the output (video IDs)
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    // Skip warning lines and empty lines
+                    if (line.startsWith("WARNING:") || line.trim().isEmpty()) {
+                        continue;
+                    }
+
+                    // Create full YouTube URL from video ID
+                    String videoLink = "https://www.youtube.com/watch?v=" + line.trim();
+                    videoLinks.add(videoLink);
+                }
+            }
+
+            // Wait for the process to complete
+            int exitCode = process.waitFor();
+
+            if (exitCode != 0) {
+                log.error("yt-dlp exited with code {} when extracting video links from channel: {}",
+                        exitCode, channelLink);
+                throw new ServiceException("Failed to extract video links: yt-dlp exited with code " + exitCode);
+            }
+
+            log.info("Successfully extracted {} video links from channel: {}", videoLinks.size(), channelLink);
+            return videoLinks;
+
+        } catch (IOException | InterruptedException e) {
+            log.error("Error executing yt-dlp to extract video links", e);
+            throw new ServiceException("Failed to extract video links using yt-dlp", e);
+        }
     }
 
 }

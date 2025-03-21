@@ -1,8 +1,11 @@
-package me.fengorz.kiwi.ai;
+package me.fengorz.kiwi.ai.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.ai.api.vo.AiResponseVO;
+import me.fengorz.kiwi.ai.service.AiChatService;
+import me.fengorz.kiwi.ai.util.LanguageConvertor;
+import me.fengorz.kiwi.ai.util.PojoBuilder;
 import me.fengorz.kiwi.common.api.R;
 import me.fengorz.kiwi.common.sdk.annotation.log.LogMarker;
 import me.fengorz.kiwi.common.sdk.controller.BaseController;

@@ -1,4 +1,4 @@
-package me.fengorz.kiwi.ai;
+package me.fengorz.kiwi.ai.util;
 
 import lombok.experimental.UtilityClass;
 import me.fengorz.kiwi.ai.api.vo.AiResponseVO;

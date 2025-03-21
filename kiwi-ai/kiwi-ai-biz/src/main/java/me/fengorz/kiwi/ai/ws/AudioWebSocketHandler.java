@@ -1,7 +1,7 @@
 package me.fengorz.kiwi.ai.ws;
 
 import lombok.extern.slf4j.Slf4j;
-import me.fengorz.kiwi.ai.AiAudioService;
+import me.fengorz.kiwi.ai.service.AiAudioService;
 import me.fengorz.kiwi.common.sdk.exception.ai.OpenaiException;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;

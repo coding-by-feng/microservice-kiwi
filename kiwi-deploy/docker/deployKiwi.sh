@@ -51,6 +51,7 @@ else
 fi
 
 chmod 777 ~/microservice-kiwi/kiwi-deploy/docker/*.sh
+chmod 777 ~/microservice-kiwi/kiwi-deploy/kiwi-ui/*.sh
 
 # Clean log directories efficiently
 echo "Cleaning log directories..."

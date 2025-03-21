@@ -1,14 +1,13 @@
-package me.fengorz.kiwi.ai.grok.service;
+package me.fengorz.kiwi.ai.service.grok;
 
 import lombok.extern.slf4j.Slf4j;
-import me.fengorz.kiwi.ai.AiChatService;
-import me.fengorz.kiwi.ai.AiConstants;
 import me.fengorz.kiwi.ai.api.model.request.ChatRequest;
 import me.fengorz.kiwi.ai.api.model.request.Message;
 import me.fengorz.kiwi.ai.api.model.response.ChatCompletionResponse;
 import me.fengorz.kiwi.ai.config.AiModeProperties;
-import me.fengorz.kiwi.ai.grok.GrokApiProperties;
 import me.fengorz.kiwi.ai.model.BatchResult;
+import me.fengorz.kiwi.ai.service.AiChatService;
+import me.fengorz.kiwi.ai.util.AiConstants;
 import me.fengorz.kiwi.common.sdk.annotation.cache.KiwiCacheKey;
 import me.fengorz.kiwi.common.sdk.annotation.cache.KiwiCacheKeyPrefix;
 import me.fengorz.kiwi.common.sdk.constant.CacheConstants;

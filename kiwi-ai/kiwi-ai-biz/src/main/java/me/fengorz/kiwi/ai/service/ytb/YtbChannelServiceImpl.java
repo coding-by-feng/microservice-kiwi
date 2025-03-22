@@ -220,25 +220,29 @@ public class YtbChannelServiceImpl extends ServiceImpl<YtbChannelMapper, YtbChan
      * @param channelId The ID of the channel to synchronize
      */
     @Async
+    @Override
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRES_NEW)
     public void syncChannelVideos(Long channelId) {
         log.info("Starting synchronization of videos for channel ID: {}", channelId);
 
-        try {
-            // Get channel and set status to PROCESSING
-            YtbChannelDO channel = this.getById(channelId);
-            if (channel == null) {
-                log.error("Channel not found with ID: {}", channelId);
-                return;
-            }
+        // Check if channel is already being processed by looking at the status in DB
+        YtbChannelDO channel = this.getById(channelId);
+        if (channel == null) {
+            log.error("Channel not found with ID: {}", channelId);
+            return;
+        }
 
+        // Check if channel is already in PROCESSING state
+        if (ProcessStatusEnum.PROCESSING.getCode().equals(channel.getStatus())) {
+            log.info("Channel ID: {} is already being processed (status: {}), skipping",
+                    channelId, channel.getStatus());
+            return;
+        }
+
+        try {
             log.info("Found channel: ID={}, name={}, link={}", channelId, channel.getChannelName(), channel.getChannelLink());
 
-            // Update channel status to PROCESSING
-            log.info("Updating channel status to PROCESSING for channel ID: {}", channelId);
-            channel.setStatus(ProcessStatusEnum.PROCESSING.getCode());
-            this.updateById(channel);
-            log.info("Channel status updated to PROCESSING for channel ID: {}", channelId);
+            updateChannelStatus("Updating channel status to PROCESSING for channel ID: {}", channelId, channel, ProcessStatusEnum.PROCESSING, "Channel status updated to PROCESSING for channel ID: {}");
 
             // Extract all video links from the channel
             log.info("Extracting video links from channel: {}", channel.getChannelLink());
@@ -272,24 +276,29 @@ public class YtbChannelServiceImpl extends ServiceImpl<YtbChannelMapper, YtbChan
             }
 
             // Update channel status to FINISH
-            log.info("Updating channel status to FINISH for channel ID: {}", channelId);
-            channel.setStatus(ProcessStatusEnum.FINISH.getCode());
-            this.updateById(channel);
-            log.info("Channel status updated to FINISH for channel ID: {}", channelId);
+            updateChannelStatus("Updating channel status to FINISH for channel ID: {}", channelId, channel, ProcessStatusEnum.FINISH, "Channel status updated to FINISH for channel ID: {}");
 
             log.info("Completed synchronization of videos for channel ID: {}, Total: {}, Success: {}, Failure: {}",
                     channelId, totalVideos, successCount, failureCount);
         } catch (Exception e) {
             log.error("Failed to synchronize videos for channel ID: {}, Error: {}", channelId, e.getMessage(), e);
             // Update channel status to indicate failure
-            YtbChannelDO channel = this.getById(channelId);
-            if (channel != null) {
-                log.info("Resetting channel status to READY for retry, channel ID: {}", channelId);
-                channel.setStatus(ProcessStatusEnum.READY.getCode()); // Reset to READY for retry
-                this.updateById(channel);
-                log.info("Channel status reset to READY for channel ID: {}", channelId);
+            YtbChannelDO channelToUpdate = this.getById(channelId);
+            if (channelToUpdate != null) {
+                updateChannelStatus("Resetting channel status to READY for retry, channel ID: {}", 
+                        channelId, channelToUpdate, ProcessStatusEnum.READY, 
+                        "Channel status reset to READY for channel ID: {}");
             }
         }
+    }
+
+    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRES_NEW)
+    private void updateChannelStatus(String previousLogFormat, Long channelId, YtbChannelDO channel, ProcessStatusEnum processing, String postLogFormat) {
+        // Update channel status to PROCESSING
+        log.info(previousLogFormat, channelId);
+        channel.setStatus(processing.getCode());
+        this.updateById(channel);
+        log.info(postLogFormat, channelId);
     }
 
     /**
@@ -311,7 +320,7 @@ public class YtbChannelServiceImpl extends ServiceImpl<YtbChannelMapper, YtbChan
                             .eq(YtbChannelVideoDO::getVideoLink, videoLink)
                             .eq(YtbChannelVideoDO::getIfValid, true));
 
-            if (existingVideo != null) {
+            if (existingVideo != null && existingVideo.getStatus().equals(ProcessStatusEnum.FINISH.getCode())) {
                 log.info("Video already exists with ID: {}, title: {}", existingVideo.getId(), existingVideo.getVideoTitle());
                 return;
             }
@@ -325,17 +334,20 @@ public class YtbChannelServiceImpl extends ServiceImpl<YtbChannelMapper, YtbChan
             videoId = Long.valueOf(seqService.genCommonIntSequence());
             log.info("Generated new video ID: {}", videoId);
 
-            YtbChannelVideoDO videoDO = new YtbChannelVideoDO()
-                    .setId(videoId)
-                    .setChannelId(channelId)
-                    .setVideoTitle(videoTitle)
-                    .setVideoLink(videoLink)
-                    .setStatus(ProcessStatusEnum.PROCESSING.getCode()) // Set to PROCESSING initially
-                    .setCreateTime(LocalDateTime.now())
-                    .setIfValid(true);
+            if (existingVideo == null) {
+                YtbChannelVideoDO videoDO = new YtbChannelVideoDO()
+                        .setId(videoId)
+                        .setChannelId(channelId)
+                        .setVideoTitle(videoTitle)
+                        .setVideoLink(videoLink)
+                        .setStatus(ProcessStatusEnum.PROCESSING.getCode()) // Set to PROCESSING initially
+                        .setCreateTime(LocalDateTime.now())
+                        .setIfValid(true);
 
-            log.info("Saving video record to database with PROCESSING status: ID={}, title={}", videoId, videoTitle);
-            videoMapper.insert(videoDO);
+                log.info("Saving video record to database with PROCESSING status: ID={}, title={}", videoId, videoTitle);
+                videoMapper.insert(videoDO);
+            }
+
             log.info("Video record saved successfully: {}", videoId);
 
             // 3. Download and process subtitles
@@ -641,8 +653,6 @@ public class YtbChannelServiceImpl extends ServiceImpl<YtbChannelMapper, YtbChan
         // Create query wrapper to count videos for specific channel
         LambdaQueryWrapper<YtbChannelVideoDO> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(YtbChannelVideoDO::getChannelId, channelDO.getId());
-
-        Integer totalVideos = videoMapper.selectCount(queryWrapper);
 
         // Build and return the VO
         return YtbChannelVO.builder()

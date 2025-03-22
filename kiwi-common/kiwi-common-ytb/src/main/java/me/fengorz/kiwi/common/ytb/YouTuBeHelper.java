@@ -300,7 +300,7 @@ public class YouTuBeHelper {
      */
     public String extractChannelNameWithYtDlp(String channelUrl) throws ServiceException {
         ProcessBuilder processBuilder = new ProcessBuilder(
-                "yt-dlp",
+                this.command,
                 "--skip-download",
                 "--print", "channel",
                 "--playlist-items", "1",
@@ -368,7 +368,7 @@ public class YouTuBeHelper {
         List<String> videoLinks = new ArrayList<>();
 
         ProcessBuilder processBuilder = new ProcessBuilder(
-                "yt-dlp",
+                this.command,
                 "--flat-playlist",
                 "--get-id",
                 channelLink

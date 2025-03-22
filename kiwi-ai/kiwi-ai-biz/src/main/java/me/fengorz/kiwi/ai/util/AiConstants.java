@@ -10,4 +10,9 @@ public class AiConstants {
         public static final String SUBTITLE_RETOUCH = "subtitle_retouch";
     }
 
+    public static final class CACHE_KEY_PREFIX_YTB {
+        public static final String CLASS = "ai_ytb";
+        public static final String CHANNEL_PROCESSING = "channel_processing";
+    }
+
 }

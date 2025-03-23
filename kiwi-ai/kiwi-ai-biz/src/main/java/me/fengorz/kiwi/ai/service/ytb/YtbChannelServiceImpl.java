@@ -658,6 +658,7 @@ public class YtbChannelServiceImpl extends ServiceImpl<YtbChannelMapper, YtbChan
         return YtbChannelVO.builder()
                 .channelId(channelDO.getId())
                 .channelName(channelDO.getChannelName())
+                .status(channelDO.getStatus())
                 .build();
     }
 

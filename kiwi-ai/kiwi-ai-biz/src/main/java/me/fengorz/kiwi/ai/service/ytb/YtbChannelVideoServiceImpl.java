@@ -32,8 +32,6 @@ public class YtbChannelVideoServiceImpl extends ServiceImpl<YtbChannelVideoMappe
                 .map(video -> {
                     YtbChannelVideoVO vo = new YtbChannelVideoVO();
                     BeanUtils.copyProperties(video, vo);
-                    // Add status information (simplified)
-                    vo.setStatus("Ready"); // This would be derived from subtitles processing status
                     return vo;
                 })
                 .collect(Collectors.toList());

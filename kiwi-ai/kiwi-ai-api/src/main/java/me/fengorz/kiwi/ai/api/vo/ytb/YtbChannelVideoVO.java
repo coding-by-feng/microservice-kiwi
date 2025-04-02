@@ -33,6 +33,6 @@ public class YtbChannelVideoVO implements Serializable {
      */
     private String videoLink;
 
-    private String status;
+    private Integer status;
 
 }

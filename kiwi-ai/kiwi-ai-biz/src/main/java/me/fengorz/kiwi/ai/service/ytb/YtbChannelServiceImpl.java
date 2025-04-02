@@ -18,6 +18,7 @@ import me.fengorz.kiwi.common.sdk.web.WebTools;
 import me.fengorz.kiwi.common.ytb.SubtitleTypeEnum;
 import me.fengorz.kiwi.common.ytb.YouTuBeHelper;
 import me.fengorz.kiwi.common.ytb.YtbSubtitlesResult;
+import org.apache.commons.collections4.ListUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -636,7 +637,7 @@ public class YtbChannelServiceImpl extends ServiceImpl<YtbChannelMapper, YtbChan
         );
 
         // 3. Convert each DO to VO with additional data
-        List<YtbChannelVO> records = channelPage.getRecords().stream()
+        List<YtbChannelVO> records = ListUtils.emptyIfNull(channelPage.getRecords()).stream()
                 .map(this::convertToVO)
                 .collect(Collectors.toList());
 

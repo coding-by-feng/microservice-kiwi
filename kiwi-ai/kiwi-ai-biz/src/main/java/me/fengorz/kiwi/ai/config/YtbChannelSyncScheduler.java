@@ -30,7 +30,7 @@ public class YtbChannelSyncScheduler {
      * Scheduled task that runs every 10 minutes to find unfinished channels and process them
      * Uses fixed delay to ensure 10-minute intervals between executions
      */
-    @Scheduled(fixedDelay = 10 * 60 * 60)
+    @Scheduled(fixedDelay = 10 * 60 * 1000)
     public void processUnfinishedChannels() {
         log.info("Starting scheduled channel synchronization check at {}", LocalDateTime.now());
         

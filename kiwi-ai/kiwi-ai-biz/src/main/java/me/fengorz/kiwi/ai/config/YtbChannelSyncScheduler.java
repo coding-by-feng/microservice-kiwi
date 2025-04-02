@@ -11,7 +11,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -41,10 +41,10 @@ public class YtbChannelSyncScheduler {
                             .eq(YtbChannelDO::getIfValid, true)
                             .and(wrapper -> wrapper
                                     .eq(YtbChannelDO::getStatus, ProcessStatusEnum.READY.getCode())
-                                    // Or in PROCESSING state but stuck (more than 1 hour old)
+                                    // Or in FAILED state but stuck (more than 2 hour old)
                                     .or(w -> w
-                                            .in(YtbChannelDO::getStatus, Arrays.asList(ProcessStatusEnum.PROCESSING.getCode(), ProcessStatusEnum.READY.getCode()))
-                                            .lt(YtbChannelDO::getCreateTime, LocalDateTime.now().minusHours(1))
+                                            .in(YtbChannelDO::getStatus, Collections.singletonList(ProcessStatusEnum.FAILED.getCode()))
+                                            .lt(YtbChannelDO::getCreateTime, LocalDateTime.now().minusHours(2))
                                     )
                             )
             );
@@ -73,4 +73,44 @@ public class YtbChannelSyncScheduler {
             log.error("Error in channel synchronization scheduler: {}", e.getMessage(), e);
         }
     }
+
+    /**
+     * Scheduled task that runs every 2 hours to find finished channels and reset them to READY state
+     * This allows periodic re-synchronization of channels that have already been processed
+     */
+    @Scheduled(fixedDelay = 2 * 60 * 60 * 1000) // 2 hours in milliseconds
+    public void resetFinishedChannels() {
+        log.info("Starting scheduled reset of finished channels at {}", LocalDateTime.now());
+
+        try {
+            // Find all channels that are valid and in FINISHED state
+            List<YtbChannelDO> finishedChannels = ytbChannelService.list(
+                    new LambdaQueryWrapper<YtbChannelDO>()
+                            .eq(YtbChannelDO::getIfValid, true)
+                            .eq(YtbChannelDO::getStatus, ProcessStatusEnum.FINISHED.getCode())
+            );
+
+            log.info("Found {} finished channels to reset", finishedChannels.size());
+
+            // Process each finished channel and reset to READY
+            for (YtbChannelDO channel : finishedChannels) {
+                log.info("Resetting status for channel ID: {}, name: {} from FINISHED to READY",
+                        channel.getId(), channel.getChannelName());
+
+                // Call the updateChannelStatus method to update the channel status
+                ytbChannelService.updateChannelStatus(
+                        "Preparing to reset channel ID: {} from FINISHED to READY",
+                        channel.getId(),
+                        channel,
+                        ProcessStatusEnum.READY,
+                        "Successfully reset channel ID: {} to READY state"
+                );
+            }
+
+            log.info("Completed resetting {} finished channels to READY state", finishedChannels.size());
+        } catch (Exception e) {
+            log.error("Error in channel reset scheduler: {}", e.getMessage(), e);
+        }
+    }
+
 }

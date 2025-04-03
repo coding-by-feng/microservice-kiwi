@@ -6,4 +6,4 @@ youtube:
     large-subtitles:
       threshold: 1000
     batch:
-      enabled: false
+      enabled: true

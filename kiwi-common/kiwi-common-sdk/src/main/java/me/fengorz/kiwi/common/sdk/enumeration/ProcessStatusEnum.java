@@ -23,8 +23,13 @@ public enum ProcessStatusEnum {
     /**
      * Processing completed
      */
-    FINISH(2, "Finish");
-    
+    FINISHED(2, "Finished"),
+
+    /**
+     * Processing failed
+     */
+    FAILED(3, "Failed");
+
     /**
      * Status code value stored in database
      */

@@ -20,4 +20,6 @@ public class YtbChannelVO implements Serializable {
 
     private Long channelId;
 
+    private Integer status;
+
 }

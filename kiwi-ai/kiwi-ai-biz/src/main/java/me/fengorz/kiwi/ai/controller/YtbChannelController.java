@@ -13,6 +13,7 @@ import me.fengorz.kiwi.ai.service.ytb.YtbChannelVideoService;
 import me.fengorz.kiwi.common.api.R;
 import me.fengorz.kiwi.common.sdk.annotation.log.LogMarker;
 import me.fengorz.kiwi.common.sdk.controller.BaseController;
+import me.fengorz.kiwi.common.sdk.web.security.SecurityUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -41,8 +42,7 @@ public class YtbChannelController extends BaseController {
     }
 
     private static Integer getCurrentUserId() {
-        return 1;
-//        return SecurityUtils.getCurrentUserId();
+        return SecurityUtils.getCurrentUserId();
     }
 
     /**

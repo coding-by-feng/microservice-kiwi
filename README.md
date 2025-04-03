@@ -152,7 +152,7 @@ brew install yt-dlp
 
 # Upload Runnable Scripts
 
-- upload yt-dlp_linux that is saved in `kiwi-deploy/ytb` to `~/docker/kiwi/ai`
+- upload yt-dlp_linux that is saved in `kiwi-deploy/ytb` to `~/docker/kiwi/ai/biz` and `~/docker/kiwi/ai/batch`
 
 # mysql
 

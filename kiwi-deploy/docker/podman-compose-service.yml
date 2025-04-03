@@ -56,7 +56,7 @@ services:
     depends_on:
       - kiwi-gate
   kiwi-ai-batch:
-    image: kiwi-ai-biz:2.0
+    image: kiwi-ai-batch:2.0
     user: root
     environment:
       - KIWI_ENC_PASSWORD=${KIWI_ENC_PASSWORD}

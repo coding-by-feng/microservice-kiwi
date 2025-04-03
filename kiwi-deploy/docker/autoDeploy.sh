@@ -10,7 +10,7 @@ docker build -f ~/docker/kiwi/gate/Dockerfile -t kiwi-gate:2.0 ~/docker/kiwi/gat
 docker build -f ~/docker/kiwi/word/biz/Dockerfile -t kiwi-word-biz:2.0 ~/docker/kiwi/word/
 docker build -f ~/docker/kiwi/crawler/Dockerfile -t kiwi-crawler:2.0 ~/docker/kiwi/crawler/
 docker build -f ~/docker/kiwi/ai/biz/Dockerfile -t kiwi-ai-biz:2.0 ~/docker/kiwi/ai/biz
-docker build -f ~/docker/kiwi/ai/batch/Dockerfile -t kiwi-ai-biz:2.0 ~/docker/kiwi/ai/batch
+docker build -f ~/docker/kiwi/ai/batch/Dockerfile -t kiwi-ai-batch:2.0 ~/docker/kiwi/ai/batch
 
 # Tag images for Podman
 for image in kiwi-{eureka,config,upms,auth,gate,word-biz,crawler,ai-biz}:2.0; do

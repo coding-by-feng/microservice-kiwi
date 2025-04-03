@@ -18,7 +18,7 @@ spring:
     hikari:
       connection-test-query: SELECT 1
       maximum-pool-size: 30  # Increase but within MySQL's max_connections limit
-      connection-timeout: 30000  # Fail faster when connections unavailable
+      connection-timeout: 300000  # Fail faster when connections unavailable
       idle-timeout: 300000  # Release idle connections sooner (5 minutes)
       max-lifetime: 1200000  # Shorter connection lifetime (20 minutes)
       keepalive-time: 240000  # Keep connections alive with periodic pings

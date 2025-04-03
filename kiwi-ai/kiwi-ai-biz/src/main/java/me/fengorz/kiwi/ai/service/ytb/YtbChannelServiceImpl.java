@@ -143,10 +143,6 @@ public class YtbChannelServiceImpl extends ServiceImpl<YtbChannelMapper, YtbChan
                     userId, channelId, existingSubscription.getId());
         }
 
-        // Trigger async process to fetch videos and subtitles
-        log.info("Triggering async video synchronization for channel ID: {}", channelId);
-        syncChannelVideos(channelId);
-
         return channelId;
     }
 

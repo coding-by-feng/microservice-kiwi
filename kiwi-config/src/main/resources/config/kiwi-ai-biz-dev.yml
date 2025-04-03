@@ -5,3 +5,5 @@ youtube:
       path: ENC(6MovVGMc/hsrID5qMQQxJx8yxkHvzUU7DQij+0bDKHWFCwoGwO/ZC9BTVvl+ZHJt)
     large-subtitles:
       threshold: 1000
+    batch:
+      enabled: true

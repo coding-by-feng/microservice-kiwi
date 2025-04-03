@@ -82,7 +82,7 @@ rest-template:
 # Custom async executor configuration
 async:
   executor:
-    single-thread:
+    thread:
       core-pool-size: 1
       max-pool-size: 1
       queue-capacity: 100

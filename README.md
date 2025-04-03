@@ -66,7 +66,7 @@ cd docker/
 mkdir kiwi ui rabbitmq mysql
 cd kiwi
 mkdir auth config crawler eureka gate upms word ai
-mkdir auth/logs config/logs crawler/logs crawler/tmp eureka/logs gate/logs upms/logs word/logs word/bizTmp word/crawlerTmp word/biz word/crawler ai/logs ai/tmp
+mkdir auth/logs config/logs crawler/logs crawler/tmp eureka/logs gate/logs upms/logs word/logs word/bizTmp word/crawlerTmp word/biz word/crawler ai/logs ai/tmp ai/biz ai/batch
 cd ../ui
 mkdir dist nginx
 # download gcp key json on root directory

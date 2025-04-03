@@ -31,4 +31,4 @@ RUN chmod 777 yt-dlp_linux
 ADD kiwi-ai-biz-2.0.jar app.jar
 
 # Set the entry point
-ENTRYPOINT java -jar -Xmx1024m -Duser.timezone=GMT+12 -Dspring.application.name=kiwi-ai-biz -Dspring.profiles.active=prod /app.jar > /logs/ai-biz.log
+ENTRYPOINT java -jar -Xmx1024m -Duser.timezone=GMT+12 -Dspring.application.name=kiwi-ai-biz -Dspring.profiles.active=batch /app.jar > /logs/ai-batch.log

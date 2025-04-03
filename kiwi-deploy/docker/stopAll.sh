@@ -9,7 +9,7 @@ fi
 echo "Stopping containers..."
 
 # Define the desired stop order
-desired_order=("kiwi-crawler" "kiwi-ai-biz" "kiwi-word-biz" "kiwi-upms" "kiwi-auth" "kiwi-gate" "kiwi-config" "kiwi-eureka")
+desired_order=("kiwi-crawler" "kiwi-ai-biz" "kiwi-ai-batch" "kiwi-word-biz" "kiwi-upms" "kiwi-auth" "kiwi-gate" "kiwi-config" "kiwi-eureka")
 
 # Stop containers in the specified order
 for name in "${desired_order[@]}"; do

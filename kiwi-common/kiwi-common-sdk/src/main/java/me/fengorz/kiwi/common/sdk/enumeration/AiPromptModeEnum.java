@@ -43,6 +43,7 @@ public enum AiPromptModeEnum {
     SUBTITLE_TRANSLATOR("subtitle-translator", 1),
     SUBTITLE_RETOUCH("subtitle-retouch", 0),
     SUBTITLE_RETOUCH_TRANSLATOR("subtitle-retouch-translator", 1),
+    CHAT("chat", 1),
     ;
 
     private final String mode;

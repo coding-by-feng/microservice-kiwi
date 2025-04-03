@@ -18,6 +18,7 @@ import me.fengorz.kiwi.common.sdk.web.WebTools;
 import me.fengorz.kiwi.common.ytb.SubtitleTypeEnum;
 import me.fengorz.kiwi.common.ytb.YouTuBeHelper;
 import me.fengorz.kiwi.common.ytb.YtbSubtitlesResult;
+import org.apache.commons.collections4.ListUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -142,10 +143,6 @@ public class YtbChannelServiceImpl extends ServiceImpl<YtbChannelMapper, YtbChan
                     userId, channelId, existingSubscription.getId());
         }
 
-        // Trigger async process to fetch videos and subtitles
-        log.info("Triggering async video synchronization for channel ID: {}", channelId);
-        syncChannelVideos(channelId);
-
         return channelId;
     }
 
@@ -233,9 +230,9 @@ public class YtbChannelServiceImpl extends ServiceImpl<YtbChannelMapper, YtbChan
         }
 
         // Check if channel is already in PROCESSING state
-        if (ProcessStatusEnum.PROCESSING.getCode().equals(channel.getStatus())) {
-            log.info("Channel ID: {} is already being processed (status: {}), skipping",
-                    channelId, channel.getStatus());
+        if (ProcessStatusEnum.PROCESSING.getCode().equals(channel.getStatus()) && channel.getCreateTime().isAfter(LocalDateTime.now().minusMinutes(10))) {
+            log.info("Channel ID: {} is already being processed (status: {}), creation time: {}, skipping",
+                    channel.getCreateTime(), channelId, channel.getStatus());
             return;
         }
 
@@ -276,7 +273,7 @@ public class YtbChannelServiceImpl extends ServiceImpl<YtbChannelMapper, YtbChan
             }
 
             // Update channel status to FINISH
-            updateChannelStatus("Updating channel status to FINISH for channel ID: {}", channelId, channel, ProcessStatusEnum.FINISH, "Channel status updated to FINISH for channel ID: {}");
+            updateChannelStatus("Updating channel status to FINISH for channel ID: {}", channelId, channel, ProcessStatusEnum.FINISHED, "Channel status updated to FINISH for channel ID: {}");
 
             log.info("Completed synchronization of videos for channel ID: {}, Total: {}, Success: {}, Failure: {}",
                     channelId, totalVideos, successCount, failureCount);
@@ -285,18 +282,19 @@ public class YtbChannelServiceImpl extends ServiceImpl<YtbChannelMapper, YtbChan
             // Update channel status to indicate failure
             YtbChannelDO channelToUpdate = this.getById(channelId);
             if (channelToUpdate != null) {
-                updateChannelStatus("Resetting channel status to READY for retry, channel ID: {}", 
-                        channelId, channelToUpdate, ProcessStatusEnum.READY, 
-                        "Channel status reset to READY for channel ID: {}");
+                updateChannelStatus("Resetting channel status to FAILED for retry, channel ID: {}",
+                        channelId, channelToUpdate, ProcessStatusEnum.FAILED,
+                        "Channel status reset to FAILED for channel ID: {}");
             }
         }
     }
 
+    @Override
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRES_NEW)
-    private void updateChannelStatus(String previousLogFormat, Long channelId, YtbChannelDO channel, ProcessStatusEnum processing, String postLogFormat) {
+    public void updateChannelStatus(String previousLogFormat, Long channelId, YtbChannelDO channel, ProcessStatusEnum status, String postLogFormat) {
         // Update channel status to PROCESSING
         log.info(previousLogFormat, channelId);
-        channel.setStatus(processing.getCode());
+        channel.setStatus(status.getCode());
         this.updateById(channel);
         log.info(postLogFormat, channelId);
     }
@@ -320,7 +318,7 @@ public class YtbChannelServiceImpl extends ServiceImpl<YtbChannelMapper, YtbChan
                             .eq(YtbChannelVideoDO::getVideoLink, videoLink)
                             .eq(YtbChannelVideoDO::getIfValid, true));
 
-            if (existingVideo != null && existingVideo.getStatus().equals(ProcessStatusEnum.FINISH.getCode())) {
+            if (existingVideo != null && existingVideo.getStatus().equals(ProcessStatusEnum.FINISHED.getCode())) {
                 log.info("Video already exists with ID: {}, title: {}", existingVideo.getId(), existingVideo.getVideoTitle());
                 return;
             }
@@ -365,7 +363,7 @@ public class YtbChannelServiceImpl extends ServiceImpl<YtbChannelMapper, YtbChan
             log.info("Updating video status to FINISH for video ID: {}", videoId);
             YtbChannelVideoDO videoToUpdate = videoMapper.selectById(videoId);
             if (videoToUpdate != null) {
-                videoToUpdate.setStatus(ProcessStatusEnum.FINISH.getCode());
+                videoToUpdate.setStatus(ProcessStatusEnum.FINISHED.getCode());
                 videoMapper.updateById(videoToUpdate);
                 log.info("Video status updated to FINISH for video ID: {}", videoId);
             }
@@ -428,7 +426,7 @@ public class YtbChannelServiceImpl extends ServiceImpl<YtbChannelMapper, YtbChan
                     subtitlesId,
                     LanguageEnum.EN,
                     subtitlesResult.getScrollingSubtitles(),
-                    ProcessStatusEnum.FINISH.getCode(), // Already completed
+                    ProcessStatusEnum.FINISHED.getCode(), // Already completed
                     false // Not from AI
             );
             log.info("English subtitles saved successfully for subtitles ID: {}", subtitlesId);
@@ -455,7 +453,7 @@ public class YtbChannelServiceImpl extends ServiceImpl<YtbChannelMapper, YtbChan
                 updateSubtitleTranslation(
                         translationId,
                         translatedContent,
-                        ProcessStatusEnum.FINISH.getCode()
+                        ProcessStatusEnum.FINISHED.getCode()
                 );
                 log.info("Chinese translation updated with content and FINISH status: {}", translationId);
             } catch (Exception e) {
@@ -478,7 +476,7 @@ public class YtbChannelServiceImpl extends ServiceImpl<YtbChannelMapper, YtbChan
             log.info("Updating subtitles status to FINISH for subtitles ID: {}", subtitlesId);
             YtbVideoSubtitlesDO subtitlesToUpdate = subtitlesMapper.selectById(subtitlesId);
             if (subtitlesToUpdate != null) {
-                subtitlesToUpdate.setStatus(ProcessStatusEnum.FINISH.getCode());
+                subtitlesToUpdate.setStatus(ProcessStatusEnum.FINISHED.getCode());
                 subtitlesMapper.updateById(subtitlesToUpdate);
                 log.info("Subtitles status updated to FINISH for subtitles ID: {}", subtitlesId);
             }
@@ -636,7 +634,7 @@ public class YtbChannelServiceImpl extends ServiceImpl<YtbChannelMapper, YtbChan
         );
 
         // 3. Convert each DO to VO with additional data
-        List<YtbChannelVO> records = channelPage.getRecords().stream()
+        List<YtbChannelVO> records = ListUtils.emptyIfNull(channelPage.getRecords()).stream()
                 .map(this::convertToVO)
                 .collect(Collectors.toList());
 
@@ -658,6 +656,7 @@ public class YtbChannelServiceImpl extends ServiceImpl<YtbChannelMapper, YtbChan
         return YtbChannelVO.builder()
                 .channelId(channelDO.getId())
                 .channelName(channelDO.getChannelName())
+                .status(channelDO.getStatus())
                 .build();
     }
 

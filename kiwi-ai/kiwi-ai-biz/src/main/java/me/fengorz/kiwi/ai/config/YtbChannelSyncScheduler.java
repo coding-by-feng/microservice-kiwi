@@ -46,6 +46,11 @@ public class YtbChannelSyncScheduler {
                                             .in(YtbChannelDO::getStatus, Collections.singletonList(ProcessStatusEnum.FAILED.getCode()))
                                             .lt(YtbChannelDO::getCreateTime, LocalDateTime.now().minusHours(2))
                                     )
+                                    // Or in PROCESSING state but stuck (more than 12 hour old)
+                                    .or(w -> w
+                                            .in(YtbChannelDO::getStatus, Collections.singletonList(ProcessStatusEnum.PROCESSING.getCode()))
+                                            .lt(YtbChannelDO::getCreateTime, LocalDateTime.now().minusHours(12))
+                                    )
                             )
             );
             

@@ -234,9 +234,9 @@ public class YtbChannelServiceImpl extends ServiceImpl<YtbChannelMapper, YtbChan
         }
 
         // Check if channel is already in PROCESSING state
-        if (ProcessStatusEnum.PROCESSING.getCode().equals(channel.getStatus())) {
-            log.info("Channel ID: {} is already being processed (status: {}), skipping",
-                    channelId, channel.getStatus());
+        if (ProcessStatusEnum.PROCESSING.getCode().equals(channel.getStatus()) && channel.getCreateTime().isBefore(LocalDateTime.now().minusMinutes(5))) {
+            log.info("Channel ID: {} is already being processed (status: {}), creation time: {}, skipping",
+                    channel.getCreateTime(), channelId, channel.getStatus());
             return;
         }
 

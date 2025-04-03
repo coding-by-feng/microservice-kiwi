@@ -6,8 +6,8 @@ import org.springframework.stereotype.Component;
 
 @Data
 @Component
-@ConfigurationProperties(prefix = "async.executor.single-thread")
-public class SingleThreadExecutorProperties {
+@ConfigurationProperties(prefix = "async.executor.thread")
+public class ThreadExecutorProperties {
 
     private int corePoolSize = 1;
     private int maxPoolSize = 1;

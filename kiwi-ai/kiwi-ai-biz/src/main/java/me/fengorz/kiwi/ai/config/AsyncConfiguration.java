@@ -1,7 +1,6 @@
 package me.fengorz.kiwi.ai.config;
 
 import org.springframework.aop.interceptor.AsyncUncaughtExceptionHandler;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.TaskScheduler;
@@ -14,7 +13,6 @@ import java.util.concurrent.Executor;
 
 @Configuration
 @EnableAsync
-@ConditionalOnProperty(name = "youtube.video.batch.enabled", havingValue = "true")
 public class AsyncConfiguration implements AsyncConfigurer {
 
     private final ThreadExecutorProperties properties;

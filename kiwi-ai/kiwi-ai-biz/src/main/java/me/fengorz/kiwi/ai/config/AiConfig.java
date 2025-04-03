@@ -30,7 +30,6 @@ import org.springframework.retry.annotation.EnableRetry;
 import org.springframework.retry.backoff.FixedBackOffPolicy;
 import org.springframework.retry.policy.SimpleRetryPolicy;
 import org.springframework.retry.support.RetryTemplate;
-import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.security.web.firewall.DefaultHttpFirewall;
 import org.springframework.security.web.firewall.HttpFirewall;
 import org.springframework.web.client.RestTemplate;
@@ -49,7 +48,6 @@ import java.util.Map;
 @ComponentScan("me.fengorz.kiwi.**")
 @Import({CoreConfig.class, DbConfig.class, CacheConfig.class})
 @EnableRetry
-@EnableScheduling
 public class AiConfig extends SslConfig {
 
     public AiConfig(RestTemplateProperties restTemplateProperties) {

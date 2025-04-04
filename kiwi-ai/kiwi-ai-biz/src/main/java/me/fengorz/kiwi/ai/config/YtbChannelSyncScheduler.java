@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.ai.api.entity.YtbChannelDO;
 import me.fengorz.kiwi.ai.service.ytb.YtbChannelService;
 import me.fengorz.kiwi.common.sdk.enumeration.ProcessStatusEnum;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -22,6 +23,7 @@ import java.util.List;
 @Component
 @EnableScheduling
 @RequiredArgsConstructor
+@ConditionalOnProperty(name = "youtube.video.batch.enabled", havingValue = "true")
 public class YtbChannelSyncScheduler {
 
     private final YtbChannelService ytbChannelService;
@@ -63,14 +65,6 @@ public class YtbChannelSyncScheduler {
                 
                 // Call the async method to process this channel
                 ytbChannelService.syncChannelVideos(channel.getId());
-                
-                // Add a small delay between processing different channels to avoid overwhelming the system
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                    log.warn("Thread interrupted while waiting between channel processing");
-                }
             }
             
             log.info("Completed scheduling channel synchronization for {} channels", unfinishedChannels.size());

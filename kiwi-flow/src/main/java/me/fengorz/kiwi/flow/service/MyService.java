@@ -16,10 +16,10 @@
 
 package me.fengorz.kiwi.flow.service;
 
+import lombok.RequiredArgsConstructor;
 import org.flowable.engine.RuntimeService;
 import org.flowable.engine.TaskService;
 import org.flowable.task.api.Task;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,13 +29,12 @@ import java.util.List;
  * @Author Kason Zhan @Date 2019/12/4 3:20 PM
  */
 @Service
+@RequiredArgsConstructor
 public class MyService {
 
-    @Autowired
-    private RuntimeService runtimeService;
+    private final RuntimeService runtimeService;
 
-    @Autowired
-    private TaskService taskService;
+    private final TaskService taskService;
 
     @Transactional
     public void startProcess() {

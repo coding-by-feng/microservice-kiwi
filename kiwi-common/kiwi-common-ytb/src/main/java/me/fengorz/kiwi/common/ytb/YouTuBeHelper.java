@@ -32,7 +32,7 @@ public class YouTuBeHelper {
     private int largeSubtitlesThreshold;
 
     @Value("${youtube.video.command}")
-    private String command;
+    private String command = "yt-dlp";
 
     public FileInputStream downloadVideo(String videoUrl) {
         try {
@@ -204,14 +204,23 @@ public class YouTuBeHelper {
 
             Process process = prepareProcess(command);
 
-            StringBuilder output = buildOutput(process);
+            StringBuilder output = buildTitleOutput(process);
 
             int exitCode = process.waitFor();
             if (exitCode != 0) {
                 throw new RuntimeException("Failed to get video title, exit code: " + exitCode);
             }
 
-            String title = output.toString().trim();
+            // Extract only the last line (which contains the actual title)
+            String fullOutput = output.toString().trim();
+            int lastNewLineIndex = fullOutput.lastIndexOf('\n');
+            String title;
+            if (lastNewLineIndex >= 0) {
+                title = fullOutput.substring(lastNewLineIndex + 1).trim();
+            } else {
+                title = fullOutput; // If there's only one line
+            }
+
             log.info("Video title retrieved: {}", title);
             return title;
 
@@ -221,13 +230,16 @@ public class YouTuBeHelper {
         }
     }
 
-    private static StringBuilder buildOutput(Process process) throws IOException {
+    private static StringBuilder buildTitleOutput(Process process) throws IOException {
         StringBuilder output = new StringBuilder();
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 // Skip warning lines and empty lines
                 if (line.startsWith("WARNING:") || line.trim().isEmpty()) {
+                    continue;
+                }
+                if (line.contains("n = ") && line.contains("player = https://www.youtube.com")) {
                     continue;
                 }
                 output.append(line);

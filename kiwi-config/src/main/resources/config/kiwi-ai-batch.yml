@@ -1,0 +1,90 @@
+security:
+  oauth2:
+    client:
+      client-id: ENC(wORgugqWfXlIuzbal/3pjXTNXij/RSpo)
+      client-secret: ENC(rMd1buB3iI+si+W99eB+QFa3QburIEmY)
+      scope: server
+
+# 数据源
+spring:
+  main:
+    allow-bean-definition-overriding: true
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: ENC(2PE/BMMoNPbRCEaIyGfcSw==)
+    password: ENC(zF1rDpn+u8RZX5OTor7BpHzprZyrH+3P)
+    url: jdbc:mysql://${DB_IP}:3306/kiwi_db?useUnicode=true&characterEncoding=UTF-8&useSSL=false&autoReconnect=true&serverTimezone=Pacific/Auckland
+    hikari:
+      connection-test-query: SELECT 1
+      maximum-pool-size: 30  # Increase but within MySQL's max_connections limit
+      connection-timeout: 300000  # Fail faster when connections unavailable
+      idle-timeout: 300000  # Release idle connections sooner (5 minutes)
+      max-lifetime: 1200000  # Shorter connection lifetime (20 minutes)
+      keepalive-time: 240000  # Keep connections alive with periodic pings
+      leak-detection-threshold: 300000  # Detect connection leaks  task:
+    execution:
+      pool:
+        core-size: 1
+        max-size: 1
+        queue-capacity: 100
+      thread-name-prefix: YTB-subtitles-thread-
+
+ignore:
+  urls:
+
+ms:
+  config:
+    exclude-db: false
+    exclude-cache: false
+
+ai:
+  grok:
+    api:
+      key: ${GROK_API_KEY}  # Replace with the actual API key
+      endpoint: https://api.x.ai/v1/chat/completions  # Hypothetical endpoint
+      model: "grok-2-1212"
+      thread-prompts-line-size: 200
+      thread-pool-size: 7
+      thread-timeout-secs: 110
+  mode:
+    directly-translation: "Directly Translate my prompt to %s language."
+    translation-and-explanation: "Translate the prompt in %s language first, please provide the %s explanation as thorough as possible in different aspects if it has, and translate the explanation to English."
+    grammar-explanation: "Translate my prompt to %s language, and provide an explanation of the grammar."
+    grammar-correction: "Correct the grammar of the text I provided, and provide the %s explanation of the grammar correction."
+    vocabulary-explanation: "Explain the vocabulary in %s language, please provide the paraphrase in English and %s of the vocabulary in different vocabulary classes, for example, verb, noun, adverb, etc. and also provide the sentences that use this vocabulary with its translation in %s language of each class."
+    synonym: "List the synonym for the given word, if there are more than one synonym list all of them, and please provide the paraphrase in English and %s of the synonym, and also provide the sentences that use this synonym with its translation in %s language."
+    antonym: "List the antonym for the given word, if there are more than one antonym list all of them, please provide the paraphrase in English and %s of the antonym, and also provide the sentences that use this antonym with its translation in %s language."
+    subtitle-translator: "Please help me to translate each sentence in %s language and put the each translation on the position after each punctuation, notice that don't give me other information(any markdown format, other tips, or hints), you must complete all the translation."
+    subtitle-retouch: "Please help me to add corresponding correct punctuation, notice that don't give me other non-subtitles information, keep the original subtitles content, and you must complete all the subtitle lines."
+    subtitle-retouch-translator: "Please help me to add corresponding correct punctuation, put the %s translation  on the position that after the punctuation, and keep each sentence in different lines, notice that keep the original content, don't give me other information(any markdown format, other tips, or hints), and you must complete the translation of all content."
+
+
+youtube:
+  oauth:
+    client-secrets-file: ${YTB_OAUTH_CLIENT_SECRETS_FILE}
+    access-token: ${YTB_OAUTH_ACCESS_TOKEN}
+
+rest-template:
+  http-client:
+    max-total-connections: 20  # Lower for tests to reduce resource usage
+    max-connections-per-route: 10
+    validate-after-inactivity: 500
+    connection-time-to-live: 10
+  request-factory:
+    connect-timeout: 100000  # Faster timeouts for tests
+    read-timeout: 100000
+  retry:
+    max-attempts: 2  # Fewer retries for faster tests
+    retryable-exceptions: "org.springframework.web.client.HttpServerErrorException,java.net.SocketTimeoutException"
+    backoff-period: 500  # Faster backoff for tests
+
+# Custom async executor configuration
+async:
+  executor:
+    thread:
+      core-pool-size: 1
+      max-pool-size: 1
+      queue-capacity: 100
+      thread-name-prefix: YTB-subtitles-thread-
+      rejected-execution-policy: CALLER_RUNS  # Options: ABORT, CALLER_RUNS, DISCARD, DISCARD_OLDEST

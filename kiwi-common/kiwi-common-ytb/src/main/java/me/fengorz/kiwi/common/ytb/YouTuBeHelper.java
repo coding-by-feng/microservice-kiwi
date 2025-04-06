@@ -88,7 +88,7 @@ public class YouTuBeHelper {
             command.add("--write-subs");
             command.add("--write-auto-sub");
             command.add("--sub-lang");
-            command.add("en"); // Default to English subtitles; can be parameterized
+            command.add("\"en,en-GB,en-US\""); // Default to English subtitles; can be parameterized
             command.add("--skip-download");
             command.add("-o");
             String currentDownloadPath = getDownloadPath();

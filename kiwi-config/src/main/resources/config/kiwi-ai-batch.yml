@@ -23,12 +23,6 @@ spring:
       max-lifetime: 1200000  # Shorter connection lifetime (20 minutes)
       keepalive-time: 240000  # Keep connections alive with periodic pings
       leak-detection-threshold: 300000  # Detect connection leaks  task:
-    execution:
-      pool:
-        core-size: 1
-        max-size: 1
-        queue-capacity: 100
-      thread-name-prefix: YTB-subtitles-thread-
 
 ignore:
   urls:
@@ -86,5 +80,5 @@ async:
       core-pool-size: 1
       max-pool-size: 1
       queue-capacity: 100
-      thread-name-prefix: YTB-subtitles-thread-
+      thread-name-prefix: YTB-subtitles-
       rejected-execution-policy: CALLER_RUNS  # Options: ABORT, CALLER_RUNS, DISCARD, DISCARD_OLDEST

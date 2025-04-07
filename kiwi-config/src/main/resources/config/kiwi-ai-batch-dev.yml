@@ -1,12 +1,12 @@
 youtube:
   video:
-    command: ./yt-dlp_linux
+    command: yt-dlp
     download:
-      path: ENC(8ZJ3rI1uzmeliVVmWQwG8w==)
+      path: "/Users/zhanshifeng/Documents/temp/ytb"
     large-subtitles:
       threshold: 1000
     batch:
-      enabled: false
+      enabled: true
 
 spring:
   datasource:

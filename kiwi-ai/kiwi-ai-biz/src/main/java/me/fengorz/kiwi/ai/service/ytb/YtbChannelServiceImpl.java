@@ -27,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -255,7 +256,21 @@ public class YtbChannelServiceImpl extends ServiceImpl<YtbChannelMapper, YtbChan
             for (String videoLink : videoLinks) {
                 try {
                     log.info("Processing video {}/{}: {}", processedCount + 1, totalVideos, videoLink);
-                    processVideoLink(channelId, videoLink);
+
+                    Optional.ofNullable(processVideoLink(channelId, videoLink))
+                            .ifPresent(videoId -> {
+                                // Update video status to FINISH after processing
+                                log.info("Updating video status to FINISH for video ID: {}", videoId);
+                                YtbChannelVideoDO videoToUpdate = videoMapper.selectById(videoId);
+                                if (videoToUpdate != null) {
+                                    videoToUpdate.setStatus(ProcessStatusEnum.FINISHED.getCode());
+                                    videoMapper.updateById(videoToUpdate);
+                                    log.info("Video status updated to FINISH for video ID: {}", videoId);
+                                }
+
+                                log.info("Completed processing video: {}", videoId);
+                            });
+
                     processedCount++;
                     successCount++;
 
@@ -306,7 +321,7 @@ public class YtbChannelServiceImpl extends ServiceImpl<YtbChannelMapper, YtbChan
      * @param videoLink The video link to process
      */
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRES_NEW)
-    private void processVideoLink(Long channelId, String videoLink) {
+    private Long processVideoLink(Long channelId, String videoLink) {
         log.info("Processing video link for channel {}: {}", channelId, videoLink);
 
         Long videoId = null;
@@ -320,7 +335,7 @@ public class YtbChannelServiceImpl extends ServiceImpl<YtbChannelMapper, YtbChan
 
             if (existingVideo != null && existingVideo.getStatus().equals(ProcessStatusEnum.FINISHED.getCode())) {
                 log.info("Video already exists with ID: {}, title: {}", existingVideo.getId(), existingVideo.getVideoTitle());
-                return;
+                return null;
             }
 
             // 1. Get video title
@@ -359,16 +374,7 @@ public class YtbChannelServiceImpl extends ServiceImpl<YtbChannelMapper, YtbChan
                 log.info("No subtitles available for video: {}", videoId);
             }
 
-            // Update video status to FINISH after processing
-            log.info("Updating video status to FINISH for video ID: {}", videoId);
-            YtbChannelVideoDO videoToUpdate = videoMapper.selectById(videoId);
-            if (videoToUpdate != null) {
-                videoToUpdate.setStatus(ProcessStatusEnum.FINISHED.getCode());
-                videoMapper.updateById(videoToUpdate);
-                log.info("Video status updated to FINISH for video ID: {}", videoId);
-            }
-
-            log.info("Completed processing video: {}", videoId);
+            return videoId;
         } catch (Exception e) {
             log.error("Error processing video: {}, Error details: {}", videoLink, e.getMessage(), e);
 

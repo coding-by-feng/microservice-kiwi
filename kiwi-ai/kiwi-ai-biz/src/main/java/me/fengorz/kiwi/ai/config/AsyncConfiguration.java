@@ -1,5 +1,6 @@
 package me.fengorz.kiwi.ai.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.aop.interceptor.AsyncUncaughtExceptionHandler;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
@@ -12,6 +13,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 
 import java.util.concurrent.Executor;
 
+@Slf4j
 @Configuration
 @EnableAsync
 @ConditionalOnProperty(name = "youtube.video.batch.enabled", havingValue = "true")
@@ -24,7 +26,9 @@ public class AsyncConfiguration implements AsyncConfigurer {
     }
 
     @Bean
-    public Executor ytbSubtitlesExecutor() {
+    @Override
+    public Executor getAsyncExecutor() {
+        log.info("properties: {}", properties);
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
         executor.setCorePoolSize(properties.getCorePoolSize());
         executor.setMaxPoolSize(properties.getMaxPoolSize());

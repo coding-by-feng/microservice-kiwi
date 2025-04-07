@@ -6,7 +6,8 @@ USER root
 RUN mkdir /logs /ai-tmp \
     && apk update && apk upgrade \
     && apk add --no-cache git bash curl build-base libffi-dev openssl-dev \
-                      bzip2-dev zlib-dev xz-dev readline-dev sqlite-dev tk-dev
+                      bzip2-dev zlib-dev xz-dev readline-dev sqlite-dev tk-dev \
+    && apk add ffmpeg
 
 # Install Pyenv
 ENV PYENV_ROOT="/root/.pyenv"

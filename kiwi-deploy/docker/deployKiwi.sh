@@ -65,6 +65,7 @@ rm -rf ~/docker/kiwi/word/crawlerTmp/*
 rm -rf ~/docker/kiwi/word/bizTmp/*
 rm -rf ~/docker/kiwi/crawler/logs/*
 rm -rf ~/docker/kiwi/ai/logs/*
+rm -rf ~/docker/kiwi/ai/tmp/*
 
 # Maven build
 if [ "$SKIP_MAVEN" = false ]; then

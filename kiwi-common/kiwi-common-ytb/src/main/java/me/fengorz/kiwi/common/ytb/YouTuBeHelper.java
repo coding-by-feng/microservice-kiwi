@@ -92,7 +92,7 @@ public class YouTuBeHelper {
             command.add("--skip-download");
             command.add("-o");
             String currentDownloadPath = getDownloadPath();
-            command.add(currentDownloadPath + "/%(title)s.%(ext)s");
+            command.add(currentDownloadPath + "/temp");
             command.add(videoUrl);
 
             Process process = prepareProcess(command);

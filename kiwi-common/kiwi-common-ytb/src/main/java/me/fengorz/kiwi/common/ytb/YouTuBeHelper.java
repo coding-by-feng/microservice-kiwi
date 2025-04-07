@@ -242,6 +242,9 @@ public class YouTuBeHelper {
                 if (line.contains("n = ") && line.contains("player = https://www.youtube.com")) {
                     continue;
                 }
+                if (line.contains("Install PhantomJS")) {
+                    continue;
+                }
                 output.append(line);
             }
         }

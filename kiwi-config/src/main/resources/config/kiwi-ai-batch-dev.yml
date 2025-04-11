@@ -1,0 +1,25 @@
+youtube:
+  video:
+    command: yt-dlp
+    download:
+      path: "/Users/zhanshifeng/Documents/temp/ytb"
+    large-subtitles:
+      threshold: 1000
+    batch:
+      enabled: true
+
+spring:
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: ENC(2PE/BMMoNPbRCEaIyGfcSw==)
+    password: ENC(zF1rDpn+u8RZX5OTor7BpHzprZyrH+3P)
+    url: jdbc:mysql://${DB_IP}:3306/kiwi_db?useUnicode=true&characterEncoding=UTF-8&useSSL=false&autoReconnect=true&serverTimezone=Pacific/Auckland
+    hikari:
+      connection-test-query: SELECT 1
+      maximum-pool-size: 30
+      connection-timeout: 86400000  # 1 day in milliseconds for long-period running tasks
+      idle-timeout: 3600000         # Increased to 1 hour
+      max-lifetime: 43200000        # 12 hours
+      keepalive-time: 3600000       # 1 hour
+      leak-detection-threshold: 3600000  # 1 hour

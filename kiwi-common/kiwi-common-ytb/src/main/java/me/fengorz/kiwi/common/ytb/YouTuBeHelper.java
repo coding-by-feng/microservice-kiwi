@@ -18,6 +18,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @SuppressWarnings("LoggingSimilarMessage")
 @Slf4j
@@ -88,7 +89,7 @@ public class YouTuBeHelper {
             command.add("--write-subs");
             command.add("--write-auto-sub");
             command.add("--sub-lang");
-            command.add("en"); // Default to English subtitles; can be parameterized
+            command.add("en,en-GB,en-US"); // Default to English subtitles; can be parameterized
             command.add("--skip-download");
             command.add("-o");
             String currentDownloadPath = getDownloadPath();
@@ -98,9 +99,22 @@ public class YouTuBeHelper {
             Process process = prepareProcess(command);
 
             int exitCode = process.waitFor();
-            if (exitCode != 0) {
-                throw new RuntimeException("Failed to download subtitles, exit code: " + exitCode);
+
+            // Capture the output
+            BufferedReader outputReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            StringBuilder commandOutput = new StringBuilder();
+            String line;
+            while ((line = outputReader.readLine()) != null) {
+                commandOutput.append(line).append("\n");
             }
+
+            if (exitCode != 0) {
+                log.error("Command execution failed with exit code: {}. Error output: {}", exitCode, commandOutput);
+                throw new RuntimeException("Failed to download subtitles, exit code: " + exitCode +
+                        ". Error details: " + commandOutput);
+            }
+
+            log.info("Subtitles command output: {}", commandOutput);
 
             String fileName = getLatestSubtitleFileName(currentDownloadPath);
             if (fileName == null) {
@@ -242,6 +256,9 @@ public class YouTuBeHelper {
                 if (line.contains("n = ") && line.contains("player = https://www.youtube.com")) {
                     continue;
                 }
+                if (line.contains("Install PhantomJS")) {
+                    continue;
+                }
                 output.append(line);
             }
         }
@@ -258,8 +275,14 @@ public class YouTuBeHelper {
     }
 
     private String getLatestSubtitleFileName(String currentDownloadPath) {
+        log.info("Getting latest subtitle file name from directory: {}", currentDownloadPath);
         File dir = new File(currentDownloadPath);
-        File[] files = dir.listFiles((d, name) -> name.endsWith(".vtt") || name.endsWith(".srt"));
+        log.info("size: {}", Objects.requireNonNull(dir.listFiles()).length);
+        File[] files = dir.listFiles((d, name) -> {
+            // Check if the file name ends with ".vtt" or ".srt"
+            log.info("Checking file name: {}", name);
+            return name.endsWith(".vtt") || name.endsWith(".srt");
+        });
         if (files == null || files.length == 0) {
             return null;
         }

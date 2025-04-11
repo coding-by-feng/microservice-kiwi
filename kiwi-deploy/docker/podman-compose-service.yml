@@ -55,21 +55,6 @@ services:
     network_mode: "host"
     depends_on:
       - kiwi-gate
-  kiwi-ai-biz-batch:
-    image: kiwi-ai-biz-batch:2.0
-    user: root
-    environment:
-      - KIWI_ENC_PASSWORD=${KIWI_ENC_PASSWORD}
-      - DB_IP=${DB_IP}
-      - GROK_API_KEY=${GROK_API_KEY}
-      - YTB_OAUTH_CLIENT_SECRETS_FILE=${YTB_OAUTH_CLIENT_SECRETS_FILE}
-      - YTB_OAUTH_ACCESS_TOKEN=${YTB_OAUTH_ACCESS_TOKEN}
-    volumes:
-      - /root/docker/kiwi/ai/logs:/logs:Z
-      - /root/docker/kiwi/ai/tmp:/ai-tmp:Z
-    network_mode: "host"
-    depends_on:
-      - kiwi-gate
   kiwi-crawler:
     image: kiwi-crawler:2.0
     user: root

@@ -249,20 +249,25 @@ public class YouTuBeHelper {
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
             String line;
             while ((line = reader.readLine()) != null) {
-                // Skip warning lines and empty lines
-                if (line.startsWith("WARNING:") || line.trim().isEmpty()) {
-                    continue;
-                }
-                if (line.contains("n = ") && line.contains("player = https://www.youtube.com")) {
-                    continue;
-                }
-                if (line.contains("Install PhantomJS")) {
-                    continue;
-                }
+                if (skipWarning(line)) continue;
                 output.append(line);
             }
         }
         return output;
+    }
+
+    private static boolean skipWarning(String line) {
+        // Skip warning lines and empty lines
+        if (line.startsWith("WARNING:") || line.trim().isEmpty()) {
+            return true;
+        }
+        if (line.contains("n = ") && line.contains("player = https://www.youtube.com")) {
+            return true;
+        }
+        if (line.contains("Install PhantomJS")) {
+            return true;
+        }
+        return false;
     }
 
     private String getLatestFileName(String currentDownloadPath) {
@@ -373,16 +378,9 @@ public class YouTuBeHelper {
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
             String line;
             while ((line = reader.readLine()) != null) {
-                // Skip any line that starts with "WARNING:"
-                if (line.startsWith("WARNING:")) {
+                if (skipWarning(line)) {
                     continue;
                 }
-
-                // Skip empty lines
-                if (line.trim().isEmpty()) {
-                    continue;
-                }
-
                 // Found a non-warning, non-empty line (likely the channel name)
                 output.append(line.trim());
                 // Don't break here - continue reading to drain the process output
@@ -419,7 +417,7 @@ public class YouTuBeHelper {
                 String line;
                 while ((line = reader.readLine()) != null) {
                     // Skip warning lines and empty lines
-                    if (line.startsWith("WARNING:") || line.trim().isEmpty()) {
+                    if (skipWarning(line)) {
                         continue;
                     }
 

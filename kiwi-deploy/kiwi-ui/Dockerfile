@@ -1,3 +1,3 @@
 FROM nginx:latest
-MAINTAINER zhanshifeng
+LABEL maintainer="Kason Zhan"
 COPY dist/ /usr/share/nginx/html/

@@ -1,3 +1,206 @@
+# Setup for Raspberry Pi OS
+
+#### ENV preparation step 1st
+```
+sudo apt update
+## install docker
+curl -fsSL https://get.docker.com -o get-docker.sh
+sudo sh get-docker.sh
+docker version
+vi ~/.bashrc
+alias docker='podman'
+source ~/.bashrc
+
+## install docker-compose 
+wget https://github.com/docker/compose/releases/download/v2.35.1/docker-compose-darwin-x86_64
+sudo mv docker-compose-darwin-x86_64 /usr/local/bin/
+sudo chmod +x /usr/local/bin/docker-compose
+
+## install python
+sudo apt install python3 python3-pip
+sudo apt install python3-venv python3-full -y
+pip3 --version
+
+## install podman-compose
+sudo apt-get install podman-compose
+
+## directory
+cd ~
+mkdir microservice-kiwi docker storage_data store_path tracker_data
+cd docker/
+mkdir kiwi ui rabbitmq mysql
+cd kiwi
+mkdir auth config crawler eureka gate upms word ai
+mkdir auth/logs config/logs crawler/logs crawler/tmp eureka/logs gate/logs upms/logs word/logs word/bizTmp word/crawlerTmp word/biz word/crawler ai/logs ai/tmp ai/biz ai/batch
+cd ../ui
+mkdir dist nginx
+
+## install JDK
+sudo apt install openjdk-17-jdk
+
+## install Maven
+sudo apt install maven
+
+# git and code
+sudo apt install git
+cd ~/microservice-kiwi/
+git init
+git pull https://github.com/coding-by-feng/microservice-kiwi.git/
+git remote add origin https://github.com/coding-by-feng/microservice-kiwi.git
+git fetch --all
+git reset --hard origin/master
+git branch --set-upstream-to=origin/master master
+git pull
+ln -s microservice-kiwi/kiwi-deploy/docker/deployKiwi.sh ~/easy-deploy
+ln -s ~/microservice-kiwi/kiwi-deploy/docker/stopAll.sh ~/easy-stop
+ln -s microservice-kiwi/kiwi-deploy/kiwi-ui/auto_deploy_ui.sh ~/easy-deploy-ui
+
+```
+#### ENV preparation step 2nd
+```
+sudo vi /etc/hosts
+
+127.0.0.1                                       fastdfs.fengorz.me
+127.0.0.1                                       kiwi-microservice-local
+127.0.0.1                                       kiwi-microservice
+127.0.0.1                                       kiwi-ui
+127.0.0.1                                       kiwi-eureka
+127.0.0.1                                       kiwi-redis
+127.0.0.1                                       kiwi-rabbitmq
+127.0.0.1                                       kiwi-db
+127.0.0.1                                       kiwi-es
+
+127.0.0.1                                     kiwi-config
+127.0.0.1                                     kiwi-auth
+127.0.0.1                                     kiwi-upms
+127.0.0.1                                     kiwi-gate
+127.0.0.1                                     kiwi-ai
+127.0.0.1                                     kiwi-crawler
+```
+
+#### Setup Environment Variables
+```
+sudo vi ~/.bashrc
+```
+```
+export KIWI_ENC_PASSWORD="xxx"
+export DB_IP="127.0.0.1"
+export GROK_API_KEY="xxx"
+```
+```
+source ~/.zshrc
+```
+#### Download related files
+```
+sudo wget https://github.com/yt-dlp/yt-dlp/releases/download/2025.04.30/yt-dlp_linux
+sudo cp -r yt-dlp_linux ~/docker/kiwi/ai/biz ~/docker/kiwi/ai/batch
+```
+
+#### mysql
+```
+sudo docker pull mysql
+sudo docker run -itd --name kiwi-mysql -p 3306:3306 -v ~/docker/mysql:/mysql_tmp -e MYSQL_ROOT_PASSWORD=XXXX --net=host mysql
+sudo docker exec -it kiwi-mysql bash
+mysql -h localhost -u root -p
+create database kiwi_db;
+exit
+exit
+```
+
+#### redis
+```
+sudo docker pull redis:latest
+sudo docker run -itd --name kiwi-redis -p 6379:6379 redis --requirepass "My_Password"
+```
+
+#### rabbitmq
+```
+sudo docker pull rabbitmq:management
+docker run -d --hostname kiwi-rabbit -v ~/docker/rabbitmq:/tmp --name kiwi-rabbit --net=host rabbitmq:management
+```
+
+#### fastdfs
+```
+sudo docker pull dodotry/fastdfs
+sudo docker run -ti -d \
+  --name tracker \
+  --net=host \
+  fyclinux/fastdfs-arm64:6.04 \
+  tracker
+sudo docker run -ti -d \
+  --name storage \
+  -v ~/storage_data:/fastdfs/storage/data \
+  -v ~/store_path:/fastdfs/store_path \
+  --net=host \
+  -e TRACKER_SERVER=kiwi-fastdfs:22122 \
+  fyclinux/fastdfs-arm64:6.04 \
+  storage
+ 
+# find the correct conf
+sudo docker exec -it storage bash
+find / -name "storage.conf"
+# /etc/fdfs/storage.conf
+# /usr/local/src/fastdfs/conf/storage.conf
+# /usr/local/src/fastdfs/docker/dockerfile_local/conf/storage.conf
+# /usr/local/src/fastdfs/docker/dockerfile_network/conf/storage.conf
+vi /etc/fdfs/storage.conf
+# Press ? to enter command search mode, type tracker_server, press Enter, change the IP address behind it to kiwi-fastdfs
+exit
+# restart the container
+```
+
+#### Maven
+```
+sudo apt install maven
+cd ~/microservice-kiwi/kiwi-common/kiwi-common-tts/lib
+mvn install:install-file \
+    -Dfile=voicerss_tts.jar \
+    -DgroupId=voicerss \
+    -DartifactId=tts \
+    -Dversion=2.0 \
+    -Dpackaging=jar
+```
+
+#### Deployment
+```
+cd ~/microservice-kiwi/kiwi-deploy/docker
+cp deployKiwi.sh ~
+cd ~
+chmod 777 deployKiwi.sh
+```
+
+#### elasticsearch
+```
+sudo docker pull elasticsearch:7.17.9
+sudo docker run -d -p 9200:9200 -p 9300:9300 --hostname kiwi-es \
+  -e "discovery.type=single-node" \
+  -e "xpack.security.enabled=true" \
+  -e "ES_JAVA_OPTS=-Xms512m -Xmx512m" \
+  --name kiwi-es \
+  -v es_config:/usr/share/elasticsearch/config \
+  -v es_data:/usr/share/elasticsearch/data \
+  elasticsearch:7.17.9
+# Enter the container
+sudo docker exec -it kiwi-es bash
+elasticsearch-users useradd root -r superuser
+elasticsearch-users useradd xxx -r superuser
+```
+Install Chrome Elasticvue plugin and login to Elasticsearch server
+After installation, remember to create an index named `kiwi_vocabulary`
+
+#### Install IK Tokenizer
+```
+sudo elasticsearch-plugin install https://get.infini.cloud/elasticsearch/analysis-ik/7.17.9
+exit
+sudo docker restart kiwi-es 
+```
+#### Prepare the Nginx environment
+```
+sudo docker pull nginx
+sudo docker build -f ~/microservice-kiwi/kiwi-deploy/kiwi-ui/Dockerfile -t kiwi-ui:1.0 ~/docker/ui/
+sudo docker run -d -v ~/docker/ui/dist/:/usr/share/nginx/html --net=host --name=kiwi-ui -it kiwi-ui:1.0
+```
+
 # docker
 
 ```
@@ -24,7 +227,7 @@ sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-
 
 ```
 # Download first
-sshpass -p fenxxx210 scp -r ~/Downloads/docker-compose-Linux-x86_64 root@119.29.200.130:/usr/local/bin
+wget https://github.com/docker/compose/releases/download/v2.35.1/docker-compose-darwin-x86_64
 mv docker-compose-Linux-x86_64 docker-compose
 chmod +x /usr/local/bin/docker-compose
 ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
@@ -84,6 +287,7 @@ git pull https://github.com/coding-by-feng/microservice-kiwi.git/
 git remote add origin https://github.com/coding-by-feng/microservice-kiwi.git
 git fetch --all
 git reset --hard origin/master
+git branch --set-upstream-to=origin/master master
 git pull
 ln -s microservice-kiwi/kiwi-deploy/docker/deployKiwi.sh ~/easy-deploy
 ln -s ~/microservice-kiwi/kiwi-deploy/docker/stopAll.sh ~/easy-stop
@@ -423,3 +627,4 @@ vi ~/.bashrc
 export GROK_API_KEY="xxxx"
 source ~/.bashrc
 ```
+

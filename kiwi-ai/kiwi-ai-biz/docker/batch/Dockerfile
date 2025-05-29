@@ -4,8 +4,8 @@ USER root
 
 # Create necessary directories and install dependencies
 RUN mkdir /logs /ai-tmp \
-    && apk update && apk upgrade \
-    && apk add --no-cache git bash curl build-base libffi-dev openssl-dev \
+    && apt-get update && apt-get upgrade -y \
+    && apt-get install --no-cache git bash curl build-base libffi-dev openssl-dev \
                       bzip2-dev zlib-dev xz-dev readline-dev sqlite-dev tk-dev
 
 # Install Pyenv

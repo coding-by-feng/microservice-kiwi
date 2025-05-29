@@ -6,4 +6,4 @@ RUN mkdir /logs \
 
 ADD kiwi-gateway-2.0.jar app.jar
 EXPOSE 9991
-ENTRYPOINT java -jar -Xmx512m -Duser.timezone=GMT+12 -Djava.awt.headless=true -Dspring.profiles.active=prod /app.jar > /logs/gate.log
+ENTRYPOINT ["java", "-jar", "-Xmx512m", "-Duser.timezone=GMT+12", "-Djava.awt.headless=true", "-Dspring.profiles.active=prod", "-Dlogging.file.name=/logs/gate.log", "/app.jar"]

@@ -1,4 +1,4 @@
-FROM openjdk:8-jdk-alpine
+FROM arm64v8/openjdk:8-jdk
 RUN mkdir /logs
 RUN apk update && apk upgrade
 RUN apk add --no-cache ttf-dejavu

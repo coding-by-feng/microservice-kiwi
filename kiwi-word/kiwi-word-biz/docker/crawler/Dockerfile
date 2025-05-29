@@ -1,4 +1,4 @@
-FROM blackbelt/oraclejdk8
+FROM eclipse-temurin:8-jdk
 
 RUN mkdir /logs
 RUN mkdir /wordTmp

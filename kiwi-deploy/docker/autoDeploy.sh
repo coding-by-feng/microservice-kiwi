@@ -12,18 +12,24 @@ docker build -f ~/docker/kiwi/crawler/Dockerfile -t kiwi-crawler:2.0 ~/docker/ki
 docker build -f ~/docker/kiwi/ai/biz/Dockerfile -t kiwi-ai-biz:2.0 ~/docker/kiwi/ai/biz
 docker build -f ~/docker/kiwi/ai/batch/Dockerfile -t kiwi-ai-biz-batch:2.0 ~/docker/kiwi/ai/batch
 
-# Tag images for Podman
-for image in kiwi-{eureka,config,upms,auth,gate,word-biz,crawler,ai-biz}:2.0; do
-  docker tag "$image" "localhost/$image"
-done
-
 echo "podman-compose base beginning"
-podman-compose --project-name kiwi-base -f ~/microservice-kiwi/kiwi-deploy/docker/podman-compose-base.yml up -d --remove-orphans --build 2>/dev/null || { echo "Base compose failed"; exit 1; }
-echo "Success, waiting 100s..."
+podman-compose --project-name kiwi-base -f ~/microservice-kiwi/kiwi-deploy/docker/podman-compose-base.yml up -d --remove-orphans --build
+base_exit_code=$?
+if [ $base_exit_code -ne 0 ]; then
+    echo "Base compose failed with exit code: $base_exit_code"
+    exit 1
+fi
+echo "Base compose completed successfully, waiting 100s..."
 sleep 100s
 
 echo "podman-compose service beginning"
-podman-compose --project-name kiwi-service -f ~/microservice-kiwi/kiwi-deploy/docker/podman-compose-service.yml up -d --force-recreate --remove-orphans --build || { echo "Service compose failed"; exit 1; }
+podman-compose --project-name kiwi-service -f ~/microservice-kiwi/kiwi-deploy/docker/podman-compose-service.yml up -d --force-recreate --remove-orphans --build
+service_exit_code=$?
+if [ $service_exit_code -ne 0 ]; then
+    echo "Service compose failed with exit code: $service_exit_code"
+    exit 1
+fi
+echo "Service compose completed successfully"
 
 # Stop crawler
 crawler_id=$(podman ps -a -q --filter "name=kiwi-crawler")

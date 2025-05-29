@@ -1,4 +1,4 @@
-FROM openjdk:8-jdk-alpine
+FROM arm64v8/openjdk:8-jdk
 RUN mkdir /logs
 ADD kiwi-eureka-2.0.jar app.jar
 EXPOSE 8762

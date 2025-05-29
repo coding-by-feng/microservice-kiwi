@@ -5,9 +5,10 @@ USER root
 # Create necessary directories and install dependencies
 RUN mkdir /logs /ai-tmp \
     && apt-get update && apt-get upgrade -y \
-    && apt-get install --no-cache git bash curl build-base libffi-dev openssl-dev \
-                      bzip2-dev zlib-dev xz-dev readline-dev sqlite-dev tk-dev \
-    && apt-get install ffmpeg
+    && apt-get install -y git bash curl build-essential libffi-dev libssl-dev \
+                         libbz2-dev zlib1g-dev liblzma-dev libreadline-dev \
+                         libsqlite3-dev tk-dev libncurses5-dev libncursesw5-dev \
+                         xz-utils ca-certificates ffmpeg
 
 # Install Pyenv
 ENV PYENV_ROOT="/root/.pyenv"

@@ -6,8 +6,8 @@
 set -e  # Exit on any error
 
 # Configuration
-PROGRESS_FILE="$HOME/.kiwi_setup_progress"
-CONFIG_FILE="$HOME/.kiwi_setup_config"
+PROGRESS_FILE="$(pwd)/.kiwi_setup_progress"
+CONFIG_FILE="$(pwd)/.kiwi_setup_config"
 SCRIPT_USER=${SUDO_USER:-$USER}
 SCRIPT_HOME=$(eval echo ~$SCRIPT_USER)
 
@@ -594,6 +594,35 @@ if ! is_step_completed "mysql_setup"; then
     # Create database
     docker exec kiwi-mysql mysql -h localhost -u root -p"$MYSQL_ROOT_PASSWORD" -e "CREATE DATABASE IF NOT EXISTS kiwi_db;"
 
+    # Check for and restore database backup if it exists
+    echo "Checking for database backup to restore..."
+    if [ -f "$SCRIPT_HOME/docker/mysql/kiwi_db.sql" ]; then
+        echo "Found kiwi_db.sql backup file, restoring database..."
+
+        # Copy SQL file to container's tmp directory (which is mapped to /mysql_tmp)
+        echo "Restoring database from backup..."
+        if docker exec kiwi-mysql mysql -h localhost -u root -p"$MYSQL_ROOT_PASSWORD" kiwi_db < "$SCRIPT_HOME/docker/mysql/kiwi_db.sql" 2>/dev/null; then
+            echo "✓ Database backup restored successfully"
+            save_config "mysql_backup_restored" "kiwi_db.sql restored successfully"
+            save_config "mysql_backup_file" "$SCRIPT_HOME/docker/mysql/kiwi_db.sql"
+        else
+            # Alternative method: use docker exec with input redirection
+            echo "Trying alternative restore method..."
+            if docker exec -i kiwi-mysql mysql -h localhost -u root -p"$MYSQL_ROOT_PASSWORD" kiwi_db < "$SCRIPT_HOME/docker/mysql/kiwi_db.sql"; then
+                echo "✓ Database backup restored successfully (alternative method)"
+                save_config "mysql_backup_restored" "kiwi_db.sql restored via alternative method"
+                save_config "mysql_backup_file" "$SCRIPT_HOME/docker/mysql/kiwi_db.sql"
+            else
+                echo "⚠ Failed to restore database backup automatically"
+                echo "You can manually restore using: docker exec -i kiwi-mysql mysql -u root -p kiwi_db < $SCRIPT_HOME/docker/mysql/kiwi_db.sql"
+                save_config "mysql_backup_restored" "failed - manual restoration required"
+            fi
+        fi
+    else
+        echo "No kiwi_db.sql backup file found, starting with empty database"
+        save_config "mysql_backup_restored" "no backup file found"
+    fi
+
     # Record MySQL setup details
     MYSQL_CONTAINER_ID=$(docker ps -q -f name=kiwi-mysql)
     MYSQL_IMAGE_INFO=$(docker images mysql --format "{{.Repository}}:{{.Tag}} {{.Size}}" | head -n1)
@@ -610,6 +639,33 @@ if ! is_step_completed "mysql_setup"; then
 else
     echo "Step 11: MySQL already set up, skipping..."
     check_and_start_container "kiwi-mysql" "mysql_setup"
+
+    # Check if backup restoration is needed (even on skip)
+    if ! has_config "mysql_backup_restored" || [ "$(load_config 'mysql_backup_restored')" = "no backup file found" ]; then
+        echo "Checking for database backup to restore..."
+        if [ -f "$SCRIPT_HOME/docker/mysql/kiwi_db.sql" ]; then
+            echo "Found kiwi_db.sql backup file, restoring database..."
+
+            # Ensure MySQL is running before attempting restore
+            if docker ps --format '{{.Names}}' | grep -q "^kiwi-mysql$"; then
+                echo "Restoring database from backup..."
+                if docker exec -i kiwi-mysql mysql -h localhost -u root -p"$MYSQL_ROOT_PASSWORD" kiwi_db < "$SCRIPT_HOME/docker/mysql/kiwi_db.sql"; then
+                    echo "✓ Database backup restored successfully"
+                    save_config "mysql_backup_restored" "kiwi_db.sql restored successfully"
+                    save_config "mysql_backup_file" "$SCRIPT_HOME/docker/mysql/kiwi_db.sql"
+                else
+                    echo "⚠ Failed to restore database backup"
+                    echo "You can manually restore using: docker exec -i kiwi-mysql mysql -u root -p kiwi_db < $SCRIPT_HOME/docker/mysql/kiwi_db.sql"
+                    save_config "mysql_backup_restored" "failed - manual restoration required"
+                fi
+            else
+                echo "⚠ MySQL container not running, cannot restore backup"
+                save_config "mysql_backup_restored" "failed - container not running"
+            fi
+        fi
+    else
+        echo "Database backup already processed: $(load_config 'mysql_backup_restored')"
+    fi
 fi
 
 # Step 12: Setup Redis
@@ -729,8 +785,22 @@ if ! is_step_completed "maven_lib_install"; then
             -Dversion=2.0 \
             -Dpackaging=jar
         echo "Maven library installation completed."
+
+        # Record successful installation
+        save_config "maven_lib_installed" "voicerss_tts.jar installed successfully"
+        save_config "maven_lib_path" "$SCRIPT_HOME/microservice-kiwi/kiwi-common/kiwi-common-tts/lib"
     else
         echo "Warning: voicerss_tts.jar not found in lib directory"
+        echo "Expected location: $SCRIPT_HOME/microservice-kiwi/kiwi-common/kiwi-common-tts/lib/voicerss_tts.jar"
+
+        # Check if the directory exists
+        if [ ! -d "$SCRIPT_HOME/microservice-kiwi/kiwi-common/kiwi-common-tts/lib" ]; then
+            echo "Directory doesn't exist. Creating directory structure..."
+            run_as_user mkdir -p "$SCRIPT_HOME/microservice-kiwi/kiwi-common/kiwi-common-tts/lib"
+            echo "Please place voicerss_tts.jar in the lib directory and re-run this step"
+        fi
+
+        save_config "maven_lib_installed" "voicerss_tts.jar not found - manual installation required"
     fi
 
     mark_step_completed "maven_lib_install"
@@ -911,40 +981,33 @@ echo
 echo "CONTAINER STATUS CHECK:"
 echo "======================"
 
-# Final container health check
+# Final container health check - check all containers regardless of step completion status
 CONTAINERS=("kiwi-mysql" "kiwi-redis" "kiwi-rabbit" "tracker" "storage" "kiwi-es" "kiwi-ui")
 RUNNING_COUNT=0
+STOPPED_COUNT=0
+MISSING_COUNT=0
 TOTAL_COUNT=${#CONTAINERS[@]}
 
-for container in "${CONTAINERS[@]}"; do
-    if docker ps --format '{{.Names}}' | grep -q "^${container}$"; then
-        echo "✓ $container: RUNNING"
-        ((RUNNING_COUNT++))
-    elif docker ps -a --format '{{.Names}}' | grep -q "^${container}$"; then
-        echo "⚠ $container: EXISTS BUT STOPPED"
-    else
-        echo "✗ $container: NOT FOUND"
-    fi
-done
+echo "Checking all expected containers..."
 
-echo "======================"
-echo "Containers running: $RUNNING_COUNT/$TOTAL_COUNT"
+# Get list of running containers and all containers with error handling
+echo "Fetching container lists..."
+RUNNING_CONTAINERS=$(docker ps --format '{{.Names}}' 2>/dev/null)
+ALL_CONTAINERS=$(docker ps -a --format '{{.Names}}' 2>/dev/null)
 
-if [ $RUNNING_COUNT -eq $TOTAL_COUNT ]; then
-    echo "🎉 All containers are running successfully!"
-    save_config "final_container_status" "all_running"
-elif [ $RUNNING_COUNT -gt 0 ]; then
-    echo "⚠ Some containers need attention"
-    save_config "final_container_status" "partial_running"
-else
-    echo "⚠ No containers are running - may need troubleshooting"
-    save_config "final_container_status" "none_running"
-fi
-
+echo "DEBUG: Running containers list:"
+echo "[$RUNNING_CONTAINERS]"
+echo "DEBUG: All containers list:"
+echo "[$ALL_CONTAINERS]"
 echo
-echo "To check individual container logs: docker logs <container-name>"
-echo "To start a stopped container: docker start <container-name>"
-echo "To see all containers: docker ps -a"
+
+echo "USEFUL COMMANDS:"
+echo "  Check all containers:     docker ps -a"
+echo "  Check running only:       docker ps"
+echo "  View container logs:      docker logs <container-name>"
+echo "  Start stopped container:  docker start <container-name>"
+echo "  Stop running container:   docker stop <container-name>"
+echo "  Restart container:        docker restart <container-name>"
 echo "- MySQL: Container 'kiwi-mysql' on port 3306"
 echo "- Redis: Container 'kiwi-redis' on port 6379"
 echo "- RabbitMQ: Container 'kiwi-rabbit' with management UI on port 15672"

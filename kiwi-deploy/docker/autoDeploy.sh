@@ -37,8 +37,8 @@ deploy_services() {
     echo "Starting base services..."
     docker compose --project-name kiwi-base -f ~/microservice-kiwi/kiwi-deploy/docker/docker-compose-base.yml up -d --remove-orphans --build
 
-    echo "Base services started successfully, waiting 100s for initialization..."
-    sleep 100s
+    echo "Base services started successfully, waiting 200s for initialization..."
+    sleep 200s
 
     echo "Starting application services..."
     docker compose --project-name kiwi-service -f ~/microservice-kiwi/kiwi-deploy/docker/docker-compose-service.yml up -d --force-recreate --remove-orphans --build

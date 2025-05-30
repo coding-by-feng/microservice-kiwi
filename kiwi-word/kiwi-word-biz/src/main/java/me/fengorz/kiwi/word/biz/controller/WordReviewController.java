@@ -48,7 +48,7 @@ public class WordReviewController extends AbstractFileController {
 
     private final ReviewService reviewService;
     private final TtsService voiceRssTtsService;
-    @Resource(name = "googleCloudStorageService")
+    @Resource(name = "fastDfsService")
     private DfsService dfsService;
 
     public WordReviewController(ReviewService reviewService,

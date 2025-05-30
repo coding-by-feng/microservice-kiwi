@@ -97,7 +97,7 @@ public class OperateServiceImpl implements OperateService {
     private final WordMainVariantService mainVariantService;
     private final ParaphrasePhraseService phraseService;
     private final ReviewService reviewService;
-    @Resource(name = "googleCloudStorageService")
+    @Resource(name = "fastDfsService")
     private DfsService dfsService;
     private final SearchOperations searchOperations;
     private final DocumentOperations documentOperations;

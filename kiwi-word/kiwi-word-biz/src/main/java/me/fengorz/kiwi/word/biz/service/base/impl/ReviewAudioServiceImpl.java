@@ -54,7 +54,7 @@ public class ReviewAudioServiceImpl extends ServiceImpl<ReviewAudioMapper, WordR
     private final ReviewAudioMapper mapper;
     private final ParaphraseExampleService paraphraseExampleService;
     private final SeqService seqService;
-    @Resource(name = "googleCloudStorageService")
+    @Resource(name = "fastDfsService")
     private DfsService dfsService;
 
     @Override

@@ -62,7 +62,7 @@ public class RevisePermanentAudioHelper implements InitializingBean {
     private final ApplicationContext applicationContext;
 
     public RevisePermanentAudioHelper(ReviewAudioService reviewAudioService,
-                                      @Qualifier("googleCloudStorageService") DfsService dfsService,
+                                      @Qualifier("fastDfsService") DfsService dfsService,
                                       AudioService audioService,
                                       ApplicationContext applicationContext) {
         this.reviewAudioService = reviewAudioService;

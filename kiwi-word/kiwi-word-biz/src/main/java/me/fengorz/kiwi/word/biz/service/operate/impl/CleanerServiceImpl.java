@@ -56,7 +56,7 @@ public class CleanerServiceImpl implements CleanerService {
     private final PronunciationService pronunciationService;
     private final WordMainVariantService variantService;
     private final ParaphrasePhraseService phraseService;
-    @Resource(name = "googleCloudStorageService")
+    @Resource(name = "fastDfsService")
     private DfsService dfsService;
 
     @Override

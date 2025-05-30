@@ -61,7 +61,7 @@ public class FetchServiceImpl implements FetchService {
     private final DictFetchApi dictFetchApi;
     private final QueryApi queryApi;
     private final MqSender MQSender;
-    @Resource(name = "googleCloudStorageService")
+    @Resource(name = "fastDfsService")
     private DfsService dfsService;
 
     @Override

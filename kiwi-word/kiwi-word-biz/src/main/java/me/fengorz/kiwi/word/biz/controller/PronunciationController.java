@@ -47,7 +47,7 @@ import java.io.InputStream;
 public class PronunciationController extends AbstractFileController {
 
     private final PronunciationService wordPronunciationService;
-    @Resource(name = "googleCloudStorageService")
+    @Resource(name = "fastDfsService")
     private DfsService dfsService;
     private final CrawlerService crawlerService;
 

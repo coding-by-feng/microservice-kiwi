@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = DfsTestApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class GoogleCloudStorageServiceImplTest {
 
-    @Qualifier("googleCloudStorageService")
+    @Qualifier("fastDfsService")
     private DfsService dfsService;
 
     @Autowired

@@ -6,7 +6,32 @@
 # See http://www.apache.org/licenses/LICENSE-2.0 for details
 #
 
-cd ~/microservice-kiwi/ || { echo "Failed to cd to ~/microservice-kiwi"; exit 1; }
+# Exit immediately if a command exits with a non-zero status
+set -e
+
+# Function to handle errors
+error_handler() {
+  local line_number=$1
+  local command="$2"
+  echo "=============================================="
+  echo "ERROR: Script failed at line $line_number"
+  echo "Failed command: $command"
+  echo "Exit code: $?"
+  echo "=============================================="
+  exit 1
+}
+
+# Set error trap
+trap 'error_handler ${LINENO} "$BASH_COMMAND"' ERR
+
+# Check if script is run with sudo privileges
+if [ "$EUID" -ne 0 ]; then
+  echo "Error: This script must be run with sudo privileges"
+  echo "Please run: sudo $0 $*"
+  exit 1
+fi
+
+cd ~/microservice-kiwi/ || { echo "CRITICAL ERROR: Failed to change directory to ~/microservice-kiwi/"; exit 1; }
 
 # Function to show help
 show_help() {
@@ -22,11 +47,11 @@ show_help() {
   echo "If no mode is specified, all operations will be executed."
   echo ""
   echo "Examples:"
-  echo "  $0                # Run all operations"
-  echo "  $0 -mode=sg       # Skip only git operations"
-  echo "  $0 -mode=sm       # Skip only maven build"
-  echo "  $0 -mode=sbd      # Skip only Dockerfile building"
-  echo "  $0 -mode=sa       # Skip all operations"
+  echo "  sudo $0                # Run all operations"
+  echo "  sudo $0 -mode=sg       # Skip only git operations"
+  echo "  sudo $0 -mode=sm       # Skip only maven build"
+  echo "  sudo $0 -mode=sbd      # Skip only Dockerfile building"
+  echo "  sudo $0 -mode=sa       # Skip all operations"
 }
 
 # Parse mode parameter
@@ -71,11 +96,16 @@ esac
 # Git operations
 if [ "$SKIP_GIT" = false ]; then
   echo "Git pulling..."
-  git stash && git pull || { echo "Git operations failed"; exit 1; }
+  echo "Stashing local changes..."
+  git stash
+  echo "Pulling latest changes..."
+  git pull
 else
   echo "Git operations skipped"
 fi
 
+# Set execute permissions
+echo "Setting execute permissions for scripts..."
 chmod 777 ~/microservice-kiwi/kiwi-deploy/docker/*.sh
 chmod 777 ~/microservice-kiwi/kiwi-deploy/kiwi-ui/*.sh
 
@@ -95,8 +125,18 @@ rm -rf ~/docker/kiwi/ai/tmp/*
 
 # Maven build
 if [ "$SKIP_MAVEN" = false ]; then
+  echo "Installing VoiceRSS TTS library..."
+  cd ~/microservice-kiwi/kiwi-common/kiwi-common-tts/lib
+  mvn install:install-file \
+      -Dfile=voicerss_tts.jar \
+      -DgroupId=voicerss \
+      -DartifactId=tts \
+      -Dversion=2.0 \
+      -Dpackaging=jar
+  cd ~/microservice-kiwi/
+
   echo "Running maven build..."
-  mvn clean install -Dmaven.test.skip=true -B || { echo "Maven build failed"; exit 1; }
+  mvn clean install -Dmaven.test.skip=true -B
 else
   echo "Maven build skipped"
 fi
@@ -104,6 +144,7 @@ fi
 # Move Dockerfiles and JARs efficiently
 if [ "$SKIP_DOCKER_BUILD" = false ]; then
   echo "Moving Dockerfiles and JARs..."
+  echo "Copying Dockerfiles..."
   cp -f ~/microservice-kiwi/kiwi-eureka/Dockerfile ~/docker/kiwi/eureka/
   cp -f ~/microservice-kiwi/kiwi-config/Dockerfile ~/docker/kiwi/config/
   cp -f ~/microservice-kiwi/kiwi-upms/kiwi-upms-biz/Dockerfile ~/docker/kiwi/upms/
@@ -115,6 +156,7 @@ if [ "$SKIP_DOCKER_BUILD" = false ]; then
   cp -f ~/microservice-kiwi/kiwi-ai/kiwi-ai-biz/docker/biz/Dockerfile ~/docker/kiwi/ai/biz
   cp -f ~/microservice-kiwi/kiwi-ai/kiwi-ai-biz/docker/batch/Dockerfile ~/docker/kiwi/ai/batch
 
+  echo "Copying JAR files..."
   cp -f ~/.m2/repository/me/fengorz/kiwi-eureka/2.0/kiwi-eureka-2.0.jar ~/docker/kiwi/eureka/
   cp -f ~/.m2/repository/me/fengorz/kiwi-config/2.0/kiwi-config-2.0.jar ~/docker/kiwi/config/
   cp -f ~/.m2/repository/me/fengorz/kiwi-upms-biz/2.0/kiwi-upms-biz-2.0.jar ~/docker/kiwi/upms/
@@ -128,7 +170,10 @@ else
   echo "Dockerfile building skipped"
 fi
 
+echo "Stopping all services..."
 ~/microservice-kiwi/kiwi-deploy/docker/stopAll.sh "$MODE"
+
+echo "Starting auto deployment..."
 ~/microservice-kiwi/kiwi-deploy/docker/autoDeploy.sh "$MODE"
 
 echo "Sleeping for 200 seconds..."

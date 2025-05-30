@@ -57,7 +57,7 @@ public class TtsServiceTest {
     @Autowired
     private TtsProperties ttsProperties;
 
-    @Qualifier("googleTtsService")
+    @Qualifier("voiceRssTtsService")
     private TtsService voiceRssTtsService;
 
     @Qualifier("voiceRssTtsService")

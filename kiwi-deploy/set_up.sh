@@ -458,6 +458,13 @@ if ! is_step_completed "git_setup"; then
     run_as_user ln -sf "$SCRIPT_HOME/microservice-kiwi/kiwi-deploy/docker/deployKiwi.sh" "$SCRIPT_HOME/easy-deploy"
     run_as_user ln -sf "$SCRIPT_HOME/microservice-kiwi/kiwi-deploy/docker/stopAll.sh" "$SCRIPT_HOME/easy-stop"
     run_as_user ln -sf "$SCRIPT_HOME/microservice-kiwi/kiwi-deploy/kiwi-ui/auto_deploy_ui.sh" "$SCRIPT_HOME/easy-deploy-ui"
+    run_as_user ln -sf "$SCRIPT_HOME/microservice-kiwi/kiwi-deploy/docker/checkContainers.sh" "$SCRIPT_HOME/easy-check"
+
+    # Make symbolic links executable
+    run_as_user chmod 777 "$SCRIPT_HOME/easy-deploy"
+    run_as_user chmod 777 "$SCRIPT_HOME/easy-stop"
+    run_as_user chmod 777 "$SCRIPT_HOME/easy-deploy-ui"
+    run_as_user chmod 777 "$SCRIPT_HOME/easy-check"
 
     # Record Git setup details
     GIT_COMMIT_HASH=$(run_as_user_home git rev-parse HEAD 2>/dev/null || echo "unknown")

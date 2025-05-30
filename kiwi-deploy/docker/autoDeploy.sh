@@ -18,6 +18,13 @@ cleanup_existing() {
 # Build images
 build_images() {
     echo "Building Docker images..."
+    cp ~/gcp-credentials.json  ~/docker/kiwi/upms/
+    cp ~/gcp-credentials.json  ~/docker/kiwi/gate/
+    cp ~/gcp-credentials.json ~/docker/kiwi/word/
+    cp ~/gcp-credentials.json ~/docker/kiwi/crawler/
+    cp ~/gcp-credentials.json  ~/docker/kiwi/ai/biz
+    cp ~/gcp-credentials.json  ~/docker/kiwi/ai/batch
+
 
     docker build -f ~/docker/kiwi/eureka/Dockerfile -t kiwi-eureka:2.0 ~/docker/kiwi/eureka/
     docker build -f ~/docker/kiwi/config/Dockerfile -t kiwi-config:2.0 ~/docker/kiwi/config/
@@ -37,8 +44,17 @@ deploy_services() {
     echo "Starting base services..."
     docker compose --project-name kiwi-base -f ~/microservice-kiwi/kiwi-deploy/docker/docker-compose-base.yml up -d --remove-orphans --build
 
-    echo "Base services started successfully, waiting 200s for initialization..."
-    sleep 200s
+    # Check if eureka is responding (any HTTP status means it's up)
+    until curl -s http://localhost:8762/health >/dev/null 2>&1; do
+      echo "Waiting for Eureka..."
+      sleep 10
+    done
+
+    # Check if config service is responding
+    until curl -s http://localhost:7771/health >/dev/null 2>&1; do
+      echo "Waiting for Config Service..."
+      sleep 10
+    done
 
     echo "Starting application services..."
     docker compose --project-name kiwi-service -f ~/microservice-kiwi/kiwi-deploy/docker/docker-compose-service.yml up -d --force-recreate --remove-orphans --build

@@ -32,8 +32,6 @@ services:
     environment:
       - KIWI_ENC_PASSWORD=${KIWI_ENC_PASSWORD}
       - DB_IP=${DB_IP}
-      - GCP_API_KEY=${GCP_API_KEY}
-      - GOOGLE_APPLICATION_CREDENTIALS=${GOOGLE_APPLICATION_CREDENTIALS}
     volumes:
       - /root/docker/kiwi/word/logs:/logs:Z
       - /root/docker/kiwi/word/bizTmp:/wordTmp:Z
@@ -47,8 +45,6 @@ services:
       - KIWI_ENC_PASSWORD=${KIWI_ENC_PASSWORD}
       - DB_IP=${DB_IP}
       - GROK_API_KEY=${GROK_API_KEY}
-      - YTB_OAUTH_CLIENT_SECRETS_FILE=${YTB_OAUTH_CLIENT_SECRETS_FILE}
-      - YTB_OAUTH_ACCESS_TOKEN=${YTB_OAUTH_ACCESS_TOKEN}
     volumes:
       - /root/docker/kiwi/ai/logs:/logs:Z
       - /root/docker/kiwi/ai/tmp:/ai-tmp:Z
@@ -61,8 +57,6 @@ services:
     environment:
       - KIWI_ENC_PASSWORD=${KIWI_ENC_PASSWORD}
       - DB_IP=${DB_IP}
-      - GCP_API_KEY=${GCP_API_KEY}
-      - GOOGLE_APPLICATION_CREDENTIALS=${GOOGLE_APPLICATION_CREDENTIALS}
     volumes:
       - /root/docker/kiwi/crawler/logs:/logs:Z
       - /root/docker/kiwi/crawler/tmp:/crawlerTmp:Z

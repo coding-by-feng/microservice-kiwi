@@ -89,7 +89,7 @@ public class ReviewServiceTest {
     @Autowired
     private ParaphraseService paraphraseService;
 
-    @Resource(name = "googleCloudStorageService")
+    @Resource(name = "fastDfsService")
     private DfsService dfsService;
 
     @Autowired

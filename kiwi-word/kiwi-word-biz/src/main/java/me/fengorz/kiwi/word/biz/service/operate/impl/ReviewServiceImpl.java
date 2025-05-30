@@ -94,7 +94,7 @@ public class ReviewServiceImpl implements ReviewService {
     private final WordMainMapper wordMainMapper;
     private final CharacterMapper characterMapper;
     private final ParaphraseStarRelMapper paraphraseStarRelMapper;
-    @Resource(name = "googleCloudStorageService")
+    @Resource(name = "fastDfsService")
     private DfsService dfsService;
     private final AudioService audioService;
     @Resource(name = "voiceRssTtsService")

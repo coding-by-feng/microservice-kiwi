@@ -84,7 +84,7 @@ public class CrawlerServiceImpl implements CrawlerService {
     private final ParaphrasePhraseService phraseService;
     private final ParaphraseStarRelService paraphraseStarRelService;
     private final ReviewAudioService reviewAudioService;
-    @Resource(name = "googleCloudStorageService")
+    @Resource(name = "fastDfsService")
     private DfsService dfsService;
     private final SeqService seqService;
     private final OperateService operateService;

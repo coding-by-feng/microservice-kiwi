@@ -46,7 +46,7 @@ public class AudioServiceImpl implements AudioService {
     private TtsService googleTtsService;
     @Resource(name = BAIDU_TTS_SERVICE_IMPL)
     private BaiduTtsService baiduTtsService;
-    @Resource(name = "googleCloudStorageService")
+    @Resource(name = "fastDfsService")
     private DfsService dfsService;
 
     @Override

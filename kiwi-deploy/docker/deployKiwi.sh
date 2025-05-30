@@ -304,18 +304,23 @@ fi
 
 # Move Dockerfiles and JARs efficiently
 if [ "$SKIP_DOCKER_BUILD" = false ]; then
-  echo "Moving Dockerfiles and JARs..."
+  echo "Moving Dockerfiles, GCP credentials and JARs..."
   echo "Copying Dockerfiles..."
   cp -f ~/microservice-kiwi/kiwi-eureka/Dockerfile ~/docker/kiwi/eureka/
   cp -f ~/microservice-kiwi/kiwi-config/Dockerfile ~/docker/kiwi/config/
   cp -f ~/microservice-kiwi/kiwi-upms/kiwi-upms-biz/Dockerfile ~/docker/kiwi/upms/
   cp -f ~/microservice-kiwi/kiwi-word/kiwi-word-biz/docker/biz/Dockerfile ~/docker/kiwi/word/biz
+  cp -f ~/gcp-credentials.json ~/docker/kiwi/word/biz
   cp -f ~/microservice-kiwi/kiwi-word/kiwi-word-biz/docker/crawler/Dockerfile ~/docker/kiwi/word/crawler
+  cp -f ~/gcp-credentials.json ~/docker/kiwi/word/crawler
   cp -f ~/microservice-kiwi/kiwi-word/kiwi-word-crawler/Dockerfile ~/docker/kiwi/crawler/
+  cp -f ~/gcp-credentials.json ~/docker/kiwi/crawler
   cp -f ~/microservice-kiwi/kiwi-auth/Dockerfile ~/docker/kiwi/auth/
   cp -f ~/microservice-kiwi/kiwi-gateway/Dockerfile ~/docker/kiwi/gate/
   cp -f ~/microservice-kiwi/kiwi-ai/kiwi-ai-biz/docker/biz/Dockerfile ~/docker/kiwi/ai/biz
+  cp -f ~/gcp-credentials.json ~/docker/kiwi/ai/biz
   cp -f ~/microservice-kiwi/kiwi-ai/kiwi-ai-biz/docker/batch/Dockerfile ~/docker/kiwi/ai/batch
+  cp -f ~/gcp-credentials.json ~/docker/kiwi/ai/batch
 
   echo "Copying JAR files..."
   cp -f ~/.m2/repository/me/fengorz/kiwi-eureka/2.0/kiwi-eureka-2.0.jar ~/docker/kiwi/eureka/

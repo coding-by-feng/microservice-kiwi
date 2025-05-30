@@ -42,7 +42,7 @@ import static me.fengorz.kiwi.common.tts.TtsConstants.BEAN_NAMES.BAIDU_TTS_SERVI
 @Service
 public class AudioServiceImpl implements AudioService {
 
-    @Resource(name = "googleTtsService")
+    @Resource(name = "voiceRssTtsService")
     private TtsService googleTtsService;
     @Resource(name = BAIDU_TTS_SERVICE_IMPL)
     private BaiduTtsService baiduTtsService;

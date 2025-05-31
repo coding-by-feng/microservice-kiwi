@@ -319,15 +319,97 @@ enter_container() {
 check_logs() {
     local container_name=$1
     local service_name=$2
-    local lines=${3:-50}
+    local mode=${3:-"static"}
+    local lines=${4:-100}
 
-    echo -e "\n=== $service_name LOGS (last $lines lines) ==="
-    if sudo docker logs "$container_name" --tail "$lines" 2>/dev/null; then
-        echo "✓ Logs retrieved successfully"
-    else
-        echo "✗ Failed to retrieve logs for $container_name"
-        echo "Container may not exist or may be stopped"
+    if [ "$mode" == "static" ]; then
+        echo -e "\n=== $service_name LOGS (last $lines lines) ==="
+        if sudo docker logs "$container_name" --tail "$lines" 2>/dev/null; then
+            echo "✓ Logs retrieved successfully"
+        else
+            echo "✗ Failed to retrieve logs for $container_name"
+            echo "Container may not exist or may be stopped"
+        fi
+    elif [ "$mode" == "monitor" ]; then
+        echo -e "\n=== MONITORING $service_name LOGS (Real-time) ==="
+        echo "Starting with last $lines lines, then showing new logs in real-time..."
+        echo "Press 'Ctrl+C' or 'q' + Enter to quit monitoring"
+        echo "=========================================="
+
+        # Check if container exists and is running
+        if ! sudo docker ps --format "{{.Names}}" | grep -q "^${container_name}$"; then
+            echo "✗ Container $container_name is not running. Cannot monitor logs."
+            return 1
+        fi
+
+        # Start monitoring logs in background
+        sudo docker logs -f --tail "$lines" "$container_name" 2>&1 &
+        local docker_logs_pid=$!
+
+        # Function to cleanup when user wants to quit
+        cleanup_monitor() {
+            echo -e "\n\n=== STOPPING LOG MONITORING ==="
+            sudo kill $docker_logs_pid 2>/dev/null
+            wait $docker_logs_pid 2>/dev/null
+            echo "✓ Log monitoring stopped"
+        }
+
+        # Set trap to handle Ctrl+C
+        trap cleanup_monitor INT
+
+        # Monitor for 'q' input
+        while true; do
+            read -t 1 -n 1 input 2>/dev/null
+            if [ "$input" == "q" ] || [ "$input" == "Q" ]; then
+                cleanup_monitor
+                break
+            fi
+
+            # Check if docker logs process is still running
+            if ! kill -0 $docker_logs_pid 2>/dev/null; then
+                echo -e "\n✗ Log monitoring stopped unexpectedly"
+                break
+            fi
+        done
+
+        # Reset trap
+        trap - INT
     fi
+}
+
+show_log_options() {
+    local container_name=$1
+    local service_name=$2
+
+    echo ""
+    echo "Choose log viewing mode:"
+    echo "1) Static logs - Show specific number of lines"
+    echo "2) Monitor logs - Real-time log monitoring"
+    echo ""
+    read -p "Enter mode (1 or 2, default: 1): " log_mode
+    log_mode=${log_mode:-1}
+
+    case $log_mode in
+        1)
+            read -p "How many log lines to show? (default: 100): " lines
+            lines=${lines:-100}
+            check_logs "$container_name" "$service_name" "static" "$lines"
+            ;;
+        2)
+            read -p "How many initial log lines to show? (default: 100): " lines
+            lines=${lines:-100}
+            echo ""
+            echo "Note: After showing initial logs, new logs will appear in real-time."
+            echo "You can press 'q' + Enter or Ctrl+C to stop monitoring."
+            echo ""
+            read -p "Press Enter to start monitoring..."
+            check_logs "$container_name" "$service_name" "monitor" "$lines"
+            ;;
+        *)
+            echo "Invalid mode. Using static logs with default 100 lines."
+            check_logs "$container_name" "$service_name" "static" "100"
+            ;;
+    esac
 }
 
 check_and_start_containers() {
@@ -521,11 +603,58 @@ show_container_status() {
 
 check_all_failed() {
     echo -e "\n=== CHECKING ALL KIWI SERVICE CONTAINERS ==="
-    for key in {1..8}; do
-        IFS='|' read -r container_name service_name <<< "${containers[$key]}"
-        check_logs "$container_name" "$service_name" 30
+    echo "Choose log viewing mode for all containers:"
+    echo "1) Static logs - Show specific number of lines for each"
+    echo "2) Monitor logs - Monitor one container at a time"
+    echo ""
+    read -p "Enter mode (1 or 2, default: 1): " log_mode
+    log_mode=${log_mode:-1}
+
+    if [ "$log_mode" == "1" ]; then
+        read -p "How many log lines to show for each container? (default: 30): " lines
+        lines=${lines:-30}
+
+        for key in {1..8}; do
+            IFS='|' read -r container_name service_name <<< "${containers[$key]}"
+            check_logs "$container_name" "$service_name" "static" "$lines"
+            echo ""
+        done
+    elif [ "$log_mode" == "2" ]; then
+        read -p "How many initial log lines to show? (default: 50): " lines
+        lines=${lines:-50}
+
         echo ""
-    done
+        echo "Choose which service container to monitor:"
+        for key in {1..8}; do
+            IFS='|' read -r container_name service_name <<< "${containers[$key]}"
+            echo "$key) $service_name ($container_name)"
+        done
+        echo ""
+        read -p "Enter container number (1-8): " container_choice
+
+        if [[ $container_choice =~ ^[1-8]$ ]]; then
+            IFS='|' read -r container_name service_name <<< "${containers[$container_choice]}"
+            echo ""
+            echo "Note: Press 'q' + Enter or Ctrl+C to stop monitoring."
+            echo ""
+            read -p "Press Enter to start monitoring $service_name..."
+            check_logs "$container_name" "$service_name" "monitor" "$lines"
+        else
+            echo "Invalid choice. Showing static logs for all containers instead."
+            for key in {1..8}; do
+                IFS='|' read -r container_name service_name <<< "${containers[$key]}"
+                check_logs "$container_name" "$service_name" "static" "30"
+                echo ""
+            done
+        fi
+    else
+        echo "Invalid mode. Using static logs with 30 lines for each container."
+        for key in {1..8}; do
+            IFS='|' read -r container_name service_name <<< "${containers[$key]}"
+            check_logs "$container_name" "$service_name" "static" "30"
+            echo ""
+        done
+    fi
 }
 
 # Main loop
@@ -569,9 +698,7 @@ while true; do
             fi
 
             # Show logs if container is running or user chose not to start
-            read -p "How many log lines to show? (default: 50): " lines
-            lines=${lines:-50}
-            check_logs "$container_name" "$service_name" "$lines"
+            show_log_options "$container_name" "$service_name"
             ;;
         16)
             check_all_failed

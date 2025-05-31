@@ -23,10 +23,6 @@
             <artifactId>kiwi-common-sdk</artifactId>
             <version>${kiwi.version}</version>
         </dependency>
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-gcp-starter-storage</artifactId>
-        </dependency>
     </dependencies>
 
 </project>

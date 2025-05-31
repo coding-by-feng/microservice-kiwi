@@ -46,6 +46,7 @@ services:
       - KIWI_ENC_PASSWORD=${KIWI_ENC_PASSWORD}
       - DB_IP=${DB_IP}
       - GROK_API_KEY=${GROK_API_KEY}
+      - GOOGLE_APPLICATION_CREDENTIALS=${GOOGLE_APPLICATION_CREDENTIALS}
     volumes:
       - /root/docker/kiwi/ai/logs:/logs:Z
       - /root/docker/kiwi/ai/tmp:/ai-tmp:Z

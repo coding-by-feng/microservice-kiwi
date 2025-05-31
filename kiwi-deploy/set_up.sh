@@ -607,30 +607,26 @@ if ! is_step_completed "mysql_setup"; then
 
     # Check for and restore database backup if it exists
     echo "Checking for database backup to restore..."
-    if [ -f "$SCRIPT_HOME/docker/mysql/kiwi_db.sql" ]; then
-        echo "Found kiwi_db.sql backup file, restoring database..."
+    if [ -f "$SCRIPT_HOME/docker/mysql/kiwi-db.sql" ]; then
+        echo "Found kiwi-db.sql backup file, restoring database..."
 
         # Copy SQL file to container's tmp directory (which is mapped to /mysql_tmp)
         echo "Restoring database from backup..."
-        if docker exec kiwi-mysql mysql -h localhost -u root -p"$MYSQL_ROOT_PASSWORD" kiwi_db < "$SCRIPT_HOME/docker/mysql/kiwi_db.sql" 2>/dev/null; then
-            echo "✓ Database backup restored successfully"
-            save_config "mysql_backup_restored" "kiwi_db.sql restored successfully"
-            save_config "mysql_backup_file" "$SCRIPT_HOME/docker/mysql/kiwi_db.sql"
-        else
-            # Alternative method: use docker exec with input redirection
-            echo "Trying alternative restore method..."
-            if docker exec -i kiwi-mysql mysql -h localhost -u root -p"$MYSQL_ROOT_PASSWORD" kiwi_db < "$SCRIPT_HOME/docker/mysql/kiwi_db.sql"; then
-                echo "✓ Database backup restored successfully (alternative method)"
-                save_config "mysql_backup_restored" "kiwi_db.sql restored via alternative method"
-                save_config "mysql_backup_file" "$SCRIPT_HOME/docker/mysql/kiwi_db.sql"
-            else
-                echo "⚠ Failed to restore database backup automatically"
-                echo "You can manually restore using: docker exec -i kiwi-mysql mysql -u root -p kiwi_db < $SCRIPT_HOME/docker/mysql/kiwi_db.sql"
-                save_config "mysql_backup_restored" "failed - manual restoration required"
+        if docker exec kiwi-mysql sh -c "mysql -h localhost -u root -p'$MYSQL_ROOT_PASSWORD' kiwi_db < /mysql_tmp/kiwi-db.sql"; then
+            echo "✓ Basic database backup restored successfully"
+            save_config "mysql_backup_restored" "kiwi-db.sql restored successfully"
+            save_config "mysql_backup_file" "$SCRIPT_HOME/docker/mysql/kiwi-db.sql"
+            cp $SCRIPT_HOME/microservice-kiwi/kiwi-sql/ytb_table_initialize.sql $SCRIPT_HOME/docker/mysql/
+            if docker exec kiwi-mysql sh -c "mysql -h localhost -u root -p'$MYSQL_ROOT_PASSWORD' kiwi_db < /mysql_tmp/ytb_table_initialize.sql"; then
+              echo "✓ YTB database backup restored successfully"
             fi
+        else
+            echo "⚠ Failed to restore database backup automatically"
+            echo "You can manually restore using: docker exec -i kiwi-mysql mysql -u root -p kiwi_db < $SCRIPT_HOME/docker/mysql/kiwi-db.sql"
+            save_config "mysql_backup_restored" "failed - manual restoration required"
         fi
     else
-        echo "No kiwi_db.sql backup file found, starting with empty database"
+        echo "No kiwi-db.sql backup file found, starting with empty database"
         save_config "mysql_backup_restored" "no backup file found"
     fi
 
@@ -654,19 +650,19 @@ else
     # Check if backup restoration is needed (even on skip)
     if ! has_config "mysql_backup_restored" || [ "$(load_config 'mysql_backup_restored')" = "no backup file found" ]; then
         echo "Checking for database backup to restore..."
-        if [ -f "$SCRIPT_HOME/docker/mysql/kiwi_db.sql" ]; then
-            echo "Found kiwi_db.sql backup file, restoring database..."
+        if [ -f "$SCRIPT_HOME/docker/mysql/kiwi-db.sql" ]; then
+            echo "Found kiwi-db.sql backup file, restoring database..."
 
             # Ensure MySQL is running before attempting restore
             if docker ps --format '{{.Names}}' | grep -q "^kiwi-mysql$"; then
                 echo "Restoring database from backup..."
-                if docker exec -i kiwi-mysql mysql -h localhost -u root -p"$MYSQL_ROOT_PASSWORD" kiwi_db < "$SCRIPT_HOME/docker/mysql/kiwi_db.sql"; then
+                if docker exec -i kiwi-mysql mysql -h localhost -u root -p"$MYSQL_ROOT_PASSWORD" kiwi_db < "$SCRIPT_HOME/docker/mysql/kiwi-db.sql"; then
                     echo "✓ Database backup restored successfully"
-                    save_config "mysql_backup_restored" "kiwi_db.sql restored successfully"
-                    save_config "mysql_backup_file" "$SCRIPT_HOME/docker/mysql/kiwi_db.sql"
+                    save_config "mysql_backup_restored" "kiwi-db.sql restored successfully"
+                    save_config "mysql_backup_file" "$SCRIPT_HOME/docker/mysql/kiwi-db.sql"
                 else
                     echo "⚠ Failed to restore database backup"
-                    echo "You can manually restore using: docker exec -i kiwi-mysql mysql -u root -p kiwi_db < $SCRIPT_HOME/docker/mysql/kiwi_db.sql"
+                    echo "You can manually restore using: docker exec -i kiwi-mysql mysql -u root -p kiwi_db < $SCRIPT_HOME/docker/mysql/kiwi-db.sql"
                     save_config "mysql_backup_restored" "failed - manual restoration required"
                 fi
             else

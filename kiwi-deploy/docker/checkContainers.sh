@@ -47,6 +47,8 @@ show_menu() {
     echo "19) Show container status"
     echo "20) Check and start stopped containers"
     echo "21) Start all stopped Kiwi containers"
+    echo "22) Start infrastructure containers only"
+    echo "23) Enter container shell"
     echo "0) Exit"
     echo ""
 }
@@ -84,6 +86,234 @@ start_container() {
     else
         echo "✗ Failed to start $service_name"
     fi
+}
+
+check_port_80_and_handle() {
+    echo "Checking if port 80 is in use..."
+
+    # Check if port 80 is being used
+    local port_info=$(sudo netstat -tulpn | grep ":80 ")
+
+    if [ -n "$port_info" ]; then
+        echo "⚠ Port 80 is currently in use:"
+        echo "$port_info"
+        echo ""
+
+        # Extract PID from netstat output
+        local pid=$(echo "$port_info" | awk '{print $7}' | cut -d'/' -f1 | head -n1)
+
+        if [ -n "$pid" ] && [ "$pid" != "-" ]; then
+            # Get process details
+            local process_info=$(ps -p "$pid" -o pid,ppid,cmd --no-headers 2>/dev/null)
+            if [ -n "$process_info" ]; then
+                echo "Process details:"
+                echo "PID: $pid"
+                echo "Command: $(ps -p "$pid" -o cmd --no-headers 2>/dev/null)"
+                echo ""
+
+                read -p "Do you want to kill this process to free port 80? (y/N): " kill_choice
+                if [[ $kill_choice == "y" || $kill_choice == "Y" ]]; then
+                    echo "Attempting to terminate process $pid..."
+
+                    # Try graceful termination first
+                    if sudo kill "$pid" 2>/dev/null; then
+                        echo "Sent TERM signal to process $pid"
+                        sleep 3
+
+                        # Check if process is still running
+                        if kill -0 "$pid" 2>/dev/null; then
+                            echo "Process still running, forcing termination..."
+                            sudo kill -9 "$pid" 2>/dev/null
+                            sleep 2
+                        fi
+
+                        # Verify port is now free
+                        if sudo netstat -tulpn | grep -q ":80 "; then
+                            echo "⚠ Port 80 is still in use after killing process"
+                            return 1
+                        else
+                            echo "✓ Port 80 is now free"
+                            return 0
+                        fi
+                    else
+                        echo "✗ Failed to kill process $pid"
+                        return 1
+                    fi
+                else
+                    echo "Skipping process termination. kiwi-ui may fail to start."
+                    return 1
+                fi
+            else
+                echo "Could not get process details for PID $pid"
+                return 1
+            fi
+        else
+            echo "Could not determine PID using port 80"
+            return 1
+        fi
+    else
+        echo "✓ Port 80 is available"
+        return 0
+    fi
+}
+
+start_infrastructure_containers() {
+    echo -e "\n=== STARTING INFRASTRUCTURE CONTAINERS ==="
+    echo "This will start the following containers in order:"
+    echo "  - MySQL"
+    echo "  - Redis"
+    echo "  - RabbitMQ"
+    echo "  - Elasticsearch"
+    echo "  - FastDFS Storage"
+    echo "  - FastDFS Tracker"
+    echo "  - Kiwi UI (with port 80 check)"
+    echo ""
+    read -p "Continue? (y/N): " choice
+    if [[ ! ($choice == "y" || $choice == "Y") ]]; then
+        echo "Cancelled."
+        return
+    fi
+
+    # Infrastructure containers in dependency order
+    local infra_order=(
+        "9|kiwi-mysql|MYSQL"
+        "10|kiwi-redis|REDIS"
+        "11|kiwi-rabbit|RABBITMQ"
+        "13|kiwi-es|ELASTICSEARCH"
+        "14|storage|FASTDFS-STORAGE"
+        "15|tracker|FASTDFS-TRACKER"
+    )
+
+    echo -e "\n=== STARTING INFRASTRUCTURE SERVICES ==="
+    for item in "${infra_order[@]}"; do
+        IFS='|' read -r key container_name service_name <<< "$item"
+
+        if check_container_status "$container_name" "$service_name" >/dev/null 2>&1; then
+            echo "✓ $service_name is already running"
+        else
+            start_container "$container_name" "$service_name"
+            echo "  Waiting 5 seconds for $service_name to initialize..."
+            sleep 5
+        fi
+        echo ""
+    done
+
+    # Handle Kiwi UI separately with port check
+    echo "=== STARTING KIWI UI ==="
+    local ui_container="kiwi-ui"
+    local ui_service="KIWI-UI"
+
+    if check_container_status "$ui_container" "$ui_service" >/dev/null 2>&1; then
+        echo "✓ $ui_service is already running"
+    else
+        # Check port 80 before starting kiwi-ui
+        if check_port_80_and_handle; then
+            echo "Starting $ui_service..."
+            start_container "$ui_container" "$ui_service"
+        else
+            echo "⚠ Cannot start $ui_service - port 80 conflict not resolved"
+        fi
+    fi
+
+    echo -e "\n=== INFRASTRUCTURE STARTUP COMPLETE ==="
+    echo "Checking status of infrastructure containers..."
+
+    # Show status of infrastructure containers
+    printf "\n%-30s %-15s\n" "CONTAINER NAME" "STATUS"
+    printf "%-30s %-15s\n" "------------------------------" "---------------"
+
+    for item in "${infra_order[@]}"; do
+        IFS='|' read -r key container_name service_name <<< "$item"
+        if sudo docker ps --format "{{.Names}}" | grep -q "^${container_name}$"; then
+            status="RUNNING"
+        elif sudo docker ps -a --format "{{.Names}}" | grep -q "^${container_name}$"; then
+            status="STOPPED"
+        else
+            status="NOT EXISTS"
+        fi
+        printf "%-30s %-15s\n" "$container_name" "$status"
+    done
+
+    # Check kiwi-ui status
+    if sudo docker ps --format "{{.Names}}" | grep -q "^${ui_container}$"; then
+        status="RUNNING"
+    elif sudo docker ps -a --format "{{.Names}}" | grep -q "^${ui_container}$"; then
+        status="STOPPED"
+    else
+        status="NOT EXISTS"
+    fi
+    printf "%-30s %-15s\n" "$ui_container" "$status"
+}
+
+enter_container() {
+    echo -e "\n=== ENTER CONTAINER SHELL ==="
+    echo "Choose which container to enter:"
+    echo ""
+    for key in {1..15}; do
+        IFS='|' read -r container_name service_name <<< "${containers[$key]}"
+        echo "$key) $service_name ($container_name)"
+    done
+    echo ""
+    read -p "Enter container number (1-15): " container_choice
+
+    if [[ ! $container_choice =~ ^[1-9]$|^1[0-5]$ ]]; then
+        echo "Invalid choice. Please enter a number between 1-15."
+        return
+    fi
+
+    IFS='|' read -r container_name service_name <<< "${containers[$container_choice]}"
+
+    # Check if container is running
+    if ! sudo docker ps --format "{{.Names}}" | grep -q "^${container_name}$"; then
+        echo -e "\n✗ Container $service_name ($container_name) is not running."
+
+        # Check if it exists but is stopped
+        if sudo docker ps -a --format "{{.Names}}" | grep -q "^${container_name}$"; then
+            echo "Container exists but is stopped."
+            read -p "Do you want to start it first? (y/N): " start_choice
+            if [[ $start_choice == "y" || $start_choice == "Y" ]]; then
+                start_container "$container_name" "$service_name"
+                echo ""
+                sleep 3  # Give container time to fully start
+            else
+                echo "Cannot enter stopped container."
+                return
+            fi
+        else
+            echo "Container does not exist."
+            return
+        fi
+    fi
+
+    # Determine the best shell to use
+    echo -e "\n=== ENTERING $service_name CONTAINER ==="
+    echo "Container: $container_name"
+    echo ""
+
+    # Try different shells in order of preference
+    local shells=("/bin/bash" "/bin/sh" "/bin/ash")
+    local shell_found=false
+
+    for shell in "${shells[@]}"; do
+        if sudo docker exec "$container_name" test -x "$shell" 2>/dev/null; then
+            echo "Using shell: $shell"
+            echo "Type 'exit' to return to the debug menu."
+            echo "----------------------------------------"
+            sudo docker exec -it "$container_name" "$shell"
+            shell_found=true
+            break
+        fi
+    done
+
+    if [ "$shell_found" = false ]; then
+        echo "No suitable shell found in container. Trying default command..."
+        sudo docker exec -it "$container_name" /bin/sh 2>/dev/null || {
+            echo "✗ Failed to enter container. Container may not support interactive shells."
+        }
+    fi
+
+    echo ""
+    echo "=== EXITED FROM $service_name CONTAINER ==="
 }
 
 check_logs() {
@@ -141,6 +371,7 @@ check_and_start_containers() {
 start_all_kiwi_containers() {
     echo -e "\n=== STARTING ALL KIWI CONTAINERS ==="
     echo "This will attempt to start all Kiwi containers in dependency order..."
+    echo "Note: Infrastructure containers will be started first, then application services."
     echo ""
     read -p "Continue? (y/N): " choice
     if [[ ! ($choice == "y" || $choice == "Y") ]]; then
@@ -148,14 +379,47 @@ start_all_kiwi_containers() {
         return
     fi
 
-    # Start in dependency order
-    local startup_order=(
+    # Start infrastructure first
+    echo -e "\n=== PHASE 1: STARTING INFRASTRUCTURE ==="
+    local infra_order=(
         "9|kiwi-mysql|MYSQL"
         "10|kiwi-redis|REDIS"
         "11|kiwi-rabbit|RABBITMQ"
         "13|kiwi-es|ELASTICSEARCH"
         "14|storage|FASTDFS-STORAGE"
         "15|tracker|FASTDFS-TRACKER"
+    )
+
+    for item in "${infra_order[@]}"; do
+        IFS='|' read -r key container_name service_name <<< "$item"
+
+        if check_container_status "$container_name" "$service_name" >/dev/null 2>&1; then
+            echo "✓ $service_name is already running"
+        else
+            start_container "$container_name" "$service_name"
+            echo "  Waiting 5 seconds for $service_name to initialize..."
+            sleep 5
+        fi
+        echo ""
+    done
+
+    # Handle Kiwi UI with port check
+    echo "=== STARTING KIWI UI ==="
+    if check_container_status "kiwi-ui" "KIWI-UI" >/dev/null 2>&1; then
+        echo "✓ KIWI-UI is already running"
+    else
+        if check_port_80_and_handle; then
+            start_container "kiwi-ui" "KIWI-UI"
+            sleep 3
+        else
+            echo "⚠ Skipping KIWI-UI startup due to port 80 conflict"
+        fi
+    fi
+    echo ""
+
+    # Start application services
+    echo -e "\n=== PHASE 2: STARTING APPLICATION SERVICES ==="
+    local app_order=(
         "1|kiwi-base-kiwi-eureka-1|EUREKA"
         "2|kiwi-base-kiwi-config-1|CONFIG"
         "3|kiwi-service-kiwi-upms-1|UPMS"
@@ -164,23 +428,16 @@ start_all_kiwi_containers() {
         "6|kiwi-service-kiwi-word-biz-1|WORD-BIZ"
         "7|kiwi-service-kiwi-ai-biz-1|AI-BIZ"
         "8|kiwi-service-kiwi-crawler-1|CRAWLER"
-        "12|kiwi-ui|KIWI-UI"
     )
 
-    for item in "${startup_order[@]}"; do
+    for item in "${app_order[@]}"; do
         IFS='|' read -r key container_name service_name <<< "$item"
 
         if check_container_status "$container_name" "$service_name" >/dev/null 2>&1; then
             echo "✓ $service_name is already running"
         else
             start_container "$container_name" "$service_name"
-            # Add delay between services to allow proper startup
-            if [[ $key -le 6 ]]; then  # Infrastructure services need more time
-                echo "  Waiting 5 seconds for $service_name to initialize..."
-                sleep 5
-            else
-                sleep 2
-            fi
+            sleep 2
         fi
         echo ""
     done
@@ -274,7 +531,7 @@ check_all_failed() {
 # Main loop
 while true; do
     show_menu
-    read -p "Enter your choice (0-21): " choice
+    read -p "Enter your choice (0-23): " choice
 
     case $choice in
         0)
@@ -293,7 +550,16 @@ while true; do
                 echo ""
                 read -p "Container is stopped. Do you want to start it? (y/N): " start_choice
                 if [[ $start_choice == "y" || $start_choice == "Y" ]]; then
-                    start_container "$container_name" "$service_name"
+                    # Special handling for kiwi-ui
+                    if [ "$container_name" == "kiwi-ui" ]; then
+                        if check_port_80_and_handle; then
+                            start_container "$container_name" "$service_name"
+                        else
+                            echo "⚠ Cannot start kiwi-ui due to port 80 conflict"
+                        fi
+                    else
+                        start_container "$container_name" "$service_name"
+                    fi
                 fi
             elif [ $status_code -eq 2 ]; then  # Container doesn't exist
                 echo "Cannot show logs - container does not exist."
@@ -325,8 +591,14 @@ while true; do
         21)
             start_all_kiwi_containers
             ;;
+        22)
+            start_infrastructure_containers
+            ;;
+        23)
+            enter_container
+            ;;
         *)
-            echo "Invalid choice. Please enter a number between 0-21."
+            echo "Invalid choice. Please enter a number between 0-23."
             ;;
     esac
 

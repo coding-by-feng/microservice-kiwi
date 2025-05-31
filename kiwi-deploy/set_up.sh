@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Kiwi Microservice Setup Script for Raspberry Pi OS
-# This script automates the complete setup process with step tracking
+# This script automates the complete setup process with step tracking and selective re-initialization
 
 set -e  # Exit on any error
 
@@ -57,6 +57,8 @@ has_config() {
     local key="$1"
     [ -f "$CONFIG_FILE" ] && grep -q "^$key=" "$CONFIG_FILE" 2>/dev/null
 }
+
+# Function to check if step is completed
 is_step_completed() {
     local step_name="$1"
     if [ -f "$PROGRESS_FILE" ]; then
@@ -77,7 +79,16 @@ mark_step_completed() {
     save_config "${step_name}_completed_at" "$(date '+%Y-%m-%d %H:%M:%S')"
 }
 
-# Function to check if step is completed
+# Function to force re-initialize a step (remove from progress)
+force_reinitialize_step() {
+    local step_name="$1"
+    if [ -f "$PROGRESS_FILE" ]; then
+        sed -i "/^$step_name$/d" "$PROGRESS_FILE" 2>/dev/null || true
+        echo "✓ Step '$step_name' marked for re-initialization"
+    fi
+}
+
+# Function to prompt for input
 prompt_for_input() {
     local prompt_message="$1"
     local var_name="$2"
@@ -103,6 +114,11 @@ prompt_for_input() {
 # Function to run command as target user
 run_as_user() {
     sudo -u $SCRIPT_USER "$@"
+}
+
+# Function to run command as target user with home directory
+run_as_user_home() {
+    sudo -u $SCRIPT_USER -H "$@"
 }
 
 # Function to check and start container if needed
@@ -146,14 +162,8 @@ check_and_start_container() {
         fi
     fi
 }
-run_as_user_home() {
-    sudo -u $SCRIPT_USER -H "$@"
-}
 
-# Function to run command as target user with home directory
-run_as_user_home() {
-    sudo -u $SCRIPT_USER -H "$@"
-}
+# Function to get environment variables
 get_env_vars() {
     echo "Loading environment variables..."
 
@@ -162,7 +172,8 @@ get_env_vars() {
         KIWI_ENC_PASSWORD=$(load_config "KIWI_ENC_PASSWORD")
         echo "Using saved KIWI_ENC_PASSWORD"
     else
-        prompt_for_input "Enter KIWI_ENC_PASSWORD" "KIWI_ENC_PASSWORD" "true" "KIWI_ENC_PASSWORD"
+        prompt_for_input "Enter KIWI_ENC_PASSWORD" "KIWI_ENC_PASSWORD" "true"
+        save_config "KIWI_ENC_PASSWORD" "$KIWI_ENC_PASSWORD"
     fi
 
     # Load GROK_API_KEY
@@ -170,14 +181,12 @@ get_env_vars() {
         GROK_API_KEY=$(load_config "GROK_API_KEY")
         echo "Using saved GROK_API_KEY"
     else
-        prompt_for_input "Enter GROK_API_KEY" "GROK_API_KEY" "true" "GROK_API_KEY"
+        prompt_for_input "Enter GROK_API_KEY" "GROK_API_KEY" "true"
+        save_config "GROK_API_KEY" "$GROK_API_KEY"
     fi
 }
 
-# Get environment variables
-get_env_vars
-
-# Get database passwords
+# Function to get database passwords
 get_db_passwords() {
     echo "Loading database and service configurations..."
 
@@ -186,7 +195,8 @@ get_db_passwords() {
         MYSQL_ROOT_PASSWORD=$(load_config "MYSQL_ROOT_PASSWORD")
         echo "Using saved MySQL root password"
     else
-        prompt_for_input "Enter MySQL root password" "MYSQL_ROOT_PASSWORD" "true" "MYSQL_ROOT_PASSWORD"
+        prompt_for_input "Enter MySQL root password" "MYSQL_ROOT_PASSWORD" "true"
+        save_config "MYSQL_ROOT_PASSWORD" "$MYSQL_ROOT_PASSWORD"
     fi
 
     # Load Redis password
@@ -194,7 +204,8 @@ get_db_passwords() {
         REDIS_PASSWORD=$(load_config "REDIS_PASSWORD")
         echo "Using saved Redis password"
     else
-        prompt_for_input "Enter Redis password" "REDIS_PASSWORD" "true" "REDIS_PASSWORD"
+        prompt_for_input "Enter Redis password" "REDIS_PASSWORD" "true"
+        save_config "REDIS_PASSWORD" "$REDIS_PASSWORD"
     fi
 
     # Load FastDFS hostname
@@ -202,7 +213,8 @@ get_db_passwords() {
         FASTDFS_HOSTNAME=$(load_config "FASTDFS_HOSTNAME")
         echo "Using saved FastDFS hostname: $FASTDFS_HOSTNAME"
     else
-        prompt_for_input "Enter FastDFS hostname (e.g., kiwi-fastdfs)" "FASTDFS_HOSTNAME" "false" "FASTDFS_HOSTNAME"
+        prompt_for_input "Enter FastDFS hostname (e.g., kiwi-fastdfs)" "FASTDFS_HOSTNAME" "false"
+        save_config "FASTDFS_HOSTNAME" "$FASTDFS_HOSTNAME"
     fi
 
     # Load Elasticsearch root password
@@ -210,7 +222,8 @@ get_db_passwords() {
         ES_ROOT_PASSWORD=$(load_config "ES_ROOT_PASSWORD")
         echo "Using saved Elasticsearch root password"
     else
-        prompt_for_input "Enter Elasticsearch root password" "ES_ROOT_PASSWORD" "true" "ES_ROOT_PASSWORD"
+        prompt_for_input "Enter Elasticsearch root password" "ES_ROOT_PASSWORD" "true"
+        save_config "ES_ROOT_PASSWORD" "$ES_ROOT_PASSWORD"
     fi
 
     # Load Elasticsearch username
@@ -218,7 +231,8 @@ get_db_passwords() {
         ES_USER_NAME=$(load_config "ES_USER_NAME")
         echo "Using saved Elasticsearch username: $ES_USER_NAME"
     else
-        prompt_for_input "Enter Elasticsearch additional username" "ES_USER_NAME" "false" "ES_USER_NAME"
+        prompt_for_input "Enter Elasticsearch additional username" "ES_USER_NAME" "false"
+        save_config "ES_USER_NAME" "$ES_USER_NAME"
     fi
 
     # Load Elasticsearch user password
@@ -226,11 +240,220 @@ get_db_passwords() {
         ES_USER_PASSWORD=$(load_config "ES_USER_PASSWORD")
         echo "Using saved Elasticsearch user password"
     else
-        prompt_for_input "Enter Elasticsearch additional user password" "ES_USER_PASSWORD" "true" "ES_USER_PASSWORD"
+        prompt_for_input "Enter Elasticsearch additional user password" "ES_USER_PASSWORD" "true"
+        save_config "ES_USER_PASSWORD" "$ES_USER_PASSWORD"
     fi
 }
 
+# Function to show step selection menu
+show_step_menu() {
+    echo
+    echo "=================================="
+    echo "STEP SELECTION MENU"
+    echo "=================================="
+    echo "Choose setup mode:"
+    echo "0. Full automatic setup (default)"
+    echo "1. Select specific steps to re-initialize"
+    echo "2. Show step status and exit"
+    echo
+    read -p "Enter your choice (0-2) [default: 0]: " SETUP_MODE
+
+    # Default to 0 if empty
+    SETUP_MODE=${SETUP_MODE:-0}
+
+    case $SETUP_MODE in
+        1)
+            select_steps_to_reinitialize
+            ;;
+        2)
+            show_step_status
+            exit 0
+            ;;
+        0)
+            echo "Proceeding with full automatic setup..."
+            ;;
+        *)
+            echo "Invalid choice. Proceeding with full automatic setup..."
+            ;;
+    esac
+}
+
+# Function to select steps to re-initialize
+select_steps_to_reinitialize() {
+    echo
+    echo "=================================="
+    echo "SELECT STEPS TO RE-INITIALIZE"
+    echo "=================================="
+    echo "Available steps:"
+    echo " 1. system_update           - System update and package installations"
+    echo " 2. docker_install          - Install Docker"
+    echo " 3. docker_setup            - Setup Docker alias and test"
+    echo " 4. docker_cleanup          - Clean Docker system"
+    echo " 5. docker_compose_install  - Install Docker Compose"
+    echo " 6. python_install          - Install Python and other packages"
+    echo " 7. directories_created     - Create directory structure"
+    echo " 8. git_setup               - Clone and setup Git repository"
+    echo " 9. hosts_configured        - Configure hosts file"
+    echo "10. env_vars_setup          - Setup environment variables"
+    echo "11. ytdlp_download          - Download yt-dlp"
+    echo "12. mysql_setup             - Setup MySQL"
+    echo "13. redis_setup             - Setup Redis"
+    echo "14. rabbitmq_setup          - Setup RabbitMQ"
+    echo "15. fastdfs_setup           - Setup FastDFS"
+    echo "16. maven_lib_install       - Maven library installation"
+    echo "17. deployment_setup        - Setup deployment script"
+    echo "18. elasticsearch_setup     - Setup Elasticsearch"
+    echo "19. ik_tokenizer_install    - Install IK Tokenizer"
+    echo "20. nginx_ui_setup          - Setup Nginx and UI"
+    echo "21. ALL                     - Re-initialize all steps"
+    echo
+    echo "Enter step numbers separated by spaces (e.g., '1 3 12' or 'ALL'):"
+    read -p "Steps to re-initialize: " SELECTED_STEPS
+
+    if [ -z "$SELECTED_STEPS" ]; then
+        echo "No steps selected. Proceeding with normal flow..."
+        return
+    fi
+
+    # Array of all step names
+    declare -a STEP_NAMES=(
+        "system_update"
+        "docker_install"
+        "docker_setup"
+        "docker_cleanup"
+        "docker_compose_install"
+        "python_install"
+        "directories_created"
+        "git_setup"
+        "hosts_configured"
+        "env_vars_setup"
+        "ytdlp_download"
+        "mysql_setup"
+        "redis_setup"
+        "rabbitmq_setup"
+        "fastdfs_setup"
+        "maven_lib_install"
+        "deployment_setup"
+        "elasticsearch_setup"
+        "ik_tokenizer_install"
+        "nginx_ui_setup"
+    )
+
+    if [ "$SELECTED_STEPS" = "ALL" ] || [ "$SELECTED_STEPS" = "21" ]; then
+        echo "Re-initializing ALL steps..."
+        for step in "${STEP_NAMES[@]}"; do
+            force_reinitialize_step "$step"
+        done
+    else
+        for num in $SELECTED_STEPS; do
+            if [[ "$num" =~ ^[0-9]+$ ]] && [ "$num" -ge 1 ] && [ "$num" -le 20 ]; then
+                step_index=$((num - 1))
+                step_name="${STEP_NAMES[$step_index]}"
+                force_reinitialize_step "$step_name"
+            else
+                echo "Warning: Invalid step number '$num' (valid range: 1-20)"
+            fi
+        done
+    fi
+
+    echo
+    echo "Selected steps have been marked for re-initialization."
+    echo "Proceeding with setup..."
+}
+
+# Function to show step status
+show_step_status() {
+    echo
+    echo "=================================="
+    echo "CURRENT STEP STATUS"
+    echo "=================================="
+
+    declare -a STEP_NAMES=(
+        "system_update"
+        "docker_install"
+        "docker_setup"
+        "docker_cleanup"
+        "docker_compose_install"
+        "python_install"
+        "directories_created"
+        "git_setup"
+        "hosts_configured"
+        "env_vars_setup"
+        "ytdlp_download"
+        "mysql_setup"
+        "redis_setup"
+        "rabbitmq_setup"
+        "fastdfs_setup"
+        "maven_lib_install"
+        "deployment_setup"
+        "elasticsearch_setup"
+        "ik_tokenizer_install"
+        "nginx_ui_setup"
+    )
+
+    declare -a STEP_DESCRIPTIONS=(
+        "System update and package installations"
+        "Install Docker"
+        "Setup Docker alias and test"
+        "Clean Docker system"
+        "Install Docker Compose"
+        "Install Python and other packages"
+        "Create directory structure"
+        "Clone and setup Git repository"
+        "Configure hosts file"
+        "Setup environment variables"
+        "Download yt-dlp"
+        "Setup MySQL"
+        "Setup Redis"
+        "Setup RabbitMQ"
+        "Setup FastDFS"
+        "Maven library installation"
+        "Setup deployment script"
+        "Setup Elasticsearch"
+        "Install IK Tokenizer"
+        "Setup Nginx and UI"
+    )
+
+    echo "Step Status Summary:"
+    echo "==================="
+
+    completed_count=0
+    total_count=${#STEP_NAMES[@]}
+
+    for i in "${!STEP_NAMES[@]}"; do
+        step_name="${STEP_NAMES[$i]}"
+        step_desc="${STEP_DESCRIPTIONS[$i]}"
+        step_num=$((i + 1))
+
+        if is_step_completed "$step_name"; then
+            status="✓ COMPLETED"
+            completed_time=$(load_config "${step_name}_completed_at")
+            if [ -n "$completed_time" ]; then
+                status="$status ($completed_time)"
+            fi
+            ((completed_count++))
+        else
+            status="✗ PENDING"
+        fi
+
+        printf "%2d. %-25s %s\n" "$step_num" "$step_name" "$status"
+        printf "    %s\n" "$step_desc"
+        echo
+    done
+
+    echo "=================================="
+    echo "Progress: $completed_count/$total_count steps completed"
+    echo "Progress file: $PROGRESS_FILE"
+    echo "Config file: $CONFIG_FILE"
+    echo "=================================="
+}
+
+# Get environment variables and database passwords first
+get_env_vars
 get_db_passwords
+
+# Show step selection menu
+show_step_menu
 
 echo
 echo "Starting setup process..."
@@ -542,18 +765,6 @@ if ! is_step_completed "env_vars_setup"; then
     # Record environment variables setup
     save_config "env_vars_added_to_bashrc" "KIWI_ENC_PASSWORD, GROK_API_KEY, DB_IP, MYSQL_ROOT_PASSWORD, REDIS_PASSWORD, FASTDFS_HOSTNAME, ES_ROOT_PASSWORD, ES_USER_NAME, ES_USER_PASSWORD"
     save_config "bashrc_location" "$SCRIPT_HOME/.bashrc"
-
-    # Also save all the environment variables to our persistent config for future use
-    # This ensures they're saved immediately after first input and never asked again
-    save_config "KIWI_ENC_PASSWORD" "$KIWI_ENC_PASSWORD"
-    save_config "GROK_API_KEY" "$GROK_API_KEY"
-    save_config "DB_IP" "127.0.0.1"
-    save_config "MYSQL_ROOT_PASSWORD" "$MYSQL_ROOT_PASSWORD"
-    save_config "REDIS_PASSWORD" "$REDIS_PASSWORD"
-    save_config "FASTDFS_HOSTNAME" "$FASTDFS_HOSTNAME"
-    save_config "ES_ROOT_PASSWORD" "$ES_ROOT_PASSWORD"
-    save_config "ES_USER_NAME" "$ES_USER_NAME"
-    save_config "ES_USER_PASSWORD" "$ES_USER_PASSWORD"
 
     echo "Environment variables added to .bashrc and saved to persistent configuration."
 
@@ -963,6 +1174,9 @@ echo "Available shortcuts:"
 echo "  $SCRIPT_HOME/easy-deploy     - Deploy Kiwi services"
 echo "  $SCRIPT_HOME/easy-stop       - Stop all services"
 echo "  $SCRIPT_HOME/easy-deploy-ui  - Deploy UI"
+echo "  $SCRIPT_HOME/easy-check      - Check container status"
+echo "  $SCRIPT_HOME/easy-setup      - Re-run setup"
+echo "  $SCRIPT_HOME/easy-clean-setup - Clean and re-setup"
 echo
 echo "Environment variables set:"
 echo "  KIWI_ENC_PASSWORD = [HIDDEN]"
@@ -983,7 +1197,7 @@ echo "4. Configuration is saved in: $CONFIG_FILE"
 echo "5. To reset progress: rm $PROGRESS_FILE"
 echo "6. To reset saved inputs: rm $CONFIG_FILE"
 echo "7. To reset everything: rm $PROGRESS_FILE $CONFIG_FILE"
-echo
+echo "8. To re-run specific steps: sudo ./$(basename $0) and choose option 1"
 echo
 echo "CONTAINER STATUS CHECK:"
 echo "======================"
@@ -1002,12 +1216,27 @@ echo "Fetching container lists..."
 RUNNING_CONTAINERS=$(docker ps --format '{{.Names}}' 2>/dev/null)
 ALL_CONTAINERS=$(docker ps -a --format '{{.Names}}' 2>/dev/null)
 
-echo "DEBUG: Running containers list:"
-echo "[$RUNNING_CONTAINERS]"
-echo "DEBUG: All containers list:"
-echo "[$ALL_CONTAINERS]"
-echo
+for container in "${CONTAINERS[@]}"; do
+    if echo "$ALL_CONTAINERS" | grep -q "^${container}$"; then
+        if echo "$RUNNING_CONTAINERS" | grep -q "^${container}$"; then
+            echo "✓ $container - RUNNING"
+            ((RUNNING_COUNT++))
+        else
+            echo "⚠ $container - STOPPED"
+            ((STOPPED_COUNT++))
+        fi
+    else
+        echo "✗ $container - MISSING"
+        ((MISSING_COUNT++))
+    fi
+done
 
+echo
+echo "CONTAINER SUMMARY:"
+echo "  Running: $RUNNING_COUNT/$TOTAL_COUNT"
+echo "  Stopped: $STOPPED_COUNT/$TOTAL_COUNT"
+echo "  Missing: $MISSING_COUNT/$TOTAL_COUNT"
+echo
 echo "USEFUL COMMANDS:"
 echo "  Check all containers:     docker ps -a"
 echo "  Check running only:       docker ps"
@@ -1015,6 +1244,8 @@ echo "  View container logs:      docker logs <container-name>"
 echo "  Start stopped container:  docker start <container-name>"
 echo "  Stop running container:   docker stop <container-name>"
 echo "  Restart container:        docker restart <container-name>"
+echo
+echo "SERVICES:"
 echo "- MySQL: Container 'kiwi-mysql' on port 3306"
 echo "- Redis: Container 'kiwi-redis' on port 6379"
 echo "- RabbitMQ: Container 'kiwi-rabbit' with management UI on port 15672"
@@ -1029,6 +1260,7 @@ echo "- Kiwi UI: http://localhost:80"
 echo
 echo "To check container status: docker ps"
 echo "To view container logs: docker logs <container-name>"
+echo "To re-run this script with step selection: sudo ./$(basename $0)"
 echo "=================================="
 
 # Final step: Show Docker status

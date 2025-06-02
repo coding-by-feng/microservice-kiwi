@@ -18,13 +18,6 @@ cleanup_existing() {
 # Build images
 build_images() {
     echo "Building Docker images..."
-    cp ~/gcp-credentials.json  ~/docker/kiwi/upms/
-    cp ~/gcp-credentials.json  ~/docker/kiwi/gate/
-    cp ~/gcp-credentials.json ~/docker/kiwi/word/
-    cp ~/gcp-credentials.json ~/docker/kiwi/crawler/
-    cp ~/gcp-credentials.json  ~/docker/kiwi/ai/biz
-    cp ~/gcp-credentials.json  ~/docker/kiwi/ai/batch
-
 
     docker build -f ~/docker/kiwi/eureka/Dockerfile -t kiwi-eureka:2.0 ~/docker/kiwi/eureka/
     docker build -f ~/docker/kiwi/config/Dockerfile -t kiwi-config:2.0 ~/docker/kiwi/config/

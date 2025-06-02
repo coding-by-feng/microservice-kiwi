@@ -30,7 +30,6 @@ RUN chmod 777 yt-dlp_linux
 
 # Add application JAR file
 ADD kiwi-ai-biz-2.0.jar app.jar
-COPY gcp-credentials.json /root/gcp-credentials.json
 
 # Set the entry point
 ENTRYPOINT ["java", "-jar", "-Xmx600m", "-Duser.timezone=GMT+12", "-Dspring.application.name=kiwi-ai-batch", "-Dspring.profiles.active=prod", "-Dlogging.file.name=/logs/ai-batch.log", "/app.jar"]

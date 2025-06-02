@@ -151,6 +151,9 @@ comprehensive_sudo_check() {
     echo "=============================================="
 }
 
+# Get current working directory
+CURRENT_DIR="$(pwd)"
+
 # Exit immediately if a command exits with a non-zero status
 set -e
 
@@ -192,7 +195,7 @@ if [ "$EUID" -ne 0 ]; then
   exit 1
 fi
 
-cd ~/microservice-kiwi/ || { echo "CRITICAL ERROR: Failed to change directory to ~/microservice-kiwi/"; exit 1; }
+cd "$CURRENT_DIR/microservice-kiwi/" || { echo "CRITICAL ERROR: Failed to change directory to $CURRENT_DIR/microservice-kiwi/"; exit 1; }
 
 # Function to show help
 show_help() {
@@ -291,37 +294,37 @@ fi
 
 # Set execute permissions
 echo "Setting execute permissions for scripts..."
-chmod 777 ~/microservice-kiwi/kiwi-deploy/docker/*.sh
-chmod 777 ~/microservice-kiwi/kiwi-deploy/kiwi-ui/*.sh
+chmod 777 "$CURRENT_DIR/microservice-kiwi/kiwi-deploy/docker/"*.sh
+chmod 777 "$CURRENT_DIR/microservice-kiwi/kiwi-deploy/kiwi-ui/"*.sh
 
 # Clean log directories efficiently
 echo "Cleaning log directories..."
-rm -rf ~/docker/kiwi/eureka/logs/*
-rm -rf ~/docker/kiwi/config/logs/*
-rm -rf ~/docker/kiwi/upms/logs/*
-rm -rf ~/docker/kiwi/auth/logs/*
-rm -rf ~/docker/kiwi/gate/logs/*
-rm -rf ~/docker/kiwi/word/logs/*
-rm -rf ~/docker/kiwi/word/crawlerTmp/*
-rm -rf ~/docker/kiwi/word/bizTmp/*
-rm -rf ~/docker/kiwi/crawler/logs/*
-rm -rf ~/docker/kiwi/ai/logs/*
-rm -rf ~/docker/kiwi/ai/tmp/*
+rm -rf "$CURRENT_DIR/docker/kiwi/eureka/logs/"*
+rm -rf "$CURRENT_DIR/docker/kiwi/config/logs/"*
+rm -rf "$CURRENT_DIR/docker/kiwi/upms/logs/"*
+rm -rf "$CURRENT_DIR/docker/kiwi/auth/logs/"*
+rm -rf "$CURRENT_DIR/docker/kiwi/gate/logs/"*
+rm -rf "$CURRENT_DIR/docker/kiwi/word/logs/"*
+rm -rf "$CURRENT_DIR/docker/kiwi/word/crawlerTmp/"*
+rm -rf "$CURRENT_DIR/docker/kiwi/word/bizTmp/"*
+rm -rf "$CURRENT_DIR/docker/kiwi/crawler/logs/"*
+rm -rf "$CURRENT_DIR/docker/kiwi/ai/logs/"*
+rm -rf "$CURRENT_DIR/docker/kiwi/ai/tmp/"*
 
 # Maven build
 if [ "$SKIP_MAVEN" = false ]; then
   echo "Installing VoiceRSS TTS library..."
-  cd ~/microservice-kiwi/kiwi-common/kiwi-common-tts/lib
+  cd "$CURRENT_DIR/microservice-kiwi/kiwi-common/kiwi-common-tts/lib"
   mvn install:install-file \
       -Dfile=voicerss_tts.jar \
       -DgroupId=voicerss \
       -DartifactId=tts \
       -Dversion=2.0 \
       -Dpackaging=jar
-  cd ~/microservice-kiwi/
+  cd "$CURRENT_DIR/microservice-kiwi/"
 
   echo "Running maven build..."
-  mvn clean install -Dmaven.test.skip=true -B
+  sudo mvn clean install -Dmaven.test.skip=true -B
 else
   echo "Maven build skipped"
 fi
@@ -330,36 +333,36 @@ fi
 if [ "$SKIP_DOCKER_BUILD" = false ]; then
   echo "Moving Dockerfiles, GCP credentials and JARs..."
   echo "Copying Dockerfiles..."
-  cp -f ~/microservice-kiwi/kiwi-eureka/Dockerfile ~/docker/kiwi/eureka/
-  cp -f ~/microservice-kiwi/kiwi-config/Dockerfile ~/docker/kiwi/config/
-  cp -f ~/microservice-kiwi/kiwi-upms/kiwi-upms-biz/Dockerfile ~/docker/kiwi/upms/
-  cp -f ~/microservice-kiwi/kiwi-word/kiwi-word-biz/docker/biz/Dockerfile ~/docker/kiwi/word/biz
-  cp -f ~/microservice-kiwi/kiwi-word/kiwi-word-biz/docker/crawler/Dockerfile ~/docker/kiwi/word/crawler
-  cp -f ~/microservice-kiwi/kiwi-word/kiwi-word-crawler/Dockerfile ~/docker/kiwi/crawler/
-  cp -f ~/microservice-kiwi/kiwi-auth/Dockerfile ~/docker/kiwi/auth/
-  cp -f ~/microservice-kiwi/kiwi-gateway/Dockerfile ~/docker/kiwi/gate/
-  cp -f ~/microservice-kiwi/kiwi-ai/kiwi-ai-biz/docker/biz/Dockerfile ~/docker/kiwi/ai/biz
-  cp -f ~/microservice-kiwi/kiwi-ai/kiwi-ai-biz/docker/batch/Dockerfile ~/docker/kiwi/ai/batch
+  cp -f "$CURRENT_DIR/microservice-kiwi/kiwi-eureka/Dockerfile" "$CURRENT_DIR/docker/kiwi/eureka/"
+  cp -f "$CURRENT_DIR/microservice-kiwi/kiwi-config/Dockerfile" "$CURRENT_DIR/docker/kiwi/config/"
+  cp -f "$CURRENT_DIR/microservice-kiwi/kiwi-upms/kiwi-upms-biz/Dockerfile" "$CURRENT_DIR/docker/kiwi/upms/"
+  cp -f "$CURRENT_DIR/microservice-kiwi/kiwi-word/kiwi-word-biz/docker/biz/Dockerfile" "$CURRENT_DIR/docker/kiwi/word/biz"
+  cp -f "$CURRENT_DIR/microservice-kiwi/kiwi-word/kiwi-word-biz/docker/crawler/Dockerfile" "$CURRENT_DIR/docker/kiwi/word/crawler"
+  cp -f "$CURRENT_DIR/microservice-kiwi/kiwi-word/kiwi-word-crawler/Dockerfile" "$CURRENT_DIR/docker/kiwi/crawler/"
+  cp -f "$CURRENT_DIR/microservice-kiwi/kiwi-auth/Dockerfile" "$CURRENT_DIR/docker/kiwi/auth/"
+  cp -f "$CURRENT_DIR/microservice-kiwi/kiwi-gateway/Dockerfile" "$CURRENT_DIR/docker/kiwi/gate/"
+  cp -f "$CURRENT_DIR/microservice-kiwi/kiwi-ai/kiwi-ai-biz/docker/biz/Dockerfile" "$CURRENT_DIR/docker/kiwi/ai/biz"
+  cp -f "$CURRENT_DIR/microservice-kiwi/kiwi-ai/kiwi-ai-biz/docker/batch/Dockerfile" "$CURRENT_DIR/docker/kiwi/ai/batch"
 
   echo "Copying JAR files..."
-  cp -f ~/.m2/repository/me/fengorz/kiwi-eureka/2.0/kiwi-eureka-2.0.jar ~/docker/kiwi/eureka/
-  cp -f ~/.m2/repository/me/fengorz/kiwi-config/2.0/kiwi-config-2.0.jar ~/docker/kiwi/config/
-  cp -f ~/.m2/repository/me/fengorz/kiwi-upms-biz/2.0/kiwi-upms-biz-2.0.jar ~/docker/kiwi/upms/
-  cp -f ~/.m2/repository/me/fengorz/kiwi-auth/2.0/kiwi-auth-2.0.jar ~/docker/kiwi/auth/
-  cp -f ~/.m2/repository/me/fengorz/kiwi-gateway/2.0/kiwi-gateway-2.0.jar ~/docker/kiwi/gate/
-  cp -f ~/.m2/repository/me/fengorz/kiwi-word-biz/2.0/kiwi-word-biz-2.0.jar ~/docker/kiwi/word/
-  cp -f ~/.m2/repository/me/fengorz/kiwi-word-crawler/2.0/kiwi-word-crawler-2.0.jar ~/docker/kiwi/crawler/
-  cp -f ~/.m2/repository/me/fengorz/kiwi-ai-biz/2.0/kiwi-ai-biz-2.0.jar ~/docker/kiwi/ai/biz
-  cp -f ~/.m2/repository/me/fengorz/kiwi-ai-biz/2.0/kiwi-ai-biz-2.0.jar ~/docker/kiwi/ai/batch
+  cp -f "$HOME/.m2/repository/me/fengorz/kiwi-eureka/2.0/kiwi-eureka-2.0.jar" "$CURRENT_DIR/docker/kiwi/eureka/"
+  cp -f "$HOME/.m2/repository/me/fengorz/kiwi-config/2.0/kiwi-config-2.0.jar" "$CURRENT_DIR/docker/kiwi/config/"
+  cp -f "$HOME/.m2/repository/me/fengorz/kiwi-upms-biz/2.0/kiwi-upms-biz-2.0.jar" "$CURRENT_DIR/docker/kiwi/upms/"
+  cp -f "$HOME/.m2/repository/me/fengorz/kiwi-auth/2.0/kiwi-auth-2.0.jar" "$CURRENT_DIR/docker/kiwi/auth/"
+  cp -f "$HOME/.m2/repository/me/fengorz/kiwi-gateway/2.0/kiwi-gateway-2.0.jar" "$CURRENT_DIR/docker/kiwi/gate/"
+  cp -f "$HOME/.m2/repository/me/fengorz/kiwi-word-biz/2.0/kiwi-word-biz-2.0.jar" "$CURRENT_DIR/docker/kiwi/word/"
+  cp -f "$HOME/.m2/repository/me/fengorz/kiwi-word-crawler/2.0/kiwi-word-crawler-2.0.jar" "$CURRENT_DIR/docker/kiwi/crawler/"
+  cp -f "$HOME/.m2/repository/me/fengorz/kiwi-ai-biz/2.0/kiwi-ai-biz-2.0.jar" "$CURRENT_DIR/docker/kiwi/ai/biz"
+  cp -f "$HOME/.m2/repository/me/fengorz/kiwi-ai-biz/2.0/kiwi-ai-biz-2.0.jar" "$CURRENT_DIR/docker/kiwi/ai/batch"
 else
   echo "Dockerfile building skipped"
 fi
 
 echo "Stopping all services..."
-~/microservice-kiwi/kiwi-deploy/docker/stopAll.sh "$MODE"
+"$CURRENT_DIR/microservice-kiwi/kiwi-deploy/docker/stopAll.sh" "$MODE"
 
 echo "Starting auto deployment..."
-~/microservice-kiwi/kiwi-deploy/docker/autoDeploy.sh "$MODE"
+"$CURRENT_DIR/microservice-kiwi/kiwi-deploy/docker/autoDeploy.sh" "$MODE"
 
 # AutoCheck Service Logic - Added at the end as requested
 echo "=============================================="
@@ -369,10 +372,10 @@ echo "=============================================="
 if [ "$ENABLE_AUTO_CHECK" = true ]; then
   if ! pgrep -f "autoCheckService.sh" >/dev/null; then
     echo "Starting autoCheckService..."
-    nohup ~/microservice-kiwi/kiwi-deploy/docker/autoCheckService.sh >~/autoCheck.log 2>&1 &
+    nohup "$CURRENT_DIR/microservice-kiwi/kiwi-deploy/docker/autoCheckService.sh" >"$CURRENT_DIR/autoCheck.log" 2>&1 &
     echo "✅ AutoCheckService started successfully"
     echo "✅ AutoCheckService is now running in the background"
-    echo "📄 Log file: ~/autoCheck.log"
+    echo "📄 Log file: $CURRENT_DIR/autoCheck.log"
   else
     echo "ℹ️  AutoCheckService is already running"
     echo "✅ AutoCheckService status: ACTIVE"

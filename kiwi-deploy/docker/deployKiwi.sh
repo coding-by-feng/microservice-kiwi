@@ -313,25 +313,42 @@ rm -rf "$CURRENT_DIR/docker/kiwi/ai/tmp/"*
 
 # Maven build
 if [ "$SKIP_MAVEN" = false ]; then
+  # Get the original user's home directory
+  if [ -n "$SUDO_USER" ]; then
+    ORIGINAL_HOME=$(eval echo "~$SUDO_USER")
+  else
+    ORIGINAL_HOME="$HOME"
+  fi
+
   echo "Installing VoiceRSS TTS library..."
+  echo "Using Maven repository: $ORIGINAL_HOME/.m2"
   cd "$CURRENT_DIR/microservice-kiwi/kiwi-common/kiwi-common-tts/lib"
   mvn install:install-file \
       -Dfile=voicerss_tts.jar \
       -DgroupId=voicerss \
       -DartifactId=tts \
       -Dversion=2.0 \
-      -Dpackaging=jar
+      -Dpackaging=jar \
+      -Dmaven.repo.local="$ORIGINAL_HOME/.m2/repository"
   cd "$CURRENT_DIR/microservice-kiwi/"
 
   echo "Running maven build..."
-  sudo mvn clean install -Dmaven.test.skip=true -B
+  mvn clean install -Dmaven.test.skip=true -B -Dmaven.repo.local="$ORIGINAL_HOME/.m2/repository"
 else
   echo "Maven build skipped"
 fi
 
 # Move Dockerfiles and JARs efficiently
 if [ "$SKIP_DOCKER_BUILD" = false ]; then
+  # Get the original user's home directory for JAR files
+  if [ -n "$SUDO_USER" ]; then
+    ORIGINAL_HOME=$(eval echo "~$SUDO_USER")
+  else
+    ORIGINAL_HOME="$HOME"
+  fi
+
   echo "Moving Dockerfiles, GCP credentials and JARs..."
+  echo "Using Maven repository: $ORIGINAL_HOME/.m2"
   echo "Copying Dockerfiles..."
   cp -f "$CURRENT_DIR/microservice-kiwi/kiwi-eureka/Dockerfile" "$CURRENT_DIR/docker/kiwi/eureka/"
   cp -f "$CURRENT_DIR/microservice-kiwi/kiwi-config/Dockerfile" "$CURRENT_DIR/docker/kiwi/config/"
@@ -345,15 +362,15 @@ if [ "$SKIP_DOCKER_BUILD" = false ]; then
   cp -f "$CURRENT_DIR/microservice-kiwi/kiwi-ai/kiwi-ai-biz/docker/batch/Dockerfile" "$CURRENT_DIR/docker/kiwi/ai/batch"
 
   echo "Copying JAR files..."
-  cp -f "$HOME/.m2/repository/me/fengorz/kiwi-eureka/2.0/kiwi-eureka-2.0.jar" "$CURRENT_DIR/docker/kiwi/eureka/"
-  cp -f "$HOME/.m2/repository/me/fengorz/kiwi-config/2.0/kiwi-config-2.0.jar" "$CURRENT_DIR/docker/kiwi/config/"
-  cp -f "$HOME/.m2/repository/me/fengorz/kiwi-upms-biz/2.0/kiwi-upms-biz-2.0.jar" "$CURRENT_DIR/docker/kiwi/upms/"
-  cp -f "$HOME/.m2/repository/me/fengorz/kiwi-auth/2.0/kiwi-auth-2.0.jar" "$CURRENT_DIR/docker/kiwi/auth/"
-  cp -f "$HOME/.m2/repository/me/fengorz/kiwi-gateway/2.0/kiwi-gateway-2.0.jar" "$CURRENT_DIR/docker/kiwi/gate/"
-  cp -f "$HOME/.m2/repository/me/fengorz/kiwi-word-biz/2.0/kiwi-word-biz-2.0.jar" "$CURRENT_DIR/docker/kiwi/word/"
-  cp -f "$HOME/.m2/repository/me/fengorz/kiwi-word-crawler/2.0/kiwi-word-crawler-2.0.jar" "$CURRENT_DIR/docker/kiwi/crawler/"
-  cp -f "$HOME/.m2/repository/me/fengorz/kiwi-ai-biz/2.0/kiwi-ai-biz-2.0.jar" "$CURRENT_DIR/docker/kiwi/ai/biz"
-  cp -f "$HOME/.m2/repository/me/fengorz/kiwi-ai-biz/2.0/kiwi-ai-biz-2.0.jar" "$CURRENT_DIR/docker/kiwi/ai/batch"
+  cp -f "$ORIGINAL_HOME/.m2/repository/me/fengorz/kiwi-eureka/2.0/kiwi-eureka-2.0.jar" "$CURRENT_DIR/docker/kiwi/eureka/"
+  cp -f "$ORIGINAL_HOME/.m2/repository/me/fengorz/kiwi-config/2.0/kiwi-config-2.0.jar" "$CURRENT_DIR/docker/kiwi/config/"
+  cp -f "$ORIGINAL_HOME/.m2/repository/me/fengorz/kiwi-upms-biz/2.0/kiwi-upms-biz-2.0.jar" "$CURRENT_DIR/docker/kiwi/upms/"
+  cp -f "$ORIGINAL_HOME/.m2/repository/me/fengorz/kiwi-auth/2.0/kiwi-auth-2.0.jar" "$CURRENT_DIR/docker/kiwi/auth/"
+  cp -f "$ORIGINAL_HOME/.m2/repository/me/fengorz/kiwi-gateway/2.0/kiwi-gateway-2.0.jar" "$CURRENT_DIR/docker/kiwi/gate/"
+  cp -f "$ORIGINAL_HOME/.m2/repository/me/fengorz/kiwi-word-biz/2.0/kiwi-word-biz-2.0.jar" "$CURRENT_DIR/docker/kiwi/word/"
+  cp -f "$ORIGINAL_HOME/.m2/repository/me/fengorz/kiwi-word-crawler/2.0/kiwi-word-crawler-2.0.jar" "$CURRENT_DIR/docker/kiwi/crawler/"
+  cp -f "$ORIGINAL_HOME/.m2/repository/me/fengorz/kiwi-ai-biz/2.0/kiwi-ai-biz-2.0.jar" "$CURRENT_DIR/docker/kiwi/ai/biz"
+  cp -f "$ORIGINAL_HOME/.m2/repository/me/fengorz/kiwi-ai-biz/2.0/kiwi-ai-biz-2.0.jar" "$CURRENT_DIR/docker/kiwi/ai/batch"
 else
   echo "Dockerfile building skipped"
 fi

@@ -176,6 +176,23 @@ check_mysql_ready() {
     return $?
 }
 
+# Function to get sudo user configuration
+get_sudo_user_config() {
+    echo "Loading sudo user configuration..."
+
+    # Load sudo username
+    if has_config "SUDO_USERNAME"; then
+        SUDO_USERNAME=$(load_config "SUDO_USERNAME")
+        echo "Using saved sudo username: $SUDO_USERNAME"
+    else
+        # Default to current script user
+        DEFAULT_USER="$SCRIPT_USER"
+        read -p "Enter username to grant sudo privileges [$DEFAULT_USER]: " input_username
+        SUDO_USERNAME=${input_username:-$DEFAULT_USER}
+        save_config "SUDO_USERNAME" "$SUDO_USERNAME"
+    fi
+}
+
 # Function to get environment variables
 get_env_vars() {
     echo "Loading environment variables..."
@@ -298,28 +315,29 @@ select_steps_to_reinitialize() {
     echo "SELECT STEPS TO RE-INITIALIZE"
     echo "=================================="
     echo "Available steps:"
-    echo " 1. system_update           - System update and package installations"
-    echo " 2. docker_install          - Install Docker"
-    echo " 3. docker_setup            - Setup Docker alias and test"
-    echo " 4. docker_cleanup          - Clean Docker system"
-    echo " 5. docker_compose_install  - Install Docker Compose"
-    echo " 6. python_install          - Install Python and other packages"
-    echo " 7. maven_config            - Configure Maven settings"
-    echo " 8. directories_created     - Create directory structure"
-    echo " 9. git_setup               - Clone and setup Git repository"
-    echo "10. hosts_configured        - Configure hosts file"
-    echo "11. env_vars_setup          - Setup environment variables"
-    echo "12. ytdlp_download          - Download yt-dlp"
-    echo "13. mysql_setup             - Setup MySQL"
-    echo "14. redis_setup             - Setup Redis"
-    echo "15. rabbitmq_setup          - Setup RabbitMQ"
-    echo "16. fastdfs_setup           - Setup FastDFS"
-    echo "17. maven_lib_install       - Maven library installation"
-    echo "18. deployment_setup        - Setup deployment script"
-    echo "19. elasticsearch_setup     - Setup Elasticsearch"
-    echo "20. ik_tokenizer_install    - Install IK Tokenizer"
-    echo "21. nginx_ui_setup          - Setup Nginx and UI"
-    echo "22. ALL                     - Re-initialize all steps"
+    echo " 1. sudo_user_setup         - Configure sudo privileges for user"
+    echo " 2. system_update           - System update and package installations"
+    echo " 3. docker_install          - Install Docker"
+    echo " 4. docker_setup            - Setup Docker alias and test"
+    echo " 5. docker_cleanup          - Clean Docker system"
+    echo " 6. docker_compose_install  - Install Docker Compose"
+    echo " 7. python_install          - Install Python and other packages"
+    echo " 8. maven_config            - Configure Maven settings"
+    echo " 9. directories_created     - Create directory structure"
+    echo "10. git_setup               - Clone and setup Git repository"
+    echo "11. hosts_configured        - Configure hosts file"
+    echo "12. env_vars_setup          - Setup environment variables"
+    echo "13. ytdlp_download          - Download yt-dlp"
+    echo "14. mysql_setup             - Setup MySQL"
+    echo "15. redis_setup             - Setup Redis"
+    echo "16. rabbitmq_setup          - Setup RabbitMQ"
+    echo "17. fastdfs_setup           - Setup FastDFS"
+    echo "18. maven_lib_install       - Maven library installation"
+    echo "19. deployment_setup        - Setup deployment script"
+    echo "20. elasticsearch_setup     - Setup Elasticsearch"
+    echo "21. ik_tokenizer_install    - Install IK Tokenizer"
+    echo "22. nginx_ui_setup          - Setup Nginx and UI"
+    echo "23. ALL                     - Re-initialize all steps"
     echo
     echo "Enter step numbers separated by spaces (e.g., '1 3 12' or 'ALL'):"
     read -p "Steps to re-initialize: " SELECTED_STEPS
@@ -331,6 +349,7 @@ select_steps_to_reinitialize() {
 
     # Array of all step names
     declare -a STEP_NAMES=(
+        "sudo_user_setup"
         "system_update"
         "docker_install"
         "docker_setup"
@@ -354,19 +373,19 @@ select_steps_to_reinitialize() {
         "nginx_ui_setup"
     )
 
-    if [ "$SELECTED_STEPS" = "ALL" ] || [ "$SELECTED_STEPS" = "22" ]; then
+    if [ "$SELECTED_STEPS" = "ALL" ] || [ "$SELECTED_STEPS" = "23" ]; then
         echo "Re-initializing ALL steps..."
         for step in "${STEP_NAMES[@]}"; do
             force_reinitialize_step "$step"
         done
     else
         for num in $SELECTED_STEPS; do
-            if [[ "$num" =~ ^[0-9]+$ ]] && [ "$num" -ge 1 ] && [ "$num" -le 21 ]; then
+            if [[ "$num" =~ ^[0-9]+$ ]] && [ "$num" -ge 1 ] && [ "$num" -le 22 ]; then
                 step_index=$((num - 1))
                 step_name="${STEP_NAMES[$step_index]}"
                 force_reinitialize_step "$step_name"
             else
-                echo "Warning: Invalid step number '$num' (valid range: 1-21)"
+                echo "Warning: Invalid step number '$num' (valid range: 1-22)"
             fi
         done
     fi
@@ -384,6 +403,7 @@ show_step_status() {
     echo "=================================="
 
     declare -a STEP_NAMES=(
+        "sudo_user_setup"
         "system_update"
         "docker_install"
         "docker_setup"
@@ -408,6 +428,7 @@ show_step_status() {
     )
 
     declare -a STEP_DESCRIPTIONS=(
+        "Configure sudo privileges for user"
         "System update and package installations"
         "Install Docker"
         "Setup Docker alias and test"
@@ -465,7 +486,10 @@ show_step_status() {
     echo "=================================="
 }
 
-# Get environment variables and database passwords first
+# Get sudo user configuration first
+get_sudo_user_config
+
+# Get environment variables and database passwords
 get_env_vars
 get_db_passwords
 
@@ -475,9 +499,77 @@ show_step_menu
 echo
 echo "Starting setup process..."
 
-# Step 1: System update and package installations
+# Step 1: Configure sudo privileges for user
+if ! is_step_completed "sudo_user_setup"; then
+    echo "Step 1: Configuring sudo privileges for user: $SUDO_USERNAME"
+
+    # Check if user exists
+    if ! id "$SUDO_USERNAME" >/dev/null 2>&1; then
+        echo "Error: User '$SUDO_USERNAME' does not exist on this system"
+        echo "Available users:"
+        getent passwd | grep -E '/home|/Users' | cut -d: -f1 | head -10
+        echo "Please create the user first or specify a different username"
+        exit 1
+    fi
+
+    # Check if user is already in sudo group
+    if groups "$SUDO_USERNAME" | grep -q "\bsudo\b"; then
+        echo "User '$SUDO_USERNAME' is already in the sudo group"
+        save_config "sudo_setup_method" "already_in_sudo_group"
+    else
+        echo "Adding user '$SUDO_USERNAME' to sudo group..."
+        usermod -aG sudo "$SUDO_USERNAME"
+        save_config "sudo_setup_method" "added_to_sudo_group"
+    fi
+
+    # Also add specific sudoers entry for extra safety
+    SUDOERS_LINE="$SUDO_USERNAME ALL=(ALL:ALL) ALL"
+
+    # Check if entry already exists
+    if sudo grep -Fxq "$SUDOERS_LINE" /etc/sudoers; then
+        echo "Sudoers entry already exists for user '$SUDO_USERNAME'"
+        save_config "sudoers_entry_added" "already_exists"
+    else
+        echo "Adding sudoers entry for user '$SUDO_USERNAME'..."
+
+        # Create a temporary sudoers file to validate syntax
+        TEMP_SUDOERS=$(mktemp)
+        cp /etc/sudoers "$TEMP_SUDOERS"
+        echo "$SUDOERS_LINE" >> "$TEMP_SUDOERS"
+
+        # Validate the sudoers file
+        if visudo -c -f "$TEMP_SUDOERS" >/dev/null 2>&1; then
+            echo "$SUDOERS_LINE" >> /etc/sudoers
+            echo "✓ Sudoers entry added successfully"
+            save_config "sudoers_entry_added" "success"
+        else
+            echo "✗ Error: Invalid sudoers syntax, entry not added"
+            save_config "sudoers_entry_added" "failed_validation"
+        fi
+
+        # Clean up temporary file
+        rm -f "$TEMP_SUDOERS"
+    fi
+
+    # Record sudo configuration details
+    save_config "sudo_username_configured" "$SUDO_USERNAME"
+    save_config "sudo_groups" "$(groups $SUDO_USERNAME 2>/dev/null || echo 'unknown')"
+
+    echo "✓ Sudo privileges configured for user: $SUDO_USERNAME"
+    echo "  - Added to sudo group: $(groups $SUDO_USERNAME | grep -q sudo && echo 'Yes' || echo 'No')"
+    echo "  - Sudoers entry added: $(load_config 'sudoers_entry_added')"
+    echo "  - User may need to log out and back in for changes to take effect"
+
+    mark_step_completed "sudo_user_setup"
+else
+    echo "Step 1: Sudo user setup already completed, skipping..."
+    echo "  - Configured user: $(load_config 'sudo_username_configured')"
+    echo "  - Setup method: $(load_config 'sudo_setup_method')"
+fi
+
+# Step 2: System update and package installations
 if ! is_step_completed "system_update"; then
-    echo "Step 1: Updating system..."
+    echo "Step 2: Updating system..."
     apt update
 
     # Record successful completion
@@ -486,12 +578,12 @@ if ! is_step_completed "system_update"; then
 
     mark_step_completed "system_update"
 else
-    echo "Step 1: System update already completed, skipping..."
+    echo "Step 2: System update already completed, skipping..."
 fi
 
-# Step 2: Install Docker
+# Step 3: Install Docker
 if ! is_step_completed "docker_install"; then
-    echo "Step 2: Installing Docker..."
+    echo "Step 3: Installing Docker..."
     curl -fsSL https://get.docker.com -o get-docker.sh
     sh get-docker.sh
     rm get-docker.sh
@@ -511,12 +603,12 @@ if ! is_step_completed "docker_install"; then
 
     mark_step_completed "docker_install"
 else
-    echo "Step 2: Docker already installed, skipping..."
+    echo "Step 3: Docker already installed, skipping..."
 fi
 
-# Step 3: Setup Docker alias and test
+# Step 4: Setup Docker alias and test
 if ! is_step_completed "docker_setup"; then
-    echo "Step 3: Setting up Docker..."
+    echo "Step 4: Setting up Docker..."
 
     # Setup Docker alias (using podman if needed)
     if ! run_as_user grep -q "alias docker='podman'" "$SCRIPT_HOME/.bashrc" 2>/dev/null; then
@@ -538,12 +630,12 @@ if ! is_step_completed "docker_setup"; then
 
     mark_step_completed "docker_setup"
 else
-    echo "Step 3: Docker setup already completed, skipping..."
+    echo "Step 4: Docker setup already completed, skipping..."
 fi
 
-# Step 3.5: Clean Docker system (after install or skip)
+# Step 5: Clean Docker system (after install or skip)
 if ! is_step_completed "docker_cleanup"; then
-    echo "Step 3.5: Cleaning Docker system..."
+    echo "Step 5: Cleaning Docker system..."
 
     # Check if Docker is accessible
     if docker version >/dev/null 2>&1; then
@@ -571,12 +663,12 @@ if ! is_step_completed "docker_cleanup"; then
 
     mark_step_completed "docker_cleanup"
 else
-    echo "Step 3.5: Docker cleanup already completed, skipping..."
+    echo "Step 5: Docker cleanup already completed, skipping..."
 fi
 
-# Step 4: Install Docker Compose
+# Step 6: Install Docker Compose
 if ! is_step_completed "docker_compose_install"; then
-    echo "Step 4: Installing Docker Compose..."
+    echo "Step 6: Installing Docker Compose..."
 
     # Detect architecture
     ARCH=$(uname -m)
@@ -608,12 +700,12 @@ if ! is_step_completed "docker_compose_install"; then
 
     mark_step_completed "docker_compose_install"
 else
-    echo "Step 4: Docker Compose already installed, skipping..."
+    echo "Step 6: Docker Compose already installed, skipping..."
 fi
 
-# Step 5: Install Python and other packages
+# Step 7: Install Python and other packages
 if ! is_step_completed "python_install"; then
-    echo "Step 5: Installing Python and other packages..."
+    echo "Step 7: Installing Python and other packages..."
     apt install python3 python3-pip python3-venv python3-full podman-compose openjdk-17-jdk maven git -y
 
     # Record installed versions
@@ -632,24 +724,24 @@ if ! is_step_completed "python_install"; then
 
     mark_step_completed "python_install"
 else
-    echo "Step 5: Python and packages already installed, skipping..."
+    echo "Step 7: Python and packages already installed, skipping..."
 fi
 
-# Step 6: Configure Maven settings
+# Step 8: Configure Maven settings
 if ! is_step_completed "maven_config"; then
-    echo "Step 6: Configuring Maven settings..."
+    echo "Step 8: Configuring Maven settings..."
 
     # Create .m2 directory if it doesn't exist
     run_as_user mkdir -p "$SCRIPT_HOME/.m2"
 
-    # Create minimal Maven settings.xml
+    # Create minimal Maven settings.xml,
     run_as_user tee "$SCRIPT_HOME/.m2/settings.xml" > /dev/null << 'EOF'
 <?xml version="1.0" encoding="UTF-8"?>
 <settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0
                               http://maven.apache.org/xsd/settings-1.0.0.xsd">
-    <localRepository>${user.home}/.m2/repository</localRepository>
+    <localRepository>~/.m2/repository</localRepository>
 </settings>
 EOF
 
@@ -662,12 +754,12 @@ EOF
 
     mark_step_completed "maven_config"
 else
-    echo "Step 6: Maven already configured, skipping..."
+    echo "Step 8: Maven already configured, skipping..."
 fi
 
-# Step 7: Create directory structure
+# Step 9: Create directory structure
 if ! is_step_completed "directories_created"; then
-    echo "Step 7: Creating directory structure..."
+    echo "Step 9: Creating directory structure..."
     cd "$SCRIPT_HOME"
 
     run_as_user mkdir -p microservice-kiwi docker storage_data store_path tracker_data
@@ -687,12 +779,12 @@ if ! is_step_completed "directories_created"; then
 
     mark_step_completed "directories_created"
 else
-    echo "Step 7: Directory structure already created, skipping..."
+    echo "Step 9: Directory structure already created, skipping..."
 fi
 
-# Step 8: Clone and setup Git repository
+# Step 10: Clone and setup Git repository
 if ! is_step_completed "git_setup"; then
-    echo "Step 8: Setting up Git repository..."
+    echo "Step 10: Setting up Git repository..."
     cd "$SCRIPT_HOME/microservice-kiwi/"
 
     # Check for corrupted git index and fix it
@@ -750,12 +842,12 @@ if ! is_step_completed "git_setup"; then
 
     mark_step_completed "git_setup"
 else
-    echo "Step 8: Git repository already set up, skipping..."
+    echo "Step 10: Git repository already set up, skipping..."
 fi
 
-# Step 9: Configure hosts file
+# Step 11: Configure hosts file
 if ! is_step_completed "hosts_configured"; then
-    echo "Step 9: Configuring hosts file..."
+    echo "Step 11: Configuring hosts file..."
 
     # Check if hosts entries already exist
     if ! grep -q "fastdfs.fengorz.me" /etc/hosts; then
@@ -780,12 +872,12 @@ EOF
 
     mark_step_completed "hosts_configured"
 else
-    echo "Step 9: Hosts file already configured, skipping..."
+    echo "Step 11: Hosts file already configured, skipping..."
 fi
 
-# Step 10: Setup environment variables
+# Step 12: Setup environment variables
 if ! is_step_completed "env_vars_setup"; then
-    echo "Step 10: Setting up environment variables..."
+    echo "Step 12: Setting up environment variables..."
 
     # Remove old entries if they exist
     run_as_user sed -i '/export KIWI_ENC_PASSWORD=/d' "$SCRIPT_HOME/.bashrc" 2>/dev/null || true
@@ -817,12 +909,12 @@ if ! is_step_completed "env_vars_setup"; then
 
     mark_step_completed "env_vars_setup"
 else
-    echo "Step 10: Environment variables already set up, skipping..."
+    echo "Step 12: Environment variables already set up, skipping..."
 fi
 
-# Step 11: Download yt-dlp
+# Step 13: Download yt-dlp
 if ! is_step_completed "ytdlp_download"; then
-    echo "Step 11: Downloading yt-dlp..."
+    echo "Step 13: Downloading yt-dlp..."
 
     wget https://github.com/yt-dlp/yt-dlp/releases/download/2025.04.30/yt-dlp_linux -O /tmp/yt-dlp_linux
     chmod +x /tmp/yt-dlp_linux
@@ -834,12 +926,12 @@ if ! is_step_completed "ytdlp_download"; then
 
     mark_step_completed "ytdlp_download"
 else
-    echo "Step 11: yt-dlp already downloaded, skipping..."
+    echo "Step 13: yt-dlp already downloaded, skipping..."
 fi
 
-# Step 12: Setup MySQL
+# Step 14: Setup MySQL
 if ! is_step_completed "mysql_setup"; then
-    echo "Step 12: Setting up MySQL..."
+    echo "Step 14: Setting up MySQL..."
 
     # Check if port 3306 is already in use
     if netstat -tlnp | grep -q ":3306 "; then
@@ -994,7 +1086,7 @@ if ! is_step_completed "mysql_setup"; then
 
     mark_step_completed "mysql_setup"
 else
-    echo "Step 12: MySQL already set up, skipping..."
+    echo "Step 14: MySQL already set up, skipping..."
     check_and_start_container "kiwi-mysql" "mysql_setup"
 
     # Check if backup restoration is needed (even on skip)
@@ -1036,9 +1128,9 @@ else
     fi
 fi
 
-# Step 13: Setup Redis
+# Step 15: Setup Redis
 if ! is_step_completed "redis_setup"; then
-    echo "Step 13: Setting up Redis..."
+    echo "Step 15: Setting up Redis..."
 
     # Pull Redis image
     docker pull redis:latest
@@ -1055,13 +1147,13 @@ if ! is_step_completed "redis_setup"; then
 
     mark_step_completed "redis_setup"
 else
-    echo "Step 13: Redis already set up, skipping..."
+    echo "Step 15: Redis already set up, skipping..."
     check_and_start_container "kiwi-redis" "redis_setup"
 fi
 
-# Step 14: Setup RabbitMQ
+# Step 16: Setup RabbitMQ
 if ! is_step_completed "rabbitmq_setup"; then
-    echo "Step 14: Setting up RabbitMQ..."
+    echo "Step 16: Setting up RabbitMQ..."
 
     # Pull RabbitMQ image
     docker pull rabbitmq:management
@@ -1083,13 +1175,13 @@ if ! is_step_completed "rabbitmq_setup"; then
 
     mark_step_completed "rabbitmq_setup"
 else
-    echo "Step 14: RabbitMQ already set up, skipping..."
+    echo "Step 16: RabbitMQ already set up, skipping..."
     check_and_start_container "kiwi-rabbit" "rabbitmq_setup"
 fi
 
-# Step 15: Setup FastDFS
+# Step 17: Setup FastDFS
 if ! is_step_completed "fastdfs_setup"; then
-    echo "Step 15: Setting up FastDFS..."
+    echo "Step 17: Setting up FastDFS..."
 
     # Pull FastDFS image
     docker pull fyclinux/fastdfs-arm64:6.04
@@ -1133,14 +1225,14 @@ if ! is_step_completed "fastdfs_setup"; then
 
     mark_step_completed "fastdfs_setup"
 else
-    echo "Step 15: FastDFS already set up, skipping..."
+    echo "Step 17: FastDFS already set up, skipping..."
     check_and_start_container "tracker" "fastdfs_setup"
     check_and_start_container "storage" "fastdfs_setup"
 fi
 
-# Step 16: Maven library installation
+# Step 18: Maven library installation
 if ! is_step_completed "maven_lib_install"; then
-    echo "Step 16: Installing Maven library..."
+    echo "Step 18: Installing Maven library..."
 
     cd "$SCRIPT_HOME/microservice-kiwi/kiwi-common/kiwi-common-tts/lib"
 
@@ -1173,12 +1265,12 @@ if ! is_step_completed "maven_lib_install"; then
 
     mark_step_completed "maven_lib_install"
 else
-    echo "Step 16: Maven library already installed, skipping..."
+    echo "Step 18: Maven library already installed, skipping..."
 fi
 
-# Step 17: Setup deployment script
+# Step 19: Setup deployment script
 if ! is_step_completed "deployment_setup"; then
-    echo "Step 17: Setting up deployment..."
+    echo "Step 19: Setting up deployment..."
 
     cd "$SCRIPT_HOME/microservice-kiwi/kiwi-deploy/docker"
 
@@ -1192,12 +1284,12 @@ if ! is_step_completed "deployment_setup"; then
 
     mark_step_completed "deployment_setup"
 else
-    echo "Step 17: Deployment already set up, skipping..."
+    echo "Step 19: Deployment already set up, skipping..."
 fi
 
-# Step 18: Setup Elasticsearch
+# Step 20: Setup Elasticsearch
 if ! is_step_completed "elasticsearch_setup"; then
-    echo "Step 18: Setting up Elasticsearch..."
+    echo "Step 20: Setting up Elasticsearch..."
 
     # Pull Elasticsearch image
     docker pull elasticsearch:7.17.9
@@ -1258,13 +1350,13 @@ if ! is_step_completed "elasticsearch_setup"; then
 
     mark_step_completed "elasticsearch_setup"
 else
-    echo "Step 18: Elasticsearch already set up, skipping..."
+    echo "Step 20: Elasticsearch already set up, skipping..."
     check_and_start_container "kiwi-es" "elasticsearch_setup"
 fi
 
-# Step 19: Install IK Tokenizer
+# Step 21: Install IK Tokenizer
 if ! is_step_completed "ik_tokenizer_install"; then
-    echo "Step 19: Installing IK Tokenizer..."
+    echo "Step 21: Installing IK Tokenizer..."
 
     # Install IK plugin
     docker exec kiwi-es elasticsearch-plugin install https://get.infini.cloud/elasticsearch/analysis-ik/7.17.9 --batch
@@ -1279,12 +1371,12 @@ if ! is_step_completed "ik_tokenizer_install"; then
 
     mark_step_completed "ik_tokenizer_install"
 else
-    echo "Step 19: IK Tokenizer already installed, skipping..."
+    echo "Step 21: IK Tokenizer already installed, skipping..."
 fi
 
-# Step 20: Setup Nginx and UI
+# Step 22: Setup Nginx and UI
 if ! is_step_completed "nginx_ui_setup"; then
-    echo "Step 20: Setting up Nginx and UI..."
+    echo "Step 22: Setting up Nginx and UI..."
 
     # Pull Nginx image
     docker pull nginx
@@ -1309,7 +1401,7 @@ if ! is_step_completed "nginx_ui_setup"; then
 
     mark_step_completed "nginx_ui_setup"
 else
-    echo "Step 20: Nginx and UI already set up, skipping..."
+    echo "Step 22: Nginx and UI already set up, skipping..."
     check_and_start_container "kiwi-ui" "nginx_ui_setup"
 fi
 
@@ -1319,6 +1411,7 @@ echo "Setup completed successfully!"
 echo "=================================="
 echo "Target user: $SCRIPT_USER"
 echo "Home directory: $SCRIPT_HOME"
+echo "Sudo user configured: $SUDO_USERNAME"
 echo
 echo "Available shortcuts:"
 echo "  $SCRIPT_HOME/easy-deploy     - Deploy Kiwi services"
@@ -1352,6 +1445,7 @@ echo "5. To reset progress: rm $PROGRESS_FILE"
 echo "6. To reset saved inputs: rm $CONFIG_FILE"
 echo "7. To reset everything: rm $PROGRESS_FILE $CONFIG_FILE"
 echo "8. To re-run specific steps: sudo ./$(basename $0) and choose option 1"
+echo "9. User '$SUDO_USERNAME' has been granted sudo privileges"
 echo
 echo "CONTAINER STATUS CHECK:"
 echo "======================"
@@ -1417,9 +1511,18 @@ echo "- Settings file: $SCRIPT_HOME/.m2/settings.xml"
 echo "- Local repository: $SCRIPT_HOME/.m2/repository"
 echo "- Maven version: $(load_config 'maven_version')"
 echo
+echo "SUDO CONFIGURATION:"
+echo "- User with sudo privileges: $SUDO_USERNAME"
+echo "- Sudo setup method: $(load_config 'sudo_setup_method')"
+echo "- Groups for user: $(load_config 'sudo_groups')"
+echo
 echo "To check container status: docker ps"
 echo "To view container logs: docker logs <container-name>"
 echo "To re-run this script with step selection: sudo ./$(basename $0)"
+
+echo "alias ll='ls -la'" >> ~/.bashrc
+source ~/.bashrc
+
 echo "=================================="
 
 # Final step: Show Docker status

@@ -4,10 +4,6 @@ spring:
   cloud:
     config:
       enabled: false
-    gcp:
-      project-id: ENC(k7DNqSwGcdkrFmiR+jB0BL00OB3QhJ0K0tRDkM7VZSd80hQW0wcktA==)
-      credentials:
-        location: file:/Users/zhanshifeng/gcp-credentials.json
   oauth2:
     resource:
       token-info-uri: http://localhost:8080/dummy-uri

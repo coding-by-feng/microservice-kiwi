@@ -216,7 +216,7 @@ get_env_vars() {
     fi
 }
 
-# Function to get database passwords
+# Function to get database passwords and network configuration
 get_db_passwords() {
     echo "Loading database and service configurations..."
 
@@ -245,6 +245,28 @@ get_db_passwords() {
     else
         prompt_for_input "Enter FastDFS hostname (e.g., kiwi-fastdfs)" "FASTDFS_HOSTNAME" "false"
         save_config "FASTDFS_HOSTNAME" "$FASTDFS_HOSTNAME"
+    fi
+
+    # Load Infrastructure IP
+    if has_config "INFRASTRUCTURE_IP"; then
+        INFRASTRUCTURE_IP=$(load_config "INFRASTRUCTURE_IP")
+        echo "Using saved Infrastructure IP: $INFRASTRUCTURE_IP"
+    else
+        echo "Infrastructure IP is used for: kiwi-ui, fastdfs.fengorz.me, kiwi-redis, kiwi-rabbitmq, kiwi-db, kiwi-fastdfs, kiwi-es"
+        prompt_for_input "Enter Infrastructure IP (default: 127.0.0.1)" "input_ip" "false"
+        INFRASTRUCTURE_IP=${input_ip:-127.0.0.1}
+        save_config "INFRASTRUCTURE_IP" "$INFRASTRUCTURE_IP"
+    fi
+
+    # Load Service IP
+    if has_config "SERVICE_IP"; then
+        SERVICE_IP=$(load_config "SERVICE_IP")
+        echo "Using saved Service IP: $SERVICE_IP"
+    else
+        echo "Service IP is used for: kiwi-microservice-local, kiwi-microservice, kiwi-eureka, kiwi-config, kiwi-auth, kiwi-upms, kiwi-gate, kiwi-ai, kiwi-crawler"
+        prompt_for_input "Enter Service IP (default: 127.0.0.1)" "input_ip" "false"
+        SERVICE_IP=${input_ip:-127.0.0.1}
+        save_config "SERVICE_IP" "$SERVICE_IP"
     fi
 
     # Load Elasticsearch root password
@@ -845,34 +867,60 @@ else
     echo "Step 10: Git repository already set up, skipping..."
 fi
 
-# Step 11: Configure hosts file
+# Step 11: Configure hosts file with separate IPs
 if ! is_step_completed "hosts_configured"; then
     echo "Step 11: Configuring hosts file..."
+    echo "Using Infrastructure IP: $INFRASTRUCTURE_IP for infrastructure services"
+    echo "Using Service IP: $SERVICE_IP for microservices"
 
-    # Check if hosts entries already exist
-    if ! grep -q "fastdfs.fengorz.me" /etc/hosts; then
-        tee -a /etc/hosts > /dev/null << EOF
-127.0.0.1    fastdfs.fengorz.me
-127.0.0.1    kiwi-microservice-local
-127.0.0.1    kiwi-microservice
-127.0.0.1    kiwi-ui
-127.0.0.1    kiwi-eureka
-127.0.0.1    kiwi-redis
-127.0.0.1    kiwi-rabbitmq
-127.0.0.1    kiwi-db
-127.0.0.1    kiwi-es
-127.0.0.1    kiwi-config
-127.0.0.1    kiwi-auth
-127.0.0.1    kiwi-upms
-127.0.0.1    kiwi-gate
-127.0.0.1    kiwi-ai
-127.0.0.1    kiwi-crawler
+    # Backup existing hosts file
+    cp /etc/hosts /etc/hosts.backup.$(date +%Y%m%d_%H%M%S)
+
+    # Remove existing Kiwi entries if they exist
+    sed -i '/# Kiwi Infrastructure Services/,/# End Kiwi Services/d' /etc/hosts
+
+    # Add new entries with proper categorization
+    tee -a /etc/hosts > /dev/null << EOF
+
+# Kiwi Infrastructure Services
+$INFRASTRUCTURE_IP    fastdfs.fengorz.me
+$INFRASTRUCTURE_IP    kiwi-ui
+$INFRASTRUCTURE_IP    kiwi-redis
+$INFRASTRUCTURE_IP    kiwi-rabbitmq
+$INFRASTRUCTURE_IP    kiwi-db
+$INFRASTRUCTURE_IP    kiwi-fastdfs
+$INFRASTRUCTURE_IP    kiwi-es
+
+# Kiwi Microservices
+$SERVICE_IP    kiwi-microservice-local
+$SERVICE_IP    kiwi-microservice
+$SERVICE_IP    kiwi-eureka
+$SERVICE_IP    kiwi-config
+$SERVICE_IP    kiwi-auth
+$SERVICE_IP    kiwi-upms
+$SERVICE_IP    kiwi-gate
+$SERVICE_IP    kiwi-ai
+$SERVICE_IP    kiwi-crawler
+# End Kiwi Services
 EOF
-    fi
+
+    # Record hosts configuration details
+    save_config "hosts_infrastructure_ip" "$INFRASTRUCTURE_IP"
+    save_config "hosts_service_ip" "$SERVICE_IP"
+    save_config "hosts_infrastructure_services" "fastdfs.fengorz.me, kiwi-ui, kiwi-redis, kiwi-rabbitmq, kiwi-db, kiwi-fastdfs, kiwi-es"
+    save_config "hosts_microservices" "kiwi-microservice-local, kiwi-microservice, kiwi-eureka, kiwi-config, kiwi-auth, kiwi-upms, kiwi-gate, kiwi-ai, kiwi-crawler"
+    save_config "hosts_backup_file" "/etc/hosts.backup.$(date +%Y%m%d_%H%M%S)"
+
+    echo "✓ Hosts file configured with separate IP addresses:"
+    echo "  - Infrastructure services: $INFRASTRUCTURE_IP"
+    echo "  - Microservices: $SERVICE_IP"
+    echo "  - Backup created: /etc/hosts.backup.*"
 
     mark_step_completed "hosts_configured"
 else
     echo "Step 11: Hosts file already configured, skipping..."
+    echo "  - Infrastructure IP: $(load_config 'hosts_infrastructure_ip')"
+    echo "  - Service IP: $(load_config 'hosts_service_ip')"
 fi
 
 # Step 12: Setup environment variables
@@ -889,10 +937,12 @@ if ! is_step_completed "env_vars_setup"; then
     run_as_user sed -i '/export ES_ROOT_PASSWORD=/d' "$SCRIPT_HOME/.bashrc" 2>/dev/null || true
     run_as_user sed -i '/export ES_USER_NAME=/d' "$SCRIPT_HOME/.bashrc" 2>/dev/null || true
     run_as_user sed -i '/export ES_USER_PASSWORD=/d' "$SCRIPT_HOME/.bashrc" 2>/dev/null || true
+    run_as_user sed -i '/export INFRASTRUCTURE_IP=/d' "$SCRIPT_HOME/.bashrc" 2>/dev/null || true
+    run_as_user sed -i '/export SERVICE_IP=/d' "$SCRIPT_HOME/.bashrc" 2>/dev/null || true
 
     # Add new entries to .bashrc
     run_as_user bash -c "echo 'export KIWI_ENC_PASSWORD=\"$KIWI_ENC_PASSWORD\"' >> ~/.bashrc"
-    run_as_user bash -c "echo 'export DB_IP=\"127.0.0.1\"' >> ~/.bashrc"
+    run_as_user bash -c "echo 'export DB_IP=\"$INFRASTRUCTURE_IP\"' >> ~/.bashrc"
     run_as_user bash -c "echo 'export GROK_API_KEY=\"$GROK_API_KEY\"' >> ~/.bashrc"
     run_as_user bash -c "echo 'export MYSQL_ROOT_PASSWORD=\"$MYSQL_ROOT_PASSWORD\"' >> ~/.bashrc"
     run_as_user bash -c "echo 'export REDIS_PASSWORD=\"$REDIS_PASSWORD\"' >> ~/.bashrc"
@@ -900,12 +950,17 @@ if ! is_step_completed "env_vars_setup"; then
     run_as_user bash -c "echo 'export ES_ROOT_PASSWORD=\"$ES_ROOT_PASSWORD\"' >> ~/.bashrc"
     run_as_user bash -c "echo 'export ES_USER_NAME=\"$ES_USER_NAME\"' >> ~/.bashrc"
     run_as_user bash -c "echo 'export ES_USER_PASSWORD=\"$ES_USER_PASSWORD\"' >> ~/.bashrc"
+    run_as_user bash -c "echo 'export INFRASTRUCTURE_IP=\"$INFRASTRUCTURE_IP\"' >> ~/.bashrc"
+    run_as_user bash -c "echo 'export SERVICE_IP=\"$SERVICE_IP\"' >> ~/.bashrc"
 
     # Record environment variables setup
-    save_config "env_vars_added_to_bashrc" "KIWI_ENC_PASSWORD, GROK_API_KEY, DB_IP, MYSQL_ROOT_PASSWORD, REDIS_PASSWORD, FASTDFS_HOSTNAME, ES_ROOT_PASSWORD, ES_USER_NAME, ES_USER_PASSWORD"
+    save_config "env_vars_added_to_bashrc" "KIWI_ENC_PASSWORD, GROK_API_KEY, DB_IP, MYSQL_ROOT_PASSWORD, REDIS_PASSWORD, FASTDFS_HOSTNAME, ES_ROOT_PASSWORD, ES_USER_NAME, ES_USER_PASSWORD, INFRASTRUCTURE_IP, SERVICE_IP"
     save_config "bashrc_location" "$SCRIPT_HOME/.bashrc"
 
     echo "Environment variables added to .bashrc and saved to persistent configuration."
+    echo "  - DB_IP set to Infrastructure IP: $INFRASTRUCTURE_IP"
+    echo "  - INFRASTRUCTURE_IP: $INFRASTRUCTURE_IP"
+    echo "  - SERVICE_IP: $SERVICE_IP"
 
     mark_step_completed "env_vars_setup"
 else
@@ -1159,7 +1214,7 @@ else
     check_and_start_container "kiwi-rabbit" "rabbitmq_setup"
 fi
 
-# Function to detect system architecture and select appropriate FastDFS image
+# Fixed Function to detect system architecture and select appropriate FastDFS image
 get_fastdfs_image() {
     local arch=$(uname -m)
     local fastdfs_image=""
@@ -1168,30 +1223,29 @@ get_fastdfs_image() {
         x86_64|amd64)
             # For Intel/AMD 64-bit systems
             fastdfs_image="delron/fastdfs:latest"
-            echo "Detected x86_64/AMD64 architecture, using: $fastdfs_image"
             save_config "fastdfs_architecture" "x86_64"
             ;;
         aarch64|arm64)
             # For ARM 64-bit systems (Raspberry Pi 4, Apple M1/M2, etc.)
             fastdfs_image="fyclinux/fastdfs-arm64:6.04"
-            echo "Detected ARM64 architecture, using: $fastdfs_image"
             save_config "fastdfs_architecture" "arm64"
             ;;
         armv7l|armhf)
             # For ARM 32-bit systems (older Raspberry Pi)
             fastdfs_image="morunchang/fastdfs:latest"
-            echo "Detected ARM v7 32-bit architecture, using: $fastdfs_image"
             save_config "fastdfs_architecture" "armv7"
             ;;
         *)
             # Fallback to x86_64 image with platform flag
             fastdfs_image="delron/fastdfs:latest"
-            echo "Unknown architecture: $arch, falling back to x86_64 image: $fastdfs_image"
-            echo "Note: This may require emulation and could be slower"
             save_config "fastdfs_architecture" "unknown_$arch"
             ;;
     esac
 
+    # Echo detection info to stderr so it doesn't interfere with return value
+    echo "Detected $arch architecture, using: $fastdfs_image" >&2
+
+    # Return only the image name
     echo "$fastdfs_image"
 }
 
@@ -1224,7 +1278,10 @@ if ! is_step_completed "fastdfs_setup"; then
 
     # Run tracker with the selected image
     echo "Starting FastDFS tracker..."
+
     docker run -ti -d \
+        -p 8081:80 \
+        -p 8881:8888 \
         --name tracker \
         --net=host \
         "$FASTDFS_IMAGE" \
@@ -1237,6 +1294,8 @@ if ! is_step_completed "fastdfs_setup"; then
     # Run storage with the selected image
     echo "Starting FastDFS storage..."
     docker run -ti -d \
+        -p 8082:80 \
+        -p 8882:8888 \
         --name storage \
         -v "$SCRIPT_HOME/storage_data:/fastdfs/storage/data" \
         -v "$SCRIPT_HOME/store_path:/fastdfs/store_path" \
@@ -1491,6 +1550,12 @@ echo "Target user: $SCRIPT_USER"
 echo "Home directory: $SCRIPT_HOME"
 echo "Sudo user configured: $SUDO_USERNAME"
 echo
+echo "Network Configuration:"
+echo "  Infrastructure IP: $INFRASTRUCTURE_IP"
+echo "    - Used for: kiwi-ui, fastdfs.fengorz.me, kiwi-redis, kiwi-rabbitmq, kiwi-db, kiwi-fastdfs, kiwi-es"
+echo "  Service IP: $SERVICE_IP"
+echo "    - Used for: kiwi-microservice-local, kiwi-microservice, kiwi-eureka, kiwi-config, kiwi-auth, kiwi-upms, kiwi-gate, kiwi-ai, kiwi-crawler"
+echo
 echo "Available shortcuts:"
 echo "  $SCRIPT_HOME/easy-deploy     - Deploy Kiwi services"
 echo "  $SCRIPT_HOME/easy-stop       - Stop all services"
@@ -1502,13 +1567,15 @@ echo
 echo "Environment variables set:"
 echo "  KIWI_ENC_PASSWORD = [HIDDEN]"
 echo "  GROK_API_KEY      = [HIDDEN]"
-echo "  DB_IP             = 127.0.0.1"
+echo "  DB_IP             = $INFRASTRUCTURE_IP"
 echo "  MYSQL_ROOT_PASSWORD = [HIDDEN]"
 echo "  REDIS_PASSWORD    = [HIDDEN]"
 echo "  FASTDFS_HOSTNAME  = $FASTDFS_HOSTNAME"
 echo "  ES_ROOT_PASSWORD  = [HIDDEN]"
 echo "  ES_USER_NAME      = $ES_USER_NAME"
 echo "  ES_USER_PASSWORD  = [HIDDEN]"
+echo "  INFRASTRUCTURE_IP = $INFRASTRUCTURE_IP"
+echo "  SERVICE_IP        = $SERVICE_IP"
 echo
 echo "Maven configuration:"
 echo "  Settings file: $SCRIPT_HOME/.m2/settings.xml"
@@ -1524,6 +1591,7 @@ echo "6. To reset saved inputs: rm $CONFIG_FILE"
 echo "7. To reset everything: rm $PROGRESS_FILE $CONFIG_FILE"
 echo "8. To re-run specific steps: sudo ./$(basename $0) and choose option 1"
 echo "9. User '$SUDO_USERNAME' has been granted sudo privileges"
+echo "10. Hosts file configured with separate IPs for infrastructure and services"
 echo
 echo "CONTAINER STATUS CHECK:"
 echo "======================"
@@ -1572,17 +1640,17 @@ echo "  Stop running container:   docker stop <container-name>"
 echo "  Restart container:        docker restart <container-name>"
 echo
 echo "SERVICES:"
-echo "- MySQL: Container 'kiwi-mysql' on port 3306"
-echo "- Redis: Container 'kiwi-redis' on port 6379"
-echo "- RabbitMQ: Container 'kiwi-rabbit' with management UI on port 15672"
-echo "- FastDFS: Containers 'tracker' and 'storage' on port 22122"
-echo "- Elasticsearch: Container 'kiwi-es' on ports 9200/9300 with IK tokenizer"
-echo "- Nginx/UI: Container 'kiwi-ui' on port 80"
+echo "- MySQL: Container 'kiwi-mysql' on port 3306 (accessible at $INFRASTRUCTURE_IP)"
+echo "- Redis: Container 'kiwi-redis' on port 6379 (accessible at $INFRASTRUCTURE_IP)"
+echo "- RabbitMQ: Container 'kiwi-rabbit' with management UI on port 15672 (accessible at $INFRASTRUCTURE_IP)"
+echo "- FastDFS: Containers 'tracker' and 'storage' on port 22122 (accessible at $INFRASTRUCTURE_IP)"
+echo "- Elasticsearch: Container 'kiwi-es' on ports 9200/9300 with IK tokenizer (accessible at $INFRASTRUCTURE_IP)"
+echo "- Nginx/UI: Container 'kiwi-ui' on port 80 (accessible at $INFRASTRUCTURE_IP)"
 echo
 echo "WEB INTERFACES:"
-echo "- RabbitMQ Management: http://localhost:15672 (guest/guest)"
-echo "- Elasticsearch: http://localhost:9200 (root/[your_password])"
-echo "- Kiwi UI: http://localhost:80"
+echo "- RabbitMQ Management: http://$INFRASTRUCTURE_IP:15672 (guest/guest)"
+echo "- Elasticsearch: http://$INFRASTRUCTURE_IP:9200 (root/[your_password])"
+echo "- Kiwi UI: http://$INFRASTRUCTURE_IP:80"
 echo
 echo "MAVEN CONFIGURATION:"
 echo "- Settings file: $SCRIPT_HOME/.m2/settings.xml"
@@ -1593,6 +1661,12 @@ echo "SUDO CONFIGURATION:"
 echo "- User with sudo privileges: $SUDO_USERNAME"
 echo "- Sudo setup method: $(load_config 'sudo_setup_method')"
 echo "- Groups for user: $(load_config 'sudo_groups')"
+echo
+echo "HOSTS FILE CONFIGURATION:"
+echo "- Infrastructure services (at $INFRASTRUCTURE_IP):"
+echo "  fastdfs.fengorz.me, kiwi-ui, kiwi-redis, kiwi-rabbitmq, kiwi-db, kiwi-fastdfs, kiwi-es"
+echo "- Microservices (at $SERVICE_IP):"
+echo "  kiwi-microservice-local, kiwi-microservice, kiwi-eureka, kiwi-config, kiwi-auth, kiwi-upms, kiwi-gate, kiwi-ai, kiwi-crawler"
 echo
 echo "To check container status: docker ps"
 echo "To view container logs: docker logs <container-name>"

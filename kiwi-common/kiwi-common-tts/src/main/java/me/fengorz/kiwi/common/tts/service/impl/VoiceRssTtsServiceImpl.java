@@ -136,7 +136,7 @@ public class VoiceRssTtsServiceImpl implements TtsService {
     public void voiceRssGlobalIncreaseCounter() {
         useTtsApiKey(TtsConstants.CACHE_KEY_PREFIX_TTS.TOTAL_API_KEY,
                 Optional.ofNullable(queryTtsApiKeyUsed(TtsConstants.CACHE_KEY_PREFIX_TTS.TOTAL_API_KEY))
-                        .orElseThrow(() -> new ResourceNotFoundException("apiKey is null")) + 1);
+                        .orElse(0) + 1);
     }
 
     @Override

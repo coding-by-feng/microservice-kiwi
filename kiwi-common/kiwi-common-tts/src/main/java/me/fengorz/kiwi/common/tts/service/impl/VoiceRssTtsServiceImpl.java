@@ -141,9 +141,9 @@ public class VoiceRssTtsServiceImpl implements TtsService {
 
     @Override
     public boolean hasValidApiKey() {
-        Integer totalUsedTime = queryTtsApiKeyUsed(TtsConstants.CACHE_KEY_PREFIX_TTS.TOTAL_API_KEY);
-        return totalUsedTime != null
-                && totalUsedTime < TtsConstants.API_KEY_MAX_USE_TIME * ttsProperties.listApiKey().size();
+        Integer totalUsedTime = Optional.ofNullable(queryTtsApiKeyUsed(TtsConstants.CACHE_KEY_PREFIX_TTS.TOTAL_API_KEY))
+                .orElse(0);
+        return totalUsedTime < TtsConstants.API_KEY_MAX_USE_TIME * ttsProperties.listApiKey().size();
     }
 
     @Override

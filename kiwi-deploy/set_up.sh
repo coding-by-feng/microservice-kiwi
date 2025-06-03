@@ -243,8 +243,20 @@ get_db_passwords() {
         FASTDFS_HOSTNAME=$(load_config "FASTDFS_HOSTNAME")
         echo "Using saved FastDFS hostname: $FASTDFS_HOSTNAME"
     else
-        prompt_for_input "Enter FastDFS hostname (e.g., kiwi-fastdfs)" "FASTDFS_HOSTNAME" "false"
+        prompt_for_input "Enter FastDFS hostname (e.g., fastdfs.fengorz.me)" "FASTDFS_HOSTNAME" "false"
         save_config "FASTDFS_HOSTNAME" "$FASTDFS_HOSTNAME"
+    fi
+
+    # Load FastDFS Non-Local IP
+    if has_config "FASTDFS_NON_LOCAL_IP"; then
+        FASTDFS_NON_LOCAL_IP=$(load_config "FASTDFS_NON_LOCAL_IP")
+        echo "Using saved FastDFS Non-Local IP: $FASTDFS_NON_LOCAL_IP"
+    else
+        echo "FastDFS Non-Local IP is used specifically for: fastdfs.fengorz.me (can be different from Infrastructure IP)"
+        prompt_for_input "Enter FastDFS Non-Local IP for fastdfs.fengorz.me (default: same as Infrastructure IP)" "input_fastdfs_ip" "false"
+        # If empty, we'll set it to INFRASTRUCTURE_IP later after it's loaded
+        FASTDFS_NON_LOCAL_IP=${input_fastdfs_ip}
+        save_config "FASTDFS_NON_LOCAL_IP" "$FASTDFS_NON_LOCAL_IP"
     fi
 
     # Load Infrastructure IP
@@ -252,10 +264,17 @@ get_db_passwords() {
         INFRASTRUCTURE_IP=$(load_config "INFRASTRUCTURE_IP")
         echo "Using saved Infrastructure IP: $INFRASTRUCTURE_IP"
     else
-        echo "Infrastructure IP is used for: kiwi-ui, fastdfs.fengorz.me, kiwi-redis, kiwi-rabbitmq, kiwi-db, kiwi-fastdfs, kiwi-es"
+        echo "Infrastructure IP is used for: kiwi-ui, kiwi-redis, kiwi-rabbitmq, kiwi-db, kiwi-fastdfs, kiwi-es"
         prompt_for_input "Enter Infrastructure IP (default: 127.0.0.1)" "input_ip" "false"
         INFRASTRUCTURE_IP=${input_ip:-127.0.0.1}
         save_config "INFRASTRUCTURE_IP" "$INFRASTRUCTURE_IP"
+    fi
+
+    # Set FastDFS Non-Local IP to Infrastructure IP if it wasn't specified
+    if [ -z "$FASTDFS_NON_LOCAL_IP" ]; then
+        FASTDFS_NON_LOCAL_IP="$INFRASTRUCTURE_IP"
+        save_config "FASTDFS_NON_LOCAL_IP" "$FASTDFS_NON_LOCAL_IP"
+        echo "FastDFS Non-Local IP set to Infrastructure IP: $FASTDFS_NON_LOCAL_IP"
     fi
 
     # Load Service IP
@@ -870,7 +889,8 @@ fi
 # Step 11: Configure hosts file with separate IPs
 if ! is_step_completed "hosts_configured"; then
     echo "Step 11: Configuring hosts file..."
-    echo "Using Infrastructure IP: $INFRASTRUCTURE_IP for infrastructure services"
+    echo "Using FastDFS Non-Local IP: $FASTDFS_NON_LOCAL_IP for fastdfs.fengorz.me"
+    echo "Using Infrastructure IP: $INFRASTRUCTURE_IP for other infrastructure services"
     echo "Using Service IP: $SERVICE_IP for microservices"
 
     # Backup existing hosts file
@@ -879,11 +899,11 @@ if ! is_step_completed "hosts_configured"; then
     # Remove existing Kiwi entries if they exist
     sed -i '/# Kiwi Infrastructure Services/,/# End Kiwi Services/d' /etc/hosts
 
-    # Add new entries with proper categorization
+    # Add new entries with proper categorization and separate FastDFS IP
     tee -a /etc/hosts > /dev/null << EOF
 
 # Kiwi Infrastructure Services
-$INFRASTRUCTURE_IP    fastdfs.fengorz.me
+$FASTDFS_NON_LOCAL_IP    fastdfs.fengorz.me
 $INFRASTRUCTURE_IP    kiwi-ui
 $INFRASTRUCTURE_IP    kiwi-redis
 $INFRASTRUCTURE_IP    kiwi-rabbitmq
@@ -905,13 +925,16 @@ $SERVICE_IP    kiwi-crawler
 EOF
 
     # Record hosts configuration details
+    save_config "hosts_fastdfs_non_local_ip" "$FASTDFS_NON_LOCAL_IP"
     save_config "hosts_infrastructure_ip" "$INFRASTRUCTURE_IP"
     save_config "hosts_service_ip" "$SERVICE_IP"
-    save_config "hosts_infrastructure_services" "fastdfs.fengorz.me, kiwi-ui, kiwi-redis, kiwi-rabbitmq, kiwi-db, kiwi-fastdfs, kiwi-es"
+    save_config "hosts_fastdfs_hostname" "$FASTDFS_HOSTNAME"
+    save_config "hosts_infrastructure_services" "kiwi-ui, kiwi-redis, kiwi-rabbitmq, kiwi-db, kiwi-fastdfs, kiwi-es"
     save_config "hosts_microservices" "kiwi-microservice-local, kiwi-microservice, kiwi-eureka, kiwi-config, kiwi-auth, kiwi-upms, kiwi-gate, kiwi-ai, kiwi-crawler"
     save_config "hosts_backup_file" "/etc/hosts.backup.$(date +%Y%m%d_%H%M%S)"
 
     echo "✓ Hosts file configured with separate IP addresses:"
+    echo "  - FastDFS hostname ($FASTDFS_HOSTNAME): $FASTDFS_NON_LOCAL_IP"
     echo "  - Infrastructure services: $INFRASTRUCTURE_IP"
     echo "  - Microservices: $SERVICE_IP"
     echo "  - Backup created: /etc/hosts.backup.*"
@@ -919,6 +942,7 @@ EOF
     mark_step_completed "hosts_configured"
 else
     echo "Step 11: Hosts file already configured, skipping..."
+    echo "  - FastDFS Non-Local IP: $(load_config 'hosts_fastdfs_non_local_ip')"
     echo "  - Infrastructure IP: $(load_config 'hosts_infrastructure_ip')"
     echo "  - Service IP: $(load_config 'hosts_service_ip')"
 fi
@@ -934,6 +958,7 @@ if ! is_step_completed "env_vars_setup"; then
     run_as_user sed -i '/export MYSQL_ROOT_PASSWORD=/d' "$SCRIPT_HOME/.bashrc" 2>/dev/null || true
     run_as_user sed -i '/export REDIS_PASSWORD=/d' "$SCRIPT_HOME/.bashrc" 2>/dev/null || true
     run_as_user sed -i '/export FASTDFS_HOSTNAME=/d' "$SCRIPT_HOME/.bashrc" 2>/dev/null || true
+    run_as_user sed -i '/export FASTDFS_NON_LOCAL_IP=/d' "$SCRIPT_HOME/.bashrc" 2>/dev/null || true
     run_as_user sed -i '/export ES_ROOT_PASSWORD=/d' "$SCRIPT_HOME/.bashrc" 2>/dev/null || true
     run_as_user sed -i '/export ES_USER_NAME=/d' "$SCRIPT_HOME/.bashrc" 2>/dev/null || true
     run_as_user sed -i '/export ES_USER_PASSWORD=/d' "$SCRIPT_HOME/.bashrc" 2>/dev/null || true
@@ -947,6 +972,7 @@ if ! is_step_completed "env_vars_setup"; then
     run_as_user bash -c "echo 'export MYSQL_ROOT_PASSWORD=\"$MYSQL_ROOT_PASSWORD\"' >> ~/.bashrc"
     run_as_user bash -c "echo 'export REDIS_PASSWORD=\"$REDIS_PASSWORD\"' >> ~/.bashrc"
     run_as_user bash -c "echo 'export FASTDFS_HOSTNAME=\"$FASTDFS_HOSTNAME\"' >> ~/.bashrc"
+    run_as_user bash -c "echo 'export FASTDFS_NON_LOCAL_IP=\"$FASTDFS_NON_LOCAL_IP\"' >> ~/.bashrc"
     run_as_user bash -c "echo 'export ES_ROOT_PASSWORD=\"$ES_ROOT_PASSWORD\"' >> ~/.bashrc"
     run_as_user bash -c "echo 'export ES_USER_NAME=\"$ES_USER_NAME\"' >> ~/.bashrc"
     run_as_user bash -c "echo 'export ES_USER_PASSWORD=\"$ES_USER_PASSWORD\"' >> ~/.bashrc"
@@ -954,11 +980,12 @@ if ! is_step_completed "env_vars_setup"; then
     run_as_user bash -c "echo 'export SERVICE_IP=\"$SERVICE_IP\"' >> ~/.bashrc"
 
     # Record environment variables setup
-    save_config "env_vars_added_to_bashrc" "KIWI_ENC_PASSWORD, GROK_API_KEY, DB_IP, MYSQL_ROOT_PASSWORD, REDIS_PASSWORD, FASTDFS_HOSTNAME, ES_ROOT_PASSWORD, ES_USER_NAME, ES_USER_PASSWORD, INFRASTRUCTURE_IP, SERVICE_IP"
+    save_config "env_vars_added_to_bashrc" "KIWI_ENC_PASSWORD, GROK_API_KEY, DB_IP, MYSQL_ROOT_PASSWORD, REDIS_PASSWORD, FASTDFS_HOSTNAME, FASTDFS_NON_LOCAL_IP, ES_ROOT_PASSWORD, ES_USER_NAME, ES_USER_PASSWORD, INFRASTRUCTURE_IP, SERVICE_IP"
     save_config "bashrc_location" "$SCRIPT_HOME/.bashrc"
 
     echo "Environment variables added to .bashrc and saved to persistent configuration."
     echo "  - DB_IP set to Infrastructure IP: $INFRASTRUCTURE_IP"
+    echo "  - FASTDFS_NON_LOCAL_IP: $FASTDFS_NON_LOCAL_IP"
     echo "  - INFRASTRUCTURE_IP: $INFRASTRUCTURE_IP"
     echo "  - SERVICE_IP: $SERVICE_IP"
 
@@ -1454,8 +1481,10 @@ if ! is_step_completed "elasticsearch_setup"; then
 
     # Create users
     echo "Creating Elasticsearch users..."
-    docker exec kiwi-es bash -c "echo '$ES_ROOT_PASSWORD' | elasticsearch-users useradd root -r superuser -p"
-    docker exec kiwi-es bash -c "echo '$ES_USER_PASSWORD' | elasticsearch-users useradd $ES_USER_NAME -r superuser -p"
+    echo "$ES_ROOT_PASSWORD" | docker exec -i kiwi-es elasticsearch-users useradd root -r superuser -p
+    echo "$ES_USER_PASSWORD" | docker exec -i kiwi-es elasticsearch-users useradd "$ES_USER_NAME" -r superuser -p
+
+    echo "Users created successfully!"
 
     # Wait a bit more for users to be created
     sleep 10
@@ -1551,8 +1580,10 @@ echo "Home directory: $SCRIPT_HOME"
 echo "Sudo user configured: $SUDO_USERNAME"
 echo
 echo "Network Configuration:"
+echo "  FastDFS Non-Local IP: $FASTDFS_NON_LOCAL_IP"
+echo "    - Used for: $FASTDFS_HOSTNAME"
 echo "  Infrastructure IP: $INFRASTRUCTURE_IP"
-echo "    - Used for: kiwi-ui, fastdfs.fengorz.me, kiwi-redis, kiwi-rabbitmq, kiwi-db, kiwi-fastdfs, kiwi-es"
+echo "    - Used for: kiwi-ui, kiwi-redis, kiwi-rabbitmq, kiwi-db, kiwi-fastdfs, kiwi-es"
 echo "  Service IP: $SERVICE_IP"
 echo "    - Used for: kiwi-microservice-local, kiwi-microservice, kiwi-eureka, kiwi-config, kiwi-auth, kiwi-upms, kiwi-gate, kiwi-ai, kiwi-crawler"
 echo
@@ -1571,6 +1602,7 @@ echo "  DB_IP             = $INFRASTRUCTURE_IP"
 echo "  MYSQL_ROOT_PASSWORD = [HIDDEN]"
 echo "  REDIS_PASSWORD    = [HIDDEN]"
 echo "  FASTDFS_HOSTNAME  = $FASTDFS_HOSTNAME"
+echo "  FASTDFS_NON_LOCAL_IP = $FASTDFS_NON_LOCAL_IP"
 echo "  ES_ROOT_PASSWORD  = [HIDDEN]"
 echo "  ES_USER_NAME      = $ES_USER_NAME"
 echo "  ES_USER_PASSWORD  = [HIDDEN]"
@@ -1592,6 +1624,7 @@ echo "7. To reset everything: rm $PROGRESS_FILE $CONFIG_FILE"
 echo "8. To re-run specific steps: sudo ./$(basename $0) and choose option 1"
 echo "9. User '$SUDO_USERNAME' has been granted sudo privileges"
 echo "10. Hosts file configured with separate IPs for infrastructure and services"
+echo "11. FastDFS hostname ($FASTDFS_HOSTNAME) uses separate IP: $FASTDFS_NON_LOCAL_IP"
 echo
 echo "CONTAINER STATUS CHECK:"
 echo "======================"
@@ -1643,7 +1676,7 @@ echo "SERVICES:"
 echo "- MySQL: Container 'kiwi-mysql' on port 3306 (accessible at $INFRASTRUCTURE_IP)"
 echo "- Redis: Container 'kiwi-redis' on port 6379 (accessible at $INFRASTRUCTURE_IP)"
 echo "- RabbitMQ: Container 'kiwi-rabbit' with management UI on port 15672 (accessible at $INFRASTRUCTURE_IP)"
-echo "- FastDFS: Containers 'tracker' and 'storage' on port 22122 (accessible at $INFRASTRUCTURE_IP)"
+echo "- FastDFS: Containers 'tracker' and 'storage' on port 22122 (accessible at $FASTDFS_NON_LOCAL_IP via $FASTDFS_HOSTNAME)"
 echo "- Elasticsearch: Container 'kiwi-es' on ports 9200/9300 with IK tokenizer (accessible at $INFRASTRUCTURE_IP)"
 echo "- Nginx/UI: Container 'kiwi-ui' on port 80 (accessible at $INFRASTRUCTURE_IP)"
 echo
@@ -1651,6 +1684,7 @@ echo "WEB INTERFACES:"
 echo "- RabbitMQ Management: http://$INFRASTRUCTURE_IP:15672 (guest/guest)"
 echo "- Elasticsearch: http://$INFRASTRUCTURE_IP:9200 (root/[your_password])"
 echo "- Kiwi UI: http://$INFRASTRUCTURE_IP:80"
+echo "- FastDFS: http://$FASTDFS_NON_LOCAL_IP:8081 (via $FASTDFS_HOSTNAME)"
 echo
 echo "MAVEN CONFIGURATION:"
 echo "- Settings file: $SCRIPT_HOME/.m2/settings.xml"
@@ -1663,8 +1697,9 @@ echo "- Sudo setup method: $(load_config 'sudo_setup_method')"
 echo "- Groups for user: $(load_config 'sudo_groups')"
 echo
 echo "HOSTS FILE CONFIGURATION:"
+echo "- FastDFS hostname ($FASTDFS_HOSTNAME): $FASTDFS_NON_LOCAL_IP"
 echo "- Infrastructure services (at $INFRASTRUCTURE_IP):"
-echo "  fastdfs.fengorz.me, kiwi-ui, kiwi-redis, kiwi-rabbitmq, kiwi-db, kiwi-fastdfs, kiwi-es"
+echo "  kiwi-ui, kiwi-redis, kiwi-rabbitmq, kiwi-db, kiwi-fastdfs, kiwi-es"
 echo "- Microservices (at $SERVICE_IP):"
 echo "  kiwi-microservice-local, kiwi-microservice, kiwi-eureka, kiwi-config, kiwi-auth, kiwi-upms, kiwi-gate, kiwi-ai, kiwi-crawler"
 echo
@@ -1673,7 +1708,12 @@ echo "To view container logs: docker logs <container-name>"
 echo "To re-run this script with step selection: sudo ./$(basename $0)"
 
 echo "alias ll='ls -la'" >> ~/.bashrc
+run_as_user bash -c "echo 'alias dp=\"sudo docker ps\"' >> ~/.bashrc"
 source ~/.bashrc
+
+echo "✓ Added aliases:"
+echo "  - ll: for 'ls -la'"
+echo "  - dp: for 'sudo docker ps'"
 
 echo "=================================="
 

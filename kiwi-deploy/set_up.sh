@@ -861,6 +861,7 @@ if ! is_step_completed "git_setup"; then
     run_as_user ln -sf "$SCRIPT_HOME/microservice-kiwi/kiwi-deploy/docker/deployKiwi.sh" "$SCRIPT_HOME/easy-deploy"
     run_as_user ln -sf "$SCRIPT_HOME/microservice-kiwi/kiwi-deploy/docker/stopAll.sh" "$SCRIPT_HOME/easy-stop"
     run_as_user ln -sf "$SCRIPT_HOME/microservice-kiwi/kiwi-deploy/kiwi-ui/auto_deploy_ui.sh" "$SCRIPT_HOME/easy-deploy-ui"
+    run_as_user ln -sf "$SCRIPT_HOME/microservice-kiwi/kiwi-deploy/kiwi-ui/initial_ui.sh" "$SCRIPT_HOME/easy-ui-initial"
     run_as_user ln -sf "$SCRIPT_HOME/microservice-kiwi/kiwi-deploy/docker/checkContainers.sh" "$SCRIPT_HOME/easy-check"
     run_as_user ln -sf "$SCRIPT_HOME/microservice-kiwi/kiwi-deploy/set_up.sh" "$SCRIPT_HOME/easy-setup"
     run_as_user ln -sf "$SCRIPT_HOME/microservice-kiwi/kiwi-deploy/clean_set_up.sh" "$SCRIPT_HOME/easy-clean-setup"
@@ -869,6 +870,7 @@ if ! is_step_completed "git_setup"; then
     run_as_user chmod 777 "$SCRIPT_HOME/easy-deploy"
     run_as_user chmod 777 "$SCRIPT_HOME/easy-stop"
     run_as_user chmod 777 "$SCRIPT_HOME/easy-deploy-ui"
+    run_as_user chmod 777 "$SCRIPT_HOME/easy-ui-initial"
     run_as_user chmod 777 "$SCRIPT_HOME/easy-check"
     run_as_user chmod 777 "$SCRIPT_HOME/easy-setup"
     run_as_user chmod 777 "$SCRIPT_HOME/easy-clean-setup"
@@ -879,7 +881,7 @@ if ! is_step_completed "git_setup"; then
     save_config "git_repository_url" "https://github.com/coding-by-feng/microservice-kiwi.git"
     save_config "git_commit_hash" "$GIT_COMMIT_HASH"
     save_config "git_branch" "$GIT_BRANCH"
-    save_config "symbolic_links_created" "easy-deploy, easy-stop, easy-deploy-ui"
+    save_config "symbolic_links_created" "easy-deploy, easy-stop, easy-deploy-ui, easy-ui-initial"
 
     mark_step_completed "git_setup"
 else

@@ -49,6 +49,7 @@ show_menu() {
     echo "21) Start all stopped Kiwi containers"
     echo "22) Start infrastructure containers only"
     echo "23) Enter container shell"
+    echo "24) Stop one container"
     echo "0) Exit"
     echo ""
 }
@@ -86,6 +87,131 @@ start_container() {
     else
         echo "✗ Failed to start $service_name"
     fi
+}
+
+stop_container() {
+    local container_name=$1
+    local service_name=$2
+    local graceful_timeout=${3:-10}
+
+    echo "Stopping $service_name ($container_name)..."
+
+    # Check if container is actually running
+    if ! sudo docker ps --format "{{.Names}}" | grep -q "^${container_name}$"; then
+        echo "✗ $service_name is not currently running"
+        return 1
+    fi
+
+    # Attempt graceful shutdown first
+    if sudo docker stop --time="$graceful_timeout" "$container_name" >/dev/null 2>&1; then
+        echo "✓ $service_name stopped successfully"
+
+        # Verify it's actually stopped
+        sleep 1
+        if sudo docker ps --format "{{.Names}}" | grep -q "^${container_name}$"; then
+            echo "⚠ $service_name may still be running - forcing stop..."
+            if sudo docker kill "$container_name" >/dev/null 2>&1; then
+                echo "✓ $service_name force-stopped"
+            else
+                echo "✗ Failed to force-stop $service_name"
+                return 1
+            fi
+        else
+            echo "✓ $service_name shutdown confirmed"
+        fi
+    else
+        echo "✗ Failed to stop $service_name gracefully, attempting force stop..."
+        if sudo docker kill "$container_name" >/dev/null 2>&1; then
+            echo "✓ $service_name force-stopped"
+        else
+            echo "✗ Failed to force-stop $service_name"
+            return 1
+        fi
+    fi
+
+    return 0
+}
+
+stop_single_container() {
+    echo -e "\n=== STOP CONTAINER ==="
+    echo "Choose which container to stop:"
+    echo ""
+
+    # Show current status and only display running containers
+    local running_containers=()
+    for key in {1..15}; do
+        IFS='|' read -r container_name service_name <<< "${containers[$key]}"
+        if sudo docker ps --format "{{.Names}}" | grep -q "^${container_name}$"; then
+            running_containers+=("$key")
+            echo "$key) $service_name ($container_name) - RUNNING"
+        fi
+    done
+
+    if [ ${#running_containers[@]} -eq 0 ]; then
+        echo "No containers are currently running."
+        return
+    fi
+
+    echo ""
+    read -p "Enter container number to stop: " container_choice
+
+    # Validate choice
+    local valid_choice=false
+    for valid_key in "${running_containers[@]}"; do
+        if [ "$container_choice" == "$valid_key" ]; then
+            valid_choice=true
+            break
+        fi
+    done
+
+    if [ "$valid_choice" = false ]; then
+        echo "Invalid choice or container is not running."
+        return
+    fi
+
+    IFS='|' read -r container_name service_name <<< "${containers[$container_choice]}"
+
+    echo ""
+    echo "You selected: $service_name ($container_name)"
+
+    # Warning for critical infrastructure containers
+    case $container_choice in
+        9|10|11|13)  # MySQL, Redis, RabbitMQ, Elasticsearch
+            echo "⚠ WARNING: This is a critical infrastructure container!"
+            echo "  Stopping $service_name may cause application services to fail."
+            ;;
+        12)  # Kiwi UI
+            echo "ℹ Note: Stopping KIWI-UI will make the web interface unavailable."
+            ;;
+    esac
+
+    echo ""
+    read -p "Are you sure you want to stop $service_name? (y/N): " confirm
+    if [[ ! ($confirm == "y" || $confirm == "Y") ]]; then
+        echo "Operation cancelled."
+        return
+    fi
+
+    # Ask for graceful shutdown timeout
+    echo ""
+    read -p "Graceful shutdown timeout in seconds (default: 10): " timeout
+    timeout=${timeout:-10}
+
+    # Validate timeout is a number
+    if ! [[ "$timeout" =~ ^[0-9]+$ ]]; then
+        echo "Invalid timeout. Using default 10 seconds."
+        timeout=10
+    fi
+
+    echo ""
+    stop_container "$container_name" "$service_name" "$timeout"
+
+    echo ""
+    echo "=== STOP OPERATION COMPLETE ==="
+
+    # Show updated status
+    echo "Current status:"
+    check_container_status "$container_name" "$service_name"
 }
 
 check_port_80_and_handle() {
@@ -660,7 +786,7 @@ check_all_failed() {
 # Main loop
 while true; do
     show_menu
-    read -p "Enter your choice (0-23): " choice
+    read -p "Enter your choice (0-24): " choice
 
     case $choice in
         0)
@@ -724,8 +850,11 @@ while true; do
         23)
             enter_container
             ;;
+        24)
+            stop_single_container
+            ;;
         *)
-            echo "Invalid choice. Please enter a number between 0-23."
+            echo "Invalid choice. Please enter a number between 0-24."
             ;;
     esac
 

@@ -1,4 +1,4 @@
-FROM arm64v8/openjdk:8-jdk
+FROM openjdk:8-jdk-alpine
 
 # Check user (should be root)
 RUN whoami

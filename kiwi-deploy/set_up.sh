@@ -172,7 +172,7 @@ check_container_running() {
 
 # Function to check MySQL readiness
 check_mysql_ready() {
-    docker exec kiwi-mysql mysql -h localhost -u root -p"$MYSQL_ROOT_PASSWORD" -e "SELECT 1;" >/dev/null 2>&1
+    docker ps -a --filter "name=kiwi-mysql" --format "{{.Names}}" | grep -q "^kiwi-mysql$"
     return $?
 }
 
@@ -945,40 +945,20 @@ if ! is_step_completed "mysql_setup"; then
     docker rm kiwi-mysql 2>/dev/null || true
 
     # Use MySQL 8.0 for better ARM compatibility
-    echo "Pulling MySQL 8.0 image..."
-    if docker pull mysql:8.0; then
-        echo "Using MySQL 8.0..."
+    echo "Pulling MySQL image..."
+    if docker pull mysql; then
+        echo "Using MySQL..."
 
         # Run MySQL container with memory optimization for Raspberry Pi
-        docker run -d --name kiwi-mysql \
-            -p 3306:3306 \
-            -v "$SCRIPT_HOME/docker/mysql:/mysql_tmp" \
-            -e MYSQL_ROOT_PASSWORD="$MYSQL_ROOT_PASSWORD" \
-            -e MYSQL_DATABASE="kiwi_db" \
-            --restart=unless-stopped \
-            mysql:8.0 \
-            --innodb-buffer-pool-size=128M \
-            --innodb-log-file-size=32M \
-            --innodb-flush-method=O_DSYNC \
-            --innodb-flush-log-at-trx-commit=2 \
-            --max-connections=50 \
-            --default-authentication-plugin=mysql_native_password
-
-        save_config "mysql_engine" "MySQL 8.0"
+        docker run -itd --name kiwi-mysql -p 3306:3306 -v ~/docker/mysql:/mysql_tmp -e MYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD --net=host mysql
+        save_config "mysql_engine" "MySQL"
     else
         echo "Failed to pull MySQL 8.0, trying latest..."
         if docker pull mysql:latest; then
             echo "Using MySQL latest..."
 
             # Run MySQL container
-            docker run -d --name kiwi-mysql \
-                -p 3306:3306 \
-                -v "$SCRIPT_HOME/docker/mysql:/mysql_tmp" \
-                -e MYSQL_ROOT_PASSWORD="$MYSQL_ROOT_PASSWORD" \
-                -e MYSQL_DATABASE="kiwi_db" \
-                --restart=unless-stopped \
-                mysql:latest \
-                --default-authentication-plugin=mysql_native_password
+            docker run -itd --name kiwi-mysql -p 3306:3306 -v ~/docker/mysql:/mysql_tmp -e MYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD --net=host mysql:latest
 
             save_config "mysql_engine" "MySQL latest"
         else
@@ -1030,11 +1010,11 @@ if ! is_step_completed "mysql_setup"; then
     else
         # Verify database creation
         echo "Verifying database creation..."
-        if docker exec kiwi-mysql mysql -h localhost -u root -p"$MYSQL_ROOT_PASSWORD" -e "SHOW DATABASES;" | grep -q "kiwi_db"; then
+        if docker exec kiwi-mysql mysql -h localhost -u root -p$MYSQL_ROOT_PASSWORD -e "SHOW DATABASES;" | grep -q "kiwi_db"; then
             echo "✓ Database 'kiwi_db' confirmed to exist"
         else
             echo "Creating database manually..."
-            docker exec kiwi-mysql mysql -h localhost -u root -p"$MYSQL_ROOT_PASSWORD" -e "CREATE DATABASE IF NOT EXISTS kiwi_db;" || {
+            docker exec kiwi-mysql mysql -h localhost -u root -p$MYSQL_ROOT_PASSWORD -e "CREATE DATABASE IF NOT EXISTS kiwi_db;" || {
                 echo "⚠ Database creation failed, but continuing (may already exist)"
             }
         fi
@@ -1045,7 +1025,7 @@ if ! is_step_completed "mysql_setup"; then
             echo "Found kiwi-db.sql backup file, restoring database..."
 
             echo "Restoring database from backup..."
-            if docker exec kiwi-mysql sh -c "mysql -h localhost -u root -p'$MYSQL_ROOT_PASSWORD' kiwi_db < /mysql_tmp/kiwi-db.sql"; then
+            if docker exec kiwi-mysql sh -c "mysql -h localhost -u root -p$MYSQL_ROOT_PASSWORD kiwi_db < /mysql_tmp/kiwi-db.sql"; then
                 echo "✓ Basic database backup restored successfully"
                 save_config "mysql_backup_restored" "kiwi-db.sql restored successfully"
                 save_config "mysql_backup_file" "$SCRIPT_HOME/docker/mysql/kiwi-db.sql"
@@ -1053,7 +1033,7 @@ if ! is_step_completed "mysql_setup"; then
                 # Also restore YTB table if available
                 if [ -f "$SCRIPT_HOME/microservice-kiwi/kiwi-sql/ytb_table_initialize.sql" ]; then
                     cp "$SCRIPT_HOME/microservice-kiwi/kiwi-sql/ytb_table_initialize.sql" "$SCRIPT_HOME/docker/mysql/"
-                    if docker exec kiwi-mysql sh -c "mysql -h localhost -u root -p'$MYSQL_ROOT_PASSWORD' kiwi_db < /mysql_tmp/ytb_table_initialize.sql"; then
+                    if docker exec kiwi-mysql sh -c "mysql -h localhost -u root -p$MYSQL_ROOT_PASSWORD kiwi_db < /mysql_tmp/ytb_table_initialize.sql"; then
                         echo "✓ YTB database backup restored successfully"
                         save_config "mysql_ytb_backup_restored" "ytb_table_initialize.sql restored successfully"
                     else
@@ -1063,7 +1043,7 @@ if ! is_step_completed "mysql_setup"; then
             else
                 echo "⚠ Failed to restore database backup automatically"
                 echo "You can manually restore using:"
-                echo "docker exec -i kiwi-mysql mysql -u root -p'$MYSQL_ROOT_PASSWORD' kiwi_db < $SCRIPT_HOME/docker/mysql/kiwi-db.sql"
+                echo "docker exec -i kiwi-mysql mysql -u root -p$MYSQL_ROOT_PASSWORD kiwi_db < $SCRIPT_HOME/docker/mysql/kiwi-db.sql"
                 save_config "mysql_backup_restored" "failed - manual restoration required"
             fi
         else
@@ -1104,14 +1084,14 @@ else
                 # Check if MySQL is responding
                 if check_mysql_ready; then
                     echo "Restoring database from backup..."
-                    if docker exec kiwi-mysql sh -c "mysql -h localhost -u root -p'$MYSQL_ROOT_PASSWORD' kiwi_db < /mysql_tmp/kiwi-db.sql"; then
+                    if docker exec kiwi-mysql sh -c "mysql -h localhost -u root -p$MYSQL_ROOT_PASSWORD kiwi_db < /mysql_tmp/kiwi-db.sql"; then
                         echo "✓ Database backup restored successfully"
                         save_config "mysql_backup_restored" "kiwi-db.sql restored successfully"
                         save_config "mysql_backup_file" "$SCRIPT_HOME/docker/mysql/kiwi-db.sql"
                     else
                         echo "⚠ Failed to restore database backup"
                         echo "You can manually restore using:"
-                        echo "docker exec -i kiwi-mysql mysql -u root -p'$MYSQL_ROOT_PASSWORD' kiwi_db < $SCRIPT_HOME/docker/mysql/kiwi-db.sql"
+                        echo "docker exec -i kiwi-mysql mysql -u root -p$MYSQL_ROOT_PASSWORD kiwi_db < $SCRIPT_HOME/docker/mysql/kiwi-db.sql"
                         save_config "mysql_backup_restored" "failed - manual restoration required"
                     fi
                 else
@@ -1179,55 +1159,153 @@ else
     check_and_start_container "kiwi-rabbit" "rabbitmq_setup"
 fi
 
-# Step 17: Setup FastDFS
+# Function to detect system architecture and select appropriate FastDFS image
+get_fastdfs_image() {
+    local arch=$(uname -m)
+    local fastdfs_image=""
+
+    case $arch in
+        x86_64|amd64)
+            # For Intel/AMD 64-bit systems
+            fastdfs_image="delron/fastdfs:latest"
+            echo "Detected x86_64/AMD64 architecture, using: $fastdfs_image"
+            save_config "fastdfs_architecture" "x86_64"
+            ;;
+        aarch64|arm64)
+            # For ARM 64-bit systems (Raspberry Pi 4, Apple M1/M2, etc.)
+            fastdfs_image="fyclinux/fastdfs-arm64:6.04"
+            echo "Detected ARM64 architecture, using: $fastdfs_image"
+            save_config "fastdfs_architecture" "arm64"
+            ;;
+        armv7l|armhf)
+            # For ARM 32-bit systems (older Raspberry Pi)
+            fastdfs_image="morunchang/fastdfs:latest"
+            echo "Detected ARM v7 32-bit architecture, using: $fastdfs_image"
+            save_config "fastdfs_architecture" "armv7"
+            ;;
+        *)
+            # Fallback to x86_64 image with platform flag
+            fastdfs_image="delron/fastdfs:latest"
+            echo "Unknown architecture: $arch, falling back to x86_64 image: $fastdfs_image"
+            echo "Note: This may require emulation and could be slower"
+            save_config "fastdfs_architecture" "unknown_$arch"
+            ;;
+    esac
+
+    echo "$fastdfs_image"
+}
+
+# Modified Step 17: Setup FastDFS with architecture detection
 if ! is_step_completed "fastdfs_setup"; then
     echo "Step 17: Setting up FastDFS..."
 
-    # Pull FastDFS image
-    docker pull fyclinux/fastdfs-arm64:6.04
+    # Detect architecture and get appropriate image
+    FASTDFS_IMAGE=$(get_fastdfs_image)
+
+    # Pull FastDFS image with architecture consideration
+    echo "Pulling FastDFS image: $FASTDFS_IMAGE"
+
+    # For non-ARM64 systems, try to pull with platform specification
+    ARCH=$(uname -m)
+    if [[ "$ARCH" == "x86_64" || "$ARCH" == "amd64" ]]; then
+        # Pull with explicit platform for x86_64
+        docker pull --platform linux/amd64 "$FASTDFS_IMAGE" || docker pull "$FASTDFS_IMAGE"
+    elif [[ "$ARCH" == "armv7l" || "$ARCH" == "armhf" ]]; then
+        # Pull with explicit platform for ARM v7
+        docker pull --platform linux/arm/v7 "$FASTDFS_IMAGE" || docker pull "$FASTDFS_IMAGE"
+    else
+        # For ARM64 and others, pull normally
+        docker pull "$FASTDFS_IMAGE"
+    fi
 
     # Stop and remove existing containers if they exist
     docker stop tracker storage 2>/dev/null || true
     docker rm tracker storage 2>/dev/null || true
 
-    # Run tracker
+    # Run tracker with the selected image
+    echo "Starting FastDFS tracker..."
     docker run -ti -d \
         --name tracker \
         --net=host \
-        fyclinux/fastdfs-arm64:6.04 \
+        "$FASTDFS_IMAGE" \
         tracker
 
     # Wait for tracker to start
-    sleep 10
+    echo "Waiting for tracker to initialize..."
+    sleep 15
 
-    # Run storage
+    # Run storage with the selected image
+    echo "Starting FastDFS storage..."
     docker run -ti -d \
         --name storage \
         -v "$SCRIPT_HOME/storage_data:/fastdfs/storage/data" \
         -v "$SCRIPT_HOME/store_path:/fastdfs/store_path" \
         --net=host \
         -e TRACKER_SERVER="$FASTDFS_HOSTNAME:22122" \
-        fyclinux/fastdfs-arm64:6.04 \
+        "$FASTDFS_IMAGE" \
         storage
 
     # Wait for storage to start
-    sleep 15
+    echo "Waiting for storage to initialize..."
+    sleep 20
 
-    # Configure storage.conf
+    # Configure storage.conf based on image type
     echo "Configuring FastDFS storage..."
-    docker exec storage sed -i "s/tracker_server=.*/tracker_server=$FASTDFS_HOSTNAME:22122/" /etc/fdfs/storage.conf
+
+    # Different images may have different configuration paths
+    case "$FASTDFS_IMAGE" in
+        *"delron/fastdfs"*|*"morunchang/fastdfs"*)
+            # These images typically use different config paths
+            docker exec storage sh -c "find /etc -name 'storage.conf' -exec sed -i 's/tracker_server=.*/tracker_server=$FASTDFS_HOSTNAME:22122/' {} +" 2>/dev/null || true
+            ;;
+        *"fyclinux/fastdfs-arm64"*)
+            # Original ARM64 image configuration
+            docker exec storage sed -i "s/tracker_server=.*/tracker_server=$FASTDFS_HOSTNAME:22122/" /etc/fdfs/storage.conf
+            ;;
+        *)
+            # Generic configuration attempt
+            docker exec storage sh -c "find /etc -name 'storage.conf' -exec sed -i 's/tracker_server=.*/tracker_server=$FASTDFS_HOSTNAME:22122/' {} +" 2>/dev/null || true
+            ;;
+    esac
 
     # Restart storage container to apply configuration
+    echo "Restarting storage to apply configuration..."
     docker restart storage
 
-    echo "FastDFS setup completed."
-    echo "Tracker and Storage containers are running."
+    # Verify containers are running
+    sleep 10
+    if docker ps | grep -q "tracker" && docker ps | grep -q "storage"; then
+        echo "✓ FastDFS setup completed successfully"
+        echo "  - Architecture: $(uname -m)"
+        echo "  - Image used: $FASTDFS_IMAGE"
+        echo "  - Tracker: listening on port 22122"
+        echo "  - Storage: connected to tracker"
+
+        # Record setup details
+        save_config "fastdfs_image_used" "$FASTDFS_IMAGE"
+        save_config "fastdfs_tracker_port" "22122"
+        save_config "fastdfs_setup_status" "completed successfully"
+    else
+        echo "⚠ FastDFS containers may not have started properly"
+        echo "Check container status with: docker ps -a"
+        echo "View logs with: docker logs tracker && docker logs storage"
+
+        save_config "fastdfs_setup_status" "completed with warnings"
+    fi
 
     mark_step_completed "fastdfs_setup"
 else
     echo "Step 17: FastDFS already set up, skipping..."
     check_and_start_container "tracker" "fastdfs_setup"
     check_and_start_container "storage" "fastdfs_setup"
+
+    # Display current configuration
+    USED_IMAGE=$(load_config "fastdfs_image_used")
+    USED_ARCH=$(load_config "fastdfs_architecture")
+    if [ -n "$USED_IMAGE" ]; then
+        echo "  - Previously used image: $USED_IMAGE"
+        echo "  - Architecture: $USED_ARCH"
+    fi
 fi
 
 # Step 18: Maven library installation

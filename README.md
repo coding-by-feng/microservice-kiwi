@@ -1,485 +1,426 @@
-# Kiwi Microservice Platform
+# Kiwi Microservice Deployment Guide
 
-A comprehensive microservice platform for vocabulary learning and management, featuring AI-powered content processing, web crawling, and distributed storage capabilities.
+A comprehensive guide for deploying the Kiwi microservice platform using automated Docker-based scripts.
 
 ## 🚀 Quick Start
 
 ### Prerequisites
 
-- **macOS**: Docker Desktop, Git, Maven
-- **Raspberry Pi/Linux**: Docker, Docker Compose, Java 17, Maven, Git
-- At least 8GB RAM recommended
-- 20GB free disk space
+- Ubuntu/Debian-based Linux system (Raspberry Pi OS recommended)
+- Root/sudo access
+- Internet connection
+- At least 4GB RAM (8GB+ recommended)
+- 20GB+ free disk space
 
-### One-Command Setup
+### Initial Setup
 
-**For macOS:**
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/coding-by-feng/microservice-kiwi.git
+   cd microservice-kiwi
+   ```
+
+2. **Move setup script to home directory:**
+   ```bash
+   cp kiwi-deploy/set_up.sh ~/
+   cd ~
+   ```
+
+3. **Run the setup script:**
+   ```bash
+   sudo ./set_up.sh
+   ```
+
+4. **Follow the interactive prompts to configure:**
+    - Environment passwords (KIWI_ENC_PASSWORD, GROK_API_KEY)
+    - Database passwords (MySQL, Redis, Elasticsearch)
+    - Network configuration (Infrastructure IP, Service IP, FastDFS hostname)
+    - User sudo privileges
+
+5. **Reboot or reload environment:**
+   ```bash
+   # Apply Docker group permissions
+   newgrp docker
+   # Or log out and back in
+   
+   # Load environment variables
+   source ~/.bashrc
+   ```
+
+## 📋 What Gets Installed
+
+The setup script automatically installs and configures:
+
+### Core Infrastructure
+- **Docker & Docker Compose** - Container orchestration
+- **MySQL 8.0** - Primary database
+- **Redis** - Caching and session storage
+- **RabbitMQ** - Message queuing
+- **Elasticsearch 7.17.9** - Search engine with IK tokenizer
+- **FastDFS** - Distributed file system
+- **Nginx** - Web server and reverse proxy
+
+### Development Tools
+- **OpenJDK 17** - Java runtime
+- **Maven** - Build automation
+- **Python 3** - Scripting and utilities
+- **Git** - Version control
+
+### Kiwi Services
+- **Eureka** - Service discovery
+- **Config Service** - Configuration management
+- **API Gateway** - Request routing
+- **Auth Service** - Authentication & authorization
+- **UPMS** - User permission management
+- **Word Service** - Document processing
+- **AI Service** - Machine learning features
+- **Crawler Service** - Web scraping
+
+## 🛠️ Command Reference
+
+After successful setup, you'll have access to these convenient commands:
+
+### Core Deployment Commands
+
+#### `~/easy-deploy` - Deploy Kiwi Services
+Builds and deploys all microservices with various options.
+
+**Basic Usage:**
 ```bash
-curl -fsSL https://raw.githubusercontent.com/coding-by-feng/microservice-kiwi/master/kiwi-deploy/set_up_mac.sh | bash
-```
-
-**For Raspberry Pi/Linux:**
-```bash
-curl -fsSL https://raw.githubusercontent.com/coding-by-feng/microservice-kiwi/master/kiwi-deploy/set_up.sh | sudo bash
-```
-
-## 📋 Platform Support
-
-| Platform | Setup Script | Container Platform | Notes |
-|----------|--------------|-------------------|-------|
-| macOS (Intel/Apple Silicon) | `set_up_mac.sh` | Docker Desktop | Full support |
-| Raspberry Pi OS | `set_up.sh` | Docker + Podman | ARM64 optimized |
-| Ubuntu/Debian | `set_up.sh` | Docker | Full support |
-
-## 🏗️ Architecture Overview
-
-### Core Services
-- **Eureka** - Service Discovery (Port: 8762)
-- **Config Server** - Configuration Management (Port: 7771)
-- **Gateway** - API Gateway
-- **Auth Service** - Authentication & Authorization
-- **UPMS** - User Permission Management System
-
-### Business Services
-- **Word Service** - Vocabulary management and processing
-- **AI Service** - AI-powered content analysis and generation
-- **Crawler Service** - Web content extraction and processing
-
-### Infrastructure
-- **MySQL** - Primary database (Port: 3306)
-- **Redis** - Cache and session storage (Port: 6379)
-- **RabbitMQ** - Message queue (Port: 5672, Management: 15672)
-- **Elasticsearch** - Search engine (Port: 9200/9300)
-- **FastDFS** - Distributed file storage (Port: 22122/23000)
-- **Nginx** - Web server and UI hosting (Port: 80)
-
-## 🛠️ Installation Guide
-
-### Automatic Setup
-
-The setup scripts handle everything automatically:
-
-1. **System dependencies installation**
-2. **Docker and container setup**
-3. **Database initialization**
-4. **Service configuration**
-5. **Environment variable setup**
-
-### Manual Setup Steps
-
-If you prefer manual installation:
-
-#### 1. Install Dependencies
-
-**macOS:**
-```bash
-# Install Homebrew (if not installed)
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-
-# Install required packages
-brew install git maven docker
-```
-
-**Linux/Raspberry Pi:**
-```bash
-# Update system
-sudo apt update
-
-# Install dependencies
-sudo apt install -y docker.io docker-compose python3 python3-pip openjdk-17-jdk maven git
-
-# Add user to docker group
-sudo usermod -aG docker $USER
-```
-
-#### 2. Clone Repository
-```bash
-git clone https://github.com/coding-by-feng/microservice-kiwi.git
-cd microservice-kiwi
-```
-
-#### 3. Environment Configuration
-
-Create a `.env` file or set environment variables:
-```bash
-export KIWI_ENC_PASSWORD="your_encryption_password"
-export GROK_API_KEY="your_grok_api_key"
-export DB_IP="127.0.0.1"
-export MYSQL_ROOT_PASSWORD="your_mysql_password"
-export REDIS_PASSWORD="your_redis_password"
-export FASTDFS_HOSTNAME="fastdfs.fengorz.me"
-export ES_ROOT_PASSWORD="your_elasticsearch_password"
-export ES_USER_NAME="kiwi_user"
-export ES_USER_PASSWORD="your_es_user_password"
-```
-
-#### 4. Run Setup
-```bash
-# For macOS
-./kiwi-deploy/set_up_mac.sh
-
-# For Linux/Raspberry Pi
-sudo ./kiwi-deploy/set_up.sh
-```
-
-## 🎮 Usage
-
-### Available Commands
-
-After setup, you'll have convenient shortcuts in your home directory:
-
-```bash
-# Deploy all services
-~/easy-deploy
-
-# Stop all services
-~/easy-stop
-
-# Deploy UI only
-~/easy-deploy-ui
-
-# Check container status
-~/easy-check
-
-# Re-run setup
-~/easy-setup
-
-# Clean setup files
-~/easy-clean-setup
-```
-
-### Deployment Options
-
-The main deployment script supports various modes:
-
-```bash
-# Full deployment (default)
+# Full deployment (git pull + maven build + docker deploy)
 sudo -E ~/easy-deploy
 
-# Skip git operations
+# Skip git operations (use existing code)
 sudo -E ~/easy-deploy -mode=sg
 
-# Skip Maven build
+# Skip maven build (use existing JARs)
 sudo -E ~/easy-deploy -mode=sm
 
-# Skip Docker build
+# Skip Docker building (use existing images)
 sudo -E ~/easy-deploy -mode=sbd
 
-# Skip all (containers only)
+# Skip all build steps (deploy existing containers)
 sudo -E ~/easy-deploy -mode=sa
 
-# Enable auto-restart monitoring
+# Enable auto-restart monitoring for crawler service
 sudo -E ~/easy-deploy -c
 ```
 
-### Container Management
+**Options:**
+- `-mode=sg` - Skip git operations
+- `-mode=sm` - Skip maven build
+- `-mode=sbd` - Skip Docker building
+- `-mode=sa` - Skip all build operations
+- `-c` - Enable autoCheckService for automatic container monitoring
 
-**Check status of all containers:**
+#### `~/easy-stop` - Stop All Services
+Gracefully stops all Kiwi containers and services.
+
 ```bash
-~/easy-check
+~/easy-stop
 ```
 
-**Manual container operations:**
+**What it does:**
+- Stops autoCheckService monitoring
+- Stops containers in dependency order
+- Removes stopped containers
+- Optionally cleans up Docker images and networks
+
+#### `~/easy-deploy-ui` - Deploy UI
+Updates the web interface with new frontend builds.
+
 ```bash
-# View all containers
-docker ps -a
+# Deploy UI from dist.zip file
+~/easy-deploy-ui
 
-# Check specific service logs
-docker logs kiwi-mysql
-docker logs kiwi-eureka
+# Deploy with explicit mode
+~/easy-deploy-ui -mode=d
 
-# Restart a service
-docker restart kiwi-mysql
-
-# Stop/start individual services
-docker stop kiwi-crawler
-docker start kiwi-crawler
-```
-
-## 🔧 Configuration
-
-### Environment Variables
-
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `KIWI_ENC_PASSWORD` | Encryption password for sensitive data | Required |
-| `GROK_API_KEY` | API key for Grok AI services | Required |
-| `DB_IP` | Database server IP | 127.0.0.1 |
-| `MYSQL_ROOT_PASSWORD` | MySQL root password | Required |
-| `REDIS_PASSWORD` | Redis authentication password | Required |
-| `FASTDFS_HOSTNAME` | FastDFS server hostname | Required |
-| `ES_ROOT_PASSWORD` | Elasticsearch root password | Required |
-| `ES_USER_NAME` | Additional Elasticsearch user | Required |
-| `ES_USER_PASSWORD` | Additional Elasticsearch user password | Required |
-
-### Service Ports
-
-| Service | Port | Description |
-|---------|------|-------------|
-| Nginx/UI | 80 | Web interface |
-| MySQL | 3306 | Database |
-| Redis | 6379 | Cache |
-| RabbitMQ | 5672 | Message queue |
-| RabbitMQ Management | 15672 | Web management |
-| Eureka | 8762 | Service discovery |
-| Config Server | 7771 | Configuration |
-| Elasticsearch | 9200, 9300 | Search engine |
-| FastDFS Tracker | 22122 | File storage tracker |
-| FastDFS Storage | 23000 | File storage |
-
-### Hosts Configuration
-
-The setup automatically adds these entries to `/etc/hosts`:
-```
-127.0.0.1    fastdfs.fengorz.me
-127.0.0.1    kiwi-microservice-local
-127.0.0.1    kiwi-microservice
-127.0.0.1    kiwi-ui
-127.0.0.1    kiwi-eureka
-127.0.0.1    kiwi-redis
-127.0.0.1    kiwi-rabbitmq
-127.0.0.1    kiwi-db
-127.0.0.1    kiwi-es
-127.0.0.1    kiwi-config
-127.0.0.1    kiwi-auth
-127.0.0.1    kiwi-upms
-127.0.0.1    kiwi-gate
-127.0.0.1    kiwi-ai
-127.0.0.1    kiwi-crawler
-```
-
-## 🐳 Docker Configuration
-
-### Images Used
-
-- **MySQL**: `mysql:latest`
-- **Redis**: `redis:latest`
-- **RabbitMQ**: `rabbitmq:management`
-- **Elasticsearch**: `elasticsearch:7.17.9`
-- **Nginx**: `nginx:latest`
-- **FastDFS**: `delron/fastdfs` (macOS), `fyclinux/fastdfs-arm64:6.04` (Raspberry Pi)
-
-### Volume Mounts
-
-```yaml
-# MySQL
-~/docker/mysql:/mysql_tmp
-
-# RabbitMQ
-~/docker/rabbitmq:/tmp
-
-# FastDFS
-~/storage_data:/fastdfs/storage/data
-~/store_path:/fastdfs/store_path
-
-# Nginx/UI
-~/docker/ui/dist:/usr/share/nginx/html
-
-# Application logs
-~/docker/kiwi/[service]/logs:/logs
-```
-
-## 🔍 Troubleshooting
-
-### Common Issues
-
-**1. Port 80 in use:**
-```bash
-# Check what's using port 80
-sudo lsof -i :80
-
-# Kill the process
-sudo kill -9 <PID>
-
-# Or use the built-in port management
+# Kill process on specific port (troubleshooting)
 ~/easy-deploy-ui -mode=kp -port=80
 ```
 
-**2. Docker permission issues:**
+**Prerequisites:**
+- Place `dist.zip` file in your home directory before running
+- Ensure kiwi-ui container exists and is accessible
+
+#### `~/easy-ui-initialize` - Initialize UI Configuration
+Sets up Nginx configuration for microservice proxying.
+
 ```bash
-# Add user to docker group
-sudo usermod -aG docker $USER
-
-# Apply group changes
-newgrp docker
-
-# Or restart your terminal
+~/easy-ui-initialize
 ```
 
-**3. Container startup failures:**
-```bash
-# Check container logs
-docker logs <container-name>
+**What it configures:**
+- Nginx reverse proxy settings
+- Route mapping for microservices (/auth, /wordBiz, /admin, /ai-biz)
+- SSL termination (if certificates available)
+- Static file serving
 
-# Check system resources
-docker system df
-docker stats
+### Monitoring and Debugging
 
-# Clean up resources if needed
-docker system prune -a --volumes
-```
+#### `~/easy-check` - Check Container Status
+Interactive container monitoring and management tool.
 
-**4. Database connection issues:**
-```bash
-# Test MySQL connection
-docker exec kiwi-mysql mysql -u root -p -e "SHOW DATABASES;"
-
-# Reset MySQL container
-docker stop kiwi-mysql
-docker rm kiwi-mysql
-# Re-run setup to recreate
-```
-
-### Log Locations
-
-- **Application logs**: `~/docker/kiwi/[service]/logs/`
-- **Setup progress**: `./.kiwi_setup_progress`
-- **Configuration**: `./.kiwi_setup_config`
-- **Auto-check logs**: `~/autoCheck.log`
-
-### Health Checks
-
-**Check all services:**
 ```bash
 ~/easy-check
 ```
 
-**Manual health verification:**
-```bash
-# Eureka
-curl http://localhost:8762/health
+**Features:**
+- View logs for individual containers (static or real-time)
+- Check container status and resource usage
+- Start/stop individual containers
+- Network connectivity testing
+- Container shell access
+- Port conflict resolution
 
-# Config Server
-curl http://localhost:7771/health
+**Menu Options:**
+1. **Container Logs (1-15)** - View logs for specific services
+2. **Check All Failed Containers (16)** - Batch log review
+3. **Check Connectivity (17)** - Test service connections
+4. **Show Resource Usage (18)** - CPU/memory statistics
+5. **Show Container Status (19)** - Current state overview
+6. **Start Stopped Containers (20)** - Batch container startup
+7. **Start All Kiwi Containers (21)** - Full system startup
+8. **Start Infrastructure Only (22)** - Database/cache services only
+9. **Enter Container Shell (23)** - Debug inside containers
+10. **Stop Single Container (24)** - Graceful individual shutdown
+
+### Setup Management
+
+#### `~/easy-setup` - Re-run Setup
+Re-executes the setup script with step selection options.
+
+```bash
+sudo ~/easy-setup
+```
+
+**Setup Modes:**
+- **Full Setup (0)** - Complete automated setup
+- **Selective Steps (1)** - Choose specific steps to re-initialize
+- **Status Review (2)** - View current setup status without changes
+
+**Use Cases:**
+- Update configuration parameters
+- Retry failed installation steps
+- Add new services or components
+- Repair corrupted installations
+
+#### `~/easy-clean-setup` - Clean and Re-setup
+Interactive cleanup tool for resetting setup progress and configuration.
+
+```bash
+~/easy-clean-setup
+```
+
+**Cleanup Options:**
+1. **Clean Progress Only** - Reset step tracking (keep passwords)
+2. **Clean Config Only** - Remove saved passwords (keep progress)
+3. **Full Reset** - Remove all setup data
+4. **Show Status** - Review current configuration
+5. **Backup Files** - Create timestamped backups
+6. **Exit** - Leave without changes
+
+## 🔧 Configuration Management
+
+### Environment Variables
+Key environment variables are automatically configured:
+
+```bash
+# Core Application
+KIWI_ENC_PASSWORD="[your-encryption-password]"
+GROK_API_KEY="[your-ai-api-key]"
+
+# Database Configuration
+DB_IP="[infrastructure-ip]"
+MYSQL_ROOT_PASSWORD="[mysql-password]"
+REDIS_PASSWORD="[redis-password]"
 
 # Elasticsearch
-curl http://localhost:9200/_cluster/health
+ES_ROOT_PASSWORD="[es-root-password]"
+ES_USER_NAME="[es-username]"
+ES_USER_PASSWORD="[es-user-password]"
 
-# RabbitMQ
-curl http://localhost:15672
+# File Storage
+FASTDFS_HOSTNAME="[fastdfs-hostname]"
+FASTDFS_NON_LOCAL_IP="[fastdfs-ip]"
 
-# UI
-curl http://localhost:80
+# Network Configuration
+INFRASTRUCTURE_IP="[infrastructure-services-ip]"
+SERVICE_IP="[microservices-ip]"
 ```
 
-## 🧹 Cleanup
+### Network Architecture
+The platform uses separate IP addresses for different service tiers:
 
-### Partial Cleanup
+**Infrastructure Services** (`INFRASTRUCTURE_IP`):
+- kiwi-ui (Web Interface)
+- kiwi-redis (Cache)
+- kiwi-rabbitmq (Message Queue)
+- kiwi-db (Database)
+- kiwi-es (Search)
+
+**Microservices** (`SERVICE_IP`):
+- kiwi-eureka (Service Discovery)
+- kiwi-config (Configuration)
+- kiwi-auth (Authentication)
+- kiwi-upms (User Management)
+- kiwi-gate (API Gateway)
+- kiwi-ai (AI Services)
+- kiwi-crawler (Web Crawler)
+
+**File Storage** (`FASTDFS_NON_LOCAL_IP`):
+- fastdfs.fengorz.me (Distributed File System)
+
+### Ports and Services
+
+| Service | Container | Port | Purpose |
+|---------|-----------|------|---------|
+| MySQL | kiwi-mysql | 3306 | Database |
+| Redis | kiwi-redis | 6379 | Cache |
+| RabbitMQ | kiwi-rabbit | 5672, 15672 | Messaging, Management UI |
+| Elasticsearch | kiwi-es | 9200, 9300 | Search Engine |
+| FastDFS Tracker | tracker | 22122 | File System Coordination |
+| FastDFS Storage | storage | 8888 | File Storage |
+| Nginx/UI | kiwi-ui | 80 | Web Interface |
+| Eureka | kiwi-eureka | 8762 | Service Discovery |
+| Config Service | kiwi-config | 7771 | Configuration |
+| API Gateway | kiwi-gate | 9991 | Request Routing |
+
+## 🐛 Troubleshooting
+
+### Common Issues
+
+#### Port Conflicts
 ```bash
-# Clean setup files only
-~/easy-clean-setup
+# Check what's using a port
+sudo netstat -tlnp | grep :80
 
-# Stop all services
-~/easy-stop
+# Kill process using port (via easy-deploy-ui)
+~/easy-deploy-ui -mode=kp -port=80
+
+# Or manually
+sudo kill -9 $(lsof -ti :80)
 ```
 
-### Complete Cleanup
-
-**macOS:**
+#### Container Issues
 ```bash
-./kiwi-deploy/clean_all_resource_mac.sh
+# Check container status
+docker ps -a
+
+# View container logs
+docker logs kiwi-mysql
+
+# Restart problematic container
+docker restart kiwi-redis
+
+# Enter container for debugging
+docker exec -it kiwi-mysql bash
 ```
 
-**Linux/Raspberry Pi:**
+#### Permission Problems
 ```bash
-# Remove containers and images
-docker stop $(docker ps -aq)
-docker rm $(docker ps -aq)
-docker rmi $(docker images -q)
+# Fix Docker permissions
+sudo usermod -aG docker $USER
+newgrp docker
 
-# Remove volumes
-docker volume prune -f
+# Reload environment variables
+source ~/.bashrc
 
-# Remove directories
-rm -rf ~/microservice-kiwi ~/docker ~/storage_data ~/store_path ~/tracker_data
-
-# Remove shortcuts
-rm -f ~/easy-* ~/deployKiwi.sh
-
-# Clean environment variables from shell profile
-```
-
-## 🔄 Updates
-
-### Update Application
-```bash
-cd ~/microservice-kiwi
-git pull
+# Re-run with proper sudo
 sudo -E ~/easy-deploy
 ```
 
-### Update UI Only
+#### Memory Issues (Raspberry Pi)
 ```bash
-# Place new dist.zip in home directory
-~/easy-deploy-ui
+# Check memory usage
+free -h
+
+# Stop non-essential services
+sudo systemctl stop apache2 
+sudo systemctl stop bluetooth
+
+# Reduce Elasticsearch memory
+docker exec kiwi-es sh -c 'echo "ES_JAVA_OPTS=-Xms256m -Xmx256m" >> /usr/share/elasticsearch/config/jvm.options'
+docker restart kiwi-es
 ```
 
-### Selective Updates
+### Log Locations
+- **Setup logs**: Home directory
+- **Container logs**: `docker logs <container-name>`
+- **Application logs**: `~/docker/kiwi/<service>/logs/`
+- **Nginx logs**: Inside kiwi-ui container at `/var/log/nginx/`
+
+### Recovery Procedures
+
+#### Corrupted Git Repository
 ```bash
-# Update without rebuilding everything
-sudo -E ~/easy-deploy -mode=sg  # Skip git
-sudo -E ~/easy-deploy -mode=sm  # Skip Maven
-sudo -E ~/easy-deploy -mode=sbd # Skip Docker build
+cd ~/microservice-kiwi
+rm -rf .git
+git init
+git remote add origin https://github.com/coding-by-feng/microservice-kiwi.git
+git fetch --all
+git reset --hard origin/master
 ```
 
-## 📊 Monitoring
-
-### Auto-Check Service
-
-Enable automatic service monitoring:
+#### Database Recovery
 ```bash
-sudo -E ~/easy-deploy -c
+# Restore from backup (if kiwi-db.sql exists)
+docker exec -i kiwi-mysql mysql -u root -p[password] kiwi_db < ~/docker/mysql/kiwi-db.sql
+
+# Recreate database
+docker exec kiwi-mysql mysql -u root -p[password] -e "DROP DATABASE IF EXISTS kiwi_db; CREATE DATABASE kiwi_db;"
 ```
 
-This starts a background service that:
-- Monitors the crawler service health
-- Automatically restarts failed services
-- Logs activity to `~/autoCheck.log`
-
-### Manual Monitoring
+#### Full System Reset
 ```bash
-# Check container status
-docker ps
+# Stop all services
+~/easy-stop
 
-# Monitor resource usage
-docker stats
+# Clean setup completely
+~/easy-clean-setup
+# Choose option 3 (Full Reset)
 
-# View service logs
-docker logs -f kiwi-crawler
+# Remove all containers and images
+docker system prune -a -f
 
-# Check application logs
-tail -f ~/docker/kiwi/crawler/logs/application.log
+# Re-run setup
+sudo ~/easy-setup
 ```
 
-## 🔗 Web Interfaces
+## 📚 Advanced Usage
 
-After successful deployment:
+### Development Workflow
+1. **Code Changes**: Modify source code in `~/microservice-kiwi/`
+2. **Quick Deploy**: `sudo -E ~/easy-deploy -mode=sg` (skip git)
+3. **Test**: Use `~/easy-check` to monitor logs
+4. **UI Updates**: Place `dist.zip` in home, run `~/easy-deploy-ui`
 
-- **Kiwi UI**: http://localhost:80
-- **RabbitMQ Management**: http://localhost:15672 (username/password)
-- **Elasticsearch**: http://localhost:9200 (root/your_password)
-- **Eureka Dashboard**: http://localhost:8762
+### Production Deployment
+1. **Full Deploy**: `sudo -E ~/easy-deploy -c` (with monitoring)
+2. **Health Check**: `~/easy-check` → option 17 (connectivity test)
+3. **Monitor**: `~/easy-check` → option 18 (resource usage)
 
-## 🤝 Contributing
+### Backup Strategy
+```bash
+# Backup databases
+docker exec kiwi-mysql mysqldump -u root -p[password] --all-databases > backup.sql
 
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Test with the deployment scripts
-5. Submit a pull request
+# Backup configuration
+~/easy-clean-setup → option 5 (backup files)
+
+# Backup volumes
+docker run --rm -v es_data:/data -v $(pwd):/backup ubuntu tar czf /backup/es_backup.tar.gz -C /data .
+```
+
+## 🤝 Support
+
+For issues and questions:
+1. Check container logs: `~/easy-check`
+2. Review setup status: `~/easy-setup` → option 2
+3. Consult troubleshooting section above
+4. Check project repository: [microservice-kiwi](https://github.com/coding-by-feng/microservice-kiwi)
 
 ## 📝 License
 
-This project is licensed under the terms specified in the main repository.
-
-## 🆘 Support
-
-For issues and questions:
-1. Check the troubleshooting section above
-2. Review container logs: `docker logs <container-name>`
-3. Check the setup logs and configuration files
-4. Open an issue in the GitHub repository
-
----
-
-**Note**: This platform includes AI-powered features and web crawling capabilities. Ensure you have appropriate API keys and respect robots.txt and rate limiting when using these features.
+This project is part of the Kiwi microservice platform. Check the main repository for license information.

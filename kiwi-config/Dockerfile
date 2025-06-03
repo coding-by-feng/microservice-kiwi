@@ -1,4 +1,4 @@
-FROM arm64v8/openjdk:8-jdk
+FROM openjdk:8-jdk-alpine
 RUN mkdir /logs
 ADD kiwi-config-2.0.jar app.jar
 EXPOSE 7771

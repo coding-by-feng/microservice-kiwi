@@ -205,7 +205,8 @@ show_help() {
   echo "  -mode=sg      Skip git operations (stash and pull)"
   echo "  -mode=sm      Skip maven build operation"
   echo "  -mode=sbd     Skip Dockerfile building operation (copying Dockerfiles and JARs)"
-  echo "  -mode=sa      Skip all operations (git + maven + Dockerfile building)"
+  echo "  -mode=sa      Skip all build operations - FAST DEPLOY MODE"
+  echo "                (Only stop containers → remove containers → start containers)"
   echo ""
   echo "Available options:"
   echo "  -c            Enable autoCheckService after deployment"
@@ -214,14 +215,13 @@ show_help() {
   echo "If no mode is specified, all operations will be executed."
   echo ""
   echo "Examples:"
-  echo "  sudo -E $0                # Run all operations"
+  echo "  sudo -E $0                # Full deployment (git + maven + docker build + deploy)"
   echo "  sudo -E $0 -mode=sg       # Skip only git operations"
   echo "  sudo -E $0 -mode=sm       # Skip only maven build"
   echo "  sudo -E $0 -mode=sbd      # Skip only Dockerfile building"
-  echo "  sudo -E $0 -mode=sa       # Skip all operations"
-  echo "  sudo -E $0 -c             # Run all operations with autoCheckService"
-  echo "  sudo -E $0 -mode=sg -c    # Skip git operations and enable autoCheckService"
-  echo "  sudo -E $0 -c -mode=sm    # Skip maven build and enable autoCheckService"
+  echo "  sudo -E $0 -mode=sa       # FAST DEPLOY: Skip all builds, only redeploy containers"
+  echo "  sudo -E $0 -c             # Full deployment with autoCheckService"
+  echo "  sudo -E $0 -mode=sa -c    # Fast deploy with autoCheckService"
 }
 
 # Initialize variables
@@ -230,6 +230,7 @@ ENABLE_AUTO_CHECK=false
 SKIP_GIT=false
 SKIP_MAVEN=false
 SKIP_DOCKER_BUILD=false
+FAST_DEPLOY_MODE=false
 
 # Process all arguments
 for arg in "$@"; do
@@ -237,28 +238,33 @@ for arg in "$@"; do
     -mode=sg)
       MODE="$arg"
       SKIP_GIT=true
-      echo "Skipping git stash and pull operations"
+      echo "⏭️  Skipping git stash and pull operations"
       ;;
     -mode=sm)
       MODE="$arg"
       SKIP_MAVEN=true
-      echo "Skipping maven build operation"
+      echo "⏭️  Skipping maven build operation"
       ;;
     -mode=sbd)
       MODE="$arg"
       SKIP_DOCKER_BUILD=true
-      echo "Skipping Dockerfile building operation"
+      echo "⏭️  Skipping Dockerfile building operation"
       ;;
     -mode=sa)
       MODE="$arg"
       SKIP_GIT=true
       SKIP_MAVEN=true
       SKIP_DOCKER_BUILD=true
-      echo "Skipping all operations (git, maven, and Dockerfile building)"
+      FAST_DEPLOY_MODE=true
+      echo "🚀 FAST DEPLOY MODE: Skipping all build operations"
+      echo "   ⏭️  Git operations: SKIPPED"
+      echo "   ⏭️  Maven build: SKIPPED"
+      echo "   ⏭️  Docker building: SKIPPED"
+      echo "   ✅ Will only: Stop → Remove → Start containers"
       ;;
     -c)
       ENABLE_AUTO_CHECK=true
-      echo "AutoCheckService will be enabled after deployment"
+      echo "🔄 AutoCheckService will be enabled after deployment"
       ;;
     -help|--help|-h)
       show_help
@@ -266,7 +272,7 @@ for arg in "$@"; do
       ;;
     *)
       if [ -n "$arg" ]; then
-        echo "Invalid parameter: $arg"
+        echo "❌ Invalid parameter: $arg"
         echo "Use -help to see available options"
         exit 1
       fi
@@ -275,110 +281,154 @@ for arg in "$@"; do
 done
 
 # Display final configuration
+echo "=============================================="
+echo "DEPLOYMENT CONFIGURATION:"
+echo "=============================================="
+if [ "$FAST_DEPLOY_MODE" = true ]; then
+  echo "🚀 MODE: FAST DEPLOY (Skip All Builds)"
+  echo "   📋 Operations: Stop Containers → Remove Containers → Start Containers"
+  echo "   ⚡ Estimated time: ~2-3 minutes"
+elif [ "$SKIP_GIT" = true ] || [ "$SKIP_MAVEN" = true ] || [ "$SKIP_DOCKER_BUILD" = true ]; then
+  echo "⚙️  MODE: PARTIAL BUILD"
+  echo "   Git operations: $([ "$SKIP_GIT" = true ] && echo "SKIPPED" || echo "ENABLED")"
+  echo "   Maven build: $([ "$SKIP_MAVEN" = true ] && echo "SKIPPED" || echo "ENABLED")"
+  echo "   Docker building: $([ "$SKIP_DOCKER_BUILD" = true ] && echo "SKIPPED" || echo "ENABLED")"
+else
+  echo "🔨 MODE: FULL BUILD"
+  echo "   📋 Operations: Git Pull → Maven Build → Docker Build → Deploy"
+  echo "   ⏱️  Estimated time: ~10-15 minutes"
+fi
+
 if [ "$ENABLE_AUTO_CHECK" = true ]; then
-  echo "✅ AutoCheckService will be started after deployment"
+  echo "🔄 AutoCheckService: ENABLED"
 else
-  echo "❌ AutoCheckService will NOT be started (use -c to enable)"
+  echo "🔄 AutoCheckService: DISABLED (use -c to enable)"
 fi
+echo "=============================================="
+echo ""
 
-# Git operations
-if [ "$SKIP_GIT" = false ]; then
-  echo "Git pulling..."
-  echo "Stashing local changes..."
-  git stash
-  echo "Pulling latest changes..."
-  git pull
+# Fast deploy mode optimization - skip unnecessary operations
+if [ "$FAST_DEPLOY_MODE" = true ]; then
+  echo "🚀 FAST DEPLOY MODE ACTIVATED"
+  echo "=============================================="
+  echo "⏭️  Skipping all build operations for maximum speed..."
+  echo "📦 Using existing Docker images and configurations"
+  echo "⚡ Proceeding directly to container deployment..."
+  echo ""
 else
-  echo "Git operations skipped"
-fi
-
-# Set execute permissions
-echo "Setting execute permissions for scripts..."
-chmod 777 "$CURRENT_DIR/microservice-kiwi/kiwi-deploy/docker/"*.sh
-chmod 777 "$CURRENT_DIR/microservice-kiwi/kiwi-deploy/kiwi-ui/"*.sh
-
-# Clean log directories efficiently
-echo "Cleaning log directories..."
-rm -rf "$CURRENT_DIR/docker/kiwi/eureka/logs/"*
-rm -rf "$CURRENT_DIR/docker/kiwi/config/logs/"*
-rm -rf "$CURRENT_DIR/docker/kiwi/upms/logs/"*
-rm -rf "$CURRENT_DIR/docker/kiwi/auth/logs/"*
-rm -rf "$CURRENT_DIR/docker/kiwi/gate/logs/"*
-rm -rf "$CURRENT_DIR/docker/kiwi/word/logs/"*
-rm -rf "$CURRENT_DIR/docker/kiwi/word/crawlerTmp/"*
-rm -rf "$CURRENT_DIR/docker/kiwi/word/bizTmp/"*
-rm -rf "$CURRENT_DIR/docker/kiwi/crawler/logs/"*
-rm -rf "$CURRENT_DIR/docker/kiwi/ai/logs/"*
-rm -rf "$CURRENT_DIR/docker/kiwi/ai/tmp/"*
-
-# Maven build
-if [ "$SKIP_MAVEN" = false ]; then
-  # Get the original user's home directory
-  if [ -n "$SUDO_USER" ]; then
-    ORIGINAL_HOME=$(eval echo "~$SUDO_USER")
+  # Git operations
+  if [ "$SKIP_GIT" = false ]; then
+    echo "📥 Git pulling..."
+    echo "📦 Stashing local changes..."
+    git stash
+    echo "⬇️  Pulling latest changes..."
+    git pull
   else
-    ORIGINAL_HOME="$HOME"
+    echo "⏭️  Git operations skipped"
   fi
 
-  echo "Installing VoiceRSS TTS library..."
-  echo "Using Maven repository: $ORIGINAL_HOME/.m2"
-  cd "$CURRENT_DIR/microservice-kiwi/kiwi-common/kiwi-common-tts/lib"
-  mvn install:install-file \
-      -Dfile=voicerss_tts.jar \
-      -DgroupId=voicerss \
-      -DartifactId=tts \
-      -Dversion=2.0 \
-      -Dpackaging=jar \
-      -Dmaven.repo.local="$ORIGINAL_HOME/.m2/repository"
-  cd "$CURRENT_DIR/microservice-kiwi/"
+  # Set execute permissions
+  echo "🔐 Setting execute permissions for scripts..."
+  chmod 777 "$CURRENT_DIR/microservice-kiwi/kiwi-deploy/docker/"*.sh
+  chmod 777 "$CURRENT_DIR/microservice-kiwi/kiwi-deploy/kiwi-ui/"*.sh
 
-  echo "Running maven build..."
-  mvn clean install -Dmaven.test.skip=true -B -Dmaven.repo.local="$ORIGINAL_HOME/.m2/repository"
-else
-  echo "Maven build skipped"
-fi
+  # Clean log directories efficiently (only if not in fast deploy mode)
+  echo "🧹 Cleaning log directories..."
+  rm -rf "$CURRENT_DIR/docker/kiwi/eureka/logs/"* 2>/dev/null || true
+  rm -rf "$CURRENT_DIR/docker/kiwi/config/logs/"* 2>/dev/null || true
+  rm -rf "$CURRENT_DIR/docker/kiwi/upms/logs/"* 2>/dev/null || true
+  rm -rf "$CURRENT_DIR/docker/kiwi/auth/logs/"* 2>/dev/null || true
+  rm -rf "$CURRENT_DIR/docker/kiwi/gate/logs/"* 2>/dev/null || true
+  rm -rf "$CURRENT_DIR/docker/kiwi/word/logs/"* 2>/dev/null || true
+  rm -rf "$CURRENT_DIR/docker/kiwi/word/crawlerTmp/"* 2>/dev/null || true
+  rm -rf "$CURRENT_DIR/docker/kiwi/word/bizTmp/"* 2>/dev/null || true
+  rm -rf "$CURRENT_DIR/docker/kiwi/crawler/logs/"* 2>/dev/null || true
+  rm -rf "$CURRENT_DIR/docker/kiwi/ai/logs/"* 2>/dev/null || true
+  rm -rf "$CURRENT_DIR/docker/kiwi/ai/tmp/"* 2>/dev/null || true
 
-# Move Dockerfiles and JARs efficiently
-if [ "$SKIP_DOCKER_BUILD" = false ]; then
-  # Get the original user's home directory for JAR files
-  if [ -n "$SUDO_USER" ]; then
-    ORIGINAL_HOME=$(eval echo "~$SUDO_USER")
+  # Maven build
+  if [ "$SKIP_MAVEN" = false ]; then
+    # Get the original user's home directory
+    if [ -n "$SUDO_USER" ]; then
+      ORIGINAL_HOME=$(eval echo "~$SUDO_USER")
+    else
+      ORIGINAL_HOME="$HOME"
+    fi
+
+    echo "📚 Installing VoiceRSS TTS library..."
+    echo "📂 Using Maven repository: $ORIGINAL_HOME/.m2"
+    cd "$CURRENT_DIR/microservice-kiwi/kiwi-common/kiwi-common-tts/lib"
+    mvn install:install-file \
+        -Dfile=voicerss_tts.jar \
+        -DgroupId=voicerss \
+        -DartifactId=tts \
+        -Dversion=2.0 \
+        -Dpackaging=jar \
+        -Dmaven.repo.local="$ORIGINAL_HOME/.m2/repository"
+    cd "$CURRENT_DIR/microservice-kiwi/"
+
+    echo "🔨 Running maven build..."
+    mvn clean install -Dmaven.test.skip=true -B -Dmaven.repo.local="$ORIGINAL_HOME/.m2/repository"
   else
-    ORIGINAL_HOME="$HOME"
+    echo "⏭️  Maven build skipped"
   fi
 
-  echo "Moving Dockerfiles, GCP credentials and JARs..."
-  echo "Using Maven repository: $ORIGINAL_HOME/.m2"
-  echo "Copying Dockerfiles..."
-  cp -f "$CURRENT_DIR/microservice-kiwi/kiwi-eureka/Dockerfile" "$CURRENT_DIR/docker/kiwi/eureka/"
-  cp -f "$CURRENT_DIR/microservice-kiwi/kiwi-config/Dockerfile" "$CURRENT_DIR/docker/kiwi/config/"
-  cp -f "$CURRENT_DIR/microservice-kiwi/kiwi-upms/kiwi-upms-biz/Dockerfile" "$CURRENT_DIR/docker/kiwi/upms/"
-  cp -f "$CURRENT_DIR/microservice-kiwi/kiwi-word/kiwi-word-biz/docker/biz/Dockerfile" "$CURRENT_DIR/docker/kiwi/word/biz"
-  cp -f "$CURRENT_DIR/microservice-kiwi/kiwi-word/kiwi-word-biz/docker/crawler/Dockerfile" "$CURRENT_DIR/docker/kiwi/word/crawler"
-  cp -f "$CURRENT_DIR/microservice-kiwi/kiwi-word/kiwi-word-crawler/Dockerfile" "$CURRENT_DIR/docker/kiwi/crawler/"
-  cp -f "$CURRENT_DIR/microservice-kiwi/kiwi-auth/Dockerfile" "$CURRENT_DIR/docker/kiwi/auth/"
-  cp -f "$CURRENT_DIR/microservice-kiwi/kiwi-gateway/Dockerfile" "$CURRENT_DIR/docker/kiwi/gate/"
-  cp -f "$CURRENT_DIR/microservice-kiwi/kiwi-ai/kiwi-ai-biz/docker/biz/Dockerfile" "$CURRENT_DIR/docker/kiwi/ai/biz"
-  cp -f "$CURRENT_DIR/microservice-kiwi/kiwi-ai/kiwi-ai-biz/docker/batch/Dockerfile" "$CURRENT_DIR/docker/kiwi/ai/batch"
+  # Move Dockerfiles and JARs efficiently
+  if [ "$SKIP_DOCKER_BUILD" = false ]; then
+    # Get the original user's home directory for JAR files
+    if [ -n "$SUDO_USER" ]; then
+      ORIGINAL_HOME=$(eval echo "~$SUDO_USER")
+    else
+      ORIGINAL_HOME="$HOME"
+    fi
 
-  echo "Copying JAR files..."
-  cp -f "$ORIGINAL_HOME/.m2/repository/me/fengorz/kiwi-eureka/2.0/kiwi-eureka-2.0.jar" "$CURRENT_DIR/docker/kiwi/eureka/"
-  cp -f "$ORIGINAL_HOME/.m2/repository/me/fengorz/kiwi-config/2.0/kiwi-config-2.0.jar" "$CURRENT_DIR/docker/kiwi/config/"
-  cp -f "$ORIGINAL_HOME/.m2/repository/me/fengorz/kiwi-upms-biz/2.0/kiwi-upms-biz-2.0.jar" "$CURRENT_DIR/docker/kiwi/upms/"
-  cp -f "$ORIGINAL_HOME/.m2/repository/me/fengorz/kiwi-auth/2.0/kiwi-auth-2.0.jar" "$CURRENT_DIR/docker/kiwi/auth/"
-  cp -f "$ORIGINAL_HOME/.m2/repository/me/fengorz/kiwi-gateway/2.0/kiwi-gateway-2.0.jar" "$CURRENT_DIR/docker/kiwi/gate/"
-  cp -f "$ORIGINAL_HOME/.m2/repository/me/fengorz/kiwi-word-biz/2.0/kiwi-word-biz-2.0.jar" "$CURRENT_DIR/docker/kiwi/word/"
-  cp -f "$ORIGINAL_HOME/.m2/repository/me/fengorz/kiwi-word-crawler/2.0/kiwi-word-crawler-2.0.jar" "$CURRENT_DIR/docker/kiwi/crawler/"
-  cp -f "$ORIGINAL_HOME/.m2/repository/me/fengorz/kiwi-ai-biz/2.0/kiwi-ai-biz-2.0.jar" "$CURRENT_DIR/docker/kiwi/ai/biz"
-  cp -f "$ORIGINAL_HOME/.m2/repository/me/fengorz/kiwi-ai-biz/2.0/kiwi-ai-biz-2.0.jar" "$CURRENT_DIR/docker/kiwi/ai/batch"
-else
-  echo "Dockerfile building skipped"
+    echo "📋 Moving Dockerfiles, GCP credentials and JARs..."
+    echo "📂 Using Maven repository: $ORIGINAL_HOME/.m2"
+    echo "📄 Copying Dockerfiles..."
+    cp -f "$CURRENT_DIR/microservice-kiwi/kiwi-eureka/Dockerfile" "$CURRENT_DIR/docker/kiwi/eureka/"
+    cp -f "$CURRENT_DIR/microservice-kiwi/kiwi-config/Dockerfile" "$CURRENT_DIR/docker/kiwi/config/"
+    cp -f "$CURRENT_DIR/microservice-kiwi/kiwi-upms/kiwi-upms-biz/Dockerfile" "$CURRENT_DIR/docker/kiwi/upms/"
+    cp -f "$CURRENT_DIR/microservice-kiwi/kiwi-word/kiwi-word-biz/docker/biz/Dockerfile" "$CURRENT_DIR/docker/kiwi/word/biz"
+    cp -f "$CURRENT_DIR/microservice-kiwi/kiwi-word/kiwi-word-biz/docker/crawler/Dockerfile" "$CURRENT_DIR/docker/kiwi/word/crawler"
+    cp -f "$CURRENT_DIR/microservice-kiwi/kiwi-word/kiwi-word-crawler/Dockerfile" "$CURRENT_DIR/docker/kiwi/crawler/"
+    cp -f "$CURRENT_DIR/microservice-kiwi/kiwi-auth/Dockerfile" "$CURRENT_DIR/docker/kiwi/auth/"
+    cp -f "$CURRENT_DIR/microservice-kiwi/kiwi-gateway/Dockerfile" "$CURRENT_DIR/docker/kiwi/gate/"
+    cp -f "$CURRENT_DIR/microservice-kiwi/kiwi-ai/kiwi-ai-biz/docker/biz/Dockerfile" "$CURRENT_DIR/docker/kiwi/ai/biz"
+    cp -f "$CURRENT_DIR/microservice-kiwi/kiwi-ai/kiwi-ai-biz/docker/batch/Dockerfile" "$CURRENT_DIR/docker/kiwi/ai/batch"
+
+    echo "📦 Copying JAR files..."
+    cp -f "$ORIGINAL_HOME/.m2/repository/me/fengorz/kiwi-eureka/2.0/kiwi-eureka-2.0.jar" "$CURRENT_DIR/docker/kiwi/eureka/"
+    cp -f "$ORIGINAL_HOME/.m2/repository/me/fengorz/kiwi-config/2.0/kiwi-config-2.0.jar" "$CURRENT_DIR/docker/kiwi/config/"
+    cp -f "$ORIGINAL_HOME/.m2/repository/me/fengorz/kiwi-upms-biz/2.0/kiwi-upms-biz-2.0.jar" "$CURRENT_DIR/docker/kiwi/upms/"
+    cp -f "$ORIGINAL_HOME/.m2/repository/me/fengorz/kiwi-auth/2.0/kiwi-auth-2.0.jar" "$CURRENT_DIR/docker/kiwi/auth/"
+    cp -f "$ORIGINAL_HOME/.m2/repository/me/fengorz/kiwi-gateway/2.0/kiwi-gateway-2.0.jar" "$CURRENT_DIR/docker/kiwi/gate/"
+    cp -f "$ORIGINAL_HOME/.m2/repository/me/fengorz/kiwi-word-biz/2.0/kiwi-word-biz-2.0.jar" "$CURRENT_DIR/docker/kiwi/word/"
+    cp -f "$ORIGINAL_HOME/.m2/repository/me/fengorz/kiwi-word-crawler/2.0/kiwi-word-crawler-2.0.jar" "$CURRENT_DIR/docker/kiwi/crawler/"
+    cp -f "$ORIGINAL_HOME/.m2/repository/me/fengorz/kiwi-ai-biz/2.0/kiwi-ai-biz-2.0.jar" "$CURRENT_DIR/docker/kiwi/ai/biz"
+    cp -f "$ORIGINAL_HOME/.m2/repository/me/fengorz/kiwi-ai-biz/2.0/kiwi-ai-biz-2.0.jar" "$CURRENT_DIR/docker/kiwi/ai/batch"
+  else
+    echo "⏭️  Dockerfile building skipped"
+  fi
 fi
 
-echo "Stopping all services..."
+# Core deployment operations (always executed)
+echo "=============================================="
+echo "🚀 STARTING CONTAINER DEPLOYMENT:"
+echo "=============================================="
+
+echo "🛑 Stopping all services..."
 "$CURRENT_DIR/microservice-kiwi/kiwi-deploy/docker/stopAll.sh" "$MODE"
 
-echo "Starting auto deployment..."
+echo "🧹 Cleaning up Docker resources..."
+echo "🗑️  Removing dangling images..."
+docker image prune -f >/dev/null 2>&1 || true
+echo "🌐 Removing unused networks..."
+docker network prune -f >/dev/null 2>&1 || true
+echo "📦 Removing unused volumes..."
+docker volume prune -f >/dev/null 2>&1 || true
+echo "✅ Docker cleanup completed"
+
+echo "🚀 Starting auto deployment..."
 "$CURRENT_DIR/microservice-kiwi/kiwi-deploy/docker/autoDeploy.sh" "$MODE"
 
 # AutoCheck Service Logic - Added at the end as requested
@@ -388,10 +438,10 @@ echo "=============================================="
 
 if [ "$ENABLE_AUTO_CHECK" = true ]; then
   if ! pgrep -f "autoCheckService.sh" >/dev/null; then
-    echo "Starting autoCheckService..."
+    echo "🔄 Starting autoCheckService..."
     nohup "$CURRENT_DIR/microservice-kiwi/kiwi-deploy/docker/autoCheckService.sh" >"$CURRENT_DIR/autoCheck.log" 2>&1 &
     echo "✅ AutoCheckService started successfully"
-    echo "✅ AutoCheckService is now running in the background"
+    echo "🔄 AutoCheckService is now running in the background"
     echo "📄 Log file: $CURRENT_DIR/autoCheck.log"
   else
     echo "ℹ️  AutoCheckService is already running"
@@ -402,8 +452,16 @@ else
   echo "❌ AutoCheckService will not be started"
   echo "💡 To enable AutoCheckService, add -c parameter to your command"
   echo "   Example: sudo -E $0 -c"
+  if [ "$FAST_DEPLOY_MODE" = true ]; then
+    echo "   Fast deploy with monitoring: sudo -E $0 -mode=sa -c"
+  fi
 fi
 
 echo "=============================================="
-echo "🎉 DEPLOYMENT COMPLETED SUCCESSFULLY!"
+if [ "$FAST_DEPLOY_MODE" = true ]; then
+  echo "🚀 FAST DEPLOYMENT COMPLETED SUCCESSFULLY!"
+  echo "⚡ Total time saved by skipping build operations"
+else
+  echo "🎉 FULL DEPLOYMENT COMPLETED SUCCESSFULLY!"
+fi
 echo "=============================================="

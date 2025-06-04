@@ -1156,6 +1156,7 @@ else
     # Check if backup restoration is needed (even on skip)
     if ! has_config "mysql_backup_restored" || [ "$(load_config 'mysql_backup_restored')" = "no backup file found" ]; then
         echo "Checking for database backup to restore..."
+        mv "$SCRIPT_HOME/kiwi-db.sql" "$SCRIPT_HOME/docker/mysql/"
         if [ -f "$SCRIPT_HOME/docker/mysql/kiwi-db.sql" ]; then
             echo "Found kiwi-db.sql backup file, restoring database..."
 

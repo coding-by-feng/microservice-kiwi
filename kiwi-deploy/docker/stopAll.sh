@@ -50,14 +50,3 @@ done
 echo "=============================================="
 echo "🎉 CLEANUP COMPLETED SUCCESSFULLY!"
 echo "=============================================="
-
-# Optional: Clean up dangling images and unused networks
-read -p "Do you want to clean up dangling images and unused networks? (y/N): " -n 1 -r
-echo
-if [[ $REPLY =~ ^[Yy]$ ]]; then
-    echo "Cleaning up dangling images..."
-    docker image prune -f
-    echo "Cleaning up unused networks..."
-    docker network prune -f
-    echo "✅ Docker cleanup completed"
-fi

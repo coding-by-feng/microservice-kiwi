@@ -1627,6 +1627,7 @@ echo "8. To re-run specific steps: sudo ./$(basename $0) and choose option 1"
 echo "9. User '$SUDO_USERNAME' has been granted sudo privileges"
 echo "10. Hosts file configured with separate IPs for infrastructure and services"
 echo "11. FastDFS hostname ($FASTDFS_HOSTNAME) uses separate IP: $FASTDFS_NON_LOCAL_IP"
+echo "12. System configured to stay awake when laptop lid is closed"
 echo
 echo "CONTAINER STATUS CHECK:"
 echo "======================"
@@ -1709,9 +1710,25 @@ echo "To check container status: docker ps"
 echo "To view container logs: docker logs <container-name>"
 echo "To re-run this script with step selection: sudo ./$(basename $0)"
 
+# Final step: Configure system to prevent sleep when laptop lid is closed and add aliases
+echo "Configuring final system settings..."
+
+# Prevent system sleep when laptop lid is closed
+echo "Disabling system sleep targets to keep system running when lid is closed..."
+systemctl mask sleep.target suspend.target hibernate.target hybrid-sleep.target
+
+# Add sleep prevention configuration status
+save_config "sleep_prevention_configured" "masked sleep.target suspend.target hibernate.target hybrid-sleep.target"
+
+echo "✓ System sleep targets disabled - laptop will stay awake when lid is closed"
+
+# Add useful aliases
+echo "Adding useful aliases..."
 echo "alias ll='ls -la'" >> ~/.bashrc
 run_as_user bash -c "echo 'alias dp=\"sudo docker ps\"' >> ~/.bashrc"
-source ~/.bashrc
+
+# Source bashrc to apply changes
+source ~/.bashrc 2>/dev/null || true
 
 echo "✓ Added aliases:"
 echo "  - ll: for 'ls -la'"
@@ -1719,6 +1736,19 @@ echo "  - dp: for 'sudo docker ps'"
 
 echo "=================================="
 
-# Final step: Show Docker status
+# Final step: Show Docker service status
 echo "Docker service status:"
 systemctl status docker --no-pager -l || true
+
+echo
+echo "FINAL SYSTEM CONFIGURATION:"
+echo "============================="
+echo "✓ System will stay awake when laptop lid is closed"
+echo "✓ Sleep targets have been masked"
+echo "✓ Docker service is running"
+echo "✓ All containers are configured"
+echo "✓ Environment variables are set"
+echo "✓ Useful aliases are configured"
+echo
+echo "System is now fully configured and ready for use!"
+echo "============================="

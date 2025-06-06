@@ -1013,55 +1013,102 @@ else
     echo "Step 13: yt-dlp already downloaded, skipping..."
 fi
 
-# Step 14: Setup MySQL
+# Step 14: Setup MySQL (Improved Version)
 if ! is_step_completed "mysql_setup"; then
     echo "Step 14: Setting up MySQL..."
 
-    # Check if port 3306 is already in use
+    # Check if port 3306 is already in use (likely another Docker container)
     if netstat -tlnp | grep -q ":3306 "; then
         echo "Warning: Port 3306 is already in use. Checking what's using it:"
         netstat -tlnp | grep ":3306 "
-        echo "You may need to stop the conflicting service or use a different port."
+
+        # Check if it's another Docker container
+        EXISTING_MYSQL_CONTAINER=$(docker ps --format '{{.Names}}' | grep -E '(mysql|mariadb)' || echo "")
+        if [ -n "$EXISTING_MYSQL_CONTAINER" ]; then
+            echo "Found existing MySQL/MariaDB container: $EXISTING_MYSQL_CONTAINER"
+            if [ "$EXISTING_MYSQL_CONTAINER" != "kiwi-mysql" ]; then
+                echo "Another MySQL container is running. You may want to stop it first:"
+                echo "docker stop $EXISTING_MYSQL_CONTAINER"
+                read -p "Continue anyway? (y/N): " CONTINUE_ANYWAY
+                if [[ ! "$CONTINUE_ANYWAY" =~ ^[Yy]$ ]]; then
+                    echo "Setup aborted. Please stop the conflicting container and retry."
+                    exit 1
+                fi
+            fi
+        else
+            echo "Port 3306 is in use by another process (not Docker)."
+            echo "This might be a system MySQL service or another application."
+            echo "You may need to stop it manually or use a different port."
+            read -p "Continue anyway? (y/N): " CONTINUE_ANYWAY
+            if [[ ! "$CONTINUE_ANYWAY" =~ ^[Yy]$ ]]; then
+                echo "Setup aborted. Please resolve port conflict and retry."
+                exit 1
+            fi
+        fi
     fi
 
     # Stop and remove existing container if it exists
+    echo "Cleaning up any existing MySQL container..."
     docker stop kiwi-mysql 2>/dev/null || true
     docker rm kiwi-mysql 2>/dev/null || true
+
+    # Create MySQL directory if it doesn't exist
+    echo "Preparing MySQL data directory..."
+    run_as_user mkdir -p "$SCRIPT_HOME/docker/mysql"
 
     # Use MySQL 8.0 for better ARM compatibility
     echo "Pulling MySQL image..."
     if docker pull mysql; then
-        echo "Using MySQL..."
-
-        # Run MySQL container with memory optimization for Raspberry Pi
-        docker run -itd --name kiwi-mysql -p 3306:3306 -v ~/docker/mysql:/mysql_tmp -e MYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD --net=host mysql
-        save_config "mysql_engine" "MySQL"
+        echo "Using MySQL latest..."
+        MYSQL_IMAGE="mysql"
+        save_config "mysql_engine" "MySQL latest"
     else
-        echo "Failed to pull MySQL 8.0, trying latest..."
-        if docker pull mysql:latest; then
-            echo "Using MySQL latest..."
-
-            # Run MySQL container
-            docker run -itd --name kiwi-mysql -p 3306:3306 -v ~/docker/mysql:/mysql_tmp -e MYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD --net=host mysql:latest
-
-            save_config "mysql_engine" "MySQL latest"
-        else
-            echo "❌ Failed to pull MySQL images"
-            echo "Please check your internet connection and Docker installation"
-            save_config "mysql_setup_status" "failed - unable to pull images"
-            mark_step_completed "mysql_setup"  # Mark as completed to prevent retry loop
-            exit 1
-        fi
+        echo "Failed to pull MySQL image"
+        echo "Please check your internet connection and Docker installation"
+        save_config "mysql_setup_status" "failed - unable to pull images"
+        mark_step_completed "mysql_setup"  # Mark as completed to prevent retry loop
+        exit 1
     fi
 
-    # Wait for MySQL to be ready with proper health checking
+    # Run MySQL container with improved configuration
+    echo "Starting MySQL container..."
+    docker run -itd \
+        --name kiwi-mysql \
+        -p 3306:3306 \
+        -v "$SCRIPT_HOME/docker/mysql:/mysql_tmp" \
+        -e MYSQL_ROOT_PASSWORD="$MYSQL_ROOT_PASSWORD" \
+        -e MYSQL_DATABASE=kiwi_db \
+        --restart=unless-stopped \
+        "$MYSQL_IMAGE" \
+        --max-connections=1000 \
+        --character-set-server=utf8mb4 \
+        --collation-server=utf8mb4_unicode_ci
+
+    # Wait for MySQL to be ready with improved health checking
     echo "Waiting for MySQL to start (this may take up to 3 minutes)..."
+
+    # Define improved MySQL readiness check function
+    check_mysql_connection() {
+        # Try TCP connection instead of socket
+        docker exec kiwi-mysql mysqladmin ping -h 127.0.0.1 -P 3306 -u root -p"$MYSQL_ROOT_PASSWORD" 2>/dev/null
+        return $?
+    }
 
     # Wait up to 180 seconds for MySQL to be ready
     MYSQL_READY=false
     for i in {1..36}; do
         echo "Attempt $i/36: Checking MySQL readiness..."
-        if check_mysql_ready; then
+
+        # First check if container is running
+        if ! docker ps --format '{{.Names}}' | grep -q "^kiwi-mysql$"; then
+            echo "Container not running, checking logs..."
+            docker logs kiwi-mysql --tail 10
+            sleep 5
+            continue
+        fi
+
+        # Then check MySQL connection
+        if check_mysql_connection; then
             echo "✓ MySQL is ready!"
             MYSQL_READY=true
             break
@@ -1073,14 +1120,18 @@ if ! is_step_completed "mysql_setup"; then
     if [ "$MYSQL_READY" = false ]; then
         echo "✗ MySQL failed to start within 3 minutes"
         echo "Checking MySQL logs:"
-        docker logs kiwi-mysql --tail 30
+        docker logs kiwi-mysql --tail 50
+        echo
+        echo "Container status:"
+        docker ps -a | grep kiwi-mysql
         echo
         echo "Troubleshooting steps:"
-        echo "1. Check if port 3306 is in use: sudo netstat -tlnp | grep 3306"
+        echo "1. Check if port 3306 is still in use: sudo netstat -tlnp | grep 3306"
         echo "2. Check container status: docker ps -a | grep kiwi-mysql"
         echo "3. View full logs: docker logs kiwi-mysql"
-        echo "4. Check system resources: free -h"
+        echo "4. Check system resources: free -h && df -h"
         echo "5. Try manual start: docker start kiwi-mysql"
+        echo "6. Check for permission issues: ls -la $SCRIPT_HOME/docker/mysql"
 
         save_config "mysql_setup_status" "failed - timeout waiting for startup"
 
@@ -1092,32 +1143,58 @@ if ! is_step_completed "mysql_setup"; then
             exit 1
         fi
     else
-        # Verify database creation
+        # Verify database creation using TCP connection
         echo "Verifying database creation..."
-        if docker exec kiwi-mysql mysql -h localhost -u root -p$MYSQL_ROOT_PASSWORD -e "SHOW DATABASES;" | grep -q "kiwi_db"; then
+        if docker exec kiwi-mysql mysql -h 127.0.0.1 -P 3306 -u root -p"$MYSQL_ROOT_PASSWORD" -e "SHOW DATABASES;" | grep -q "kiwi_db"; then
             echo "✓ Database 'kiwi_db' confirmed to exist"
         else
             echo "Creating database manually..."
-            docker exec kiwi-mysql mysql -h localhost -u root -p$MYSQL_ROOT_PASSWORD -e "CREATE DATABASE IF NOT EXISTS kiwi_db;" || {
+            if docker exec kiwi-mysql mysql -h 127.0.0.1 -P 3306 -u root -p"$MYSQL_ROOT_PASSWORD" -e "CREATE DATABASE IF NOT EXISTS kiwi_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"; then
+                echo "✓ Database 'kiwi_db' created successfully"
+            else
                 echo "⚠ Database creation failed, but continuing (may already exist)"
-            }
+            fi
         fi
 
         # Check for and restore database backup if it exists
         echo "Checking for database backup to restore..."
+
+        # First, try to move backup file from root to proper location
+        if [ -f "$SCRIPT_HOME/kiwi-db.sql" ]; then
+            echo "Moving backup file to proper location..."
+            mv "$SCRIPT_HOME/kiwi-db.sql" "$SCRIPT_HOME/docker/mysql/"
+        fi
+
         if [ -f "$SCRIPT_HOME/docker/mysql/kiwi-db.sql" ]; then
             echo "Found kiwi-db.sql backup file, restoring database..."
 
-            echo "Restoring database from backup..."
-            if docker exec kiwi-mysql sh -c "mysql -h localhost -u root -p$MYSQL_ROOT_PASSWORD kiwi_db < /mysql_tmp/kiwi-db.sql"; then
-                echo "✓ Basic database backup restored successfully"
-                save_config "mysql_backup_restored" "kiwi-db.sql restored successfully"
-                save_config "mysql_backup_file" "$SCRIPT_HOME/docker/mysql/kiwi-db.sql"
+            # Verify file is accessible inside container
+            if docker exec kiwi-mysql test -f /mysql_tmp/kiwi-db.sql; then
+                echo "Backup file accessible, proceeding with restoration..."
+
+                # Restore using TCP connection
+                if docker exec kiwi-mysql mysql -h 127.0.0.1 -P 3306 -u root -p"$MYSQL_ROOT_PASSWORD" kiwi_db -e "source /mysql_tmp/kiwi-db.sql"; then
+                    echo "✓ Basic database backup restored successfully"
+                    save_config "mysql_backup_restored" "kiwi-db.sql restored successfully"
+                    save_config "mysql_backup_file" "$SCRIPT_HOME/docker/mysql/kiwi-db.sql"
+                else
+                    echo "Trying alternative restoration method..."
+                    if docker exec -i kiwi-mysql mysql -h 127.0.0.1 -P 3306 -u root -p"$MYSQL_ROOT_PASSWORD" kiwi_db < /mysql_tmp/kiwi-db.sql; then
+                        echo "✓ Database backup restored successfully (alternative method)"
+                        save_config "mysql_backup_restored" "kiwi-db.sql restored successfully (alternative)"
+                    else
+                        echo "⚠ Failed to restore database backup automatically"
+                        echo "You can manually restore using:"
+                        echo "docker exec -i kiwi-mysql mysql -h 127.0.0.1 -P 3306 -u root -p$MYSQL_ROOT_PASSWORD kiwi_db < $SCRIPT_HOME/docker/mysql/kiwi-db.sql"
+                        save_config "mysql_backup_restored" "failed - manual restoration required"
+                    fi
+                fi
 
                 # Also restore YTB table if available
                 if [ -f "$SCRIPT_HOME/microservice-kiwi/kiwi-sql/ytb_table_initialize.sql" ]; then
+                    echo "Found YTB table initialization script..."
                     cp "$SCRIPT_HOME/microservice-kiwi/kiwi-sql/ytb_table_initialize.sql" "$SCRIPT_HOME/docker/mysql/"
-                    if docker exec kiwi-mysql sh -c "mysql -h localhost -u root -p$MYSQL_ROOT_PASSWORD kiwi_db < /mysql_tmp/ytb_table_initialize.sql"; then
+                    if docker exec kiwi-mysql mysql -h 127.0.0.1 -P 3306 -u root -p"$MYSQL_ROOT_PASSWORD" kiwi_db -e "source /mysql_tmp/ytb_table_initialize.sql"; then
                         echo "✓ YTB database backup restored successfully"
                         save_config "mysql_ytb_backup_restored" "ytb_table_initialize.sql restored successfully"
                     else
@@ -1125,10 +1202,11 @@ if ! is_step_completed "mysql_setup"; then
                     fi
                 fi
             else
-                echo "⚠ Failed to restore database backup automatically"
-                echo "You can manually restore using:"
-                echo "docker exec -i kiwi-mysql mysql -u root -p$MYSQL_ROOT_PASSWORD kiwi_db < $SCRIPT_HOME/docker/mysql/kiwi-db.sql"
-                save_config "mysql_backup_restored" "failed - manual restoration required"
+                echo "⚠ Backup file not accessible inside container"
+                echo "File permissions or mount issue. Check:"
+                echo "ls -la $SCRIPT_HOME/docker/mysql/kiwi-db.sql"
+                docker exec kiwi-mysql ls -la /mysql_tmp/
+                save_config "mysql_backup_restored" "failed - file not accessible in container"
             fi
         else
             echo "No kiwi-db.sql backup file found, starting with empty database"
@@ -1156,7 +1234,12 @@ else
     # Check if backup restoration is needed (even on skip)
     if ! has_config "mysql_backup_restored" || [ "$(load_config 'mysql_backup_restored')" = "no backup file found" ]; then
         echo "Checking for database backup to restore..."
-        mv "$SCRIPT_HOME/kiwi-db.sql" "$SCRIPT_HOME/docker/mysql/"
+
+        # Move backup file if it exists in root
+        if [ -f "$SCRIPT_HOME/kiwi-db.sql" ]; then
+            mv "$SCRIPT_HOME/kiwi-db.sql" "$SCRIPT_HOME/docker/mysql/"
+        fi
+
         if [ -f "$SCRIPT_HOME/docker/mysql/kiwi-db.sql" ]; then
             echo "Found kiwi-db.sql backup file, restoring database..."
 
@@ -1166,17 +1249,17 @@ else
                 echo "Waiting for MySQL to be ready for backup restoration..."
                 sleep 10
 
-                # Check if MySQL is responding
-                if check_mysql_ready; then
+                # Check if MySQL is responding using TCP
+                if docker exec kiwi-mysql mysqladmin ping -h 127.0.0.1 -P 3306 -u root -p"$MYSQL_ROOT_PASSWORD" 2>/dev/null; then
                     echo "Restoring database from backup..."
-                    if docker exec kiwi-mysql sh -c "mysql -h localhost -u root -p$MYSQL_ROOT_PASSWORD kiwi_db < /mysql_tmp/kiwi-db.sql"; then
+                    if docker exec -i kiwi-mysql mysql -h 127.0.0.1 -P 3306 -u root -p"$MYSQL_ROOT_PASSWORD" kiwi_db < /mysql_tmp/kiwi-db.sql; then
                         echo "✓ Database backup restored successfully"
                         save_config "mysql_backup_restored" "kiwi-db.sql restored successfully"
                         save_config "mysql_backup_file" "$SCRIPT_HOME/docker/mysql/kiwi-db.sql"
                     else
                         echo "⚠ Failed to restore database backup"
                         echo "You can manually restore using:"
-                        echo "docker exec -i kiwi-mysql mysql -u root -p$MYSQL_ROOT_PASSWORD kiwi_db < $SCRIPT_HOME/docker/mysql/kiwi-db.sql"
+                        echo "docker exec -i kiwi-mysql mysql -h 127.0.0.1 -P 3306 -u root -p$MYSQL_ROOT_PASSWORD kiwi_db < $SCRIPT_HOME/docker/mysql/kiwi-db.sql"
                         save_config "mysql_backup_restored" "failed - manual restoration required"
                     fi
                 else
@@ -1191,6 +1274,74 @@ else
     else
         echo "Database backup already processed: $(load_config 'mysql_backup_restored')"
     fi
+fi
+
+# Step 14.5: Configure MySQL settings (Improved)
+if ! is_step_completed "mysql_config"; then
+    echo "Step 14.5: Configuring MySQL settings..."
+
+    # Check if MySQL container is running
+    if ! docker ps --format '{{.Names}}' | grep -q "^kiwi-mysql$"; then
+        echo "MySQL container is not running, attempting to start..."
+        if ! docker start kiwi-mysql; then
+            echo "⚠ Failed to start MySQL container for configuration"
+            save_config "mysql_config_status" "failed - container not running"
+            mark_step_completed "mysql_config"
+        fi
+        sleep 10
+    fi
+
+    # Wait for MySQL to be ready using TCP connection
+    echo "Waiting for MySQL to be ready for configuration..."
+    MYSQL_READY=false
+    for i in {1..12}; do
+        if docker exec kiwi-mysql mysqladmin ping -h 127.0.0.1 -P 3306 -u root -p"$MYSQL_ROOT_PASSWORD" 2>/dev/null; then
+            MYSQL_READY=true
+            break
+        fi
+        echo "MySQL not ready yet, waiting 5 more seconds..."
+        sleep 5
+    done
+
+    if [ "$MYSQL_READY" = false ]; then
+        echo "⚠ MySQL not ready for configuration"
+        save_config "mysql_config_status" "failed - MySQL not ready"
+    else
+        # Verify current max_connections setting
+        echo "Checking current MySQL configuration..."
+        CURRENT_MAX_CONN=$(docker exec kiwi-mysql mysql -h 127.0.0.1 -P 3306 -u root -p"$MYSQL_ROOT_PASSWORD" -e "SHOW VARIABLES LIKE 'max_connections';" 2>/dev/null | grep max_connections | awk '{print $2}' || echo "unknown")
+        echo "Current max_connections: $CURRENT_MAX_CONN"
+
+        if [ "$CURRENT_MAX_CONN" = "1000" ]; then
+            echo "✓ MySQL max_connections already set to 1000 (configured at startup)"
+            save_config "mysql_max_connections_configured" "1000"
+            save_config "mysql_current_max_connections" "$CURRENT_MAX_CONN"
+            save_config "mysql_config_status" "already configured at startup"
+        else
+            # Configure MySQL settings if not set at startup
+            echo "Setting MySQL max_connections to 1000..."
+            if docker exec kiwi-mysql mysql -h 127.0.0.1 -P 3306 -u root -p"$MYSQL_ROOT_PASSWORD" -e "SET GLOBAL max_connections = 1000;" 2>/dev/null; then
+                echo "✓ MySQL max_connections set to 1000"
+                save_config "mysql_max_connections_configured" "1000"
+
+                # Verify the setting was applied
+                UPDATED_MAX_CONN=$(docker exec kiwi-mysql mysql -h 127.0.0.1 -P 3306 -u root -p"$MYSQL_ROOT_PASSWORD" -e "SHOW VARIABLES LIKE 'max_connections';" 2>/dev/null | grep max_connections | awk '{print $2}' || echo "unknown")
+                echo "✓ Updated max_connections: $UPDATED_MAX_CONN"
+                save_config "mysql_current_max_connections" "$UPDATED_MAX_CONN"
+                save_config "mysql_config_status" "completed successfully"
+            else
+                echo "⚠ Failed to configure MySQL max_connections"
+                echo "You can manually run: docker exec kiwi-mysql mysql -h 127.0.0.1 -P 3306 -u root -p$MYSQL_ROOT_PASSWORD -e \"SET GLOBAL max_connections = 1000;\""
+                save_config "mysql_config_status" "failed - manual configuration required"
+            fi
+        fi
+    fi
+
+    mark_step_completed "mysql_config"
+else
+    echo "Step 14.5: MySQL configuration already completed, skipping..."
+    echo "  - Max connections configured: $(load_config 'mysql_max_connections_configured')"
+    echo "  - Current setting: $(load_config 'mysql_current_max_connections')"
 fi
 
 # Step 15: Setup Redis

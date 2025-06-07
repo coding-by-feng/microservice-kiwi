@@ -76,7 +76,8 @@ ai:
     subtitle-translator: "Please help me to translate each sentence in #[NL] language and put the each translation on the position after each punctuation, notice that don't give me other information(any markdown format, other tips, or hints), you must complete all the translation."
     subtitle-retouch: "Please help me to add corresponding correct punctuation, notice that don't give me other non-subtitles information, keep the original subtitles content, and you must complete all the subtitle lines."
     subtitle-retouch-translator: "Please help me to add corresponding correct punctuation, put the #[NL] translation on the position that after the punctuation, and keep each sentence in different lines, notice that keep the original content, don't give me other information(any markdown format, other tips, or hints), and you must complete the translation of all content."
-    words-association: "List common #[TL] vocabulary or phrases that can express the prompt and explain the differences between them. My first language is #[NL], please explain in #[NL]."
+    vocabulary-association: "List common #[TL] vocabulary as much as possible that can express the prompt and explain the differences between them. My first language is #[NL], please explain in #[NL]."
+    phrases-association: "List common #[TL] phrases as much as possible that can express the prompt and explain the differences between them. My first language is #[NL], please explain in #[NL]."
 
 
 ms:

@@ -326,16 +326,78 @@ public class AiV2ControllerIntegrationTest {
     }
 
     @Test
+    void testVocabularyAssociation_Success() {
+        // Test data
+        String originalText = "Ocean";
+
+        // Perform the GET request
+        String url = "http://localhost:" + port + "/ai/v2/vocabulary-association/" + TARGET_LANG + "/" + NATIVE_LANG + "/" + originalText;
+        ResponseEntity<R> response = restTemplate.getForEntity(url, R.class);
+
+        // Verify the response
+        assertEquals(HttpStatus.OK, response.getStatusCode(), "HTTP status should be 200 OK");
+        assertNotNull(response.getBody(), "Response body should not be null");
+        assertTrue(response.getBody().isSuccess(), "Response should be successful");
+
+        AiResponseVO vo = KiwiJsonUtils.fromObjectToJson(response.getBody().getData(), AiResponseVO.class);
+        assertNotNull(vo, "VO should not be null");
+        assertEquals(originalText, vo.getOriginalText(), "Original text should match");
+        assertEquals(TARGET_LANG, vo.getLanguageCode(), "Language code should match");
+        log.info("Words association response: {}", vo.getResponseText());
+    }
+
+    @Test
+    void testVocabularyAssociation_InvalidLanguage() {
+        // Test data
+        String originalText = "Ocean";
+        String invalidLang = "INVALID";
+
+        // Perform the GET request
+        String url = "http://localhost:" + port + "/ai/v2/vocabulary-association/" + invalidLang + "/" + NATIVE_LANG + "/" + originalText;
+        ResponseEntity<R> response = restTemplate.getForEntity(url, R.class);
+
+        // Verify the response
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode(), "HTTP status should be 400 BAD_REQUEST");
+        assertNotNull(response.getBody(), "Response body should not be null");
+        assertFalse(response.getBody().isSuccess(), "Response should not be successful");
+        log.info("Error response: {}", response.getBody().getMsg());
+    }
+
+    @Test
+    void testVocabularyAssociation_SpecialCases() {
+        // Test with compound word
+        String compoundWord = "Rainbow";
+        String url1 = "http://localhost:" + port + "/ai/v2/vocabulary-association/" + TARGET_LANG + "/" + NATIVE_LANG + "/" + compoundWord;
+        ResponseEntity<R> response1 = restTemplate.getForEntity(url1, R.class);
+        assertEquals(HttpStatus.OK, response1.getStatusCode());
+        log.info("Words association for compound word: {}", compoundWord);
+
+        // Test with abstract concept
+        String abstractWord = "Freedom";
+        String url2 = "http://localhost:" + port + "/ai/v2/vocabulary-association/" + TARGET_LANG + "/" + NATIVE_LANG + "/" + abstractWord;
+        ResponseEntity<R> response2 = restTemplate.getForEntity(url2, R.class);
+        assertEquals(HttpStatus.OK, response2.getStatusCode());
+        log.info("Words association for abstract word: {}", abstractWord);
+
+        // Test with emotion word
+        String emotionWord = "Joy";
+        String url3 = "http://localhost:" + port + "/ai/v2/vocabulary-association/" + TARGET_LANG + "/" + NATIVE_LANG + "/" + emotionWord;
+        ResponseEntity<R> response3 = restTemplate.getForEntity(url3, R.class);
+        assertEquals(HttpStatus.OK, response3.getStatusCode());
+        log.info("Words association for emotion word: {}", emotionWord);
+    }
+
+    @Test
     void testMultipleLanguageCombinations() {
         // Test with different language combinations
         String originalText = "Good morning";
-        
+
         // EN -> ZH_CN with ZH_CN explanations
         String url1 = "http://localhost:" + port + "/ai/v2/translation-and-explanation/ZH_CN/EN/" + originalText;
         ResponseEntity<R> response1 = restTemplate.getForEntity(url1, R.class);
         assertEquals(HttpStatus.OK, response1.getStatusCode());
         log.info("EN->ZH_CN translation with EN explanation");
-        
+
         // ZH_CN -> EN with ZH_CN explanations  
         String chineseText = "早上好";
         String url2 = "http://localhost:" + port + "/ai/v2/translation-and-explanation/EN/ZH_CN/" + chineseText;

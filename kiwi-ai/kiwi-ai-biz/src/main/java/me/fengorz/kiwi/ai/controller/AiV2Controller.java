@@ -116,14 +116,26 @@ public class AiV2Controller extends BaseController {
     }
 
     @LogMarker(isPrintParameter = true)
-    @GetMapping("/words-association/{target-lang}/{native-lang}/{originalText}")
-    public R<AiResponseVO> wordsAssociation(@PathVariable(value = "originalText") String originalText,
+    @GetMapping("/vocabulary-association/{target-lang}/{native-lang}/{originalText}")
+    public R<AiResponseVO> vocabularyAssociation(@PathVariable(value = "originalText") String originalText,
+                                                 @PathVariable(value = "target-lang") String targetLang,
+                                                 @PathVariable(value = "native-lang") String nativeLang) {
+        String decodedOriginalText = WebTools.decode(originalText);
+        return R.success(PojoBuilder.buildDirectlyTranslationVO(decodedOriginalText,
+                LanguageConvertor.convertLanguageToEnum(targetLang),
+                aiService.call(decodedOriginalText, AiPromptModeEnum.VOCABULARY_ASSOCIATION,
+                        LanguageEnum.LANGUAGE_MAP.get(targetLang), LanguageEnum.LANGUAGE_MAP.get(nativeLang))));
+    }
+
+    @LogMarker(isPrintParameter = true)
+    @GetMapping("/phrases-association/{target-lang}/{native-lang}/{originalText}")
+    public R<AiResponseVO> phrasesAssociation(@PathVariable(value = "originalText") String originalText,
                                             @PathVariable(value = "target-lang") String targetLang,
                                             @PathVariable(value = "native-lang") String nativeLang) {
         String decodedOriginalText = WebTools.decode(originalText);
         return R.success(PojoBuilder.buildDirectlyTranslationVO(decodedOriginalText,
                 LanguageConvertor.convertLanguageToEnum(targetLang),
-                aiService.call(decodedOriginalText, AiPromptModeEnum.WORDS_ASSOCIATION,
+                aiService.call(decodedOriginalText, AiPromptModeEnum.PHRASES_ASSOCIATION,
                         LanguageEnum.LANGUAGE_MAP.get(targetLang), LanguageEnum.LANGUAGE_MAP.get(nativeLang))));
     }
 

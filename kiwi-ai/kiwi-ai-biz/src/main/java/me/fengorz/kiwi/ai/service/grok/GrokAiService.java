@@ -56,14 +56,30 @@ public class GrokAiService implements AiChatService {
                         new Message("user", prompt)), grokApiProperties.getModel());
 
         // Hypothetical request body (similar to OpenAI’s format)
+        return call(headers, chatRequest);
+    }
+
+    @Override
+    public String call(String prompt, AiPromptModeEnum promptMode, LanguageEnum targetLanguage, LanguageEnum nativeLanguage) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.put("Authorization", Collections.singletonList("Bearer " + grokApiProperties.getKey()));
+
+        ChatRequest chatRequest = new ChatRequest(
+                Arrays.asList(new Message("system", buildPrompt(promptMode, targetLanguage, nativeLanguage)),
+                        new Message("user", prompt)), grokApiProperties.getModel());
+
+        // Hypothetical request body (similar to OpenAI's format)
+        return call(headers, chatRequest);
+    }
+
+    private String call(HttpHeaders headers, ChatRequest chatRequest) {
         String requestBody = KiwiJsonUtils.toJsonStr(chatRequest);
-
         HttpEntity<String> entity = new HttpEntity<>(requestBody, headers);
-
         ResponseEntity<ChatCompletionResponse> response = restTemplate.postForEntity(grokApiProperties.getEndpoint(), entity, ChatCompletionResponse.class);
 
         if (response.getStatusCode().is2xxSuccessful()) {
-            return Objects.requireNonNull(response.getBody()).getChoices().get(0).getMessage().getContent();  // Parse or return the response (e.g., Grok’s response JSON)
+            return Objects.requireNonNull(response.getBody()).getChoices().get(0).getMessage().getContent();
         } else {
             log.error("Grok API call failed: status code: {}; body: {}", response.getStatusCode(), response.getBody());
             throw new GrokAiException("Grok API call failed: " + response.getStatusCode());
@@ -230,6 +246,24 @@ public class GrokAiService implements AiChatService {
             languageWildcards[i] = language.getCode();
         }
         return String.format(modeProperties.getMode().get(promptMode.getMode()), languageWildcards);
+    }
+
+    @NotNull
+    private String buildPrompt(AiPromptModeEnum promptMode, LanguageEnum targetLanguage, LanguageEnum nativeLanguage) {
+        String promptTemplate = modeProperties.getMode().get(promptMode.getMode());
+
+        if (promptTemplate == null) {
+            throw new GrokAiException("Prompt template not found for prompt mode: " + promptMode);
+        }
+
+        // Handle cases where languages are NONE or null
+        if (LanguageEnum.NONE.equals(targetLanguage) && LanguageEnum.NONE.equals(nativeLanguage)) {
+            throw new GrokAiException("Both targetLanguage and nativeLanguage cannot be NONE");
+        }
+
+        // Replace placeholders with actual language names
+        return promptTemplate.replace("#[TL]", targetLanguage.getCode())
+                .replace("#[NL]", nativeLanguage.getCode());
     }
 
 }

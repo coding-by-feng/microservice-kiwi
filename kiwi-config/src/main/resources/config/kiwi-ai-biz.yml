@@ -48,16 +48,17 @@ ai:
       thread-pool-size: 7
       thread-timeout-secs: 110
   mode:
-    directly-translation: "Directly Translate my prompt to %s language."
-    translation-and-explanation: "Translate the prompt in %s language first, please provide the %s explanation as thorough as possible in different aspects if it has, and translate the explanation to English."
-    grammar-explanation: "Translate my prompt to %s language, and provide an explanation of the grammar."
-    grammar-correction: "Correct the grammar of the text I provided, and provide the %s explanation of the grammar correction."
-    vocabulary-explanation: "Explain the vocabulary in %s language, please provide the paraphrase in English and %s of the vocabulary in different vocabulary classes, for example, verb, noun, adverb, etc. and also provide the sentences that use this vocabulary with its translation in %s language of each class."
-    synonym: "List the synonym for the given word, if there are more than one synonym list all of them, and please provide the paraphrase in English and %s of the synonym, and also provide the sentences that use this synonym with its translation in %s language."
-    antonym: "List the antonym for the given word, if there are more than one antonym list all of them, please provide the paraphrase in English and %s of the antonym, and also provide the sentences that use this antonym with its translation in %s language."
-    subtitle-translator: "Please help me to translate each sentence in %s language and put the each translation on the position after each punctuation, notice that don't give me other information(any markdown format, other tips, or hints), you must complete all the translation."
+    directly-translation: "Directly Translate my prompt to #[NL] language."
+    translation-and-explanation: "Translate the prompt in #[NL] language first, please provide the explanation as thorough as possible in different aspects if there are any, my first language is #[NL], please explain in #[NL]."
+    grammar-explanation: "Translate my prompt to #[NL] language, and next provide an explanation of the grammar, my first language is #[NL], please explain in #[NL]."
+    grammar-correction: "Correct the grammar of the text I provided, then translate it to #[NL] language, and provide the explanation of the grammar correction, my first language is #[NL], please explain in #[NL]."
+    vocabulary-explanation: "Explain the vocabulary in both of #[NL] and #[TL] language, please provide the paraphrase in both of #[NL] and #[TL] language in different vocabulary classes, for example, verb, noun, adverb, etc. and also provide the demo #[TL] sentences that use this vocabulary with its translation in #[NL] language of each class. Be careful that skip the vocabulary classes if the vocabulary doesn't have them."
+    synonym: "List the synonym for the given word, please provide the paraphrase in both of #[NL] and #[TL] language of the synonym, and also provide the #[TL] sentences that use this synonym with its translation in #[NL] language."
+    antonym: "List the antonym for the given word, please provide the paraphrase in both of #[NL] and #[TL] language of the antonym, and also provide the #[TL] sentences that use this antonym with its translation in #[NL] language."
+    subtitle-translator: "Please help me to translate each sentence in #[NL] language and put the each translation on the position after each punctuation, notice that don't give me other information(any markdown format, other tips, or hints), you must complete all the translation."
     subtitle-retouch: "Please help me to add corresponding correct punctuation, notice that don't give me other non-subtitles information, keep the original subtitles content, and you must complete all the subtitle lines."
-    subtitle-retouch-translator: "Please help me to add corresponding correct punctuation, put the %s translation  on the position that after the punctuation, and keep each sentence in different lines, notice that keep the original content, don't give me other information(any markdown format, other tips, or hints), and you must complete the translation of all content."
+    subtitle-retouch-translator: "Please help me to add corresponding correct punctuation, put the #[NL] translation on the position that after the punctuation, and keep each sentence in different lines, notice that keep the original content, don't give me other information(any markdown format, other tips, or hints), and you must complete the translation of all content."
+    words-association: "List common #[TL] vocabulary or phrases that can express the prompt and explain the differences between them. My first language is #[NL], please explain in #[NL]."
 
 
 youtube:

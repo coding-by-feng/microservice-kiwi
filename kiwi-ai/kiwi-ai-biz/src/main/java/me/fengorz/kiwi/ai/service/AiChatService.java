@@ -13,6 +13,8 @@ public interface AiChatService {
 
     String call(String prompt, AiPromptModeEnum promptMode, LanguageEnum language);
 
+    String call(String prompt, AiPromptModeEnum promptMode, LanguageEnum targetLanguage, LanguageEnum nativeLanguage);
+
     String batchCall(List<String> prompt, AiPromptModeEnum promptMode, LanguageEnum language);
 
     String batchCallForYtbAndCache(String ytbUrl, List<String> prompt, AiPromptModeEnum promptMode, LanguageEnum language);

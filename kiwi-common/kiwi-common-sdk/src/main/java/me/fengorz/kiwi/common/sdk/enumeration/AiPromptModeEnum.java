@@ -43,7 +43,8 @@ public enum AiPromptModeEnum {
     SUBTITLE_TRANSLATOR("subtitle-translator", 1),
     SUBTITLE_RETOUCH("subtitle-retouch", 0),
     SUBTITLE_RETOUCH_TRANSLATOR("subtitle-retouch-translator", 1),
-    WORDS_ASSOCIATION("words-association", 3),
+    VOCABULARY_ASSOCIATION("vocabulary-association", 3),
+    PHRASES_ASSOCIATION("phrases-association", 3),
     CHAT("chat", 1),
     ;
 

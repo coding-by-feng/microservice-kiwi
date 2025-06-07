@@ -38,9 +38,9 @@ async:
 
 crawler:
   config:
-    core-pool-size: 5
-    max-pool-size: 10
-    queue-capacity: 5
+    core-pool-size: 40
+    max-pool-size: 50
+    queue-capacity: 20
     enable-mq: true
     enable-scheduler: {
       "voice-generate-only-collected": true,

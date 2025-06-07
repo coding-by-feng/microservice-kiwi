@@ -37,16 +37,11 @@ import org.springframework.core.env.Environment;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Locale;
 
 import static me.fengorz.kiwi.common.tts.TtsConstants.BEAN_NAMES.BAIDU_TTS_SERVICE_IMPL;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Slf4j
 @ActiveProfiles({EnvConstants.TEST})
@@ -57,11 +52,8 @@ public class TtsServiceTest {
     @Autowired
     private TtsProperties ttsProperties;
 
-    @Qualifier("voiceRssTtsService")
-    private TtsService voiceRssTtsService;
-
-    @Qualifier("voiceRssTtsService")
-    private TtsService googleTtsService;
+    @Qualifier("chatTtsService")
+    private TtsService ttsService;
 
     @Autowired
     @Qualifier(BAIDU_TTS_SERVICE_IMPL)
@@ -73,7 +65,7 @@ public class TtsServiceTest {
     @Test
     @Disabled
     void autoSelectApiKey() {
-        String apiKey = voiceRssTtsService.autoSelectApiKey();
+        String apiKey = ttsService.autoSelectApiKey();
         assertTrue(ttsProperties.listApiKey().contains(apiKey));
         log.info("autoSelectApiKey >>>> {}", apiKey);
     }
@@ -81,69 +73,69 @@ public class TtsServiceTest {
     @Test
     @Disabled
     void increaseApiKeyUsedTime() {
-        Assertions.assertDoesNotThrow(() -> voiceRssTtsService.increaseApiKeyUsedTime("d2f5e9a0fbf14318a475d808c0dddc62"));
+        Assertions.assertDoesNotThrow(() -> ttsService.increaseApiKeyUsedTime("d2f5e9a0fbf14318a475d808c0dddc62"));
     }
 
     @Test
     @Disabled
     void useTtsApiKey() {
         Assertions.assertDoesNotThrow(() -> {
-            voiceRssTtsService.useTtsApiKey(ttsProperties.getApiKey10(), 350);
-            voiceRssTtsService.useTtsApiKey(ttsProperties.getApiKey11(), 350);
-            voiceRssTtsService.useTtsApiKey(ttsProperties.getApiKey12(), 350);
-            voiceRssTtsService.useTtsApiKey(ttsProperties.getApiKey13(), 350);
-            voiceRssTtsService.useTtsApiKey(ttsProperties.getApiKey14(), 350);
-            voiceRssTtsService.useTtsApiKey(ttsProperties.getApiKey15(), 0);
-            voiceRssTtsService.useTtsApiKey(ttsProperties.getApiKey16(), 0);
-            voiceRssTtsService.useTtsApiKey(ttsProperties.getApiKey17(), 0);
-            voiceRssTtsService.useTtsApiKey(ttsProperties.getApiKey18(), 0);
-            voiceRssTtsService.useTtsApiKey(ttsProperties.getApiKey19(), 0);
-            voiceRssTtsService.useTtsApiKey(ttsProperties.getApiKey20(), 0);
+            ttsService.useTtsApiKey(ttsProperties.getApiKey10(), 350);
+            ttsService.useTtsApiKey(ttsProperties.getApiKey11(), 350);
+            ttsService.useTtsApiKey(ttsProperties.getApiKey12(), 350);
+            ttsService.useTtsApiKey(ttsProperties.getApiKey13(), 350);
+            ttsService.useTtsApiKey(ttsProperties.getApiKey14(), 350);
+            ttsService.useTtsApiKey(ttsProperties.getApiKey15(), 0);
+            ttsService.useTtsApiKey(ttsProperties.getApiKey16(), 0);
+            ttsService.useTtsApiKey(ttsProperties.getApiKey17(), 0);
+            ttsService.useTtsApiKey(ttsProperties.getApiKey18(), 0);
+            ttsService.useTtsApiKey(ttsProperties.getApiKey19(), 0);
+            ttsService.useTtsApiKey(ttsProperties.getApiKey20(), 0);
         });
     }
 
     @Test
     @Disabled
     void queryTtsApiKeyUsed() {
-        Assertions.assertEquals(0, voiceRssTtsService.queryTtsApiKeyUsed(ttsProperties.getApiKey10()));
+        Assertions.assertEquals(0, ttsService.queryTtsApiKeyUsed(ttsProperties.getApiKey10()));
     }
 
 
     @Test
     @Disabled
     void deprecateApiKeyToday() {
-        Assertions.assertDoesNotThrow(() -> voiceRssTtsService.deprecateApiKeyToday(ttsProperties.getApiKey1()));
+        Assertions.assertDoesNotThrow(() -> ttsService.deprecateApiKeyToday(ttsProperties.getApiKey1()));
         Assertions.assertEquals(TtsConstants.API_KEY_MAX_USE_TIME,
-                voiceRssTtsService.queryTtsApiKeyUsed(ttsProperties.getApiKey1()));
+                ttsService.queryTtsApiKeyUsed(ttsProperties.getApiKey1()));
     }
 
     @Test
     @Disabled
     void queryApiKeyUsed() {
         log.info("queryTtsApiKeyUsed [{}] used times is {}", ttsProperties.getApiKey10(),
-                voiceRssTtsService.queryTtsApiKeyUsed(ttsProperties.getApiKey10()));
+                ttsService.queryTtsApiKeyUsed(ttsProperties.getApiKey10()));
         log.info("queryTtsApiKeyUsed [{}] used times is {}", ttsProperties.getApiKey11(),
-                voiceRssTtsService.queryTtsApiKeyUsed(ttsProperties.getApiKey11()));
+                ttsService.queryTtsApiKeyUsed(ttsProperties.getApiKey11()));
         log.info("queryTtsApiKeyUsed [{}] used times is {}", ttsProperties.getApiKey12(),
-                voiceRssTtsService.queryTtsApiKeyUsed(ttsProperties.getApiKey12()));
+                ttsService.queryTtsApiKeyUsed(ttsProperties.getApiKey12()));
         log.info("queryTtsApiKeyUsed [{}] used times is {}", ttsProperties.getApiKey13(),
-                voiceRssTtsService.queryTtsApiKeyUsed(ttsProperties.getApiKey13()));
+                ttsService.queryTtsApiKeyUsed(ttsProperties.getApiKey13()));
         log.info("queryTtsApiKeyUsed [{}] used times is {}", ttsProperties.getApiKey14(),
-                voiceRssTtsService.queryTtsApiKeyUsed(ttsProperties.getApiKey14()));
+                ttsService.queryTtsApiKeyUsed(ttsProperties.getApiKey14()));
     }
 
     @Test
     @Disabled
     void refreshAllApiKey() {
-        Assertions.assertDoesNotThrow(() -> voiceRssTtsService.refreshAllApiKey());
+        Assertions.assertDoesNotThrow(() -> ttsService.refreshAllApiKey());
     }
 
     @Test
     void queryAllTtsApiKeyUsed() {
         log.info("queryTtsApiKeyUsed [total] used times is {}",
-                voiceRssTtsService.queryTtsApiKeyUsed(TtsConstants.CACHE_KEY_PREFIX_TTS.TOTAL_API_KEY));
+                ttsService.queryTtsApiKeyUsed(TtsConstants.CACHE_KEY_PREFIX_TTS.TOTAL_API_KEY));
         for (String apiKey : ttsProperties.listApiKey()) {
-            log.info("queryTtsApiKeyUsed [{}] used times is {}", apiKey, voiceRssTtsService.queryTtsApiKeyUsed(apiKey));
+            log.info("queryTtsApiKeyUsed [{}] used times is {}", apiKey, ttsService.queryTtsApiKeyUsed(apiKey));
         }
     }
 
@@ -151,7 +143,7 @@ public class TtsServiceTest {
     @Disabled
     void assertTtsApiKeyNotNull() {
         for (String apiKey : ttsProperties.listApiKey()) {
-            assertNotNull(voiceRssTtsService.queryTtsApiKeyUsed(apiKey));
+            assertNotNull(ttsService.queryTtsApiKeyUsed(apiKey));
         }
     }
 
@@ -179,7 +171,7 @@ public class TtsServiceTest {
     @SneakyThrows
     @Test
     public void testVoiceRssTts() {
-        byte[] data = voiceRssTtsService.speechEnglish("test voice rss");
+        byte[] data = ttsService.speechEnglish("test voice rss");
         assertNotNull(data);
         try {
             Util.writeBytesToFileSystem(data, "/Users/zhanshifeng/Documents/temp/voice_rss_tts_test.mp3");
@@ -188,35 +180,4 @@ public class TtsServiceTest {
         }
     }
 
-    @Test
-    @SneakyThrows
-    void testSynthesizeTextAndSaveAudio() throws Exception {
-        // generate a long English sentence that over 20 vocabulary for test
-        String text = "A man in a red shirt and a black hat, standing on a grassy hill, looking at a group of people and a small dog, while walking with a girl in a blue shirt and a yellow hat, walking with a man in a green shirt and a white hat.";
-        String languageCode = Locale.US.toLanguageTag();
-        String voiceName = "en-US-Wavenet-D";
-        String outputFileName = "test_output.wav";
-        Path outputPath = Paths.get("src/test/resources", outputFileName);
-
-        // Act
-        byte[] audioBytes = googleTtsService.speechEnglish(text, voiceName);
-
-        // Assert
-        assertNotNull(audioBytes, "Audio bytes should not be null");
-        assertTrue(audioBytes.length > 0, "Audio bytes should not be empty");
-
-        // Save the audio to src/test/resources
-        try (FileOutputStream fos = new FileOutputStream(outputPath.toFile())) {
-            fos.write(audioBytes);
-        }
-
-        // Verify the file exists and has content
-        File outputFile = outputPath.toFile();
-        assertTrue(outputFile.exists(), "Output file should exist");
-        assertTrue(outputFile.length() > 0, "Output file should not be empty");
-
-        // Optional: Read the file back and verify its content matches
-        byte[] savedAudioBytes = Files.readAllBytes(outputPath);
-        assertArrayEquals(audioBytes, savedAudioBytes, "Saved audio should match the generated audio");
-    }
 }

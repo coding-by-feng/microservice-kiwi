@@ -88,7 +88,7 @@ public class CrawlerServiceImpl implements CrawlerService {
     private DfsService dfsService;
     private final SeqService seqService;
     private final OperateService operateService;
-    @Resource(name = "voiceRssTtsService")
+    @Resource(name = "chatTtsService")
     private TtsService googleTtsService;
     private final ReviewService reviewService;
 

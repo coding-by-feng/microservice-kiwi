@@ -104,6 +104,14 @@ ms:
     exclude-cache: false
     
 tts:
+  chattts:
+    api:
+      # Base URL of your ChatTTS API service
+      base-url: http://kiwi-chattts:8000
+      # Request timeout in seconds
+      timeout: 30
+      # Number of retry attempts
+      retry-count: 3
   baidu:
     app-id: "20116041"
     api-key: "lTZsmSq37OtRKj6WDpjeemip"

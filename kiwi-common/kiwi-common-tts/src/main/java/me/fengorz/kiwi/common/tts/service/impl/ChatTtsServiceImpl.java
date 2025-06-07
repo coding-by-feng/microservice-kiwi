@@ -141,5 +141,10 @@ public class ChatTtsServiceImpl implements TtsService {
         throw new TtsException(errorMsg, lastException);
     }
 
+    @Override
+    public boolean hasValidApiKey() {
+        return true;
+    }
+
 
 }

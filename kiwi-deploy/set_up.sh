@@ -912,6 +912,7 @@ $INFRASTRUCTURE_IP    kiwi-rabbitmq
 $INFRASTRUCTURE_IP    kiwi-db
 $INFRASTRUCTURE_IP    kiwi-fastdfs
 $INFRASTRUCTURE_IP    kiwi-es
+$INFRASTRUCTURE_IP    kiwi-chattts
 
 # Kiwi Microservices
 $SERVICE_IP    kiwi-microservice-local

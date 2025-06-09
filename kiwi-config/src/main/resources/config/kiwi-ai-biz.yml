@@ -43,10 +43,10 @@ ai:
     api:
       key: ${GROK_API_KEY}  # Replace with the actual API key
       endpoint: https://api.x.ai/v1/chat/completions  # Hypothetical endpoint
-      model: "grok-2-1212"
-      thread-prompts-line-size: 200
-      thread-pool-size: 7
-      thread-timeout-secs: 110
+      model: "grok-3"
+      thread-prompts-line-size: 500
+      thread-pool-size: 8
+      thread-timeout-secs: 120
   mode:
     directly-translation: "Directly Translate my prompt to #[NL] language."
     translation-and-explanation: "Translate the prompt in #[NL] language first, please provide the explanation as thorough as possible in different aspects if there are any, my first language is #[NL], please explain in #[NL]."
@@ -77,7 +77,7 @@ rest-template:
     connect-timeout: 100000  # Faster timeouts for tests
     read-timeout: 100000
   retry:
-    max-attempts: 2  # Fewer retries for faster tests
+    max-attempts: 3  # Fewer retries for faster tests
     retryable-exceptions: "org.springframework.web.client.HttpServerErrorException,java.net.SocketTimeoutException"
     backoff-period: 500  # Faster backoff for tests
 

@@ -95,8 +95,26 @@ rest-template:
     connect-timeout: 100000  # Faster timeouts for tests
     read-timeout: 100000
   retry:
-    max-attempts: 2  # Fewer retries for faster tests
-    retryable-exceptions: "org.springframework.web.client.HttpServerErrorException,java.net.SocketTimeoutException"
+    max-attempts: 3  # Fewer retries for faster tests
+    retryable-exceptions:
+      # REST Client Exceptions (General)
+      - "org.springframework.web.client.RestClientException"
+      - "org.springframework.web.client.ResourceAccessException"
+
+      # HTTP Server Errors (5xx) - Usually transient
+      - "org.springframework.web.client.HttpServerErrorException"
+
+      # Network/Connection Exceptions
+      - "java.net.SocketTimeoutException"
+      - "java.net.ConnectException"
+      - "java.net.SocketException"
+      - "java.net.UnknownHostException"
+      - "java.io.IOException"
+      - "javax.net.ssl.SSLException"
+      - "javax.net.ssl.SSLHandshakeException"
+      - "org.apache.http.conn.ConnectTimeoutException"
+      - "org.apache.http.conn.HttpHostConnectException"
+      - "org.apache.http.NoHttpResponseException"
     backoff-period: 500  # Faster backoff for tests
 
 ignore:

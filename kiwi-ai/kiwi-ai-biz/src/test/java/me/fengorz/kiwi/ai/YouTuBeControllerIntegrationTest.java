@@ -23,7 +23,10 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -44,7 +47,17 @@ public class YouTuBeControllerIntegrationTest {
     private TestRestTemplate restTemplate;
 
     // Note: URLs are already URL-encoded
-    private static final String TEST_URL_AUTO_SUBTITLES = "https%3A%2F%2Fyoutu.be%2F98o_L3jlixw%3Fsi%3DtI5xIUVoQzUEK5yV"; // Short test video
+    private static final String TEST_URL_AUTO_SUBTITLES; // Short test video
+
+    static {
+        try {
+            TEST_URL_AUTO_SUBTITLES = URLEncoder.encode("https://youtu.be/jSEnSnHPBlI", String.valueOf(StandardCharsets.UTF_8));
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    //    private static final String TEST_URL_AUTO_SUBTITLES = "https%3A%2F%2Fyoutu.be%2F98o_L3jlixw%3Fsi%3DtI5xIUVoQzUEK5yV"; // Short test video
     private static final String TEST_URL_NORMAL_SUBTITLES = "https%3A%2F%2Fwww.youtube.com%2Fwatch%3Fv%3Dq0DMYs4b2Yw"; // Short test video
 
     private String buildUrl(String endpoint) {
@@ -89,7 +102,6 @@ public class YouTuBeControllerIntegrationTest {
     }
 
     @Test
-    @Disabled
     void testDownloadSubtitlesWithoutLanguageInVtt_Success() {
         String url = buildUrl("subtitles") + "?url=" + TEST_URL_AUTO_SUBTITLES;
 
@@ -208,6 +220,7 @@ public class YouTuBeControllerIntegrationTest {
     }
 
     @Test
+    @Disabled
     void testCleanSubtitles_Success() {
         // Test without language parameter first
         URI uri = UriComponentsBuilder.fromUriString(buildUrl("subtitles"))

@@ -23,6 +23,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.retry.support.RetryTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -35,12 +36,15 @@ import java.util.concurrent.*;
 public class GrokAiService implements AiChatService {
 
     private final RestTemplate restTemplate;
+    private final RetryTemplate retryTemplate;
     private final GrokApiProperties grokApiProperties;
     private final AiModeProperties modeProperties;
 
     public GrokAiService(@Qualifier("aiRestTemplate") RestTemplate restTemplate,
+                         @Qualifier("aiRetryTemplate") RetryTemplate retryTemplate,
                          GrokApiProperties grokApiProperties, AiModeProperties modeProperties) {
         this.restTemplate = restTemplate;
+        this.retryTemplate = retryTemplate;
         this.grokApiProperties = grokApiProperties;
         this.modeProperties = modeProperties;
     }
@@ -76,7 +80,11 @@ public class GrokAiService implements AiChatService {
     private String call(HttpHeaders headers, ChatRequest chatRequest) {
         String requestBody = KiwiJsonUtils.toJsonStr(chatRequest);
         HttpEntity<String> entity = new HttpEntity<>(requestBody, headers);
-        ResponseEntity<ChatCompletionResponse> response = restTemplate.postForEntity(grokApiProperties.getEndpoint(), entity, ChatCompletionResponse.class);
+        // Use RetryTemplate to wrap the RestTemplate call
+        ResponseEntity<ChatCompletionResponse> response = retryTemplate.execute(context -> {
+            log.debug("Attempting Grok API call (attempt {})", context.getRetryCount() + 1);
+            return restTemplate.postForEntity(grokApiProperties.getEndpoint(), entity, ChatCompletionResponse.class);
+        });
 
         if (response.getStatusCode().is2xxSuccessful()) {
             return Objects.requireNonNull(response.getBody()).getChoices().get(0).getMessage().getContent();

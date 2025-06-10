@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.ai.api.model.request.AiStreamingRequest;
 import me.fengorz.kiwi.ai.api.model.response.AiStreamingResponse;
+import me.fengorz.kiwi.ai.model.ValidationResult;
 import me.fengorz.kiwi.ai.service.AiStreamingService;
 import me.fengorz.kiwi.ai.util.LanguageConvertor;
 import me.fengorz.kiwi.common.sdk.enumeration.AiPromptModeEnum;
@@ -25,6 +26,11 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component
 public class AiStreamingWebSocketHandler extends TextWebSocketHandler {
 
+    private static final String LOG_PREFIX = "[AI-WS]";
+    private static final String VALIDATION_PREFIX = "[VALIDATION]";
+    private static final String REQUEST_PREFIX = "[REQUEST]";
+    private static final String RESPONSE_PREFIX = "[RESPONSE]";
+
     private final AiStreamingService aiStreamingService;
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final Map<String, WebSocketSession> sessions = new ConcurrentHashMap<>();
@@ -35,26 +41,53 @@ public class AiStreamingWebSocketHandler extends TextWebSocketHandler {
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
-        sessions.put(session.getId(), session);
-        log.info("AI Streaming WebSocket connection established: {}", session.getId());
+        String sessionId = session.getId();
+        sessions.put(sessionId, session);
+
+        log.info("{} Connection established - SessionId: {}, RemoteAddress: {}",
+                LOG_PREFIX, sessionId, session.getRemoteAddress());
 
         // Send welcome message
-        sendMessage(session, AiStreamingResponse.connected("AI Streaming connection established"));
+        AiStreamingResponse welcomeResponse = AiStreamingResponse.connected("AI Streaming connection established");
+        sendMessageWithLogging(session, welcomeResponse, "CONNECTION_ESTABLISHED");
     }
 
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
-        try {
-            String payload = message.getPayload();
-            log.info("Received AI streaming request from session {}: {}", session.getId(), payload);
+        String sessionId = session.getId();
+        String payload = message.getPayload();
 
+        log.info("{} {} Received message - SessionId: {}, PayloadLength: {}",
+                LOG_PREFIX, REQUEST_PREFIX, sessionId, payload.length());
+        log.debug("{} {} Raw payload: {}", LOG_PREFIX, REQUEST_PREFIX, payload);
+
+        try {
             // Parse the incoming request
             AiStreamingRequest request = objectMapper.readValue(payload, AiStreamingRequest.class);
 
+            log.info("{} {} Parsed request - SessionId: {}, PromptMode: {}, TargetLanguage: {}, NativeLanguage: {}, PromptLength: {}",
+                    LOG_PREFIX, REQUEST_PREFIX, sessionId,
+                    request.getPromptMode(),
+                    request.getTargetLanguage(),
+                    request.getNativeLanguage(),
+                    request.getPrompt() != null ? request.getPrompt().length() : 0);
+
             // Validate request
-            if (!validateRequest(session, request)) {
+            ValidationResult validation = validateRequest(request);
+            if (!validation.isValid()) {
+                log.warn("{} {} Validation failed - SessionId: {}, Error: {}",
+                        LOG_PREFIX, VALIDATION_PREFIX, sessionId, validation.getErrorMessage());
+
+                AiStreamingResponse errorResponse = AiStreamingResponse.error(
+                        validation.getErrorMessage(),
+                        validation.getErrorCode(),
+                        request);
+                sendMessageWithLogging(session, errorResponse, "VALIDATION_ERROR");
                 return;
             }
+
+            log.info("{} {} Validation passed - SessionId: {}",
+                    LOG_PREFIX, VALIDATION_PREFIX, sessionId);
 
             // Set timestamp if not provided
             if (request.getTimestamp() == null) {
@@ -65,79 +98,107 @@ public class AiStreamingWebSocketHandler extends TextWebSocketHandler {
             processAiStreamingRequest(session, request);
 
         } catch (Exception e) {
-            log.error("Error processing AI streaming message from session {}: {}", session.getId(), e.getMessage(), e);
-            sendMessage(session, AiStreamingResponse.error("Failed to process request: " + e.getMessage(), null));
+            log.error("{} Error processing message - SessionId: {}, Error: {}",
+                    LOG_PREFIX, sessionId, e.getMessage(), e);
+
+            AiStreamingResponse errorResponse = AiStreamingResponse.error(
+                    "Failed to process request: " + e.getMessage(),
+                    "PROCESSING_ERROR",
+                    null);
+            sendMessageWithLogging(session, errorResponse, "PROCESSING_ERROR");
         }
     }
 
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
-        sessions.remove(session.getId());
-        log.info("AI Streaming WebSocket connection closed: {}, status: {}", session.getId(), status);
+        String sessionId = session.getId();
+        sessions.remove(sessionId);
+
+        log.info("{} Connection closed - SessionId: {}, Status: {}, Reason: {}",
+                LOG_PREFIX, sessionId, status.getCode(), status.getReason());
     }
 
     @Override
     public void handleTransportError(WebSocketSession session, Throwable exception) throws Exception {
-        log.error("AI Streaming transport error for session {}: {}", session.getId(), exception.getMessage(), exception);
-        sessions.remove(session.getId());
+        String sessionId = session.getId();
+        log.error("{} Transport error - SessionId: {}, Error: {}",
+                LOG_PREFIX, sessionId, exception.getMessage(), exception);
+
+        sessions.remove(sessionId);
+
+        if (session.isOpen()) {
+            AiStreamingResponse errorResponse = AiStreamingResponse.error(
+                    "Transport error occurred",
+                    "TRANSPORT_ERROR",
+                    null);
+            sendMessageWithLogging(session, errorResponse, "TRANSPORT_ERROR");
+        }
     }
 
-    private boolean validateRequest(WebSocketSession session, AiStreamingRequest request) {
+    private ValidationResult validateRequest(AiStreamingRequest request) {
+        log.debug("{} {} Starting validation for request", LOG_PREFIX, VALIDATION_PREFIX);
+
+        // Check prompt
         if (!StringUtils.hasText(request.getPrompt())) {
-            sendMessage(session, AiStreamingResponse.error("Prompt cannot be empty", "INVALID_PROMPT", request));
-            return false;
+            return ValidationResult.invalid("Prompt cannot be empty", "INVALID_PROMPT");
         }
+        log.debug("{} {} Prompt validation passed", LOG_PREFIX, VALIDATION_PREFIX);
 
+        // Check prompt mode
         if (!StringUtils.hasText(request.getPromptMode())) {
-            sendMessage(session, AiStreamingResponse.error("Prompt mode cannot be empty", "INVALID_PROMPT_MODE", request));
-            return false;
-        }
-
-        if (!StringUtils.hasText(request.getTargetLanguage())) {
-            sendMessage(session, AiStreamingResponse.error("Target language cannot be empty", "INVALID_TARGET_LANGUAGE", request));
-            return false;
+            return ValidationResult.invalid("Prompt mode cannot be empty", "INVALID_PROMPT_MODE");
         }
 
         // Validate prompt mode enum
         try {
-            AiPromptModeEnum.valueOf(request.getPromptMode());
+            AiPromptModeEnum promptMode = AiPromptModeEnum.fromMode(request.getPromptMode());
+            log.debug("{} {} Prompt mode validation passed: {}", LOG_PREFIX, VALIDATION_PREFIX, promptMode);
         } catch (IllegalArgumentException e) {
-            sendMessage(session, AiStreamingResponse.error("Invalid prompt mode: " + request.getPromptMode(), "INVALID_PROMPT_MODE", request));
-            return false;
+            return ValidationResult.invalid("Invalid prompt mode: " + request.getPromptMode(), "INVALID_PROMPT_MODE");
+        }
+
+        // Check target language
+        if (!StringUtils.hasText(request.getTargetLanguage())) {
+            return ValidationResult.invalid("Target language cannot be empty", "INVALID_TARGET_LANGUAGE");
         }
 
         // Validate target language
         try {
-            LanguageConvertor.convertLanguageToEnum(request.getTargetLanguage());
+            LanguageEnum targetLang = LanguageConvertor.convertLanguageToEnum(request.getTargetLanguage());
+            log.debug("{} {} Target language validation passed: {}", LOG_PREFIX, VALIDATION_PREFIX, targetLang);
         } catch (Exception e) {
-            sendMessage(session, AiStreamingResponse.error("Invalid target language: " + request.getTargetLanguage(), "INVALID_TARGET_LANGUAGE", request));
-            return false;
+            return ValidationResult.invalid("Invalid target language: " + request.getTargetLanguage(), "INVALID_TARGET_LANGUAGE");
         }
 
         // Validate native language if provided
         if (StringUtils.hasText(request.getNativeLanguage())) {
             try {
-                LanguageConvertor.convertLanguageToEnum(request.getNativeLanguage());
+                LanguageEnum nativeLang = LanguageConvertor.convertLanguageToEnum(request.getNativeLanguage());
+                log.debug("{} {} Native language validation passed: {}", LOG_PREFIX, VALIDATION_PREFIX, nativeLang);
             } catch (Exception e) {
-                sendMessage(session, AiStreamingResponse.error("Invalid native language: " + request.getNativeLanguage(), "INVALID_NATIVE_LANGUAGE", request));
-                return false;
+                return ValidationResult.invalid("Invalid native language: " + request.getNativeLanguage(), "INVALID_NATIVE_LANGUAGE");
             }
         }
 
-        return true;
+        log.debug("{} {} All validations passed", LOG_PREFIX, VALIDATION_PREFIX);
+        return ValidationResult.valid();
     }
 
     private void processAiStreamingRequest(WebSocketSession session, AiStreamingRequest request) {
+        String sessionId = session.getId();
+
         try {
-            log.info("Processing AI streaming request for session: {}", session.getId());
+            log.info("{} Starting AI streaming - SessionId: {}", LOG_PREFIX, sessionId);
 
             long startTime = System.currentTimeMillis();
 
             // Send processing started message
-            sendMessage(session, AiStreamingResponse.started("AI streaming started", request));
+            AiStreamingResponse startedResponse = AiStreamingResponse.started("AI streaming started", request);
+            sendMessageWithLogging(session, startedResponse, "PROCESSING_STARTED");
 
             // Decode the original text
             String decodedText = WebTools.decode(request.getPrompt());
+            log.debug("{} Decoded text length: {}", LOG_PREFIX, decodedText.length());
 
             // Set up streaming callbacks
             StringBuilder fullResponse = new StringBuilder();
@@ -147,69 +208,124 @@ public class AiStreamingWebSocketHandler extends TextWebSocketHandler {
                 LanguageEnum targetLang = LanguageConvertor.convertLanguageToEnum(request.getTargetLanguage());
                 LanguageEnum nativeLang = LanguageConvertor.convertLanguageToEnum(request.getNativeLanguage());
 
+                log.info("{} Two-language mode - SessionId: {}, Target: {}, Native: {}",
+                        LOG_PREFIX, sessionId, targetLang, nativeLang);
+
                 aiStreamingService.streamCall(
                         decodedText,
-                        AiPromptModeEnum.valueOf(request.getPromptMode()),
+                        AiPromptModeEnum.fromMode(request.getPromptMode()),
                         targetLang,
                         nativeLang,
                         // onChunk callback
                         chunk -> {
                             fullResponse.append(chunk);
-                            sendMessage(session, AiStreamingResponse.chunk(chunk, request));
+                            AiStreamingResponse chunkResponse = AiStreamingResponse.chunk(chunk, request);
+                            sendMessageWithLogging(session, chunkResponse, "CHUNK");
                         },
                         // onError callback
                         error -> {
-                            log.error("AI streaming error for session {}: {}", session.getId(), error.getMessage(), error);
-                            sendMessage(session, AiStreamingResponse.error("AI streaming failed: " + error.getMessage(), "STREAMING_ERROR", request));
+                            log.error("{} AI streaming error - SessionId: {}, Error: {}",
+                                    LOG_PREFIX, sessionId, error.getMessage(), error);
+                            AiStreamingResponse errorResponse = AiStreamingResponse.error(
+                                    "AI streaming failed: " + error.getMessage(),
+                                    "STREAMING_ERROR",
+                                    request);
+                            sendMessageWithLogging(session, errorResponse, "STREAMING_ERROR");
                         },
                         // onComplete callback
                         () -> {
                             long processingDuration = System.currentTimeMillis() - startTime;
-                            log.info("AI streaming completed for session: {} in {}ms", session.getId(), processingDuration);
-                            sendMessage(session, AiStreamingResponse.completed("AI streaming completed", request, fullResponse.toString(), processingDuration));
+                            log.info("{} AI streaming completed - SessionId: {}, Duration: {}ms, ResponseLength: {}",
+                                    LOG_PREFIX, sessionId, processingDuration, fullResponse.length());
+                            AiStreamingResponse completedResponse = AiStreamingResponse.completed(
+                                    "AI streaming completed",
+                                    request,
+                                    fullResponse.toString(),
+                                    processingDuration);
+                            sendMessageWithLogging(session, completedResponse, "COMPLETED");
                         }
                 );
             } else {
                 // Single language mode
                 LanguageEnum language = LanguageConvertor.convertLanguageToEnum(request.getTargetLanguage());
 
+                log.info("{} Single-language mode - SessionId: {}, Language: {}",
+                        LOG_PREFIX, sessionId, language);
+
                 aiStreamingService.streamCall(
                         decodedText,
-                        AiPromptModeEnum.valueOf(request.getPromptMode()),
+                        AiPromptModeEnum.fromMode(request.getPromptMode()),
                         language,
                         // onChunk callback
                         chunk -> {
                             fullResponse.append(chunk);
-                            sendMessage(session, AiStreamingResponse.chunk(chunk, request));
+                            AiStreamingResponse chunkResponse = AiStreamingResponse.chunk(chunk, request);
+                            sendMessageWithLogging(session, chunkResponse, "CHUNK");
                         },
                         // onError callback
                         error -> {
-                            log.error("AI streaming error for session {}: {}", session.getId(), error.getMessage(), error);
-                            sendMessage(session, AiStreamingResponse.error("AI streaming failed: " + error.getMessage(), "STREAMING_ERROR", request));
+                            log.error("{} AI streaming error - SessionId: {}, Error: {}",
+                                    LOG_PREFIX, sessionId, error.getMessage(), error);
+                            AiStreamingResponse errorResponse = AiStreamingResponse.error(
+                                    "AI streaming failed: " + error.getMessage(),
+                                    "STREAMING_ERROR",
+                                    request);
+                            sendMessageWithLogging(session, errorResponse, "STREAMING_ERROR");
                         },
                         // onComplete callback
                         () -> {
                             long processingDuration = System.currentTimeMillis() - startTime;
-                            log.info("AI streaming completed for session: {} in {}ms", session.getId(), processingDuration);
-                            sendMessage(session, AiStreamingResponse.completed("AI streaming completed", request, fullResponse.toString(), processingDuration));
+                            log.info("{} AI streaming completed - SessionId: {}, Duration: {}ms, ResponseLength: {}",
+                                    LOG_PREFIX, sessionId, processingDuration, fullResponse.length());
+                            AiStreamingResponse completedResponse = AiStreamingResponse.completed(
+                                    "AI streaming completed",
+                                    request,
+                                    fullResponse.toString(),
+                                    processingDuration);
+                            sendMessageWithLogging(session, completedResponse, "COMPLETED");
                         }
                 );
             }
 
         } catch (Exception e) {
-            log.error("Error processing AI streaming request for session {}: {}", session.getId(), e.getMessage(), e);
-            sendMessage(session, AiStreamingResponse.error("AI streaming request failed: " + e.getMessage(), "REQUEST_ERROR", request));
+            log.error("{} Error processing AI streaming request - SessionId: {}, Error: {}",
+                    LOG_PREFIX, sessionId, e.getMessage(), e);
+
+            AiStreamingResponse errorResponse = AiStreamingResponse.error(
+                    "AI streaming request failed: " + e.getMessage(),
+                    "REQUEST_ERROR",
+                    request);
+            sendMessageWithLogging(session, errorResponse, "REQUEST_ERROR");
         }
     }
 
-    private void sendMessage(WebSocketSession session, AiStreamingResponse response) {
+    private void sendMessageWithLogging(WebSocketSession session, AiStreamingResponse response, String messageType) {
+        String sessionId = session.getId();
+
         try {
             if (session.isOpen()) {
                 String jsonResponse = objectMapper.writeValueAsString(response);
+
+                // Log response details based on type
+                if ("CHUNK".equals(messageType)) {
+                    log.debug("{} {} Sending chunk - SessionId: {}, ChunkLength: {}",
+                            LOG_PREFIX, RESPONSE_PREFIX, sessionId,
+                            response.getChunk() != null ? response.getChunk().length() : 0);
+                } else {
+                    log.info("{} {} Sending response - SessionId: {}, Type: {}, ResponseType: {}",
+                            LOG_PREFIX, RESPONSE_PREFIX, sessionId, messageType, response.getType());
+                    log.debug("{} {} Response content: {}", LOG_PREFIX, RESPONSE_PREFIX, jsonResponse);
+                }
+
                 session.sendMessage(new TextMessage(jsonResponse));
+            } else {
+                log.warn("{} {} Cannot send message, session closed - SessionId: {}, MessageType: {}",
+                        LOG_PREFIX, RESPONSE_PREFIX, sessionId, messageType);
             }
         } catch (IOException e) {
-            log.error("Failed to send message to session {}: {}", session.getId(), e.getMessage(), e);
+            log.error("{} {} Failed to send message - SessionId: {}, MessageType: {}, Error: {}",
+                    LOG_PREFIX, RESPONSE_PREFIX, sessionId, messageType, e.getMessage(), e);
         }
     }
+
 }

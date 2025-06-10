@@ -1,10 +1,9 @@
 package me.fengorz.kiwi.ai.api.model.response;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 import me.fengorz.kiwi.ai.api.model.request.AiStreamingRequest;
 
 import java.io.Serializable;
@@ -16,7 +15,7 @@ import java.io.Serializable;
  * @Date 06/03/2025
  */
 @Data
-@Builder
+@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
 public class AiStreamingResponse implements Serializable {
@@ -86,34 +85,9 @@ public class AiStreamingResponse implements Serializable {
     private String metadata;
 
     // Convenience methods for type checking
-    @JsonIgnore
-    public boolean isConnected() {
-        return TYPE_CONNECTED.equals(type);
-    }
 
-    @JsonIgnore
-    public boolean isStarted() {
-        return TYPE_STARTED.equals(type);
-    }
-
-    @JsonIgnore
-    public boolean isChunk() {
-        return TYPE_CHUNK.equals(type);
-    }
-
-    @JsonIgnore
-    public boolean isCompleted() {
-        return TYPE_COMPLETED.equals(type);
-    }
-
-    @JsonIgnore
-    public boolean isError() {
+    public boolean ifError() {
         return TYPE_ERROR.equals(type);
-    }
-
-    @JsonIgnore
-    public boolean isSuccess() {
-        return !isError();
     }
 
     // Convenience factory methods
@@ -195,42 +169,10 @@ public class AiStreamingResponse implements Serializable {
     }
 
     /**
-     * Gets the content length for logging purposes
-     * @return length of chunk or full response, 0 if neither exists
-     */
-    @JsonIgnore
-    public int getContentLength() {
-        if (chunk != null) {
-            return chunk.length();
-        }
-        if (fullResponse != null) {
-            return fullResponse.length();
-        }
-        return 0;
-    }
-
-    /**
-     * Gets a brief description of the response for logging
-     * @return brief description string
-     */
-    @JsonIgnore
-    public String getBriefDescription() {
-        StringBuilder desc = new StringBuilder(type);
-        if (message != null) {
-            desc.append(" - ").append(message);
-        }
-        if (errorCode != null) {
-            desc.append(" (").append(errorCode).append(")");
-        }
-        return desc.toString();
-    }
-
-    /**
      * Validates that the response has all required fields for its type
      * @return true if valid, false otherwise
      */
-    @JsonIgnore
-    public boolean isValid() {
+    public boolean ifValid() {
         if (type == null || timestamp == null) {
             return false;
         }

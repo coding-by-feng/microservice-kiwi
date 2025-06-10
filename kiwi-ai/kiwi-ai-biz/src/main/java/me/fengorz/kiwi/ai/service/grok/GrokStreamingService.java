@@ -88,10 +88,12 @@ public class GrokStreamingService implements AiStreamingService {
         });
     }
 
+    // Also add this method to log the full streaming response for debugging
     private void streamRequest(GrokStreamingRequest grokStreamingRequest, Consumer<String> onChunk,
                                Consumer<Exception> onError, Runnable onComplete) {
         try {
             String requestBody = KiwiJsonUtils.toJsonStr(grokStreamingRequest);
+            log.info("Sending Grok request: {}", requestBody);
 
             // Create request callback to set headers and body
             RequestCallback requestCallback = request -> {
@@ -112,7 +114,11 @@ public class GrokStreamingService implements AiStreamingService {
                             new InputStreamReader(response.getBody(), StandardCharsets.UTF_8))) {
 
                         String line;
+                        int lineNumber = 0;
                         while ((line = reader.readLine()) != null) {
+                            lineNumber++;
+                            log.debug("Received line {}: {}", lineNumber, line);
+
                             if (line.trim().isEmpty()) {
                                 continue;
                             }
@@ -120,9 +126,11 @@ public class GrokStreamingService implements AiStreamingService {
                             // Parse SSE format: data: {...}
                             if (line.startsWith("data: ")) {
                                 String data = line.substring(6).trim();
+                                log.debug("Processing SSE data: {}", data);
 
                                 // Skip [DONE] marker
                                 if ("[DONE]".equals(data)) {
+                                    log.info("Received [DONE] marker, ending stream");
                                     break;
                                 }
 
@@ -130,14 +138,20 @@ public class GrokStreamingService implements AiStreamingService {
                                     // Extract content from the JSON response
                                     String content = extractContent(data);
                                     if (content != null && !content.isEmpty()) {
+                                        log.debug("Calling onChunk with content: '{}'", content);
                                         onChunk.accept(content);
+                                    } else {
+                                        log.warn("Extracted content is null or empty for data: {}", data);
                                     }
                                 } catch (Exception e) {
                                     log.warn("Failed to parse streaming chunk: {}", data, e);
                                 }
+                            } else {
+                                log.debug("Received non-data line: {}", line);
                             }
                         }
 
+                        log.info("Stream completed, calling onComplete");
                         onComplete.run();
 
                     } catch (IOException e) {
@@ -161,13 +175,18 @@ public class GrokStreamingService implements AiStreamingService {
 
     private String extractContent(String jsonData) {
         try {
-            // Simple regex-based extraction for content field
+            log.info("🔍 DEBUG: Raw JSON data: {}", jsonData);
+
             Matcher matcher = CONTENT_PATTERN.matcher(jsonData);
             if (matcher.find()) {
-                return matcher.group(1);
+                String content = matcher.group(1);
+                log.info("🔍 DEBUG: Extracted content: '{}'", content);
+                return content;
+            } else {
+                log.warn("🔍 DEBUG: No content match found in: {}", jsonData);
             }
         } catch (Exception e) {
-            log.warn("Failed to extract content from: {}", jsonData, e);
+            log.error("🔍 DEBUG: Extract failed", e);
         }
         return null;
     }

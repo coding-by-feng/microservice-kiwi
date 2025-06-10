@@ -34,6 +34,7 @@ public class AiStreamingWebSocketHandler extends TextWebSocketHandler {
     private final AiStreamingService aiStreamingService;
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final Map<String, WebSocketSession> sessions = new ConcurrentHashMap<>();
+    private final Map<String, Boolean> activeStreams = new ConcurrentHashMap<>();
 
     public AiStreamingWebSocketHandler(@Qualifier("grokStreamingService") AiStreamingService aiStreamingService) {
         this.aiStreamingService = aiStreamingService;
@@ -43,6 +44,7 @@ public class AiStreamingWebSocketHandler extends TextWebSocketHandler {
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
         String sessionId = session.getId();
         sessions.put(sessionId, session);
+        activeStreams.put(sessionId, true);
 
         log.info("{} Connection established - SessionId: {}, RemoteAddress: {}",
                 LOG_PREFIX, sessionId, session.getRemoteAddress());
@@ -113,9 +115,17 @@ public class AiStreamingWebSocketHandler extends TextWebSocketHandler {
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
         String sessionId = session.getId();
         sessions.remove(sessionId);
+        activeStreams.put(sessionId, false); // Mark as inactive but keep for cleanup
 
-        log.info("{} Connection closed - SessionId: {}, Status: {}, Reason: {}",
+        log.info("{} Connection closed - SessionId: {}, Code: {}, Reason: '{}'",
                 LOG_PREFIX, sessionId, status.getCode(), status.getReason());
+
+        // Log specific details for abnormal closures
+        if (status.getCode() == 1005) {
+            log.warn("{} Connection closed with code 1005 (No Status) - likely network issue or client disconnect", LOG_PREFIX);
+        } else if (status.getCode() != 1000) {
+            log.warn("{} Connection closed abnormally - Code: {}", LOG_PREFIX, status.getCode());
+        }
     }
 
     @Override
@@ -125,6 +135,7 @@ public class AiStreamingWebSocketHandler extends TextWebSocketHandler {
                 LOG_PREFIX, sessionId, exception.getMessage(), exception);
 
         sessions.remove(sessionId);
+        activeStreams.put(sessionId, false); // Mark as inactive
 
         if (session.isOpen()) {
             AiStreamingResponse errorResponse = AiStreamingResponse.error(
@@ -216,33 +227,44 @@ public class AiStreamingWebSocketHandler extends TextWebSocketHandler {
                         AiPromptModeEnum.fromMode(request.getPromptMode()),
                         targetLang,
                         nativeLang,
-                        // onChunk callback
+                        // onChunk callback with session check
                         chunk -> {
-                            fullResponse.append(chunk);
-                            AiStreamingResponse chunkResponse = AiStreamingResponse.chunk(chunk, request);
-                            sendMessageWithLogging(session, chunkResponse, "CHUNK");
+                            if (isSessionActive(sessionId)) {
+                                fullResponse.append(chunk);
+                                AiStreamingResponse chunkResponse = AiStreamingResponse.chunk(chunk, request);
+                                sendMessageWithLogging(session, chunkResponse, "CHUNK");
+                            } else {
+                                log.debug("{} Skipping chunk for inactive session: {}", LOG_PREFIX, sessionId);
+                            }
                         },
                         // onError callback
                         error -> {
-                            log.error("{} AI streaming error - SessionId: {}, Error: {}",
-                                    LOG_PREFIX, sessionId, error.getMessage(), error);
-                            AiStreamingResponse errorResponse = AiStreamingResponse.error(
-                                    "AI streaming failed: " + error.getMessage(),
-                                    "STREAMING_ERROR",
-                                    request);
-                            sendMessageWithLogging(session, errorResponse, "STREAMING_ERROR");
+                            if (isSessionActive(sessionId)) {
+                                log.error("{} AI streaming error - SessionId: {}, Error: {}",
+                                        LOG_PREFIX, sessionId, error.getMessage(), error);
+                                AiStreamingResponse errorResponse = AiStreamingResponse.error(
+                                        "AI streaming failed: " + error.getMessage(),
+                                        "STREAMING_ERROR",
+                                        request);
+                                sendMessageWithLogging(session, errorResponse, "STREAMING_ERROR");
+                            }
+                            cleanupSession(sessionId);
                         },
                         // onComplete callback
                         () -> {
                             long processingDuration = System.currentTimeMillis() - startTime;
                             log.info("{} AI streaming completed - SessionId: {}, Duration: {}ms, ResponseLength: {}",
                                     LOG_PREFIX, sessionId, processingDuration, fullResponse.length());
-                            AiStreamingResponse completedResponse = AiStreamingResponse.completed(
-                                    "AI streaming completed",
-                                    request,
-                                    fullResponse.toString(),
-                                    processingDuration);
-                            sendMessageWithLogging(session, completedResponse, "COMPLETED");
+
+                            if (isSessionActive(sessionId)) {
+                                AiStreamingResponse completedResponse = AiStreamingResponse.completed(
+                                        "AI streaming completed",
+                                        request,
+                                        fullResponse.toString(),
+                                        processingDuration);
+                                sendMessageWithLogging(session, completedResponse, "COMPLETED");
+                            }
+                            cleanupSession(sessionId);
                         }
                 );
             } else {
@@ -256,33 +278,44 @@ public class AiStreamingWebSocketHandler extends TextWebSocketHandler {
                         decodedText,
                         AiPromptModeEnum.fromMode(request.getPromptMode()),
                         language,
-                        // onChunk callback
+                        // onChunk callback with session check
                         chunk -> {
-                            fullResponse.append(chunk);
-                            AiStreamingResponse chunkResponse = AiStreamingResponse.chunk(chunk, request);
-                            sendMessageWithLogging(session, chunkResponse, "CHUNK");
+                            if (isSessionActive(sessionId)) {
+                                fullResponse.append(chunk);
+                                AiStreamingResponse chunkResponse = AiStreamingResponse.chunk(chunk, request);
+                                sendMessageWithLogging(session, chunkResponse, "CHUNK");
+                            } else {
+                                log.debug("{} Skipping chunk for inactive session: {}", LOG_PREFIX, sessionId);
+                            }
                         },
                         // onError callback
                         error -> {
-                            log.error("{} AI streaming error - SessionId: {}, Error: {}",
-                                    LOG_PREFIX, sessionId, error.getMessage(), error);
-                            AiStreamingResponse errorResponse = AiStreamingResponse.error(
-                                    "AI streaming failed: " + error.getMessage(),
-                                    "STREAMING_ERROR",
-                                    request);
-                            sendMessageWithLogging(session, errorResponse, "STREAMING_ERROR");
+                            if (isSessionActive(sessionId)) {
+                                log.error("{} AI streaming error - SessionId: {}, Error: {}",
+                                        LOG_PREFIX, sessionId, error.getMessage(), error);
+                                AiStreamingResponse errorResponse = AiStreamingResponse.error(
+                                        "AI streaming failed: " + error.getMessage(),
+                                        "STREAMING_ERROR",
+                                        request);
+                                sendMessageWithLogging(session, errorResponse, "STREAMING_ERROR");
+                            }
+                            cleanupSession(sessionId);
                         },
                         // onComplete callback
                         () -> {
                             long processingDuration = System.currentTimeMillis() - startTime;
                             log.info("{} AI streaming completed - SessionId: {}, Duration: {}ms, ResponseLength: {}",
                                     LOG_PREFIX, sessionId, processingDuration, fullResponse.length());
-                            AiStreamingResponse completedResponse = AiStreamingResponse.completed(
-                                    "AI streaming completed",
-                                    request,
-                                    fullResponse.toString(),
-                                    processingDuration);
-                            sendMessageWithLogging(session, completedResponse, "COMPLETED");
+
+                            if (isSessionActive(sessionId)) {
+                                AiStreamingResponse completedResponse = AiStreamingResponse.completed(
+                                        "AI streaming completed",
+                                        request,
+                                        fullResponse.toString(),
+                                        processingDuration);
+                                sendMessageWithLogging(session, completedResponse, "COMPLETED");
+                            }
+                            cleanupSession(sessionId);
                         }
                 );
             }
@@ -301,6 +334,13 @@ public class AiStreamingWebSocketHandler extends TextWebSocketHandler {
 
     private void sendMessageWithLogging(WebSocketSession session, AiStreamingResponse response, String messageType) {
         String sessionId = session.getId();
+
+        // Check if session is still active before sending
+        if (!isSessionActive(sessionId)) {
+            log.debug("{} {} Skipping message for inactive session - SessionId: {}, MessageType: {}",
+                    LOG_PREFIX, RESPONSE_PREFIX, sessionId, messageType);
+            return;
+        }
 
         try {
             if (session.isOpen()) {
@@ -321,11 +361,32 @@ public class AiStreamingWebSocketHandler extends TextWebSocketHandler {
             } else {
                 log.warn("{} {} Cannot send message, session closed - SessionId: {}, MessageType: {}",
                         LOG_PREFIX, RESPONSE_PREFIX, sessionId, messageType);
+                // Mark session as inactive if we discover it's closed
+                activeStreams.put(sessionId, false);
             }
         } catch (IOException e) {
             log.error("{} {} Failed to send message - SessionId: {}, MessageType: {}, Error: {}",
                     LOG_PREFIX, RESPONSE_PREFIX, sessionId, messageType, e.getMessage(), e);
+            // Mark session as inactive on send failure
+            activeStreams.put(sessionId, false);
         }
+    }
+
+    /**
+     * Check if a session is still active (connected and able to receive messages)
+     */
+    private boolean isSessionActive(String sessionId) {
+        return activeStreams.getOrDefault(sessionId, false) &&
+                sessions.containsKey(sessionId) &&
+                sessions.get(sessionId).isOpen();
+    }
+
+    /**
+     * Clean up session resources
+     */
+    private void cleanupSession(String sessionId) {
+        activeStreams.remove(sessionId);
+        log.debug("{} Cleaned up session resources - SessionId: {}", LOG_PREFIX, sessionId);
     }
 
 }

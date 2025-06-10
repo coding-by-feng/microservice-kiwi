@@ -13,6 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
+import org.springframework.retry.support.RetryTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RequestCallback;
 import org.springframework.web.client.ResponseExtractor;
@@ -33,6 +34,7 @@ import java.util.regex.Pattern;
 public class GrokStreamingService implements AiStreamingService {
 
     private final RestTemplate restTemplate;
+    private final RetryTemplate retryTemplate;
     private final GrokApiProperties grokApiProperties;
     private final AiModeProperties modeProperties;
 
@@ -40,9 +42,11 @@ public class GrokStreamingService implements AiStreamingService {
     private static final Pattern CONTENT_PATTERN = Pattern.compile("\"content\"\\s*:\\s*\"([^\"]+)\"");
 
     public GrokStreamingService(@Qualifier("aiRestTemplate") RestTemplate restTemplate,
+                                @Qualifier("aiRetryTemplate") RetryTemplate retryTemplate,
                                 GrokApiProperties grokApiProperties,
                                 AiModeProperties modeProperties) {
         this.restTemplate = restTemplate;
+        this.retryTemplate = retryTemplate;
         this.grokApiProperties = grokApiProperties;
         this.modeProperties = modeProperties;
     }
@@ -59,7 +63,7 @@ public class GrokStreamingService implements AiStreamingService {
                         true // Enable streaming
                 );
 
-                streamRequest(grokStreamingRequest, onChunk, onError, onComplete);
+                streamRequestWithRetry(grokStreamingRequest, onChunk, onError, onComplete);
             } catch (Exception e) {
                 log.error("Error in streaming call: {}", e.getMessage(), e);
                 onError.accept(e);
@@ -80,7 +84,7 @@ public class GrokStreamingService implements AiStreamingService {
                         true // Enable streaming
                 );
 
-                streamRequest(grokStreamingRequest, onChunk, onError, onComplete);
+                streamRequestWithRetry(grokStreamingRequest, onChunk, onError, onComplete);
             } catch (Exception e) {
                 log.error("Error in streaming call with two languages: {}", e.getMessage(), e);
                 onError.accept(e);
@@ -88,12 +92,32 @@ public class GrokStreamingService implements AiStreamingService {
         });
     }
 
-    // Also add this method to log the full streaming response for debugging
+    /**
+     * Stream request with retry logic using RetryTemplate
+     */
+    private void streamRequestWithRetry(GrokStreamingRequest grokStreamingRequest, Consumer<String> onChunk,
+                                        Consumer<Exception> onError, Runnable onComplete) {
+        try {
+            // Use RetryTemplate to wrap the streaming call
+            retryTemplate.execute(context -> {
+                log.info("🔄 Attempting Grok streaming call (attempt {})", context.getRetryCount() + 1);
+                streamRequest(grokStreamingRequest, onChunk, onError, onComplete);
+                return null;
+            });
+        } catch (Exception e) {
+            log.error("❌ All Grok streaming retry attempts failed: {}", e.getMessage(), e);
+            onError.accept(e);
+        }
+    }
+
+    /**
+     * Core streaming request method
+     */
     private void streamRequest(GrokStreamingRequest grokStreamingRequest, Consumer<String> onChunk,
                                Consumer<Exception> onError, Runnable onComplete) {
         try {
             String requestBody = KiwiJsonUtils.toJsonStr(grokStreamingRequest);
-            log.info("Sending Grok request: {}", requestBody);
+            log.debug("Sending Grok streaming request: {}", requestBody);
 
             // Create request callback to set headers and body
             RequestCallback requestCallback = request -> {
@@ -110,15 +134,15 @@ public class GrokStreamingService implements AiStreamingService {
             // Create response extractor to handle streaming response
             ResponseExtractor<Void> responseExtractor = response -> {
                 if (response.getStatusCode().is2xxSuccessful()) {
+                    log.info("✅ Grok streaming connection established, processing response...");
+
                     try (BufferedReader reader = new BufferedReader(
                             new InputStreamReader(response.getBody(), StandardCharsets.UTF_8))) {
 
                         String line;
-                        int lineNumber = 0;
-                        while ((line = reader.readLine()) != null) {
-                            lineNumber++;
-                            log.debug("Received line {}: {}", lineNumber, line);
+                        boolean hasReceivedContent = false;
 
+                        while ((line = reader.readLine()) != null) {
                             if (line.trim().isEmpty()) {
                                 continue;
                             }
@@ -126,11 +150,10 @@ public class GrokStreamingService implements AiStreamingService {
                             // Parse SSE format: data: {...}
                             if (line.startsWith("data: ")) {
                                 String data = line.substring(6).trim();
-                                log.debug("Processing SSE data: {}", data);
 
                                 // Skip [DONE] marker
                                 if ("[DONE]".equals(data)) {
-                                    log.info("Received [DONE] marker, ending stream");
+                                    log.info("📋 Received [DONE] marker, ending stream");
                                     break;
                                 }
 
@@ -138,28 +161,33 @@ public class GrokStreamingService implements AiStreamingService {
                                     // Extract content from the JSON response
                                     String content = extractContent(data);
                                     if (content != null && !content.isEmpty()) {
-                                        log.debug("Calling onChunk with content: '{}'", content);
+                                        hasReceivedContent = true;
+                                        log.debug("📤 Sending chunk: '{}'", content);
                                         onChunk.accept(content);
-                                    } else {
-                                        log.warn("Extracted content is null or empty for data: {}", data);
                                     }
                                 } catch (Exception e) {
-                                    log.warn("Failed to parse streaming chunk: {}", data, e);
+                                    log.warn("⚠️ Failed to parse streaming chunk: {}", data, e);
+                                    // Don't throw here, just log the warning and continue
                                 }
-                            } else {
-                                log.debug("Received non-data line: {}", line);
                             }
                         }
 
-                        log.info("Stream completed, calling onComplete");
+                        // Check if we received any content at all
+                        if (!hasReceivedContent) {
+                            throw new GrokAiException("No content received from Grok streaming API");
+                        }
+
+                        log.info("✅ Grok streaming completed successfully");
                         onComplete.run();
 
                     } catch (IOException e) {
-                        log.error("Error reading streaming response: {}", e.getMessage(), e);
-                        onError.accept(e);
+                        log.error("💥 Error reading Grok streaming response: {}", e.getMessage(), e);
+                        throw new GrokAiException("Error reading streaming response: " + e.getMessage(), e);
                     }
                 } else {
-                    throw new GrokAiException("Streaming request failed with status: " + response.getStatusCode());
+                    String errorMsg = "Grok streaming request failed with status: " + response.getStatusCode();
+                    log.error("💥 {}", errorMsg);
+                    throw new GrokAiException(errorMsg);
                 }
                 return null;
             };
@@ -168,25 +196,28 @@ public class GrokStreamingService implements AiStreamingService {
             restTemplate.execute(grokApiProperties.getEndpoint(), HttpMethod.POST, requestCallback, responseExtractor);
 
         } catch (Exception e) {
-            log.error("Error in streaming request: {}", e.getMessage(), e);
-            onError.accept(e);
+            log.error("💥 Error in Grok streaming request: {}", e.getMessage(), e);
+            throw new GrokAiException("Streaming request failed: " + e.getMessage(), e);
         }
     }
 
+    /**
+     * Extract content from JSON data with improved error handling
+     */
     private String extractContent(String jsonData) {
         try {
-            log.info("🔍 DEBUG: Raw JSON data: {}", jsonData);
+            log.debug("🔍 Processing JSON data: {}", jsonData);
 
             Matcher matcher = CONTENT_PATTERN.matcher(jsonData);
             if (matcher.find()) {
                 String content = matcher.group(1);
-                log.info("🔍 DEBUG: Extracted content: '{}'", content);
+                log.debug("✅ Extracted content: '{}'", content);
                 return content;
             } else {
-                log.warn("🔍 DEBUG: No content match found in: {}", jsonData);
+                log.debug("ℹ️ No content found in JSON data (might be metadata): {}", jsonData);
             }
         } catch (Exception e) {
-            log.error("🔍 DEBUG: Extract failed", e);
+            log.warn("⚠️ Failed to extract content from JSON: {}", jsonData, e);
         }
         return null;
     }

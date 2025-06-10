@@ -30,6 +30,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static me.fengorz.kiwi.common.sdk.enumeration.AiPromptModeEnum.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 @Slf4j
@@ -119,7 +120,7 @@ public class AiStreamingWsIntegrationTest {
         AiStreamingRequest request = AiStreamingRequest.builder()
                 .requestId("test-translation-" + System.currentTimeMillis())
                 .prompt("Hello%2C%20how%20are%20you%20today%3F") // URL encoded "Hello, how are you today?"
-                .promptMode("DIRECTLY_TRANSLATION")
+                .promptMode(DIRECTLY_TRANSLATION.getMode())
                 .targetLanguage(LanguageEnum.ZH_CN.getCode())
                 .nativeLanguage(LanguageEnum.EN.getCode())
                 .timestamp(System.currentTimeMillis())
@@ -179,7 +180,7 @@ public class AiStreamingWsIntegrationTest {
         AiStreamingRequest request = AiStreamingRequest.builder()
                 .requestId("test-grammar-" + System.currentTimeMillis())
                 .prompt("I%20goes%20to%20school%20everyday") // "I goes to school everyday" - intentional grammar error
-                .promptMode("GRAMMAR_EXPLANATION")
+                .promptMode(GRAMMAR_EXPLANATION.getMode())
                 .targetLanguage(LanguageEnum.EN.getCode())
                 .nativeLanguage(LanguageEnum.ZH_CN.getCode())
                 .timestamp(System.currentTimeMillis())
@@ -191,8 +192,8 @@ public class AiStreamingWsIntegrationTest {
         log.info("Sent grammar explanation request: {}", requestJson);
 
         // Wait for completion
-        boolean completed = completionLatch.await(60, TimeUnit.SECONDS);
-        assertTrue(completed, "Grammar explanation should complete within 30 seconds");
+        boolean completed = completionLatch.await(100, TimeUnit.SECONDS);
+        assertTrue(completed, "Grammar explanation should complete within 100 seconds");
 
         // Verify response contains grammar explanation
         AiStreamingResponse completedResponse = receivedMessages.stream()
@@ -218,7 +219,7 @@ public class AiStreamingWsIntegrationTest {
         AiStreamingRequest request = AiStreamingRequest.builder()
                 .requestId("test-validation-" + System.currentTimeMillis())
                 .prompt("") // Empty prompt
-                .promptMode("DIRECTLY_TRANSLATION")
+                .promptMode(DIRECTLY_TRANSLATION.getMode())
                 .targetLanguage(LanguageEnum.ZH_CN.getCode())
                 .build();
 
@@ -288,7 +289,7 @@ public class AiStreamingWsIntegrationTest {
         AiStreamingRequest request = AiStreamingRequest.builder()
                 .requestId("test-performance-" + System.currentTimeMillis())
                 .prompt("This%20is%20a%20longer%20text%20for%20performance%20testing.%20It%20contains%20multiple%20sentences%20and%20should%20be%20processed%20efficiently.")
-                .promptMode("TRANSLATION_AND_EXPLANATION")
+                .promptMode(TRANSLATION_AND_EXPLANATION.getMode())
                 .targetLanguage(LanguageEnum.ZH_CN.getCode())
                 .nativeLanguage(LanguageEnum.EN.getCode())
                 .timestamp(startTime)

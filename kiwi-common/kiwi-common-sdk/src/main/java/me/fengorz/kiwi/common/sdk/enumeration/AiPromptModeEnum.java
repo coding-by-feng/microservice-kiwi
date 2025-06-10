@@ -56,4 +56,43 @@ public enum AiPromptModeEnum {
         this.languageWildcardCounts = languageWildcardCounts;
     }
 
+    /**
+     * Get enum instance by mode value
+     * @param mode the mode string to search for
+     * @return the matching AiPromptModeEnum instance
+     * @throws IllegalArgumentException if no matching mode is found
+     */
+    public static AiPromptModeEnum fromMode(String mode) {
+        if (mode == null) {
+            throw new IllegalArgumentException("Mode cannot be null");
+        }
+
+        for (AiPromptModeEnum enumValue : values()) {
+            if (enumValue.mode.equals(mode)) {
+                return enumValue;
+            }
+        }
+
+        throw new IllegalArgumentException("No enum constant found for mode: " + mode);
+    }
+
+    /**
+     * Get enum instance by mode value, returning null if not found
+     * @param mode the mode string to search for
+     * @return the matching AiPromptModeEnum instance or null if not found
+     */
+    public static AiPromptModeEnum fromModeOrNull(String mode) {
+        if (mode == null) {
+            return null;
+        }
+
+        for (AiPromptModeEnum enumValue : values()) {
+            if (enumValue.mode.equals(mode)) {
+                return enumValue;
+            }
+        }
+
+        return null;
+    }
+
 }

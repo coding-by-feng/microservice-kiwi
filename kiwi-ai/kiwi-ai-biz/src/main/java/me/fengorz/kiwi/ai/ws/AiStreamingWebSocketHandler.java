@@ -230,8 +230,11 @@ public class AiStreamingWebSocketHandler extends TextWebSocketHandler {
                         // onChunk callback with session check
                         chunk -> {
                             if (isSessionActive(sessionId)) {
+                                log.debug("🔍 Received chunk from AI: '{}'", chunk);
                                 fullResponse.append(chunk);
                                 AiStreamingResponse chunkResponse = AiStreamingResponse.chunk(chunk, request);
+                                log.debug("🔍 Created chunk response - type: {}, chunk: '{}', chunkIsNull: {}",
+                                        chunkResponse.getType(), chunkResponse.getChunk(), chunkResponse.getChunk() == null);
                                 sendMessageWithLogging(session, chunkResponse, "CHUNK");
                             } else {
                                 log.debug("{} Skipping chunk for inactive session: {}", LOG_PREFIX, sessionId);
@@ -281,8 +284,11 @@ public class AiStreamingWebSocketHandler extends TextWebSocketHandler {
                         // onChunk callback with session check
                         chunk -> {
                             if (isSessionActive(sessionId)) {
+                                log.debug("🔍 Received chunk from AI: '{}'", chunk);
                                 fullResponse.append(chunk);
                                 AiStreamingResponse chunkResponse = AiStreamingResponse.chunk(chunk, request);
+                                log.debug("🔍 Created chunk response - type: {}, chunk: '{}', chunkIsNull: {}",
+                                        chunkResponse.getType(), chunkResponse.getChunk(), chunkResponse.getChunk() == null);
                                 sendMessageWithLogging(session, chunkResponse, "CHUNK");
                             } else {
                                 log.debug("{} Skipping chunk for inactive session: {}", LOG_PREFIX, sessionId);

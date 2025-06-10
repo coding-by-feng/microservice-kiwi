@@ -46,7 +46,7 @@ public class WsIntegrationTest {
         receivedMessage = null;
 
         // Connect to WebSocket endpoint
-        String url = "ws://localhost:" + port + "/ai-biz/ai/ws/stt/audio";
+        String url = "ws://localhost:" + port + "/ai/ws/stt/audio";
         WebSocketHttpHeaders headers = new WebSocketHttpHeaders();
 
         session = new StandardWebSocketClient().doHandshake(new TextWebSocketHandler() {

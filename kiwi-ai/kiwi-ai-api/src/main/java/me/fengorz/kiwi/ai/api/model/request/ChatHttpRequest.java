@@ -10,7 +10,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ChatRequest {
+public class ChatHttpRequest {
 
     @JsonProperty("messages")
     private List<Message> messages;  // List of Message objects

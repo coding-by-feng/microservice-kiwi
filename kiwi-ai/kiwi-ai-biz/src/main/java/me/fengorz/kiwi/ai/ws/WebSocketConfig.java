@@ -10,14 +10,22 @@ import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry
 public class WebSocketConfig implements WebSocketConfigurer {
 
     private final AudioWebSocketHandler audioWebSocketHandler;
+    private final AiStreamingWebSocketHandler aiStreamingWebSocketHandler;
 
-    public WebSocketConfig(AudioWebSocketHandler audioWebSocketHandler) {
+
+    public WebSocketConfig(AudioWebSocketHandler audioWebSocketHandler,
+                           AiStreamingWebSocketHandler aiStreamingWebSocketHandler) {
         this.audioWebSocketHandler = audioWebSocketHandler;
+        this.aiStreamingWebSocketHandler = aiStreamingWebSocketHandler;
     }
 
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-        registry.addHandler(audioWebSocketHandler, "/ai-biz/ai/ws/stt/audio")
+        registry.addHandler(audioWebSocketHandler, "/ai/ws/stt/audio")
+                .setAllowedOrigins("*");
+
+        // New AI streaming WebSocket handler
+        registry.addHandler(aiStreamingWebSocketHandler, "/ai/ws/stream")
                 .setAllowedOrigins("*");
     }
 }

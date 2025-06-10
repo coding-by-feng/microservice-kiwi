@@ -1,7 +1,7 @@
 package me.fengorz.kiwi.ai.service.grok;
 
 import lombok.extern.slf4j.Slf4j;
-import me.fengorz.kiwi.ai.api.model.request.ChatRequest;
+import me.fengorz.kiwi.ai.api.model.request.ChatHttpRequest;
 import me.fengorz.kiwi.ai.api.model.request.Message;
 import me.fengorz.kiwi.ai.api.model.response.ChatCompletionResponse;
 import me.fengorz.kiwi.ai.config.AiModeProperties;
@@ -55,12 +55,12 @@ public class GrokAiService implements AiChatService {
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.put("Authorization", Collections.singletonList("Bearer " + grokApiProperties.getKey()));
 
-        ChatRequest chatRequest = new ChatRequest(
+        ChatHttpRequest chatHttpRequest = new ChatHttpRequest(
                 Arrays.asList(new Message("system", buildPrompt(promptMode, language)),
                         new Message("user", prompt)), grokApiProperties.getModel());
 
         // Hypothetical request body (similar to OpenAI’s format)
-        return call(headers, chatRequest);
+        return call(headers, chatHttpRequest);
     }
 
     @Override
@@ -69,16 +69,16 @@ public class GrokAiService implements AiChatService {
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.put("Authorization", Collections.singletonList("Bearer " + grokApiProperties.getKey()));
 
-        ChatRequest chatRequest = new ChatRequest(
+        ChatHttpRequest chatHttpRequest = new ChatHttpRequest(
                 Arrays.asList(new Message("system", buildPrompt(promptMode, targetLanguage, nativeLanguage)),
                         new Message("user", prompt)), grokApiProperties.getModel());
 
         // Hypothetical request body (similar to OpenAI's format)
-        return call(headers, chatRequest);
+        return call(headers, chatHttpRequest);
     }
 
-    private String call(HttpHeaders headers, ChatRequest chatRequest) {
-        String requestBody = KiwiJsonUtils.toJsonStr(chatRequest);
+    private String call(HttpHeaders headers, ChatHttpRequest chatHttpRequest) {
+        String requestBody = KiwiJsonUtils.toJsonStr(chatHttpRequest);
         HttpEntity<String> entity = new HttpEntity<>(requestBody, headers);
         // Use RetryTemplate to wrap the RestTemplate call
         ResponseEntity<ChatCompletionResponse> response = retryTemplate.execute(context -> {
@@ -220,12 +220,12 @@ public class GrokAiService implements AiChatService {
         }
 
         // Build request with system prompt and combined user prompt
-        ChatRequest chatRequest = new ChatRequest(
+        ChatHttpRequest chatHttpRequest = new ChatHttpRequest(
                 Arrays.asList(new Message("system", buildPrompt(promptMode, language)),
                         new Message("user", batchContent.toString())), grokApiProperties.getModel());
 
         // Convert request to JSON
-        String requestBody = KiwiJsonUtils.toJsonStr(chatRequest);
+        String requestBody = KiwiJsonUtils.toJsonStr(chatHttpRequest);
 
         // Create HTTP entity with headers and body
         HttpEntity<String> entity = new HttpEntity<>(requestBody, headers);

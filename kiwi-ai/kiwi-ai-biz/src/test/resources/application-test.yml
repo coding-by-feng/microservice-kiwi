@@ -120,6 +120,7 @@ rest-template:
 ignore:
   urls:
     - /ai/**
+    - /ai-biz/**
   userNames:
     - admin
 

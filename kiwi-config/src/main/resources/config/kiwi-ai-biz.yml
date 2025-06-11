@@ -79,7 +79,9 @@ rest-template:
   retry:
     max-attempts: 3  # Fewer retries for faster tests
     retryable-exceptions:
+      - "me.fengorz.kiwi.common.sdk.exception.ai.GrokAiException"
       # REST Client Exceptions (General)
+
       - "org.springframework.web.client.RestClientException"
       - "org.springframework.web.client.ResourceAccessException"
 

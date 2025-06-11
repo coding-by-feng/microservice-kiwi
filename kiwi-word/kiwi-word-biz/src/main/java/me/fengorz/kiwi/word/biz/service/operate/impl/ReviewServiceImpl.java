@@ -615,9 +615,9 @@ public class ReviewServiceImpl implements ReviewService {
                     .orElseThrow(() -> new ResourceNotFoundException("Word cannot be found, sourceId=%d, type=%d", sourceId, type));
             StringBuilder sb = new StringBuilder();
             for (char alphabet : wordMainDO.getWordName().toCharArray()) {
-                sb.append(StringUtils.upperCase(String.valueOf(alphabet))).append(GlobalConstants.SYMBOL_CHINESE_ELLIPSIS).append(GlobalConstants.SPACING);
+                sb.append(StringUtils.upperCase(String.valueOf(alphabet))).append(GlobalConstants.SYMBOL_COMMA).append(GlobalConstants.SPACING);
             }
-            return endWithPausingSymbol(sb.toString());
+            return sb.toString() + NEXT_OR_SKIP;
         } else if (ReviseAudioTypeEnum.isCharacter(type)) {
             if (RevisePermanentAudioEnum.isPermanent(sourceId)) {
                 return RevisePermanentAudioEnum.fromSourceId(type).getText();
@@ -676,4 +676,7 @@ public class ReviewServiceImpl implements ReviewService {
     private static String endWithPausingSymbol(String text) {
         return text + GlobalConstants.SYMBOL_PAUSING_SYMBOLS;
     }
+
+    private static final String NEXT_OR_SKIP = " Next or Skip.";
+
 }

@@ -408,7 +408,7 @@ else
     cp -f "$ORIGINAL_HOME/.m2/repository/me/fengorz/kiwi-ai-biz/2.0/kiwi-ai-biz-2.0.jar" "$CURRENT_DIR/docker/kiwi/ai/batch"
 
     echo "📄 Copying GCP credential json..."
-    cp -f "$CURRENT_DIR/gcp-credentials.json" "$CURRENT_DIR/kiwi/word/bizTmp"
+    cp -f "$CURRENT_DIR/gcp-credentials.json" "$CURRENT_DIR/docker/kiwi/word/bizTmp"
 
   else
     echo "⏭️  Dockerfile building skipped"

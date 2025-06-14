@@ -98,7 +98,7 @@ public class ReviewServiceImpl implements ReviewService {
     private DfsService dfsService;
     private final AudioService audioService;
     @Resource(name = "googleTtsService")
-    private TtsService voiceRssTtsService;
+    private TtsService ttsService;
     private final ParaphraseTtsGenerationPayload paraphraseTtsGenerationPayload;
     private final RevisePermanentAudioHelper revisePermanentAudioHelper;
 
@@ -144,7 +144,7 @@ public class ReviewServiceImpl implements ReviewService {
     public void increase(int type, Integer userId) {
         if (ReviseDailyCounterTypeEnum.REVIEW_AUDIO_VOICERSS_TTS_COUNTER.getType() == type) {
             synchronized (BARRIER) {
-                voiceRssTtsService.voiceRssGlobalIncreaseCounter();
+                ttsService.voiceRssGlobalIncreaseCounter();
             }
         }
         WordReviewDailyCounterDO counter = findReviewCounterDO(userId, type);
@@ -597,18 +597,18 @@ public class ReviewServiceImpl implements ReviewService {
             ParaphraseDO paraphraseDO = Optional.ofNullable(paraphraseMapper.selectById(sourceId)).orElseThrow(
                     () -> new ResourceNotFoundException(String.format("Paraphrase cannot be found, sourceId=%d, type=%d", sourceId, type)));
             if (ReviseAudioTypeEnum.isEnglish(type)) {
-                return endWithPausingSymbol(paraphraseDO.getParaphraseEnglish());
+                return paraphraseDO.getParaphraseEnglish();
             } else if (ReviseAudioTypeEnum.isChinese(type)) {
-                return endWithPausingSymbol(StringUtils.defaultIfBlank(paraphraseDO.getMeaningChinese(),
-                        RevisePermanentAudioEnum.WORD_PARAPHRASE_MISSING.getText()));
+                return StringUtils.defaultIfBlank(paraphraseDO.getMeaningChinese(),
+                        RevisePermanentAudioEnum.WORD_PARAPHRASE_MISSING.getText());
             }
         } else if (ReviseAudioTypeEnum.isExample(type)) {
             ParaphraseExampleDO paraphraseExampleDO = Optional.ofNullable(paraphraseExampleMapper.selectById(sourceId))
                     .orElseThrow(() -> new ResourceNotFoundException("Example cannot be found, sourceId=%d, type=%d", sourceId, type));
             if (ReviseAudioTypeEnum.isEnglish(type)) {
-                return endWithPausingSymbol(paraphraseExampleDO.getExampleSentence());
+                return paraphraseExampleDO.getExampleSentence();
             } else if (ReviseAudioTypeEnum.isChinese(type)) {
-                return endWithPausingSymbol(paraphraseExampleDO.getExampleTranslate());
+                return paraphraseExampleDO.getExampleTranslate();
             }
         } else if (ReviseAudioTypeEnum.isSpelling(type)) {
             WordMainDO wordMainDO = Optional.ofNullable(wordMainMapper.selectById(sourceId))
@@ -617,18 +617,18 @@ public class ReviewServiceImpl implements ReviewService {
             for (char alphabet : wordMainDO.getWordName().toCharArray()) {
                 sb.append(StringUtils.upperCase(String.valueOf(alphabet))).append(GlobalConstants.SYMBOL_COMMA).append(GlobalConstants.SPACING);
             }
-            return sb.toString() + NEXT_OR_SKIP;
+            return sb + NEXT;
         } else if (ReviseAudioTypeEnum.isCharacter(type)) {
             if (RevisePermanentAudioEnum.isPermanent(sourceId)) {
                 return RevisePermanentAudioEnum.fromSourceId(type).getText();
             }
             CharacterDO characterDO = Optional.ofNullable(characterMapper.selectById(sourceId))
                     .orElseThrow(() -> new ResourceNotFoundException("Character cannot be found, sourceId=%d, type=%d", sourceId, type));
-            return endWithPausingSymbol(RevisePermanentAudioEnum.WORD_CHARACTER.getText() + characterDO.getCharacterCode());
+            return RevisePermanentAudioEnum.WORD_CHARACTER.getText() + characterDO.getCharacterCode();
         } else if (ReviseAudioTypeEnum.isWord(type)) {
             WordMainDO wordMainDO = Optional.ofNullable(wordMainMapper.selectById(sourceId))
                     .orElseThrow(() -> new ResourceNotFoundException("Word cannot be found, sourceId=%d, type=%d", sourceId, type));
-            return endWithPausingSymbol(wordMainDO.getWordName());
+            return wordMainDO.getWordName();
         }
         throw new DataCheckedException("English text cannot be found, sourceId=%d, type=%d", sourceId, type);
     }
@@ -673,10 +673,6 @@ public class ReviewServiceImpl implements ReviewService {
     private static final Object BARRIER = new Object();
     private static final Object BARRIER_FOR_DAYS = new Object();
 
-    private static String endWithPausingSymbol(String text) {
-        return text + GlobalConstants.SYMBOL_PAUSING_SYMBOLS;
-    }
-
-    private static final String NEXT_OR_SKIP = " Next or Skip.";
+    private static final String NEXT = " Next ";
 
 }

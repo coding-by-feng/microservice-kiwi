@@ -25,3 +25,10 @@ spring:
   cloud:
     config:
       enabled: false
+    loadbalancer:
+      ribbon:
+        enabled: false
+
+eureka:
+  client:
+    enabled: false

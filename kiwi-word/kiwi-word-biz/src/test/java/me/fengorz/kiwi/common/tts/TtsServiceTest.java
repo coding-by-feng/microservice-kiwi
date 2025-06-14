@@ -46,13 +46,16 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @Slf4j
 @ActiveProfiles({EnvConstants.TEST})
 @ExtendWith(SpringExtension.class)
+@SuppressWarnings("LoggingSimilarMessage")
 @SpringBootTest(classes = WordBizApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class TtsServiceTest {
 
     @Autowired
     private TtsProperties ttsProperties;
 
-    @Qualifier("chatTtsService")
+    @Autowired
+    @Qualifier("googleTtsService")
+//    @Qualifier("voiceRssTtsService")
     private TtsService ttsService;
 
     @Autowired
@@ -170,11 +173,12 @@ public class TtsServiceTest {
 
     @SneakyThrows
     @Test
-    public void testVoiceRssTts() {
-        byte[] data = ttsService.speechEnglish("test voice rss");
+    public void testTts() {
+        byte[] data = ttsService.speechChinese("你好，我的名字是卡森，我正在奥克兰学习，我非常喜欢这里的环境和人们！");
+//        byte[] data = ttsService.speechEnglish("hello, my name is Kason, and I am studying in Auckland, I love the environment and people here!");
         assertNotNull(data);
         try {
-            Util.writeBytesToFileSystem(data, "/Users/zhanshifeng/Documents/temp/voice_rss_tts_test.mp3");
+            Util.writeBytesToFileSystem(data, "/Users/zhanshifeng/Documents/temp/tts_test.mp3");
         } catch (IOException e) {
             e.printStackTrace();
         }

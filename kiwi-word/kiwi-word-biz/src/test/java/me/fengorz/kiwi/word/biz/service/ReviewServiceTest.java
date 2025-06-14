@@ -74,7 +74,6 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 @ActiveProfiles({EnvConstants.TEST})
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = WordBizApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@Disabled
 public class ReviewServiceTest {
 
     @Autowired
@@ -294,7 +293,7 @@ public class ReviewServiceTest {
     @Test
     void test_reGenReviewAudioForParaphrase() {
         assertDoesNotThrow(() -> {
-            reviewService.reGenReviewAudioForParaphrase(3020173);
+            reviewService.reGenReviewAudioForParaphrase(5570452);
         });
     }
 

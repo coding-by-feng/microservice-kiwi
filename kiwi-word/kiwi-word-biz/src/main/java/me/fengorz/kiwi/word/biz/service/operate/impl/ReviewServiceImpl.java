@@ -97,7 +97,7 @@ public class ReviewServiceImpl implements ReviewService {
     @Resource(name = "fastDfsService")
     private DfsService dfsService;
     private final AudioService audioService;
-    @Resource(name = "chatTtsService")
+    @Resource(name = "googleTtsService")
     private TtsService voiceRssTtsService;
     private final ParaphraseTtsGenerationPayload paraphraseTtsGenerationPayload;
     private final RevisePermanentAudioHelper revisePermanentAudioHelper;

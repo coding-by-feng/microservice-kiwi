@@ -1,14 +1,9 @@
 spring:
   autoconfigure:
     exclude: org.springframework.boot.autoconfigure.amqp.RabbitAutoConfiguration,org.springframework.boot.autoconfigure.security.oauth2.OAuth2AutoConfiguration,org.springframework.boot.autoconfigure.security.oauth2.resource.servlet.OAuth2ResourceServerAutoConfiguration
-  cloud:
-    config:
-      enabled: false
   oauth2:
     resource:
       token-info-uri: http://localhost:8080/dummy-uri
-#      jwt:
-#        key-uri: https://your-auth-server/.well-known/jwks.json  # Replace with your OAuth2 server’s JWKS endpoint
       client:
         client-id: dummy-client
         client-secret: dummy-secret
@@ -17,7 +12,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: ENC(2PE/BMMoNPbRCEaIyGfcSw==)
     password: ENC(zF1rDpn+u8RZX5OTor7BpHzprZyrH+3P)
-    url: jdbc:mysql://${DB_IP}:3306/kiwi_db?allowPublicKeyRetrieval=true&useUnicode=true&characterEncoding=UTF-8&useSSL=false&autoReconnect=true&serverTimezone=Pacific/Auckland
+    url: jdbc:mysql://kason-server.local:3306/kiwi_db?allowPublicKeyRetrieval=true&useUnicode=true&characterEncoding=UTF-8&useSSL=false&autoReconnect=true&serverTimezone=Pacific/Auckland
     hikari:
       connection-test-query: SELECT 1
       max-lifetime: 1800000
@@ -27,13 +22,8 @@ spring:
       minimum-idle: 2
   redis:
     host: kiwi-redis
+    password: ENC(uxuSI1Bl5AelC8dYvJUvMhsRbasVD4zh)
     port: 6379
-    lettuce:
-      pool:
-        max-active: 4  # Maximum number of active connections (total connections in the pool)
-        max-idle: 2     # Maximum number of idle connections
-        min-idle: 0     # Minimum number of idle connections
-        time-between-eviction-runs: 30000  # Time between pool eviction runs (in milliseconds)
   servlet:
     multipart:
       enabled: true

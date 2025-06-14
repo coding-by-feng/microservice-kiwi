@@ -52,7 +52,7 @@ public class WordReviewController extends AbstractFileController {
     private DfsService dfsService;
 
     public WordReviewController(ReviewService reviewService,
-                                @Qualifier("chatTtsService") TtsService voiceRssTtsService) {
+                                @Qualifier("googleTtsService") TtsService voiceRssTtsService) {
         this.reviewService = reviewService;
         this.voiceRssTtsService = voiceRssTtsService;
     }

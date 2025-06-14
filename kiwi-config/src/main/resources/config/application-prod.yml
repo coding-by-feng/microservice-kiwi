@@ -28,9 +28,9 @@ spring:
     allow-bean-definition-overriding: true
   cloud:
     gcp:
-      project-id: ENC(k7DNqSwGcdkrFmiR+jB0BL00OB3QhJ0K0tRDkM7VZSd80hQW0wcktA==)
+      project-id: ENC(5q3wUNe5RH6F8ORU+aaVqa5XK6bF5pJwdHzcloHX3Uz2PyTTN5C7kw==)
       credentials:
-        location: ENC(AV6a8RCHaKt/P9qGX+jthL1KSo3jtcsvJRVg7Op+60hXNakLsJqDAg==)
+        location: ENC(Nfvxt6bll1kBRfZsBHzJuOFe+Nn6PWPROfyeMfdbaclUAZSgHRp0DxHkWcvLsrkn)
 
 # feign 配置
 feign:

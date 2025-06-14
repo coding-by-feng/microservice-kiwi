@@ -28,7 +28,7 @@ spring:
     allow-bean-definition-overriding: true
   cloud:
     gcp:
-      project-id: ENC(k7DNqSwGcdkrFmiR+jB0BL00OB3QhJ0K0tRDkM7VZSd80hQW0wcktA==)
+      project-id: ENC(5q3wUNe5RH6F8ORU+aaVqa5XK6bF5pJwdHzcloHX3Uz2PyTTN5C7kw==)
       credentials:
         location: ENC(cicvoPPUGdVt01NMX91FN2X7ud3c6Fiu5CchvC8LDYEFENPuURkzAL0TXBJSBpaqs1w2Gbv5nZg=)
 

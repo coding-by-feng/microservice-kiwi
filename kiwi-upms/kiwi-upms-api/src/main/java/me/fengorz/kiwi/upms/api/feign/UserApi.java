@@ -20,11 +20,10 @@ import me.fengorz.kiwi.common.api.R;
 import me.fengorz.kiwi.common.sdk.constant.EnvConstants;
 import me.fengorz.kiwi.common.sdk.constant.SecurityConstants;
 import me.fengorz.kiwi.upms.api.dto.UserFullInfoDTO;
+import me.fengorz.kiwi.upms.api.entity.SysUser;
 import me.fengorz.kiwi.upms.api.feign.factory.UserApiFallbackFactory;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @Description TODO
@@ -32,7 +31,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
  * @Date 2022/9/18 10:15
  */
 @FeignClient(contextId = "userApi", value = EnvConstants.APPLICATION_NAME_KIWI_UPMS,
-    fallbackFactory = UserApiFallbackFactory.class)
+        fallbackFactory = UserApiFallbackFactory.class)
 public interface UserApi {
 
     String SYS_USER = "/sys/user";
@@ -42,6 +41,13 @@ public interface UserApi {
 
     @GetMapping(SYS_USER + "/info/{username}")
     R<UserFullInfoDTO> info(@PathVariable("username") String username,
-        @RequestHeader(SecurityConstants.KEY_HEADER_FROM) String from);
+                            @RequestHeader(SecurityConstants.KEY_HEADER_FROM) String from);
+
+    @PostMapping(SYS_USER)
+    R<Boolean> save(@RequestBody SysUser sysUser);
+
+    @PostMapping(SYS_USER)
+    R<Boolean> save(@RequestBody SysUser sysUser,
+                    @RequestHeader(SecurityConstants.KEY_HEADER_FROM) String from);
 
 }

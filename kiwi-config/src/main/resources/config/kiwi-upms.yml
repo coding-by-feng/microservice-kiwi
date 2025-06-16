@@ -7,9 +7,8 @@ spring:
 ignore:
   urls:
     - /actuator/**
-    - /sys/user/info/*
+    - /sys/user/**
     - /log/**
-    - /sys/user/oneClickRegister
 
 ms:
   config:

@@ -23,6 +23,11 @@ services:
     environment:
       - KIWI_ENC_PASSWORD=${KIWI_ENC_PASSWORD}
       - DB_IP=${DB_IP}
+      # Google OAuth2 Configuration
+      - GOOGLE_OAUTH2_CLIENT_ID=${GOOGLE_OAUTH2_CLIENT_ID}
+      - GOOGLE_OAUTH2_CLIENT_SECRET=${GOOGLE_OAUTH2_CLIENT_SECRET}
+      - GOOGLE_OAUTH2_REDIRECT_URI=${GOOGLE_OAUTH2_REDIRECT_URI}
+      - HOME_PAGE=${HOME_PAGE}
     volumes:
       - ~/kiwi/auth/logs:/logs:Z
     network_mode: "host"

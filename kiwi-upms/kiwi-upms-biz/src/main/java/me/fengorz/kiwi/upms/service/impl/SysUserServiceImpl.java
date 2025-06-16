@@ -53,6 +53,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
     private final SysRoleService sysRoleService;
     private final SysMenuService sysMenuService;
     private final SeqService seqService;
+    private final BCryptPasswordEncoder passwordEncoder;
 
     @Override
     public UserFullInfoDTO getUserFullInfo(SysUser sysUser) {
@@ -82,7 +83,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         sysUser.setUserId(seqService.genCommonIntSequence());
         sysUser.setUsername(this.randomUserName());
         sysUser.setCreateTime(LocalDateTime.now());
-        sysUser.setPassword(new BCryptPasswordEncoder().encode("123456"));
+        sysUser.setPassword(passwordEncoder.encode("123456"));
         this.save(sysUser);
 
         return new SysUser().setUsername(sysUser.getUsername()).setPassword("123456");

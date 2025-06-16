@@ -17,6 +17,7 @@
 package me.fengorz.kiwi.upms.config;
 
 import me.fengorz.kiwi.bdf.config.CoreConfig;
+import me.fengorz.kiwi.bdf.config.SecurityConfig;
 import me.fengorz.kiwi.common.cache.redis.config.CacheConfig;
 import me.fengorz.kiwi.common.db.config.DbConfig;
 import org.springframework.context.annotation.ComponentScan;
@@ -27,7 +28,7 @@ import org.springframework.context.annotation.Import;
  * @Author Kason Zhan @Date 2019-09-20 09:28
  */
 @Configuration
-@Import({CoreConfig.class, DbConfig.class, CacheConfig.class})
+@Import({CoreConfig.class, DbConfig.class, CacheConfig.class, SecurityConfig.class})
 @ComponentScan("me.fengorz.kiwi.upms.**")
 public class UpmsConfig {
 }

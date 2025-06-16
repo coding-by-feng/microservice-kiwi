@@ -91,4 +91,20 @@ public class SysUser extends Model<SysUser> {
      * QQ openid
      */
     private String qqOpenid;
+    /**
+     * Google openid
+     */
+    private String googleOpenid;
+    /**
+     * 邮箱地址
+     */
+    private String email;
+    /**
+     * 用户真实姓名
+     */
+    private String realName;
+    /**
+     * 注册来源：local, google, wechat, qq
+     */
+    private String registerSource;
 }

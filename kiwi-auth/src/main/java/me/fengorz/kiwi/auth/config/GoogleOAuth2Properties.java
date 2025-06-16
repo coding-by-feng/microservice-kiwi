@@ -16,16 +16,18 @@
 
 package me.fengorz.kiwi.auth.config;
 
-import me.fengorz.kiwi.bdf.config.CoreConfig;
-import me.fengorz.kiwi.bdf.config.SecurityConfig;
-import me.fengorz.kiwi.common.cache.redis.config.CacheConfig;
-import me.fengorz.kiwi.common.db.config.DbConfig;
-import org.springframework.context.annotation.ComponentScan;
+import lombok.Data;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
 
+@Data
 @Configuration
-@Import({CoreConfig.class, CacheConfig.class, DbConfig.class, SecurityConfig.class})
-@ComponentScan("me.fengorz.kiwi.auth.**")
-public class AuthConfig {
+@ConfigurationProperties(prefix = "google.oauth2")
+public class GoogleOAuth2Properties {
+
+    private String clientId;
+    private String clientSecret;
+    private String redirectUri;
+    private String[] scopes = {"openid", "profile", "email"};
+    private String homePage;
 }

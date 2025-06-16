@@ -17,3 +17,15 @@ ms:
   config:
     exclude-db: false
     exclude-cache: false
+
+# Google OAuth2 Configuration
+google:
+  oauth2:
+    client-id: ${GOOGLE_OAUTH2_CLIENT_ID:}
+    client-secret: ${GOOGLE_OAUTH2_CLIENT_SECRET:}
+    redirect-uri: ${GOOGLE_OAUTH2_REDIRECT_URI:http://localhost:9991/auth/oauth/google/callback}
+    homePage: ${HOME_PAGE:http://localhost:8080/#/index/vocabulary/detail}
+    scopes:
+      - openid
+      - profile
+      - email

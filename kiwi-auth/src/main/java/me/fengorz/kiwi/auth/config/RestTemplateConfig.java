@@ -16,16 +16,21 @@
 
 package me.fengorz.kiwi.auth.config;
 
-import me.fengorz.kiwi.bdf.config.CoreConfig;
-import me.fengorz.kiwi.bdf.config.SecurityConfig;
-import me.fengorz.kiwi.common.cache.redis.config.CacheConfig;
-import me.fengorz.kiwi.common.db.config.DbConfig;
-import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
+import org.springframework.web.client.RestTemplate;
 
+/**
+ * Configuration for RestTemplate bean
+ * 
+ * @Author Kason Zhan
+ * @Date 2025-06-16
+ */
 @Configuration
-@Import({CoreConfig.class, CacheConfig.class, DbConfig.class, SecurityConfig.class})
-@ComponentScan("me.fengorz.kiwi.auth.**")
-public class AuthConfig {
+public class RestTemplateConfig {
+
+    @Bean
+    public RestTemplate restTemplate() {
+        return new RestTemplate();
+    }
 }

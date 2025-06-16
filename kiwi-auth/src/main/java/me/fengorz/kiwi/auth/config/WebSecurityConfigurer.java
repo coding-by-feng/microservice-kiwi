@@ -38,8 +38,7 @@ public class WebSecurityConfigurer extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-                .antMatchers("/oauth/token/**").permitAll()
-                .antMatchers("/kiwiTokenEndpoint/**").permitAll()
+                .antMatchers("/oauth/**").permitAll()
                 // Allow Google OAuth2 endpoints
                 .antMatchers("/oauth/google/**").permitAll()
                 .anyRequest().authenticated()

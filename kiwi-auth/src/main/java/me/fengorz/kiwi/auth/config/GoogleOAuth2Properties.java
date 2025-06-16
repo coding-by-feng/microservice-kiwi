@@ -30,4 +30,5 @@ public class GoogleOAuth2Properties {
     private String redirectUri;
     private String[] scopes = {"openid", "profile", "email"};
     private String homePage;
+    private String checkTokenEndpointUrl;
 }

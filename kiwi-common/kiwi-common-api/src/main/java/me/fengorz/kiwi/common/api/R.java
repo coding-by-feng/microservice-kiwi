@@ -117,6 +117,7 @@ public class R<T> implements Serializable {
         return apiResult;
     }
 
+    @JsonIgnore
     public boolean isSuccess() {
         return ResultCode.SUCCESS.getCode().equals(this.code);
     }

@@ -1,3 +1,10 @@
+security:
+  oauth2:
+    client:
+      client-id: ENC(wORgugqWfXlIuzbal/3pjXTNXij/RSpo)
+      client-secret: ENC(rMd1buB3iI+si+W99eB+QFa3QburIEmY)
+      scope: server
+
 # 数据源
 spring:
   datasource:
@@ -25,6 +32,7 @@ google:
     client-secret: ${GOOGLE_OAUTH2_CLIENT_SECRET:}
     redirect-uri: ${GOOGLE_OAUTH2_REDIRECT_URI:http://localhost:9991/auth/oauth/google/callback}
     homePage: ${HOME_PAGE:http://localhost:8080/#/index/vocabulary/detail}
+    check-token-endpoint-url: http://kiwi-auth:3001/oauth/check_token
     scopes:
       - openid
       - profile

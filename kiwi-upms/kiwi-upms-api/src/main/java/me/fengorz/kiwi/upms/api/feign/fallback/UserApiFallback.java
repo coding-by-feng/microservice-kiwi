@@ -20,6 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.api.R;
 import me.fengorz.kiwi.common.api.feign.AbstractFallback;
 import me.fengorz.kiwi.upms.api.dto.UserFullInfoDTO;
+import me.fengorz.kiwi.upms.api.entity.SysUser;
 import me.fengorz.kiwi.upms.api.feign.UserApi;
 
 /**
@@ -34,11 +35,31 @@ public class UserApiFallback extends AbstractFallback implements UserApi {
     public R<UserFullInfoDTO> info(String username) {
         return handleError();
     }
-
+/* <<<<<<<<<<<<<<  ✨ Windsurf Command ⭐ >>>>>>>>>>>>>>>> */
+    /**
+     * feign查询用户信息失败时的回调
+     *
+     * @param username 用户名
+     * @param from     来源
+     * @return {@link R#failed()}
+     */
+/* <<<<<<<<<<  3b13a914-a6d4-4c2d-ae53-ed686fdd3473  >>>>>>>>>>> */
     @Override
     public R<UserFullInfoDTO> info(String username, String from) {
         log.error("feign 查询用户信息失败:{}", username, throwable);
         return null;
+    }
+
+    @Override
+    public R<Boolean> save(SysUser sysUser) {
+        log.error("feign 保存用户失败:{}", sysUser != null ? sysUser.getUsername() : "null", throwable);
+        return handleError();
+    }
+
+    @Override
+    public R<Boolean> save(SysUser sysUser, String from) {
+        log.error("feign 保存用户失败:{}, from:{}", sysUser != null ? sysUser.getUsername() : "null", from, throwable);
+        return handleError();
     }
 
 }

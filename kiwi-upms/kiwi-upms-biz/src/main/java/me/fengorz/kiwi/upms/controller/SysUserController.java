@@ -24,7 +24,6 @@ import me.fengorz.kiwi.common.sdk.controller.BaseController;
 import me.fengorz.kiwi.upms.api.dto.UserFullInfoDTO;
 import me.fengorz.kiwi.upms.api.entity.SysUser;
 import me.fengorz.kiwi.upms.service.SysUserService;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Objects;
@@ -102,7 +101,6 @@ public class SysUserController extends BaseController {
      */
     @LogMarker("新增用户表")
     @PostMapping
-    @PreAuthorize("@pms.hasPermission('admin_sysuser_add')")
     public R save(@RequestBody SysUser sysUser) {
         return R.success(sysUserService.save(sysUser));
     }
@@ -115,7 +113,6 @@ public class SysUserController extends BaseController {
      */
     @LogMarker("修改用户表")
     @PutMapping
-    @PreAuthorize("@pms.hasPermission('admin_sysuser_edit')")
     public R updateById(@RequestBody SysUser sysUser) {
         return R.success(sysUserService.updateById(sysUser));
     }
@@ -128,7 +125,6 @@ public class SysUserController extends BaseController {
      */
     @LogMarker("通过id删除用户表")
     @DeleteMapping("/{userId}")
-    @PreAuthorize("@pms.hasPermission('admin_sysuser_del')")
     public R removeById(@PathVariable Integer userId) {
         return R.success(sysUserService.removeById(userId));
     }

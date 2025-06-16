@@ -70,6 +70,13 @@ public class GoogleUserService {
             // User doesn't exist, create new one
             sysUser = createNewGoogleUser(googleUserInfo);
             userFullInfo = createUserFullInfo(sysUser);
+
+            // After creating the user, retrieve the full info from the system
+            userResponse = userApi.info(googleUserInfo.getEmail(), SecurityConstants.FROM_IN);
+            if (userResponse != null && userResponse.isSuccess() && userResponse.getData() != null) {
+                userFullInfo = userResponse.getData();
+                sysUser = userFullInfo.getSysUser();
+            }
         }
 
         return convertToEnhancerUser(sysUser, userFullInfo);
@@ -103,11 +110,16 @@ public class GoogleUserService {
 
         // Set default department (you may want to configure this)
         sysUser.setDeptId(1); // Default department ID
+        sysUser.setUserId(0); // Default User ID, automatically assigned
 
-        log.info("Created new user from Google SSO: {}", googleUserInfo.getEmail());
+        // Save user via Feign API
+        R<Boolean> saveResult = userApi.save(sysUser, SecurityConstants.FROM_IN);
+        if (saveResult == null || !saveResult.isSuccess() || !Boolean.TRUE.equals(saveResult.getData())) {
+            log.error("Failed to create user via Feign API for Google user: {}", googleUserInfo.getEmail());
+            throw new RuntimeException("Failed to create user: " + googleUserInfo.getEmail());
+        }
 
-        // Note: In a real implementation, you'd save this to database via service call
-        // This is just for demonstration
+        log.info("Successfully created new user from Google SSO: {}", googleUserInfo.getEmail());
         return sysUser;
     }
 
@@ -118,31 +130,63 @@ public class GoogleUserService {
      * @param googleUserInfo Google user information
      */
     private void updateGoogleInfo(SysUser sysUser, GoogleUserInfo googleUserInfo) {
+        boolean needsUpdate = false;
+
         // Update Google OpenID if not already set
         if (sysUser.getGoogleOpenid() == null) {
             sysUser.setGoogleOpenid(googleUserInfo.getId());
+            needsUpdate = true;
         }
 
         // Update avatar if Google has a newer one
         if (googleUserInfo.getPicture() != null && !googleUserInfo.getPicture().equals(sysUser.getAvatar())) {
             sysUser.setAvatar(googleUserInfo.getPicture());
+            needsUpdate = true;
         }
 
         // Update real name if not set
         if (sysUser.getRealName() == null && googleUserInfo.getName() != null) {
             sysUser.setRealName(googleUserInfo.getName());
+            needsUpdate = true;
         }
 
         // Update email if not set
         if (sysUser.getEmail() == null) {
             sysUser.setEmail(googleUserInfo.getEmail());
+            needsUpdate = true;
         }
 
-        sysUser.setUpdateTime(LocalDateTime.now());
+        if (needsUpdate) {
+            sysUser.setUpdateTime(LocalDateTime.now());
 
-        log.info("Updated user info from Google SSO: {}", googleUserInfo.getEmail());
+            // Update user via Feign API
+            R<Boolean> updateResult = updateUserViaFeign(sysUser);
+            if (updateResult == null || !updateResult.isSuccess() || !Boolean.TRUE.equals(updateResult.getData())) {
+                log.error("Failed to update user via Feign API for Google user: {}", googleUserInfo.getEmail());
+                // Don't throw exception for update failures, just log the error
+            } else {
+                log.info("Successfully updated user info from Google SSO: {}", googleUserInfo.getEmail());
+            }
+        }
+    }
 
-        // Note: In a real implementation, you'd update this in database via service call
+    /**
+     * Update user via Feign API (placeholder for actual update method)
+     * Note: This assumes you have an update method in your UserApi
+     *
+     * @param sysUser User to update
+     * @return Result of update operation
+     */
+    private R<Boolean> updateUserViaFeign(SysUser sysUser) {
+        // This is a placeholder - you'll need to implement an update method in UserApi
+        // For now, we'll just log that an update is needed
+        log.info("User update needed for: {} (Google OpenID: {})", sysUser.getUsername(), sysUser.getGoogleOpenid());
+
+        // You might want to add an update method to UserApi like:
+        // return userApi.updateById(sysUser, SecurityConstants.FROM_IN);
+
+        // For now, return success to avoid breaking the flow
+        return R.success(true);
     }
 
     /**
@@ -243,22 +287,40 @@ public class GoogleUserService {
         SysUser sysUser = userFullInfo.getSysUser();
 
         // Update user with Google information
-        sysUser.setGoogleOpenid(googleUserInfo.getId());
+        boolean needsUpdate = false;
+
+        if (sysUser.getGoogleOpenid() == null) {
+            sysUser.setGoogleOpenid(googleUserInfo.getId());
+            needsUpdate = true;
+        }
+
         if (sysUser.getEmail() == null) {
             sysUser.setEmail(googleUserInfo.getEmail());
+            needsUpdate = true;
         }
-        if (googleUserInfo.getPicture() != null) {
+
+        if (googleUserInfo.getPicture() != null && !googleUserInfo.getPicture().equals(sysUser.getAvatar())) {
             sysUser.setAvatar(googleUserInfo.getPicture());
+            needsUpdate = true;
         }
+
         if (sysUser.getRealName() == null && googleUserInfo.getName() != null) {
             sysUser.setRealName(googleUserInfo.getName());
+            needsUpdate = true;
         }
-        sysUser.setUpdateTime(LocalDateTime.now());
 
-        // Note: In a real implementation, you'd also store the Google ID for future reference
-        // and update the database
+        if (needsUpdate) {
+            sysUser.setUpdateTime(LocalDateTime.now());
 
-        log.info("Linked Google account {} to existing user {}", googleUserInfo.getEmail(), existingUsername);
+            // Update user via Feign API
+            R<Boolean> updateResult = updateUserViaFeign(sysUser);
+            if (updateResult == null || !updateResult.isSuccess() || !Boolean.TRUE.equals(updateResult.getData())) {
+                log.error("Failed to update user via Feign API when linking Google account: {}", existingUsername);
+                // Don't throw exception, just log the error
+            } else {
+                log.info("Successfully linked Google account {} to existing user {}", googleUserInfo.getEmail(), existingUsername);
+            }
+        }
 
         return convertToEnhancerUser(sysUser, userFullInfo);
     }

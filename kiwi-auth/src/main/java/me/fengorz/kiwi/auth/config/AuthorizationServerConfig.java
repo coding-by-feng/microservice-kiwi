@@ -18,7 +18,6 @@ package me.fengorz.kiwi.auth.config;
 
 import lombok.RequiredArgsConstructor;
 import me.fengorz.kiwi.bdf.security.component.KiwiWebResponseExceptionTranslator;
-import me.fengorz.kiwi.bdf.security.service.KiwiClientDetailsService;
 import me.fengorz.kiwi.common.api.entity.EnhancerUser;
 import me.fengorz.kiwi.common.sdk.constant.SecurityConstants;
 import org.springframework.context.annotation.Bean;
@@ -57,15 +56,23 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 
     @Override
     public void configure(AuthorizationServerSecurityConfigurer configurer) throws Exception {
-        configurer.allowFormAuthenticationForClients().checkTokenAccess("permitAll()");
+        configurer.tokenKeyAccess("permitAll()").allowFormAuthenticationForClients().checkTokenAccess("permitAll()");
     }
 
     @Override
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
-        KiwiClientDetailsService clientDetailsService = new KiwiClientDetailsService(dataSource);
-        clientDetailsService.setSelectClientDetailsSql(SecurityConstants.DEFAULT_SELECT_STATEMENT);
-        clientDetailsService.setFindClientDetailsSql(SecurityConstants.DEFAULT_FIND_STATEMENT);
-        clients.withClientDetails(clientDetailsService);
+        clients.inMemory()
+                // Create a public client (no secret required)
+                .withClient("public-client")
+                .secret("") // ← EMPTY SECRET
+                .scopes("read", "write")
+                .authorizedGrantTypes("authorization_code", "password", "client_credentials", "refresh_token")
+                .and()
+                // Or use your existing database clients but disable secret check
+                .withClient("vocabulary")
+                .secret("$2a$10$ZPPGRJizoM0tcD0mWTWyhu50jcSDHy6BV2NKC9T8AnPDbDtRat07m") // ← REMOVE SECRET REQUIREMENT
+                .scopes("read", "write", "profile")
+                .authorizedGrantTypes("authorization_code", "password", "client_credentials", "refresh_token");
     }
 
     @Override

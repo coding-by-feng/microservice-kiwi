@@ -14,6 +14,8 @@ server:
 spring:
   application:
     name: kiwi-auth
+  main:
+    allow-bean-definition-overriding: true
   cloud:
     config:
       fail-fast: true

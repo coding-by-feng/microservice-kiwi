@@ -56,7 +56,7 @@ public class GoogleUserService {
      */
     public EnhancerUser findOrCreateUser(GoogleUserInfo googleUserInfo) {
         // First, try to find existing user by email
-        R<UserFullInfoDTO> userResponse = userApi.info(googleUserInfo.getEmail(), SecurityConstants.FROM_IN);
+        R<UserFullInfoDTO> userResponse = userApi.info(googleUserInfo.getEmail());
 
         UserFullInfoDTO userFullInfo;
         SysUser sysUser;
@@ -113,7 +113,7 @@ public class GoogleUserService {
         sysUser.setUserId(0); // Default User ID, automatically assigned
 
         // Save user via Feign API
-        R<Boolean> saveResult = userApi.save(sysUser, SecurityConstants.FROM_IN);
+        R<Boolean> saveResult = userApi.save(sysUser);
         if (saveResult == null || !saveResult.isSuccess() || !Boolean.TRUE.equals(saveResult.getData())) {
             log.error("Failed to create user via Feign API for Google user: {}", googleUserInfo.getEmail());
             throw new RuntimeException("Failed to create user: " + googleUserInfo.getEmail());

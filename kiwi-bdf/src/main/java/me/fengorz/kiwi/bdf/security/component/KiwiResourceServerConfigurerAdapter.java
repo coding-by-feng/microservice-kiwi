@@ -41,7 +41,7 @@ public class KiwiResourceServerConfigurerAdapter extends ResourceServerConfigure
     @Autowired
     private FilterIgnorePropertiesConfig ignorePropertiesConfig;
     @Autowired
-    private AccessDeniedHandler pigAccessDeniedHandler;
+    private AccessDeniedHandler accessDeniedHandler;
     @Autowired
     private RestTemplate lbRestTemplate;
     @Autowired
@@ -71,7 +71,7 @@ public class KiwiResourceServerConfigurerAdapter extends ResourceServerConfigure
 
         remoteTokenServices.setRestTemplate(lbRestTemplate);
         remoteTokenServices.setAccessTokenConverter(accessTokenConverter);
-        resources.authenticationEntryPoint(resourceAuthExceptionEntryPoint).accessDeniedHandler(pigAccessDeniedHandler)
+        resources.authenticationEntryPoint(resourceAuthExceptionEntryPoint).accessDeniedHandler(accessDeniedHandler)
             .tokenServices(remoteTokenServices);
     }
 }

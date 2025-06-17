@@ -50,6 +50,7 @@ show_menu() {
     echo "22) Start infrastructure containers only"
     echo "23) Enter container shell"
     echo "24) Stop one container"
+    echo "25) Restart one container"
     echo "0) Exit"
     echo ""
 }
@@ -130,6 +131,151 @@ stop_container() {
     fi
 
     return 0
+}
+
+restart_container() {
+    local container_name=$1
+    local service_name=$2
+    local graceful_timeout=${3:-10}
+
+    echo "=== RESTARTING $service_name ($container_name) ==="
+
+    # Check if container exists
+    if ! sudo docker ps -a --format "{{.Names}}" | grep -q "^${container_name}$"; then
+        echo "✗ Container $service_name does not exist"
+        return 1
+    fi
+
+    # Check current status
+    local is_running=false
+    if sudo docker ps --format "{{.Names}}" | grep -q "^${container_name}$"; then
+        is_running=true
+        echo "Container is currently running - will stop first"
+    else
+        echo "Container is stopped - will start directly"
+    fi
+
+    # If running, stop it first
+    if [ "$is_running" = true ]; then
+        echo ""
+        echo "Step 1: Stopping container..."
+        if stop_container "$container_name" "$service_name" "$graceful_timeout"; then
+            echo "✓ Container stopped successfully"
+        else
+            echo "✗ Failed to stop container"
+            return 1
+        fi
+
+        # Wait a moment to ensure clean shutdown
+        echo "Waiting 3 seconds for clean shutdown..."
+        sleep 3
+    fi
+
+    # Start the container
+    echo ""
+    echo "Step 2: Starting container..."
+
+    # Special handling for kiwi-ui (port 80 check)
+    if [ "$container_name" == "kiwi-ui" ]; then
+        if check_port_80_and_handle; then
+            start_container "$container_name" "$service_name"
+        else
+            echo "✗ Cannot start $service_name due to port 80 conflict"
+            return 1
+        fi
+    else
+        start_container "$container_name" "$service_name"
+    fi
+
+    echo ""
+    echo "=== RESTART COMPLETE ==="
+
+    # Show final status
+    echo "Final status:"
+    check_container_status "$container_name" "$service_name"
+
+    return 0
+}
+
+restart_single_container() {
+    echo -e "\n=== RESTART CONTAINER ==="
+    echo "Choose which container to restart:"
+    echo ""
+
+    # Show all containers with their current status
+    for key in {1..15}; do
+        IFS='|' read -r container_name service_name <<< "${containers[$key]}"
+
+        if sudo docker ps --format "{{.Names}}" | grep -q "^${container_name}$"; then
+            status="RUNNING"
+        elif sudo docker ps -a --format "{{.Names}}" | grep -q "^${container_name}$"; then
+            status="STOPPED"
+        else
+            status="NOT EXISTS"
+        fi
+
+        echo "$key) $service_name ($container_name) - $status"
+    done
+
+    echo ""
+    read -p "Enter container number to restart (1-15): " container_choice
+
+    # Validate choice
+    if [[ ! $container_choice =~ ^[1-9]$|^1[0-5]$ ]]; then
+        echo "Invalid choice. Please enter a number between 1-15."
+        return
+    fi
+
+    IFS='|' read -r container_name service_name <<< "${containers[$container_choice]}"
+
+    # Check if container exists
+    if ! sudo docker ps -a --format "{{.Names}}" | grep -q "^${container_name}$"; then
+        echo "✗ Container $service_name does not exist. Cannot restart."
+        return
+    fi
+
+    echo ""
+    echo "You selected: $service_name ($container_name)"
+
+    # Warning for critical infrastructure containers
+    case $container_choice in
+        9|10|11|13)  # MySQL, Redis, RabbitMQ, Elasticsearch
+            echo "⚠ WARNING: This is a critical infrastructure container!"
+            echo "  Restarting $service_name may temporarily disrupt application services."
+            ;;
+        1|2)  # Eureka, Config
+            echo "⚠ WARNING: This is a core service container!"
+            echo "  Restarting $service_name may affect service discovery and configuration."
+            ;;
+        12)  # Kiwi UI
+            echo "ℹ Note: Restarting KIWI-UI will temporarily make the web interface unavailable."
+            ;;
+    esac
+
+    echo ""
+    read -p "Are you sure you want to restart $service_name? (y/N): " confirm
+    if [[ ! ($confirm == "y" || $confirm == "Y") ]]; then
+        echo "Operation cancelled."
+        return
+    fi
+
+    # Ask for graceful shutdown timeout (only if container is running)
+    if sudo docker ps --format "{{.Names}}" | grep -q "^${container_name}$"; then
+        echo ""
+        read -p "Graceful shutdown timeout in seconds (default: 10): " timeout
+        timeout=${timeout:-10}
+
+        # Validate timeout is a number
+        if ! [[ "$timeout" =~ ^[0-9]+$ ]]; then
+            echo "Invalid timeout. Using default 10 seconds."
+            timeout=10
+        fi
+    else
+        timeout=10  # Default for stopped containers
+    fi
+
+    echo ""
+    restart_container "$container_name" "$service_name" "$timeout"
 }
 
 stop_single_container() {
@@ -786,7 +932,7 @@ check_all_failed() {
 # Main loop
 while true; do
     show_menu
-    read -p "Enter your choice (0-24): " choice
+    read -p "Enter your choice (0-25): " choice
 
     case $choice in
         0)
@@ -853,8 +999,11 @@ while true; do
         24)
             stop_single_container
             ;;
+        25)
+            restart_single_container
+            ;;
         *)
-            echo "Invalid choice. Please enter a number between 0-24."
+            echo "Invalid choice. Please enter a number between 0-25."
             ;;
     esac
 

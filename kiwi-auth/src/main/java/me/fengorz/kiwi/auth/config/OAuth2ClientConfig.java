@@ -49,6 +49,8 @@ public class OAuth2ClientConfig {
     }
 
     private ClientRegistration googleClientRegistration() {
+        // Log Google OAuth2 properties
+        log.info("Google OAuth2 properties: {}", googleOAuth2Properties);
         return ClientRegistration.withRegistrationId("google")
                 .clientId(googleOAuth2Properties.getClientId())
                 .clientSecret(googleOAuth2Properties.getClientSecret())

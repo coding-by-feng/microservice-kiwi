@@ -18,8 +18,8 @@ package me.fengorz.kiwi.auth.filter;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import me.fengorz.kiwi.auth.dto.GoogleTokenCacheInfo;
-import me.fengorz.kiwi.auth.service.GoogleTokenCacheService;
+import me.fengorz.kiwi.bdf.security.google.GoogleTokenCacheService;
+import me.fengorz.kiwi.bdf.security.google.dto.GoogleTokenCacheInfo;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.token.TokenStore;

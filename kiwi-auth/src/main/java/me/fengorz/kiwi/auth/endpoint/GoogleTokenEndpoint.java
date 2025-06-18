@@ -19,9 +19,9 @@ package me.fengorz.kiwi.auth.endpoint;
 import cn.hutool.core.util.StrUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import me.fengorz.kiwi.auth.dto.GoogleTokenCacheInfo;
-import me.fengorz.kiwi.auth.service.GoogleTokenCacheService;
 import me.fengorz.kiwi.auth.service.GoogleTokenValidationService;
+import me.fengorz.kiwi.bdf.security.google.GoogleTokenCacheService;
+import me.fengorz.kiwi.bdf.security.google.dto.GoogleTokenCacheInfo;
 import me.fengorz.kiwi.common.api.R;
 import me.fengorz.kiwi.common.api.entity.EnhancerUser;
 import me.fengorz.kiwi.common.sdk.constant.SecurityConstants;
@@ -30,13 +30,13 @@ import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
-import org.springframework.security.oauth2.common.OAuth2RefreshToken;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Enhanced token validation endpoint that supports both OAuth2 and Google tokens
@@ -70,8 +70,7 @@ public class GoogleTokenEndpoint {
 
         // Remove OAuth2 tokens
         tokenStore.removeAccessToken(accessToken);
-        OAuth2RefreshToken refreshToken = accessToken.getRefreshToken();
-        tokenStore.removeRefreshToken(refreshToken);
+        Optional.ofNullable(accessToken.getRefreshToken()).ifPresent(tokenStore::removeRefreshToken);
 
         // Remove Google token cache if exists
         try {

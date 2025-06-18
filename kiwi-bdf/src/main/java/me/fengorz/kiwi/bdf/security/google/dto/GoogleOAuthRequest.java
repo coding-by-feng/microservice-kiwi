@@ -14,33 +14,38 @@
  *
  */
 
-package me.fengorz.kiwi.auth.dto;
+package me.fengorz.kiwi.bdf.security.google.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Map;
-import java.util.Set;
+import javax.validation.constraints.NotBlank;
 
 /**
- * Google OAuth response DTO
+ * Google OAuth request DTOs
  * 
  * @Author Kason Zhan
  * @Date 2025-06-16
  */
-@Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
-public class GoogleOAuthResponse {
+public class GoogleOAuthRequest {
 
-    private String accessToken;
-    private String tokenType;
-    private Integer expiresIn;
-    private String refreshToken;
-    private Set<String> scope;
-    private Map<String, Object> userInfo;
-    private Map<String, Object> additionalInfo;
+    @Data
+    @NoArgsConstructor
+    public static class TokenRequest {
+        @NotBlank(message = "Access token is required")
+        private String accessToken;
+    }
+
+    @Data
+    @NoArgsConstructor
+    public static class RefreshTokenRequest {
+        @NotBlank(message = "Refresh token is required")
+        private String refreshToken;
+    }
+
+    @Data
+    @NoArgsConstructor
+    public static class AuthorizeRequest {
+        private String state;
+    }
 }

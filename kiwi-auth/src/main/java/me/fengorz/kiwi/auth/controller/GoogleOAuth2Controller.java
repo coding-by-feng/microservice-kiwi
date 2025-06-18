@@ -19,17 +19,18 @@ package me.fengorz.kiwi.auth.controller;
 import cn.hutool.core.util.StrUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import me.fengorz.kiwi.auth.config.GoogleOAuth2Properties;
-import me.fengorz.kiwi.auth.dto.GoogleOAuthRequest;
-import me.fengorz.kiwi.auth.dto.GoogleOAuthResponse;
-import me.fengorz.kiwi.auth.dto.GoogleUserInfo;
 import me.fengorz.kiwi.auth.service.GoogleOAuth2Service;
-import me.fengorz.kiwi.auth.service.GoogleTokenCacheService;
+import me.fengorz.kiwi.bdf.security.google.GoogleOAuth2Properties;
+import me.fengorz.kiwi.bdf.security.google.GoogleTokenCacheService;
+import me.fengorz.kiwi.bdf.security.google.dto.GoogleOAuthRequest;
+import me.fengorz.kiwi.bdf.security.google.dto.GoogleOAuthResponse;
+import me.fengorz.kiwi.bdf.security.google.dto.GoogleUserInfo;
 import me.fengorz.kiwi.common.api.R;
 import me.fengorz.kiwi.common.api.entity.EnhancerUser;
 import me.fengorz.kiwi.common.sdk.constant.SecurityConstants;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.oauth2.common.DefaultExpiringOAuth2RefreshToken;
 import org.springframework.security.oauth2.common.DefaultOAuth2AccessToken;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.common.OAuth2RefreshToken;
@@ -261,7 +262,7 @@ public class GoogleOAuth2Controller {
                 systemToken.getValue(),
                 googleAccessToken,
                 googleRefreshToken,
-                19900,
+                expiresIn,
                 googleUserInfo
         );
 
@@ -325,6 +326,14 @@ public class GoogleOAuth2Controller {
         accessToken.setExpiration(new Date(System.currentTimeMillis() + 30 * 24 * 60 * 60 * 1000L)); // 30 days
         accessToken.setScope(scopes);  // Java 8 compatible HashSet
         accessToken.setTokenType("Bearer");
+
+        // Create expiring refresh token (Method 2: With expiration)
+        Date refreshTokenExpiration = new Date(System.currentTimeMillis() + 90 * 24 * 60 * 60 * 1000L); // 90 days
+        OAuth2RefreshToken refreshToken = new DefaultExpiringOAuth2RefreshToken(
+                UUID.randomUUID().toString(),
+                refreshTokenExpiration
+        );
+        accessToken.setRefreshToken(refreshToken);
 
         // Add additional information using EnhancerUser properties
         Map<String, Object> additionalInfo = new HashMap<>();

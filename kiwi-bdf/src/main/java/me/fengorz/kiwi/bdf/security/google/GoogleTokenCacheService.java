@@ -14,13 +14,13 @@
  *
  */
 
-package me.fengorz.kiwi.auth.service;
+package me.fengorz.kiwi.bdf.security.google;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
-import me.fengorz.kiwi.auth.dto.GoogleTokenCacheInfo;
-import me.fengorz.kiwi.auth.dto.GoogleUserInfo;
+import me.fengorz.kiwi.bdf.security.google.dto.GoogleTokenCacheInfo;
+import me.fengorz.kiwi.bdf.security.google.dto.GoogleUserInfo;
 import me.fengorz.kiwi.common.sdk.constant.SecurityConstants;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.RedisTemplate;

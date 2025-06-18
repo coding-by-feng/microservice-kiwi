@@ -18,6 +18,7 @@ package me.fengorz.kiwi.common.sdk.web.security;
 
 import lombok.experimental.UtilityClass;
 import me.fengorz.kiwi.common.api.entity.EnhancerUser;
+import me.fengorz.kiwi.common.sdk.exception.AuthException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -69,8 +70,7 @@ public class SecurityUtils {
         if (currentUser != null) {
             return currentUser.getId();
         }
-         return 1;
-//        throw new AuthException("登录超时");
+        throw new AuthException("登录超时");
     }
 
     public static void buildTestUser(Integer userId, String userName) {
@@ -79,6 +79,63 @@ public class SecurityUtils {
         SecurityContextHolder.getContext()
                 .setAuthentication(new UsernamePasswordAuthenticationToken(new EnhancerUser(userId, 0, userName,
                         "test", true, true, true, true, list), null));
+    }
+
+    /*
+     * Add these debug methods to your SecurityUtils class
+     */
+
+    /**
+     * Debug method to understand why getCurrentUser() returns null
+     */
+    public static void debugSecurityContext() {
+        Authentication auth = getAuthentication();
+
+        if (auth == null) {
+            System.out.println("DEBUG: No Authentication in SecurityContext");
+            return;
+        }
+
+        System.out.println("DEBUG: Authentication class: " + auth.getClass().getName());
+        System.out.println("DEBUG: Authentication name: " + auth.getName());
+        System.out.println("DEBUG: Is authenticated: " + auth.isAuthenticated());
+
+        Object principal = auth.getPrincipal();
+        if (principal == null) {
+            System.out.println("DEBUG: Principal is null");
+        } else {
+            System.out.println("DEBUG: Principal class: " + principal.getClass().getName());
+            if (principal instanceof EnhancerUser) {
+                EnhancerUser user = (EnhancerUser) principal;
+                System.out.println("DEBUG: EnhancerUser ID: " + user.getId());
+                System.out.println("DEBUG: EnhancerUser username: " + user.getUsername());
+            } else {
+                System.out.println("DEBUG: Principal is not EnhancerUser: " + principal.toString());
+            }
+        }
+
+        System.out.println("DEBUG: Authorities: " + auth.getAuthorities());
+    }
+
+    /**
+     * Enhanced getCurrentUser with debugging
+     */
+    public EnhancerUser getCurrentUserWithDebug() {
+        Authentication authentication = getAuthentication();
+
+        if (Objects.isNull(authentication)) {
+            System.out.println("DEBUG: Authentication is null in SecurityContext");
+            return null;
+        }
+
+        Object principal = authentication.getPrincipal();
+        if (!(principal instanceof EnhancerUser)) {
+            System.out.println("DEBUG: Principal is not EnhancerUser. Type: " +
+                    (principal != null ? principal.getClass().getName() : "null"));
+            return null;
+        }
+
+        return (EnhancerUser) principal;
     }
 
 }

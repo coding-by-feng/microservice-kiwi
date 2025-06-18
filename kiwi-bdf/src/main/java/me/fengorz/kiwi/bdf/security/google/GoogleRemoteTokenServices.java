@@ -14,10 +14,10 @@
  *
  */
 
-package me.fengorz.kiwi.auth.service;
+package me.fengorz.kiwi.bdf.security.google;
 
 import lombok.extern.slf4j.Slf4j;
-import me.fengorz.kiwi.auth.dto.GoogleTokenCacheInfo;
+import me.fengorz.kiwi.bdf.security.google.dto.GoogleTokenCacheInfo;
 import me.fengorz.kiwi.common.api.entity.EnhancerUser;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -42,12 +42,12 @@ import java.util.Map;
  * @Date 2025-06-16
  */
 @Slf4j
-public class EnhancedRemoteTokenServices extends RemoteTokenServices {
+public class GoogleRemoteTokenServices extends RemoteTokenServices {
 
     private final TokenStore tokenStore;
     private final GoogleTokenCacheService googleTokenCacheService;
 
-    public EnhancedRemoteTokenServices(TokenStore tokenStore, GoogleTokenCacheService googleTokenCacheService) {
+    public GoogleRemoteTokenServices(TokenStore tokenStore, GoogleTokenCacheService googleTokenCacheService) {
         this.tokenStore = tokenStore;
         this.googleTokenCacheService = googleTokenCacheService;
     }

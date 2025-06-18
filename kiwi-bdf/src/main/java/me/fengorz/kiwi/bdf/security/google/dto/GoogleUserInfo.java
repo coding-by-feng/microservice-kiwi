@@ -14,21 +14,31 @@
  *
  */
 
-package me.fengorz.kiwi.auth.config;
+package me.fengorz.kiwi.bdf.security.google.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Configuration;
+import lombok.NoArgsConstructor;
 
+/**
+ * Google user information DTO
+ * 
+ * @Author Kason Zhan
+ * @Date 2025-06-16
+ */
 @Data
-@Configuration
-@ConfigurationProperties(prefix = "google.oauth2")
-public class GoogleOAuth2Properties {
+@NoArgsConstructor
+public class GoogleUserInfo {
 
-    private String clientId;
-    private String clientSecret;
-    private String redirectUri;
-    private String[] scopes = {"openid", "profile", "email"};
-    private String homePage;
-    private String checkTokenEndpointUrl;
+    private String id;
+    private String email;
+    private String name;
+    @JsonProperty("given_name")
+    private String givenName;
+    @JsonProperty("family_name")
+    private String familyName;
+    private String picture;
+    private String locale;
+    @JsonProperty("verified_email")
+    private Boolean verifiedEmail;
 }

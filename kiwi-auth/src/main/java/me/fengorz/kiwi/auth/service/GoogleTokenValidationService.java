@@ -18,8 +18,9 @@ package me.fengorz.kiwi.auth.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import me.fengorz.kiwi.auth.dto.GoogleTokenCacheInfo;
-import me.fengorz.kiwi.auth.dto.GoogleUserInfo;
+import me.fengorz.kiwi.bdf.security.google.GoogleTokenCacheService;
+import me.fengorz.kiwi.bdf.security.google.dto.GoogleTokenCacheInfo;
+import me.fengorz.kiwi.bdf.security.google.dto.GoogleUserInfo;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;

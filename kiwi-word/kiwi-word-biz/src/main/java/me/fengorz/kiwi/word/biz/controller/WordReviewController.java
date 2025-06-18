@@ -76,7 +76,7 @@ public class WordReviewController extends AbstractFileController {
 
     @GetMapping("/getReviewCounterVO/{type}")
     public R<WordReviewDailyCounterVO> getReviewCounterVO(@PathVariable("type") Integer type) {
-        return R.success(reviewService.findReviewCounterVO(SecurityUtils.getCurrentUserId(), type));
+        return R.success(reviewService.findReviewCounterVO(SecurityUtils.getCurrentUserWithDebug().getId(), type));
     }
 
     @GetMapping("/getAllReviewCounterVO")

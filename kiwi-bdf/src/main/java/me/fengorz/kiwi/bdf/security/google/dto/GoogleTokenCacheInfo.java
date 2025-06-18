@@ -14,7 +14,7 @@
  *
  */
 
-package me.fengorz.kiwi.auth.dto;
+package me.fengorz.kiwi.bdf.security.google.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;

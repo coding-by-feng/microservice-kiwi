@@ -14,31 +14,33 @@
  *
  */
 
-package me.fengorz.kiwi.auth.dto;
+package me.fengorz.kiwi.bdf.security.google.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Map;
+import java.util.Set;
+
 /**
- * Google user information DTO
+ * Google OAuth response DTO
  * 
  * @Author Kason Zhan
  * @Date 2025-06-16
  */
 @Data
+@Builder
 @NoArgsConstructor
-public class GoogleUserInfo {
+@AllArgsConstructor
+public class GoogleOAuthResponse {
 
-    private String id;
-    private String email;
-    private String name;
-    @JsonProperty("given_name")
-    private String givenName;
-    @JsonProperty("family_name")
-    private String familyName;
-    private String picture;
-    private String locale;
-    @JsonProperty("verified_email")
-    private Boolean verifiedEmail;
+    private String accessToken;
+    private String tokenType;
+    private Integer expiresIn;
+    private String refreshToken;
+    private Set<String> scope;
+    private Map<String, Object> userInfo;
+    private Map<String, Object> additionalInfo;
 }

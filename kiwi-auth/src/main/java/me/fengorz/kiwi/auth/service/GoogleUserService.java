@@ -18,7 +18,7 @@ package me.fengorz.kiwi.auth.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import me.fengorz.kiwi.auth.dto.GoogleUserInfo;
+import me.fengorz.kiwi.bdf.security.google.dto.GoogleUserInfo;
 import me.fengorz.kiwi.common.api.R;
 import me.fengorz.kiwi.common.api.entity.EnhancerUser;
 import me.fengorz.kiwi.common.sdk.constant.SecurityConstants;

@@ -14,12 +14,10 @@
  *
  */
 
-package me.fengorz.kiwi.auth.config;
+package me.fengorz.kiwi.bdf.security.google;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import me.fengorz.kiwi.auth.service.EnhancedRemoteTokenServices;
-import me.fengorz.kiwi.auth.service.GoogleTokenCacheService;
 import me.fengorz.kiwi.bdf.security.component.KiwiUserAuthenticationConverter;
 import me.fengorz.kiwi.common.sdk.config.FilterIgnorePropertiesConfig;
 import org.springframework.context.annotation.Bean;
@@ -55,7 +53,7 @@ public class GoogleTokenResourceServerConfig {
     public ResourceServerTokenServices resourceServerTokenServices() {
         log.info("Configuring enhanced ResourceServerTokenServices with Google token support");
         
-        EnhancedRemoteTokenServices tokenServices = new EnhancedRemoteTokenServices(
+        GoogleRemoteTokenServices tokenServices = new GoogleRemoteTokenServices(
             tokenStore, 
             googleTokenCacheService
         );

@@ -25,8 +25,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
-import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.redis.RedisTokenStore;
 
@@ -38,7 +36,6 @@ import org.springframework.security.oauth2.provider.token.store.redis.RedisToken
  */
 @Slf4j
 @Configuration
-@EnableScheduling
 @RequiredArgsConstructor
 public class GoogleOAuth2Config {
 
@@ -92,21 +89,4 @@ public class GoogleOAuth2Config {
         return objectMapper;
     }
 
-    /**
-     * Scheduled task to clean up expired Google tokens
-     * Runs every 30 minutes to remove expired Google token cache entries
-     */
-    @Scheduled(fixedRate = 120 * 60 * 1000) // 120 minutes
-    public void scheduledGoogleTokenCleanup() {
-        log.debug("Starting scheduled Google token cleanup task");
-        
-        try {
-            // This would be injected via @Autowired in a real component
-            // For now, this is just a placeholder to show the scheduling concept
-            // The actual cleanup will be triggered via the endpoint or direct service call
-            log.debug("Scheduled Google token cleanup completed");
-        } catch (Exception e) {
-            log.error("Error during scheduled Google token cleanup", e);
-        }
-    }
 }

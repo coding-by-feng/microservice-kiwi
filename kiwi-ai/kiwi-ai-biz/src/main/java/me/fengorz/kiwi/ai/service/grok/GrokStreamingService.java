@@ -52,34 +52,14 @@ public class GrokStreamingService implements AiStreamingService {
     }
 
     @Override
-    public void streamCall(String prompt, AiPromptModeEnum promptMode, LanguageEnum language,
-                           Consumer<String> onChunk, Consumer<Exception> onError, Runnable onComplete) {
-        CompletableFuture.runAsync(() -> {
-            try {
-                GrokStreamingRequest grokStreamingRequest = new GrokStreamingRequest(
-                        Arrays.asList(new Message("system", buildPrompt(promptMode, language)),
-                                new Message("user", prompt)),
-                        grokApiProperties.getModel(),
-                        true // Enable streaming
-                );
-
-                streamRequestWithRetry(grokStreamingRequest, onChunk, onError, onComplete);
-            } catch (Exception e) {
-                log.error("Error in streaming call: {}", e.getMessage(), e);
-                onError.accept(e);
-            }
-        });
-    }
-
-    @Override
     public void streamCall(String prompt, AiPromptModeEnum promptMode, LanguageEnum targetLanguage,
                            LanguageEnum nativeLanguage, Consumer<String> onChunk, Consumer<Exception> onError,
                            Runnable onComplete) {
         CompletableFuture.runAsync(() -> {
             try {
                 GrokStreamingRequest grokStreamingRequest = new GrokStreamingRequest(
-                        Arrays.asList(new Message("system", buildPrompt(promptMode, targetLanguage, nativeLanguage)),
-                                new Message("user", prompt)),
+                        Arrays.asList(new Message("system", buildSystemPrompt(prompt, promptMode, targetLanguage, nativeLanguage)),
+                                new Message("user", buildUserPrompt(prompt))),
                         grokApiProperties.getModel(),
                         true // Enable streaming
                 );
@@ -90,6 +70,13 @@ public class GrokStreamingService implements AiStreamingService {
                 onError.accept(e);
             }
         });
+    }
+
+    private static String buildUserPrompt(String prompt) {
+        if (prompt.startsWith(AiPromptModeEnum.SELECTION_EXPLANATION.getTag())) {
+            return prompt.split(Pattern.quote(AiPromptModeEnum.SPLITTER))[0].replaceFirst(AiPromptModeEnum.SELECTION_EXPLANATION.getTag(), "");
+        }
+        return prompt;
     }
 
     /**
@@ -223,19 +210,8 @@ public class GrokStreamingService implements AiStreamingService {
     }
 
     @NotNull
-    private String buildPrompt(AiPromptModeEnum promptMode, LanguageEnum language) {
-        if (promptMode.getLanguageWildcardCounts() == 0 || LanguageEnum.NONE.equals(language)) {
-            return modeProperties.getMode().get(promptMode.getMode());
-        }
-        Object[] languageWildcards = new Object[promptMode.getLanguageWildcardCounts()];
-        for (int i = 0; i < promptMode.getLanguageWildcardCounts(); i++) {
-            languageWildcards[i] = language.getCode();
-        }
-        return String.format(modeProperties.getMode().get(promptMode.getMode()), languageWildcards);
-    }
-
-    @NotNull
-    private String buildPrompt(AiPromptModeEnum promptMode, LanguageEnum targetLanguage, LanguageEnum nativeLanguage) {
+    @SuppressWarnings("DuplicatedCode")
+    private String buildSystemPrompt(String prompt, AiPromptModeEnum promptMode, LanguageEnum targetLanguage, LanguageEnum nativeLanguage) {
         String promptTemplate = modeProperties.getMode().get(promptMode.getMode());
 
         if (promptTemplate == null) {
@@ -247,8 +223,24 @@ public class GrokStreamingService implements AiStreamingService {
             throw new GrokAiException("Both targetLanguage and nativeLanguage cannot be NONE");
         }
 
+        if (prompt.startsWith(AiPromptModeEnum.SELECTION_EXPLANATION.getTag())) {
+            return buildSelectionExplanationPrompt(prompt, targetLanguage, promptTemplate);
+        }
+
         // Replace placeholders with actual language names
         return promptTemplate.replace("#[TL]", targetLanguage.getCode())
                 .replace("#[NL]", nativeLanguage.getCode());
+    }
+
+    @NotNull
+    private static String buildSelectionExplanationPrompt(String prompt, LanguageEnum targetLanguage, String promptTemplate) {
+        String[] segments = prompt.replaceFirst(Pattern.quote(AiPromptModeEnum.SELECTION_EXPLANATION.getTag()), "")
+                .split(Pattern.quote(AiPromptModeEnum.SPLITTER));
+        String processedPrompt = promptTemplate.replace("#[TL]", targetLanguage.getCode());
+        for (int i = 0; i < segments.length; i++) {
+            String segmentPlaceholder = "#[S" + i + "]";
+            processedPrompt = processedPrompt.replace(segmentPlaceholder, segments[i].trim());
+        }
+        return processedPrompt;
     }
 }

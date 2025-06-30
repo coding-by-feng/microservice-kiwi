@@ -214,117 +214,61 @@ public class AiStreamingWebSocketHandler extends TextWebSocketHandler {
             // Set up streaming callbacks
             StringBuilder fullResponse = new StringBuilder();
 
-            if (StringUtils.hasText(request.getNativeLanguage())) {
-                // Two-language mode
-                LanguageEnum targetLang = LanguageConvertor.convertLanguageToEnum(request.getTargetLanguage());
-                LanguageEnum nativeLang = LanguageConvertor.convertLanguageToEnum(request.getNativeLanguage());
+            // Two-language mode
+            LanguageEnum targetLang = LanguageConvertor.convertLanguageToEnum(request.getTargetLanguage());
+            LanguageEnum nativeLang = LanguageConvertor.convertLanguageToEnum(request.getNativeLanguage());
 
-                log.info("{} Two-language mode - SessionId: {}, Target: {}, Native: {}",
-                        LOG_PREFIX, sessionId, targetLang, nativeLang);
+            log.info("{} Two-language mode - SessionId: {}, Target: {}, Native: {}",
+                    LOG_PREFIX, sessionId, targetLang, nativeLang);
 
-                aiStreamingService.streamCall(
-                        decodedText,
-                        AiPromptModeEnum.fromMode(request.getPromptMode()),
-                        targetLang,
-                        nativeLang,
-                        // onChunk callback with session check
-                        chunk -> {
-                            if (isSessionActive(sessionId)) {
-                                log.debug("🔍 Received chunk from AI: '{}'", chunk);
-                                fullResponse.append(chunk);
-                                AiStreamingResponse chunkResponse = AiStreamingResponse.chunk(chunk, request);
-                                log.debug("🔍 Created chunk response - type: {}, chunk: '{}', chunkIsNull: {}",
-                                        chunkResponse.getType(), chunkResponse.getChunk(), chunkResponse.getChunk() == null);
-                                sendMessageWithLogging(session, chunkResponse, "CHUNK");
-                            } else {
-                                log.debug("{} Skipping chunk for inactive session: {}", LOG_PREFIX, sessionId);
-                            }
-                        },
-                        // onError callback
-                        error -> {
-                            if (isSessionActive(sessionId)) {
-                                log.error("{} AI streaming error - SessionId: {}, Error: {}",
-                                        LOG_PREFIX, sessionId, error.getMessage(), error);
-                                AiStreamingResponse errorResponse = AiStreamingResponse.error(
-                                        "AI streaming failed: " + error.getMessage(),
-                                        "STREAMING_ERROR",
-                                        request);
-                                sendMessageWithLogging(session, errorResponse, "STREAMING_ERROR");
-                            }
-                            cleanupSession(sessionId);
-                        },
-                        // onComplete callback
-                        () -> {
-                            long processingDuration = System.currentTimeMillis() - startTime;
-                            log.info("{} AI streaming completed - SessionId: {}, Duration: {}ms, ResponseLength: {}",
-                                    LOG_PREFIX, sessionId, processingDuration, fullResponse.length());
-
-                            if (isSessionActive(sessionId)) {
-                                AiStreamingResponse completedResponse = AiStreamingResponse.completed(
-                                        "AI streaming completed",
-                                        request,
-                                        fullResponse.toString(),
-                                        processingDuration);
-                                sendMessageWithLogging(session, completedResponse, "COMPLETED");
-                            }
-                            cleanupSession(sessionId);
+            aiStreamingService.streamCall(
+                    decodedText,
+                    AiPromptModeEnum.fromMode(request.getPromptMode()),
+                    targetLang,
+                    nativeLang,
+                    // onChunk callback with session check
+                    chunk -> {
+                        if (isSessionActive(sessionId)) {
+                            log.debug("🔍 Received chunk from AI: '{}'", chunk);
+                            fullResponse.append(chunk);
+                            AiStreamingResponse chunkResponse = AiStreamingResponse.chunk(chunk, request);
+                            log.debug("🔍 Created chunk response - type: {}, chunk: '{}', chunkIsNull: {}",
+                                    chunkResponse.getType(), chunkResponse.getChunk(), chunkResponse.getChunk() == null);
+                            sendMessageWithLogging(session, chunkResponse, "CHUNK");
+                        } else {
+                            log.debug("{} Skipping chunk for inactive session: {}", LOG_PREFIX, sessionId);
                         }
-                );
-            } else {
-                // Single language mode
-                LanguageEnum language = LanguageConvertor.convertLanguageToEnum(request.getTargetLanguage());
-
-                log.info("{} Single-language mode - SessionId: {}, Language: {}",
-                        LOG_PREFIX, sessionId, language);
-
-                aiStreamingService.streamCall(
-                        decodedText,
-                        AiPromptModeEnum.fromMode(request.getPromptMode()),
-                        language,
-                        // onChunk callback with session check
-                        chunk -> {
-                            if (isSessionActive(sessionId)) {
-                                log.debug("🔍 Received chunk from AI: '{}'", chunk);
-                                fullResponse.append(chunk);
-                                AiStreamingResponse chunkResponse = AiStreamingResponse.chunk(chunk, request);
-                                log.debug("🔍 Created chunk response - type: {}, chunk: '{}', chunkIsNull: {}",
-                                        chunkResponse.getType(), chunkResponse.getChunk(), chunkResponse.getChunk() == null);
-                                sendMessageWithLogging(session, chunkResponse, "CHUNK");
-                            } else {
-                                log.debug("{} Skipping chunk for inactive session: {}", LOG_PREFIX, sessionId);
-                            }
-                        },
-                        // onError callback
-                        error -> {
-                            if (isSessionActive(sessionId)) {
-                                log.error("{} AI streaming error - SessionId: {}, Error: {}",
-                                        LOG_PREFIX, sessionId, error.getMessage(), error);
-                                AiStreamingResponse errorResponse = AiStreamingResponse.error(
-                                        "AI streaming failed: " + error.getMessage(),
-                                        "STREAMING_ERROR",
-                                        request);
-                                sendMessageWithLogging(session, errorResponse, "STREAMING_ERROR");
-                            }
-                            cleanupSession(sessionId);
-                        },
-                        // onComplete callback
-                        () -> {
-                            long processingDuration = System.currentTimeMillis() - startTime;
-                            log.info("{} AI streaming completed - SessionId: {}, Duration: {}ms, ResponseLength: {}",
-                                    LOG_PREFIX, sessionId, processingDuration, fullResponse.length());
-
-                            if (isSessionActive(sessionId)) {
-                                AiStreamingResponse completedResponse = AiStreamingResponse.completed(
-                                        "AI streaming completed",
-                                        request,
-                                        fullResponse.toString(),
-                                        processingDuration);
-                                sendMessageWithLogging(session, completedResponse, "COMPLETED");
-                            }
-                            cleanupSession(sessionId);
+                    },
+                    // onError callback
+                    error -> {
+                        if (isSessionActive(sessionId)) {
+                            log.error("{} AI streaming error - SessionId: {}, Error: {}",
+                                    LOG_PREFIX, sessionId, error.getMessage(), error);
+                            AiStreamingResponse errorResponse = AiStreamingResponse.error(
+                                    "AI streaming failed: " + error.getMessage(),
+                                    "STREAMING_ERROR",
+                                    request);
+                            sendMessageWithLogging(session, errorResponse, "STREAMING_ERROR");
                         }
-                );
-            }
+                        cleanupSession(sessionId);
+                    },
+                    // onComplete callback
+                    () -> {
+                        long processingDuration = System.currentTimeMillis() - startTime;
+                        log.info("{} AI streaming completed - SessionId: {}, Duration: {}ms, ResponseLength: {}",
+                                LOG_PREFIX, sessionId, processingDuration, fullResponse.length());
+
+                        if (isSessionActive(sessionId)) {
+                            AiStreamingResponse completedResponse = AiStreamingResponse.completed(
+                                    "AI streaming completed",
+                                    request,
+                                    fullResponse.toString(),
+                                    processingDuration);
+                            sendMessageWithLogging(session, completedResponse, "COMPLETED");
+                        }
+                        cleanupSession(sessionId);
+                    }
+            );
 
         } catch (Exception e) {
             log.error("{} Error processing AI streaming request - SessionId: {}, Error: {}",

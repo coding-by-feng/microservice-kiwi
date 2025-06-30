@@ -13,19 +13,6 @@ import java.util.function.Consumer;
 public interface AiStreamingService {
 
     /**
-     * Stream AI response with single language
-     *
-     * @param prompt The input prompt
-     * @param promptMode The prompt mode
-     * @param language The target language
-     * @param onChunk Callback for each text chunk received
-     * @param onError Callback for error handling
-     * @param onComplete Callback when streaming is complete
-     */
-    void streamCall(String prompt, AiPromptModeEnum promptMode, LanguageEnum language,
-                   Consumer<String> onChunk, Consumer<Exception> onError, Runnable onComplete);
-
-    /**
      * Stream AI response with target and native languages
      *
      * @param prompt The input prompt

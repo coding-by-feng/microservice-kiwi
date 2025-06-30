@@ -33,6 +33,7 @@ import java.util.concurrent.*;
 @Slf4j
 @Service("grokAiService")
 @KiwiCacheKeyPrefix(AiConstants.CACHE_KEY_PREFIX_GROK.CLASS)
+@Deprecated
 public class GrokAiService implements AiChatService {
 
     private final RestTemplate restTemplate;

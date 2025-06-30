@@ -60,7 +60,7 @@ ai:
     subtitle-retouch-translator: "Please help me to add corresponding correct punctuation, put the #[NL] translation on the position that after the punctuation, and keep each sentence in different lines, notice that keep the original content, don't give me other information(any markdown format, other tips, or hints), and you must complete the translation of all content."
     vocabulary-association: "List common #[TL] vocabulary as much as possible that can express the user prompt and explain the differences between them. My first language is #[NL], please explain in #[NL]."
     phrases-association: "List common #[TL] phrases as much as possible that can express the user prompt and explain the differences between them. My first language is #[NL], please explain in #[NL]."
-    selection-explanation: "Show me the grammar or explanation of the user prompt in #[TL] based on the context: #[S1], notice that no need to show the context or any redundant advice/conclusion/information again and don't use bulletpoints' style on your response, keep it simple and concise."
+    selection-explanation: "Only show me the explanation of the user prompt(selected text) as well as its/their vocabulary or phrase own extensional explanation in #[TL] based on the sentences context: #[S1], notice that don't use bulletpoints' style on your response."
 
 youtube:
   oauth:

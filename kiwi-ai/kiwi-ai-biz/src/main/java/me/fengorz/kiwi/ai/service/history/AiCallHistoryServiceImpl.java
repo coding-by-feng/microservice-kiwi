@@ -36,6 +36,21 @@ public class AiCallHistoryServiceImpl extends ServiceImpl<AiCallHistoryMapper, A
         log.info("Saving AI call history for user: {}, prompt mode: {}", userId, request.getPromptMode());
 
         try {
+            // Check if a record with the same aiUrl and userId already exists
+            AiCallHistoryDO existingRecord = this.getOne(
+                    new LambdaQueryWrapper<AiCallHistoryDO>()
+                            .eq(AiCallHistoryDO::getUserId, userId)
+                            .eq(AiCallHistoryDO::getAiUrl, request.getAiUrl())
+                            .eq(AiCallHistoryDO::getIsDelete, false)
+                            .last("LIMIT 1")
+            );
+
+            if (existingRecord != null) {
+                log.info("AI call history already exists for user: {} and aiUrl: {}, skipping save. Existing ID: {}",
+                        userId, request.getAiUrl(), existingRecord.getId());
+                return existingRecord.getId();
+            }
+
             // Generate ID
             Long id = Long.valueOf(seqService.genCommonIntSequence());
 
@@ -54,7 +69,7 @@ public class AiCallHistoryServiceImpl extends ServiceImpl<AiCallHistoryMapper, A
             LocalDateTime requestTimestamp = null;
             if (request.getTimestamp() != null) {
                 requestTimestamp = LocalDateTime.ofInstant(
-                        Instant.ofEpochMilli(request.getTimestamp()), 
+                        Instant.ofEpochMilli(request.getTimestamp()),
                         ZoneId.systemDefault()
                 );
             }
@@ -74,7 +89,7 @@ public class AiCallHistoryServiceImpl extends ServiceImpl<AiCallHistoryMapper, A
 
             // Save to database
             this.save(historyDO);
-            
+
             log.info("Successfully saved AI call history with ID: {}", id);
             return id;
         } catch (Exception e) {

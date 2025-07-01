@@ -55,4 +55,10 @@ public class AiStreamingRequest implements Serializable {
      * Additional metadata (optional)
      */
     private String metadata;
+
+    /**
+     * Current AI URL
+     */
+    private String aiUrl;
+
 }

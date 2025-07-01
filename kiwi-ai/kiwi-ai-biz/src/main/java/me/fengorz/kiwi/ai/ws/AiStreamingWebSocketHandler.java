@@ -6,10 +6,12 @@ import me.fengorz.kiwi.ai.api.model.request.AiStreamingRequest;
 import me.fengorz.kiwi.ai.api.model.response.AiStreamingResponse;
 import me.fengorz.kiwi.ai.model.ValidationResult;
 import me.fengorz.kiwi.ai.service.AiStreamingService;
+import me.fengorz.kiwi.ai.service.history.AiCallHistoryService;
 import me.fengorz.kiwi.ai.util.LanguageConvertor;
 import me.fengorz.kiwi.common.sdk.enumeration.AiPromptModeEnum;
 import me.fengorz.kiwi.common.sdk.enumeration.LanguageEnum;
 import me.fengorz.kiwi.common.sdk.web.WebTools;
+import me.fengorz.kiwi.common.sdk.web.security.SecurityUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -32,12 +34,15 @@ public class AiStreamingWebSocketHandler extends TextWebSocketHandler {
     private static final String RESPONSE_PREFIX = "[RESPONSE]";
 
     private final AiStreamingService aiStreamingService;
+    private final AiCallHistoryService aiCallHistoryService;
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final Map<String, WebSocketSession> sessions = new ConcurrentHashMap<>();
     private final Map<String, Boolean> activeStreams = new ConcurrentHashMap<>();
 
-    public AiStreamingWebSocketHandler(@Qualifier("grokStreamingService") AiStreamingService aiStreamingService) {
+    public AiStreamingWebSocketHandler(@Qualifier("grokStreamingService") AiStreamingService aiStreamingService,
+                                       AiCallHistoryService aiCallHistoryService) {
         this.aiStreamingService = aiStreamingService;
+        this.aiCallHistoryService = aiCallHistoryService;
     }
 
     @Override
@@ -67,11 +72,12 @@ public class AiStreamingWebSocketHandler extends TextWebSocketHandler {
             // Parse the incoming request
             AiStreamingRequest request = objectMapper.readValue(payload, AiStreamingRequest.class);
 
-            log.info("{} {} Parsed request - SessionId: {}, PromptMode: {}, TargetLanguage: {}, NativeLanguage: {}, PromptLength: {}",
+            log.info("{} {} Parsed request - SessionId: {}, PromptMode: {}, TargetLanguage: {}, NativeLanguage: {}, AiUrl: {}, PromptLength: {}",
                     LOG_PREFIX, REQUEST_PREFIX, sessionId,
                     request.getPromptMode(),
                     request.getTargetLanguage(),
                     request.getNativeLanguage(),
+                    request.getAiUrl(),
                     request.getPrompt() != null ? request.getPrompt().length() : 0);
 
             // Validate request
@@ -94,6 +100,20 @@ public class AiStreamingWebSocketHandler extends TextWebSocketHandler {
             // Set timestamp if not provided
             if (request.getTimestamp() == null) {
                 request.setTimestamp(System.currentTimeMillis());
+            }
+
+            // Save call history to database
+            try {
+                Integer currentUserId = getCurrentUserId();
+                if (currentUserId != null) {
+                    Long historyId = aiCallHistoryService.saveCallHistory(request, Long.valueOf(currentUserId));
+                    log.info("{} Saved call history with ID: {} for user: {}", LOG_PREFIX, historyId, currentUserId);
+                } else {
+                    log.warn("{} No authenticated user found, skipping call history save", LOG_PREFIX);
+                }
+            } catch (Exception e) {
+                log.error("{} Failed to save call history: {}", LOG_PREFIX, e.getMessage(), e);
+                // Don't fail the request, just log the error
             }
 
             // Process the AI streaming request
@@ -339,4 +359,15 @@ public class AiStreamingWebSocketHandler extends TextWebSocketHandler {
         log.debug("{} Cleaned up session resources - SessionId: {}", LOG_PREFIX, sessionId);
     }
 
+    /**
+     * Get current user ID from security context
+     */
+    private static Integer getCurrentUserId() {
+        try {
+            return SecurityUtils.getCurrentUserId();
+        } catch (Exception e) {
+            log.debug("Failed to get current user ID: {}", e.getMessage());
+            return null;
+        }
+    }
 }

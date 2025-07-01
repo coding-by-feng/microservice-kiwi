@@ -40,7 +40,8 @@ public class AiCallHistoryServiceImpl extends ServiceImpl<AiCallHistoryMapper, A
             AiCallHistoryDO existingRecord = this.getOne(
                     new LambdaQueryWrapper<AiCallHistoryDO>()
                             .eq(AiCallHistoryDO::getUserId, userId)
-                            .eq(AiCallHistoryDO::getAiUrl, request.getAiUrl())
+                            .eq(AiCallHistoryDO::getPromptMode, request.getPromptMode())
+                            .eq(AiCallHistoryDO::getPrompt, request.getPrompt())
                             .eq(AiCallHistoryDO::getIsDelete, false)
                             .last("LIMIT 1")
             );

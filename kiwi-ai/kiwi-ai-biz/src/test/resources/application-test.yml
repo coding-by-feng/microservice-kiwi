@@ -32,7 +32,7 @@ spring:
       maximum-pool-size: 20
       minimum-idle: 10
   redis:
-    host: 192.168.178.164
+    host: kiwi-redis
     password: ENC(uxuSI1Bl5AelC8dYvJUvMhsRbasVD4zh)
     port: 6379
   main:

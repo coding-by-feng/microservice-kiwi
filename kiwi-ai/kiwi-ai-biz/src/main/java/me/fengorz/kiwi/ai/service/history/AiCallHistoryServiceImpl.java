@@ -14,6 +14,7 @@ import me.fengorz.kiwi.common.db.service.SeqService;
 import me.fengorz.kiwi.common.sdk.web.WebTools;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
@@ -30,7 +31,7 @@ public class AiCallHistoryServiceImpl extends ServiceImpl<AiCallHistoryMapper, A
     private final SeqService seqService;
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRES_NEW)
     public Long saveCallHistory(AiStreamingRequest request, Long userId) {
         log.info("Saving AI call history for user: {}, prompt mode: {}", userId, request.getPromptMode());
 

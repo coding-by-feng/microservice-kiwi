@@ -11,7 +11,6 @@ import me.fengorz.kiwi.ai.util.LanguageConvertor;
 import me.fengorz.kiwi.common.sdk.enumeration.AiPromptModeEnum;
 import me.fengorz.kiwi.common.sdk.enumeration.LanguageEnum;
 import me.fengorz.kiwi.common.sdk.web.WebTools;
-import me.fengorz.kiwi.common.sdk.web.security.SecurityUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -104,7 +103,7 @@ public class AiStreamingWebSocketHandler extends TextWebSocketHandler {
 
             // Save call history to database
             try {
-                Integer currentUserId = getCurrentUserId();
+                Integer currentUserId = getUserIdFromSession(session);
                 if (currentUserId != null) {
                     Long historyId = aiCallHistoryService.saveCallHistory(request, Long.valueOf(currentUserId));
                     log.info("{} Saved call history with ID: {} for user: {}", LOG_PREFIX, historyId, currentUserId);
@@ -360,14 +359,22 @@ public class AiStreamingWebSocketHandler extends TextWebSocketHandler {
     }
 
     /**
-     * Get current user ID from security context
+     * Get user ID from WebSocket session attributes
      */
-    private static Integer getCurrentUserId() {
+    private Integer getUserIdFromSession(WebSocketSession session) {
         try {
-            return SecurityUtils.getCurrentUserId();
+            Object userId = session.getAttributes().get("userId");
+            if (userId instanceof Integer) {
+                log.debug("Retrieved user ID from session: {}", userId);
+                return (Integer) userId;
+            } else if (userId != null) {
+                log.debug("Converting user ID from session: {} ({})", userId, userId.getClass().getSimpleName());
+                return Integer.valueOf(userId.toString());
+            }
         } catch (Exception e) {
-            log.debug("Failed to get current user ID: {}", e.getMessage());
-            return null;
+            log.debug("Failed to get user ID from session: {}", e.getMessage());
         }
+        return null;
     }
+
 }

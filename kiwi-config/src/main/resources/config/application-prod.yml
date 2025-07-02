@@ -109,6 +109,14 @@ management:
   health:
     elasticsearch:
       enabled: false
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+
+ignore:
+  urls:
+    - /actuator/**
 
 tts:
   # ChatTTS Configuration

@@ -30,6 +30,15 @@ spring:
         queue-capacity: 100
       thread-name-prefix: YTB-subtitles-thread-
 
+management:
+  health:
+    elasticsearch:
+      enabled: false
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+
 ignore:
   urls:
     - /actuator/**

@@ -2,7 +2,6 @@ package me.fengorz.kiwi.ai.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.ai.api.entity.YtbChannelDO;
 import me.fengorz.kiwi.ai.api.entity.YtbChannelVideoDO;
@@ -14,6 +13,7 @@ import me.fengorz.kiwi.common.api.R;
 import me.fengorz.kiwi.common.sdk.annotation.log.LogMarker;
 import me.fengorz.kiwi.common.sdk.controller.BaseController;
 import me.fengorz.kiwi.common.sdk.web.security.SecurityUtils;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -21,12 +21,17 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @Validated
 @RestController
-@RequiredArgsConstructor
 @RequestMapping("/ai/ytb/channel")
 public class YtbChannelController extends BaseController {
 
     private final YtbChannelService channelService;
     private final YtbChannelVideoService videoService;
+
+    public YtbChannelController(@Qualifier("ytbChannelServiceV2") YtbChannelService channelService,
+                                YtbChannelVideoService videoService) {
+        this.channelService = channelService;
+        this.videoService = videoService;
+    }
 
     /**
      * Submit a YouTube channel

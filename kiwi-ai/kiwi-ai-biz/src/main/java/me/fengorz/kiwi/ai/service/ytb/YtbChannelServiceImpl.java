@@ -33,7 +33,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Slf4j
-@Service
+@Service("ytbChannelService")
 public class YtbChannelServiceImpl extends ServiceImpl<YtbChannelMapper, YtbChannelDO> implements YtbChannelService {
 
     private final YtbChannelUserMapper channelUserMapper;

@@ -57,7 +57,7 @@ public class GrokAiService implements AiChatService {
         headers.put("Authorization", Collections.singletonList("Bearer " + grokApiProperties.getKey()));
 
         ChatHttpRequest chatHttpRequest = new ChatHttpRequest(
-                Arrays.asList(new Message("system", buildPrompt(promptMode, language)),
+                Arrays.asList(new Message("system", buildPrompt(promptMode, language, language)),
                         new Message("user", prompt)), grokApiProperties.getModel());
 
         // Hypothetical request body (similar to OpenAI’s format)
@@ -222,7 +222,7 @@ public class GrokAiService implements AiChatService {
 
         // Build request with system prompt and combined user prompt
         ChatHttpRequest chatHttpRequest = new ChatHttpRequest(
-                Arrays.asList(new Message("system", buildPrompt(promptMode, language)),
+                Arrays.asList(new Message("system", buildPrompt(promptMode, language, language)),
                         new Message("user", batchContent.toString())), grokApiProperties.getModel());
 
         // Convert request to JSON
@@ -246,6 +246,7 @@ public class GrokAiService implements AiChatService {
     }
 
     @NotNull
+    @Deprecated
     private String buildPrompt(AiPromptModeEnum promptMode, LanguageEnum language) {
         if (promptMode.getLanguageWildcardCounts() == 0 || LanguageEnum.NONE.equals(language)) {
             return modeProperties.getMode().get(promptMode.getMode());

@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import me.fengorz.kiwi.ai.api.model.request.AiStreamingRequest;
+import me.fengorz.kiwi.common.api.ws.WsConstants;
 
 import java.io.Serializable;
 
@@ -21,13 +22,6 @@ import java.io.Serializable;
 public class AiStreamingResponse implements Serializable {
 
     private static final long serialVersionUID = 1L;
-
-    // Response type constants
-    public static final String TYPE_CONNECTED = "connected";
-    public static final String TYPE_STARTED = "started";
-    public static final String TYPE_CHUNK = "chunk";
-    public static final String TYPE_COMPLETED = "completed";
-    public static final String TYPE_ERROR = "error";
 
     /**
      * Response type: connected, started, chunk, completed, error
@@ -87,13 +81,29 @@ public class AiStreamingResponse implements Serializable {
     // Convenience methods for type checking
 
     public boolean ifError() {
-        return TYPE_ERROR.equals(type);
+        return WsConstants.TYPE_ERROR.equals(type);
+    }
+
+    public boolean ifConnected() {
+        return WsConstants.TYPE_CONNECTED.equals(type);
+    }
+
+    public boolean ifStarted() {
+        return WsConstants.TYPE_STARTED.equals(type);
+    }
+
+    public boolean ifChunk() {
+        return WsConstants.TYPE_CHUNK.equals(type);
+    }
+
+    public boolean ifCompleted() {
+        return WsConstants.TYPE_COMPLETED.equals(type);
     }
 
     // Convenience factory methods
     public static AiStreamingResponse connected(String message) {
         return AiStreamingResponse.builder()
-                .type(TYPE_CONNECTED)
+                .type(WsConstants.TYPE_CONNECTED)
                 .message(message)
                 .timestamp(System.currentTimeMillis())
                 .build();
@@ -101,7 +111,7 @@ public class AiStreamingResponse implements Serializable {
 
     public static AiStreamingResponse started(String message, AiStreamingRequest request) {
         return AiStreamingResponse.builder()
-                .type(TYPE_STARTED)
+                .type(WsConstants.TYPE_STARTED)
                 .message(message)
                 .request(request)
                 .timestamp(System.currentTimeMillis())
@@ -110,7 +120,7 @@ public class AiStreamingResponse implements Serializable {
 
     public static AiStreamingResponse chunk(String chunk, AiStreamingRequest request) {
         return AiStreamingResponse.builder()
-                .type(TYPE_CHUNK)
+                .type(WsConstants.TYPE_CHUNK)
                 .chunk(chunk)
                 .request(request)
                 .timestamp(System.currentTimeMillis())
@@ -119,7 +129,7 @@ public class AiStreamingResponse implements Serializable {
 
     public static AiStreamingResponse chunk(String chunk, Integer chunkIndex, Integer totalChunks, AiStreamingRequest request) {
         return AiStreamingResponse.builder()
-                .type(TYPE_CHUNK)
+                .type(WsConstants.TYPE_CHUNK)
                 .chunk(chunk)
                 .chunkIndex(chunkIndex)
                 .totalChunks(totalChunks)
@@ -130,7 +140,7 @@ public class AiStreamingResponse implements Serializable {
 
     public static AiStreamingResponse completed(String message, AiStreamingRequest request, String fullResponse) {
         return AiStreamingResponse.builder()
-                .type(TYPE_COMPLETED)
+                .type(WsConstants.TYPE_COMPLETED)
                 .message(message)
                 .request(request)
                 .fullResponse(fullResponse)
@@ -140,7 +150,7 @@ public class AiStreamingResponse implements Serializable {
 
     public static AiStreamingResponse completed(String message, AiStreamingRequest request, String fullResponse, Long processingDuration) {
         return AiStreamingResponse.builder()
-                .type(TYPE_COMPLETED)
+                .type(WsConstants.TYPE_COMPLETED)
                 .message(message)
                 .request(request)
                 .fullResponse(fullResponse)
@@ -151,7 +161,7 @@ public class AiStreamingResponse implements Serializable {
 
     public static AiStreamingResponse error(String message, AiStreamingRequest request) {
         return AiStreamingResponse.builder()
-                .type(TYPE_ERROR)
+                .type(WsConstants.TYPE_ERROR)
                 .message(message)
                 .request(request)
                 .timestamp(System.currentTimeMillis())
@@ -160,7 +170,7 @@ public class AiStreamingResponse implements Serializable {
 
     public static AiStreamingResponse error(String message, String errorCode, AiStreamingRequest request) {
         return AiStreamingResponse.builder()
-                .type(TYPE_ERROR)
+                .type(WsConstants.TYPE_ERROR)
                 .message(message)
                 .errorCode(errorCode)
                 .request(request)
@@ -178,15 +188,15 @@ public class AiStreamingResponse implements Serializable {
         }
 
         switch (type) {
-            case TYPE_CONNECTED:
+            case WsConstants.TYPE_CONNECTED:
                 return message != null;
-            case TYPE_STARTED:
+            case WsConstants.TYPE_STARTED:
                 return message != null && request != null;
-            case TYPE_CHUNK:
+            case WsConstants.TYPE_CHUNK:
                 return chunk != null && request != null;
-            case TYPE_COMPLETED:
+            case WsConstants.TYPE_COMPLETED:
                 return message != null && request != null && fullResponse != null;
-            case TYPE_ERROR:
+            case WsConstants.TYPE_ERROR:
                 return message != null;
             default:
                 return false;

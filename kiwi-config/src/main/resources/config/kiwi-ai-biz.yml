@@ -54,7 +54,7 @@ ai:
       key: ${GROK_API_KEY}  # Replace with the actual API key
       endpoint: https://api.x.ai/v1/chat/completions  # Hypothetical endpoint
       model: "grok-3"
-      thread-prompts-line-size: 500
+      thread-prompts-line-size: 400
       thread-pool-size: 8
       thread-timeout-secs: 120
   mode:
@@ -67,7 +67,7 @@ ai:
     antonym: "List the antonym for the given word, please provide the paraphrase in both of #[NL] and #[TL] language of the antonym, and also provide the #[TL] sentences that use this antonym with its translation in #[NL] language."
     subtitle-translator: "Please help me to translate each sentence in #[NL](if the language is already in #[NL], no need to translate, just put the original sentence and add correct punctuation) language and put the each translation on the position after each punctuation, notice that don't give me other information(any markdown format, other tips, or hints), you must complete all the translation."
     subtitle-retouch: "Please help me to add corresponding correct punctuation, notice that don't give me other non-subtitles information, keep the original subtitles content, and you must complete all the subtitle lines."
-    subtitle-retouch-translator: "Please help me to add corresponding correct punctuation, put the #[NL] translation on the position that after the punctuation, and keep each sentence in different lines, notice that keep the original content, don't give me other information(any markdown format, other tips, or hints), and you must complete the translation of all content."
+    subtitle-retouch-translator: "Please help me to add corresponding correct punctuation, put the #[TL] translation on the position that after the punctuation, and keep each sentence in different lines, notice that keep the original content, don't give me other information(any markdown format, other tips, or hints), and you must complete the translation of all content. Notice that if the subtitles content is already in #[TL], no need to translate, just put the original sentence and add correct punctuation."
     vocabulary-association: "List common #[TL] vocabulary as much as possible that can express the user prompt and explain the differences between them. My first language is #[NL], please explain in #[NL]."
     phrases-association: "List common #[TL] phrases as much as possible that can express the user prompt and explain the differences between them. My first language is #[NL], please explain in #[NL]."
     selection-explanation: "Only show me the explanation of the user prompt(selected text) as well as its/their vocabulary or phrase own extensional explanation in #[TL] based on the sentences context: #[S1], notice that don't use bulletpoints' style on your response."

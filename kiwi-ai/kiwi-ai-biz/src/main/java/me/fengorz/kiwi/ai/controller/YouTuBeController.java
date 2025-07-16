@@ -88,7 +88,7 @@ public class YouTuBeController {
     private YtbSubtitlesVO buildYtbSubtitlesVoWithTranslation(String decodedUrl, String language, YtbSubtitlesResult ytbSubtitlesResult) {
         log.info("ytbSubtitlesResult: {}", ytbSubtitlesResult);
         YtbSubtitlesVO result = null;
-        boolean ifNeedTranslation = language != null && !"null".equals(language);
+        boolean ifNeedTranslation = language != null && !"null".equals(language) && !LanguageEnum.EN.getCode().equals(language);
         LanguageEnum lang = ifNeedTranslation ? LanguageConvertor.convertLanguageToEnum(language) : LanguageEnum.NONE;
         switch (ytbSubtitlesResult.getType()) {
             case SMALL_AUTO_GENERATED_RETURN_STRING: {

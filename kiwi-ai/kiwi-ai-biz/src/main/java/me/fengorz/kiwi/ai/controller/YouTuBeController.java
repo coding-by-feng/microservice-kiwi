@@ -2,6 +2,7 @@ package me.fengorz.kiwi.ai.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.ai.service.AiChatService;
+import me.fengorz.kiwi.ai.service.ytb.YtbSubtitleStreamingService;
 import me.fengorz.kiwi.ai.util.LanguageConvertor;
 import me.fengorz.kiwi.common.api.R;
 import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
@@ -30,11 +31,14 @@ public class YouTuBeController {
 
     private final YouTuBeHelper youTuBeHelper;
     private final AiChatService grokAiService;
+    private final YtbSubtitleStreamingService subtitleStreamingService;
 
     public YouTuBeController(YouTuBeHelper youTuBeHelper,
-                             @Qualifier("grokAiService") AiChatService grokAiService) {
+                             @Qualifier("grokAiService") AiChatService grokAiService,
+                             YtbSubtitleStreamingService subtitleStreamingService) {
         this.youTuBeHelper = youTuBeHelper;
         this.grokAiService = grokAiService;
+        this.subtitleStreamingService = subtitleStreamingService;
     }
 
     @GetMapping("/download")
@@ -63,37 +67,74 @@ public class YouTuBeController {
 
     @GetMapping("/subtitles/scrolling")
     public R<String> getScrollingSubtitles(@RequestParam("url") String videoUrl) {
-        String decodedUrl = WebTools.decode(videoUrl);
-        YtbSubtitlesResult ytbSubtitlesResult = youTuBeHelper.downloadSubtitles(decodedUrl);
-        return R.success(ytbSubtitlesResult.getScrollingSubtitles());
+        try {
+            YtbSubtitlesResult ytbSubtitlesResult = subtitleStreamingService.getScrollingSubtitles(videoUrl);
+            return R.success(ytbSubtitlesResult.getScrollingSubtitles());
+        } catch (Exception e) {
+            log.error("Error getting scrolling subtitles: {}", e.getMessage(), e);
+            return R.failed("Failed to get scrolling subtitles: " + e.getMessage());
+        }
     }
 
+    /**
+     * HTTP endpoint for subtitle translation (backward compatibility)
+     * @deprecated Use WebSocket endpoint /ai/ws/ytb/subtitle for real-time streaming
+     */
     @GetMapping("/subtitles/translated")
+    @Deprecated
     public R<String> getTranslatedOrRetouchedSubtitles(@RequestParam("url") String videoUrl,
                                                        @RequestParam(value = "language", required = false) String language) {
-        String decodedUrl = WebTools.decode(videoUrl);
-        YtbSubtitlesResult ytbSubtitlesResult = youTuBeHelper.downloadSubtitles(decodedUrl);
-        String translatedOrRetouchedSubtitles = buildTranslatedOrRetouchedSubtitles(decodedUrl, language, ytbSubtitlesResult);
-        return R.success(translatedOrRetouchedSubtitles);
+        try {
+            String decodedUrl = WebTools.decode(videoUrl);
+            YtbSubtitlesResult ytbSubtitlesResult = youTuBeHelper.downloadSubtitles(decodedUrl);
+            String translatedOrRetouchedSubtitles = buildTranslatedOrRetouchedSubtitles(decodedUrl, language, ytbSubtitlesResult);
+            return R.success(translatedOrRetouchedSubtitles);
+        } catch (Exception e) {
+            log.error("Error getting translated subtitles: {}", e.getMessage(), e);
+            return R.failed("Failed to get translated subtitles: " + e.getMessage());
+        }
+    }
+
+    /**
+     * New HTTP endpoint that redirects to WebSocket recommendation
+     */
+    @GetMapping("/subtitles/translated/stream")
+    public R<String> getTranslatedSubtitlesStreamInfo() {
+        return R.success("For real-time subtitle translation with streaming support, " +
+                "please use the WebSocket endpoint: ws://your-domain/ai/ws/ytb/subtitle. " +
+                "This provides real-time streaming of translation results with better performance.");
     }
 
     @DeleteMapping("/subtitles")
-    public R<Void> cleanSubtitles(@RequestParam("url") String videoUrl, @RequestParam(value = "language", required = false) String language) {
-        String decodedVideoUrl = WebTools.decode(videoUrl);
-        boolean ifNeedTranslation = language != null && !"null".equals(language);
-        LanguageEnum lang = ifNeedTranslation ? LanguageConvertor.convertLanguageToEnum(language) : LanguageEnum.NONE;
-        youTuBeHelper.cleanSubtitles(decodedVideoUrl);
-        grokAiService.cleanBatchCallForYtbAndCache(decodedVideoUrl, AiPromptModeEnum.SUBTITLE_RETOUCH_TRANSLATOR, lang);
-        grokAiService.cleanBatchCallForYtbAndCache(decodedVideoUrl, AiPromptModeEnum.SUBTITLE_RETOUCH, lang);
-        grokAiService.cleanBatchCallForYtbAndCache(decodedVideoUrl, AiPromptModeEnum.SUBTITLE_TRANSLATOR, lang);
-        grokAiService.cleanCallForYtbAndCache(decodedVideoUrl, AiPromptModeEnum.SUBTITLE_RETOUCH_TRANSLATOR, lang);
-        grokAiService.cleanCallForYtbAndCache(decodedVideoUrl, AiPromptModeEnum.SUBTITLE_TRANSLATOR, lang);
-        grokAiService.cleanCallForYtbAndCache(decodedVideoUrl, AiPromptModeEnum.SUBTITLE_RETOUCH, lang);
-        return R.success();
+    public R<Void> cleanSubtitles(@RequestParam("url") String videoUrl,
+                                  @RequestParam(value = "language", required = false) String language) {
+        try {
+            subtitleStreamingService.cleanAllCaches(videoUrl, language);
+            return R.success();
+        } catch (Exception e) {
+            log.error("Error cleaning subtitles cache: {}", e.getMessage(), e);
+            return R.failed("Failed to clean subtitles cache: " + e.getMessage());
+        }
     }
 
+    @GetMapping("/title")
+    public R<String> getVideoTitle(@RequestParam("url") String videoUrl) {
+        try {
+            String title = subtitleStreamingService.getVideoTitle(videoUrl);
+            return R.success(title);
+        } catch (Exception e) {
+            log.error("Error getting video title: {}", e.getMessage(), e);
+            return R.failed("Failed to get video title: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Legacy method for backward compatibility - kept for existing HTTP clients
+     * @deprecated Use YtbSubtitleStreamingService.streamSubtitleTranslation() instead
+     */
     @Retryable(maxAttempts = 2, value = Exception.class)
     @SuppressWarnings({"rawtypes", "unchecked"})
+    @Deprecated
     private String buildTranslatedOrRetouchedSubtitles(String decodedUrl, String language, YtbSubtitlesResult ytbSubtitlesResult) {
         log.info("ytbSubtitlesResult: {}", ytbSubtitlesResult);
         boolean ifNeedTranslation = language != null && !"null".equals(language) && !LanguageEnum.EN.getCode().equals(language);
@@ -133,11 +174,5 @@ public class YouTuBeController {
             default:
                 return GlobalConstants.EMPTY;
         }
-    }
-
-    @GetMapping("/title")
-    public R<String> getVideoTitle(@RequestParam("url") String videoUrl) {
-        String title = youTuBeHelper.getVideoTitle(WebTools.decode(videoUrl));
-        return R.success(title);
     }
 }

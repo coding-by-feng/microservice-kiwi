@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.ai.api.entity.AiCallHistoryDO;
+import me.fengorz.kiwi.ai.api.enums.HistoryFilterEnum;
 import me.fengorz.kiwi.ai.api.model.request.AiStreamingRequest;
 import me.fengorz.kiwi.ai.api.vo.AiCallHistoryVO;
 import me.fengorz.kiwi.ai.service.history.mapper.AiCallHistoryMapper;
@@ -86,6 +87,7 @@ public class AiCallHistoryServiceImpl extends ServiceImpl<AiCallHistoryMapper, A
                     .setNativeLanguage(request.getNativeLanguage())
                     .setTimestamp(requestTimestamp)
                     .setIsDelete(false)
+                    .setIsArchive(false)
                     .setCreateTime(LocalDateTime.now());
 
             // Save to database
@@ -100,6 +102,53 @@ public class AiCallHistoryServiceImpl extends ServiceImpl<AiCallHistoryMapper, A
     }
 
     @Override
+    public IPage<AiCallHistoryVO> getUserCallHistory(Page<AiCallHistoryDO> page, Long userId, HistoryFilterEnum filter) {
+        log.info("Getting AI call history for user: {}, page: {}, size: {}, filter: {}", 
+                userId, page.getCurrent(), page.getSize(), filter.getCode());
+
+        // Build query wrapper based on filter
+        LambdaQueryWrapper<AiCallHistoryDO> queryWrapper = new LambdaQueryWrapper<AiCallHistoryDO>()
+                .eq(AiCallHistoryDO::getUserId, userId)
+                .eq(AiCallHistoryDO::getIsDelete, false);
+
+        // Apply archive filter based on the filter type
+        switch (filter) {
+            case NORMAL:
+                queryWrapper.eq(AiCallHistoryDO::getIsArchive, false);
+                break;
+            case ARCHIVED:
+                queryWrapper.eq(AiCallHistoryDO::getIsArchive, true);
+                break;
+            case ALL:
+                // No additional filter for archive status
+                break;
+        }
+
+        // Add ordering
+        queryWrapper.orderByDesc(AiCallHistoryDO::getTimestamp)
+                   .orderByDesc(AiCallHistoryDO::getCreateTime);
+
+        // Query user's call history
+        IPage<AiCallHistoryDO> historyPage = this.page(page, queryWrapper);
+
+        // Convert DO to VO
+        List<AiCallHistoryVO> historyVOList = historyPage.getRecords().stream()
+                .map(this::convertToVO)
+                .collect(Collectors.toList());
+
+        // Create result page
+        Page<AiCallHistoryVO> voPage = new Page<>();
+        voPage.setCurrent(historyPage.getCurrent());
+        voPage.setSize(historyPage.getSize());
+        voPage.setTotal(historyPage.getTotal());
+        voPage.setRecords(historyVOList);
+
+        log.info("Retrieved {} AI call history records for user: {} with filter: {}", 
+                historyVOList.size(), userId, filter.getCode());
+        return voPage;
+    }
+
+    @Override
     public IPage<AiCallHistoryVO> getUserCallHistory(Page<AiCallHistoryDO> page, Long userId) {
         log.info("Getting AI call history for user: {}, page: {}, size: {}", 
                 userId, page.getCurrent(), page.getSize());
@@ -109,6 +158,7 @@ public class AiCallHistoryServiceImpl extends ServiceImpl<AiCallHistoryMapper, A
                 new LambdaQueryWrapper<AiCallHistoryDO>()
                         .eq(AiCallHistoryDO::getUserId, userId)
                         .eq(AiCallHistoryDO::getIsDelete, false)
+                        .eq(AiCallHistoryDO::getIsArchive, false)
                         .orderByDesc(AiCallHistoryDO::getTimestamp)
                         .orderByDesc(AiCallHistoryDO::getCreateTime));
 
@@ -126,6 +176,92 @@ public class AiCallHistoryServiceImpl extends ServiceImpl<AiCallHistoryMapper, A
 
         log.info("Retrieved {} AI call history records for user: {}", historyVOList.size(), userId);
         return voPage;
+    }
+
+    @Override
+    public boolean archiveCallHistory(Long id, Long userId) {
+        log.info("Archiving AI call history record - ID: {}, User: {}", id, userId);
+
+        try {
+            // First check if the record exists and belongs to the user
+            AiCallHistoryDO existingRecord = this.getOne(
+                    new LambdaQueryWrapper<AiCallHistoryDO>()
+                            .eq(AiCallHistoryDO::getId, id)
+                            .eq(AiCallHistoryDO::getUserId, userId)
+                            .eq(AiCallHistoryDO::getIsDelete, false));
+
+            if (existingRecord == null) {
+                log.warn("AI call history record not found or doesn't belong to user - ID: {}, User: {}", id, userId);
+                return false;
+            }
+
+            // Check if already archived
+            if (Boolean.TRUE.equals(existingRecord.getIsArchive())) {
+                log.info("AI call history record is already archived - ID: {}", id);
+                return true;
+            }
+
+            // Archive the record
+            existingRecord.setIsArchive(true);
+            existingRecord.setUpdateTime(LocalDateTime.now());
+            
+            boolean result = this.updateById(existingRecord);
+            
+            if (result) {
+                log.info("Successfully archived AI call history record - ID: {}", id);
+            } else {
+                log.error("Failed to archive AI call history record - ID: {}", id);
+            }
+            
+            return result;
+        } catch (Exception e) {
+            log.error("Error archiving AI call history record - ID: {}, User: {}, Error: {}", 
+                    id, userId, e.getMessage(), e);
+            return false;
+        }
+    }
+
+    @Override
+    public boolean deleteCallHistory(Long id, Long userId) {
+        log.info("Deleting AI call history record - ID: {}, User: {}", id, userId);
+
+        try {
+            // First check if the record exists and belongs to the user
+            AiCallHistoryDO existingRecord = this.getOne(
+                    new LambdaQueryWrapper<AiCallHistoryDO>()
+                            .eq(AiCallHistoryDO::getId, id)
+                            .eq(AiCallHistoryDO::getUserId, userId)
+                            .eq(AiCallHistoryDO::getIsDelete, false));
+
+            if (existingRecord == null) {
+                log.warn("AI call history record not found or doesn't belong to user - ID: {}, User: {}", id, userId);
+                return false;
+            }
+
+            // Check if already deleted
+            if (Boolean.TRUE.equals(existingRecord.getIsDelete())) {
+                log.info("AI call history record is already deleted - ID: {}", id);
+                return true;
+            }
+
+            // Soft delete the record
+            existingRecord.setIsDelete(true);
+            existingRecord.setUpdateTime(LocalDateTime.now());
+            
+            boolean result = this.updateById(existingRecord);
+            
+            if (result) {
+                log.info("Successfully deleted AI call history record - ID: {}", id);
+            } else {
+                log.error("Failed to delete AI call history record - ID: {}", id);
+            }
+            
+            return result;
+        } catch (Exception e) {
+            log.error("Error deleting AI call history record - ID: {}, User: {}, Error: {}", 
+                    id, userId, e.getMessage(), e);
+            return false;
+        }
     }
 
     /**

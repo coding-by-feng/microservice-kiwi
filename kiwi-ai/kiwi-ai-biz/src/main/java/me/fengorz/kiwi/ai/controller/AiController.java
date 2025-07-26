@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.ai.api.entity.AiCallHistoryDO;
+import me.fengorz.kiwi.ai.api.enums.HistoryFilterEnum;
 import me.fengorz.kiwi.ai.api.vo.AiCallHistoryVO;
 import me.fengorz.kiwi.ai.api.vo.AiResponseVO;
 import me.fengorz.kiwi.ai.service.AiChatService;
@@ -103,13 +104,15 @@ public class AiController extends BaseController {
      *
      * @param current Page number (1-based indexing)
      * @param size    Number of items per page
+     * @param filter  Filter type: "normal" (default), "archived", or "all"
      * @return Paginated list of user's AI call history ordered by timestamp desc
      */
     @LogMarker
     @GetMapping("/history")
     public R<IPage<AiCallHistoryVO>> getCallHistory(
             @RequestParam(value = "current", defaultValue = "1") Integer current,
-            @RequestParam(value = "size", defaultValue = "20") Integer size) {
+            @RequestParam(value = "size", defaultValue = "20") Integer size,
+            @RequestParam(value = "filter", defaultValue = "normal") String filter) {
 
         // Validate pagination parameters
         if (current < 1) {
@@ -130,12 +133,85 @@ public class AiController extends BaseController {
                 return R.failed("User not authenticated");
             }
 
-            IPage<AiCallHistoryVO> resultPage = aiCallHistoryService.getUserCallHistory(page, Long.valueOf(userId));
+            // Convert filter string to enum
+            HistoryFilterEnum filterEnum = HistoryFilterEnum.fromCode(filter);
+            
+            IPage<AiCallHistoryVO> resultPage = aiCallHistoryService.getUserCallHistory(page, Long.valueOf(userId), filterEnum);
 
             return R.success(resultPage);
         } catch (Exception e) {
             log.error("Error retrieving user call history: {}", e.getMessage(), e);
             return R.failed("Failed to retrieve call history");
+        }
+    }
+
+    /**
+     * Archive AI call history item by ID
+     *
+     * @param id History item ID
+     * @return Success or failure response
+     */
+    @LogMarker
+    @PutMapping("/history/{id}/archive")
+    public R<String> archiveCallHistory(@PathVariable("id") Long id) {
+        try {
+            // Get current user ID
+            Integer userId = getCurrentUserId();
+            if (userId == null) {
+                return R.failed("User not authenticated");
+            }
+
+            // Validate ID parameter
+            if (id == null || id <= 0) {
+                return R.failed("Invalid history item ID");
+            }
+
+            // Archive the history item
+            boolean result = aiCallHistoryService.archiveCallHistory(id, Long.valueOf(userId));
+            
+            if (result) {
+                return R.success("History item archived successfully");
+            } else {
+                return R.failed("Failed to archive history item. Item may not exist or doesn't belong to current user.");
+            }
+        } catch (Exception e) {
+            log.error("Error archiving history item with ID {}: {}", id, e.getMessage(), e);
+            return R.failed("Failed to archive history item");
+        }
+    }
+
+    /**
+     * Delete AI call history item by ID
+     *
+     * @param id History item ID
+     * @return Success or failure response
+     */
+    @LogMarker
+    @DeleteMapping("/history/{id}")
+    public R<String> deleteCallHistory(@PathVariable("id") Long id) {
+        try {
+            // Get current user ID
+            Integer userId = getCurrentUserId();
+            if (userId == null) {
+                return R.failed("User not authenticated");
+            }
+
+            // Validate ID parameter
+            if (id == null || id <= 0) {
+                return R.failed("Invalid history item ID");
+            }
+
+            // Delete the history item
+            boolean result = aiCallHistoryService.deleteCallHistory(id, Long.valueOf(userId));
+            
+            if (result) {
+                return R.success("History item deleted successfully");
+            } else {
+                return R.failed("Failed to delete history item. Item may not exist or doesn't belong to current user.");
+            }
+        } catch (Exception e) {
+            log.error("Error deleting history item with ID {}: {}", id, e.getMessage(), e);
+            return R.failed("Failed to delete history item");
         }
     }
 

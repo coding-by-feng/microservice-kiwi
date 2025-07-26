@@ -68,6 +68,11 @@ public class AiCallHistoryDO implements Serializable {
     private Boolean isDelete;
 
     /**
+     * Archive flag (0: not archived, 1: archived)
+     */
+    private Boolean isArchive;
+
+    /**
      * Record creation time
      */
     private LocalDateTime createTime;

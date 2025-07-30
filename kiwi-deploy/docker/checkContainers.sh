@@ -205,7 +205,6 @@ restart_single_container() {
     # Show all containers with their current status
     for key in {1..15}; do
         IFS='|' read -r container_name service_name <<< "${containers[$key]}"
-
         if sudo docker ps --format "{{.Names}}" | grep -q "^${container_name}$"; then
             status="RUNNING"
         elif sudo docker ps -a --format "{{.Names}}" | grep -q "^${container_name}$"; then
@@ -216,6 +215,11 @@ restart_single_container() {
 
         echo "$key) $service_name ($container_name) - $status"
     done
+
+    if [ ${#containers[@]} -eq 0 ]; then
+        echo "No containers are currently running."
+        return
+    fi
 
     echo ""
     read -p "Enter container number to restart (1-15): " container_choice
@@ -440,6 +444,8 @@ start_infrastructure_containers() {
     echo "  - FastDFS Tracker"
     echo "  - Kiwi UI (with port 80 check)"
     echo ""
+    echo "NOTE: Each container will wait 30 seconds after starting to ensure proper initialization."
+    echo ""
     read -p "Continue? (y/N): " choice
     if [[ ! ($choice == "y" || $choice == "Y") ]]; then
         echo "Cancelled."
@@ -457,41 +463,54 @@ start_infrastructure_containers() {
     )
 
     echo -e "\n=== STARTING INFRASTRUCTURE SERVICES ==="
+    local total_containers=${#infra_order[@]}
+    local current_container=0
+    
     for item in "${infra_order[@]}"; do
         IFS='|' read -r key container_name service_name <<< "$item"
+        ((current_container++))
+        
+        echo "[$current_container/$total_containers] Processing $service_name..."
 
         if check_container_status "$container_name" "$service_name" >/dev/null 2>&1; then
             echo "✓ $service_name is already running"
         else
             start_container "$container_name" "$service_name"
-            echo "  Waiting 5 seconds for $service_name to initialize..."
-            sleep 5
+            if [ $current_container -lt $total_containers ]; then
+                echo "  Waiting 30 seconds for $service_name to fully initialize before starting next container..."
+                # Show countdown for better user experience
+                for i in {30..1}; do
+                    printf "\r  Countdown: %02d seconds remaining..." $i
+                    sleep 1
+                done
+                printf "\r  ✓ Wait complete. Ready for next container.                    \n"
+            else
+                echo "  Final container started. Waiting 10 seconds for stabilization..."
+                sleep 10
+            fi
         fi
         echo ""
     done
 
-    # Handle Kiwi UI separately with port check
+    # Handle Kiwi UI with port check
     echo "=== STARTING KIWI UI ==="
-    local ui_container="kiwi-ui"
-    local ui_service="KIWI-UI"
-
-    if check_container_status "$ui_container" "$ui_service" >/dev/null 2>&1; then
-        echo "✓ $ui_service is already running"
+    if check_container_status "kiwi-ui" "KIWI-UI" >/dev/null 2>&1; then
+        echo "✓ KIWI-UI is already running"
     else
-        # Check port 80 before starting kiwi-ui
         if check_port_80_and_handle; then
-            echo "Starting $ui_service..."
-            start_container "$ui_container" "$ui_service"
+            start_container "kiwi-ui" "KIWI-UI"
+            sleep 3
         else
-            echo "⚠ Cannot start $ui_service - port 80 conflict not resolved"
+            echo "⚠ Skipping KIWI-UI startup due to port 80 conflict"
         fi
     fi
+    echo ""
 
     echo -e "\n=== INFRASTRUCTURE STARTUP COMPLETE ==="
     echo "Checking status of infrastructure containers..."
 
     # Show status of infrastructure containers
-    printf "\n%-30s %-15s\n" "CONTAINER NAME" "STATUS"
+    printf "%-30s %-15s\n" "CONTAINER NAME" "STATUS"
     printf "%-30s %-15s\n" "------------------------------" "---------------"
 
     for item in "${infra_order[@]}"; do
@@ -507,14 +526,14 @@ start_infrastructure_containers() {
     done
 
     # Check kiwi-ui status
-    if sudo docker ps --format "{{.Names}}" | grep -q "^${ui_container}$"; then
+    if sudo docker ps --format "{{.Names}}" | grep -q "^kiwi-ui$"; then
         status="RUNNING"
-    elif sudo docker ps -a --format "{{.Names}}" | grep -q "^${ui_container}$"; then
+    elif sudo docker ps -a --format "{{.Names}}" | grep -q "^kiwi-ui$"; then
         status="STOPPED"
     else
         status="NOT EXISTS"
     fi
-    printf "%-30s %-15s\n" "$ui_container" "$status"
+    printf "%-30s %-15s\n" "kiwi-ui" "$status"
 }
 
 enter_container() {
@@ -726,6 +745,7 @@ start_all_kiwi_containers() {
     echo -e "\n=== STARTING ALL KIWI CONTAINERS ==="
     echo "This will attempt to start all Kiwi containers in dependency order..."
     echo "Note: Infrastructure containers will be started first, then application services."
+    echo "Each container will wait 30 seconds after starting to ensure proper initialization."
     echo ""
     read -p "Continue? (y/N): " choice
     if [[ ! ($choice == "y" || $choice == "Y") ]]; then
@@ -744,15 +764,31 @@ start_all_kiwi_containers() {
         "15|tracker|FASTDFS-TRACKER"
     )
 
+    local total_infra=${#infra_order[@]}
+    local current_infra=0
+
     for item in "${infra_order[@]}"; do
         IFS='|' read -r key container_name service_name <<< "$item"
+        ((current_infra++))
+        
+        echo "[$current_infra/$total_infra] Processing $service_name..."
 
         if check_container_status "$container_name" "$service_name" >/dev/null 2>&1; then
             echo "✓ $service_name is already running"
         else
             start_container "$container_name" "$service_name"
-            echo "  Waiting 5 seconds for $service_name to initialize..."
-            sleep 5
+            if [ $current_infra -lt $total_infra ]; then
+                echo "  Waiting 30 seconds for $service_name to fully initialize before starting next container..."
+                # Show countdown for better user experience
+                for i in {30..1}; do
+                    printf "\r  Countdown: %02d seconds remaining..." $i
+                    sleep 1
+                done
+                printf "\r  ✓ Wait complete. Ready for next container.                    \n"
+            else
+                echo "  Final infrastructure container started. Waiting 10 seconds for stabilization..."
+                sleep 10
+            fi
         fi
         echo ""
     done
@@ -784,14 +820,31 @@ start_all_kiwi_containers() {
         "8|kiwi-service-kiwi-crawler-1|CRAWLER"
     )
 
+    local total_apps=${#app_order[@]}
+    local current_app=0
+
     for item in "${app_order[@]}"; do
         IFS='|' read -r key container_name service_name <<< "$item"
+        ((current_app++))
+        
+        echo "[$current_app/$total_apps] Processing $service_name..."
 
         if check_container_status "$container_name" "$service_name" >/dev/null 2>&1; then
             echo "✓ $service_name is already running"
         else
             start_container "$container_name" "$service_name"
-            sleep 2
+            if [ $current_app -lt $total_apps ]; then
+                echo "  Waiting 30 seconds for $service_name to fully initialize before starting next container..."
+                # Show countdown for better user experience
+                for i in {30..1}; do
+                    printf "\r  Countdown: %02d seconds remaining..." $i
+                    sleep 1
+                done
+                printf "\r  ✓ Wait complete. Ready for next container.                    \n"
+            else
+                echo "  Final application container started. Waiting 5 seconds for stabilization..."
+                sleep 5
+            fi
         fi
         echo ""
     done

@@ -610,8 +610,12 @@ fi
 
 # Step 2: System update and package installations
 if ! is_step_completed "system_update"; then
-    echo "Step 2: Updating system..."
+    echo "Step 2: Updating system and installing essential packages..."
     apt update
+    
+    # Install essential packages including curl, wget, and other utilities
+    echo "Installing essential packages (curl, wget, ca-certificates, gnupg, lsb-release)..."
+    apt install -y curl wget ca-certificates gnupg lsb-release
 
     # Record successful completion
     save_config "system_update_status" "completed"
@@ -625,6 +629,14 @@ fi
 # Step 3: Install Docker
 if ! is_step_completed "docker_install"; then
     echo "Step 3: Installing Docker..."
+    
+    # Check if curl is available, install if missing
+    if ! command -v curl &> /dev/null; then
+        echo "curl not found, installing essential packages..."
+        apt update
+        apt install -y curl wget ca-certificates gnupg lsb-release
+    fi
+    
     curl -fsSL https://get.docker.com -o get-docker.sh
     sh get-docker.sh
     rm get-docker.sh

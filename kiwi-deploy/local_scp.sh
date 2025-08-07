@@ -5,7 +5,7 @@ SOURCE_PATH_1="/Users/zhanshifeng/Documents/myDocument/idea-project/importance-b
 SOURCE_PATH_2="/Users/zhanshifeng/Documents/myDocument/webstorm-projects/kiwi-ui-dev/dist.zip"
 SOURCE_PATH_3="/Users/zhanshifeng/Documents/myDocument/webstorm-projects/kiwi-ui-dev/dist"
 REMOTE_USER="kason"
-REMOTE_HOST="kason-server.local"
+REMOTE_HOST="10.244.218.28"
 
 # Function to display menu
 show_menu() {

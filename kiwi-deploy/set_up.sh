@@ -1477,7 +1477,6 @@ if ! is_step_completed "fastdfs_setup"; then
         -p 8081:80 \
         -p 8881:8888 \
         --name tracker \
-        --net=host \
         "$FASTDFS_IMAGE" \
         tracker
 
@@ -1493,7 +1492,6 @@ if ! is_step_completed "fastdfs_setup"; then
         --name storage \
         -v "$SCRIPT_HOME/storage_data:/fastdfs/storage/data" \
         -v "$SCRIPT_HOME/store_path:/fastdfs/store_path" \
-        --net=host \
         -e TRACKER_SERVER="$FASTDFS_HOSTNAME:22122" \
         "$FASTDFS_IMAGE" \
         storage

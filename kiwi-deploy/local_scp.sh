@@ -5,7 +5,10 @@ SOURCE_PATH_1="/Users/zhanshifeng/Documents/myDocument/idea-project/importance-b
 SOURCE_PATH_2="/Users/zhanshifeng/Documents/myDocument/webstorm-projects/kiwi-ui-dev/dist.zip"
 SOURCE_PATH_3="/Users/zhanshifeng/Documents/myDocument/webstorm-projects/kiwi-ui-dev/dist"
 REMOTE_USER="kason"
-REMOTE_HOST="10.244.218.28"
+REMOTE_HOST="kason-pi.local"
+
+# SCP options to force password authentication
+SCP_OPTIONS="-o PreferredAuthentications=password -o PubkeyAuthentication=no"
 
 # Function to display menu
 show_menu() {
@@ -19,7 +22,7 @@ show_menu() {
 # Function to copy SQL file
 copy_sql() {
     echo "Copying SQL file..."
-    scp -r "$SOURCE_PATH_1" "$REMOTE_USER@$REMOTE_HOST":~
+    scp $SCP_OPTIONS "$SOURCE_PATH_1" "$REMOTE_USER@$REMOTE_HOST":~
     if [ $? -eq 0 ]; then
         echo "SQL file copied successfully!"
     else
@@ -43,7 +46,7 @@ copy_dist_zip() {
     fi
 
     echo "Copying dist.zip..."
-    scp -r "$SOURCE_PATH_2" "$REMOTE_USER@$REMOTE_HOST":~
+    scp $SCP_OPTIONS "$SOURCE_PATH_2" "$REMOTE_USER@$REMOTE_HOST":~
     if [ $? -eq 0 ]; then
         echo "dist.zip copied successfully!"
     else
@@ -74,7 +77,7 @@ zip_and_copy_dist() {
     if [ $? -eq 0 ]; then
         echo "dist.zip created successfully!"
         echo "Copying dist.zip..."
-        scp -r "$SOURCE_PATH_2" "$REMOTE_USER@$REMOTE_HOST":~
+        scp $SCP_OPTIONS "$SOURCE_PATH_2" "$REMOTE_USER@$REMOTE_HOST":~
         if [ $? -eq 0 ]; then
             echo "dist.zip copied successfully!"
         else
@@ -84,8 +87,6 @@ zip_and_copy_dist() {
         echo "Failed to create dist.zip."
     fi
 }
-
-
 
 # Main menu loop
 while true; do

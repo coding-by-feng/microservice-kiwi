@@ -30,7 +30,6 @@ import me.fengorz.kiwi.word.biz.service.base.ReviewAudioService;
 import me.fengorz.kiwi.word.biz.service.operate.AudioService;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.SpringApplication;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
@@ -117,11 +116,11 @@ public class RevisePermanentAudioHelper implements InitializingBean {
                     reviewAudioService.updateById(audio);
                     log.info("Updated audio, characterCode={}, audio: {}", k, audio);
                 } catch (DfsOperateException | TtsException ex) {
-                    log.error("Generate Chinese voice exception, characterCode={}, audio={}!", k, audio, ex);
-                    log.error("Critical error occurred, shutting down application", e);
+                    log.warn("Generate Chinese voice exception, characterCode={}, audio={}!", k, audio, ex);
+                    log.warn("Critical error occurred, shutting down application", e);
                     // Exit with a non-zero status code (indicating abnormal termination)
-                    int exitCode = SpringApplication.exit(applicationContext, () -> 1);
-                    System.exit(exitCode);
+//                    int exitCode = SpringApplication.exit(applicationContext, () -> 1);
+//                    System.exit(exitCode);
                 }
             }
 

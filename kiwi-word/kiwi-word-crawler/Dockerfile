@@ -1,4 +1,4 @@
-FROM openjdk:8-jdk-alpine
+FROM eclipse-temurin:8-jdk
 
 RUN mkdir /logs
 RUN mkdir /crawlerTmp

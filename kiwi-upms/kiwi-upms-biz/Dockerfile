@@ -1,4 +1,5 @@
-FROM openjdk:8-jdk-alpine
+FROM eclipse-temurin:8-jdk
+
 RUN mkdir /logs
 ADD kiwi-upms-biz-2.0.jar app.jar
 EXPOSE 4001

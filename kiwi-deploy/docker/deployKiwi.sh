@@ -197,6 +197,18 @@ fi
 
 cd "$CURRENT_DIR/microservice-kiwi/" || { echo "CRITICAL ERROR: Failed to change directory to $CURRENT_DIR/microservice-kiwi/"; exit 1; }
 
+# Define available microservices
+declare -A MICROSERVICES=(
+    ["eureka"]="kiwi-eureka"
+    ["config"]="kiwi-config"
+    ["upms"]="kiwi-upms-biz"
+    ["auth"]="kiwi-auth"
+    ["gate"]="kiwi-gateway"
+    ["word"]="kiwi-word-biz"
+    ["crawler"]="kiwi-word-crawler"
+    ["ai"]="kiwi-ai-biz"
+)
+
 # Function to show help
 show_help() {
   echo "Usage: $0 [MODE] [OPTIONS]"
@@ -204,24 +216,31 @@ show_help() {
   echo "Available modes:"
   echo "  -mode=sg      Skip git operations (stash and pull)"
   echo "  -mode=sm      Skip maven build operation"
+  echo "  -mode=sgm     Skip git operations AND maven build"
   echo "  -mode=sbd     Skip Dockerfile building operation (copying Dockerfiles and JARs)"
   echo "  -mode=sa      Skip all build operations - FAST DEPLOY MODE"
   echo "                (Only stop containers → remove containers → start containers)"
   echo ""
   echo "Available options:"
   echo "  -c            Enable autoCheckService after deployment"
+  echo "  -s=SERVICE    Build/deploy specific service(s) only"
+  echo "                Available services: eureka, config, upms, auth, gate, word, crawler, ai"
+  echo "                Multiple services: -s=eureka,config,upms"
+  echo "                All services: -s=all (default)"
   echo "  -help         Show this help message"
   echo ""
   echo "If no mode is specified, all operations will be executed."
   echo ""
   echo "Examples:"
-  echo "  sudo -E $0                # Full deployment (git + maven + docker build + deploy)"
-  echo "  sudo -E $0 -mode=sg       # Skip only git operations"
-  echo "  sudo -E $0 -mode=sm       # Skip only maven build"
-  echo "  sudo -E $0 -mode=sbd      # Skip only Dockerfile building"
-  echo "  sudo -E $0 -mode=sa       # FAST DEPLOY: Skip all builds, only redeploy containers"
-  echo "  sudo -E $0 -c             # Full deployment with autoCheckService"
-  echo "  sudo -E $0 -mode=sa -c    # Fast deploy with autoCheckService"
+  echo "  sudo -E $0                        # Full deployment (all services)"
+  echo "  sudo -E $0 -mode=sg               # Skip only git operations"
+  echo "  sudo -E $0 -mode=sm               # Skip only maven build"
+  echo "  sudo -E $0 -mode=sgm              # Skip git AND maven build"
+  echo "  sudo -E $0 -mode=sbd              # Skip only Dockerfile building"
+  echo "  sudo -E $0 -mode=sa               # FAST DEPLOY: Skip all builds"
+  echo "  sudo -E $0 -s=eureka,config       # Build only eureka and config services"
+  echo "  sudo -E $0 -mode=sgm -s=auth      # Skip git+maven, build only auth service"
+  echo "  sudo -E $0 -mode=sa -c            # Fast deploy with autoCheckService"
 }
 
 # Initialize variables
@@ -231,6 +250,8 @@ SKIP_GIT=false
 SKIP_MAVEN=false
 SKIP_DOCKER_BUILD=false
 FAST_DEPLOY_MODE=false
+SELECTED_SERVICES=""
+BUILD_ALL_SERVICES=true
 
 # Process all arguments
 for arg in "$@"; do
@@ -244,6 +265,12 @@ for arg in "$@"; do
       MODE="$arg"
       SKIP_MAVEN=true
       echo "⏭️  Skipping maven build operation"
+      ;;
+    -mode=sgm)
+      MODE="$arg"
+      SKIP_GIT=true
+      SKIP_MAVEN=true
+      echo "⏭️  Skipping git operations AND maven build"
       ;;
     -mode=sbd)
       MODE="$arg"
@@ -261,6 +288,13 @@ for arg in "$@"; do
       echo "   ⏭️  Maven build: SKIPPED"
       echo "   ⏭️  Docker building: SKIPPED"
       echo "   ✅ Will only: Stop → Remove → Start containers"
+      ;;
+    -s=*)
+      SELECTED_SERVICES="${arg#-s=}"
+      if [ "$SELECTED_SERVICES" != "all" ]; then
+        BUILD_ALL_SERVICES=false
+        echo "🎯 Selected services: $SELECTED_SERVICES"
+      fi
       ;;
     -c)
       ENABLE_AUTO_CHECK=true
@@ -280,6 +314,30 @@ for arg in "$@"; do
   esac
 done
 
+# Validate selected services
+if [ "$BUILD_ALL_SERVICES" = false ]; then
+  IFS=',' read -ra SERVICE_ARRAY <<< "$SELECTED_SERVICES"
+  for service in "${SERVICE_ARRAY[@]}"; do
+    if [[ ! " ${!MICROSERVICES[@]} " =~ " ${service} " ]]; then
+      echo "❌ Invalid service: $service"
+      echo "Available services: ${!MICROSERVICES[@]}"
+      exit 1
+    fi
+  done
+fi
+
+# Function to check if a service should be built
+should_build_service() {
+  local service=$1
+  if [ "$BUILD_ALL_SERVICES" = true ]; then
+    return 0
+  fi
+  if [[ ",$SELECTED_SERVICES," =~ ",$service," ]]; then
+    return 0
+  fi
+  return 1
+}
+
 # Display final configuration
 echo "=============================================="
 echo "DEPLOYMENT CONFIGURATION:"
@@ -297,6 +355,12 @@ else
   echo "🔨 MODE: FULL BUILD"
   echo "   📋 Operations: Git Pull → Maven Build → Docker Build → Deploy"
   echo "   ⏱️  Estimated time: ~10-15 minutes"
+fi
+
+if [ "$BUILD_ALL_SERVICES" = false ]; then
+  echo "🎯 Services to build: $SELECTED_SERVICES"
+else
+  echo "🎯 Services to build: ALL"
 fi
 
 if [ "$ENABLE_AUTO_CHECK" = true ]; then
@@ -334,17 +398,33 @@ else
 
   # Clean log directories efficiently (only if not in fast deploy mode)
   echo "🧹 Cleaning log directories..."
-  rm -rf "$CURRENT_DIR/docker/kiwi/eureka/logs/"* 2>/dev/null || true
-  rm -rf "$CURRENT_DIR/docker/kiwi/config/logs/"* 2>/dev/null || true
-  rm -rf "$CURRENT_DIR/docker/kiwi/upms/logs/"* 2>/dev/null || true
-  rm -rf "$CURRENT_DIR/docker/kiwi/auth/logs/"* 2>/dev/null || true
-  rm -rf "$CURRENT_DIR/docker/kiwi/gate/logs/"* 2>/dev/null || true
-  rm -rf "$CURRENT_DIR/docker/kiwi/word/logs/"* 2>/dev/null || true
-  rm -rf "$CURRENT_DIR/docker/kiwi/word/crawlerTmp/"* 2>/dev/null || true
-  rm -rf "$CURRENT_DIR/docker/kiwi/word/bizTmp/"* 2>/dev/null || true
-  rm -rf "$CURRENT_DIR/docker/kiwi/crawler/logs/"* 2>/dev/null || true
-  rm -rf "$CURRENT_DIR/docker/kiwi/ai/logs/"* 2>/dev/null || true
-  rm -rf "$CURRENT_DIR/docker/kiwi/ai/tmp/"* 2>/dev/null || true
+  if should_build_service "eureka"; then
+    rm -rf "$CURRENT_DIR/docker/kiwi/eureka/logs/"* 2>/dev/null || true
+  fi
+  if should_build_service "config"; then
+    rm -rf "$CURRENT_DIR/docker/kiwi/config/logs/"* 2>/dev/null || true
+  fi
+  if should_build_service "upms"; then
+    rm -rf "$CURRENT_DIR/docker/kiwi/upms/logs/"* 2>/dev/null || true
+  fi
+  if should_build_service "auth"; then
+    rm -rf "$CURRENT_DIR/docker/kiwi/auth/logs/"* 2>/dev/null || true
+  fi
+  if should_build_service "gate"; then
+    rm -rf "$CURRENT_DIR/docker/kiwi/gate/logs/"* 2>/dev/null || true
+  fi
+  if should_build_service "word"; then
+    rm -rf "$CURRENT_DIR/docker/kiwi/word/logs/"* 2>/dev/null || true
+    rm -rf "$CURRENT_DIR/docker/kiwi/word/crawlerTmp/"* 2>/dev/null || true
+    rm -rf "$CURRENT_DIR/docker/kiwi/word/bizTmp/"* 2>/dev/null || true
+  fi
+  if should_build_service "crawler"; then
+    rm -rf "$CURRENT_DIR/docker/kiwi/crawler/logs/"* 2>/dev/null || true
+  fi
+  if should_build_service "ai"; then
+    rm -rf "$CURRENT_DIR/docker/kiwi/ai/logs/"* 2>/dev/null || true
+    rm -rf "$CURRENT_DIR/docker/kiwi/ai/tmp/"* 2>/dev/null || true
+  fi
 
   # Maven build
   if [ "$SKIP_MAVEN" = false ]; then
@@ -367,8 +447,41 @@ else
         -Dmaven.repo.local="$ORIGINAL_HOME/.m2/repository"
     cd "$CURRENT_DIR/microservice-kiwi/"
 
-    echo "🔨 Running maven build..."
-    mvn clean install -Dmaven.test.skip=true -B -Dmaven.repo.local="$ORIGINAL_HOME/.m2/repository"
+    if [ "$BUILD_ALL_SERVICES" = true ]; then
+      echo "🔨 Running maven build for all services..."
+      mvn clean install -Dmaven.test.skip=true -B -Dmaven.repo.local="$ORIGINAL_HOME/.m2/repository"
+    else
+      echo "🔨 Running selective maven build..."
+      # Build common modules first (always needed)
+      echo "📦 Building common modules..."
+      mvn clean install -pl kiwi-common -am -Dmaven.test.skip=true -B -Dmaven.repo.local="$ORIGINAL_HOME/.m2/repository"
+
+      # Build selected services
+      IFS=',' read -ra SERVICE_ARRAY <<< "$SELECTED_SERVICES"
+      for service in "${SERVICE_ARRAY[@]}"; do
+        module="${MICROSERVICES[$service]}"
+        echo "📦 Building $service ($module)..."
+
+        # Handle special cases for nested modules
+        case "$service" in
+          "upms")
+            mvn clean install -pl kiwi-upms/kiwi-upms-biz -am -Dmaven.test.skip=true -B -Dmaven.repo.local="$ORIGINAL_HOME/.m2/repository"
+            ;;
+          "word")
+            mvn clean install -pl kiwi-word/kiwi-word-biz -am -Dmaven.test.skip=true -B -Dmaven.repo.local="$ORIGINAL_HOME/.m2/repository"
+            ;;
+          "crawler")
+            mvn clean install -pl kiwi-word/kiwi-word-crawler -am -Dmaven.test.skip=true -B -Dmaven.repo.local="$ORIGINAL_HOME/.m2/repository"
+            ;;
+          "ai")
+            mvn clean install -pl kiwi-ai/kiwi-ai-biz -am -Dmaven.test.skip=true -B -Dmaven.repo.local="$ORIGINAL_HOME/.m2/repository"
+            ;;
+          *)
+            mvn clean install -pl $module -am -Dmaven.test.skip=true -B -Dmaven.repo.local="$ORIGINAL_HOME/.m2/repository"
+            ;;
+        esac
+      done
+    fi
   else
     echo "⏭️  Maven build skipped"
   fi
@@ -384,56 +497,378 @@ else
 
     echo "📋 Moving Dockerfiles, GCP credentials and JARs..."
     echo "📂 Using Maven repository: $ORIGINAL_HOME/.m2"
-    echo "📄 Copying Dockerfiles..."
-    cp -f "$CURRENT_DIR/microservice-kiwi/kiwi-eureka/Dockerfile" "$CURRENT_DIR/docker/kiwi/eureka/"
-    cp -f "$CURRENT_DIR/microservice-kiwi/kiwi-config/Dockerfile" "$CURRENT_DIR/docker/kiwi/config/"
-    cp -f "$CURRENT_DIR/microservice-kiwi/kiwi-upms/kiwi-upms-biz/Dockerfile" "$CURRENT_DIR/docker/kiwi/upms/"
-    cp -f "$CURRENT_DIR/microservice-kiwi/kiwi-word/kiwi-word-biz/docker/biz/Dockerfile" "$CURRENT_DIR/docker/kiwi/word/biz"
-    cp -f "$CURRENT_DIR/microservice-kiwi/kiwi-word/kiwi-word-biz/docker/crawler/Dockerfile" "$CURRENT_DIR/docker/kiwi/word/crawler"
-    cp -f "$CURRENT_DIR/microservice-kiwi/kiwi-word/kiwi-word-crawler/Dockerfile" "$CURRENT_DIR/docker/kiwi/crawler/"
-    cp -f "$CURRENT_DIR/microservice-kiwi/kiwi-auth/Dockerfile" "$CURRENT_DIR/docker/kiwi/auth/"
-    cp -f "$CURRENT_DIR/microservice-kiwi/kiwi-gateway/Dockerfile" "$CURRENT_DIR/docker/kiwi/gate/"
-    cp -f "$CURRENT_DIR/microservice-kiwi/kiwi-ai/kiwi-ai-biz/docker/biz/Dockerfile" "$CURRENT_DIR/docker/kiwi/ai/biz"
-    cp -f "$CURRENT_DIR/microservice-kiwi/kiwi-ai/kiwi-ai-biz/docker/batch/Dockerfile" "$CURRENT_DIR/docker/kiwi/ai/batch"
 
-    echo "📦 Copying JAR files..."
-    cp -f "$ORIGINAL_HOME/.m2/repository/me/fengorz/kiwi-eureka/2.0/kiwi-eureka-2.0.jar" "$CURRENT_DIR/docker/kiwi/eureka/"
-    cp -f "$ORIGINAL_HOME/.m2/repository/me/fengorz/kiwi-config/2.0/kiwi-config-2.0.jar" "$CURRENT_DIR/docker/kiwi/config/"
-    cp -f "$ORIGINAL_HOME/.m2/repository/me/fengorz/kiwi-upms-biz/2.0/kiwi-upms-biz-2.0.jar" "$CURRENT_DIR/docker/kiwi/upms/"
-    cp -f "$ORIGINAL_HOME/.m2/repository/me/fengorz/kiwi-auth/2.0/kiwi-auth-2.0.jar" "$CURRENT_DIR/docker/kiwi/auth/"
-    cp -f "$ORIGINAL_HOME/.m2/repository/me/fengorz/kiwi-gateway/2.0/kiwi-gateway-2.0.jar" "$CURRENT_DIR/docker/kiwi/gate/"
-    cp -f "$ORIGINAL_HOME/.m2/repository/me/fengorz/kiwi-word-biz/2.0/kiwi-word-biz-2.0.jar" "$CURRENT_DIR/docker/kiwi/word/"
-    cp -f "$ORIGINAL_HOME/.m2/repository/me/fengorz/kiwi-word-crawler/2.0/kiwi-word-crawler-2.0.jar" "$CURRENT_DIR/docker/kiwi/crawler/"
-    cp -f "$ORIGINAL_HOME/.m2/repository/me/fengorz/kiwi-ai-biz/2.0/kiwi-ai-biz-2.0.jar" "$CURRENT_DIR/docker/kiwi/ai/biz"
-    cp -f "$ORIGINAL_HOME/.m2/repository/me/fengorz/kiwi-ai-biz/2.0/kiwi-ai-biz-2.0.jar" "$CURRENT_DIR/docker/kiwi/ai/batch"
+    if should_build_service "eureka"; then
+      echo "📄 Copying eureka files..."
+      cp -f "$CURRENT_DIR/microservice-kiwi/kiwi-eureka/Dockerfile" "$CURRENT_DIR/docker/kiwi/eureka/"
+      cp -f "$ORIGINAL_HOME/.m2/repository/me/fengorz/kiwi-eureka/2.0/kiwi-eureka-2.0.jar" "$CURRENT_DIR/docker/kiwi/eureka/"
+    fi
 
-    echo "📄 Copying GCP credential json..."
-    cp -f "$CURRENT_DIR/gcp-credentials.json" "$CURRENT_DIR/docker/kiwi/word/bizTmp"
+    if should_build_service "config"; then
+      echo "📄 Copying config files..."
+      cp -f "$CURRENT_DIR/microservice-kiwi/kiwi-config/Dockerfile" "$CURRENT_DIR/docker/kiwi/config/"
+      cp -f "$ORIGINAL_HOME/.m2/repository/me/fengorz/kiwi-config/2.0/kiwi-config-2.0.jar" "$CURRENT_DIR/docker/kiwi/config/"
+    fi
+
+    if should_build_service "upms"; then
+      echo "📄 Copying upms files..."
+      cp -f "$CURRENT_DIR/microservice-kiwi/kiwi-upms/kiwi-upms-biz/Dockerfile" "$CURRENT_DIR/docker/kiwi/upms/"
+      cp -f "$ORIGINAL_HOME/.m2/repository/me/fengorz/kiwi-upms-biz/2.0/kiwi-upms-biz-2.0.jar" "$CURRENT_DIR/docker/kiwi/upms/"
+    fi
+
+    if should_build_service "auth"; then
+      echo "📄 Copying auth files..."
+      cp -f "$CURRENT_DIR/microservice-kiwi/kiwi-auth/Dockerfile" "$CURRENT_DIR/docker/kiwi/auth/"
+      cp -f "$ORIGINAL_HOME/.m2/repository/me/fengorz/kiwi-auth/2.0/kiwi-auth-2.0.jar" "$CURRENT_DIR/docker/kiwi/auth/"
+    fi
+
+    if should_build_service "gate"; then
+      echo "📄 Copying gateway files..."
+      cp -f "$CURRENT_DIR/microservice-kiwi/kiwi-gateway/Dockerfile" "$CURRENT_DIR/docker/kiwi/gate/"
+      cp -f "$ORIGINAL_HOME/.m2/repository/me/fengorz/kiwi-gateway/2.0/kiwi-gateway-2.0.jar" "$CURRENT_DIR/docker/kiwi/gate/"
+    fi
+
+    if should_build_service "word"; then
+      echo "📄 Copying word service files..."
+      cp -f "$CURRENT_DIR/microservice-kiwi/kiwi-word/kiwi-word-biz/docker/biz/Dockerfile" "$CURRENT_DIR/docker/kiwi/word/biz"
+      cp -f "$CURRENT_DIR/microservice-kiwi/kiwi-word/kiwi-word-biz/docker/crawler/Dockerfile" "$CURRENT_DIR/docker/kiwi/word/crawler"
+      cp -f "$ORIGINAL_HOME/.m2/repository/me/fengorz/kiwi-word-biz/2.0/kiwi-word-biz-2.0.jar" "$CURRENT_DIR/docker/kiwi/word/"
+      cp -f "$CURRENT_DIR/gcp-credentials.json" "$CURRENT_DIR/docker/kiwi/word/bizTmp"
+    fi
+
+    if should_build_service "crawler"; then
+      echo "📄 Copying crawler files..."
+      cp -f "$CURRENT_DIR/microservice-kiwi/kiwi-word/kiwi-word-crawler/Dockerfile" "$CURRENT_DIR/docker/kiwi/crawler/"
+      cp -f "$ORIGINAL_HOME/.m2/repository/me/fengorz/kiwi-word-crawler/2.0/kiwi-word-crawler-2.0.jar" "$CURRENT_DIR/docker/kiwi/crawler/"
+    fi
+
+    if should_build_service "ai"; then
+      echo "📄 Copying AI service files..."
+      cp -f "$CURRENT_DIR/microservice-kiwi/kiwi-ai/kiwi-ai-biz/docker/biz/Dockerfile" "$CURRENT_DIR/docker/kiwi/ai/biz"
+      cp -f "$CURRENT_DIR/microservice-kiwi/kiwi-ai/kiwi-ai-biz/docker/batch/Dockerfile" "$CURRENT_DIR/docker/kiwi/ai/batch"
+      cp -f "$ORIGINAL_HOME/.m2/repository/me/fengorz/kiwi-ai-biz/2.0/kiwi-ai-biz-2.0.jar" "$CURRENT_DIR/docker/kiwi/ai/biz"
+      cp -f "$ORIGINAL_HOME/.m2/repository/me/fengorz/kiwi-ai-biz/2.0/kiwi-ai-biz-2.0.jar" "$CURRENT_DIR/docker/kiwi/ai/batch"
+    fi
 
   else
     echo "⏭️  Dockerfile building skipped"
   fi
 fi
 
+# Define container names mapping
+declare -A CONTAINER_NAMES=(
+    ["eureka"]="kiwi-eureka"
+    ["config"]="kiwi-config"
+    ["upms"]="kiwi-upms-biz"
+    ["auth"]="kiwi-auth"
+    ["gate"]="kiwi-gateway"
+    ["word"]="kiwi-word-biz"
+    ["crawler"]="kiwi-word-crawler"
+    ["ai"]="kiwi-ai-biz"
+)
+
+# Function to stop specific containers
+stop_selected_containers() {
+    local services="$1"
+    IFS=',' read -ra SERVICE_ARRAY <<< "$services"
+
+    for service in "${SERVICE_ARRAY[@]}"; do
+        container_name="${CONTAINER_NAMES[$service]}"
+        echo "🛑 Stopping $service container ($container_name)..."
+
+        # Check if container exists and is running
+        if docker ps -a --format '{{.Names}}' | grep -q "^${container_name}$"; then
+            docker stop "$container_name" 2>/dev/null || true
+            echo "   ✅ Stopped $container_name"
+        else
+            echo "   ℹ️  Container $container_name not found or not running"
+        fi
+    done
+}
+
+# Function to remove specific containers
+remove_selected_containers() {
+    local services="$1"
+    IFS=',' read -ra SERVICE_ARRAY <<< "$services"
+
+    for service in "${SERVICE_ARRAY[@]}"; do
+        container_name="${CONTAINER_NAMES[$service]}"
+        echo "🗑️  Removing $service container ($container_name)..."
+
+        # Check if container exists
+        if docker ps -a --format '{{.Names}}' | grep -q "^${container_name}$"; then
+            docker rm -f "$container_name" 2>/dev/null || true
+            echo "   ✅ Removed $container_name"
+        else
+            echo "   ℹ️  Container $container_name already removed"
+        fi
+    done
+}
+
+# Function to deploy specific service with Docker build and run
+deploy_single_service() {
+    local service=$1
+    local DOCKER_DIR="$CURRENT_DIR/docker/kiwi"
+
+    # Ensure Docker network exists
+    docker network create kiwi-network 2>/dev/null || true
+
+    case "$service" in
+        "eureka")
+            echo "📡 Building Eureka Service Discovery Server..."
+            if [ ! -d "$DOCKER_DIR/eureka" ]; then
+                echo "❌ Directory not found: $DOCKER_DIR/eureka"
+                return 1
+            fi
+            cd "$DOCKER_DIR/eureka"
+            docker build -t kiwi-eureka:latest .
+            docker run -d --name kiwi-eureka \
+                --network kiwi-network \
+                -p 18000:18000 \
+                -v "$DOCKER_DIR/eureka/logs:/logs" \
+                -e EUREKA_SERVER=http://kiwi-eureka:18000/eureka/ \
+                kiwi-eureka:latest
+            echo "✅ Eureka deployed successfully"
+            ;;
+
+        "config")
+            echo "⚙️ Building Config Server..."
+            if [ ! -d "$DOCKER_DIR/config" ]; then
+                echo "❌ Directory not found: $DOCKER_DIR/config"
+                return 1
+            fi
+            cd "$DOCKER_DIR/config"
+            docker build -t kiwi-config:latest .
+            docker run -d --name kiwi-config \
+                --network kiwi-network \
+                -p 18001:18001 \
+                -v "$DOCKER_DIR/config/logs:/logs" \
+                -e EUREKA_SERVER=http://kiwi-eureka:18000/eureka/ \
+                kiwi-config:latest
+            echo "✅ Config Server deployed successfully"
+            ;;
+
+        "upms")
+            echo "👤 Building UPMS Service..."
+            if [ ! -d "$DOCKER_DIR/upms" ]; then
+                echo "❌ Directory not found: $DOCKER_DIR/upms"
+                return 1
+            fi
+            cd "$DOCKER_DIR/upms"
+            docker build -t kiwi-upms:latest .
+            docker run -d --name kiwi-upms-biz \
+                --network kiwi-network \
+                -p 18002:18002 \
+                -v "$DOCKER_DIR/upms/logs:/logs" \
+                -e EUREKA_SERVER=http://kiwi-eureka:18000/eureka/ \
+                kiwi-upms:latest
+            echo "✅ UPMS deployed successfully"
+            ;;
+
+        "auth")
+            echo "🔐 Building Auth Service..."
+            if [ ! -d "$DOCKER_DIR/auth" ]; then
+                echo "❌ Directory not found: $DOCKER_DIR/auth"
+                return 1
+            fi
+            cd "$DOCKER_DIR/auth"
+            docker build -t kiwi-auth:latest .
+            docker run -d --name kiwi-auth \
+                --network kiwi-network \
+                -p 18003:18003 \
+                -v "$DOCKER_DIR/auth/logs:/logs" \
+                -e EUREKA_SERVER=http://kiwi-eureka:18000/eureka/ \
+                kiwi-auth:latest
+            echo "✅ Auth Service deployed successfully"
+            ;;
+
+        "gate")
+            echo "🌐 Building API Gateway..."
+            if [ ! -d "$DOCKER_DIR/gate" ]; then
+                echo "❌ Directory not found: $DOCKER_DIR/gate"
+                return 1
+            fi
+            cd "$DOCKER_DIR/gate"
+            docker build -t kiwi-gateway:latest .
+            docker run -d --name kiwi-gateway \
+                --network kiwi-network \
+                -p 18004:18004 \
+                -v "$DOCKER_DIR/gate/logs:/logs" \
+                -e EUREKA_SERVER=http://kiwi-eureka:18000/eureka/ \
+                kiwi-gateway:latest
+            echo "✅ API Gateway deployed successfully"
+            ;;
+
+        "word")
+            echo "📚 Building Word Service..."
+            if [ ! -d "$DOCKER_DIR/word/biz" ]; then
+                echo "❌ Directory not found: $DOCKER_DIR/word/biz"
+                return 1
+            fi
+            cd "$DOCKER_DIR/word/biz"
+            docker build -t kiwi-word-biz:latest .
+            docker run -d --name kiwi-word-biz \
+                --network kiwi-network \
+                -p 18010:18010 \
+                -v "$DOCKER_DIR/word/logs:/logs" \
+                -v "$DOCKER_DIR/word/bizTmp:/bizTmp" \
+                -e EUREKA_SERVER=http://kiwi-eureka:18000/eureka/ \
+                kiwi-word-biz:latest
+            echo "✅ Word Service deployed successfully"
+            ;;
+
+        "crawler")
+            echo "🕷️ Building Crawler Service..."
+            if [ ! -d "$DOCKER_DIR/crawler" ]; then
+                echo "❌ Directory not found: $DOCKER_DIR/crawler"
+                return 1
+            fi
+            cd "$DOCKER_DIR/crawler"
+            docker build -t kiwi-word-crawler:latest .
+            docker run -d --name kiwi-word-crawler \
+                --network kiwi-network \
+                -p 18011:18011 \
+                -v "$DOCKER_DIR/crawler/logs:/logs" \
+                -e EUREKA_SERVER=http://kiwi-eureka:18000/eureka/ \
+                kiwi-word-crawler:latest
+            echo "✅ Crawler Service deployed successfully"
+            ;;
+
+        "ai")
+            echo "🤖 Building AI Service..."
+
+            # Check if AI directories exist
+            if [ ! -d "$DOCKER_DIR/ai" ]; then
+                echo "❌ AI directory not found: $DOCKER_DIR/ai"
+                echo "Creating AI directory structure..."
+                mkdir -p "$DOCKER_DIR/ai/biz" "$DOCKER_DIR/ai/batch" "$DOCKER_DIR/ai/logs" "$DOCKER_DIR/ai/tmp"
+            fi
+
+            # Build AI Business Logic
+            if [ -d "$DOCKER_DIR/ai/biz" ] && [ -f "$DOCKER_DIR/ai/biz/Dockerfile" ]; then
+                echo "   → Building AI Business Logic component..."
+                cd "$DOCKER_DIR/ai/biz"
+                docker build -t kiwi-ai-biz:latest .
+
+                echo "   → Starting AI Business Logic container..."
+                docker run -d --name kiwi-ai-biz \
+                    --network kiwi-network \
+                    -p 18015:18015 \
+                    -v "$DOCKER_DIR/ai/logs:/logs" \
+                    -v "$DOCKER_DIR/ai/tmp:/ai-tmp" \
+                    -e EUREKA_SERVER=http://kiwi-eureka:18000/eureka/ \
+                    -e TZ=Pacific/Auckland \
+                    kiwi-ai-biz:latest
+            else
+                echo "⚠️  AI Business Logic Dockerfile not found at $DOCKER_DIR/ai/biz/Dockerfile"
+            fi
+
+            # Build AI Batch
+            if [ -d "$DOCKER_DIR/ai/batch" ] && [ -f "$DOCKER_DIR/ai/batch/Dockerfile" ]; then
+                echo "   → Building AI Batch component..."
+                cd "$DOCKER_DIR/ai/batch"
+                docker build -t kiwi-ai-batch:latest .
+
+                echo "   → Starting AI Batch container..."
+                docker run -d --name kiwi-ai-batch \
+                    --network kiwi-network \
+                    -p 18016:18016 \
+                    -v "$DOCKER_DIR/ai/logs:/logs" \
+                    -v "$DOCKER_DIR/ai/tmp:/ai-tmp" \
+                    -e EUREKA_SERVER=http://kiwi-eureka:18000/eureka/ \
+                    -e TZ=Pacific/Auckland \
+                    kiwi-ai-batch:latest
+            else
+                echo "⚠️  AI Batch Dockerfile not found at $DOCKER_DIR/ai/batch/Dockerfile"
+            fi
+
+            echo "✅ AI Service deployment completed"
+            ;;
+
+        *)
+            echo "❌ Unknown service: $service"
+            return 1
+            ;;
+    esac
+
+    # Return to original directory
+    cd "$CURRENT_DIR/microservice-kiwi/"
+}
+
+# Function to perform selective deployment
+selective_deployment() {
+    local services="$1"
+
+    echo "=============================================="
+    echo "🎯 SELECTIVE SERVICE DEPLOYMENT"
+    echo "=============================================="
+    echo "Services to deploy: $services"
+    echo "Working directory: $CURRENT_DIR"
+    echo "=============================================="
+
+    # Deploy each selected service
+    IFS=',' read -ra SERVICE_ARRAY <<< "$services"
+    for service in "${SERVICE_ARRAY[@]}"; do
+        echo ""
+        deploy_single_service "$service"
+    done
+
+    echo ""
+    echo "=============================================="
+    echo "🎉 SELECTIVE DEPLOYMENT COMPLETED"
+    echo "Deployed services: $services"
+    echo "=============================================="
+
+    # Show running containers
+    echo ""
+    echo "Running containers:"
+    docker ps --filter "name=kiwi-" --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
+}
+
 # Core deployment operations (always executed)
 echo "=============================================="
 echo "🚀 STARTING CONTAINER DEPLOYMENT:"
 echo "=============================================="
 
-echo "🛑 Stopping all services..."
-"$CURRENT_DIR/microservice-kiwi/kiwi-deploy/docker/stopAll.sh" "$MODE"
+# Stop services (either selected or all)
+if [ "$BUILD_ALL_SERVICES" = true ]; then
+  echo "🛑 Stopping all services..."
+  "$CURRENT_DIR/microservice-kiwi/kiwi-deploy/docker/stopAll.sh" "$MODE"
+else
+  echo "🛑 Stopping selected services: $SELECTED_SERVICES"
+  stop_selected_containers "$SELECTED_SERVICES"
+fi
 
-echo "🧹 Cleaning up Docker resources..."
-echo "🗑️  Removing dangling images..."
-docker image prune -f >/dev/null 2>&1 || true
-echo "🌐 Removing unused networks..."
-docker network prune -f >/dev/null 2>&1 || true
-echo "📦 Removing unused volumes..."
-docker volume prune -f >/dev/null 2>&1 || true
-echo "✅ Docker cleanup completed"
+# Remove containers
+if [ "$BUILD_ALL_SERVICES" = true ]; then
+  echo "🗑️  Removing all containers..."
+  # Call existing script or implement full removal
+  docker ps -a | grep "kiwi-" | awk '{print $1}' | xargs -r docker rm -f 2>/dev/null || true
+else
+  echo "🗑️  Removing selected containers: $SELECTED_SERVICES"
+  remove_selected_containers "$SELECTED_SERVICES"
+fi
 
-echo "🚀 Starting auto deployment..."
-"$CURRENT_DIR/microservice-kiwi/kiwi-deploy/docker/autoDeploy.sh" "$MODE"
+# Clean up Docker resources (only if building all services)
+if [ "$BUILD_ALL_SERVICES" = true ]; then
+  echo "🧹 Cleaning up Docker resources..."
+  echo "🗑️  Removing dangling images..."
+  docker image prune -f >/dev/null 2>&1 || true
+  echo "🌐 Removing unused networks..."
+  docker network prune -f >/dev/null 2>&1 || true
+  echo "📦 Removing unused volumes..."
+  docker volume prune -f >/dev/null 2>&1 || true
+  echo "✅ Docker cleanup completed"
+fi
+
+# Build Docker images and deploy
+if [ "$BUILD_ALL_SERVICES" = true ]; then
+  echo "🚀 Starting auto deployment for all services..."
+  "$CURRENT_DIR/microservice-kiwi/kiwi-deploy/docker/autoDeploy.sh" "$MODE"
+else
+  # Selective deployment
+  selective_deployment "$SELECTED_SERVICES"
+fi
 
 # AutoCheck Service Logic - Added at the end as requested
 echo "=============================================="
@@ -466,6 +901,11 @@ if [ "$FAST_DEPLOY_MODE" = true ]; then
   echo "🚀 FAST DEPLOYMENT COMPLETED SUCCESSFULLY!"
   echo "⚡ Total time saved by skipping build operations"
 else
-  echo "🎉 FULL DEPLOYMENT COMPLETED SUCCESSFULLY!"
+  if [ "$BUILD_ALL_SERVICES" = false ]; then
+    echo "🎉 SELECTIVE DEPLOYMENT COMPLETED SUCCESSFULLY!"
+    echo "✅ Deployed services: $SELECTED_SERVICES"
+  else
+    echo "🎉 FULL DEPLOYMENT COMPLETED SUCCESSFULLY!"
+  fi
 fi
 echo "=============================================="

@@ -1,35 +1,44 @@
-FROM blackbelt/oraclejdk8
+# Use Eclipse Temurin JDK 8 (Ubuntu/Debian based)
+FROM eclipse-temurin:8-jdk
 
-USER root
+# Set working directory
+WORKDIR /app
 
-# Create necessary directories and install dependencies
-RUN mkdir /logs /ai-tmp \
-    && apk update && apk upgrade \
-    && apk add --no-cache git bash curl build-base libffi-dev openssl-dev \
-                         bzip2-dev zlib-dev xz-dev readline-dev sqlite-dev tk-dev \
-                         ffmpeg
+# Create necessary directories and install minimal dependencies for yt-dlp
+RUN mkdir -p /logs /ai-tmp \
+    && apt-get update \
+    && apt-get install -y --no-install-recommends \
+        python3 \
+        python3-pip \
+        python3-venv \
+        ffmpeg \
+        curl \
+        wget \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
-# Install Pyenv
-ENV PYENV_ROOT="/root/.pyenv"
-ENV PATH="$PYENV_ROOT/bin:$PATH"
-
-RUN curl -fsSL https://pyenv.run | bash \
-    && echo 'export PYENV_ROOT="/root/.pyenv"' >> /root/.bashrc \
-    && echo 'export PATH="$PYENV_ROOT/bin:$PATH"' >> /root/.bashrc \
-    && echo 'eval "$(pyenv init --path)"' >> /root/.bashrc \
-    && echo 'eval "$(pyenv init -)"' >> /root/.bashrc
-
-# Install Python via Pyenv
-RUN /bin/bash -c "source /root/.bashrc && pyenv install -v 3.9.21"
-RUN pyenv global 3.9
+# Create and activate virtual environment
+ENV VIRTUAL_ENV=/opt/venv
+RUN python3 -m venv $VIRTUAL_ENV
+ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
 # Install yt-dlp
 ADD yt-dlp_linux yt-dlp_linux
 
 RUN chmod 777 yt-dlp_linux
 
-# Add application JAR file
-ADD kiwi-ai-biz-2.0.jar app.jar
+# Copy the JAR file
+COPY kiwi-ai-biz-2.0.jar /app/app.jar
 
-# Set the entry point
-ENTRYPOINT ["java", "-jar", "-Xmx1024m", "-Duser.timezone=GMT+12", "-Dspring.application.name=kiwi-ai-biz", "-Dspring.profiles.active=prod", "-Dlogging.file.name=/logs/ai-biz.log", "/app.jar"]
+# Set environment variables
+ENV JAVA_OPTS="-Xms512m -Xmx2048m -XX:+UseG1GC -XX:MaxGCPauseMillis=200"
+ENV TZ=Pacific/Auckland
+
+# Create volume mount points
+VOLUME ["/logs", "/ai-tmp"]
+
+# Expose port
+EXPOSE 18015
+
+# Run the application
+ENTRYPOINT ["sh", "-c", "java ${JAVA_OPTS} -jar /app/app.jar"]

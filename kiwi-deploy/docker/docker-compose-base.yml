@@ -13,7 +13,7 @@ services:
       - ~/docker/kiwi/eureka/logs:/logs:Z
     network_mode: "host"
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8762/health"]
+      test: ["CMD", "curl", "-f", "http://localhost:8762/actuator/health"]
       interval: 30s
       timeout: 10s
       retries: 4
@@ -33,18 +33,8 @@ services:
     depends_on:
       - kiwi-eureka
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:7771/health"]
+      test: ["CMD", "curl", "-f", "http://localhost:7771/actuator/health"]
       interval: 30s
       timeout: 10s
       retries: 4
       start_period: 3m
-    entrypoint:
-      - /bin/bash
-      - -c
-      - |
-        echo "Waiting for kiwi-eureka to be healthy..."
-        until curl -sf http://localhost:8762/health; do
-          sleep 5
-        done
-        echo "kiwi-eureka is healthy. Starting kiwi-config..."
-        exec your-original-start-command

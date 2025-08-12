@@ -1633,8 +1633,12 @@ execute_step_20_elasticsearch_setup() {
         print_info "Waiting for Elasticsearch to start..."
         sleep 60
         print_info "Creating Elasticsearch users..."
-        echo "$ES_ROOT_PASSWORD" | docker exec -i kiwi-es elasticsearch-users useradd root -r superuser -p
-        echo "$ES_USER_PASSWORD" | docker exec -i kiwi-es elasticsearch-users useradd "$ES_USER_NAME" -r superuser -p
+        # Use correct binary path and run as the 'elasticsearch' user. Pass password via -p.
+        # If the user already exists, reset the password instead of failing.
+        docker exec -u elasticsearch kiwi-es /usr/share/elasticsearch/bin/elasticsearch-users useradd root -p "$ES_ROOT_PASSWORD" -r superuser \
+          || docker exec -u elasticsearch kiwi-es /usr/share/elasticsearch/bin/elasticsearch-users passwd root -p "$ES_ROOT_PASSWORD"
+        docker exec -u elasticsearch kiwi-es /usr/share/elasticsearch/bin/elasticsearch-users useradd "$ES_USER_NAME" -p "$ES_USER_PASSWORD" -r superuser \
+          || docker exec -u elasticsearch kiwi-es /usr/share/elasticsearch/bin/elasticsearch-users passwd "$ES_USER_NAME" -p "$ES_USER_PASSWORD"
         docker exec kiwi-es curl -X PUT "localhost:9200/kiwi_vocabulary" \
             -u "root:$ES_ROOT_PASSWORD" \
             -H "Content-Type: application/json" \

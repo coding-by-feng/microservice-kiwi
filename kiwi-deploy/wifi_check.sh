@@ -52,6 +52,14 @@ function check_wifi_connected() {
   return 0
 }
 
+function set_google_dns() {
+  local ssid=$1
+  echo "$(date): Setting Google DNS for connection: $ssid"
+  nmcli connection modify "$ssid" ipv4.dns "8.8.8.8 8.8.4.4"
+  nmcli connection modify "$ssid" ipv4.ignore-auto-dns yes
+  nmcli connection up "$ssid"
+}
+
 if [ ! -f "$CONFIG_FILE" ]; then
   echo "Config file not found, using default Wi-Fi credentials."
   WIFI_SSID="$DEFAULT_SSID"
@@ -68,7 +76,11 @@ until connect_wifi "$WIFI_SSID" "$WIFI_PASS" && sleep 5 && check_wifi_connected;
   sleep 10
 done
 
-echo "$(date): Wi-Fi connected successfully to $WIFI_SSID. Starting monitoring..."
+echo "$(date): Wi-Fi connected successfully to $WIFI_SSID. Setting DNS..."
+
+set_google_dns "$WIFI_SSID"
+
+echo "$(date): Starting monitoring..."
 
 while true; do
   if check_wifi_connected; then
@@ -76,6 +88,8 @@ while true; do
   else
     echo "$(date): Wi-Fi disconnected. Trying to reconnect..."
     connect_wifi "$WIFI_SSID" "$WIFI_PASS"
+    # After reconnecting, reset DNS again
+    set_google_dns "$WIFI_SSID"
   fi
-  sleep 30
+  sleep 20
 done

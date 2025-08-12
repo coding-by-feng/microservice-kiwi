@@ -806,12 +806,74 @@ selective_deployment() {
     echo "Working directory: $CURRENT_DIR"
     echo "=============================================="
 
-    # Deploy each selected service
-    IFS=',' read -ra SERVICE_ARRAY <<< "$services"
-    for service in "${SERVICE_ARRAY[@]}"; do
-        echo ""
-        deploy_single_service "$service"
-    done
+    # Prefer docker compose to (re)create only the requested services
+    # Fallback to legacy per-service docker build/run if docker compose is unavailable
+    if command -v docker-compose >/dev/null 2>&1; then
+        COMPOSE_CMD="docker-compose"
+    elif docker compose version >/dev/null 2>&1; then
+        COMPOSE_CMD="docker compose"
+    else
+        COMPOSE_CMD=""
+    fi
+
+    if [ -n "$COMPOSE_CMD" ]; then
+        # Map short service keys to compose service names
+        declare -A COMPOSE_SERVICES=(
+            [eureka]="kiwi-eureka"
+            [config]="kiwi-config"
+            [upms]="kiwi-upms"
+            [auth]="kiwi-auth"
+            [gate]="kiwi-gate"
+            [word]="kiwi-word-biz"
+            [crawler]="kiwi-crawler"
+            [ai]="kiwi-ai-biz"
+        )
+
+        # Build list of compose services to (re)create
+        IFS=',' read -ra SERVICE_ARRAY <<< "$services"
+        COMPOSE_TARGETS=()
+        for service in "${SERVICE_ARRAY[@]}"; do
+            target="${COMPOSE_SERVICES[$service]}"
+            if [ -n "$target" ]; then
+                COMPOSE_TARGETS+=("$target")
+            else
+                echo "⚠️  Unknown service key '$service' for docker compose; skipping"
+            fi
+        done
+
+        if [ ${#COMPOSE_TARGETS[@]} -eq 0 ]; then
+            echo "❌ No valid services to deploy via docker compose"
+            return 1
+        fi
+
+        # Use the base + service compose files if present
+        COMPOSE_FILES=(
+            "$CURRENT_DIR/microservice-kiwi/kiwi-deploy/docker/docker-compose-base.yml"
+            "$CURRENT_DIR/microservice-kiwi/kiwi-deploy/docker/docker-compose-service.yml"
+        )
+
+        COMPOSE_FILE_ARGS=()
+        for f in "${COMPOSE_FILES[@]}"; do
+            if [ -f "$f" ]; then
+                COMPOSE_FILE_ARGS+=( -f "$f" )
+            fi
+        done
+
+        echo "🧩 Using docker compose for selective redeploy..."
+        echo "   Files: ${COMPOSE_FILE_ARGS[*]}"
+        echo "   Targets: ${COMPOSE_TARGETS[*]}"
+
+        # Recreate only selected services (no implicit dependencies unless present)
+        $COMPOSE_CMD "${COMPOSE_FILE_ARGS[@]}" up -d --force-recreate --remove-orphans "${COMPOSE_TARGETS[@]}"
+    else
+        echo "ℹ️  docker compose not found; falling back to legacy per-service build/run"
+        # Legacy path: Deploy each selected service using docker build/run
+        IFS=',' read -ra SERVICE_ARRAY <<< "$services"
+        for service in "${SERVICE_ARRAY[@]}"; do
+            echo ""
+            deploy_single_service "$service"
+        done
+    fi
 
     echo ""
     echo "=============================================="

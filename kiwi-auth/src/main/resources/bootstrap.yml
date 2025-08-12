@@ -35,3 +35,9 @@ eureka:
   security:
     username: ENC(SKdYEg+E1hatfznKqx4LcBiqYnYDcXW7)
     password: ENC(ceDAameujB+jXutTPYZUe7NW7P8WoRsm)
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: 'health'

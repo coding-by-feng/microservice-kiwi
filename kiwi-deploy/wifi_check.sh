@@ -1,6 +1,17 @@
 #!/bin/bash
 
+LOG_FILE="$HOME/wifi_check.log"
 CONFIG_FILE="$HOME/.wifi_check_config"
+
+# Check if script is already running under nohup (child)
+if [ "$1" != "nohup-child" ]; then
+  echo "Starting script in background with nohup, logging to $LOG_FILE"
+  nohup "$0" nohup-child > "$LOG_FILE" 2>&1 &
+  echo "Script is running in background (PID $!). Logs: $LOG_FILE"
+  exit 0
+fi
+
+# The rest of your script runs here as the nohup-child
 
 DEFAULT_SSID="SPARK-P8EJZP"
 DEFAULT_PASS="JoyfulEmuUU58?"

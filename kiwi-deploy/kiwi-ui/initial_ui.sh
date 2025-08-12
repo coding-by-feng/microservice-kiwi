@@ -3,9 +3,17 @@
 # Script to update nginx configuration in kiwi-ui container
 # This adds the proxy configuration for microservices without SSL
 
-echo "Updating nginx configuration in kiwi-ui container..."
+read -p "Enter the microservice host (e.g., kiwi-microservice): " MICROSERVICE_HOST
 
-# First, let's backup the current configuration
+if [ -z "$MICROSERVICE_HOST" ]; then
+    echo "✗ No host provided. Exiting."
+    exit 1
+fi
+
+echo "Updating nginx configuration in kiwi-ui container..."
+echo "Using microservice host: $MICROSERVICE_HOST"
+
+# Backup current configuration
 docker exec kiwi-ui cp /etc/nginx/nginx.conf /etc/nginx/nginx.conf.backup
 
 # Install vi editor in the container if not present
@@ -13,7 +21,7 @@ docker exec kiwi-ui apt-get update
 docker exec kiwi-ui apt-get install -y vim
 
 # Create the new nginx configuration
-docker exec kiwi-ui tee /etc/nginx/nginx.conf > /dev/null << 'EOF'
+cat <<EOF | docker exec -i kiwi-ui tee /etc/nginx/nginx.conf > /dev/null
 user nginx;
 worker_processes auto;
 error_log /var/log/nginx/error.log debug;
@@ -27,9 +35,9 @@ http {
     include /etc/nginx/mime.types;
     default_type application/octet-stream;
 
-    log_format main '$remote_addr - $remote_user [$time_local] "$request" '
-                    '$status $body_bytes_sent "$http_referer" '
-                    '"$http_user_agent" "$http_x_forwarded_for"';
+    log_format main '\$remote_addr - \$remote_user [\$time_local] "\$request" '
+                    '\$status \$body_bytes_sent "\$http_referer" '
+                    '"\$http_user_agent" "\$http_x_forwarded_for"';
 
     access_log /var/log/nginx/access.log main;
     sendfile on;
@@ -42,59 +50,53 @@ http {
         listen 80;
         server_name localhost kason-pi kason-pi.local;
 
-        # Serve static files
         location / {
             root /usr/share/nginx/html;
             index index.html index.htm;
         }
 
-        # Proxy configuration for auth service
         location /auth {
-            proxy_pass http://kiwi-microservice:9991;
-            proxy_set_header Host $host;
-            proxy_set_header X-Real-IP $remote_addr;
-            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-            proxy_set_header X-Forwarded-Proto $scheme;
+            proxy_pass http://$MICROSERVICE_HOST:9991;
+            proxy_set_header Host \$host;
+            proxy_set_header X-Real-IP \$remote_addr;
+            proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto \$scheme;
         }
 
-        # Proxy configuration for word business service
         location /wordBiz {
-            proxy_pass http://kiwi-microservice:9991;
-            proxy_set_header Host $host;
-            proxy_set_header X-Real-IP $remote_addr;
-            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-            proxy_set_header X-Forwarded-Proto $scheme;
+            proxy_pass http://$MICROSERVICE_HOST:9991;
+            proxy_set_header Host \$host;
+            proxy_set_header X-Real-IP \$remote_addr;
+            proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto \$scheme;
         }
 
-        # Proxy configuration for code service
         location /code {
-            proxy_pass http://kiwi-microservice:9991;
-            proxy_set_header Host $host;
-            proxy_set_header X-Real-IP $remote_addr;
-            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-            proxy_set_header X-Forwarded-Proto $scheme;
+            proxy_pass http://$MICROSERVICE_HOST:9991;
+            proxy_set_header Host \$host;
+            proxy_set_header X-Real-IP \$remote_addr;
+            proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto \$scheme;
         }
 
-        # Proxy configuration for admin service
         location /admin {
-            proxy_pass http://kiwi-microservice:9991;
-            proxy_set_header Host $host;
-            proxy_set_header X-Real-IP $remote_addr;
-            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-            proxy_set_header X-Forwarded-Proto $scheme;
+            proxy_pass http://$MICROSERVICE_HOST:9991;
+            proxy_set_header Host \$host;
+            proxy_set_header X-Real-IP \$remote_addr;
+            proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto \$scheme;
         }
 
         location /ai-biz {
-            proxy_pass http://kiwi-microservice:9991;
-	    proxy_http_version 1.1;
-	    proxy_set_header Upgrade $http_upgrade;
-	    proxy_set_header Connection "upgrade";
-	    proxy_set_header Host $host;
-	    proxy_set_header X-Real-IP $remote_addr;
-	    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-	    proxy_set_header X-Forwarded-Proto $scheme;
+            proxy_pass http://$MICROSERVICE_HOST:9991;
+            proxy_http_version 1.1;
+            proxy_set_header Upgrade \$http_upgrade;
+            proxy_set_header Connection "upgrade";
+            proxy_set_header Host \$host;
+            proxy_set_header X-Real-IP \$remote_addr;
+            proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto \$scheme;
         }
-
     }
 }
 EOF
@@ -112,15 +114,14 @@ if [ $? -eq 0 ]; then
 
     echo "✓ Nginx configuration updated successfully!"
     echo ""
-    echo "The following proxy routes are now configured:"
-    echo "  - /auth      -> http://kiwi-microservice:9991"
-    echo "  - /wordBiz   -> http://kiwi-microservice:9991"
-    echo "  - /code      -> http://kiwi-microservice:9991"
-    echo "  - /admin     -> http://kiwi-microservice:9991"
-    echo "  - /health    -> Health check endpoint"
+    echo "The following proxy routes are now configured with host: $MICROSERVICE_HOST"
+    echo "  - /auth      -> http://$MICROSERVICE_HOST:9991"
+    echo "  - /wordBiz   -> http://$MICROSERVICE_HOST:9991"
+    echo "  - /code      -> http://$MICROSERVICE_HOST:9991"
+    echo "  - /admin     -> http://$MICROSERVICE_HOST:9991"
     echo ""
     echo "You can access the application at: http://localhost:80"
-    echo "Or at: http://$(hostname -I | awk '{print $1}'):80"
+    echo "Or at: http://\$(hostname -I | awk '{print \$1}'):80"
 else
     echo "✗ Nginx configuration test failed"
     echo "Restoring backup configuration..."

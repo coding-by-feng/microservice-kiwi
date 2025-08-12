@@ -3,7 +3,6 @@
 LOG_FILE="$HOME/wifi_check.log"
 CONFIG_FILE="$HOME/.wifi_check_config"
 
-# Self-launch with nohup if not already
 if [ "$1" != "nohup-child" ]; then
   echo "Starting script in background with nohup, logging to $LOG_FILE"
   nohup "$0" nohup-child > "$LOG_FILE" 2>&1 &
@@ -19,12 +18,15 @@ function connect_wifi() {
   local password=$2
   echo "$(date): Trying to connect to Wi-Fi: $ssid"
 
-  nmcli connection show "$ssid" &>/dev/null
-  if [ $? -ne 0 ]; then
-    nmcli dev wifi connect "$ssid" password "$password"
-  else
-    nmcli connection up "$ssid"
+  # Remove old connection if exists
+  local old_conn
+  old_conn=$(nmcli -t -f NAME,TYPE connection show | grep "^$ssid:wifi$" | cut -d: -f1)
+  if [ -n "$old_conn" ]; then
+    echo "$(date): Removing old connection profile: $old_conn"
+    nmcli connection delete "$old_conn"
   fi
+
+  nmcli dev wifi connect "$ssid" password "$password"
 }
 
 function check_wifi_connected() {
@@ -61,7 +63,6 @@ else
   WIFI_PASS=$(sed -n '2p' "$CONFIG_FILE")
 fi
 
-# Keep trying to connect until successful
 until connect_wifi "$WIFI_SSID" "$WIFI_PASS" && sleep 5 && check_wifi_connected; do
   echo "$(date): Initial connection failed, retrying in 10 seconds..."
   sleep 10

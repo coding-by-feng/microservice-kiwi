@@ -6,8 +6,8 @@ services:
       - KIWI_ENC_PASSWORD=${KIWI_ENC_PASSWORD}
       - DB_IP=${DB_IP}
     volumes:
-      - ~/kiwi/word/logs:/logs:Z
-      - ~/kiwi/word/bizTmp:/wordTmp:Z
+      - ~/docker/kiwi/word/logs:/logs:Z
+      - ~/docker/kiwi/word/bizTmp:/wordTmp:Z
     network_mode: "host"
   kiwi-crawler:
     image: kiwi-crawler:2.0
@@ -17,8 +17,8 @@ services:
       - KIWI_ENC_PASSWORD=${KIWI_ENC_PASSWORD}
       - DB_IP=${DB_IP}
     volumes:
-      - ~/kiwi/crawler/logs:/logs:Z
-      - ~/kiwi/crawler/tmp:/crawlerTmp:Z
+      - ~/docker/kiwi/crawler/logs:/logs:Z
+      - ~/docker/kiwi/crawler/tmp:/crawlerTmp:Z
     network_mode: "host"
     depends_on:
       - kiwi-word-biz

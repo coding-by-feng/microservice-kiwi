@@ -6,7 +6,7 @@ services:
       - KIWI_ENC_PASSWORD=${KIWI_ENC_PASSWORD}
       - DB_IP=${DB_IP}
     volumes:
-      - ~/kiwi/gate/logs:/logs:Z
+      - ~/docker/kiwi/gate/logs:/logs:Z
     network_mode: "host"
   kiwi-upms:
     image: kiwi-upms:2.0
@@ -15,7 +15,7 @@ services:
       - KIWI_ENC_PASSWORD=${KIWI_ENC_PASSWORD}
       - DB_IP=${DB_IP}
     volumes:
-      - ~/kiwi/upms/logs:/logs:Z
+      - ~/docker/kiwi/upms/logs:/logs:Z
     network_mode: "host"
   kiwi-auth:
     image: kiwi-auth:2.0
@@ -29,7 +29,7 @@ services:
       - GOOGLE_OAUTH2_REDIRECT_URI=${GOOGLE_OAUTH2_REDIRECT_URI}
       - HOME_PAGE=${HOME_PAGE}
     volumes:
-      - ~/kiwi/auth/logs:/logs:Z
+      - ~/docker/kiwi/auth/logs:/logs:Z
     network_mode: "host"
   kiwi-word-biz:
     image: kiwi-word-biz:2.0
@@ -39,8 +39,8 @@ services:
       - DB_IP=${DB_IP}
       - GOOGLE_APPLICATION_CREDENTIALS=${GOOGLE_APPLICATION_CREDENTIALS}
     volumes:
-      - ~/kiwi/word/logs:/logs:Z
-      - ~/kiwi/word/bizTmp:/wordTmp:Z
+      - ~/docker/kiwi/word/logs:/logs:Z
+      - ~/docker/kiwi/word/bizTmp:/wordTmp:Z
     network_mode: "host"
     depends_on:
       - kiwi-gate
@@ -52,8 +52,8 @@ services:
       - DB_IP=${DB_IP}
       - GROK_API_KEY=${GROK_API_KEY}
     volumes:
-      - ~/kiwi/ai/logs:/logs:Z
-      - ~/kiwi/ai/tmp:/ai-tmp:Z
+      - ~/docker/kiwi/ai/logs:/logs:Z
+      - ~/docker/kiwi/ai/tmp:/ai-tmp:Z
     network_mode: "host"
     depends_on:
       - kiwi-gate
@@ -64,8 +64,8 @@ services:
       - KIWI_ENC_PASSWORD=${KIWI_ENC_PASSWORD}
       - DB_IP=${DB_IP}
     volumes:
-      - ~/kiwi/crawler/logs:/logs:Z
-      - ~/kiwi/crawler/tmp:/crawlerTmp:Z
+      - ~/docker/kiwi/crawler/logs:/logs:Z
+      - ~/docker/kiwi/crawler/tmp:/crawlerTmp:Z
     network_mode: "host"
     depends_on:
       - kiwi-gate

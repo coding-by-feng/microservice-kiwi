@@ -1,3 +1,5 @@
+version: "3.8"
+
 services:
   kiwi-gate:
     image: kiwi-gate:2.0
@@ -24,12 +26,24 @@ services:
     volumes:
       - ~/docker/kiwi/upms/logs:/logs:Z
     network_mode: "host"
+    depends_on:
+      - kiwi-gate
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:4001/health"]
       interval: 30s
       timeout: 10s
       retries: 4
       start_period: 4m
+    entrypoint:
+      - /bin/bash
+      - -c
+      - |
+        echo "Waiting for kiwi-gate to be healthy..."
+        until curl -sf http://localhost:9991/health; do
+          sleep 5
+        done
+        echo "kiwi-gate is healthy. Starting kiwi-upms..."
+        exec your-original-start-command
 
   kiwi-auth:
     image: kiwi-auth:2.0
@@ -37,7 +51,6 @@ services:
     environment:
       - KIWI_ENC_PASSWORD=${KIWI_ENC_PASSWORD}
       - DB_IP=${DB_IP}
-      # Google OAuth2 Configuration
       - GOOGLE_OAUTH2_CLIENT_ID=${GOOGLE_OAUTH2_CLIENT_ID}
       - GOOGLE_OAUTH2_CLIENT_SECRET=${GOOGLE_OAUTH2_CLIENT_SECRET}
       - GOOGLE_OAUTH2_REDIRECT_URI=${GOOGLE_OAUTH2_REDIRECT_URI}
@@ -45,12 +58,24 @@ services:
     volumes:
       - ~/docker/kiwi/auth/logs:/logs:Z
     network_mode: "host"
+    depends_on:
+      - kiwi-upms
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:3001/health"]
       interval: 30s
       timeout: 10s
       retries: 4
       start_period: 4m
+    entrypoint:
+      - /bin/bash
+      - -c
+      - |
+        echo "Waiting for kiwi-upms to be healthy..."
+        until curl -sf http://localhost:4001/health; do
+          sleep 5
+        done
+        echo "kiwi-upms is healthy. Starting kiwi-auth..."
+        exec your-original-start-command
 
   kiwi-word-biz:
     image: kiwi-word-biz:2.0
@@ -63,14 +88,24 @@ services:
       - ~/docker/kiwi/word/logs:/logs:Z
       - ~/docker/kiwi/word/bizTmp:/wordTmp:Z
     network_mode: "host"
+    depends_on:
+      - kiwi-auth
     healthcheck:
       test: ["CMD", "pgrep", "-f", "kiwi-word-biz"]
       interval: 30s
       timeout: 10s
       retries: 4
       start_period: 4m
-    depends_on:
-      - kiwi-gate
+    entrypoint:
+      - /bin/bash
+      - -c
+      - |
+        echo "Waiting for kiwi-auth to be healthy..."
+        until curl -sf http://localhost:3001/health; do
+          sleep 5
+        done
+        echo "kiwi-auth is healthy. Starting kiwi-word-biz..."
+        exec your-original-start-command
 
   kiwi-ai-biz:
     image: kiwi-ai-biz:2.0
@@ -83,14 +118,24 @@ services:
       - ~/docker/kiwi/ai/logs:/logs:Z
       - ~/docker/kiwi/ai/tmp:/ai-tmp:Z
     network_mode: "host"
+    depends_on:
+      - kiwi-word-biz
     healthcheck:
       test: ["CMD", "pgrep", "-f", "kiwi-ai-biz"]
       interval: 30s
       timeout: 10s
       retries: 4
       start_period: 4m
-    depends_on:
-      - kiwi-gate
+    entrypoint:
+      - /bin/bash
+      - -c
+      - |
+        echo "Waiting for kiwi-word-biz to be healthy..."
+        until pgrep -f kiwi-word-biz >/dev/null; do
+          sleep 5
+        done
+        echo "kiwi-word-biz is healthy. Starting kiwi-ai-biz..."
+        exec your-original-start-command
 
   kiwi-crawler:
     image: kiwi-crawler:2.0
@@ -102,12 +147,21 @@ services:
       - ~/docker/kiwi/crawler/logs:/logs:Z
       - ~/docker/kiwi/crawler/tmp:/crawlerTmp:Z
     network_mode: "host"
+    depends_on:
+      - kiwi-ai-biz
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:6001/health"]
       interval: 30s
       timeout: 10s
       retries: 4
       start_period: 4m
-    depends_on:
-      - kiwi-gate
-      - kiwi-word-biz
+    entrypoint:
+      - /bin/bash
+      - -c
+      - |
+        echo "Waiting for kiwi-ai-biz to be healthy..."
+        until pgrep -f kiwi-ai-biz >/dev/null; do
+          sleep 5
+        done
+        echo "kiwi-ai-biz is healthy. Starting kiwi-crawler..."
+        exec your-original-start-command

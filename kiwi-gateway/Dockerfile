@@ -1,4 +1,4 @@
-FROM eclipse-temurin:8-jdk
+FROM openjdk:8-jdk-alpine
 RUN mkdir /logs
 RUN apk update && apk upgrade
 RUN apk add --no-cache ttf-dejavu

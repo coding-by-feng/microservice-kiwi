@@ -65,6 +65,61 @@ public class YouTuBeController {
         }
     }
 
+    /**
+     * Download the translated/retouched subtitles as a .txt file.
+     * The file content is identical to the response from /subtitles/translated.
+     */
+    @GetMapping("/subtitles/translated/download")
+    public ResponseEntity<StreamingResponseBody> downloadTranslatedSubtitlesAsTxt(
+            @RequestParam("url") String videoUrl,
+            @RequestParam(value = "language", required = false) String language) {
+        try {
+            String decodedUrl = WebTools.decode(videoUrl);
+
+            // Build content using the same logic as /subtitles/translated
+            YtbSubtitlesResult ytbSubtitlesResult = youTuBeHelper.downloadSubtitles(decodedUrl);
+            String content = buildTranslatedOrRetouchedSubtitles(decodedUrl, language, ytbSubtitlesResult);
+            if (content == null) {
+                content = GlobalConstants.EMPTY;
+            }
+
+            // Build a safe filename: subtitles-{title}-{lang}.txt
+            String rawTitle;
+            try {
+                rawTitle = subtitleStreamingService.getVideoTitle(videoUrl);
+            } catch (Exception ex) {
+                rawTitle = UUID.randomUUID().toString();
+            }
+            String safeTitle = (rawTitle == null || rawTitle.isEmpty()) ? UUID.randomUUID().toString()
+                    : rawTitle.replaceAll("[\\\\/:*?\"<>|\\r\\n]", "_").trim();
+
+            String langCode = null;
+            try {
+                LanguageEnum le = LanguageConvertor.convertLanguageToEnum(language);
+                langCode = le != null ? le.getCode() : null;
+            } catch (Exception ignore) {
+                // ignore and leave langCode null
+            }
+
+            String filename = "subtitles-" + safeTitle + (langCode != null ? "-" + langCode : "") + ".txt";
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.set(HttpHeaders.CONTENT_TYPE, "text/plain; charset=UTF-8");
+            headers.setContentDispositionFormData("attachment", filename);
+
+            final byte[] bytes = content.getBytes(java.nio.charset.StandardCharsets.UTF_8);
+            StreamingResponseBody stream = outputStream -> {
+                outputStream.write(bytes);
+                outputStream.flush();
+            };
+
+            return new ResponseEntity<>(stream, headers, HttpStatus.OK);
+        } catch (Exception e) {
+            log.error("Error downloading translated subtitles: {}", e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
     @GetMapping("/subtitles/scrolling")
     public R<String> getScrollingSubtitles(@RequestParam("url") String videoUrl) {
         try {

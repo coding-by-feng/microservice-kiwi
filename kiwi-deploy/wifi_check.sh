@@ -10,12 +10,23 @@ if [ "$1" != "nohup-child" ]; then
   exit 0
 fi
 
+
+
 DEFAULT_SSID="SPARK-P8EJZP"
 DEFAULT_PASS="JoyfulEmuUU58?"
 
 function connect_wifi() {
   local ssid=$1
   local password=$2
+
+  # Restart NetworkManager before each connection attempt
+  echo "$(date): Restarting NetworkManager before connecting to $ssid..."
+  sudo systemctl stop NetworkManager
+  sleep 2
+  sudo systemctl start NetworkManager
+  echo "$(date): NetworkManager restarted, waiting 5 seconds for initialization..."
+  sleep 5
+
   echo "$(date): Trying to connect to Wi-Fi: $ssid"
 
   # Remove old connection if exists

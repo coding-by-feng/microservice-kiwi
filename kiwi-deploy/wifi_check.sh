@@ -17,37 +17,50 @@ function get_best_bssid() {
   local ssid=$1
   echo "$(date): Scanning for best $ssid network..."
 
-  # Scan and get all networks with the target SSID, sorted by signal strength (descending)
-  local best_network
-  best_network=$(nmcli -t -f BSSID,SIGNAL,FREQ dev wifi list | \
-    grep -E "(2\.4|5\.)" | \
-    while IFS=':' read -r bssid signal freq rest; do
-      # Check if this BSSID belongs to our target SSID
-      local network_ssid
-      network_ssid=$(nmcli -t -f BSSID,SSID dev wifi list | grep "^$bssid:" | cut -d: -f2)
-      if [ "$network_ssid" = "$ssid" ]; then
-        # Prefer 5GHz networks by adding bonus to signal strength
-        if [ "$freq" -gt 5000 ]; then
-          signal=$((signal + 10))  # 5GHz bonus
-        fi
-        echo "$signal:$bssid:$freq"
-      fi
-    done | sort -rn | head -1)
+  # Force a fresh scan first
+  nmcli dev wifi rescan >/dev/null 2>&1
+  sleep 2
 
-  if [ -n "$best_network" ]; then
-    local signal=$(echo "$best_network" | cut -d: -f1)
-    local bssid=$(echo "$best_network" | cut -d: -f2)
-    local freq=$(echo "$best_network" | cut -d: -f3)
-    local band="2.4GHz"
-    if [ "$freq" -gt 5000 ]; then
-      band="5GHz"
-      signal=$((signal - 10))  # Remove the bonus for logging
+  # Get all networks matching our SSID with their details
+  local best_bssid=""
+  local best_score=-999
+
+  nmcli -t -f BSSID,SSID,SIGNAL,FREQ dev wifi list 2>/dev/null | while IFS=':' read -r bssid network_ssid signal freq rest; do
+    # Skip if SSID doesn't match
+    if [ "$network_ssid" != "$ssid" ]; then
+      continue
     fi
 
-    echo "$(date): Best network found - BSSID: $bssid, Signal: $signal, Band: $band"
-    echo "$bssid"
+    # Skip if any field is empty
+    if [ -z "$bssid" ] || [ -z "$signal" ] || [ -z "$freq" ]; then
+      continue
+    fi
+
+    # Calculate preference score
+    local score=$signal
+
+    # Prefer 5GHz networks (freq > 5000 MHz)
+    if [ "$freq" -gt 5000 ]; then
+      score=$((signal + 15))  # 5GHz bonus
+      local band="5GHz"
+    else
+      local band="2.4GHz"
+    fi
+
+    echo "$(date): Found $ssid - BSSID: $bssid, Signal: $signal, Band: $band, Score: $score"
+
+    # Track the best one
+    if [ "$score" -gt "$best_score" ]; then
+      best_score=$score
+      best_bssid=$bssid
+    fi
+  done
+
+  if [ -n "$best_bssid" ] && [ "$best_bssid" != "00:00:00:00:00:00" ]; then
+    echo "$(date): Selected best BSSID: $best_bssid"
+    echo "$best_bssid"
   else
-    echo "$(date): No networks found for $ssid"
+    echo "$(date): No valid networks found for $ssid"
     echo ""
   fi
 }
@@ -61,20 +74,26 @@ function connect_wifi() {
 
   # Remove old connection if exists
   local old_conn
-  old_conn=$(nmcli -t -f NAME,TYPE connection show | grep "^$ssid:wifi$" | cut -d: -f1)
+  old_conn=$(nmcli -t -f NAME,TYPE connection show | grep ":wifi$" | grep "^$ssid:" | cut -d: -f1)
   if [ -n "$old_conn" ]; then
     echo "$(date): Removing old connection profile: $old_conn"
-    nmcli connection delete "$old_conn"
+    nmcli connection delete "$old_conn" >/dev/null 2>&1
   fi
 
-  # Try to connect to specific BSSID if provided
-  if [ -n "$preferred_bssid" ]; then
+  # Try to connect to specific BSSID if provided and valid
+  if [ -n "$preferred_bssid" ] && echo "$preferred_bssid" | grep -qE "^[0-9a-fA-F]{2}:[0-9a-fA-F]{2}:[0-9a-fA-F]{2}:[0-9a-fA-F]{2}:[0-9a-fA-F]{2}:[0-9a-fA-F]{2}$"; then
     echo "$(date): Connecting to specific BSSID: $preferred_bssid"
-    nmcli dev wifi connect "$ssid" password "$password" bssid "$preferred_bssid"
-  else
-    echo "$(date): Connecting to any available $ssid network"
-    nmcli dev wifi connect "$ssid" password "$password"
+    nmcli dev wifi connect "$ssid" password "$password" bssid "$preferred_bssid" 2>/dev/null
+    local result=$?
+    if [ $result -eq 0 ]; then
+      return 0
+    else
+      echo "$(date): Failed to connect to specific BSSID, trying any available"
+    fi
   fi
+
+  echo "$(date): Connecting to any available $ssid network"
+  nmcli dev wifi connect "$ssid" password "$password"
 }
 
 function check_wifi_connected() {

@@ -371,6 +371,23 @@ fi
 echo "=============================================="
 echo ""
 
+# Stop all services first (critical step)
+echo "=============================================="
+echo "🛑 INITIAL CLEANUP - STOPPING ALL SERVICES"
+echo "=============================================="
+echo "Running stopAll.sh to ensure clean deployment environment..."
+"$CURRENT_DIR/microservice-kiwi/kiwi-deploy/docker/stopAll.sh" || {
+    echo "❌ Failed to stop existing services"
+    echo "This might cause deployment conflicts. Continue anyway? (y/N)"
+    read -r response
+    if [[ ! "$response" =~ ^[Yy]$ ]]; then
+        echo "Deployment cancelled by user"
+        exit 1
+    fi
+}
+echo "✅ All existing services stopped and cleaned up"
+echo ""
+
 # Fast deploy mode optimization - skip unnecessary operations
 if [ "$FAST_DEPLOY_MODE" = true ]; then
   echo "🚀 FAST DEPLOY MODE ACTIVATED"
@@ -887,47 +904,26 @@ selective_deployment() {
     docker ps --filter "name=kiwi-" --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
 }
 
-# Core deployment operations (always executed)
+# Core deployment operations (modified to skip the redundant stopAll call)
 echo "=============================================="
 echo "🚀 STARTING CONTAINER DEPLOYMENT:"
 echo "=============================================="
 
-# Stop services (either selected or all)
-if [ "$BUILD_ALL_SERVICES" = true ]; then
-  echo "🛑 Stopping all services..."
-  "$CURRENT_DIR/microservice-kiwi/kiwi-deploy/docker/stopAll.sh" "$MODE"
-else
-  echo "🛑 Stopping selected services: $SELECTED_SERVICES"
-  stop_selected_containers "$SELECTED_SERVICES"
-fi
-
-# Remove containers
-if [ "$BUILD_ALL_SERVICES" = true ]; then
-  echo "🗑️  Removing all containers..."
-  # Call existing script or implement full removal
-  docker ps -a | grep "kiwi-" | awk '{print $1}' | xargs -r docker rm -f 2>/dev/null || true
-else
-  echo "🗑️  Removing selected containers: $SELECTED_SERVICES"
-  remove_selected_containers "$SELECTED_SERVICES"
-fi
-
-# Clean up Docker resources (only if building all services)
-if [ "$BUILD_ALL_SERVICES" = true ]; then
-  echo "🧹 Cleaning up Docker resources..."
-  echo "🗑️  Removing dangling images..."
-  docker image prune -f >/dev/null 2>&1 || true
-  echo "🌐 Removing unused networks..."
-  docker network prune -f >/dev/null 2>&1 || true
-  echo "📦 Removing unused volumes..."
-  docker volume prune -f >/dev/null 2>&1 || true
-  echo "✅ Docker cleanup completed"
-fi
+# Note: Services are already stopped by the initial stopAll.sh call above
+# No need to stop/remove again unless doing selective deployment
 
 # Build Docker images and deploy
 if [ "$BUILD_ALL_SERVICES" = true ]; then
   echo "🚀 Starting auto deployment for all services..."
   "$CURRENT_DIR/microservice-kiwi/kiwi-deploy/docker/autoDeploy.sh" "$MODE"
 else
+  # For selective deployment, we still need to stop/remove only selected services
+  echo "🛑 Stopping selected services: $SELECTED_SERVICES"
+  stop_selected_containers "$SELECTED_SERVICES"
+
+  echo "🗑️  Removing selected containers: $SELECTED_SERVICES"
+  remove_selected_containers "$SELECTED_SERVICES"
+
   # Selective deployment
   selective_deployment "$SELECTED_SERVICES"
 fi
@@ -971,3 +967,4 @@ else
   fi
 fi
 echo "=============================================="
+

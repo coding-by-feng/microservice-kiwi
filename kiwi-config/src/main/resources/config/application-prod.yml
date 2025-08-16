@@ -9,6 +9,27 @@ spring:
     host: kiwi-redis
     password: ENC(uxuSI1Bl5AelC8dYvJUvMhsRbasVD4zh)
     port: 6379
+    timeout: 10000ms
+    database: 0
+    lettuce:
+      pool:
+        # Maximum number of connections in the pool
+        max-active: 20
+        # Maximum number of idle connections in the pool
+        max-idle: 10
+        # Minimum number of idle connections in the pool
+        min-idle: 5
+        # Maximum time to wait for a connection from the pool
+        max-wait: 5000ms
+      shutdown-timeout: 100ms
+    # Alternative jedis pool configuration (if using jedis instead of lettuce)
+    # jedis:
+    #   pool:
+    #     max-active: 50
+    #     max-idle: 20
+    #     min-idle: 5
+    #     max-wait: 5000ms
+
   servlet:
     multipart:
       enabled: true
@@ -150,4 +171,3 @@ tts:
     api-key-21: '09ee88231aee4a42a6cfb1fba7d3ded6'
     # kiwi_s_f_zhan
     api-key-22: 'fdbfa7e01ef34ab6b1af4890e824ef1b'
-

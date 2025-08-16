@@ -22,21 +22,12 @@ ENV VIRTUAL_ENV=/opt/venv
 RUN python3 -m venv $VIRTUAL_ENV
 ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
-# Install yt-dlp
-ADD yt-dlp_linux yt-dlp_linux
+# Install yt-dlp from PyPI (matches container arch)
+RUN pip install --no-cache-dir --upgrade pip \
+    && pip install --no-cache-dir yt-dlp
 
-RUN chmod 777 yt-dlp_linux
-
-# Copy the JAR file
+# Copy the JAR file (single copy, consistent path)
 COPY kiwi-ai-biz-2.0.jar /app/app.jar
 
-# Install yt-dlp
-ADD yt-dlp_linux yt-dlp_linux
-
-RUN chmod 777 yt-dlp_linux
-
-# Add application JAR file
-ADD kiwi-ai-biz-2.0.jar app.jar
-
-# Set the entry point
-ENTRYPOINT ["java", "-jar", "-Xmx600m", "-Duser.timezone=GMT+12", "-Dspring.application.name=kiwi-ai-batch", "-Dspring.profiles.active=prod", "-Dlogging.file.name=/logs/ai-batch.log", "/app.jar"]
+# Set the entry point (fix jar path ordering)
+ENTRYPOINT ["java", "-Xmx600m", "-Duser.timezone=GMT+12", "-Dspring.application.name=kiwi-ai-batch", "-Dspring.profiles.active=prod", "-Dlogging.file.name=/logs/ai-batch.log", "-jar", "/app/app.jar"]

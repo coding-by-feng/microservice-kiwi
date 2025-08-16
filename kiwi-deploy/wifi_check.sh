@@ -10,13 +10,13 @@ if [ "$1" != "nohup-child" ]; then
   exit 0
 fi
 
-# No default values - user must provide credentials on first run
+DEFAULT_SSID="SPARK-P8EJZP"
+DEFAULT_PASS="JoyfulEmuUU58?"
 
 function connect_wifi() {
   local ssid=$1
   local password=$2
-  local bssid=$3
-  echo "$(date): Trying to connect to Wi-Fi: $ssid (BSSID: $bssid)"
+  echo "$(date): Trying to connect to Wi-Fi: $ssid"
 
   # Remove old connection if exists
   local old_conn
@@ -26,7 +26,7 @@ function connect_wifi() {
     nmcli connection delete "$old_conn"
   fi
 
-  nmcli dev wifi connect "$ssid" bssid "$bssid" password "$password"
+  nmcli dev wifi connect "$ssid" password "$password"
 }
 
 function check_wifi_connected() {
@@ -60,65 +60,18 @@ function set_google_dns() {
   nmcli connection up "$ssid"
 }
 
-function prompt_wifi_credentials() {
-  echo "=== WiFi Configuration Setup ==="
-  echo "Please enter your WiFi credentials:"
-
-  read -p "WiFi SSID (network name): " input_ssid
-  read -s -p "WiFi Password: " input_password
-  echo
-  read -p "WiFi BSSID (MAC address, e.g., 20:37:F0:9E:A2:D7): " input_bssid
-
-  # Validate BSSID format (basic check)
-  if [[ ! "$input_bssid" =~ ^([0-9A-Fa-f]{2}:){5}[0-9A-Fa-f]{2}$ ]]; then
-    echo "Warning: BSSID format may be incorrect. Expected format: XX:XX:XX:XX:XX:XX"
-    read -p "Continue anyway? (y/N): " confirm
-    if [[ ! "$confirm" =~ ^[Yy]$ ]]; then
-      echo "Setup cancelled."
-      exit 1
-    fi
-  fi
-
-  # Save to config file
-  echo "$input_ssid" > "$CONFIG_FILE"
-  echo "$input_password" >> "$CONFIG_FILE"
-  echo "$input_bssid" >> "$CONFIG_FILE"
-
-  echo "Configuration saved to $CONFIG_FILE"
-
-  # Set environment variables
-  WIFI_SSID="$input_ssid"
-  WIFI_PASS="$input_password"
-  WIFI_BSSID="$input_bssid"
-}
-
-# Load or prompt for WiFi configuration
 if [ ! -f "$CONFIG_FILE" ]; then
-  echo "Config file not found. Setting up WiFi configuration..."
-  prompt_wifi_credentials
+  echo "Config file not found, using default Wi-Fi credentials."
+  WIFI_SSID="$DEFAULT_SSID"
+  WIFI_PASS="$DEFAULT_PASS"
+  echo "$WIFI_SSID" > "$CONFIG_FILE"
+  echo "$WIFI_PASS" >> "$CONFIG_FILE"
 else
   WIFI_SSID=$(sed -n '1p' "$CONFIG_FILE")
   WIFI_PASS=$(sed -n '2p' "$CONFIG_FILE")
-  WIFI_BSSID=$(sed -n '3p' "$CONFIG_FILE")
-
-  # Check if BSSID exists in config (for backward compatibility)
-  if [ -z "$WIFI_BSSID" ]; then
-    echo "BSSID not found in config file. Please add it:"
-    read -p "WiFi BSSID (MAC address, e.g., 20:37:F0:9E:A2:D7): " input_bssid
-    echo "$input_bssid" >> "$CONFIG_FILE"
-    WIFI_BSSID="$input_bssid"
-  fi
 fi
 
-# Export as environment variables
-export WIFI_SSID
-export WIFI_PASS
-export WIFI_BSSID
-
-echo "$(date): Using WiFi credentials - SSID: $WIFI_SSID, BSSID: $WIFI_BSSID"
-
-# Initial connection attempt
-until connect_wifi "$WIFI_SSID" "$WIFI_PASS" "$WIFI_BSSID" && sleep 5 && check_wifi_connected; do
+until connect_wifi "$WIFI_SSID" "$WIFI_PASS" && sleep 5 && check_wifi_connected; do
   echo "$(date): Initial connection failed, retrying in 10 seconds..."
   sleep 10
 done
@@ -129,13 +82,12 @@ set_google_dns "$WIFI_SSID"
 
 echo "$(date): Starting monitoring..."
 
-# Main monitoring loop
 while true; do
   if check_wifi_connected; then
     echo "$(date): Wi-Fi is connected."
   else
     echo "$(date): Wi-Fi disconnected. Trying to reconnect..."
-    connect_wifi "$WIFI_SSID" "$WIFI_PASS" "$WIFI_BSSID"
+    connect_wifi "$WIFI_SSID" "$WIFI_PASS"
     # After reconnecting, reset DNS again
     set_google_dns "$WIFI_SSID"
   fi

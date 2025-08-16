@@ -10,90 +10,23 @@ if [ "$1" != "nohup-child" ]; then
   exit 0
 fi
 
-DEFAULT_SSID="SPARK-P8EJZP"
-DEFAULT_PASS="JoyfulEmuUU58?"
-
-function get_best_bssid() {
-  local ssid=$1
-  echo "$(date): Scanning for best $ssid network..."
-
-  # Force a fresh scan first
-  nmcli dev wifi rescan >/dev/null 2>&1
-  sleep 2
-
-  # Get all networks matching our SSID with their details
-  local best_bssid=""
-  local best_score=-999
-
-  nmcli -t -f BSSID,SSID,SIGNAL,FREQ dev wifi list 2>/dev/null | while IFS=':' read -r bssid network_ssid signal freq rest; do
-    # Skip if SSID doesn't match
-    if [ "$network_ssid" != "$ssid" ]; then
-      continue
-    fi
-
-    # Skip if any field is empty
-    if [ -z "$bssid" ] || [ -z "$signal" ] || [ -z "$freq" ]; then
-      continue
-    fi
-
-    # Calculate preference score
-    local score=$signal
-
-    # Prefer 5GHz networks (freq > 5000 MHz)
-    if [ "$freq" -gt 5000 ]; then
-      score=$((signal + 15))  # 5GHz bonus
-      local band="5GHz"
-    else
-      local band="2.4GHz"
-    fi
-
-    echo "$(date): Found $ssid - BSSID: $bssid, Signal: $signal, Band: $band, Score: $score"
-
-    # Track the best one
-    if [ "$score" -gt "$best_score" ]; then
-      best_score=$score
-      best_bssid=$bssid
-    fi
-  done
-
-  if [ -n "$best_bssid" ] && [ "$best_bssid" != "00:00:00:00:00:00" ]; then
-    echo "$(date): Selected best BSSID: $best_bssid"
-    echo "$best_bssid"
-  else
-    echo "$(date): No valid networks found for $ssid"
-    echo ""
-  fi
-}
+# No default values - user must provide credentials on first run
 
 function connect_wifi() {
   local ssid=$1
   local password=$2
-  local preferred_bssid=$3
-
-  echo "$(date): Trying to connect to Wi-Fi: $ssid"
+  local bssid=$3
+  echo "$(date): Trying to connect to Wi-Fi: $ssid (BSSID: $bssid)"
 
   # Remove old connection if exists
   local old_conn
-  old_conn=$(nmcli -t -f NAME,TYPE connection show | grep ":wifi$" | grep "^$ssid:" | cut -d: -f1)
+  old_conn=$(nmcli -t -f NAME,TYPE connection show | grep "^$ssid:wifi$" | cut -d: -f1)
   if [ -n "$old_conn" ]; then
     echo "$(date): Removing old connection profile: $old_conn"
-    nmcli connection delete "$old_conn" >/dev/null 2>&1
+    nmcli connection delete "$old_conn"
   fi
 
-  # Try to connect to specific BSSID if provided and valid
-  if [ -n "$preferred_bssid" ] && echo "$preferred_bssid" | grep -qE "^[0-9a-fA-F]{2}:[0-9a-fA-F]{2}:[0-9a-fA-F]{2}:[0-9a-fA-F]{2}:[0-9a-fA-F]{2}:[0-9a-fA-F]{2}$"; then
-    echo "$(date): Connecting to specific BSSID: $preferred_bssid"
-    nmcli dev wifi connect "$ssid" password "$password" bssid "$preferred_bssid" 2>/dev/null
-    local result=$?
-    if [ $result -eq 0 ]; then
-      return 0
-    else
-      echo "$(date): Failed to connect to specific BSSID, trying any available"
-    fi
-  fi
-
-  echo "$(date): Connecting to any available $ssid network"
-  nmcli dev wifi connect "$ssid" password "$password"
+  nmcli dev wifi connect "$ssid" bssid "$bssid" password "$password"
 }
 
 function check_wifi_connected() {
@@ -119,46 +52,6 @@ function check_wifi_connected() {
   return 0
 }
 
-function get_current_connection_info() {
-  local bssid=$(iwconfig 2>/dev/null | grep "Access Point" | awk '{print $6}' | grep -v "Not-Associated")
-  local signal=$(iwconfig 2>/dev/null | grep "Signal level" | awk '{print $4}' | cut -d= -f2)
-  local freq=$(iwconfig 2>/dev/null | grep "Frequency" | awk '{print $2}' | cut -d: -f2)
-
-  if [ -n "$bssid" ] && [ -n "$signal" ] && [ -n "$freq" ]; then
-    local band="2.4GHz"
-    if echo "$freq" | grep -q "^5\."; then
-      band="5GHz"
-    fi
-    echo "$(date): Current connection - BSSID: $bssid, Signal: $signal, Band: $band"
-  fi
-}
-
-function should_switch_network() {
-  local current_signal=$(iwconfig 2>/dev/null | grep "Signal level" | awk '{print $4}' | cut -d= -f2 | sed 's/dBm//')
-  local current_freq=$(iwconfig 2>/dev/null | grep "Frequency" | awk '{print $2}' | cut -d: -f2)
-
-  if [ -z "$current_signal" ] || [ -z "$current_freq" ]; then
-    return 0  # Switch if we can't get current info
-  fi
-
-  # Convert signal to positive number for comparison
-  current_signal=${current_signal#-}
-
-  # Check if current connection is poor (signal worse than -75 dBm)
-  if [ "$current_signal" -gt 75 ]; then
-    echo "$(date): Current signal is weak ($current_signal dBm), looking for better network"
-    return 0
-  fi
-
-  # If on 2.4GHz and signal is not great, look for 5GHz alternative
-  if echo "$current_freq" | grep -q "^2\.4" && [ "$current_signal" -gt 60 ]; then
-    echo "$(date): On 2.4GHz with moderate signal, checking for 5GHz alternative"
-    return 0
-  fi
-
-  return 1  # Don't switch
-}
-
 function set_google_dns() {
   local ssid=$1
   echo "$(date): Setting Google DNS for connection: $ssid"
@@ -167,63 +60,83 @@ function set_google_dns() {
   nmcli connection up "$ssid"
 }
 
-# Load configuration
+function prompt_wifi_credentials() {
+  echo "=== WiFi Configuration Setup ==="
+  echo "Please enter your WiFi credentials:"
+
+  read -p "WiFi SSID (network name): " input_ssid
+  read -s -p "WiFi Password: " input_password
+  echo
+  read -p "WiFi BSSID (MAC address, e.g., 20:37:F0:9E:A2:D7): " input_bssid
+
+  # Validate BSSID format (basic check)
+  if [[ ! "$input_bssid" =~ ^([0-9A-Fa-f]{2}:){5}[0-9A-Fa-f]{2}$ ]]; then
+    echo "Warning: BSSID format may be incorrect. Expected format: XX:XX:XX:XX:XX:XX"
+    read -p "Continue anyway? (y/N): " confirm
+    if [[ ! "$confirm" =~ ^[Yy]$ ]]; then
+      echo "Setup cancelled."
+      exit 1
+    fi
+  fi
+
+  # Save to config file
+  echo "$input_ssid" > "$CONFIG_FILE"
+  echo "$input_password" >> "$CONFIG_FILE"
+  echo "$input_bssid" >> "$CONFIG_FILE"
+
+  echo "Configuration saved to $CONFIG_FILE"
+
+  # Set environment variables
+  WIFI_SSID="$input_ssid"
+  WIFI_PASS="$input_password"
+  WIFI_BSSID="$input_bssid"
+}
+
+# Load or prompt for WiFi configuration
 if [ ! -f "$CONFIG_FILE" ]; then
-  echo "Config file not found, using default Wi-Fi credentials."
-  WIFI_SSID="$DEFAULT_SSID"
-  WIFI_PASS="$DEFAULT_PASS"
-  echo "$WIFI_SSID" > "$CONFIG_FILE"
-  echo "$WIFI_PASS" >> "$CONFIG_FILE"
+  echo "Config file not found. Setting up WiFi configuration..."
+  prompt_wifi_credentials
 else
   WIFI_SSID=$(sed -n '1p' "$CONFIG_FILE")
   WIFI_PASS=$(sed -n '2p' "$CONFIG_FILE")
+  WIFI_BSSID=$(sed -n '3p' "$CONFIG_FILE")
+
+  # Check if BSSID exists in config (for backward compatibility)
+  if [ -z "$WIFI_BSSID" ]; then
+    echo "BSSID not found in config file. Please add it:"
+    read -p "WiFi BSSID (MAC address, e.g., 20:37:F0:9E:A2:D7): " input_bssid
+    echo "$input_bssid" >> "$CONFIG_FILE"
+    WIFI_BSSID="$input_bssid"
+  fi
 fi
 
-# Initial connection with optimization
-echo "$(date): Starting optimized Wi-Fi connection..."
-best_bssid=$(get_best_bssid "$WIFI_SSID")
+# Export as environment variables
+export WIFI_SSID
+export WIFI_PASS
+export WIFI_BSSID
 
-until connect_wifi "$WIFI_SSID" "$WIFI_PASS" "$best_bssid" && sleep 5 && check_wifi_connected; do
+echo "$(date): Using WiFi credentials - SSID: $WIFI_SSID, BSSID: $WIFI_BSSID"
+
+# Initial connection attempt
+until connect_wifi "$WIFI_SSID" "$WIFI_PASS" "$WIFI_BSSID" && sleep 5 && check_wifi_connected; do
   echo "$(date): Initial connection failed, retrying in 10 seconds..."
   sleep 10
-  # Rescan for best network on retry
-  best_bssid=$(get_best_bssid "$WIFI_SSID")
 done
 
 echo "$(date): Wi-Fi connected successfully to $WIFI_SSID. Setting DNS..."
-get_current_connection_info
+
 set_google_dns "$WIFI_SSID"
 
 echo "$(date): Starting monitoring..."
 
 # Main monitoring loop
-check_count=0
 while true; do
   if check_wifi_connected; then
     echo "$(date): Wi-Fi is connected."
-    get_current_connection_info
-
-    # Every 10 checks (about 3.3 minutes), evaluate if we should switch to a better network
-    if [ $((check_count % 10)) -eq 0 ] && should_switch_network; then
-      echo "$(date): Checking for better network..."
-      best_bssid=$(get_best_bssid "$WIFI_SSID")
-
-      if [ -n "$best_bssid" ]; then
-        current_bssid=$(iwconfig 2>/dev/null | grep "Access Point" | awk '{print $6}' | grep -v "Not-Associated")
-
-        if [ "$best_bssid" != "$current_bssid" ]; then
-          echo "$(date): Found better network, switching..."
-          connect_wifi "$WIFI_SSID" "$WIFI_PASS" "$best_bssid"
-          set_google_dns "$WIFI_SSID"
-        fi
-      fi
-    fi
-
-    check_count=$((check_count + 1))
   else
-    echo "$(date): Wi-Fi disconnected. Trying to reconnect to best available network..."
-    best_bssid=$(get_best_bssid "$WIFI_SSID")
-    connect_wifi "$WIFI_SSID" "$WIFI_PASS" "$best_bssid"
+    echo "$(date): Wi-Fi disconnected. Trying to reconnect..."
+    connect_wifi "$WIFI_SSID" "$WIFI_PASS" "$WIFI_BSSID"
+    # After reconnecting, reset DNS again
     set_google_dns "$WIFI_SSID"
   fi
   sleep 20

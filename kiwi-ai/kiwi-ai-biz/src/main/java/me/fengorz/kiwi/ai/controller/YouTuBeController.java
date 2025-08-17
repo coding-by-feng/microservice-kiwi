@@ -67,7 +67,7 @@ public class YouTuBeController {
 
     /**
      * Download the translated/retouched subtitles as a .txt file.
-     * The file content is identical to the response from /subtitles/translated.
+     * Optimized version using WebSocket streaming service internally for better performance.
      */
     @GetMapping("/subtitles/translated/download")
     public ResponseEntity<StreamingResponseBody> downloadTranslatedSubtitlesAsTxt(
@@ -76,14 +76,7 @@ public class YouTuBeController {
         try {
             String decodedUrl = WebTools.decode(videoUrl);
 
-            // Build content using the same logic as /subtitles/translated
-            YtbSubtitlesResult ytbSubtitlesResult = youTuBeHelper.downloadSubtitles(decodedUrl);
-            String content = buildTranslatedOrRetouchedSubtitles(decodedUrl, language, ytbSubtitlesResult);
-            if (content == null) {
-                content = GlobalConstants.EMPTY;
-            }
-
-            // Build a safe filename: subtitles-{title}-{lang}.txt
+            // Build a safe filename first
             String rawTitle;
             try {
                 rawTitle = subtitleStreamingService.getVideoTitle(videoUrl);
@@ -107,15 +100,109 @@ public class YouTuBeController {
             headers.set(HttpHeaders.CONTENT_TYPE, "text/plain; charset=UTF-8");
             headers.setContentDispositionFormData("attachment", filename);
 
-            final byte[] bytes = content.getBytes(java.nio.charset.StandardCharsets.UTF_8);
+            // Use StreamingResponseBody for real-time streaming download
             StreamingResponseBody stream = outputStream -> {
-                outputStream.write(bytes);
-                outputStream.flush();
+                StringBuilder contentBuilder = new StringBuilder();
+                final boolean[] hasError = {false};
+                final Exception[] streamException = {null};
+                final Object lock = new Object();
+                final boolean[] isComplete = {false};
+
+                try {
+                    // Use the optimized streaming service (same as WebSocket endpoint)
+                    subtitleStreamingService.streamSubtitleTranslation(
+                        decodedUrl,
+                        language,
+                        // onChunk callback - stream each chunk as it arrives
+                        chunk -> {
+                            try {
+                                synchronized (lock) {
+                                    if (!hasError[0]) {
+                                        // Write chunk directly to output stream for real-time download
+                                        byte[] chunkBytes = chunk.getBytes(java.nio.charset.StandardCharsets.UTF_8);
+                                        outputStream.write(chunkBytes);
+                                        outputStream.flush();
+
+                                        // Also accumulate for logging purposes
+                                        contentBuilder.append(chunk);
+
+                                        log.debug("Streamed chunk of {} bytes to download", chunkBytes.length);
+                                    }
+                                }
+                            } catch (Exception e) {
+                                log.error("Error writing chunk to download stream: {}", e.getMessage(), e);
+                                synchronized (lock) {
+                                    hasError[0] = true;
+                                    streamException[0] = e;
+                                    lock.notify();
+                                }
+                            }
+                        },
+                        // onError callback
+                        error -> {
+                            log.error("Error in subtitle streaming for download: {}", error.getMessage(), error);
+                            synchronized (lock) {
+                                hasError[0] = true;
+                                streamException[0] = error;
+                                lock.notify();
+                            }
+                        },
+                        // onComplete callback
+                        () -> {
+                            log.info("Subtitle streaming completed for download. Total content length: {} characters",
+                                contentBuilder.length());
+                            synchronized (lock) {
+                                isComplete[0] = true;
+                                lock.notify();
+                            }
+                        }
+                    );
+
+                    // Wait for completion or error
+                    synchronized (lock) {
+                        while (!isComplete[0] && !hasError[0]) {
+                            try {
+                                lock.wait(30000); // 30 second timeout
+                                if (!isComplete[0] && !hasError[0]) {
+                                    throw new RuntimeException("Subtitle streaming timeout after 30 seconds");
+                                }
+                            } catch (InterruptedException e) {
+                                Thread.currentThread().interrupt();
+                                throw new RuntimeException("Subtitle streaming interrupted", e);
+                            }
+                        }
+                    }
+
+                    if (hasError[0] && streamException[0] != null) {
+                        throw new RuntimeException("Subtitle streaming failed", streamException[0]);
+                    }
+
+                    log.info("Successfully completed streaming download for video: {}, language: {}, total size: {} bytes",
+                        videoUrl, language, contentBuilder.length());
+
+                } catch (Exception e) {
+                    log.error("Error in streaming download: {}", e.getMessage(), e);
+                    // Write error message to stream if possible
+                    try {
+                        String errorMsg = "Error generating subtitles: " + e.getMessage();
+                        outputStream.write(errorMsg.getBytes(java.nio.charset.StandardCharsets.UTF_8));
+                        outputStream.flush();
+                    } catch (Exception writeError) {
+                        log.error("Failed to write error to stream: {}", writeError.getMessage(), writeError);
+                    }
+                    throw new RuntimeException("Subtitle download failed", e);
+                } finally {
+                    try {
+                        outputStream.close();
+                    } catch (Exception e) {
+                        log.error("Error closing output stream: {}", e.getMessage(), e);
+                    }
+                }
             };
 
             return new ResponseEntity<>(stream, headers, HttpStatus.OK);
         } catch (Exception e) {
-            log.error("Error downloading translated subtitles: {}", e.getMessage(), e);
+            log.error("Error setting up translated subtitles download: {}", e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }

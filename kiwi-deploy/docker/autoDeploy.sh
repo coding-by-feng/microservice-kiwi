@@ -1,16 +1,62 @@
 #!/bin/bash
+set -e
+set -o pipefail
 
-set -e  # Exit on any error
+# ---------------------------------------------------------
+# Dynamic path resolution (replaces unsafe use of ~ under sudo)
+# ---------------------------------------------------------
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# autoDeploy.sh is in: microservice-kiwi/kiwi-deploy/docker/
+# project root: three levels up from kiwi-deploy/docker (adjust if layout changes)
+PROJECT_ROOT="$(cd "$SCRIPT_DIR/../../.." && pwd)"
+DOCKER_DEPLOY_DIR="$PROJECT_ROOT/microservice-kiwi/kiwi-deploy/docker"
+COMPOSE_BASE_YML="$DOCKER_DEPLOY_DIR/docker-compose-base.yml"
+COMPOSE_SERVICE_YML="$DOCKER_DEPLOY_DIR/docker-compose-service.yml"
+DOCKER_KIWI_ROOT="$PROJECT_ROOT/docker/kiwi"
+
+# Detect docker compose command
+if command -v docker-compose >/dev/null 2>&1; then
+  COMPOSE_CMD="docker-compose"
+elif docker compose version >/dev/null 2>&1; then
+  COMPOSE_CMD="docker compose"
+else
+  echo "❌ Neither 'docker compose' nor 'docker-compose' found in PATH."
+  exit 1
+fi
+
+# Preflight checks
+missing=0
+for f in "$COMPOSE_BASE_YML" "$COMPOSE_SERVICE_YML"; do
+  if [ ! -f "$f" ]; then
+     echo "❌ Missing compose file: $f"
+     ((missing++))
+  fi
+done
+for d in eureka config upms auth gate word crawler ai; do
+  if [ ! -d "$DOCKER_KIWI_ROOT/$d" ]; then
+     echo "❌ Missing expected Docker build directory: $DOCKER_KIWI_ROOT/$d"
+     ((missing++))
+  fi
+done
+if [ $missing -gt 0 ]; then
+  echo "Aborting due to $missing missing required file(s)/directory(ies)."
+  echo "PROJECT_ROOT resolved to: $PROJECT_ROOT"
+  exit 1
+fi
 
 echo "=== KIWI MICROSERVICE DEPLOYMENT WITH DOCKER COMPOSE ==="
+echo "PROJECT_ROOT: $PROJECT_ROOT"
+echo "Using compose command: $COMPOSE_CMD"
+echo "Base compose: $COMPOSE_BASE_YML"
+echo "Service compose: $COMPOSE_SERVICE_YML"
 
 # Cleanup function
 cleanup_existing() {
     echo "Cleaning up existing deployment..."
 
     # Stop existing services (ignore errors if they don't exist)
-    docker compose --project-name kiwi-service -f ~/microservice-kiwi/kiwi-deploy/docker/docker-compose-service.yml down --remove-orphans 2>/dev/null || true
-    docker compose --project-name kiwi-base -f ~/microservice-kiwi/kiwi-deploy/docker/docker-compose-base.yml down --remove-orphans 2>/dev/null || true
+    $COMPOSE_CMD --project-name kiwi-service -f "$COMPOSE_SERVICE_YML" down --remove-orphans 2>/dev/null || true
+    $COMPOSE_CMD --project-name kiwi-base -f "$COMPOSE_BASE_YML" down --remove-orphans 2>/dev/null || true
 
     echo "Cleanup completed"
 }
@@ -23,56 +69,47 @@ build_images() {
     echo
 
     echo "📡 Building Eureka Service Discovery Server..."
-    echo "   → Service registry for microservice discovery and health monitoring"
-    docker build -f ~/docker/kiwi/eureka/Dockerfile -t kiwi-eureka:2.0 ~/docker/kiwi/eureka/
+    docker build -f "$DOCKER_KIWI_ROOT/eureka/Dockerfile" -t kiwi-eureka:2.0 "$DOCKER_KIWI_ROOT/eureka/"
     echo "   ✅ Eureka server built successfully"
     echo
 
     echo "⚙️  Building Configuration Management Service..."
-    echo "   → Centralized configuration server for all microservices"
-    docker build -f ~/docker/kiwi/config/Dockerfile -t kiwi-config:2.0 ~/docker/kiwi/config/
+    docker build -f "$DOCKER_KIWI_ROOT/config/Dockerfile" -t kiwi-config:2.0 "$DOCKER_KIWI_ROOT/config/"
     echo "   ✅ Config service built successfully"
     echo
 
     echo "👥 Building User Permission Management System (UPMS)..."
-    echo "   → User authentication, authorization, and permission management"
-    docker build -f ~/docker/kiwi/upms/Dockerfile -t kiwi-upms:2.0 ~/docker/kiwi/upms/
+    docker build -f "$DOCKER_KIWI_ROOT/upms/Dockerfile" -t kiwi-upms:2.0 "$DOCKER_KIWI_ROOT/upms/"
     echo "   ✅ UPMS service built successfully"
     echo
 
     echo "🔐 Building Authentication Service..."
-    echo "   → OAuth2/JWT token generation and validation service"
-    docker build -f ~/docker/kiwi/auth/Dockerfile -t kiwi-auth:2.0 ~/docker/kiwi/auth/
+    docker build -f "$DOCKER_KIWI_ROOT/auth/Dockerfile" -t kiwi-auth:2.0 "$DOCKER_KIWI_ROOT/auth/"
     echo "   ✅ Auth service built successfully"
     echo
 
     echo "🚪 Building API Gateway Service..."
-    echo "   → Request routing, load balancing, and API rate limiting"
-    docker build -f ~/docker/kiwi/gate/Dockerfile -t kiwi-gate:2.0 ~/docker/kiwi/gate/
+    docker build -f "$DOCKER_KIWI_ROOT/gate/Dockerfile" -t kiwi-gate:2.0 "$DOCKER_KIWI_ROOT/gate/"
     echo "   ✅ Gateway service built successfully"
     echo
 
     echo "📝 Building Word Processing Business Service..."
-    echo "   → Document processing, text analysis, and content management"
-    docker build -f ~/docker/kiwi/word/biz/Dockerfile -t kiwi-word-biz:2.0 ~/docker/kiwi/word/
+    docker build -f "$DOCKER_KIWI_ROOT/word/biz/Dockerfile" -t kiwi-word-biz:2.0 "$DOCKER_KIWI_ROOT/word/"
     echo "   ✅ Word processing service built successfully"
     echo
 
     echo "🕷️  Building Web Crawler Service..."
-    echo "   → Data extraction, web scraping, and content indexing"
-    docker build -f ~/docker/kiwi/crawler/Dockerfile -t kiwi-crawler:2.0 ~/docker/kiwi/crawler/
+    docker build -f "$DOCKER_KIWI_ROOT/crawler/Dockerfile" -t kiwi-crawler:2.0 "$DOCKER_KIWI_ROOT/crawler/"
     echo "   ✅ Crawler service built successfully"
     echo
 
     echo "🤖 Building AI Business Logic Service..."
-    echo "   → Machine learning models, AI processing, and intelligent features"
-    docker build -f ~/docker/kiwi/ai/biz/Dockerfile -t kiwi-ai-biz:2.0 ~/docker/kiwi/ai/biz
+    docker build -f "$DOCKER_KIWI_ROOT/ai/biz/Dockerfile" -t kiwi-ai-biz:2.0 "$DOCKER_KIWI_ROOT/ai/biz"
     echo "   ✅ AI business service built successfully"
     echo
 
     echo "⚡ Building AI Batch Processing Service..."
-    echo "   → Background AI tasks, bulk processing, and scheduled ML jobs"
-    docker build -f ~/docker/kiwi/ai/batch/Dockerfile -t kiwi-ai-biz-batch:2.0 ~/docker/kiwi/ai/batch
+    docker build -f "$DOCKER_KIWI_ROOT/ai/batch/Dockerfile" -t kiwi-ai-biz-batch:2.0 "$DOCKER_KIWI_ROOT/ai/batch"
     echo "   ✅ AI batch service built successfully"
     echo
 
@@ -83,7 +120,7 @@ build_images() {
 # Deploy services
 deploy_services() {
     echo "Starting base services..."
-    docker compose --project-name kiwi-base -f ~/microservice-kiwi/kiwi-deploy/docker/docker-compose-base.yml up -d --remove-orphans --build
+    $COMPOSE_CMD --project-name kiwi-base -f "$COMPOSE_BASE_YML" up -d --remove-orphans --build
 
     # Check if eureka is responding (any HTTP status means it's up)
     until curl -s http://localhost:8762/health >/dev/null 2>&1; do
@@ -98,7 +135,7 @@ deploy_services() {
     done
 
     echo "Starting application services..."
-    docker compose --project-name kiwi-service -f ~/microservice-kiwi/kiwi-deploy/docker/docker-compose-service.yml up -d --force-recreate --remove-orphans --build
+    $COMPOSE_CMD --project-name kiwi-service -f "$COMPOSE_SERVICE_YML" up -d --force-recreate --remove-orphans --build
 
     echo "Application services started successfully"
 }
@@ -127,10 +164,10 @@ show_status() {
     docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
 
     echo -e "\nBase services status:"
-    docker compose --project-name kiwi-base -f ~/microservice-kiwi/kiwi-deploy/docker/docker-compose-base.yml ps
+    $COMPOSE_CMD --project-name kiwi-base -f "$COMPOSE_BASE_YML" ps
 
     echo -e "\nApplication services status:"
-    docker compose --project-name kiwi-service -f ~/microservice-kiwi/kiwi-deploy/docker/docker-compose-service.yml ps
+    $COMPOSE_CMD --project-name kiwi-service -f "$COMPOSE_SERVICE_YML" ps
 }
 
 # Main execution

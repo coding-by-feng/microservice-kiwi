@@ -2,7 +2,8 @@
 
 # Enhanced Kiwi Microservice Setup Script for Raspberry Pi OS
 # This script automates the complete setup process with step tracking and selective re-initialization
-# Version: 2.2 - Fixed file handling and status display
+# Version: 2.3 - Added docker.io fallback installation
+# CHANGE: If both official script and manual repo install fail, try: apt install -y docker.io
 # FIXED: Proper file paths, permissions, and status display
 
 set -e  # Exit on any error
@@ -1109,41 +1110,67 @@ execute_step_3_docker_install() {
             apt-get update
 
             # Install Docker packages
-            apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin || \
-            apt-get install -y docker-ce docker-ce-cli containerd.io
-
-            save_config "docker_install_method" "manual_installation"
+            if apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin 2>/dev/null; then
+                save_config "docker_install_method" "manual_installation"
+            elif apt-get install -y docker-ce docker-ce-cli containerd.io 2>/dev/null; then
+                save_config "docker_install_method" "manual_installation_partial"
+            else
+                print_warning "Manual repository installation did not complete successfully"
+                save_config "docker_install_method" "manual_installation_failed"
+            fi
         fi
 
         rm -f get-docker.sh
 
-        # Add user to docker group
-        usermod -aG docker $SCRIPT_USER
-
-        # Start and enable docker service
-        systemctl start docker
-        systemctl enable docker
-
-        # Test Docker installation
-        if docker run hello-world >/dev/null 2>&1; then
-            print_success "Docker test successful"
-            docker rm $(docker ps -aq -f ancestor=hello-world) 2>/dev/null || true
-        else
-            print_warning "Docker test failed, may need to restart or re-login"
+        # Fallback: use distribution package docker.io if docker still missing
+        if ! command -v docker >/dev/null 2>&1; then
+            print_warning "Docker not found after previous methods. Trying fallback: apt install -y docker.io"
+            set +e
+            apt update
+            apt install -y docker.io
+            FALLBACK_STATUS=$?
+            set -e
+            if [ $FALLBACK_STATUS -eq 0 ] && command -v docker >/dev/null 2>&1; then
+                print_success "Docker installed via docker.io fallback"
+                save_config "docker_install_method" "apt_docker_io"
+            else
+                print_error "Fallback docker.io installation failed"
+                save_config "docker_install_method" "all_methods_failed"
+            fi
         fi
 
-        DOCKER_VERSION=$(docker --version 2>/dev/null || echo "unknown")
-        save_config "docker_version" "$DOCKER_VERSION"
-        save_config "docker_architecture" "$ARCH"
+        # Proceed only if docker command exists
+        if command -v docker >/dev/null 2>&1; then
+            # Add user to docker group
+            usermod -aG docker $SCRIPT_USER 2>/dev/null || true
 
-        print_success "Docker installation completed"
-        mark_step_completed "docker_install"
+            # Start and enable docker service (ignore errors if service name differs)
+            systemctl start docker 2>/dev/null || true
+            systemctl enable docker 2>/dev/null || true
+
+            # Test Docker installation
+            if docker run --rm hello-world >/dev/null 2>&1; then
+                print_success "Docker test successful"
+            else
+                print_warning "Docker test container failed to run (may require relogin)"
+            fi
+
+            DOCKER_VERSION=$(docker --version 2>/dev/null || echo "unknown")
+            save_config "docker_version" "$DOCKER_VERSION"
+            save_config "docker_architecture" "$ARCH"
+
+            print_success "Docker installation step finished"
+            mark_step_completed "docker_install"
+        else
+            print_error "Docker installation failed after all attempted methods"
+            print_error "You can manually try: sudo apt install docker.io"
+            save_config "docker_version" "not_installed"
+        fi
     else
         print_info "Step 3: Docker already installed, skipping..."
     fi
 }
 
-# Step 4-22: All remaining step execution functions
 execute_step_4_docker_setup() {
     if ! is_step_completed "docker_setup"; then
         print_info "Step 4: Setting up Docker..."
@@ -1719,7 +1746,7 @@ execute_all_setup_steps() {
     execute_step_20_elasticsearch_setup
     execute_step_21_ik_tokenizer_install
     execute_step_22_nginx_ui_setup
-    print_success "All setup steps completed!"
+    print_success "All setup steps completed"
 }
 
 # Function to display final summary
@@ -1814,3 +1841,4 @@ echo "======================================"
 
 # Exit successfully
 exit 0
+

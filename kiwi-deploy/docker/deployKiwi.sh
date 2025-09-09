@@ -156,6 +156,8 @@ CURRENT_DIR="$(pwd)"
 
 # Exit immediately if a command exits with a non-zero status
 set -e
+set -o pipefail
+set -E  # inherit ERR in functions/subshells
 
 # Echo all environment variables from .bashrc
 echo "=============================================="
@@ -177,12 +179,20 @@ echo ""
 error_handler() {
   local line_number=$1
   local command="$2"
+  local exit_code=$?   # capture immediately
   echo "=============================================="
   echo "ERROR: Script failed at line $line_number"
   echo "Failed command: $command"
-  echo "Exit code: $?"
+  echo "Exit code: $exit_code"
+  # If autoDeploy log exists show tail for quick context
+  if [ -f "$CURRENT_DIR/autoDeploy.log" ]; then
+     echo "--- Last 40 lines of autoDeploy.log ---"
+     tail -n 40 "$CURRENT_DIR/autoDeploy.log" || true
+     echo "--------------------------------------"
+  fi
+  echo "TIP: Re-run with: bash -x $0 (plus your params) for more tracing."
   echo "=============================================="
-  exit 1
+  exit "$exit_code"
 }
 
 # Set error trap
@@ -915,7 +925,19 @@ echo "=============================================="
 # Build Docker images and deploy
 if [ "$BUILD_ALL_SERVICES" = true ]; then
   echo "🚀 Starting auto deployment for all services..."
-  "$CURRENT_DIR/microservice-kiwi/kiwi-deploy/docker/autoDeploy.sh" "$MODE"
+  AUTO_DEPLOY_SCRIPT="$CURRENT_DIR/microservice-kiwi/kiwi-deploy/docker/autoDeploy.sh"
+  if [ ! -f "$AUTO_DEPLOY_SCRIPT" ]; then
+     echo "❌ autoDeploy script not found at: $AUTO_DEPLOY_SCRIPT"
+     echo "Current directory: $(pwd)"
+     ls -l "$CURRENT_DIR/microservice-kiwi/kiwi-deploy/docker/" || true
+     exit 1
+  fi
+  chmod +x "$AUTO_DEPLOY_SCRIPT" || true
+  echo "➡️  Invoking: $AUTO_DEPLOY_SCRIPT $MODE"
+  echo "   (Logging to $CURRENT_DIR/autoDeploy.log)"
+  # Use bash -x for extra diagnostics; preserve failure exit code via pipefail
+  bash -x "$AUTO_DEPLOY_SCRIPT" "$MODE" 2>&1 | tee "$CURRENT_DIR/autoDeploy.log"
+  echo "✅ autoDeploy completed"
 else
   # For selective deployment, we still need to stop/remove only selected services
   echo "🛑 Stopping selected services: $SELECTED_SERVICES"

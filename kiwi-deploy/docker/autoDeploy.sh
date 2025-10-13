@@ -2,6 +2,13 @@
 set -e
 set -o pipefail
 
+# Short-circuit for OBM/OBMAS (build-only) modes to prevent any docker actions
+MODE_ARG="${1:-}"
+if [[ "$MODE_ARG" == "-mode=obm" || "$MODE_ARG" == "-mode=obmas" ]]; then
+  echo "OBM/OBMAS mode detected in autoDeploy.sh — skipping docker image build and deployment."
+  exit 0
+fi
+
 # ---------------------------------------------------------
 # Dynamic path resolution (replaces unsafe use of ~ under sudo)
 # ---------------------------------------------------------

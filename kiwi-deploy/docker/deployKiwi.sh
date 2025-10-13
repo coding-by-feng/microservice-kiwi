@@ -179,16 +179,20 @@ echo ""
 error_handler() {
   local line_number=$1
   local command="$2"
-  local exit_code=$?   # capture immediately
+  local exit_code=${3:-1}   # use value captured by trap
   echo "=============================================="
   echo "ERROR: Script failed at line $line_number"
   echo "Failed command: $command"
   echo "Exit code: $exit_code"
-  # If autoDeploy log exists show tail for quick context
-  if [ -f "$CURRENT_DIR/autoDeploy.log" ]; then
-     echo "--- Last 40 lines of autoDeploy.log ---"
-     tail -n 40 "$CURRENT_DIR/autoDeploy.log" || true
-     echo "--------------------------------------"
+  # In build-only modes, don't show autoDeploy log to avoid confusion
+  if [ "${ONLY_BUILD_MAVEN}" = true ]; then
+    echo "Note: ONLY_BUILD_MAVEN=true (OBM/OBMAS). Docker steps are disabled in this mode."
+  else
+    if [ -f "$CURRENT_DIR/autoDeploy.log" ]; then
+       echo "--- Last 40 lines of autoDeploy.log ---"
+       tail -n 40 "$CURRENT_DIR/autoDeploy.log" || true
+       echo "--------------------------------------"
+    fi
   fi
   echo "TIP: Re-run with: bash -x $0 (plus your params) for more tracing."
   echo "=============================================="
@@ -196,7 +200,7 @@ error_handler() {
 }
 
 # Set error trap
-trap 'error_handler ${LINENO} "$BASH_COMMAND"' ERR
+trap 'rc=$?; error_handler ${LINENO} "$BASH_COMMAND" "$rc"' ERR
 
 # Check if script is run with sudo privileges
 if [ "$EUID" -ne 0 ]; then
@@ -392,30 +396,72 @@ should_build_service() {
 build_module_for_service() {
   local service="$1"
   local original_home="$2"
-  echo "🔨 Fallback: building module for service '$service'..."
+  local module; module="$(get_module_for_service "$service")"
+  if [ -z "$module" ]; then
+    echo "   ⚠️  Unknown module for service '$service', skipped."
+    return 0
+  fi
+  local start_ts end_ts dur
+  start_ts=$(date +%s)
+  echo "[BUILD] → $service ($module)"
+  mvn -q clean install -pl "$module" -am -Dmaven.test.skip=true -B -Dmaven.repo.local="$original_home/.m2/repository"
+  end_ts=$(date +%s); dur=$((end_ts - start_ts))
+  echo "[DONE]  ✓ $service built in ${dur}s"
+}
+
+# Map service -> module path for mvn -pl (reuses your service keys)
+get_module_for_service() {
+  local service="$1"
   case "$service" in
-    upms)
-      mvn -q -pl kiwi-upms/kiwi-upms-biz -am -DskipTests -B -Dmaven.repo.local="$original_home/.m2/repository" package
-      ;;
-    word)
-      mvn -q -pl kiwi-word/kiwi-word-biz -am -DskipTests -B -Dmaven.repo.local="$original_home/.m2/repository" package
-      ;;
-    crawler)
-      mvn -q -pl kiwi-word/kiwi-word-crawler -am -DskipTests -B -Dmaven.repo.local="$original_home/.m2/repository" package
-      ;;
-    ai)
-      mvn -q -pl kiwi-ai/kiwi-ai-biz -am -DskipTests -B -Dmaven.repo.local="$original_home/.m2/repository" package
-      ;;
-    *)
-      # top-level single module names
-      local module="${MICROSERVICES[$service]}"
-      if [ -n "$module" ]; then
-        mvn -q -pl "$module" -am -DskipTests -B -Dmaven.repo.local="$original_home/.m2/repository" package
-      else
-        echo "⚠️  Unknown module for service '$service', skipping build fallback."
-      fi
-      ;;
+    "upms")    echo "kiwi-upms/kiwi-upms-biz" ;;
+    "word")    echo "kiwi-word/kiwi-word-biz" ;;
+    "crawler") echo "kiwi-word/kiwi-word-crawler" ;;
+    "ai")      echo "kiwi-ai/kiwi-ai-biz" ;;
+    "eureka")  echo "kiwi-eureka" ;;
+    "config")  echo "kiwi-config" ;;
+    "auth")    echo "kiwi-auth" ;;
+    "gate")    echo "kiwi-gateway" ;;
+    *)         echo "" ;;
   esac
+}
+
+build_services_sequentially() {
+  local original_home="$1"
+  local total idx=0
+  local services_ordered=()
+
+  if [ "$BUILD_ALL_SERVICES" = true ]; then
+    services_ordered=(eureka config auth gate upms word crawler ai)
+  else
+    IFS=',' read -ra services_ordered <<< "$SELECTED_SERVICES"
+  fi
+
+  total=${#services_ordered[@]}
+
+  echo "== BUILD PLAN =="
+  echo "1) kiwi-common (shared)"
+  idx=0
+  for s in "${services_ordered[@]}"; do
+    idx=$((idx+1))
+    echo "$((idx+1))) $s ($(get_module_for_service "$s"))"
+  done
+  echo "================"
+
+  # 1) Build common first
+  local start_ts end_ts dur
+  start_ts=$(date +%s)
+  echo "[BUILD] → kiwi-common"
+  mvn -q clean install -pl kiwi-common -am -Dmaven.test.skip=true -B -Dmaven.repo.local="$original_home/.m2/repository"
+  end_ts=$(date +%s); dur=$((end_ts - start_ts))
+  echo "[DONE]  ✓ kiwi-common built in ${dur}s"
+
+  # 2) Build services one by one
+  idx=0
+  for service in "${services_ordered[@]}"; do
+    idx=$((idx+1))
+    echo "----- [$idx/$total] -----"
+    build_service_module "$service" "$original_home"
+  done
 }
 
 # Safe jar discovery within a module target dir (no failing pipelines under set -e/pipefail)
@@ -561,7 +607,8 @@ copy_built_jars_to_dir() {
       # Create/update stable symlink for compatibility (points to the actual file)
       ln -sfn "$base" "$dest_dir/$normalized"
       echo "   ✅ $svc -> $base (and symlinked as $normalized)"
-      ((copied++))
+      # Avoid set -e abort: do not use ((copied++)) which returns 1 when copied==0
+      copied=$((copied+1))
     else
       echo "   ❌ No runnable jar found for '$svc'. Checked:"
       echo "      - $module_dir/target"
@@ -664,38 +711,9 @@ if [ "$ONLY_BUILD_MAVEN" = true ]; then
       -Dmaven.repo.local="$ORIGINAL_HOME/.m2/repository"
   cd "$CURRENT_DIR/microservice-kiwi/"
 
-  # Maven build (all or selective) — mirrors existing logic
-  if [ "$BUILD_ALL_SERVICES" = true ]; then
-    echo "🔨 Running maven build for all services..."
-    mvn -q clean install -Dmaven.test.skip=true -B -Dmaven.repo.local="$ORIGINAL_HOME/.m2/repository"
-  else
-    echo "🔨 Running selective maven build..."
-    echo "📦 Building common modules..."
-    mvn -q clean install -pl kiwi-common -am -Dmaven.test.skip=true -B -Dmaven.repo.local="$ORIGINAL_HOME/.m2/repository"
-
-    IFS=',' read -ra SERVICE_ARRAY <<< "$SELECTED_SERVICES"
-    for service in "${SERVICE_ARRAY[@]}"; do
-      echo "📦 Building $service ..."
-      case "$service" in
-        "upms")
-          mvn -q clean install -pl kiwi-upms/kiwi-upms-biz -am -Dmaven.test.skip=true -B -Dmaven.repo.local="$ORIGINAL_HOME/.m2/repository"
-          ;;
-        "word")
-          mvn -q clean install -pl kiwi-word/kiwi-word-biz -am -Dmaven.test.skip=true -B -Dmaven.repo.local="$ORIGINAL_HOME/.m2/repository"
-          ;;
-        "crawler")
-          mvn -q clean install -pl kiwi-word/kiwi-word-crawler -am -Dmaven.test.skip=true -B -Dmaven.repo.local="$ORIGINAL_HOME/.m2/repository"
-          ;;
-        "ai")
-          mvn -q clean install -pl kiwi-ai/kiwi-ai-biz -am -Dmaven.test.skip=true -B -Dmaven.repo.local="$ORIGINAL_HOME/.m2/repository"
-          ;;
-        *)
-          module="${MICROSERVICES[$service]}"
-          mvn -q clean install -pl "$module" -am -Dmaven.test.skip=true -B -Dmaven.repo.local="$ORIGINAL_HOME/.m2/repository"
-          ;;
-      esac
-    done
-  fi
+  # Step-by-step Maven build (quiet, with progress) for all/selected
+  echo "🔨 Running step-by-step Maven build..."
+  build_services_sequentially "$ORIGINAL_HOME"
 
   # Copy JARs to ~/built_jar (robust discovery)
   copy_built_jars_to_dir "$ORIGINAL_HOME" "$CURRENT_DIR/microservice-kiwi"

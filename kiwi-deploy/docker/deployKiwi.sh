@@ -655,7 +655,7 @@ if [ "$ONLY_BUILD_MAVEN" = true ]; then
   # Ensure required TTS lib in local repo (same as existing logic)
   echo "📚 Installing VoiceRSS TTS library into local Maven repo..."
   cd "$CURRENT_DIR/microservice-kiwi/kiwi-common/kiwi-common-tts/lib"
-  mvn install:install-file \
+  mvn -q install:install-file \
       -Dfile=voicerss_tts.jar \
       -DgroupId=voicerss \
       -DartifactId=tts \
@@ -667,31 +667,31 @@ if [ "$ONLY_BUILD_MAVEN" = true ]; then
   # Maven build (all or selective) — mirrors existing logic
   if [ "$BUILD_ALL_SERVICES" = true ]; then
     echo "🔨 Running maven build for all services..."
-    mvn clean install -Dmaven.test.skip=true -B -Dmaven.repo.local="$ORIGINAL_HOME/.m2/repository"
+    mvn -q clean install -Dmaven.test.skip=true -B -Dmaven.repo.local="$ORIGINAL_HOME/.m2/repository"
   else
     echo "🔨 Running selective maven build..."
     echo "📦 Building common modules..."
-    mvn clean install -pl kiwi-common -am -Dmaven.test.skip=true -B -Dmaven.repo.local="$ORIGINAL_HOME/.m2/repository"
+    mvn -q clean install -pl kiwi-common -am -Dmaven.test.skip=true -B -Dmaven.repo.local="$ORIGINAL_HOME/.m2/repository"
 
     IFS=',' read -ra SERVICE_ARRAY <<< "$SELECTED_SERVICES"
     for service in "${SERVICE_ARRAY[@]}"; do
       echo "📦 Building $service ..."
       case "$service" in
         "upms")
-          mvn clean install -pl kiwi-upms/kiwi-upms-biz -am -Dmaven.test.skip=true -B -Dmaven.repo.local="$ORIGINAL_HOME/.m2/repository"
+          mvn -q clean install -pl kiwi-upms/kiwi-upms-biz -am -Dmaven.test.skip=true -B -Dmaven.repo.local="$ORIGINAL_HOME/.m2/repository"
           ;;
         "word")
-          mvn clean install -pl kiwi-word/kiwi-word-biz -am -Dmaven.test.skip=true -B -Dmaven.repo.local="$ORIGINAL_HOME/.m2/repository"
+          mvn -q clean install -pl kiwi-word/kiwi-word-biz -am -Dmaven.test.skip=true -B -Dmaven.repo.local="$ORIGINAL_HOME/.m2/repository"
           ;;
         "crawler")
-          mvn clean install -pl kiwi-word/kiwi-word-crawler -am -Dmaven.test.skip=true -B -Dmaven.repo.local="$ORIGINAL_HOME/.m2/repository"
+          mvn -q clean install -pl kiwi-word/kiwi-word-crawler -am -Dmaven.test.skip=true -B -Dmaven.repo.local="$ORIGINAL_HOME/.m2/repository"
           ;;
         "ai")
-          mvn clean install -pl kiwi-ai/kiwi-ai-biz -am -Dmaven.test.skip=true -B -Dmaven.repo.local="$ORIGINAL_HOME/.m2/repository"
+          mvn -q clean install -pl kiwi-ai/kiwi-ai-biz -am -Dmaven.test.skip=true -B -Dmaven.repo.local="$ORIGINAL_HOME/.m2/repository"
           ;;
         *)
           module="${MICROSERVICES[$service]}"
-          mvn clean install -pl "$module" -am -Dmaven.test.skip=true -B -Dmaven.repo.local="$ORIGINAL_HOME/.m2/repository"
+          mvn -q clean install -pl "$module" -am -Dmaven.test.skip=true -B -Dmaven.repo.local="$ORIGINAL_HOME/.m2/repository"
           ;;
       esac
     done
@@ -832,7 +832,7 @@ else
     echo "📚 Installing VoiceRSS TTS library..."
     echo "📂 Using Maven repository: $ORIGINAL_HOME/.m2"
     cd "$CURRENT_DIR/microservice-kiwi/kiwi-common/kiwi-common-tts/lib"
-    mvn install:install-file \
+    mvn -q install:install-file \
         -Dfile=voicerss_tts.jar \
         -DgroupId=voicerss \
         -DartifactId=tts \
@@ -843,12 +843,12 @@ else
 
     if [ "$BUILD_ALL_SERVICES" = true ]; then
       echo "🔨 Running maven build for all services..."
-      mvn clean install -Dmaven.test.skip=true -B -Dmaven.repo.local="$ORIGINAL_HOME/.m2/repository"
+      mvn -q clean install -Dmaven.test.skip=true -B -Dmaven.repo.local="$ORIGINAL_HOME/.m2/repository"
     else
       echo "🔨 Running selective maven build..."
       # Build common modules first (always needed)
       echo "📦 Building common modules..."
-      mvn clean install -pl kiwi-common -am -Dmaven.test.skip=true -B -Dmaven.repo.local="$ORIGINAL_HOME/.m2/repository"
+      mvn -q clean install -pl kiwi-common -am -Dmaven.test.skip=true -B -Dmaven.repo.local="$ORIGINAL_HOME/.m2/repository"
 
       # Build selected services
       IFS=',' read -ra SERVICE_ARRAY <<< "$SELECTED_SERVICES"
@@ -859,19 +859,19 @@ else
         # Handle special cases for nested modules
         case "$service" in
           "upms")
-            mvn clean install -pl kiwi-upms/kiwi-upms-biz -am -Dmaven.test.skip=true -B -Dmaven.repo.local="$ORIGINAL_HOME/.m2/repository"
+            mvn -q clean install -pl kiwi-upms/kiwi-upms-biz -am -Dmaven.test.skip=true -B -Dmaven.repo.local="$ORIGINAL_HOME/.m2/repository"
             ;;
           "word")
-            mvn clean install -pl kiwi-word/kiwi-word-biz -am -Dmaven.test.skip=true -B -Dmaven.repo.local="$ORIGINAL_HOME/.m2/repository"
+            mvn -q clean install -pl kiwi-word/kiwi-word-biz -am -Dmaven.test.skip=true -B -Dmaven.repo.local="$ORIGINAL_HOME/.m2/repository"
             ;;
           "crawler")
-            mvn clean install -pl kiwi-word/kiwi-word-crawler -am -Dmaven.test.skip=true -B -Dmaven.repo.local="$ORIGINAL_HOME/.m2/repository"
+            mvn -q clean install -pl kiwi-word/kiwi-word-crawler -am -Dmaven.test.skip=true -B -Dmaven.repo.local="$ORIGINAL_HOME/.m2/repository"
             ;;
           "ai")
-            mvn clean install -pl kiwi-ai/kiwi-ai-biz -am -Dmaven.test.skip=true -B -Dmaven.repo.local="$ORIGINAL_HOME/.m2/repository"
+            mvn -q clean install -pl kiwi-ai/kiwi-ai-biz -am -Dmaven.test.skip=true -B -Dmaven.repo.local="$ORIGINAL_HOME/.m2/repository"
             ;;
           *)
-            mvn clean install -pl $module -am -Dmaven.test.skip=true -B -Dmaven.repo.local="$ORIGINAL_HOME/.m2/repository"
+            mvn -q clean install -pl $module -am -Dmaven.test.skip=true -B -Dmaven.repo.local="$ORIGINAL_HOME/.m2/repository"
             ;;
         esac
       done

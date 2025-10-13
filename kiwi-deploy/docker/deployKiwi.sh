@@ -378,37 +378,70 @@ should_build_service() {
 # === New: helper to copy built jars to ~/built_jar (under original user's home) ===
 copy_built_jars_to_dir() {
   local original_home="$1"
+  local project_root="$2"   # path to .../microservice-kiwi
   local dest_dir="${original_home}/built_jar"
   mkdir -p "$dest_dir"
 
-  # Map service -> expected jar path in local maven repo
-  declare -A JAR_MAP=(
-    ["eureka"]="$original_home/.m2/repository/me/fengorz/kiwi-eureka/2.0/kiwi-eureka-2.0.jar"
-    ["config"]="$original_home/.m2/repository/me/fengorz/kiwi-config/2.0/kiwi-config-2.0.jar"
-    ["upms"]="$original_home/.m2/repository/me/fengorz/kiwi-upms-biz/2.0/kiwi-upms-biz-2.0.jar"
-    ["auth"]="$original_home/.m2/repository/me/fengorz/kiwi-auth/2.0/kiwi-auth-2.0.jar"
-    ["gate"]="$original_home/.m2/repository/me/fengorz/kiwi-gateway/2.0/kiwi-gateway-2.0.jar"
-    ["word"]="$original_home/.m2/repository/me/fengorz/kiwi-word-biz/2.0/kiwi-word-biz-2.0.jar"
-    ["crawler"]="$original_home/.m2/repository/me/fengorz/kiwi-word-crawler/2.0/kiwi-word-crawler-2.0.jar"
-    ["ai"]="$original_home/.m2/repository/me/fengorz/kiwi-ai-biz/2.0/kiwi-ai-biz-2.0.jar"
+  # Map service -> [module_dir, normalized_output_name]
+  declare -A MODULE_DIRS=(
+    ["eureka"]="$project_root/kiwi-eureka"
+    ["config"]="$project_root/kiwi-config"
+    ["upms"]="$project_root/kiwi-upms/kiwi-upms-biz"
+    ["auth"]="$project_root/kiwi-auth"
+    ["gate"]="$project_root/kiwi-gateway"
+    ["word"]="$project_root/kiwi-word/kiwi-word-biz"
+    ["crawler"]="$project_root/kiwi-word/kiwi-word-crawler"
+    ["ai"]="$project_root/kiwi-ai/kiwi-ai-biz"
+  )
+  declare -A NORMALIZED_NAMES=(
+    ["eureka"]="kiwi-eureka-2.0.jar"
+    ["config"]="kiwi-config-2.0.jar"
+    ["upms"]="kiwi-upms-biz-2.0.jar"
+    ["auth"]="kiwi-auth-2.0.jar"
+    ["gate"]="kiwi-gateway-2.0.jar"
+    ["word"]="kiwi-word-biz-2.0.jar"
+    ["crawler"]="kiwi-word-crawler-2.0.jar"
+    ["ai"]="kiwi-ai-biz-2.0.jar"
   )
 
-  local copied=0
+  # Pick the runnable jar from target dir (exclude sources/javadoc/tests/original-*)
+  find_runnable_jar() {
+    local module_dir="$1"
+    local target_dir="$module_dir/target"
+    [ -d "$target_dir" ] || return 1
+    # shellcheck disable=SC2012
+    local jar
+    jar=$(ls -1t "$target_dir"/*.jar 2>/dev/null | grep -Ev '(-sources|-javadoc|-tests)\.jar$' | grep -Ev '/original-.*\.jar$' | head -n1)
+    if [ -n "$jar" ] && [ -f "$jar" ]; then
+      echo "$jar"
+      return 0
+    fi
+    return 1
+  }
+
+  local services
   if [ "$BUILD_ALL_SERVICES" = true ]; then
     services=(eureka config upms auth gate word crawler ai)
   else
     IFS=',' read -ra services <<< "$SELECTED_SERVICES"
   fi
 
-  echo "📦 Copying built jars to: $dest_dir"
+  echo "📦 Collecting built jars into: $dest_dir"
+  local copied=0
   for svc in "${services[@]}"; do
-    jar_path="${JAR_MAP[$svc]}"
-    if [ -n "$jar_path" ] && [ -f "$jar_path" ]; then
-      cp -f "$jar_path" "$dest_dir/"
-      echo "   ✅ $svc -> $(basename "$jar_path")"
+    local module_dir="${MODULE_DIRS[$svc]}"
+    local normalized="${NORMALIZED_NAMES[$svc]}"
+    if [ -z "$module_dir" ] || [ -z "$normalized" ]; then
+      echo "   ⚠️  Unknown module mapping for service: $svc"
+      continue
+    fi
+    jar_path="$(find_runnable_jar "$module_dir")" || jar_path=""
+    if [ -n "$jar_path" ]; then
+      cp -f "$jar_path" "$dest_dir/$normalized"
+      echo "   ✅ $svc -> $(basename "$dest_dir/$normalized")"
       ((copied++))
     else
-      echo "   ⚠️  $svc jar not found in local repo, expected: ${jar_path:-<unknown>}"
+      echo "   ⚠️  No runnable jar found under: $module_dir/target"
     fi
   done
 
@@ -540,8 +573,8 @@ if [ "$ONLY_BUILD_MAVEN" = true ]; then
     done
   fi
 
-  # Copy JARs to ~/built_jar
-  copy_built_jars_to_dir "$ORIGINAL_HOME"
+  # Copy JARs to ~/built_jar (from module targets, normalized names)
+  copy_built_jars_to_dir "$ORIGINAL_HOME" "$CURRENT_DIR/microservice-kiwi"
 
   # If OBMAS, send them to remote
   if [ "$SEND_AFTER_BUILD" = true ]; then
@@ -730,12 +763,28 @@ else
     echo "📂 Maven repository: $ORIGINAL_HOME/.m2"
     [ "$USE_EXISTING_JARS_ONLY" = true ] && echo "📂 Using existing jars from: $ORIGINAL_HOME/built_jar"
 
-    # Helper to resolve jar path based on mode
+    # Helper to resolve jar path based on mode (prefer built_jar by prefix in OUEJ)
+    find_built_by_prefix() {
+      local prefix="$1"   # e.g. kiwi-eureka
+      local dir="$2"
+      # shellcheck disable=SC2012
+      ls -1t "$dir/${prefix}-"*.jar 2>/dev/null | head -n1
+    }
     resolve_jar_path() {
-      local artifact="$1"    # e.g. kiwi-eureka-2.0.jar
+      local service="$1"     # key: eureka/config/...
       local m2_path="$2"     # fallback path under ~/.m2
       if [ "$USE_EXISTING_JARS_ONLY" = true ]; then
-        echo "$ORIGINAL_HOME/built_jar/$artifact"
+        case "$service" in
+          eureka)  find_built_by_prefix "kiwi-eureka" "$ORIGINAL_HOME/built_jar" ;;
+          config)  find_built_by_prefix "kiwi-config" "$ORIGINAL_HOME/built_jar" ;;
+          upms)    find_built_by_prefix "kiwi-upms-biz" "$ORIGINAL_HOME/built_jar" ;;
+          auth)    find_built_by_prefix "kiwi-auth" "$ORIGINAL_HOME/built_jar" ;;
+          gate)    find_built_by_prefix "kiwi-gateway" "$ORIGINAL_HOME/built_jar" ;;
+          word)    find_built_by_prefix "kiwi-word-biz" "$ORIGINAL_HOME/built_jar" ;;
+          crawler) find_built_by_prefix "kiwi-word-crawler" "$ORIGINAL_HOME/built_jar" ;;
+          ai)      find_built_by_prefix "kiwi-ai-biz" "$ORIGINAL_HOME/built_jar" ;;
+          *) echo "" ;;
+        esac
       else
         echo "$m2_path"
       fi
@@ -745,8 +794,8 @@ else
     if should_build_service "eureka"; then
       echo "📄 Copying eureka files..."
       cp -f "$CURRENT_DIR/microservice-kiwi/kiwi-eureka/Dockerfile" "$CURRENT_DIR/docker/kiwi/eureka/"
-      eureka_jar=$(resolve_jar_path "kiwi-eureka-2.0.jar" "$ORIGINAL_HOME/.m2/repository/me/fengorz/kiwi-eureka/2.0/kiwi-eureka-2.0.jar")
-      [ -f "$eureka_jar" ] || { echo "❌ Missing jar: $eureka_jar. Use -mode=obm/obmas first."; exit 1; }
+      eureka_jar=$(resolve_jar_path "eureka" "$ORIGINAL_HOME/.m2/repository/me/fengorz/kiwi-eureka/2.0/kiwi-eureka-2.0.jar")
+      [ -n "$eureka_jar" ] && [ -f "$eureka_jar" ] || { echo "❌ Missing jar for eureka. Use -mode=obm/obmas first."; exit 1; }
       cp -f "$eureka_jar" "$CURRENT_DIR/docker/kiwi/eureka/"
     fi
 
@@ -754,8 +803,8 @@ else
     if should_build_service "config"; then
       echo "📄 Copying config files..."
       cp -f "$CURRENT_DIR/microservice-kiwi/kiwi-config/Dockerfile" "$CURRENT_DIR/docker/kiwi/config/"
-      config_jar=$(resolve_jar_path "kiwi-config-2.0.jar" "$ORIGINAL_HOME/.m2/repository/me/fengorz/kiwi-config/2.0/kiwi-config-2.0.jar")
-      [ -f "$config_jar" ] || { echo "❌ Missing jar: $config_jar. Use -mode=obm/obmas first."; exit 1; }
+      config_jar=$(resolve_jar_path "config" "$ORIGINAL_HOME/.m2/repository/me/fengorz/kiwi-config/2.0/kiwi-config-2.0.jar")
+      [ -n "$config_jar" ] && [ -f "$config_jar" ] || { echo "❌ Missing jar for config. Use -mode=obm/obmas first."; exit 1; }
       cp -f "$config_jar" "$CURRENT_DIR/docker/kiwi/config/"
     fi
 
@@ -763,8 +812,8 @@ else
     if should_build_service "upms"; then
       echo "📄 Copying upms files..."
       cp -f "$CURRENT_DIR/microservice-kiwi/kiwi-upms/kiwi-upms-biz/Dockerfile" "$CURRENT_DIR/docker/kiwi/upms/"
-      upms_jar=$(resolve_jar_path "kiwi-upms-biz-2.0.jar" "$ORIGINAL_HOME/.m2/repository/me/fengorz/kiwi-upms-biz/2.0/kiwi-upms-biz-2.0.jar")
-      [ -f "$upms_jar" ] || { echo "❌ Missing jar: $upms_jar. Use -mode=obm/obmas first."; exit 1; }
+      upms_jar=$(resolve_jar_path "upms" "$ORIGINAL_HOME/.m2/repository/me/fengorz/kiwi-upms-biz/2.0/kiwi-upms-biz-2.0.jar")
+      [ -n "$upms_jar" ] && [ -f "$upms_jar" ] || { echo "❌ Missing jar for upms. Use -mode=obm/obmas first."; exit 1; }
       cp -f "$upms_jar" "$CURRENT_DIR/docker/kiwi/upms/"
     fi
 
@@ -772,8 +821,8 @@ else
     if should_build_service "auth"; then
       echo "📄 Copying auth files..."
       cp -f "$CURRENT_DIR/microservice-kiwi/kiwi-auth/Dockerfile" "$CURRENT_DIR/docker/kiwi/auth/"
-      auth_jar=$(resolve_jar_path "kiwi-auth-2.0.jar" "$ORIGINAL_HOME/.m2/repository/me/fengorz/kiwi-auth/2.0/kiwi-auth-2.0.jar")
-      [ -f "$auth_jar" ] || { echo "❌ Missing jar: $auth_jar. Use -mode=obm/obmas first."; exit 1; }
+      auth_jar=$(resolve_jar_path "auth" "$ORIGINAL_HOME/.m2/repository/me/fengorz/kiwi-auth/2.0/kiwi-auth-2.0.jar")
+      [ -n "$auth_jar" ] && [ -f "$auth_jar" ] || { echo "❌ Missing jar for auth. Use -mode=obm/obmas first."; exit 1; }
       cp -f "$auth_jar" "$CURRENT_DIR/docker/kiwi/auth/"
     fi
 
@@ -781,8 +830,8 @@ else
     if should_build_service "gate"; then
       echo "📄 Copying gateway files..."
       cp -f "$CURRENT_DIR/microservice-kiwi/kiwi-gateway/Dockerfile" "$CURRENT_DIR/docker/kiwi/gate/"
-      gate_jar=$(resolve_jar_path "kiwi-gateway-2.0.jar" "$ORIGINAL_HOME/.m2/repository/me/fengorz/kiwi-gateway/2.0/kiwi-gateway-2.0.jar")
-      [ -f "$gate_jar" ] || { echo "❌ Missing jar: $gate_jar. Use -mode=obm/obmas first."; exit 1; }
+      gate_jar=$(resolve_jar_path "gate" "$ORIGINAL_HOME/.m2/repository/me/fengorz/kiwi-gateway/2.0/kiwi-gateway-2.0.jar")
+      [ -n "$gate_jar" ] && [ -f "$gate_jar" ] || { echo "❌ Missing jar for gate. Use -mode=obm/obmas first."; exit 1; }
       cp -f "$gate_jar" "$CURRENT_DIR/docker/kiwi/gate/"
     fi
 
@@ -791,8 +840,8 @@ else
       echo "📄 Copying word service files..."
       cp -f "$CURRENT_DIR/microservice-kiwi/kiwi-word/kiwi-word-biz/docker/biz/Dockerfile" "$CURRENT_DIR/docker/kiwi/word/biz"
       cp -f "$CURRENT_DIR/microservice-kiwi/kiwi-word/kiwi-word-biz/docker/crawler/Dockerfile" "$CURRENT_DIR/docker/kiwi/word/crawler"
-      word_jar=$(resolve_jar_path "kiwi-word-biz-2.0.jar" "$ORIGINAL_HOME/.m2/repository/me/fengorz/kiwi-word-biz/2.0/kiwi-word-biz-2.0.jar")
-      [ -f "$word_jar" ] || { echo "❌ Missing jar: $word_jar. Use -mode=obm/obmas first."; exit 1; }
+      word_jar=$(resolve_jar_path "word" "$ORIGINAL_HOME/.m2/repository/me/fengorz/kiwi-word-biz/2.0/kiwi-word-biz-2.0.jar")
+      [ -n "$word_jar" ] && [ -f "$word_jar" ] || { echo "❌ Missing jar for word-biz. Use -mode=obm/obmas first."; exit 1; }
       cp -f "$word_jar" "$CURRENT_DIR/docker/kiwi/word/"
       cp -f "$CURRENT_DIR/gcp-credentials.json" "$CURRENT_DIR/docker/kiwi/word/bizTmp"
     fi
@@ -801,8 +850,8 @@ else
     if should_build_service "crawler"; then
       echo "📄 Copying crawler files..."
       cp -f "$CURRENT_DIR/microservice-kiwi/kiwi-word/kiwi-word-crawler/Dockerfile" "$CURRENT_DIR/docker/kiwi/crawler/"
-      crawler_jar=$(resolve_jar_path "kiwi-word-crawler-2.0.jar" "$ORIGINAL_HOME/.m2/repository/me/fengorz/kiwi-word-crawler/2.0/kiwi-word-crawler-2.0.jar")
-      [ -f "$crawler_jar" ] || { echo "❌ Missing jar: $crawler_jar. Use -mode=obm/obmas first."; exit 1; }
+      crawler_jar=$(resolve_jar_path "crawler" "$ORIGINAL_HOME/.m2/repository/me/fengorz/kiwi-word-crawler/2.0/kiwi-word-crawler-2.0.jar")
+      [ -n "$crawler_jar" ] && [ -f "$crawler_jar" ] || { echo "❌ Missing jar for crawler. Use -mode=obm/obmas first."; exit 1; }
       cp -f "$crawler_jar" "$CURRENT_DIR/docker/kiwi/crawler/"
     fi
 
@@ -811,8 +860,8 @@ else
       echo "📄 Copying AI service files..."
       cp -f "$CURRENT_DIR/microservice-kiwi/kiwi-ai/kiwi-ai-biz/docker/biz/Dockerfile" "$CURRENT_DIR/docker/kiwi/ai/biz"
       cp -f "$CURRENT_DIR/microservice-kiwi/kiwi-ai/kiwi-ai-biz/docker/batch/Dockerfile" "$CURRENT_DIR/docker/kiwi/ai/batch"
-      ai_jar=$(resolve_jar_path "kiwi-ai-biz-2.0.jar" "$ORIGINAL_HOME/.m2/repository/me/fengorz/kiwi-ai-biz/2.0/kiwi-ai-biz-2.0.jar")
-      [ -f "$ai_jar" ] || { echo "❌ Missing jar: $ai_jar. Use -mode=obm/obmas first."; exit 1; }
+      ai_jar=$(resolve_jar_path "ai" "$ORIGINAL_HOME/.m2/repository/me/fengorz/kiwi-ai-biz/2.0/kiwi-ai-biz-2.0.jar")
+      [ -n "$ai_jar" ] && [ -f "$ai_jar" ] || { echo "❌ Missing jar for ai. Use -mode=obm/obmas first."; exit 1; }
       cp -f "$ai_jar" "$CURRENT_DIR/docker/kiwi/ai/biz"
       cp -f "$ai_jar" "$CURRENT_DIR/docker/kiwi/ai/batch"
     fi

@@ -230,6 +230,8 @@ show_help() {
   echo "  -mode=sbd     Skip Dockerfile building operation (copying Dockerfiles and JARs)"
   echo "  -mode=sa      Skip all build operations - FAST DEPLOY MODE"
   echo "                (Only stop containers → remove containers → start containers)"
+  echo "  -mode=obm     Only build with Maven, then copy built JARs to ~/built_jar"
+  echo "  -mode=obmas   Only build with Maven, then send built JARs to remote via scp"
   echo ""
   echo "Available options:"
   echo "  -c            Enable autoCheckService after deployment"
@@ -248,6 +250,8 @@ show_help() {
   echo "  sudo -E $0 -mode=sgm              # Skip git AND maven build"
   echo "  sudo -E $0 -mode=sbd              # Skip only Dockerfile building"
   echo "  sudo -E $0 -mode=sa               # FAST DEPLOY: Skip all builds"
+  echo "  sudo -E $0 -mode=obm              # Only Maven build and copy jars to ~/built_jar"
+  echo "  sudo -E $0 -mode=obmas            # Maven build then scp jars to remote"
   echo "  sudo -E $0 -s=eureka,config       # Build only eureka and config services"
   echo "  sudo -E $0 -mode=sgm -s=auth      # Skip git+maven, build only auth service"
   echo "  sudo -E $0 -mode=sa -c            # Fast deploy with autoCheckService"
@@ -262,6 +266,8 @@ SKIP_DOCKER_BUILD=false
 FAST_DEPLOY_MODE=false
 SELECTED_SERVICES=""
 BUILD_ALL_SERVICES=true
+ONLY_BUILD_MAVEN=false
+SEND_AFTER_BUILD=false
 
 # Process all arguments
 for arg in "$@"; do
@@ -298,6 +304,17 @@ for arg in "$@"; do
       echo "   ⏭️  Maven build: SKIPPED"
       echo "   ⏭️  Docker building: SKIPPED"
       echo "   ✅ Will only: Stop → Remove → Start containers"
+      ;;
+    -mode=obm)
+      MODE="$arg"
+      ONLY_BUILD_MAVEN=true
+      echo "🧱 OBM MODE: Only Maven build and copy jars to ~/built_jar"
+      ;;
+    -mode=obmas)
+      MODE="$arg"
+      ONLY_BUILD_MAVEN=true
+      SEND_AFTER_BUILD=true
+      echo "📦➡️  OBMAS MODE: Maven build, then send jars to remote via scp"
       ;;
     -s=*)
       SELECTED_SERVICES="${arg#-s=}"
@@ -347,6 +364,183 @@ should_build_service() {
   fi
   return 1
 }
+
+# === New: helper to copy built jars to ~/built_jar (under original user's home) ===
+copy_built_jars_to_dir() {
+  local original_home="$1"
+  local dest_dir="${original_home}/built_jar"
+  mkdir -p "$dest_dir"
+
+  # Map service -> expected jar path in local maven repo
+  declare -A JAR_MAP=(
+    ["eureka"]="$original_home/.m2/repository/me/fengorz/kiwi-eureka/2.0/kiwi-eureka-2.0.jar"
+    ["config"]="$original_home/.m2/repository/me/fengorz/kiwi-config/2.0/kiwi-config-2.0.jar"
+    ["upms"]="$original_home/.m2/repository/me/fengorz/kiwi-upms-biz/2.0/kiwi-upms-biz-2.0.jar"
+    ["auth"]="$original_home/.m2/repository/me/fengorz/kiwi-auth/2.0/kiwi-auth-2.0.jar"
+    ["gate"]="$original_home/.m2/repository/me/fengorz/kiwi-gateway/2.0/kiwi-gateway-2.0.jar"
+    ["word"]="$original_home/.m2/repository/me/fengorz/kiwi-word-biz/2.0/kiwi-word-biz-2.0.jar"
+    ["crawler"]="$original_home/.m2/repository/me/fengorz/kiwi-word-crawler/2.0/kiwi-word-crawler-2.0.jar"
+    ["ai"]="$original_home/.m2/repository/me/fengorz/kiwi-ai-biz/2.0/kiwi-ai-biz-2.0.jar"
+  )
+
+  local copied=0
+  if [ "$BUILD_ALL_SERVICES" = true ]; then
+    services=(eureka config upms auth gate word crawler ai)
+  else
+    IFS=',' read -ra services <<< "$SELECTED_SERVICES"
+  fi
+
+  echo "📦 Copying built jars to: $dest_dir"
+  for svc in "${services[@]}"; do
+    jar_path="${JAR_MAP[$svc]}"
+    if [ -n "$jar_path" ] && [ -f "$jar_path" ]; then
+      cp -f "$jar_path" "$dest_dir/"
+      echo "   ✅ $svc -> $(basename "$jar_path")"
+      ((copied++))
+    else
+      echo "   ⚠️  $svc jar not found in local repo, expected: ${jar_path:-<unknown>}"
+    fi
+  done
+
+  # Ensure ownership for original user, if available
+  if [ -n "$SUDO_USER" ]; then
+    chown -R "$SUDO_USER":"$SUDO_USER" "$dest_dir" || true
+  fi
+
+  if [ "$copied" -eq 0 ]; then
+    echo "❌ No jars were copied. Did the Maven build succeed?"
+    return 1
+  fi
+
+  echo "✅ Copied $copied jar(s) to $dest_dir"
+  return 0
+}
+
+# === New: send jars to remote host via scp (first-run prompts saved) ===
+send_jars_remote() {
+  local original_home="$1"
+  local src_dir="${original_home}/built_jar"
+  local cfg_dir="${original_home}/.kiwi"
+  local cfg_file="${cfg_dir}/obmas.conf"
+
+  mkdir -p "$cfg_dir"
+  if [ ! -f "$cfg_file" ]; then
+    echo "📝 First-time OBMAS setup:"
+    read -p "Remote host (hostname or IP): " REMOTE_HOST
+    read -p "Remote user: " REMOTE_USER
+    read -p "Remote directory (default: ~/kiwi_jars): " REMOTE_DIR
+    REMOTE_DIR=${REMOTE_DIR:-"~/kiwi_jars"}
+    read -s -p "Remote password: " REMOTE_PASS
+    echo
+    # Save config (password in plaintext; file will be 600)
+    umask 077
+    cat > "$cfg_file" <<EOF
+REMOTE_HOST="$REMOTE_HOST"
+REMOTE_USER="$REMOTE_USER"
+REMOTE_DIR="$REMOTE_DIR"
+REMOTE_PASS="$REMOTE_PASS"
+EOF
+    # Restore default umask
+    umask 022
+    if [ -n "$SUDO_USER" ]; then
+      chown "$SUDO_USER":"$SUDO_USER" "$cfg_file" || true
+    fi
+    echo "✅ Saved OBMAS configuration to $cfg_file"
+  fi
+
+  # shellcheck disable=SC1090
+  source "$cfg_file"
+
+  if [ ! -d "$src_dir" ] || [ -z "$(ls -1 "$src_dir"/*.jar 2>/dev/null)" ]; then
+    echo "❌ No jars found to send in: $src_dir"
+    return 1
+  fi
+
+  echo "🌐 Sending jars to $REMOTE_USER@$REMOTE_HOST:$REMOTE_DIR ..."
+  if command -v sshpass >/dev/null 2>&1; then
+    sshpass -p "$REMOTE_PASS" ssh -o StrictHostKeyChecking=no "$REMOTE_USER@$REMOTE_HOST" "mkdir -p \"$REMOTE_DIR\""
+    sshpass -p "$REMOTE_PASS" scp -o StrictHostKeyChecking=no "$src_dir"/*.jar "$REMOTE_USER@$REMOTE_HOST":"$REMOTE_DIR"/
+  else
+    echo "ℹ️  'sshpass' not found; using interactive ssh/scp (you may be prompted for password)."
+    ssh -o StrictHostKeyChecking=no "$REMOTE_USER@$REMOTE_HOST" "mkdir -p \"$REMOTE_DIR\""
+    scp -o StrictHostKeyChecking=no "$src_dir"/*.jar "$REMOTE_USER@$REMOTE_HOST":"$REMOTE_DIR"/
+  fi
+
+  echo "✅ Jars sent to $REMOTE_USER@$REMOTE_HOST:$REMOTE_DIR"
+}
+
+# === New: OBM/OBMAS short-circuit workflow ===
+if [ "$ONLY_BUILD_MAVEN" = true ]; then
+  echo "=============================================="
+  echo "OBM/OBMAS CONFIGURATION:"
+  echo "=============================================="
+  if [ -n "$SUDO_USER" ]; then
+    ORIGINAL_HOME=$(eval echo "~$SUDO_USER")
+  else
+    ORIGINAL_HOME="$HOME"
+  fi
+  echo "Mode: $MODE"
+  echo "Selected services: $([ "$BUILD_ALL_SERVICES" = true ] && echo "ALL" || echo "$SELECTED_SERVICES")"
+  echo "Maven local repo: $ORIGINAL_HOME/.m2/repository"
+  echo "Jar output dir:   $ORIGINAL_HOME/built_jar"
+  echo "=============================================="
+
+  # Ensure required TTS lib in local repo (same as existing logic)
+  echo "📚 Installing VoiceRSS TTS library into local Maven repo..."
+  cd "$CURRENT_DIR/microservice-kiwi/kiwi-common/kiwi-common-tts/lib"
+  mvn install:install-file \
+      -Dfile=voicerss_tts.jar \
+      -DgroupId=voicerss \
+      -DartifactId=tts \
+      -Dversion=2.0 \
+      -Dpackaging=jar \
+      -Dmaven.repo.local="$ORIGINAL_HOME/.m2/repository"
+  cd "$CURRENT_DIR/microservice-kiwi/"
+
+  # Maven build (all or selective) — mirrors existing logic
+  if [ "$BUILD_ALL_SERVICES" = true ]; then
+    echo "🔨 Running maven build for all services..."
+    mvn clean install -Dmaven.test.skip=true -B -Dmaven.repo.local="$ORIGINAL_HOME/.m2/repository"
+  else
+    echo "🔨 Running selective maven build..."
+    echo "📦 Building common modules..."
+    mvn clean install -pl kiwi-common -am -Dmaven.test.skip=true -B -Dmaven.repo.local="$ORIGINAL_HOME/.m2/repository"
+
+    IFS=',' read -ra SERVICE_ARRAY <<< "$SELECTED_SERVICES"
+    for service in "${SERVICE_ARRAY[@]}"; do
+      echo "📦 Building $service ..."
+      case "$service" in
+        "upms")
+          mvn clean install -pl kiwi-upms/kiwi-upms-biz -am -Dmaven.test.skip=true -B -Dmaven.repo.local="$ORIGINAL_HOME/.m2/repository"
+          ;;
+        "word")
+          mvn clean install -pl kiwi-word/kiwi-word-biz -am -Dmaven.test.skip=true -B -Dmaven.repo.local="$ORIGINAL_HOME/.m2/repository"
+          ;;
+        "crawler")
+          mvn clean install -pl kiwi-word/kiwi-word-crawler -am -Dmaven.test.skip=true -B -Dmaven.repo.local="$ORIGINAL_HOME/.m2/repository"
+          ;;
+        "ai")
+          mvn clean install -pl kiwi-ai/kiwi-ai-biz -am -Dmaven.test.skip=true -B -Dmaven.repo.local="$ORIGINAL_HOME/.m2/repository"
+          ;;
+        *)
+          module="${MICROSERVICES[$service]}"
+          mvn clean install -pl "$module" -am -Dmaven.test.skip=true -B -Dmaven.repo.local="$ORIGINAL_HOME/.m2/repository"
+          ;;
+      esac
+    done
+  fi
+
+  # Copy JARs to ~/built_jar
+  copy_built_jars_to_dir "$ORIGINAL_HOME"
+
+  # If OBMAS, send them to remote
+  if [ "$SEND_AFTER_BUILD" = true ]; then
+    send_jars_remote "$ORIGINAL_HOME"
+  fi
+
+  echo "🎉 OBM workflow complete."
+  exit 0
+fi
 
 # Display final configuration
 echo "=============================================="

@@ -1164,6 +1164,12 @@ echo "=============================================="
 
 # Build Docker images and deploy
 if [ "$BUILD_ALL_SERVICES" = true ]; then
+  # Safety guard: if somehow ONLY_BUILD_MAVEN is still true, do not continue
+  if [ "$ONLY_BUILD_MAVEN" = true ]; then
+    echo "OBM/OBMAS mode: skipping auto deployment."
+    exit 0
+  fi
+
   echo "🚀 Starting auto deployment for all services..."
   AUTO_DEPLOY_SCRIPT="$CURRENT_DIR/microservice-kiwi/kiwi-deploy/docker/autoDeploy.sh"
   if [ ! -f "$AUTO_DEPLOY_SCRIPT" ]; then

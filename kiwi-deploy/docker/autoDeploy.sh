@@ -2,10 +2,34 @@
 set -e
 set -o pipefail
 
-# Short-circuit for OBM/OBMAS (build-only) modes to prevent any docker actions
+# Trace entry and inputs
 MODE_ARG="${1:-}"
+PARENT_CMD="$(ps -o args= -p "$PPID" 2>/dev/null || true)"
+GRANDPARENT="$(ps -o ppid= -p "$PPID" 2>/dev/null | tr -d ' ' || true)"
+GRANDPARENT_CMD="$(ps -o args= -p "$GRANDPARENT" 2>/dev/null || true)"
+echo "=== autoDeploy.sh ENTRY ==="
+echo "MODE_ARG: ${MODE_ARG}"
+echo "KIWI_DEPLOY_MODE(env): ${KIWI_DEPLOY_MODE:-<unset>}"
+echo "ONLY_BUILD_MAVEN(env): ${ONLY_BUILD_MAVEN:-<unset>}"
+echo "Parent cmd: ${PARENT_CMD}"
+echo "Grandparent cmd: ${GRANDPARENT_CMD}"
+echo "==========================="
+
+# Short-circuit for OBM/OBMAS (build-only) modes to prevent any docker actions
 if [[ "$MODE_ARG" == "-mode=obm" || "$MODE_ARG" == "-mode=obmas" ]]; then
-  echo "OBM/OBMAS mode detected in autoDeploy.sh — skipping docker image build and deployment."
+  echo "OBM/OBMAS detected via MODE_ARG — skipping docker image build and deployment."
+  exit 0
+fi
+if [[ "${KIWI_DEPLOY_MODE}" == "-mode=obm" || "${KIWI_DEPLOY_MODE}" == "-mode=obmas" ]]; then
+  echo "OBM/OBMAS detected via KIWI_DEPLOY_MODE env — skipping docker image build and deployment."
+  exit 0
+fi
+if [[ "${ONLY_BUILD_MAVEN}" == "true" ]]; then
+  echo "Build-only flag (ONLY_BUILD_MAVEN=true) detected — skipping docker image build and deployment."
+  exit 0
+fi
+if echo "$PARENT_CMD $GRANDPARENT_CMD" | grep -qE -- '\-mode=(obm|obmas)'; then
+  echo "OBM/OBMAS detected in ancestor process args — skipping docker image build and deployment."
   exit 0
 fi
 

@@ -351,6 +351,17 @@ for arg in "$@"; do
   esac
 done
 
+# Export mode flags so child scripts (if any) can detect build-only mode
+export KIWI_DEPLOY_MODE="$MODE"
+export ONLY_BUILD_MAVEN
+
+# Quick, centralized mode summary (helps trace the flow)
+echo "=== deployKiwi.sh MODE SUMMARY ==="
+echo "MODE: ${MODE:-<none>} | ONLY_BUILD_MAVEN=${ONLY_BUILD_MAVEN} | SEND_AFTER_BUILD=${SEND_AFTER_BUILD} | USE_EXISTING_JARS_ONLY=${USE_EXISTING_JARS_ONLY}"
+echo "SKIP_GIT=${SKIP_GIT} | SKIP_MAVEN=${SKIP_MAVEN} | SKIP_DOCKER_BUILD=${SKIP_DOCKER_BUILD} | FAST_DEPLOY_MODE=${FAST_DEPLOY_MODE}"
+echo "Selected services: $([ "$BUILD_ALL_SERVICES" = true ] && echo ALL || echo "$SELECTED_SERVICES")"
+echo "=================================="
+
 # Validate selected services
 if [ "$BUILD_ALL_SERVICES" = false ]; then
   IFS=',' read -ra SERVICE_ARRAY <<< "$SELECTED_SERVICES"
@@ -375,14 +386,95 @@ should_build_service() {
   return 1
 }
 
-# === New: helper to copy built jars to ~/built_jar (under original user's home) ===
+# === New/Updated helpers for OBM/OBMAS ===
+
+# Build a single service module on-demand (used as fallback if jar not found)
+build_module_for_service() {
+  local service="$1"
+  local original_home="$2"
+  echo "🔨 Fallback: building module for service '$service'..."
+  case "$service" in
+    upms)
+      mvn -q -pl kiwi-upms/kiwi-upms-biz -am -DskipTests -B -Dmaven.repo.local="$original_home/.m2/repository" package
+      ;;
+    word)
+      mvn -q -pl kiwi-word/kiwi-word-biz -am -DskipTests -B -Dmaven.repo.local="$original_home/.m2/repository" package
+      ;;
+    crawler)
+      mvn -q -pl kiwi-word/kiwi-word-crawler -am -DskipTests -B -Dmaven.repo.local="$original_home/.m2/repository" package
+      ;;
+    ai)
+      mvn -q -pl kiwi-ai/kiwi-ai-biz -am -DskipTests -B -Dmaven.repo.local="$original_home/.m2/repository" package
+      ;;
+    *)
+      # top-level single module names
+      local module="${MICROSERVICES[$service]}"
+      if [ -n "$module" ]; then
+        mvn -q -pl "$module" -am -DskipTests -B -Dmaven.repo.local="$original_home/.m2/repository" package
+      else
+        echo "⚠️  Unknown module for service '$service', skipping build fallback."
+      fi
+      ;;
+  esac
+}
+
+# Safe jar discovery within a module target dir (no failing pipelines under set -e/pipefail)
+_find_runnable_jar_in_target() {
+  local target_dir="$1"
+  [ -d "$target_dir" ] || return 1
+  local latest=""
+  local latest_mtime=0
+  shopt -s nullglob
+  for f in "$target_dir"/*.jar; do
+    # exclude sources/javadoc/tests and original-*
+    case "$f" in
+      *-sources.jar|*-javadoc.jar|*-tests.jar|*/original-*.jar) continue ;;
+    esac
+    if [ -f "$f" ]; then
+      # get mtime (Linux stat -c, macOS stat -f)
+      local mtime
+      if mtime=$(stat -c %Y "$f" 2>/dev/null); then :; else mtime=$(stat -f %m "$f" 2>/dev/null || echo 0); fi
+      if [ "$mtime" -gt "$latest_mtime" ]; then
+        latest="$f"
+        latest_mtime="$mtime"
+      fi
+    fi
+  done
+  shopt -u nullglob
+  [ -n "$latest" ] && { echo "$latest"; return 0; }
+  return 1
+}
+
+# Project-wide/m2 fallback search by artifact prefix
+_find_jar_by_prefix() {
+  local prefix="$1"   # e.g. kiwi-gateway
+  local search_dir="$2"
+  local latest=""
+  local latest_mtime=0
+  # Use find to scan, but avoid failing pipelines by handling in bash
+  while IFS= read -r -d '' f; do
+    case "$f" in
+      *-sources.jar|*-javadoc.jar|*-tests.jar|*/original-*.jar) continue ;;
+    esac
+    local mtime
+    if mtime=$(stat -c %Y "$f" 2>/dev/null); then :; else mtime=$(stat -f %m "$f" 2>/dev/null || echo 0); fi
+    if [ "$mtime" -gt "$latest_mtime" ]; then
+      latest="$f"
+      latest_mtime="$mtime"
+    fi
+  done < <(find "$search_dir" -type f -name "${prefix}-*.jar" -print0 2>/dev/null)
+  [ -n "$latest" ] && { echo "$latest"; return 0; }
+  return 1
+}
+
+# Updated: copy built jars to ~/built_jar safely and robustly
 copy_built_jars_to_dir() {
   local original_home="$1"
   local project_root="$2"   # path to .../microservice-kiwi
   local dest_dir="${original_home}/built_jar"
   mkdir -p "$dest_dir"
 
-  # Map service -> [module_dir, normalized_output_name]
+  # Map service -> module dir (for target scan)
   declare -A MODULE_DIRS=(
     ["eureka"]="$project_root/kiwi-eureka"
     ["config"]="$project_root/kiwi-config"
@@ -393,6 +485,18 @@ copy_built_jars_to_dir() {
     ["crawler"]="$project_root/kiwi-word/kiwi-word-crawler"
     ["ai"]="$project_root/kiwi-ai/kiwi-ai-biz"
   )
+  # Map service -> artifactId prefix (for scanning and stable symlink)
+  declare -A ARTIFACT_PREFIXES=(
+    ["eureka"]="kiwi-eureka"
+    ["config"]="kiwi-config"
+    ["upms"]="kiwi-upms-biz"
+    ["auth"]="kiwi-auth"
+    ["gate"]="kiwi-gateway"
+    ["word"]="kiwi-word-biz"
+    ["crawler"]="kiwi-word-crawler"
+    ["ai"]="kiwi-ai-biz"
+  )
+  # Stable symlink names (preserve existing 2.0 references)
   declare -A NORMALIZED_NAMES=(
     ["eureka"]="kiwi-eureka-2.0.jar"
     ["config"]="kiwi-config-2.0.jar"
@@ -403,21 +507,6 @@ copy_built_jars_to_dir() {
     ["crawler"]="kiwi-word-crawler-2.0.jar"
     ["ai"]="kiwi-ai-biz-2.0.jar"
   )
-
-  # Pick the runnable jar from target dir (exclude sources/javadoc/tests/original-*)
-  find_runnable_jar() {
-    local module_dir="$1"
-    local target_dir="$module_dir/target"
-    [ -d "$target_dir" ] || return 1
-    # shellcheck disable=SC2012
-    local jar
-    jar=$(ls -1t "$target_dir"/*.jar 2>/dev/null | grep -Ev '(-sources|-javadoc|-tests)\.jar$' | grep -Ev '/original-.*\.jar$' | head -n1)
-    if [ -n "$jar" ] && [ -f "$jar" ]; then
-      echo "$jar"
-      return 0
-    fi
-    return 1
-  }
 
   local services
   if [ "$BUILD_ALL_SERVICES" = true ]; then
@@ -430,18 +519,54 @@ copy_built_jars_to_dir() {
   local copied=0
   for svc in "${services[@]}"; do
     local module_dir="${MODULE_DIRS[$svc]}"
+    local prefix="${ARTIFACT_PREFIXES[$svc]}"
     local normalized="${NORMALIZED_NAMES[$svc]}"
-    if [ -z "$module_dir" ] || [ -z "$normalized" ]; then
-      echo "   ⚠️  Unknown module mapping for service: $svc"
+
+    if [ -z "$module_dir" ] || [ -z "$prefix" ] || [ -z "$normalized" ]; then
+      echo "   ⚠️  Unknown mapping for service: $svc"
       continue
     fi
-    jar_path="$(find_runnable_jar "$module_dir")" || jar_path=""
-    if [ -n "$jar_path" ]; then
-      cp -f "$jar_path" "$dest_dir/$normalized"
-      echo "   ✅ $svc -> $(basename "$dest_dir/$normalized")"
+
+    echo "→ [$svc] Searching for runnable jar..."
+    local jar_path=""
+    # 1) Try module/target
+    if [ -d "$module_dir/target" ]; then
+      echo "   • Checking: $module_dir/target"
+      jar_path=$(_find_runnable_jar_in_target "$module_dir/target") || jar_path=""
+    else
+      echo "   • Target dir missing: $module_dir/target"
+    fi
+
+    # 2) If missing, build this module quickly and re-check
+    if [ -z "$jar_path" ]; then
+      build_module_for_service "$svc" "$original_home"
+      jar_path=$(_find_runnable_jar_in_target "$module_dir/target") || jar_path=""
+    fi
+
+    # 3) If still missing, scan the whole project by prefix
+    if [ -z "$jar_path" ]; then
+      echo "   • Scanning project for ${prefix}-*.jar ..."
+      jar_path=$(_find_jar_by_prefix "$prefix" "$project_root") || jar_path=""
+    fi
+
+    # 4) If still missing, scan local m2 repo by prefix
+    if [ -z "$jar_path" ]; then
+      echo "   • Scanning maven repo for ${prefix}-*.jar ..."
+      jar_path=$(_find_jar_by_prefix "$prefix" "$original_home/.m2/repository") || jar_path=""
+    fi
+
+    if [ -n "$jar_path" ] && [ -f "$jar_path" ]; then
+      local base="$(basename "$jar_path")"
+      cp -f "$jar_path" "$dest_dir/$base"
+      # Create/update stable symlink for compatibility (points to the actual file)
+      ln -sfn "$base" "$dest_dir/$normalized"
+      echo "   ✅ $svc -> $base (and symlinked as $normalized)"
       ((copied++))
     else
-      echo "   ⚠️  No runnable jar found under: $module_dir/target"
+      echo "   ❌ No runnable jar found for '$svc'. Checked:"
+      echo "      - $module_dir/target"
+      echo "      - Project-wide ${prefix}-*.jar"
+      echo "      - $original_home/.m2/repository/${prefix}-*.jar"
     fi
   done
 
@@ -514,9 +639,8 @@ EOF
 
 # === New: OBM/OBMAS short-circuit workflow ===
 if [ "$ONLY_BUILD_MAVEN" = true ]; then
-  echo "=============================================="
-  echo "OBM/OBMAS CONFIGURATION:"
-  echo "=============================================="
+  echo "== OBM/OBMAS FLOW: ENTER =="
+  # Set the original home directory based on SUDO_USER
   if [ -n "$SUDO_USER" ]; then
     ORIGINAL_HOME=$(eval echo "~$SUDO_USER")
   else
@@ -573,7 +697,7 @@ if [ "$ONLY_BUILD_MAVEN" = true ]; then
     done
   fi
 
-  # Copy JARs to ~/built_jar (from module targets, normalized names)
+  # Copy JARs to ~/built_jar (robust discovery)
   copy_built_jars_to_dir "$ORIGINAL_HOME" "$CURRENT_DIR/microservice-kiwi"
 
   # If OBMAS, send them to remote
@@ -581,7 +705,7 @@ if [ "$ONLY_BUILD_MAVEN" = true ]; then
     send_jars_remote "$ORIGINAL_HOME"
   fi
 
-  echo "🎉 OBM workflow complete."
+  echo "== OBM/OBMAS FLOW: DONE. Exiting without any docker steps. =="
   exit 0
 fi
 
@@ -619,6 +743,12 @@ echo "=============================================="
 echo ""
 
 # Stop all services first (critical step)
+# Add a visible guard before any docker-related action
+if [ "$ONLY_BUILD_MAVEN" = true ]; then
+  echo "Guard: ONLY_BUILD_MAVEN=true detected before cleanup. Exiting now."
+  exit 0
+fi
+
 echo "=============================================="
 echo "🛑 INITIAL CLEANUP - STOPPING ALL SERVICES"
 echo "=============================================="
@@ -1208,8 +1338,11 @@ echo "=============================================="
 echo "🚀 STARTING CONTAINER DEPLOYMENT:"
 echo "=============================================="
 
-# Note: Services are already stopped by the initial stopAll.sh call above
-# No need to stop/remove again unless doing selective deployment
+# Safety guard: never proceed to autoDeploy in build-only mode
+if [ "$ONLY_BUILD_MAVEN" = true ]; then
+  echo "Guard: ONLY_BUILD_MAVEN=true detected before autoDeploy. Exiting now."
+  exit 0
+fi
 
 # Build Docker images and deploy
 if [ "$BUILD_ALL_SERVICES" = true ]; then
@@ -1230,8 +1363,8 @@ if [ "$BUILD_ALL_SERVICES" = true ]; then
   chmod +x "$AUTO_DEPLOY_SCRIPT" || true
   echo "➡️  Invoking: $AUTO_DEPLOY_SCRIPT $MODE"
   echo "   (Logging to $CURRENT_DIR/autoDeploy.log)"
-  # Use bash -x for extra diagnostics; preserve failure exit code via pipefail
-  bash -x "$AUTO_DEPLOY_SCRIPT" "$MODE" 2>&1 | tee "$CURRENT_DIR/autoDeploy.log"
+  # Ensure children also see mode flags
+  KIWI_DEPLOY_MODE="$MODE" ONLY_BUILD_MAVEN="$ONLY_BUILD_MAVEN" bash -x "$AUTO_DEPLOY_SCRIPT" "$MODE" 2>&1 | tee "$CURRENT_DIR/autoDeploy.log"
   echo "✅ autoDeploy completed"
 else
   # For selective deployment, we still need to stop/remove only selected services

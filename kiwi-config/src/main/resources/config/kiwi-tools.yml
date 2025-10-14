@@ -1,0 +1,83 @@
+security:
+  oauth2:
+    client:
+      client-id: ENC(wORgugqWfXlIuzbal/3pjXTNXij/RSpo)
+      client-secret: ENC(rMd1buB3iI+si+W99eB+QFa3QburIEmY)
+      scope: server
+
+# 数据源
+spring:
+  main:
+    allow-bean-definition-overriding: true
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: ENC(2PE/BMMoNPbRCEaIyGfcSw==)
+    password: ENC(zF1rDpn+u8RZX5OTor7BpHzprZyrH+3P)
+    url: jdbc:mysql://${DB_IP}:3306/kiwi_db?allowPublicKeyRetrieval=true&useUnicode=true&characterEncoding=UTF-8&useSSL=false&autoReconnect=true&serverTimezone=Pacific/Auckland
+    hikari:
+      connection-test-query: SELECT 1
+      maximum-pool-size: 30  # Increase but within MySQL's max_connections limit
+      connection-timeout: 300000  # Fail faster when connections unavailable
+      idle-timeout: 300000  # Release idle connections sooner (5 minutes)
+      max-lifetime: 1200000  # Shorter connection lifetime (20 minutes)
+      keepalive-time: 240000  # Keep connections alive with periodic pings
+      leak-detection-threshold: 300000  # Detect connection leaks  task:
+    execution:
+      pool:
+        core-size: 1
+        max-size: 1
+        queue-capacity: 100
+      thread-name-prefix: YTB-subtitles-thread-
+
+management:
+  health:
+    elasticsearch:
+      enabled: false
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+
+ignore:
+  urls:
+    - /api/**
+
+ms:
+  config:
+    exclude-db: false
+    exclude-cache: true
+
+rest-template:
+  http-client:
+    max-total-connections: 20  # Lower for tests to reduce resource usage
+    max-connections-per-route: 10
+    validate-after-inactivity: 500
+    connection-time-to-live: 10
+  request-factory:
+    connect-timeout: 100000  # Faster timeouts for tests
+    read-timeout: 100000
+  retry:
+    max-attempts: 3  # Fewer retries for faster tests
+    retryable-exceptions:
+      - "me.fengorz.kiwi.common.sdk.exception.ai.GrokAiException"
+      # REST Client Exceptions (General)
+
+      - "org.springframework.web.client.RestClientException"
+      - "org.springframework.web.client.ResourceAccessException"
+
+      # HTTP Server Errors (5xx) - Usually transient
+      - "org.springframework.web.client.HttpServerErrorException"
+
+      # Network/Connection Exceptions
+      - "java.net.SocketTimeoutException"
+      - "java.net.ConnectException"
+      - "java.net.SocketException"
+      - "java.net.UnknownHostException"
+      - "java.io.IOException"
+      - "javax.net.ssl.SSLException"
+      - "javax.net.ssl.SSLHandshakeException"
+      - "org.apache.http.conn.ConnectTimeoutException"
+      - "org.apache.http.conn.HttpHostConnectException"
+      - "org.apache.http.NoHttpResponseException"
+    backoff-period: 500  # Faster backoff for tests

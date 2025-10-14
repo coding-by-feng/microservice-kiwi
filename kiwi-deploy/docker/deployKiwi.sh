@@ -236,9 +236,12 @@ show_help() {
   echo "  -mode=sa      Skip all build operations - FAST DEPLOY MODE"
   echo "                (Only stop containers → remove containers → start containers)"
   echo "  -mode=obm     Only build with Maven, then copy built JARs to ~/built_jar"
+  echo "                Use with -s=svc1,svc2 to build only those services (e.g. -mode=obm -s=auth,gate)"
   echo "  -mode=obmas   Only build with Maven, then send built JARs to remote via scp"
+  echo "                Supports partial builds with -s=... just like -mode=obm"
   echo "  -mode=ouej    Only use existing jars from ~/built_jar (skip git and maven)"
   echo "  -mode=osj     Only send existing jars to remote (skip git, maven, docker)"
+  echo "  -mode=og      Only perform git stash+pull and chmod scripts (no build/deploy)"   # NEW
   echo ""
   echo "Available options:"
   echo "  -c            Enable autoCheckService after deployment"
@@ -263,6 +266,8 @@ show_help() {
   echo "  sudo -E $0 -s=eureka,config       # Build only eureka and config services"
   echo "  sudo -E $0 -mode=sgm -s=auth      # Skip git+maven, build only auth service"
   echo "  sudo -E $0 -mode=sa -c            # Fast deploy with autoCheckService"
+  echo "  sudo -E $0 -mode=obm -s=auth,gate   # Build only auth & gateway jars into ~/built_jar"
+  echo "  sudo -E $0 -mode=obmas -s=ai        # Build only AI jar then scp it"
 }
 
 # Initialize variables
@@ -278,6 +283,7 @@ ONLY_BUILD_MAVEN=false
 SEND_AFTER_BUILD=false
 USE_EXISTING_JARS_ONLY=false
 ONLY_SEND_JARS=false   # NEW: osj flag
+ONLY_GIT_MODE=false    # NEW: og flag
 
 # Process all arguments
 for arg in "$@"; do
@@ -341,6 +347,14 @@ for arg in "$@"; do
       ONLY_SEND_JARS=true
       echo "🚚 OSJ MODE: Only send existing jars from ~/built_jar to remote"
       ;;
+    -mode=og)  # NEW: only git mode
+      MODE="$arg"
+      ONLY_GIT_MODE=true
+      SKIP_GIT=false
+      SKIP_MAVEN=true
+      SKIP_DOCKER_BUILD=true
+      echo "🪄 OG MODE: Only git stash/pull + chmod scripts (no Maven/Docker/deploy)"
+      ;;
     -s=*)
       SELECTED_SERVICES="${arg#-s=}"
       if [ "$SELECTED_SERVICES" != "all" ]; then
@@ -369,12 +383,13 @@ done
 # Export mode flags so child scripts (if any) can detect build-only mode
 export KIWI_DEPLOY_MODE="$MODE"
 export ONLY_BUILD_MAVEN
-export ONLY_SEND_JARS   # NEW: export for completeness
+export ONLY_SEND_JARS
+export ONLY_GIT_MODE   # NEW
 
 # Quick, centralized mode summary (helps trace the flow)
 echo "=== deployKiwi.sh MODE SUMMARY ==="
 echo "MODE: ${MODE:-<none>} | ONLY_BUILD_MAVEN=${ONLY_BUILD_MAVEN} | SEND_AFTER_BUILD=${SEND_AFTER_BUILD} | USE_EXISTING_JARS_ONLY=${USE_EXISTING_JARS_ONLY}"
-echo "SKIP_GIT=${SKIP_GIT} | SKIP_MAVEN=${SKIP_MAVEN} | SKIP_DOCKER_BUILD=${SKIP_DOCKER_BUILD} | FAST_DEPLOY_MODE=${FAST_DEPLOY_MODE} | ONLY_SEND_JARS=${ONLY_SEND_JARS}"
+echo "SKIP_GIT=${SKIP_GIT} | SKIP_MAVEN=${SKIP_MAVEN} | SKIP_DOCKER_BUILD=${SKIP_DOCKER_BUILD} | FAST_DEPLOY_MODE=${FAST_DEPLOY_MODE} | ONLY_SEND_JARS=${ONLY_SEND_JARS} | ONLY_GIT_MODE=${ONLY_GIT_MODE}"  # UPDATED
 echo "Selected services: $([ "$BUILD_ALL_SERVICES" = true ] && echo ALL || echo "$SELECTED_SERVICES")"
 echo "=================================="
 
@@ -818,6 +833,8 @@ if [ "$ONLY_BUILD_MAVEN" = true ]; then
   echo "== OBM/OBMAS FLOW: DONE. Exiting without any docker steps. =="
   exit 0
 fi
+
+# ...existing code...
 
 # Display final configuration
 echo "=============================================="

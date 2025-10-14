@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet id="0002-insert-projects" author="copilot">
+        <insert tableName="projects">
+            <column name="id" value="101"/>
+            <column name="projectCode" value="P-101"/>
+            <column name="name" value="Kitchen remodel"/>
+            <column name="clientName" value="张三"/>
+            <column name="clientPhone" value="021-12345678"/>
+            <column name="address" value="123 Queen St, Auckland"/>
+            <column name="salesPerson" value="Alice"/>
+            <column name="installer" value="Bob"/>
+            <column name="teamMembers" value="Bob; Carol"/>
+            <column name="startDate" value="2025-03-01"/>
+            <column name="endDate" value="2025-03-05"/>
+            <column name="status" value="未开始"/>
+            <column name="todayTask" value=""/>
+            <column name="progressNote" value=""/>
+            <column name="photoUrl" value=""/>
+            <column name="createdAt" value="2025-02-10T08:12:34.000Z"/>
+        </insert>
+        <insert tableName="projects">
+            <column name="id" value="102"/>
+            <column name="projectCode" value="P-102"/>
+            <column name="name" value="Bathroom renovation"/>
+            <column name="clientName" value="李四"/>
+            <column name="clientPhone" value="021-87654321"/>
+            <column name="address" value="456 King St, Auckland"/>
+            <column name="salesPerson" value="David"/>
+            <column name="installer" value="Eve"/>
+            <column name="teamMembers" value="Eve; Frank"/>
+            <column name="startDate" value="2025-03-10"/>
+            <column name="endDate" value="2025-03-12"/>
+            <column name="status" value="进行中"/>
+            <column name="todayTask" value="Tile removal"/>
+            <column name="progressNote" value=""/>
+            <column name="photoUrl" value=""/>
+            <column name="createdAt" value="2025-02-11T10:00:00.000Z"/>
+        </insert>
+    </changeSet>
+</databaseChangeLog>
+

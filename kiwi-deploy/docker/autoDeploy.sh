@@ -63,7 +63,7 @@ for f in "$COMPOSE_BASE_YML" "$COMPOSE_SERVICE_YML"; do
      ((missing++))
   fi
 done
-for d in eureka config upms auth gate word crawler ai; do
+for d in eureka config upms auth gate word crawler ai tools; do
   if [ ! -d "$DOCKER_KIWI_ROOT/$d" ]; then
      echo "❌ Missing expected Docker build directory: $DOCKER_KIWI_ROOT/$d"
      ((missing++))
@@ -144,8 +144,13 @@ build_images() {
     echo "   ✅ AI batch service built successfully"
     echo
 
+    echo "🧰 Building Tools Service..."
+    docker build -f "$DOCKER_KIWI_ROOT/tools/Dockerfile" -t kiwi-tools-biz:2.0 "$DOCKER_KIWI_ROOT/tools/"
+    echo "   ✅ Tools service built successfully"
+    echo
+
     echo "🎉 All images built successfully!"
-    echo "Total services built: 9 microservices ready for deployment"
+    echo "Total services built: 10 microservices ready for deployment"
 }
 
 # Deploy services

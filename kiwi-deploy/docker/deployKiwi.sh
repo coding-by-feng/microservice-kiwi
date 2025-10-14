@@ -221,6 +221,7 @@ declare -A MICROSERVICES=(
     ["word"]="kiwi-word-biz"
     ["crawler"]="kiwi-word-crawler"
     ["ai"]="kiwi-ai-biz"
+    ["tools"]="kiwi-tools-biz"   # NEW: tools
 )
 
 # Function to show help
@@ -242,7 +243,7 @@ show_help() {
   echo "Available options:"
   echo "  -c            Enable autoCheckService after deployment"
   echo "  -s=SERVICE    Build/deploy specific service(s) only"
-  echo "                Available services: eureka, config, upms, auth, gate, word, crawler, ai"
+  echo "                Available services: eureka, config, upms, auth, gate, word, crawler, ai, tools"  # +tools
   echo "                Multiple services: -s=eureka,config,upms"
   echo "                All services: -s=all (default)"
   echo "  -help         Show this help message"
@@ -544,6 +545,7 @@ get_module_for_service() {
     "word")    echo "kiwi-word/kiwi-word-biz" ;;
     "crawler") echo "kiwi-word/kiwi-word-crawler" ;;
     "ai")      echo "kiwi-ai/kiwi-ai-biz" ;;
+    "tools")   echo "kiwi-tools/kiwi-tools-biz" ;;   # NEW
     "eureka")  echo "kiwi-eureka" ;;
     "config")  echo "kiwi-config" ;;
     "auth")    echo "kiwi-auth" ;;
@@ -558,7 +560,7 @@ build_services_sequentially() {
   local services_ordered=()
 
   if [ "$BUILD_ALL_SERVICES" = true ]; then
-    services_ordered=(eureka config auth gate upms word crawler ai)
+    services_ordered=(eureka config auth gate upms word crawler tools ai)  # NEW: tools in plan
   else
     IFS=',' read -ra services_ordered <<< "$SELECTED_SERVICES"
   fi
@@ -657,6 +659,7 @@ copy_built_jars_to_dir() {
     ["word"]="$project_root/kiwi-word/kiwi-word-biz"
     ["crawler"]="$project_root/kiwi-word/kiwi-word-crawler"
     ["ai"]="$project_root/kiwi-ai/kiwi-ai-biz"
+    ["tools"]="$project_root/kiwi-tools/kiwi-tools-biz"   # NEW
   )
   # Map service -> artifactId prefix (for scanning and stable symlink)
   declare -A ARTIFACT_PREFIXES=(
@@ -668,6 +671,7 @@ copy_built_jars_to_dir() {
     ["word"]="kiwi-word-biz"
     ["crawler"]="kiwi-word-crawler"
     ["ai"]="kiwi-ai-biz"
+    ["tools"]="kiwi-tools-biz"   # NEW
   )
   # Stable symlink names (preserve existing 2.0 references)
   declare -A NORMALIZED_NAMES=(
@@ -679,6 +683,7 @@ copy_built_jars_to_dir() {
     ["word"]="kiwi-word-biz-2.0.jar"
     ["crawler"]="kiwi-word-crawler-2.0.jar"
     ["ai"]="kiwi-ai-biz-2.0.jar"
+    ["tools"]="kiwi-tools-biz-2.0.jar"  # NEW
   )
 
   # Clean up any previous broken self-symlinks (from older runs)
@@ -693,7 +698,7 @@ copy_built_jars_to_dir() {
 
   local services
   if [ "$BUILD_ALL_SERVICES" = true ]; then
-    services=(eureka config upms auth gate word crawler ai)
+    services=(eureka config upms auth gate word crawler tools ai)  # NEW tools
   else
     IFS=',' read -ra services <<< "$SELECTED_SERVICES"
   fi
@@ -923,6 +928,9 @@ else
     rm -rf "$CURRENT_DIR/docker/kiwi/ai/logs/"* 2>/dev/null || true
     rm -rf "$CURRENT_DIR/docker/kiwi/ai/tmp/"* 2>/dev/null || true
   fi
+  if should_build_service "tools"; then
+    rm -rf "$CURRENT_DIR/docker/kiwi/tools/logs/"* 2>/dev/null || true   # NEW
+  fi
 
   # Maven build
   if [ "$SKIP_MAVEN" = false ]; then
@@ -1082,6 +1090,7 @@ else
           word)    find_built_by_prefix "kiwi-word-biz" "$ORIGINAL_HOME/built_jar" ;;
           crawler) find_built_by_prefix "kiwi-word-crawler" "$ORIGINAL_HOME/built_jar" ;;
           ai)      find_built_by_prefix "kiwi-ai-biz" "$ORIGINAL_HOME/built_jar" ;;
+          tools)   find_built_by_prefix "kiwi-tools-biz" "$ORIGINAL_HOME/built_jar" ;;  # NEW
           *) echo "" ;;
         esac
       else
@@ -1134,6 +1143,22 @@ else
       cp -f "$gate_jar" "$CURRENT_DIR/docker/kiwi/gate/"
     fi
 
+    # tools (NEW)
+    if should_build_service "tools"; then
+      echo "📄 Copying tools files..."
+      # Try common Dockerfile locations
+      if [ -f "$CURRENT_DIR/microservice-kiwi/kiwi-tools/kiwi-tools-biz/Dockerfile" ]; then
+        cp -f "$CURRENT_DIR/microservice-kiwi/kiwi-tools/kiwi-tools-biz/Dockerfile" "$CURRENT_DIR/docker/kiwi/tools/"
+      elif [ -f "$CURRENT_DIR/microservice-kiwi/kiwi-tools/kiwi-tools-biz/docker/Dockerfile" ]; then
+        cp -f "$CURRENT_DIR/microservice-kiwi/kiwi-tools/kiwi-tools-biz/docker/Dockerfile" "$CURRENT_DIR/docker/kiwi/tools/"
+      else
+        echo "⚠️  Tools Dockerfile not found under kiwi-tools/kiwi-tools-biz. Ensure it exists."
+      fi
+      tools_jar=$(resolve_jar_path "tools" "$ORIGINAL_HOME/.m2/repository/me/fengorz/kiwi-tools-biz/2.0/kiwi-tools-biz-2.0.jar")
+      [ -n "$tools_jar" ] && [ -f "$tools_jar" ] || { echo "❌ Missing jar for tools in ${USE_EXISTING_JARS_ONLY:+$ORIGINAL_HOME/built_jar}. Use -mode=obm/obmas first."; exit 1; }
+      cp -f "$tools_jar" "$CURRENT_DIR/docker/kiwi/tools/"
+    fi
+
     # word
     if should_build_service "word"; then
       echo "📄 Copying word service files..."
@@ -1180,6 +1205,7 @@ declare -A CONTAINER_NAMES=(
     ["word"]="kiwi-word-biz"
     ["crawler"]="kiwi-word-crawler"
     ["ai"]="kiwi-ai-biz"
+    ["tools"]="kiwi-tools-biz"   # NEW
 )
 
 # Function to stop specific containers
@@ -1400,6 +1426,23 @@ deploy_single_service() {
             echo "✅ AI Service deployment completed"
             ;;
 
+        "tools")  # NEW
+            echo "🧰 Building Tools Service..."
+            if [ ! -d "$DOCKER_DIR/tools" ]; then
+                echo "❌ Directory not found: $DOCKER_DIR/tools"
+                return 1
+            fi
+            cd "$DOCKER_DIR/tools"
+            docker build -t kiwi-tools-biz:latest .
+            docker run -d --name kiwi-tools-biz \
+                --network kiwi-network \
+                -p 18012:18012 \
+                -v "$DOCKER_DIR/tools/logs:/logs" \
+                -e EUREKA_SERVER=http://kiwi-eureka:18000/eureka/ \
+                kiwi-tools-biz:latest
+            echo "✅ Tools Service deployed successfully"
+            ;;
+
         *)
             echo "❌ Unknown service: $service"
             return 1
@@ -1442,6 +1485,7 @@ selective_deployment() {
             [word]="kiwi-word-biz"
             [crawler]="kiwi-crawler"
             [ai]="kiwi-ai-biz"
+            [tools]="kiwi-tools-biz"   # NEW
         )
 
         # Build list of compose services to (re)create

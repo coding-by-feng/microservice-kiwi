@@ -2,7 +2,7 @@ server:
   port: 9005
 spring:
   application:
-    name: kiwi-tools
+    name: kiwi-tools-biz
   servlet:
     multipart:
       max-file-size: 5MB

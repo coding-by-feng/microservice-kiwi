@@ -1,0 +1,33 @@
+server:
+  port: 9005
+spring:
+  application:
+    name: kiwi-tools
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 6MB
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-master.xml
+    enabled: true
+logging:
+  level:
+    root: INFO
+    me.fengorz.kiwi.tools: INFO
+
+# Tools service custom properties
+tools:
+  cors-allowed-origins:
+    - http://localhost:5173
+  upload-dir: uploads
+  public-base-url: ""
+  write-rate-limit-per-min: 60
+  upload-rate-limit-per-min: 30
+  idempotency-ttl-minutes: 60
+  allowed-statuses:
+    - "未开始"
+    - "进行中"
+    - "已完成"

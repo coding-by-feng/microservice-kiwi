@@ -151,6 +151,38 @@ services:
         export TZ=Pacific/Auckland
         exec java $${JAVA_OPTS} -jar /app/app.jar
 
+  kiwi-tools-biz:
+    image: kiwi-tools-biz:2.0
+    user: root
+    environment:
+      - KIWI_ENC_PASSWORD=${KIWI_ENC_PASSWORD}
+      - DB_IP=${DB_IP}
+    volumes:
+      - ~/docker/kiwi/tools/logs:/logs:Z
+    network_mode: "host"
+    depends_on:
+      - kiwi-auth
+    healthcheck:
+      test: ["CMD", "pgrep", "-f", "kiwi-tools-biz"]
+      interval: 30s
+      timeout: 10s
+      retries: 8
+      start_period: 4m
+    entrypoint:
+      - /bin/bash
+      - -c
+      - |
+        echo "Waiting for kiwi-auth to be healthy..."
+        until code=$(curl -s -o /dev/null -w '%{http_code}' http://localhost:3001/actuator/health); [ "$$code" = "200" ] || [ "$$code" = "401" ] || [ "$$code" = "403" ]; do
+          sleep 5
+        done
+        echo "kiwi-auth is healthy. Starting kiwi-tools-biz..."
+        exec java -jar -Xmx256m \
+          -Duser.timezone=GMT+12 \
+          -Dspring.profiles.active=prod \
+          -Dlogging.file.name=/logs/tools-biz.log \
+          /app.jar
+
   kiwi-crawler:
     image: kiwi-crawler:2.0
     user: root

@@ -535,6 +535,24 @@ if [ "$ONLY_SEND_JARS" = true ]; then
   exit 0
 fi
 
+# === OG short-circuit workflow (Only Git) ===
+if [ "$ONLY_GIT_MODE" = true ]; then
+  echo "== OG FLOW: ENTER =="
+  echo "📥 Performing git operations only (stash + pull)..."
+  # Ensure we are at project root (already cd'ed earlier, but enforce)
+  cd "$CURRENT_DIR/microservice-kiwi/" || { echo "❌ Cannot cd to project root"; exit 1; }
+  git stash || true
+  git pull --rebase || git pull
+  echo "🔐 Applying execute permissions to deployment scripts..."
+  # chmod top-level deploy dirs (silence errors if missing subdirs)
+  chmod 777 "$CURRENT_DIR/microservice-kiwi/kiwi-deploy/"*.sh 2>/dev/null || true
+  chmod 777 "$CURRENT_DIR/microservice-kiwi/kiwi-deploy/docker/"*.sh 2>/dev/null || true
+  # Recursively ensure every .sh is executable
+  find "$CURRENT_DIR/microservice-kiwi/kiwi-deploy" -type f -name "*.sh" -exec chmod 777 {} + 2>/dev/null || true
+  echo "✅ OG FLOW COMPLETE. Exiting without stopping containers, Maven build, or Docker actions."
+  exit 0
+fi
+
 # === New/Updated helpers for OBM/OBMAS ===
 build_service_module() {
   local service="$1"
@@ -805,7 +823,9 @@ if [ "$ONLY_BUILD_MAVEN" = true ]; then
   echo "Maven local repo: $ORIGINAL_HOME/.m2/repository"
   echo "Jar output dir:   $ORIGINAL_HOME/built_jar"
   echo "=============================================="
-
+  echo "🛑 Stopping all running containers before Maven build (OBM/OBMAS pre-step)..."
+  "$CURRENT_DIR/microservice-kiwi/kiwi-deploy/docker/stopAll.sh" || echo "⚠️ stopAll.sh reported issues; continuing with build"
+  echo "=============================================="
   # Ensure required TTS lib in local repo (same as existing logic)
   echo "📚 Installing VoiceRSS TTS library into local Maven repo..."
   cd "$CURRENT_DIR/microservice-kiwi/kiwi-common/kiwi-common-tts/lib"
@@ -833,8 +853,6 @@ if [ "$ONLY_BUILD_MAVEN" = true ]; then
   echo "== OBM/OBMAS FLOW: DONE. Exiting without any docker steps. =="
   exit 0
 fi
-
-# ...existing code...
 
 # Display final configuration
 echo "=============================================="

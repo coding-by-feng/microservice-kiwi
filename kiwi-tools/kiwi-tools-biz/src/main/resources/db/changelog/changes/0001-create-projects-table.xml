@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet id="0001-create-projects" author="copilot">
+        <createTable tableName="projects">
+            <column name="id" type="varchar(64)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="projectCode" type="varchar(64)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="name" type="varchar(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="clientName" type="varchar(100)"/>
+            <column name="clientPhone" type="varchar(30)"/>
+            <column name="address" type="varchar(200)"/>
+            <column name="salesPerson" type="varchar(100)"/>
+            <column name="installer" type="varchar(100)"/>
+            <column name="teamMembers" type="varchar(512)"/>
+            <column name="startDate" type="varchar(10)"/>
+            <column name="endDate" type="varchar(10)"/>
+            <column name="status" type="varchar(32)"/>
+            <column name="todayTask" type="varchar(1024)"/>
+            <column name="progressNote" type="varchar(2048)"/>
+            <column name="photoUrl" type="varchar(512)"/>
+            <column name="createdAt" type="varchar(64)"/>
+        </createTable>
+        <createIndex tableName="projects" indexName="uk_projects_projectCode" unique="true">
+            <column name="projectCode"/>
+        </createIndex>
+    </changeSet>
+</databaseChangeLog>
+

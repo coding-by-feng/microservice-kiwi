@@ -2,6 +2,8 @@ package me.fengorz.kiwi.tools.model;
 
 import lombok.Data;
 
+import java.time.LocalDateTime;
+
 @Data
 public class Project {
     private String id; // string or number; we will use numeric string
@@ -19,5 +21,6 @@ public class Project {
     private String todayTask; // text
     private String progressNote; // text
     private String photoUrl; // public URL or empty
-    private String createdAt; // ISO 8601 UTC
+    private LocalDateTime createdAt; // ISO 8601 UTC
+    private Boolean archived; // default in DB is false
 }

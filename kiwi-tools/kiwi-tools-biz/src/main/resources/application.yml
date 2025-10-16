@@ -1,8 +1,6 @@
 server:
   port: 9005
 spring:
-  application:
-    name: kiwi-tools-biz
   servlet:
     multipart:
       max-file-size: 5MB
@@ -16,7 +14,7 @@ spring:
 logging:
   level:
     root: INFO
-    me.fengorz.kiwi.tools: INFO
+    me.fengorz.kiwi.tools: DEBUG
 
 # Tools service custom properties
 tools:
@@ -31,3 +29,7 @@ tools:
     - "未开始"
     - "进行中"
     - "已完成"
+
+ignore:
+  urls:
+    - /api/**

@@ -1,0 +1,419 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet id="0001-demo-projects" author="kiwi">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="projects"/>
+            <sqlCheck expectedResult="0">SELECT COUNT(1) FROM projects</sqlCheck>
+        </preConditions>
+
+        <!-- P-001 -->
+        <insert tableName="projects">
+            <column name="project_code" value="P-001"/>
+            <column name="name" value="Auckland CBD Office Fit-out"/>
+            <column name="client_name" value="Auckland City Co"/>
+            <column name="client_phone" value="0210000001"/>
+            <column name="address" value="Auckland CBD, NZ"/>
+            <column name="sales_person" value="Alice"/>
+            <column name="installer" value="Team Kauri"/>
+            <column name="team_members" value="Alice,Bob,Charlie"/>
+            <column name="start_date" value="2025-03-01"/>
+            <column name="end_date" value="2025-03-03"/>
+            <column name="status" value="未开始"/>
+            <column name="today_task" value=""/>
+            <column name="progress_note" value="Kick-off scheduled"/>
+            <column name="photo_url" value=""/>
+            <column name="archived" valueBoolean="false"/>
+            <column name="created_at" valueDate="2025-02-28T09:00:00"/>
+        </insert>
+
+        <!-- P-002 -->
+        <insert tableName="projects">
+            <column name="project_code" value="P-002"/>
+            <column name="name" value="Ponsonby Villa Renovation"/>
+            <column name="client_name" value="Ponsonby Trust"/>
+            <column name="client_phone" value="0210000002"/>
+            <column name="address" value="Ponsonby, Auckland"/>
+            <column name="sales_person" value="Bob"/>
+            <column name="installer" value="Team Rimu"/>
+            <column name="team_members" value="Dave,Eve,Frank"/>
+            <column name="start_date" value="2025-03-02"/>
+            <column name="end_date" value="2025-03-05"/>
+            <column name="status" value="施工中"/>
+            <column name="today_task" value="Site prep"/>
+            <column name="progress_note" value="Materials ordered"/>
+            <column name="photo_url" value=""/>
+            <column name="archived" valueBoolean="false"/>
+            <column name="created_at" valueDate="2025-02-28T10:00:00"/>
+        </insert>
+
+        <!-- P-003 -->
+        <insert tableName="projects">
+            <column name="project_code" value="P-003"/>
+            <column name="name" value="Parnell Kitchen Upgrade"/>
+            <column name="client_name" value="Parnell Holdings"/>
+            <column name="client_phone" value="0210000003"/>
+            <column name="address" value="Parnell, Auckland"/>
+            <column name="sales_person" value="Cara"/>
+            <column name="installer" value="Team Nikau"/>
+            <column name="team_members" value="George,Hannah"/>
+            <column name="start_date" value="2025-03-03"/>
+            <column name="end_date" value="2025-03-06"/>
+            <column name="status" value="未开始"/>
+            <column name="today_task" value=""/>
+            <column name="progress_note" value="Awaiting client approval"/>
+            <column name="photo_url" value=""/>
+            <column name="archived" valueBoolean="false"/>
+            <column name="created_at" valueDate="2025-02-28T11:00:00"/>
+        </insert>
+
+        <!-- P-004 -->
+        <insert tableName="projects">
+            <column name="project_code" value="P-004"/>
+            <column name="name" value="Mount Eden Bathroom Remodel"/>
+            <column name="client_name" value="Mt Eden Homes"/>
+            <column name="client_phone" value="0210000004"/>
+            <column name="address" value="Mount Eden, Auckland"/>
+            <column name="sales_person" value="Dylan"/>
+            <column name="installer" value="Team Totara"/>
+            <column name="team_members" value="Ian,Jane"/>
+            <column name="start_date" value="2025-03-04"/>
+            <column name="end_date" value="2025-03-08"/>
+            <column name="status" value="施工中"/>
+            <column name="today_task" value="Tile delivery"/>
+            <column name="progress_note" value="Demolition complete"/>
+            <column name="photo_url" value=""/>
+            <column name="archived" valueBoolean="false"/>
+            <column name="created_at" valueDate="2025-02-28T12:00:00"/>
+        </insert>
+
+        <!-- P-005 -->
+        <insert tableName="projects">
+            <column name="project_code" value="P-005"/>
+            <column name="name" value="Newmarket Retail Fit-out"/>
+            <column name="client_name" value="Retailer NZ"/>
+            <column name="client_phone" value="0210000005"/>
+            <column name="address" value="Newmarket, Auckland"/>
+            <column name="sales_person" value="Emily"/>
+            <column name="installer" value="Team Kauri"/>
+            <column name="team_members" value="Kyle,Lily"/>
+            <column name="start_date" value="2025-03-05"/>
+            <column name="end_date" value="2025-03-10"/>
+            <column name="status" value="未开始"/>
+            <column name="today_task" value=""/>
+            <column name="progress_note" value="Design finalized"/>
+            <column name="photo_url" value=""/>
+            <column name="archived" valueBoolean="false"/>
+            <column name="created_at" valueDate="2025-02-28T13:00:00"/>
+        </insert>
+
+        <!-- P-006 -->
+        <insert tableName="projects">
+            <column name="project_code" value="P-006"/>
+            <column name="name" value="Takapuna Apartment Refresh"/>
+            <column name="client_name" value="North Shore Living"/>
+            <column name="client_phone" value="0210000006"/>
+            <column name="address" value="Takapuna, Auckland"/>
+            <column name="sales_person" value="Finn"/>
+            <column name="installer" value="Team Rimu"/>
+            <column name="team_members" value="Mia,Noah"/>
+            <column name="start_date" value="2025-03-06"/>
+            <column name="end_date" value="2025-03-09"/>
+            <column name="status" value="完成"/>
+            <column name="today_task" value="Handover"/>
+            <column name="progress_note" value="Final inspection passed"/>
+            <column name="photo_url" value=""/>
+            <column name="archived" valueBoolean="false"/>
+            <column name="created_at" valueDate="2025-02-28T14:00:00"/>
+        </insert>
+
+        <!-- P-007 -->
+        <insert tableName="projects">
+            <column name="project_code" value="P-007"/>
+            <column name="name" value="Albany Warehouse Lighting"/>
+            <column name="client_name" value="Albany Logistics"/>
+            <column name="client_phone" value="0210000007"/>
+            <column name="address" value="Albany, Auckland"/>
+            <column name="sales_person" value="Grace"/>
+            <column name="installer" value="Team Nikau"/>
+            <column name="team_members" value="Olivia,Paul"/>
+            <column name="start_date" value="2025-03-07"/>
+            <column name="end_date" value="2025-03-12"/>
+            <column name="status" value="施工中"/>
+            <column name="today_task" value="Electrical rough-in"/>
+            <column name="progress_note" value="Permits approved"/>
+            <column name="photo_url" value=""/>
+            <column name="archived" valueBoolean="false"/>
+            <column name="created_at" valueDate="2025-02-28T15:00:00"/>
+        </insert>
+
+        <!-- P-008 -->
+        <insert tableName="projects">
+            <column name="project_code" value="P-008"/>
+            <column name="name" value="Henderson Deck Build"/>
+            <column name="client_name" value="Westside Homes"/>
+            <column name="client_phone" value="0210000008"/>
+            <column name="address" value="Henderson, Auckland"/>
+            <column name="sales_person" value="Henry"/>
+            <column name="installer" value="Team Totara"/>
+            <column name="team_members" value="Quinn,Rachel"/>
+            <column name="start_date" value="2025-03-08"/>
+            <column name="end_date" value="2025-03-11"/>
+            <column name="status" value="未开始"/>
+            <column name="today_task" value=""/>
+            <column name="progress_note" value="Survey booked"/>
+            <column name="photo_url" value=""/>
+            <column name="archived" valueBoolean="false"/>
+            <column name="created_at" valueDate="2025-02-28T16:00:00"/>
+        </insert>
+
+        <!-- P-009 -->
+        <insert tableName="projects">
+            <column name="project_code" value="P-009"/>
+            <column name="name" value="Manukau Office Partitioning"/>
+            <column name="client_name" value="South Biz Ltd"/>
+            <column name="client_phone" value="0210000009"/>
+            <column name="address" value="Manukau, Auckland"/>
+            <column name="sales_person" value="Isla"/>
+            <column name="installer" value="Team Kauri"/>
+            <column name="team_members" value="Sam,Tom"/>
+            <column name="start_date" value="2025-03-09"/>
+            <column name="end_date" value="2025-03-13"/>
+            <column name="status" value="施工中"/>
+            <column name="today_task" value="Frame delivery"/>
+            <column name="progress_note" value="Site access confirmed"/>
+            <column name="photo_url" value=""/>
+            <column name="archived" valueBoolean="false"/>
+            <column name="created_at" valueDate="2025-02-28T17:00:00"/>
+        </insert>
+
+        <!-- P-010 -->
+        <insert tableName="projects">
+            <column name="project_code" value="P-010"/>
+            <column name="name" value="Howick Kitchen Install"/>
+            <column name="client_name" value="Eastside Kitchens"/>
+            <column name="client_phone" value="0210000010"/>
+            <column name="address" value="Howick, Auckland"/>
+            <column name="sales_person" value="Jack"/>
+            <column name="installer" value="Team Rimu"/>
+            <column name="team_members" value="Uma,Vincent"/>
+            <column name="start_date" value="2025-03-10"/>
+            <column name="end_date" value="2025-03-14"/>
+            <column name="status" value="未开始"/>
+            <column name="today_task" value=""/>
+            <column name="progress_note" value="Client confirmed schedule"/>
+            <column name="photo_url" value=""/>
+            <column name="archived" valueBoolean="false"/>
+            <column name="created_at" valueDate="2025-02-28T18:00:00"/>
+        </insert>
+
+        <!-- P-011 -->
+        <insert tableName="projects">
+            <column name="project_code" value="P-011"/>
+            <column name="name" value="Onehunga Bathroom Tiling"/>
+            <column name="client_name" value="Onehunga Homes"/>
+            <column name="client_phone" value="0210000011"/>
+            <column name="address" value="Onehunga, Auckland"/>
+            <column name="sales_person" value="Kate"/>
+            <column name="installer" value="Team Nikau"/>
+            <column name="team_members" value="Wendy,Xavier"/>
+            <column name="start_date" value="2025-03-11"/>
+            <column name="end_date" value="2025-03-15"/>
+            <column name="status" value="施工中"/>
+            <column name="today_task" value="Waterproofing"/>
+            <column name="progress_note" value="Plumbing rough-in done"/>
+            <column name="photo_url" value=""/>
+            <column name="archived" valueBoolean="false"/>
+            <column name="created_at" valueDate="2025-02-28T19:00:00"/>
+        </insert>
+
+        <!-- P-012 -->
+        <insert tableName="projects">
+            <column name="project_code" value="P-012"/>
+            <column name="name" value="Glen Innes Exterior Paint"/>
+            <column name="client_name" value="GI Property"/>
+            <column name="client_phone" value="0210000012"/>
+            <column name="address" value="Glen Innes, Auckland"/>
+            <column name="sales_person" value="Liam"/>
+            <column name="installer" value="Team Totara"/>
+            <column name="team_members" value="Yara,Zack"/>
+            <column name="start_date" value="2025-03-12"/>
+            <column name="end_date" value="2025-03-16"/>
+            <column name="status" value="完成"/>
+            <column name="today_task" value="Final touch-ups"/>
+            <column name="progress_note" value="Weather clear"/>
+            <column name="photo_url" value=""/>
+            <column name="archived" valueBoolean="false"/>
+            <column name="created_at" valueDate="2025-02-28T20:00:00"/>
+        </insert>
+
+        <!-- P-013 -->
+        <insert tableName="projects">
+            <column name="project_code" value="P-013"/>
+            <column name="name" value="Epsom Roof Maintenance"/>
+            <column name="client_name" value="Epsom College"/>
+            <column name="client_phone" value="0210000013"/>
+            <column name="address" value="Epsom, Auckland"/>
+            <column name="sales_person" value="Mona"/>
+            <column name="installer" value="Team Kauri"/>
+            <column name="team_members" value="Adam,Ben"/>
+            <column name="start_date" value="2025-03-13"/>
+            <column name="end_date" value="2025-03-17"/>
+            <column name="status" value="未开始"/>
+            <column name="today_task" value=""/>
+            <column name="progress_note" value="Access arrangements pending"/>
+            <column name="photo_url" value=""/>
+            <column name="archived" valueBoolean="false"/>
+            <column name="created_at" valueDate="2025-02-28T21:00:00"/>
+        </insert>
+
+        <!-- P-014 -->
+        <insert tableName="projects">
+            <column name="project_code" value="P-014"/>
+            <column name="name" value="Saint Heliers Deck Repair"/>
+            <column name="client_name" value="Coastal Homes"/>
+            <column name="client_phone" value="0210000014"/>
+            <column name="address" value="Saint Heliers, Auckland"/>
+            <column name="sales_person" value="Nate"/>
+            <column name="installer" value="Team Rimu"/>
+            <column name="team_members" value="Cara,Dion"/>
+            <column name="start_date" value="2025-03-14"/>
+            <column name="end_date" value="2025-03-18"/>
+            <column name="status" value="施工中"/>
+            <column name="today_task" value="Joist replacement"/>
+            <column name="progress_note" value="Timber on site"/>
+            <column name="photo_url" value=""/>
+            <column name="archived" valueBoolean="false"/>
+            <column name="created_at" valueDate="2025-02-28T22:00:00"/>
+        </insert>
+
+        <!-- P-015 -->
+        <insert tableName="projects">
+            <column name="project_code" value="P-015"/>
+            <column name="name" value="Remuera Interior Paint"/>
+            <column name="client_name" value="Remuera Estate"/>
+            <column name="client_phone" value="0210000015"/>
+            <column name="address" value="Remuera, Auckland"/>
+            <column name="sales_person" value="Olive"/>
+            <column name="installer" value="Team Nikau"/>
+            <column name="team_members" value="Eli,Fay"/>
+            <column name="start_date" value="2025-03-15"/>
+            <column name="end_date" value="2025-03-19"/>
+            <column name="status" value="未开始"/>
+            <column name="today_task" value=""/>
+            <column name="progress_note" value="Colour samples approved"/>
+            <column name="photo_url" value=""/>
+            <column name="archived" valueBoolean="false"/>
+            <column name="created_at" valueDate="2025-02-28T23:00:00"/>
+        </insert>
+
+        <!-- P-016 -->
+        <insert tableName="projects">
+            <column name="project_code" value="P-016"/>
+            <column name="name" value="Kingsland Studio Wiring"/>
+            <column name="client_name" value="Studio AKL"/>
+            <column name="client_phone" value="0210000016"/>
+            <column name="address" value="Kingsland, Auckland"/>
+            <column name="sales_person" value="Pete"/>
+            <column name="installer" value="Team Totara"/>
+            <column name="team_members" value="Gus,Hiro"/>
+            <column name="start_date" value="2025-03-16"/>
+            <column name="end_date" value="2025-03-20"/>
+            <column name="status" value="施工中"/>
+            <column name="today_task" value="Cable routing"/>
+            <column name="progress_note" value="Switchboards delivered"/>
+            <column name="photo_url" value=""/>
+            <column name="archived" valueBoolean="false"/>
+            <column name="created_at" valueDate="2025-03-01T00:00:00"/>
+        </insert>
+
+        <!-- P-017 -->
+        <insert tableName="projects">
+            <column name="project_code" value="P-017"/>
+            <column name="name" value="Sandringham Fence Build"/>
+            <column name="client_name" value="Sandringham Gardens"/>
+            <column name="client_phone" value="0210000017"/>
+            <column name="address" value="Sandringham, Auckland"/>
+            <column name="sales_person" value="Quin"/>
+            <column name="installer" value="Team Kauri"/>
+            <column name="team_members" value="Ivy,Jay"/>
+            <column name="start_date" value="2025-03-17"/>
+            <column name="end_date" value="2025-03-21"/>
+            <column name="status" value="完成"/>
+            <column name="today_task" value="Site cleanup"/>
+            <column name="progress_note" value="Inspection scheduled"/>
+            <column name="photo_url" value=""/>
+            <column name="archived" valueBoolean="false"/>
+            <column name="created_at" valueDate="2025-03-01T01:00:00"/>
+        </insert>
+
+        <!-- P-018 -->
+        <insert tableName="projects">
+            <column name="project_code" value="P-018"/>
+            <column name="name" value="Avondale Driveway Repair"/>
+            <column name="client_name" value="Avondale Council"/>
+            <column name="client_phone" value="0210000018"/>
+            <column name="address" value="Avondale, Auckland"/>
+            <column name="sales_person" value="Rae"/>
+            <column name="installer" value="Team Rimu"/>
+            <column name="team_members" value="Kai,Leo"/>
+            <column name="start_date" value="2025-03-18"/>
+            <column name="end_date" value="2025-03-22"/>
+            <column name="status" value="未开始"/>
+            <column name="today_task" value=""/>
+            <column name="progress_note" value="Traffic plan in review"/>
+            <column name="photo_url" value=""/>
+            <column name="archived" valueBoolean="false"/>
+            <column name="created_at" valueDate="2025-03-01T02:00:00"/>
+        </insert>
+
+        <!-- P-019 -->
+        <insert tableName="projects">
+            <column name="project_code" value="P-019"/>
+            <column name="name" value="Northcote Bathroom Upgrade"/>
+            <column name="client_name" value="Northcote Homes"/>
+            <column name="client_phone" value="0210000019"/>
+            <column name="address" value="Northcote, Auckland"/>
+            <column name="sales_person" value="Sara"/>
+            <column name="installer" value="Team Nikau"/>
+            <column name="team_members" value="Mack,Nia"/>
+            <column name="start_date" value="2025-03-19"/>
+            <column name="end_date" value="2025-03-23"/>
+            <column name="status" value="施工中"/>
+            <column name="today_task" value="Plasterboard install"/>
+            <column name="progress_note" value="Plumbing completed"/>
+            <column name="photo_url" value=""/>
+            <column name="archived" valueBoolean="false"/>
+            <column name="created_at" valueDate="2025-03-01T03:00:00"/>
+        </insert>
+
+        <!-- P-020 -->
+        <insert tableName="projects">
+            <column name="project_code" value="P-020"/>
+            <column name="name" value="Greenlane Office Carpeting"/>
+            <column name="client_name" value="Greenlane Corp"/>
+            <column name="client_phone" value="0210000020"/>
+            <column name="address" value="Greenlane, Auckland"/>
+            <column name="sales_person" value="Tara"/>
+            <column name="installer" value="Team Totara"/>
+            <column name="team_members" value="Omar,Pia"/>
+            <column name="start_date" value="2025-03-20"/>
+            <column name="end_date" value="2025-03-24"/>
+            <column name="status" value="未开始"/>
+            <column name="today_task" value=""/>
+            <column name="progress_note" value="Carpet ordered"/>
+            <column name="photo_url" value=""/>
+            <column name="archived" valueBoolean="false"/>
+            <column name="created_at" valueDate="2025-03-01T04:00:00"/>
+        </insert>
+
+        <rollback>
+            <delete tableName="projects">
+                <where>project_code IN ('P-001','P-002','P-003','P-004','P-005','P-006','P-007','P-008','P-009','P-010','P-011','P-012','P-013','P-014','P-015','P-016','P-017','P-018','P-019','P-020')</where>
+            </delete>
+        </rollback>
+    </changeSet>
+</databaseChangeLog>

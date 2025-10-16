@@ -1,36 +1,65 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
-                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
-    <changeSet id="0001-create-projects" author="copilot">
+    <changeSet id="0001-create-projects-table" author="tools-biz">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="projects"/>
+            </not>
+        </preConditions>
+
         <createTable tableName="projects">
             <column name="id" type="varchar(64)">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column name="projectCode" type="varchar(64)">
-                <constraints nullable="false" unique="true"/>
+            <column name="project_code" type="varchar(64)">
+                <constraints nullable="false"/>
             </column>
             <column name="name" type="varchar(100)">
                 <constraints nullable="false"/>
             </column>
-            <column name="clientName" type="varchar(100)"/>
-            <column name="clientPhone" type="varchar(30)"/>
+            <column name="client_name" type="varchar(100)"/>
+            <column name="client_phone" type="varchar(30)"/>
             <column name="address" type="varchar(200)"/>
-            <column name="salesPerson" type="varchar(100)"/>
+            <column name="sales_person" type="varchar(100)"/>
             <column name="installer" type="varchar(100)"/>
-            <column name="teamMembers" type="varchar(512)"/>
-            <column name="startDate" type="varchar(10)"/>
-            <column name="endDate" type="varchar(10)"/>
-            <column name="status" type="varchar(32)"/>
-            <column name="todayTask" type="varchar(1024)"/>
-            <column name="progressNote" type="varchar(2048)"/>
-            <column name="photoUrl" type="varchar(512)"/>
-            <column name="createdAt" type="varchar(64)"/>
+            <column name="team_members" type="text"/>
+            <column name="start_date" type="date"/>
+            <column name="end_date" type="date"/>
+            <column name="status" type="varchar(50)"/>
+            <column name="today_task" type="text"/>
+            <column name="progress_note" type="text"/>
+            <column name="photo_url" type="varchar(512)"/>
+            <column name="archived" type="BOOLEAN" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
         </createTable>
-        <createIndex tableName="projects" indexName="uk_projects_projectCode" unique="true">
-            <column name="projectCode"/>
+
+        <addUniqueConstraint tableName="projects" columnNames="project_code" constraintName="uk_projects_project_code"/>
+
+        <createIndex tableName="projects" indexName="idx_projects_created_at">
+            <column name="created_at"/>
         </createIndex>
+        <createIndex tableName="projects" indexName="idx_projects_start_date">
+            <column name="start_date"/>
+        </createIndex>
+        <createIndex tableName="projects" indexName="idx_projects_end_date">
+            <column name="end_date"/>
+        </createIndex>
+        <createIndex tableName="projects" indexName="idx_projects_status">
+            <column name="status"/>
+        </createIndex>
+
+        <rollback>
+            <dropTable tableName="projects"/>
+        </rollback>
     </changeSet>
+
 </databaseChangeLog>
 

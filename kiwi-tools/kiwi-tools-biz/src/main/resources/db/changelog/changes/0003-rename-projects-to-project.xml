@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <!-- Align physical table name with MyBatis-Plus default ("project" for entity Project) -->
+    <changeSet id="0001-rename-projects-to-project" author="tools-biz">
+        <preConditions onFail="MARK_RAN">
+            <and>
+                <tableExists tableName="projects"/>
+                <not>
+                    <tableExists tableName="project"/>
+                </not>
+            </and>
+        </preConditions>
+        <renameTable oldTableName="projects" newTableName="project"/>
+    </changeSet>
+
+</databaseChangeLog>
+

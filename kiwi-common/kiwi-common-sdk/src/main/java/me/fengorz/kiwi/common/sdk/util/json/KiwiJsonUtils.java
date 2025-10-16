@@ -7,6 +7,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.experimental.UtilityClass;
 import me.fengorz.kiwi.common.sdk.exception.ServiceException;
 import org.slf4j.Logger;
@@ -33,9 +34,12 @@ public class KiwiJsonUtils {
         OBJECT_MAPPER.setSerializationInclusion(JsonInclude.Include.NON_NULL);  // Ignore null fields in serialization
         OBJECT_MAPPER.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);  // Ignore unknown properties
         OBJECT_MAPPER.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);  // Allow serialization of empty beans
+
         OBJECT_MAPPER.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);  // Write dates as ISO strings
         OBJECT_MAPPER.setDateFormat(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));  // Custom date format
         OBJECT_MAPPER.setTimeZone(TimeZone.getTimeZone("UTC"));  // Use UTC timezone
+        // Java 8 date/time support (LocalDateTime, LocalDate, etc.)
+        OBJECT_MAPPER.registerModule(new JavaTimeModule());
     }
 
     public static String toJsonStr(Object obj) {

@@ -1,6 +1,10 @@
 package me.fengorz.kiwi.tools;
 
 import me.fengorz.kiwi.common.sdk.util.json.KiwiJsonUtils;
+import me.fengorz.kiwi.tools.model.Project;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,20 +14,20 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
 import static org.hamcrest.Matchers.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
-@AutoConfigureMockMvc(addFilters = false) // disable security filters in MockMvc tests
+@AutoConfigureMockMvc(addFilters = false)
 @ActiveProfiles("test")
 @SpringBootTest(
         classes = ToolsBizTestApplication.class,
@@ -32,6 +36,18 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class ProjectApiTest {
     @Autowired
     MockMvc mockMvc;
+
+    private static final String PREFIX = "E2E-AKL-";
+
+    @Before
+    public void beforeEach() throws Exception {
+        cleanupByPrefix(PREFIX);
+    }
+
+    @After
+    public void afterEach() throws Exception {
+        cleanupByPrefix(PREFIX);
+    }
 
     @Test
     public void testCreateAndList() throws Exception {
@@ -81,5 +97,228 @@ public class ProjectApiTest {
                 .andExpect(jsonPath("$.page", is(1)))
                 .andExpect(jsonPath("$.pageSize", is(50)))
                 .andExpect(jsonPath("$.total", greaterThanOrEqualTo(1)));
+    }
+
+    @Test
+    public void e2e_create100_list_then_delete50_and_verify_totals() throws Exception {
+        long baseline = getTotal(true, null);
+
+        // create 100
+        java.util.List<Project> created = new java.util.ArrayList<>();
+        for (int i = 1; i <= 100; i++) {
+            Project p = createProject(PREFIX + i, "未开始");
+            Assert.assertNotNull(p.getId());
+            Assert.assertNotNull(p.getProjectCode());
+            Assert.assertFalse(Boolean.TRUE.equals(p.getArchived()));
+            created.add(p);
+        }
+
+        long afterCreate = getTotal(true, null);
+        Assert.assertEquals(baseline + 100, afterCreate);
+
+        // delete first 50
+        for (int i = 0; i < 50; i++) {
+            deleteProject(created.get(i).getId());
+        }
+
+        long afterDelete = getTotal(true, null);
+        Assert.assertEquals(baseline + 50, afterDelete);
+
+        // simple pagination check (defaults exclude archived)
+        MvcResult page1 = mockMvc.perform(get("/api/projects")
+                        .param("page", "1")
+                        .param("pageSize", "20")
+                        .param("sortBy", "created_at")
+                        .param("sortOrder", "desc"))
+                .andExpect(status().isOk())
+                .andReturn();
+        java.util.Map<?, ?> body = KiwiJsonUtils.fromJson(page1.getResponse().getContentAsString(), java.util.Map.class);
+        Assert.assertEquals(20, ((java.util.List<?>) body.get("items")).size());
+
+        // cleanup remaining 50
+        for (int i = 50; i < 100; i++) {
+            deleteProject(created.get(i).getId());
+        }
+        long finalTotal = getTotal(true, null);
+        Assert.assertEquals(baseline, finalTotal);
+    }
+
+    @Test
+    public void e2e_archive_post_api_and_filters() throws Exception {
+        // create 10
+        java.util.List<Project> created = new java.util.ArrayList<>();
+        for (int i = 1; i <= 10; i++) {
+            created.add(createProject(PREFIX + "ARCH-" + i, "未开始"));
+        }
+
+        // archive 4
+        for (int i = 0; i < 4; i++) {
+            Project p = archiveProject(created.get(i).getId(), true);
+            Assert.assertTrue(Boolean.TRUE.equals(p.getArchived()));
+        }
+
+        // idempotent
+        Project again = archiveProject(created.get(0).getId(), true);
+        Assert.assertTrue(Boolean.TRUE.equals(again.getArchived()));
+
+        // counts using q filter
+        long defaultTotal = getTotal(false, PREFIX + "ARCH-");
+        long allTotal = getTotal(true, PREFIX + "ARCH-");
+        long archivedOnly = getTotalWithArchivedFilter(true, PREFIX + "ARCH-");
+        long activeOnly = getTotalWithArchivedFilter(false, PREFIX + "ARCH-");
+
+        Assert.assertEquals(6, defaultTotal);
+        Assert.assertEquals(10, allTotal);
+        Assert.assertEquals(4, archivedOnly);
+        Assert.assertEquals(6, activeOnly);
+
+        // unarchive 2
+        for (int i = 0; i < 2; i++) {
+            Project p = archiveProject(created.get(i).getId(), false);
+            Assert.assertFalse(Boolean.TRUE.equals(p.getArchived()));
+        }
+        Assert.assertEquals(2, getTotalWithArchivedFilter(true, PREFIX + "ARCH-"));
+        Assert.assertEquals(8, getTotalWithArchivedFilter(false, PREFIX + "ARCH-"));
+    }
+
+    @Test
+    public void e2e_validation_and_patch_update() throws Exception {
+        // invalid end before start
+        java.util.Map<String, Object> bad = new java.util.HashMap<>();
+        bad.put("name", PREFIX + "BAD");
+        bad.put("startDate", "2025-03-10");
+        bad.put("endDate", "2025-03-28");
+        mockMvc.perform(post("/api/projects")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(KiwiJsonUtils.toJsonPretty(bad)))
+                .andExpect(status().isBadRequest());
+
+        // create valid
+        Project p = createProject(PREFIX + "PATCH", "未开始");
+
+        // patch fields and archived
+        java.util.Map<String, Object> patchBody = new java.util.HashMap<>();
+        patchBody.put("clientName", "Kiwi Ltd");
+        patchBody.put("status", "未开始");
+        patchBody.put("archived", true);
+
+        MvcResult patchedRes = mockMvc.perform(patch("/api/projects/{id}", p.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(KiwiJsonUtils.toJsonPretty(patchBody)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.clientName", is("Kiwi Ltd")))
+                .andExpect(jsonPath("$.archived", is(true)))
+                .andReturn();
+
+        Project patched = KiwiJsonUtils.fromJson(patchedRes.getResponse().getContentAsString(), Project.class);
+
+        // get by id
+        mockMvc.perform(get("/api/projects/{id}", patched.getId()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id", is(patched.getId())));
+
+        // delete
+        deleteProject(patched.getId());
+
+        mockMvc.perform(get("/api/projects/{id}", patched.getId()))
+                .andExpect(status().isNotFound());
+    }
+
+    // ---------- Helpers ----------
+
+    private Project createProject(String name, String status) throws Exception {
+        java.util.Map<String, Object> body = new java.util.HashMap<>();
+        body.put("name", name);
+        body.put("status", status);
+        body.put("address", "Auckland CBD, NZ");
+
+        MvcResult res = mockMvc.perform(post("/api/projects")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(KiwiJsonUtils.toJsonPretty(body)))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.id", notNullValue()))
+                .andExpect(jsonPath("$.projectCode", startsWith("P-")))
+                .andReturn();
+
+        return KiwiJsonUtils.fromJson(res.getResponse().getContentAsString(), Project.class);
+    }
+
+    private Project archiveProject(String id, Boolean archived) throws Exception {
+        java.util.Map<String, Object> body = new java.util.HashMap<>();
+        if (archived != null) body.put("archived", archived);
+        MvcResult res = mockMvc.perform(post("/api/projects/{id}/archive", id)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(KiwiJsonUtils.toJsonPretty(body)))
+                .andExpect(status().isOk())
+                .andReturn();
+        return KiwiJsonUtils.fromJson(res.getResponse().getContentAsString(), Project.class);
+    }
+
+    private void deleteProject(String id) throws Exception {
+        mockMvc.perform(delete("/api/projects/{id}", id))
+                .andExpect(status().isNoContent());
+    }
+
+    private long getTotal(boolean includeArchived, String q) throws Exception {
+        org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder req = get("/api/projects")
+                .param("page", "1")
+                .param("pageSize", "1")
+                .param("sortBy", "created_at")
+                .param("sortOrder", "desc");
+        if (includeArchived) req.param("includeArchived", "true");
+        if (q != null) req.param("q", q);
+
+        MvcResult res = mockMvc.perform(req)
+                .andExpect(status().isOk())
+                .andReturn();
+        java.util.Map<?, ?> body = KiwiJsonUtils.fromJson(res.getResponse().getContentAsString(), java.util.Map.class);
+        return ((Number) body.get("total")).longValue();
+    }
+
+    private long getTotalWithArchivedFilter(boolean archived, String q) throws Exception {
+        org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder req = get("/api/projects")
+                .param("page", "1")
+                .param("pageSize", "1")
+                .param("sortBy", "created_at")
+                .param("sortOrder", "desc")
+                .param("archived", String.valueOf(archived));
+        if (q != null) req.param("q", q);
+
+        MvcResult res = mockMvc.perform(req)
+                .andExpect(status().isOk())
+                .andReturn();
+        java.util.Map<?, ?> body = KiwiJsonUtils.fromJson(res.getResponse().getContentAsString(), java.util.Map.class);
+        return ((Number) body.get("total")).longValue();
+    }
+
+    private void cleanupByPrefix(String prefix) throws Exception {
+        // list with includeArchived=true and q=prefix, then delete all
+        int page = 1;
+        int pageSize = 200;
+        long total;
+        java.util.List<java.util.Map<String, Object>> collected = new java.util.ArrayList<>();
+        do {
+            MvcResult res = mockMvc.perform(get("/api/projects")
+                            .param("q", prefix)
+                            .param("page", String.valueOf(page))
+                            .param("pageSize", String.valueOf(pageSize))
+                            .param("includeArchived", "true")
+                            .param("sortBy", "created_at")
+                            .param("sortOrder", "desc"))
+                    .andExpect(status().isOk())
+                    .andReturn();
+            java.util.Map body = KiwiJsonUtils.fromJson(res.getResponse().getContentAsString(), java.util.Map.class);
+            total = ((Number) body.get("total")).longValue();
+            java.util.List items = (java.util.List) body.get("items");
+            if (items != null) collected.addAll(items);
+            page++;
+        } while ((page - 1) * pageSize < total);
+
+        for (java.util.Map<String, Object> m : collected) {
+            Object id = m.get("id");
+            if (id != null) {
+                try { deleteProject(String.valueOf(id)); } catch (Exception ignored) {}
+            }
+        }
     }
 }

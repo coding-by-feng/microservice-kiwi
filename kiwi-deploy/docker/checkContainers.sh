@@ -53,6 +53,7 @@ show_menu() {
     echo "24) Enter container shell"
     echo "25) Stop one container"
     echo "26) Restart one container"
+    echo "27) Quick health logs (last 50 lines from all services)"  # NEW
     echo "0) Exit"
     echo ""
 }
@@ -983,10 +984,22 @@ check_all_failed() {
     fi
 }
 
+quick_health_logs() {
+    echo -e "\n=== QUICK HEALTH CHECK: LAST 50 LINES FROM ALL SERVICE CONTAINERS ==="
+    echo "This will show the last 50 log lines for each Kiwi microservice (1-9)."
+    echo ""
+    for key in {1..9}; do
+        IFS='|' read -r container_name service_name <<< "${containers[$key]}"
+        check_logs "$container_name" "$service_name" "static" "50"
+        echo ""
+    done
+    echo "=== END OF QUICK HEALTH CHECK ==="
+}
+
 # Main loop
 while true; do
     show_menu
-    read -p "Enter your choice (0-26): " choice   # UPDATED
+    read -p "Enter your choice (0-27): " choice   # UPDATED
 
     case $choice in
         0)
@@ -1036,7 +1049,8 @@ while true; do
         24) enter_container ;;
         25) stop_single_container ;;
         26) restart_single_container ;;
-        *) echo "Invalid choice. Please enter a number between 0-26." ;;
+        27) quick_health_logs ;;  # NEW
+        *) echo "Invalid choice. Please enter a number between 0-27." ;;
     esac
 
     echo ""

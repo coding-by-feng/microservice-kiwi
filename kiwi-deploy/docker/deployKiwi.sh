@@ -543,7 +543,19 @@ if [ "$ONLY_GIT_MODE" = true ]; then
   cd "$CURRENT_DIR/microservice-kiwi/" || { echo "❌ Cannot cd to project root"; exit 1; }
   git stash || true
   git pull --rebase || git pull
-  echo "✅ OG FLOW COMPLETE (git only). Exiting without any further steps."
+
+  # NEW: After git-only update, ensure kiwi-deploy shell scripts are executable
+  echo "🔐 Updating permissions for kiwi-deploy shell scripts..."
+  DEPLOY_DIR="$CURRENT_DIR/microservice-kiwi/kiwi-deploy"
+  if [ -d "$DEPLOY_DIR" ]; then
+    # Recursively set 777 for all .sh files under kiwi-deploy (portable for macOS/BSD find)
+    find "$DEPLOY_DIR" -type f -name "*.sh" -exec chmod 777 {} \;
+    echo "✅ Set 777 on all .sh files under: $DEPLOY_DIR"
+  else
+    echo "ℹ️  kiwi-deploy directory not found at: $DEPLOY_DIR"
+  fi
+
+  echo "✅ OG FLOW COMPLETE (git only + chmod). Exiting without any further steps."
   exit 0
 fi
 
@@ -1374,7 +1386,6 @@ selective_deployment() {
 
     # Show running containers
     echo ""
-    echo "Running containers:"
     docker ps --filter "name=kiwi-" --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
 }
 

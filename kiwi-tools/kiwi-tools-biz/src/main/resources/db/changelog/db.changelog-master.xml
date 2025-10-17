@@ -4,9 +4,10 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
-    <include file="db/changelog/changes/0001-create-projects-table.xml" relativeToChangelogFile="false"/>
+    <!-- Create projects table (has photo_url initially) -->
+    <include file="db/changelog/changes/0005-create-project-table.xml" relativeToChangelogFile="false"/>
+
+    <!-- Seed demo data (now without photo_url, 30 Auckland-related rows) -->
     <include file="db/changelog/changes/0001-create-projects-demo-data.xml" relativeToChangelogFile="false"/>
-    <include file="db/changelog/changes/0003-rename-projects-to-project.xml" relativeToChangelogFile="false"/>
 
 </databaseChangeLog>
-

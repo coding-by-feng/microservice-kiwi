@@ -35,7 +35,6 @@ public class ToolsProperties {
     /** Idempotency key TTL minutes for POST /api/projects */
     private int idempotencyTtlMinutes = 60;
 
-    /** Allowed status values */
-    private List<String> allowedStatuses = Arrays.asList("未开始", "进行中", "已完成");
+    /** Allowed status values (codes) */
+    private List<String> allowedStatuses = Arrays.asList("not_started", "in_progress", "completed");
 }
-

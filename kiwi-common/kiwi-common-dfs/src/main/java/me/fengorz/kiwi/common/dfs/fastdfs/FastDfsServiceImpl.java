@@ -27,6 +27,7 @@ import me.fengorz.kiwi.common.dfs.DfsConstants;
 import me.fengorz.kiwi.common.dfs.DfsService;
 import me.fengorz.kiwi.common.sdk.exception.dfs.DfsOperateDeleteException;
 import me.fengorz.kiwi.common.sdk.exception.dfs.DfsOperateException;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayInputStream;
@@ -39,6 +40,7 @@ import java.util.Set;
  * @Date 2019/11/4 10:58 AM
  */
 @Service("fastDfsService")
+@ConditionalOnProperty(name = "storage.backend", havingValue = "fastdfs", matchIfMissing = true)
 @Slf4j
 @RequiredArgsConstructor
 public class FastDfsServiceImpl implements DfsService {

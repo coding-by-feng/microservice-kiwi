@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.RequiredArgsConstructor;
 import me.fengorz.kiwi.tools.model.Project;
+import me.fengorz.kiwi.tools.model.ProjectStatus;
 import me.fengorz.kiwi.tools.repository.mapper.ProjectMapper;
 import org.springframework.stereotype.Repository;
 
@@ -62,7 +63,7 @@ public class ProjectRepository {
         return mapper.selectCount(qw) > 0;
     }
 
-    public List<Project> search(String q, String status, LocalDate start, LocalDate end,
+    public List<Project> search(String q, ProjectStatus status, LocalDate start, LocalDate end,
                                 String sortBy, String sortOrder, int page, int pageSize,
                                 Boolean archived, Boolean includeArchived) {
         LambdaQueryWrapper<Project> qw = buildWrapper(q, status, start, end, archived, includeArchived);
@@ -71,22 +72,22 @@ public class ProjectRepository {
         return mapper.selectPage(mp, qw).getRecords();
     }
 
-    public List<Project> search(String q, String status, LocalDate start, LocalDate end,
+    public List<Project> search(String q, ProjectStatus status, LocalDate start, LocalDate end,
                                 String sortBy, String sortOrder, int page, int pageSize) {
         return search(q, status, start, end, sortBy, sortOrder, page, pageSize, false, false);
     }
 
-    public long count(String q, String status, LocalDate start, LocalDate end,
+    public long count(String q, ProjectStatus status, LocalDate start, LocalDate end,
                       Boolean archived, Boolean includeArchived) {
         LambdaQueryWrapper<Project> qw = buildWrapper(q, status, start, end, archived, includeArchived);
         return mapper.selectCount(qw);
     }
 
-    public long count(String q, String status, LocalDate start, LocalDate end) {
+    public long count(String q, ProjectStatus status, LocalDate start, LocalDate end) {
         return count(q, status, start, end, false, false);
     }
 
-    private LambdaQueryWrapper<Project> buildWrapper(String q, String status, LocalDate start, LocalDate end,
+    private LambdaQueryWrapper<Project> buildWrapper(String q, ProjectStatus status, LocalDate start, LocalDate end,
                                                      Boolean archived, Boolean includeArchived) {
         LambdaQueryWrapper<Project> qw = new LambdaQueryWrapper<>();
         if (q != null && !q.isEmpty()) {
@@ -96,7 +97,7 @@ public class ProjectRepository {
                     .or().like(Project::getClientName, t)
                     .or().like(Project::getAddress, t));
         }
-        if (status != null && !status.isEmpty()) {
+        if (status != null) {
             qw.eq(Project::getStatus, status);
         }
         if (start != null || end != null) {
@@ -107,8 +108,12 @@ public class ProjectRepository {
             qw.apply("( (start_date is not null or end_date is not null) " +
                      "and (coalesce(start_date, end_date) <= {0} and coalesce(end_date, start_date) >= {1}) )", e, s);
         }
-        // archived filter: default exclude archived unless includeArchived=true is requested
-        if (!Boolean.TRUE.equals(includeArchived)) {
+        // Archived filter semantics:
+        // - includeArchived=true => only archived
+        // - else => archived flag equals provided 'archived' param (default false)
+        if (Boolean.TRUE.equals(includeArchived)) {
+            qw.eq(Project::getArchived, true);
+        } else {
             boolean a = archived != null ? archived : false;
             qw.eq(Project::getArchived, a);
         }

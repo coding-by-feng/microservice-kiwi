@@ -496,6 +496,7 @@ show_step_status() {
         "ik_tokenizer_install"
         "nginx_ui_setup"
         "ftp_setup"
+        "ip_update"
     )
 
     declare -a STEP_DESCRIPTIONS=(
@@ -522,6 +523,7 @@ show_step_status() {
         "Install IK Tokenizer"
         "Setup Nginx and UI"
         "Setup FTP server"
+        "Update service IPs (.bashrc, hosts, FastDFS)"
     )
 
     echo "Step Completion Status:"
@@ -727,13 +729,14 @@ select_steps_to_reinitialize() {
     echo "21. ik_tokenizer_install    - Install IK Tokenizer"
     echo "22. nginx_ui_setup          - Setup Nginx and UI"
     echo "23. ftp_setup               - Setup FTP server"
-    echo "24. ALL                     - Re-initialize all steps"
-    echo "25. BACK                    - Return to main menu"
+    echo "24. ip_update               - Update service IPs (.bashrc, hosts, FastDFS)"
+    echo "25. ALL                     - Re-initialize all steps"
+    echo "26. BACK                    - Return to main menu"
     echo
     echo "Enter step numbers separated by spaces (e.g., '1 3 12' or 'ALL' or 'BACK'):"
     read -p "Steps to re-initialize: " SELECTED_STEPS
 
-    if [ -z "$SELECTED_STEPS" ] || [ "$SELECTED_STEPS" = "BACK" ] || [ "$SELECTED_STEPS" = "25" ]; then
+    if [ -z "$SELECTED_STEPS" ] || [ "$SELECTED_STEPS" = "BACK" ] || [ "$SELECTED_STEPS" = "26" ]; then
         print_info "Returning to main menu..."
         return 1  # Signal to return to menu
     fi
@@ -763,21 +766,22 @@ select_steps_to_reinitialize() {
         "ik_tokenizer_install"
         "nginx_ui_setup"
         "ftp_setup"
+        "ip_update"
     )
 
-    if [ "$SELECTED_STEPS" = "ALL" ] || [ "$SELECTED_STEPS" = "24" ]; then
+    if [ "$SELECTED_STEPS" = "ALL" ] || [ "$SELECTED_STEPS" = "25" ]; then
         print_info "Re-initializing ALL steps..."
         for step in "${STEP_NAMES[@]}"; do
             force_reinitialize_step "$step"
         done
     else
         for num in $SELECTED_STEPS; do
-            if [[ "$num" =~ ^[0-9]+$ ]] && [ "$num" -ge 1 ] && [ "$num" -le 23 ]; then
+            if [[ "$num" =~ ^[0-9]+$ ]] && [ "$num" -ge 1 ] && [ "$num" -le 24 ]; then
                 step_index=$((num - 1))
                 step_name="${STEP_NAMES[$step_index]}"
                 force_reinitialize_step "$step_name"
             else
-                print_warning "Invalid step number '$num' (valid range: 1-23)"
+                print_warning "Invalid step number '$num' (valid range: 1-24)"
             fi
         done
     fi
@@ -821,15 +825,16 @@ execute_selected_steps_only() {
         "ik_tokenizer_install"
         "nginx_ui_setup"
         "ftp_setup"
+        "ip_update"
     )
 
-    if [ "$selected_steps" = "ALL" ] || [ "$selected_steps" = "24" ]; then
+    if [ "$selected_steps" = "ALL" ] || [ "$selected_steps" = "25" ]; then
         # Execute all steps
         execute_all_setup_steps
     else
         # Execute only selected steps
         for num in $selected_steps; do
-            if [[ "$num" =~ ^[0-9]+$ ]] && [ "$num" -ge 1 ] && [ "$num" -le 23 ]; then
+            if [[ "$num" =~ ^[0-9]+$ ]] && [ "$num" -ge 1 ] && [ "$num" -le 24 ]; then
                 step_index=$((num - 1))
                 step_name="${STEP_NAMES[$step_index]}"
                 execute_individual_step "$step_name" "$num"
@@ -921,66 +926,13 @@ execute_individual_step() {
         "ftp_setup")
             execute_step_23_ftp_setup
             ;;
+        "ip_update")
+            execute_step_24_ip_update
+            ;;
         *)
             print_warning "Unknown step: $step_name"
             ;;
     esac
-}
-
-# Modified show_step_menu function
-show_step_menu() {
-    while true; do
-        echo
-        echo "=================================="
-        echo "STEP SELECTION MENU"
-        echo "=================================="
-        echo "Choose setup mode:"
-        echo "0. Full automatic setup"
-        echo "1. Select specific steps to re-initialize"
-        echo "2. Show step status"
-        echo "3. Clean all and start fresh"
-        echo "4. Exit"
-        echo
-        read -p "Enter your choice (0-4) [default: 0]: " SETUP_MODE
-
-        # Default to 0 if empty
-        SETUP_MODE=${SETUP_MODE:-0}
-
-        case $SETUP_MODE in
-            1)
-                if select_steps_to_reinitialize; then
-                    # Steps were executed, continue in menu loop
-                    continue
-                else
-                    # User chose to go back, continue in menu loop
-                    continue
-                fi
-                ;;
-            2)
-                show_step_status
-                continue
-                ;;
-            3)
-                if clean_all_setup; then
-                    # If clean was successful, break out to start fresh setup
-                    break
-                fi
-                continue
-                ;;
-            4)
-                print_info "Exiting setup script..."
-                exit 0
-                ;;
-            0)
-                print_info "Proceeding with full automatic setup..."
-                break
-                ;;
-            *)
-                print_warning "Invalid choice. Please try again."
-                continue
-                ;;
-        esac
-    done
 }
 
 # INDIVIDUAL STEP EXECUTION FUNCTIONS
@@ -1391,6 +1343,7 @@ $INFRASTRUCTURE_IP    kiwi-db
 $INFRASTRUCTURE_IP    kiwi-fastdfs
 $INFRASTRUCTURE_IP    kiwi-es
 $INFRASTRUCTURE_IP    kiwi-chattts
+$INFRASTRUCTURE_IP    kiwi-ftp
 
 # Kiwi Microservices
 $SERVICE_IP    kiwi-microservice-local
@@ -1792,6 +1745,100 @@ execute_step_23_ftp_setup() {
     else
         print_info "Step 23: FTP already set up, checking status..."
         check_and_start_container "kiwi-ftp" "ftp_setup"
+    fi
+}
+
+# New Step 24: Update IPs and configs
+execute_step_24_ip_update() {
+    if ! is_step_completed "ip_update"; then
+        print_info "Step 24: Updating IPs for hosts, .bashrc, and FastDFS config..."
+
+        # Prompt for new IP
+        prompt_for_input "Enter new Infrastructure IP (IPv4)" "NEW_IP" "false" "^([0-9]{1,3}\.){3}[0-9]{1,3}$" "Please enter a valid IPv4 address"
+
+        # Save to config
+        save_config "INFRASTRUCTURE_IP" "$NEW_IP"
+        save_config "FASTDFS_NON_LOCAL_IP" "$NEW_IP"
+
+        # Update ~/.bashrc variables
+        print_info "Updating ~/.bashrc environment variables..."
+        run_as_user sed -i '/export DB_IP=/d' "$SCRIPT_HOME/.bashrc" 2>/dev/null || true
+        run_as_user sed -i '/export FASTDFS_NON_LOCAL_IP=/d' "$SCRIPT_HOME/.bashrc" 2>/dev/null || true
+        run_as_user sed -i '/export INFRASTRUCTURE_IP=/d' "$SCRIPT_HOME/.bashrc" 2>/dev/null || true
+        {
+            echo "export DB_IP=\"$NEW_IP\""
+            echo "export FASTDFS_NON_LOCAL_IP=\"$NEW_IP\""
+            echo "export INFRASTRUCTURE_IP=\"$NEW_IP\""
+        } | run_as_user tee -a "$SCRIPT_HOME/.bashrc" > /dev/null
+
+        # Source .bashrc (note: affects only subshell)
+        run_as_user bash -lc "source ~/.bashrc" || true
+        print_success ".bashrc updated. Please run 'source ~/.bashrc' in your current shell to apply."
+
+        # Update /etc/hosts block
+        print_info "Updating /etc/hosts with new IP..."
+        cp /etc/hosts /etc/hosts.backup.$(date +%Y%m%d_%H%M%S)
+        sed -i '/# Kiwi Infrastructure Services/,/# End Kiwi Services/d' /etc/hosts
+        tee -a /etc/hosts > /dev/null << EOF
+
+# Kiwi Infrastructure Services
+$NEW_IP    fastdfs.fengorz.me
+$NEW_IP    kiwi-ui
+$NEW_IP    kiwi-redis
+$NEW_IP    kiwi-rabbitmq
+$NEW_IP    kiwi-db
+$NEW_IP    kiwi-fastdfs
+$NEW_IP    kiwi-es
+$NEW_IP    kiwi-chattts
+$NEW_IP    kiwi-ftp
+
+# Kiwi Microservices
+$NEW_IP    kiwi-microservice-local
+$NEW_IP    kiwi-microservice
+$NEW_IP    kiwi-eureka
+$NEW_IP    kiwi-config
+$NEW_IP    kiwi-auth
+$NEW_IP    kiwi-upms
+$NEW_IP    kiwi-gate
+$NEW_IP    kiwi-ai
+$NEW_IP    kiwi-crawler
+# End Kiwi Services
+EOF
+        print_success "/etc/hosts updated"
+
+        # Optionally refresh FastDFS storage container with new TRACKER_SERVER
+        if docker ps -a --format '{{.Names}}' | grep -q '^storage$'; then
+            print_info "Recreating FastDFS storage container with updated TRACKER_SERVER..."
+            # Determine image
+            FASTDFS_IMAGE=$(load_config "fastdfs_image_used")
+            if [ -z "$FASTDFS_IMAGE" ]; then
+                ARCH=$(uname -m)
+                case $ARCH in
+                    x86_64|amd64) FASTDFS_IMAGE="delron/fastdfs:latest" ;;
+                    aarch64|arm64) FASTDFS_IMAGE="ygqygq2/fastdfs-nginx:latest" ;;
+                    *) FASTDFS_IMAGE="delron/fastdfs:latest" ;;
+                esac
+            fi
+            docker stop storage >/dev/null 2>&1 || true
+            docker rm storage >/dev/null 2>&1 || true
+            docker run -tid \
+                --name storage \
+                -p 23000:23000 \
+                -p 8888:8888 \
+                -v "$SCRIPT_HOME/storage_data:/fastdfs/storage/data" \
+                -v "$SCRIPT_HOME/store_path:/fastdfs/store_path" \
+                -e TRACKER_SERVER="$NEW_IP:22122" \
+                --restart=unless-stopped \
+                "$FASTDFS_IMAGE" \
+                storage
+            print_success "FastDFS storage container recreated"
+        else
+            print_info "FastDFS storage container not found; skip recreation."
+        fi
+
+        mark_step_completed "ip_update"
+    else
+        print_info "Step 24: IP update already completed previously. You can re-initialize this step to apply a new IP."
     fi
 }
 

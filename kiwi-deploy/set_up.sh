@@ -58,6 +58,41 @@ print_info() {
     log "INFO: $1"
 }
 
+# Helper: find a free TCP port starting from a base in a range
+find_free_port() {
+    local start=${1:-8888}
+    local end=${2:-8999}
+    local p
+    for ((p=start; p<=end; p++)); do
+        if command -v lsof >/dev/null 2>&1; then
+            if ! lsof -iTCP -sTCP:LISTEN -n -P 2>/dev/null | grep -q ":$p "; then
+                echo "$p"
+                return 0
+            fi
+        elif command -v ss >/dev/null 2>&1; then
+            if ! ss -ltn 2>/dev/null | awk '{print $4}' | grep -q ":$p$"; then
+                echo "$p"
+                return 0
+            fi
+        else
+            # Fallback using netstat if available
+            if command -v netstat >/dev/null 2>&1; then
+                if ! netstat -tln 2>/dev/null | awk '{print $4}' | grep -q ":$p$"; then
+                    echo "$p"
+                    return 0
+                fi
+            else
+                # No tools to check; optimistically return the first candidate
+                echo "$p"
+                return 0
+            fi
+        fi
+    done
+    # If no free port found, return start as last resort
+    echo "$start"
+    return 1
+}
+
 # Initialize files with proper permissions
 initialize_files() {
     # Create files if they don't exist
@@ -579,13 +614,15 @@ show_step_status() {
     fi
 
     if [ -n "$DOCKER_CMD" ]; then
+        # Read configured FastDFS HTTP port (for display)
+        FASTDFS_PORT_EXPECTED=$(load_config "FASTDFS_HTTP_PORT" 2>/dev/null || echo 8888)
         # Define containers to check
         declare -a CONTAINERS=(
             "kiwi-mysql:MySQL Database:3306"
             "kiwi-redis:Redis Cache:6379"
             "kiwi-rabbit:RabbitMQ Message Queue:5672,15672"
             "tracker:FastDFS Tracker:22122"
-            "storage:FastDFS Storage:23000,8888"
+            "storage:FastDFS Storage:23000,${FASTDFS_PORT_EXPECTED}"
             "kiwi-es:Elasticsearch:9200,9300"
             "kiwi-ui:Web UI (Nginx):80"
             "kiwi-ftp:FTP Server:21,21100-21110"
@@ -1379,6 +1416,7 @@ execute_step_12_env_vars_setup() {
         run_as_user sed -i '/export ES_USER_PASSWORD=/d' "$SCRIPT_HOME/.bashrc" 2>/dev/null || true
         run_as_user sed -i '/export INFRASTRUCTURE_IP=/d' "$SCRIPT_HOME/.bashrc" 2>/dev/null || true
         run_as_user sed -i '/export SERVICE_IP=/d' "$SCRIPT_HOME/.bashrc" 2>/dev/null || true
+        run_as_user sed -i '/export FASTDFS_HTTP_PORT=/d' "$SCRIPT_HOME/.bashrc" 2>/dev/null || true
         {
             echo ""
             echo "# Kiwi Microservice Environment Variables"
@@ -1394,6 +1432,7 @@ execute_step_12_env_vars_setup() {
             echo "export ES_USER_PASSWORD=\"$ES_USER_PASSWORD\""
             echo "export INFRASTRUCTURE_IP=\"$INFRASTRUCTURE_IP\""
             echo "export SERVICE_IP=\"$SERVICE_IP\""
+            echo "export FASTDFS_HTTP_PORT=\"$(load_config "FASTDFS_HTTP_PORT" 2>/dev/null || echo 8888)\""
         } | run_as_user tee -a "$SCRIPT_HOME/.bashrc" > /dev/null
         print_success "Environment variables configured"
         mark_step_completed "env_vars_setup"
@@ -1535,6 +1574,20 @@ execute_step_17_fastdfs_setup() {
         docker stop tracker storage 2>/dev/null || true
         docker rm tracker storage 2>/dev/null || true
         run_as_user mkdir -p "$SCRIPT_HOME/tracker_data" "$SCRIPT_HOME/storage_data" "$SCRIPT_HOME/store_path"
+
+        # Determine FastDFS HTTP port (host) with auto-fallback if busy
+        FASTDFS_HTTP_PORT=$(load_config "FASTDFS_HTTP_PORT" 2>/dev/null || echo "")
+        if [ -z "$FASTDFS_HTTP_PORT" ]; then
+            FASTDFS_HTTP_PORT=$(find_free_port 8888 8999)
+        else
+            if command -v lsof >/dev/null 2>&1; then
+                if lsof -iTCP -sTCP:LISTEN -n -P 2>/dev/null | grep -q ":$FASTDFS_HTTP_PORT "; then
+                    FASTDFS_HTTP_PORT=$(find_free_port 8888 8999)
+                fi
+            fi
+        fi
+        save_config "FASTDFS_HTTP_PORT" "$FASTDFS_HTTP_PORT"
+
         docker run -tid \
             --name tracker \
             -p 22122:22122 \
@@ -1543,17 +1596,38 @@ execute_step_17_fastdfs_setup() {
             "$FASTDFS_IMAGE" \
             tracker
         sleep 10
-        docker run -tid \
-            --name storage \
-            -p 23000:23000 \
-            -p 8888:8888 \
-            -v "$SCRIPT_HOME/storage_data:/fastdfs/storage/data" \
-            -v "$SCRIPT_HOME/store_path:/fastdfs/store_path" \
-            -e TRACKER_SERVER="$FASTDFS_NON_LOCAL_IP:22122" \
-            --restart=unless-stopped \
-            "$FASTDFS_IMAGE" \
-            storage
-        print_success "FastDFS setup completed"
+
+        # Try running storage; if port conflict occurs, retry with a new port
+        ATTEMPTS=0
+        MAX_ATTEMPTS=5
+        while true; do
+            set +e
+            docker run -tid \
+                --name storage \
+                -p 23000:23000 \
+                -p ${FASTDFS_HTTP_PORT}:8888 \
+                -v "$SCRIPT_HOME/storage_data:/fastdfs/storage/data" \
+                -v "$SCRIPT_HOME/store_path:/fastdfs/store_path" \
+                -e TRACKER_SERVER="$FASTDFS_NON_LOCAL_IP:22122" \
+                --restart=unless-stopped \
+                "$FASTDFS_IMAGE" \
+                storage
+            RUN_RC=$?
+            set -e
+            if [ $RUN_RC -eq 0 ]; then
+                break
+            fi
+            ((ATTEMPTS++))
+            if [ $ATTEMPTS -ge $MAX_ATTEMPTS ]; then
+                print_error "Failed to start FastDFS storage after $ATTEMPTS attempts. Check Docker logs."
+                break
+            fi
+            print_warning "Port $FASTDFS_HTTP_PORT may be busy. Retrying with a new port... (attempt $ATTEMPTS)"
+            docker rm -f storage >/dev/null 2>&1 || true
+            FASTDFS_HTTP_PORT=$(find_free_port 8888 8999)
+            save_config "FASTDFS_HTTP_PORT" "$FASTDFS_HTTP_PORT"
+        done
+        print_success "FastDFS setup completed (HTTP port ${FASTDFS_HTTP_PORT})"
         save_config "fastdfs_image_used" "$FASTDFS_IMAGE"
         mark_step_completed "fastdfs_setup"
     else
@@ -1780,11 +1854,13 @@ execute_step_24_ip_update() {
         run_as_user sed -i '/export FASTDFS_NON_LOCAL_IP=/d' "$SCRIPT_HOME/.bashrc" 2>/dev/null || true
         run_as_user sed -i '/export INFRASTRUCTURE_IP=/d' "$SCRIPT_HOME/.bashrc" 2>/dev/null || true
         run_as_user sed -i '/export SERVICE_IP=/d' "$SCRIPT_HOME/.bashrc" 2>/dev/null || true
+        run_as_user sed -i '/export FASTDFS_HTTP_PORT=/d' "$SCRIPT_HOME/.bashrc" 2>/dev/null || true
         {
             echo "export DB_IP=\"$NEW_IP\""
             echo "export FASTDFS_NON_LOCAL_IP=\"$NEW_IP\""
             echo "export INFRASTRUCTURE_IP=\"$NEW_IP\""
             echo "export SERVICE_IP=\"$NEW_SERVICE_IP\""
+            echo "export FASTDFS_HTTP_PORT=\"$(load_config "FASTDFS_HTTP_PORT" 2>/dev/null || echo 8888)\""
         } | run_as_user tee -a "$SCRIPT_HOME/.bashrc" > /dev/null
 
         # Source .bashrc (note: affects only subshell)
@@ -1844,28 +1920,71 @@ EOF
                         *) FASTDFS_IMAGE="delron/fastdfs:latest" ;;
                     esac
                 fi
+                # Determine HTTP port and ensure it's available; fallback if needed
+                FASTDFS_HTTP_PORT=$(load_config "FASTDFS_HTTP_PORT" 2>/dev/null || echo 8888)
+                if command -v lsof >/dev/null 2>&1; then
+                    if lsof -iTCP -sTCP:LISTEN -n -P 2>/dev/null | grep -q ":$FASTDFS_HTTP_PORT "; then
+                        print_warning "Port $FASTDFS_HTTP_PORT is busy. Searching for a free port..."
+                        FASTDFS_HTTP_PORT=$(find_free_port 8888 8999)
+                        print_info "Using FastDFS HTTP port: $FASTDFS_HTTP_PORT"
+                    fi
+                fi
+                save_config "FASTDFS_HTTP_PORT" "$FASTDFS_HTTP_PORT"
+                # Update ~/.bashrc export for FASTDFS_HTTP_PORT
+                run_as_user sed -i '/export FASTDFS_HTTP_PORT=/d' "$SCRIPT_HOME/.bashrc" 2>/dev/null || true
+                echo "export FASTDFS_HTTP_PORT=\"$FASTDFS_HTTP_PORT\"" | run_as_user tee -a "$SCRIPT_HOME/.bashrc" > /dev/null
+
                 docker stop storage >/dev/null 2>&1 || true
                 docker rm storage >/dev/null 2>&1 || true
-                docker run -tid \
-                    --name storage \
-                    -p 23000:23000 \
-                    -p 8888:8888 \
-                    -v "$SCRIPT_HOME/storage_data:/fastdfs/storage/data" \
-                    -v "$SCRIPT_HOME/store_path:/fastdfs/store_path" \
-                    -e TRACKER_SERVER="$NEW_IP:22122" \
-                    --restart=unless-stopped \
-                    "$FASTDFS_IMAGE" \
-                    storage
-                print_success "FastDFS storage container recreated"
+
+                # Try running storage; if port conflict occurs, retry with a new port
+                ATTEMPTS=0
+                MAX_ATTEMPTS=5
+                while true; do
+                    set +e
+                    docker run -tid \
+                        --name storage \
+                        -p 23000:23000 \
+                        -p ${FASTDFS_HTTP_PORT}:8888 \
+                        -v "$SCRIPT_HOME/storage_data:/fastdfs/storage/data" \
+                        -v "$SCRIPT_HOME/store_path:/fastdfs/store_path" \
+                        -e TRACKER_SERVER="$NEW_IP:22122" \
+                        --restart=unless-stopped \
+                        "$FASTDFS_IMAGE" \
+                        storage
+                    RUN_RC=$?
+                    set -e
+                    if [ $RUN_RC -eq 0 ]; then
+                        break
+                    fi
+                    ((ATTEMPTS++))
+                    if [ $ATTEMPTS -ge $MAX_ATTEMPTS ]; then
+                        print_error "Failed to recreate FastDFS storage after $ATTEMPTS attempts. Check Docker logs."
+                        break
+                    fi
+                    print_warning "Port $FASTDFS_HTTP_PORT may be busy. Retrying with a new port... (attempt $ATTEMPTS)"
+                    docker rm -f storage >/dev/null 2>&1 || true
+                    FASTDFS_HTTP_PORT=$(find_free_port 8888 8999)
+                    save_config "FASTDFS_HTTP_PORT" "$FASTDFS_HTTP_PORT"
+                    run_as_user sed -i '/export FASTDFS_HTTP_PORT=/d' "$SCRIPT_HOME/.bashrc" 2>/dev/null || true
+                    echo "export FASTDFS_HTTP_PORT=\"$FASTDFS_HTTP_PORT\"" | run_as_user tee -a "$SCRIPT_HOME/.bashrc" > /dev/null
+                done
+                print_success "FastDFS storage container recreated (HTTP port ${FASTDFS_HTTP_PORT})"
             else
                 print_info "FastDFS storage container not found; skipping storage recreation."
             fi
-            # Tracker container typically doesn't need IP update; leave as-is if present
+            # Reload tracker if present to ensure it uses new IP for peer references
+            if [ "$TRACKER_EXISTS" = true ]; then
+                print_info "Restarting FastDFS tracker to ensure connectivity..."
+                docker restart tracker >/dev/null 2>&1 || true
+            fi
         fi
 
         mark_step_completed "ip_update"
     else
-        print_info "Step 24: IP update already completed previously. You can re-initialize this step to apply a new IP."
+        print_info "Step 24: IP update already applied, skipping..."
+        check_and_start_container "tracker" "fastdfs_setup"
+        check_and_start_container "storage" "fastdfs_setup"
     fi
 }
 
@@ -1937,11 +2056,14 @@ display_final_summary() {
     echo
     echo "Container Summary: $RUNNING_COUNT/$TOTAL_COUNT running"
     echo
+    # Load configured FastDFS HTTP port for display
+    local FASTDFS_HTTP_PORT_SUMMARY
+    FASTDFS_HTTP_PORT_SUMMARY=$(load_config "FASTDFS_HTTP_PORT" 2>/dev/null || echo 8888)
     echo -e "${BLUE}WEB INTERFACES:${NC}"
     echo "  RabbitMQ: http://$INFRASTRUCTURE_IP:15672 (guest/guest)"
     echo "  Elasticsearch: http://$INFRASTRUCTURE_IP:9200"
     echo "  Kiwi UI: http://$INFRASTRUCTURE_IP:80"
-    echo "  FastDFS: http://$FASTDFS_NON_LOCAL_IP:8888"
+    echo "  FastDFS: http://$FASTDFS_NON_LOCAL_IP:${FASTDFS_HTTP_PORT_SUMMARY}"
     echo
     echo -e "${BLUE}DATABASE CONNECTIONS:${NC}"
     echo "  MySQL: $INFRASTRUCTURE_IP:3306 (root / [password])"

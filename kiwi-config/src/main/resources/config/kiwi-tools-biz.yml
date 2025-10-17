@@ -30,6 +30,17 @@ spring:
         queue-capacity: 100
       thread-name-prefix: YTB-subtitles-thread-
 
+# FTP configuration
+ftp:
+  host: kiwi-ftp
+  port: 21
+  username: ENC(LnyjqsOsAhLH6oOlKozLFg==)
+  password: ENC(PvjdIGuFWiYPJ4VxpWK+nAeW/V+Je+xV)
+  base-dir: /rangi_windows
+  passive-mode: true
+  connect-timeout: 15000
+  data-timeout: 30000
+
 management:
   health:
     elasticsearch:
@@ -42,6 +53,10 @@ management:
 ignore:
   urls:
     - /api/**
+
+# Storage backend switch
+storage:
+  backend: ftp
 
 ms:
   config:

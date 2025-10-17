@@ -16,6 +16,20 @@ logging:
     root: INFO
     me.fengorz.kiwi.tools: DEBUG
 
+# MyBatis-Plus configuration to map enums via code values
+mybatis-plus:
+  configuration:
+    # needed in general and harmless here
+    map-underscore-to-camel-case: true
+    # ensure enums use MybatisEnumTypeHandler (works with IEnum)
+    default-enum-type-handler: com.baomidou.mybatisplus.extension.handlers.MybatisEnumTypeHandler
+  # scan for enums (optional but helpful for older MP versions)
+  type-enums-package: me.fengorz.kiwi.tools.model
+
+# Storage backend switch
+storage:
+  backend: ftp
+
 # Tools service custom properties
 tools:
   cors-allowed-origins:
@@ -26,9 +40,13 @@ tools:
   upload-rate-limit-per-min: 30
   idempotency-ttl-minutes: 60
   allowed-statuses:
+    # keep legacy Chinese and new code values to be backward compatible
     - "未开始"
     - "进行中"
     - "已完成"
+    - "not_started"
+    - "in_progress"
+    - "completed"
 
 ignore:
   urls:

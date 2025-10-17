@@ -1,5 +1,9 @@
 package me.fengorz.kiwi.tools.controller;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import me.fengorz.kiwi.tools.model.Project;
 import me.fengorz.kiwi.tools.service.ExportService;
 import me.fengorz.kiwi.tools.service.ProjectService;
@@ -18,6 +22,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/export")
+@Api(tags = "Export", description = "Export project schedules as Excel or PDF")
 public class ExportController {
     private final ProjectService projectService;
     private final ExportService exportService;
@@ -28,6 +33,13 @@ public class ExportController {
     }
 
     @GetMapping("/excel")
+    @ApiOperation(value = "Export projects to Excel", produces = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "start", value = "Start date (YYYY-MM-DD)", dataType = "string", paramType = "query"),
+            @ApiImplicitParam(name = "end", value = "End date (YYYY-MM-DD)", dataType = "string", paramType = "query"),
+            @ApiImplicitParam(name = "archived", value = "If true/false, filter by archived flag. If null, defaults to active only.", dataType = "boolean", paramType = "query"),
+            @ApiImplicitParam(name = "includeArchived", value = "If true, include archived and active.", dataType = "boolean", paramType = "query")
+    })
     public ResponseEntity<byte[]> exportExcel(@RequestParam(required = false) String start,
                                               @RequestParam(required = false) String end,
                                               @RequestParam(required = false) Boolean archived,
@@ -45,6 +57,13 @@ public class ExportController {
     }
 
     @GetMapping("/pdf")
+    @ApiOperation(value = "Export projects to PDF", produces = MediaType.APPLICATION_PDF_VALUE)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "start", value = "Start date (YYYY-MM-DD)", dataType = "string", paramType = "query"),
+            @ApiImplicitParam(name = "end", value = "End date (YYYY-MM-DD)", dataType = "string", paramType = "query"),
+            @ApiImplicitParam(name = "archived", value = "If true/false, filter by archived flag. If null, defaults to active only.", dataType = "boolean", paramType = "query"),
+            @ApiImplicitParam(name = "includeArchived", value = "If true, include archived and active.", dataType = "boolean", paramType = "query")
+    })
     public ResponseEntity<byte[]> exportPdf(@RequestParam(required = false) String start,
                                             @RequestParam(required = false) String end,
                                             @RequestParam(required = false) Boolean archived,

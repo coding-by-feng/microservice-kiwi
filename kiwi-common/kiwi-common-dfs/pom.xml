@@ -23,6 +23,12 @@
             <artifactId>kiwi-common-sdk</artifactId>
             <version>${kiwi.version}</version>
         </dependency>
+        <!-- FTP client -->
+        <dependency>
+            <groupId>commons-net</groupId>
+            <artifactId>commons-net</artifactId>
+            <version>3.10.0</version>
+        </dependency>
     </dependencies>
 
 </project>

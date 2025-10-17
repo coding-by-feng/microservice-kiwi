@@ -1931,6 +1931,181 @@ display_final_summary() {
     echo "======================================"
 }
 
+# === Interactive step selection menu ===
+show_step_menu() {
+    local TOTAL_STEPS=24
+
+    get_step_func() {
+        local n="$1"
+        case "$n" in
+            1)  echo execute_step_1_sudo_user_setup ;;
+            2)  echo execute_step_2_system_update ;;
+            3)  echo execute_step_3_docker_install ;;
+            4)  echo execute_step_4_docker_setup ;;
+            5)  echo execute_step_5_docker_cleanup ;;
+            6)  echo execute_step_6_docker_compose_install ;;
+            7)  echo execute_step_7_python_install ;;
+            8)  echo execute_step_8_maven_config ;;
+            9)  echo execute_step_9_directories_created ;;
+            10) echo execute_step_10_git_setup ;;
+            11) echo execute_step_11_hosts_configured ;;
+            12) echo execute_step_12_env_vars_setup ;;
+            13) echo execute_step_13_ytdlp_download ;;
+            14) echo execute_step_14_mysql_setup ;;
+            15) echo execute_step_15_redis_setup ;;
+            16) echo execute_step_16_rabbitmq_setup ;;
+            17) echo execute_step_17_fastdfs_setup ;;
+            18) echo execute_step_18_maven_lib_install ;;
+            19) echo execute_step_19_deployment_setup ;;
+            20) echo execute_step_20_elasticsearch_setup ;;
+            21) echo execute_step_21_ik_tokenizer_install ;;
+            22) echo execute_step_22_nginx_ui_setup ;;
+            23) echo execute_step_23_ftp_setup ;;
+            24) echo execute_step_24_ip_update ;;
+            *)  echo "" ;;
+        esac
+    }
+
+    run_step_by_number() {
+        local n="$1"
+        local func
+        func="$(get_step_func "$n")"
+        if [ -z "$func" ]; then
+            print_warning "Unknown step number: $n"
+            return 1
+        fi
+        if ! type -t "$func" >/dev/null 2>&1; then
+            print_warning "Step function not defined: $func (step $n)"
+            return 1
+        fi
+        print_info "Running step $n via $func ..."
+        "$func"
+    }
+
+    run_range_or_list() {
+        local spec="$1"
+        # Accept formats like "5", "5-9", "3,7,10", "3,5-7,12"
+        local IFS=','
+        for token in $spec; do
+            if [[ "$token" =~ ^[0-9]+-[0-9]+$ ]]; then
+                local start=${token%-*}
+                local end=${token#*-}
+                if [ "$start" -gt "$end" ]; then
+                    local tmp=$start; start=$end; end=$tmp
+                fi
+                local i
+                for (( i=start; i<=end; i++ )); do
+                    run_step_by_number "$i"
+                done
+            elif [[ "$token" =~ ^[0-9]+$ ]]; then
+                run_step_by_number "$token"
+            else
+                print_warning "Invalid token: $token (ignored)"
+            fi
+        done
+    }
+
+    continue_from_first_incomplete() {
+        local first_incomplete=-1
+        local i
+        for (( i=1; i<=TOTAL_STEPS; i++ )); do
+            local step_name
+            step_name="$(get_step_func "$i" | sed 's/^execute_//;s/_/ /g')"
+            if ! is_step_completed "$step_name" 2>/dev/null; then
+                first_incomplete=$i
+                break
+            fi
+        done
+        if [ "$first_incomplete" -lt 0 ]; then
+            print_info "All steps are already marked completed. Nothing to continue."
+            return 0
+        fi
+        print_info "Continuing from first incomplete step: $first_incomplete"
+        local j
+        for (( j=first_incomplete; j<=TOTAL_STEPS; j++ )); do
+            run_step_by_number "$j"
+        done
+    }
+
+    show_status() {
+        echo ""
+        echo "===== Setup Progress Status ====="
+        local completed=0
+        local i
+        for (( i=1; i<=TOTAL_STEPS; i++ )); do
+            local func="$(get_step_func "$i")"
+            [ -z "$func" ] && continue
+            local step_key
+            step_key="$(echo "$func" | sed 's/^execute_//')"
+            local label
+            label="Step $i: ${step_key//_/ }"
+            if is_step_completed "$step_key" 2>/dev/null; then
+                echo -e "  ${GREEN}✓${NC} $label"
+                ((completed++))
+            else
+                echo -e "  ${YELLOW}•${NC} $label"
+            fi
+        done
+        echo "---------------------------------"
+        echo "Completed: $completed/$TOTAL_STEPS"
+        echo "Config file: $CONFIG_FILE"
+        echo "Progress file: $PROGRESS_FILE"
+        echo "Log file: $LOG_FILE"
+        echo "================================="
+        echo ""
+    }
+
+    while true; do
+        echo ""
+        echo "========== Setup Menu =========="
+        echo "1) Full automatic setup (recommended)"
+        echo "2) Run specific step(s) (e.g. 10 or 5-9 or 3,7,12)"
+        echo "3) Re-initialize a step (clear completion flag)"
+        echo "4) Continue from first incomplete step"
+        echo "5) Show status"
+        echo "6) Exit"
+        echo "================================"
+        read -p "Choose an option [1-6]: " choice
+        case "$choice" in
+            1)
+                # Return to main to run full automatic
+                return 0
+                ;;
+            2)
+                read -p "Enter step number(s) or range(s): " spec
+                run_range_or_list "$spec"
+                display_final_summary
+                exit 0
+                ;;
+            3)
+                read -p "Enter step number to re-initialize: " stepn
+                if [[ "$stepn" =~ ^[0-9]+$ ]] && [ "$stepn" -ge 1 ] && [ "$stepn" -le "$TOTAL_STEPS" ]; then
+                    local func="$(get_step_func "$stepn")"
+                    local key="$(echo "$func" | sed 's/^execute_//')"
+                    force_reinitialize_step "$key"
+                else
+                    print_warning "Invalid step number: $stepn"
+                fi
+                ;;
+            4)
+                continue_from_first_incomplete
+                display_final_summary
+                exit 0
+                ;;
+            5)
+                show_status
+                ;;
+            6)
+                echo "Exiting without changes."
+                exit 0
+                ;;
+            *)
+                print_warning "Invalid choice. Please select 1-6."
+                ;;
+        esac
+    done
+}
+
 # MAIN EXECUTION
 # Check system requirements first
 check_system_requirements

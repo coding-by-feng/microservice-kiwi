@@ -107,10 +107,21 @@ The legacy README documented these—condensed & clarified below.
 - -mode=sg  Skip git pull
 - -mode=sm  Skip Maven build
 - -mode=sbd Skip Docker build
-- -mode=sa  Skip all build steps (reuse existing)
 - -c        Enable auto-restart monitoring (crawler focus)
 
-### 6.2 Port / Process Utilities
+### 6.2 Advanced Modes
+- -mode=obm    Only build with Maven, copy jars into ~/built_jar (use -s=svc1,svc2 to limit)
+- -mode=obmas  Build with Maven, then scp jars to a remote host (first run asks for target)
+- -mode=ouej   Use existing jars from ~/built_jar for deployment (skip git and maven)
+- -mode=osj    Only send jars from ~/built_jar to a remote host (skip git, maven, docker)
+- -mode=og     Only run git stash + pull (no build/deploy)
+
+Example (send-only):
+```bash
+sudo -E ./easy-deploy -mode=osj
+```
+
+### 6.3 Port / Process Utilities
 Kill port (manual fallback):
 ```bash
 sudo kill -9 $(lsof -ti :8080)

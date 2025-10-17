@@ -231,10 +231,7 @@ show_help() {
   echo "Available modes:"
   echo "  -mode=sg      Skip git operations (stash and pull)"
   echo "  -mode=sm      Skip maven build operation"
-  echo "  -mode=sgm     Skip git operations AND maven build"
   echo "  -mode=sbd     Skip Dockerfile building operation (copying Dockerfiles and JARs)"
-  echo "  -mode=sa      Skip all build operations - FAST DEPLOY MODE"
-  echo "                (Only stop containers → remove containers → start containers)"
   echo "  -mode=obm     Only build with Maven, then copy built JARs to ~/built_jar"
   echo "                Use with -s=svc1,svc2 to build only those services (e.g. -mode=obm -s=auth,gate)"
   echo "  -mode=obmas   Only build with Maven, then send built JARs to remote via scp"
@@ -257,17 +254,12 @@ show_help() {
   echo "  sudo -E $0                        # Full deployment (all services)"
   echo "  sudo -E $0 -mode=sg               # Skip only git operations"
   echo "  sudo -E $0 -mode=sm               # Skip only maven build"
-  echo "  sudo -E $0 -mode=sgm              # Skip git AND maven build"
   echo "  sudo -E $0 -mode=sbd              # Skip only Dockerfile building"
-  echo "  sudo -E $0 -mode=sa               # FAST DEPLOY: Skip all builds"
   echo "  sudo -E $0 -mode=obm              # Only Maven build and copy jars to ~/built_jar"
   echo "  sudo -E $0 -mode=obmas            # Maven build then scp jars to remote"
+  echo "  sudo -E $0 -mode=osj              # Send jars from ~/built_jar to remote (no build)"
   echo "  sudo -E $0 -mode=ouej             # Use jars from ~/built_jar and deploy"
   echo "  sudo -E $0 -s=eureka,config       # Build only eureka and config services"
-  echo "  sudo -E $0 -mode=sgm -s=auth      # Skip git+maven, build only auth service"
-  echo "  sudo -E $0 -mode=sa -c            # Fast deploy with autoCheckService"
-  echo "  sudo -E $0 -mode=obm -s=auth,gate   # Build only auth & gateway jars into ~/built_jar"
-  echo "  sudo -E $0 -mode=obmas -s=ai        # Build only AI jar then scp it"
 }
 
 # Initialize variables
@@ -282,8 +274,8 @@ BUILD_ALL_SERVICES=true
 ONLY_BUILD_MAVEN=false
 SEND_AFTER_BUILD=false
 USE_EXISTING_JARS_ONLY=false
-ONLY_SEND_JARS=false   # NEW: osj flag
-ONLY_GIT_MODE=false    # NEW: og flag
+ONLY_SEND_JARS=false
+ONLY_GIT_MODE=false
 
 # Process all arguments
 for arg in "$@"; do
@@ -298,28 +290,10 @@ for arg in "$@"; do
       SKIP_MAVEN=true
       echo "⏭️  Skipping maven build operation"
       ;;
-    -mode=sgm)
-      MODE="$arg"
-      SKIP_GIT=true
-      SKIP_MAVEN=true
-      echo "⏭️  Skipping git operations AND maven build"
-      ;;
     -mode=sbd)
       MODE="$arg"
       SKIP_DOCKER_BUILD=true
       echo "⏭️  Skipping Dockerfile building operation"
-      ;;
-    -mode=sa)
-      MODE="$arg"
-      SKIP_GIT=true
-      SKIP_MAVEN=true
-      SKIP_DOCKER_BUILD=true
-      FAST_DEPLOY_MODE=true
-      echo "🚀 FAST DEPLOY MODE: Skipping all build operations"
-      echo "   ⏭️  Git operations: SKIPPED"
-      echo "   ⏭️  Maven build: SKIPPED"
-      echo "   ⏭️  Docker building: SKIPPED"
-      echo "   ✅ Will only: Stop → Remove → Start containers"
       ;;
     -mode=obm)
       MODE="$arg"
@@ -339,7 +313,7 @@ for arg in "$@"; do
       USE_EXISTING_JARS_ONLY=true
       echo "📦 OUEJ MODE: Using jars from ~/built_jar (skip git and maven)"
       ;;
-    -mode=osj)  # NEW: only send jars
+    -mode=osj)
       MODE="$arg"
       SKIP_GIT=true
       SKIP_MAVEN=true
@@ -347,7 +321,7 @@ for arg in "$@"; do
       ONLY_SEND_JARS=true
       echo "🚚 OSJ MODE: Only send existing jars from ~/built_jar to remote"
       ;;
-    -mode=og)  # NEW: only git mode
+    -mode=og)
       MODE="$arg"
       ONLY_GIT_MODE=true
       SKIP_GIT=false
@@ -384,7 +358,7 @@ done
 export KIWI_DEPLOY_MODE="$MODE"
 export ONLY_BUILD_MAVEN
 export ONLY_SEND_JARS
-export ONLY_GIT_MODE   # NEW
+export ONLY_GIT_MODE
 
 # Quick, centralized mode summary (helps trace the flow)
 echo "=== deployKiwi.sh MODE SUMMARY ==="
@@ -1309,7 +1283,6 @@ selective_deployment() {
     echo "=============================================="
 
     # Prefer docker compose to (re)create only the requested services
-    # Fallback to legacy per-service docker build/run if docker compose is unavailable
     if command -v docker-compose >/dev/null 2>&1; then
         COMPOSE_CMD="docker-compose"
     elif docker compose version >/dev/null 2>&1; then
@@ -1317,6 +1290,35 @@ selective_deployment() {
     else
         COMPOSE_CMD=""
     fi
+
+    # Before using compose, build the images for the selected services (tag :2.0)
+    local DOCKER_KIWI_ROOT="$CURRENT_DIR/docker/kiwi"
+    IFS=',' read -ra SERVICE_ARRAY <<< "$services"
+    for service in "${SERVICE_ARRAY[@]}"; do
+        case "$service" in
+          eureka)
+            [ -d "$DOCKER_KIWI_ROOT/eureka" ] && docker build -f "$DOCKER_KIWI_ROOT/eureka/Dockerfile" -t kiwi-eureka:2.0 "$DOCKER_KIWI_ROOT/eureka" || true ;;
+          config)
+            [ -d "$DOCKER_KIWI_ROOT/config" ] && docker build -f "$DOCKER_KIWI_ROOT/config/Dockerfile" -t kiwi-config:2.0 "$DOCKER_KIWI_ROOT/config" || true ;;
+          upms)
+            [ -d "$DOCKER_KIWI_ROOT/upms" ] && docker build -f "$DOCKER_KIWI_ROOT/upms/Dockerfile" -t kiwi-upms:2.0 "$DOCKER_KIWI_ROOT/upms" || true ;;
+          auth)
+            [ -d "$DOCKER_KIWI_ROOT/auth" ] && docker build -f "$DOCKER_KIWI_ROOT/auth/Dockerfile" -t kiwi-auth:2.0 "$DOCKER_KIWI_ROOT/auth" || true ;;
+          gate)
+            [ -d "$DOCKER_KIWI_ROOT/gate" ] && docker build -f "$DOCKER_KIWI_ROOT/gate/Dockerfile" -t kiwi-gate:2.0 "$DOCKER_KIWI_ROOT/gate" || true ;;
+          word)
+            [ -d "$DOCKER_KIWI_ROOT/word/biz" ] && docker build -f "$DOCKER_KIWI_ROOT/word/biz/Dockerfile" -t kiwi-word-biz:2.0 "$DOCKER_KIWI_ROOT/word" || true ;;
+          crawler)
+            [ -d "$DOCKER_KIWI_ROOT/crawler" ] && docker build -f "$DOCKER_KIWI_ROOT/crawler/Dockerfile" -t kiwi-crawler:2.0 "$DOCKER_KIWI_ROOT/crawler" || true ;;
+          ai)
+            [ -d "$DOCKER_KIWI_ROOT/ai/biz" ] && docker build -f "$DOCKER_KIWI_ROOT/ai/biz/Dockerfile" -t kiwi-ai-biz:2.0 "$DOCKER_KIWI_ROOT/ai/biz" || true
+            [ -d "$DOCKER_KIWI_ROOT/ai/batch" ] && docker build -f "$DOCKER_KIWI_ROOT/ai/batch/Dockerfile" -t kiwi-ai-biz-batch:2.0 "$DOCKER_KIWI_ROOT/ai/batch" || true ;;
+          tools)
+            [ -d "$DOCKER_KIWI_ROOT/tools" ] && docker build -f "$DOCKER_KIWI_ROOT/tools/Dockerfile" -t kiwi-tools-biz:2.0 "$DOCKER_KIWI_ROOT/tools" || true ;;
+          *)
+            echo "⚠️  Unknown service key '$service' during build; skipping build" ;;
+        esac
+    done
 
     if [ -n "$COMPOSE_CMD" ]; then
         # Map short service keys to compose service names
@@ -1329,49 +1331,49 @@ selective_deployment() {
             [word]="kiwi-word-biz"
             [crawler]="kiwi-crawler"
             [ai]="kiwi-ai-biz"
-            [tools]="kiwi-tools-biz"   # NEW
+            [tools]="kiwi-tools-biz"
         )
 
-        # Build list of compose services to (re)create
-        IFS=',' read -ra SERVICE_ARRAY <<< "$services"
-        COMPOSE_TARGETS=()
+        # Split targets into base vs service lists
+        BASE_TARGETS=()
+        APP_TARGETS=()
         for service in "${SERVICE_ARRAY[@]}"; do
-            target="${COMPOSE_SERVICES[$service]}"
-            if [ -n "$target" ]; then
-                COMPOSE_TARGETS+=("$target")
-            else
+            case "$service" in
+              eureka|config)
+                BASE_TARGETS+=("${COMPOSE_SERVICES[$service]}")
+                ;;
+              upms|auth|gate|word|crawler|ai|tools)
+                APP_TARGETS+=("${COMPOSE_SERVICES[$service]}")
+                ;;
+              *)
                 echo "⚠️  Unknown service key '$service' for docker compose; skipping"
-            fi
+                ;;
+            esac
         done
 
-        if [ ${#COMPOSE_TARGETS[@]} -eq 0 ]; then
-            echo "❌ No valid services to deploy via docker compose"
-            return 1
+        # Compose files
+        local BASE_YML="$CURRENT_DIR/microservice-kiwi/kiwi-deploy/docker/docker-compose-base.yml"
+        local SERV_YML="$CURRENT_DIR/microservice-kiwi/kiwi-deploy/docker/docker-compose-service.yml"
+
+        # Bring up base services (no deps)
+        if [ ${#BASE_TARGETS[@]} -gt 0 ]; then
+            if [ ! -f "$BASE_YML" ]; then
+              echo "❌ Missing base compose file: $BASE_YML"; return 1
+            fi
+            echo "🧩 docker compose (project=kiwi-base): ${BASE_TARGETS[*]}"
+            $COMPOSE_CMD --project-name kiwi-base -f "$BASE_YML" up -d --no-deps --force-recreate --remove-orphans "${BASE_TARGETS[@]}"
         fi
 
-        # Use the base + service compose files if present
-        COMPOSE_FILES=(
-            "$CURRENT_DIR/microservice-kiwi/kiwi-deploy/docker/docker-compose-base.yml"
-            "$CURRENT_DIR/microservice-kiwi/kiwi-deploy/docker/docker-compose-service.yml"
-        )
-
-        COMPOSE_FILE_ARGS=()
-        for f in "${COMPOSE_FILES[@]}"; do
-            if [ -f "$f" ]; then
-                COMPOSE_FILE_ARGS+=( -f "$f" )
+        # Bring up application services (no deps)
+        if [ ${#APP_TARGETS[@]} -gt 0 ]; then
+            if [ ! -f "$SERV_YML" ]; then
+              echo "❌ Missing service compose file: $SERV_YML"; return 1
             fi
-        done
-
-        echo "🧩 Using docker compose for selective redeploy..."
-        echo "   Files: ${COMPOSE_FILE_ARGS[*]}"
-        echo "   Targets: ${COMPOSE_TARGETS[*]}"
-
-        # Recreate only selected services (no implicit dependencies unless present)
-        $COMPOSE_CMD "${COMPOSE_FILE_ARGS[@]}" up -d --force-recreate --remove-orphans "${COMPOSE_TARGETS[@]}"
-    else
+            echo "🧩 docker compose (project=kiwi-service): ${APP_TARGETS[*]}"
+            $COMPOSE_CMD --project-name kiwi-service -f "$SERV_YML" up -d --no-deps --force-recreate --remove-orphans "${APP_TARGETS[@]}"
+        fi
+    } else {
         echo "ℹ️  docker compose not found; falling back to legacy per-service build/run"
-        # Legacy path: Deploy each selected service using docker build/run
-        IFS=',' read -ra SERVICE_ARRAY <<< "$services"
         for service in "${SERVICE_ARRAY[@]}"; do
             echo ""
             deploy_single_service "$service"
@@ -1454,23 +1456,14 @@ else
   echo "ℹ️  You are NOT using auto check mode this time"
   echo "❌ AutoCheckService will not be started"
   echo "💡 To enable AutoCheckService, add -c parameter to your command"
-  echo "   Example: sudo -E $0 -c"
-  if [ "$FAST_DEPLOY_MODE" = true ]; then
-    echo "   Fast deploy with monitoring: sudo -E $0 -mode=sa -c"
-  fi
 fi
 
 echo "=============================================="
-if [ "$FAST_DEPLOY_MODE" = true ]; then
-  echo "🚀 FAST DEPLOYMENT COMPLETED SUCCESSFULLY!"
-  echo "⚡ Total time saved by skipping build operations"
+if [ "$BUILD_ALL_SERVICES" = false ]; then
+  echo "🎉 SELECTIVE DEPLOYMENT COMPLETED SUCCESSFULLY!"
+  echo "✅ Deployed services: $SELECTED_SERVICES"
 else
-  if [ "$BUILD_ALL_SERVICES" = false ]; then
-    echo "🎉 SELECTIVE DEPLOYMENT COMPLETED SUCCESSFULLY!"
-    echo "✅ Deployed services: $SELECTED_SERVICES"
-  else
-    echo "🎉 FULL DEPLOYMENT COMPLETED SUCCESSFULLY!"
-  fi
+  echo "🎉 FULL DEPLOYMENT COMPLETED SUCCESSFULLY!"
 fi
 echo "=============================================="
 

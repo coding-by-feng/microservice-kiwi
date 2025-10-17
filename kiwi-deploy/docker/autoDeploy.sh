@@ -11,25 +11,26 @@ echo "=== autoDeploy.sh ENTRY ==="
 echo "MODE_ARG: ${MODE_ARG}"
 echo "KIWI_DEPLOY_MODE(env): ${KIWI_DEPLOY_MODE:-<unset>}"
 echo "ONLY_BUILD_MAVEN(env): ${ONLY_BUILD_MAVEN:-<unset>}"
+echo "ONLY_SEND_JARS(env): ${ONLY_SEND_JARS:-<unset>}"
 echo "Parent cmd: ${PARENT_CMD}"
 echo "Grandparent cmd: ${GRANDPARENT_CMD}"
 echo "==========================="
 
-# Short-circuit for OBM/OBMAS (build-only) modes to prevent any docker actions
-if [[ "$MODE_ARG" == "-mode=obm" || "$MODE_ARG" == "-mode=obmas" ]]; then
-  echo "OBM/OBMAS detected via MODE_ARG — skipping docker image build and deployment."
+# Short-circuit for OBM/OBMAS/OSJ (build/send-only) modes to prevent any docker actions
+if [[ "$MODE_ARG" == "-mode=obm" || "$MODE_ARG" == "-mode=obmas" || "$MODE_ARG" == "-mode=osj" ]]; then
+  echo "OBM/OBMAS/OSJ detected via MODE_ARG — skipping docker image build and deployment."
   exit 0
 fi
-if [[ "${KIWI_DEPLOY_MODE}" == "-mode=obm" || "${KIWI_DEPLOY_MODE}" == "-mode=obmas" ]]; then
-  echo "OBM/OBMAS detected via KIWI_DEPLOY_MODE env — skipping docker image build and deployment."
+if [[ "${KIWI_DEPLOY_MODE}" == "-mode=obm" || "${KIWI_DEPLOY_MODE}" == "-mode=obmas" || "${KIWI_DEPLOY_MODE}" == "-mode=osj" ]]; then
+  echo "OBM/OBMAS/OSJ detected via KIWI_DEPLOY_MODE env — skipping docker image build and deployment."
   exit 0
 fi
-if [[ "${ONLY_BUILD_MAVEN}" == "true" ]]; then
-  echo "Build-only flag (ONLY_BUILD_MAVEN=true) detected — skipping docker image build and deployment."
+if [[ "${ONLY_BUILD_MAVEN}" == "true" || "${ONLY_SEND_JARS}" == "true" ]]; then
+  echo "Build/send-only flag detected (ONLY_BUILD_MAVEN or ONLY_SEND_JARS) — skipping docker image build and deployment."
   exit 0
 fi
-if echo "$PARENT_CMD $GRANDPARENT_CMD" | grep -qE -- '\-mode=(obm|obmas)'; then
-  echo "OBM/OBMAS detected in ancestor process args — skipping docker image build and deployment."
+if echo "$PARENT_CMD $GRANDPARENT_CMD" | grep -qE -- '\-mode=(obm|obmas|osj)'; then
+  echo "OBM/OBMAS/OSJ detected in ancestor process args — skipping docker image build and deployment."
   exit 0
 fi
 

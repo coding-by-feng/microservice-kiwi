@@ -495,6 +495,7 @@ show_step_status() {
         "elasticsearch_setup"
         "ik_tokenizer_install"
         "nginx_ui_setup"
+        "ftp_setup"
     )
 
     declare -a STEP_DESCRIPTIONS=(
@@ -520,6 +521,7 @@ show_step_status() {
         "Setup Elasticsearch"
         "Install IK Tokenizer"
         "Setup Nginx and UI"
+        "Setup FTP server"
     )
 
     echo "Step Completion Status:"
@@ -584,6 +586,7 @@ show_step_status() {
             "storage:FastDFS Storage:23000,8888"
             "kiwi-es:Elasticsearch:9200,9300"
             "kiwi-ui:Web UI (Nginx):80"
+            "kiwi-ftp:FTP Server:21,21100-21110"
         )
 
         for container_info in "${CONTAINERS[@]}"; do
@@ -723,13 +726,14 @@ select_steps_to_reinitialize() {
     echo "20. elasticsearch_setup     - Setup Elasticsearch"
     echo "21. ik_tokenizer_install    - Install IK Tokenizer"
     echo "22. nginx_ui_setup          - Setup Nginx and UI"
-    echo "23. ALL                     - Re-initialize all steps"
-    echo "24. BACK                    - Return to main menu"
+    echo "23. ftp_setup               - Setup FTP server"
+    echo "24. ALL                     - Re-initialize all steps"
+    echo "25. BACK                    - Return to main menu"
     echo
     echo "Enter step numbers separated by spaces (e.g., '1 3 12' or 'ALL' or 'BACK'):"
     read -p "Steps to re-initialize: " SELECTED_STEPS
 
-    if [ -z "$SELECTED_STEPS" ] || [ "$SELECTED_STEPS" = "BACK" ] || [ "$SELECTED_STEPS" = "24" ]; then
+    if [ -z "$SELECTED_STEPS" ] || [ "$SELECTED_STEPS" = "BACK" ] || [ "$SELECTED_STEPS" = "25" ]; then
         print_info "Returning to main menu..."
         return 1  # Signal to return to menu
     fi
@@ -758,21 +762,22 @@ select_steps_to_reinitialize() {
         "elasticsearch_setup"
         "ik_tokenizer_install"
         "nginx_ui_setup"
+        "ftp_setup"
     )
 
-    if [ "$SELECTED_STEPS" = "ALL" ] || [ "$SELECTED_STEPS" = "23" ]; then
+    if [ "$SELECTED_STEPS" = "ALL" ] || [ "$SELECTED_STEPS" = "24" ]; then
         print_info "Re-initializing ALL steps..."
         for step in "${STEP_NAMES[@]}"; do
             force_reinitialize_step "$step"
         done
     else
         for num in $SELECTED_STEPS; do
-            if [[ "$num" =~ ^[0-9]+$ ]] && [ "$num" -ge 1 ] && [ "$num" -le 22 ]; then
+            if [[ "$num" =~ ^[0-9]+$ ]] && [ "$num" -ge 1 ] && [ "$num" -le 23 ]; then
                 step_index=$((num - 1))
                 step_name="${STEP_NAMES[$step_index]}"
                 force_reinitialize_step "$step_name"
             else
-                print_warning "Invalid step number '$num' (valid range: 1-22)"
+                print_warning "Invalid step number '$num' (valid range: 1-23)"
             fi
         done
     fi
@@ -815,15 +820,16 @@ execute_selected_steps_only() {
         "elasticsearch_setup"
         "ik_tokenizer_install"
         "nginx_ui_setup"
+        "ftp_setup"
     )
 
-    if [ "$selected_steps" = "ALL" ] || [ "$selected_steps" = "23" ]; then
+    if [ "$selected_steps" = "ALL" ] || [ "$selected_steps" = "24" ]; then
         # Execute all steps
         execute_all_setup_steps
     else
         # Execute only selected steps
         for num in $selected_steps; do
-            if [[ "$num" =~ ^[0-9]+$ ]] && [ "$num" -ge 1 ] && [ "$num" -le 22 ]; then
+            if [[ "$num" =~ ^[0-9]+$ ]] && [ "$num" -ge 1 ] && [ "$num" -le 23 ]; then
                 step_index=$((num - 1))
                 step_name="${STEP_NAMES[$step_index]}"
                 execute_individual_step "$step_name" "$num"
@@ -911,6 +917,9 @@ execute_individual_step() {
             ;;
         "nginx_ui_setup")
             execute_step_22_nginx_ui_setup
+            ;;
+        "ftp_setup")
+            execute_step_23_ftp_setup
             ;;
         *)
             print_warning "Unknown step: $step_name"
@@ -1721,6 +1730,71 @@ execute_step_22_nginx_ui_setup() {
     fi
 }
 
+# New Step 23: FTP setup using init_ftp.sh
+execute_step_23_ftp_setup() {
+    if ! is_step_completed "ftp_setup"; then
+        print_info "Step 23: Setting up FTP server..."
+
+        # Collect or load FTP credentials
+        if has_config "FTP_USER"; then
+            FTP_USER_CFG=$(load_config "FTP_USER")
+        else
+            FTP_USER_CFG=""
+        fi
+        if has_config "FTP_PASS"; then
+            FTP_PASS_CFG=$(load_config "FTP_PASS")
+        else
+            FTP_PASS_CFG=""
+        fi
+        DEFAULT_FTP_BASE_DIR="/rangi_windows"
+        if has_config "FTP_BASE_DIR"; then
+            DEFAULT_FTP_BASE_DIR=$(load_config "FTP_BASE_DIR")
+        fi
+
+        # Prompt if missing or empty
+        if [ -z "$FTP_USER_CFG" ]; then
+            prompt_for_input "Enter FTP username" "FTP_USER_CFG" "false"
+            save_config "FTP_USER" "$FTP_USER_CFG"
+        fi
+        if [ -z "$FTP_PASS_CFG" ]; then
+            prompt_for_input "Enter FTP password" "FTP_PASS_CFG" "true"
+            save_config "FTP_PASS" "$FTP_PASS_CFG"
+        fi
+        if [ -z "$DEFAULT_FTP_BASE_DIR" ]; then
+            DEFAULT_FTP_BASE_DIR="/rangi_windows"
+        fi
+        # Allow override of base dir (not secret)
+        read -p "Enter FTP base dir inside container [${DEFAULT_FTP_BASE_DIR}]: " input_base_dir
+        FTP_BASE_DIR_VAL=${input_base_dir:-$DEFAULT_FTP_BASE_DIR}
+        save_config "FTP_BASE_DIR" "$FTP_BASE_DIR_VAL"
+
+        # Ensure init script exists and is executable
+        FTP_INIT_SCRIPT="$SCRIPT_DIR/ftp/init_ftp.sh"
+        if [ ! -f "$FTP_INIT_SCRIPT" ]; then
+            print_error "FTP initializer not found at $FTP_INIT_SCRIPT"
+            return 1
+        fi
+        chmod +x "$FTP_INIT_SCRIPT" || true
+
+        # Run the initializer non-interactively when possible by passing envs
+        print_info "Building and starting kiwi-ftp container..."
+        FTP_USER="$FTP_USER_CFG" FTP_PASS="$FTP_PASS_CFG" FTP_BASE_DIR="$FTP_BASE_DIR_VAL" "$FTP_INIT_SCRIPT"
+
+        # Verify container
+        sleep 2
+        if docker ps --format '{{.Names}}' 2>/dev/null | grep -q '^kiwi-ftp$'; then
+            print_success "FTP container 'kiwi-ftp' is running"
+        else
+            print_warning "FTP container not detected as running yet. Check logs if needed."
+        fi
+
+        mark_step_completed "ftp_setup"
+    else
+        print_info "Step 23: FTP already set up, checking status..."
+        check_and_start_container "kiwi-ftp" "ftp_setup"
+    fi
+}
+
 # Function to execute all setup steps
 execute_all_setup_steps() {
     print_info "Starting full automatic setup process..."
@@ -1746,6 +1820,7 @@ execute_all_setup_steps() {
     execute_step_20_elasticsearch_setup
     execute_step_21_ik_tokenizer_install
     execute_step_22_nginx_ui_setup
+    execute_step_23_ftp_setup
     print_success "All setup steps completed"
 }
 
@@ -1772,7 +1847,7 @@ display_final_summary() {
     echo "  $SCRIPT_HOME/easy-check      - Check container status"
     echo
     echo -e "${BLUE}CONTAINER STATUS:${NC}"
-    CONTAINERS=("kiwi-mysql" "kiwi-redis" "kiwi-rabbit" "tracker" "storage" "kiwi-es" "kiwi-ui")
+    CONTAINERS=("kiwi-mysql" "kiwi-redis" "kiwi-rabbit" "tracker" "storage" "kiwi-es" "kiwi-ui" "kiwi-ftp")
     RUNNING_COUNT=0
     TOTAL_COUNT=${#CONTAINERS[@]}
     for container in "${CONTAINERS[@]}"; do

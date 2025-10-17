@@ -32,6 +32,7 @@ eureka:
   client:
     service-url:
       defaultZone: http://${eureka.security.username}:${eureka.security.password}@kiwi-eureka:8762/eureka
+    enabled: false
   security:
     username: ENC(SKdYEg+E1hatfznKqx4LcBiqYnYDcXW7)
     password: ENC(ceDAameujB+jXutTPYZUe7NW7P8WoRsm)

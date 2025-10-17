@@ -10,6 +10,13 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.Primary;
+import org.springframework.data.redis.connection.RedisClusterConnection;
+import org.springframework.data.redis.connection.RedisConnection;
+import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -21,6 +28,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.startsWith;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -30,12 +39,18 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc(addFilters = false)
 @ActiveProfiles("test")
 @SpringBootTest(
-        classes = ToolsBizTestApplication.class,
-        webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT
-)
+        classes = {ToolsBizTestApplication.class, ToolsBizTestOverrides.class},
+        webEnvironment = SpringBootTest.WebEnvironment.MOCK)
+@Import(ProjectApiTest.DummyRedisTestConfig.class)
 public class ProjectApiTest {
+    static {
+        // Workaround for JAXB optimization incompatibility with JDK 24 used by Spring Security OAuth2
+        System.setProperty("com.sun.xml.bind.v2.bytecode.ClassTailor.noOptimize", "true");
+    }
+
     @Autowired
     MockMvc mockMvc;
+
 
     private static final String PREFIX = "E2E-AKL-";
 
@@ -59,8 +74,8 @@ public class ProjectApiTest {
         body.put("id", "101"); // dummy if required by your controller
         body.put("projectCode", "P-101"); // dummy if server generates, it will be ignored
         body.put("name", "Kitchen remodel");
-        // keep Chinese text to validate encoding correctness
-        body.put("status", "未开始");
+        // now use English status code
+        body.put("status", "not_started");
         // dummy required fields (adapt to your actual request model validation)
         body.put("clientName", "测试客户");
         body.put("clientPhone", "13800000000");
@@ -72,7 +87,7 @@ public class ProjectApiTest {
         body.put("endDate", "2025-10-20");
         body.put("todayTask", "安装橱柜");
         body.put("progressNote", "初始创建记录");
-        body.put("photoUrl", "https://example.com/photo.jpg");
+        // photoUrl removed; photos are managed via /api/projects/{id}/photo endpoints
 
         mockMvc.perform(post("/api/projects")
                         .characterEncoding(StandardCharsets.UTF_8.name())
@@ -83,8 +98,8 @@ public class ProjectApiTest {
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id", notNullValue()))
                 .andExpect(jsonPath("$.projectCode", startsWith("P-")))
-                // verify UTF-8 survives round-trip
-                .andExpect(jsonPath("$.status", is("未开始")));
+                // API returns English code now
+                .andExpect(jsonPath("$.status", is("not_started")));
 
         mockMvc.perform(get("/api/projects")
                         .characterEncoding(StandardCharsets.UTF_8.name())
@@ -106,7 +121,7 @@ public class ProjectApiTest {
         // create 100
         java.util.List<Project> created = new java.util.ArrayList<>();
         for (int i = 1; i <= 100; i++) {
-            Project p = createProject(PREFIX + i, "未开始");
+            Project p = createProject(PREFIX + i, "not_started");
             Assert.assertNotNull(p.getId());
             Assert.assertNotNull(p.getProjectCode());
             Assert.assertFalse(Boolean.TRUE.equals(p.getArchived()));
@@ -148,7 +163,7 @@ public class ProjectApiTest {
         // create 10
         java.util.List<Project> created = new java.util.ArrayList<>();
         for (int i = 1; i <= 10; i++) {
-            created.add(createProject(PREFIX + "ARCH-" + i, "未开始"));
+            created.add(createProject(PREFIX + "ARCH-" + i, "not_started"));
         }
 
         // archive 4
@@ -194,12 +209,12 @@ public class ProjectApiTest {
                 .andExpect(status().isBadRequest());
 
         // create valid
-        Project p = createProject(PREFIX + "PATCH", "未开始");
+        Project p = createProject(PREFIX + "PATCH", "not_started");
 
         // patch fields and archived
         java.util.Map<String, Object> patchBody = new java.util.HashMap<>();
         patchBody.put("clientName", "Kiwi Ltd");
-        patchBody.put("status", "未开始");
+        patchBody.put("status", "not_started");
         patchBody.put("archived", true);
 
         MvcResult patchedRes = mockMvc.perform(patch("/api/projects/{id}", p.getId())
@@ -317,8 +332,30 @@ public class ProjectApiTest {
         for (java.util.Map<String, Object> m : collected) {
             Object id = m.get("id");
             if (id != null) {
-                try { deleteProject(String.valueOf(id)); } catch (Exception ignored) {}
+                try {
+                    deleteProject(String.valueOf(id));
+                } catch (Exception ignored) {
+                }
             }
+        }
+    }
+
+    @TestConfiguration
+    static class DummyRedisTestConfig {
+        @Bean
+        @Primary
+        public RedisConnectionFactory redisConnectionFactory() {
+            RedisConnectionFactory factory = mock(RedisConnectionFactory.class, RETURNS_DEEP_STUBS);
+            RedisConnection conn = mock(RedisConnection.class, RETURNS_DEEP_STUBS);
+            RedisClusterConnection clusterConn = mock(RedisClusterConnection.class, RETURNS_DEEP_STUBS);
+            when(factory.getConnection()).thenReturn(conn);
+            when(factory.getClusterConnection()).thenReturn(clusterConn);
+            // reactive methods are rarely used; return null to avoid bringing reactor into tests
+            try {
+                // method may not exist on older Spring Data; ignore if reflective failures occur
+                when(factory.getSentinelConnection()).thenReturn(null);
+            } catch (Throwable ignored) { }
+            return factory;
         }
     }
 }

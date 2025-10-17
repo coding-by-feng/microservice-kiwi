@@ -1,8 +1,8 @@
 package me.fengorz.kiwi.tools.service;
 
-import me.fengorz.kiwi.tools.config.ToolsProperties;
 import me.fengorz.kiwi.tools.exception.ToolsException;
 import me.fengorz.kiwi.tools.model.Project;
+import me.fengorz.kiwi.tools.model.ProjectStatus;
 import me.fengorz.kiwi.tools.repository.ProjectRepository;
 import me.fengorz.kiwi.tools.util.DateUtil;
 import me.fengorz.kiwi.tools.util.StringUtil;
@@ -14,7 +14,6 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import static cn.hutool.core.map.MapUtil.getBool;
 import static cn.hutool.core.map.MapUtil.getStr;
@@ -25,18 +24,16 @@ import static cn.hutool.core.map.MapUtil.getStr;
  * - Validate incoming data (lengths, control characters, date formats/order, status).
  * - Apply partial updates (PATCH-like behavior for PUT body with partial fields).
  * - Enforce pagination, sorting, and date-overlap filtering (delegates to repository for search).
- * - Generate server fields (createdAt, default empty photoUrl).
+ * - Generate server fields (createdAt).
  * <p>
  * Notes:
  * - sortBy expects snake_case keys: created_at (default), start_date, end_date, project_code.
  */
 @Service
 public class ProjectService {
-    private final ToolsProperties props;
     private final ProjectRepository repo;
 
-    public ProjectService(ToolsProperties props, ProjectRepository repo) {
-        this.props = props;
+    public ProjectService(ProjectRepository repo) {
         this.repo = repo;
     }
 
@@ -58,8 +55,9 @@ public class ProjectService {
         String so = (sortOrder == null || sortOrder.isEmpty()) ? "desc" : sortOrder;
         LocalDate s = start != null && !start.isEmpty() ? LocalDate.parse(start) : null;
         LocalDate e = end != null && !end.isEmpty() ? LocalDate.parse(end) : null;
-        List<Project> items = repo.search(q, status, s, e, sb, so, p, ps, archived, includeArchived);
-        long total = repo.count(q, status, s, e, archived, includeArchived);
+        ProjectStatus st = ProjectStatus.fromInput(status);
+        List<Project> items = repo.search(q, st, s, e, sb, so, p, ps, archived, includeArchived);
+        long total = repo.count(q, st, s, e, archived, includeArchived);
         Map<String, Object> resp = new HashMap<>();
         resp.put("items", items);
         resp.put("page", p);
@@ -79,12 +77,10 @@ public class ProjectService {
      * Create a new project after validating fields.
      * Server-generated fields:
      * - createdAt: ISO-8601 instant (UTC)
-     * - photoUrl: default empty string when not provided (to match UI expectations)
      */
     public Project create(Project in) {
         validateProject(in, true);
         in.setCreatedAt(LocalDateTime.now());
-        in.setPhotoUrl(in.getPhotoUrl() == null ? "" : in.getPhotoUrl());
         return repo.save(in);
     }
 
@@ -144,13 +140,11 @@ public class ProjectService {
         if (m.containsKey("start_date")) p.setStartDate(getStr(m, "start_date"));
         if (m.containsKey("endDate")) p.setEndDate(getStr(m, "endDate"));
         if (m.containsKey("end_date")) p.setEndDate(getStr(m, "end_date"));
-        if (m.containsKey("status")) p.setStatus(getStr(m, "status"));
+        if (m.containsKey("status")) p.setStatus(ProjectStatus.fromInput(m.get("status")));
         if (m.containsKey("todayTask")) p.setTodayTask(getStr(m, "todayTask"));
         if (m.containsKey("today_task")) p.setTodayTask(getStr(m, "today_task"));
         if (m.containsKey("progressNote")) p.setProgressNote(getStr(m, "progressNote"));
         if (m.containsKey("progress_note")) p.setProgressNote(getStr(m, "progress_note"));
-        if (m.containsKey("photoUrl")) p.setPhotoUrl(Optional.ofNullable(getStr(m, "photoUrl")).orElse(""));
-        if (m.containsKey("photo_url")) p.setPhotoUrl(Optional.ofNullable(getStr(m, "photo_url")).orElse(""));
         if (m.containsKey("archived")) {
             Boolean a = getBool(m, "archived");
             if (a != null) p.setArchived(a);
@@ -163,7 +157,7 @@ public class ProjectService {
      * - Rejects control characters in identity/short fields.
      * - Validates name length (1–100), clientPhone length (<=30), address (<=200), salesPerson/installer (<=100).
      * - Validates dates (YYYY-MM-DD) and ensures endDate >= startDate when both present.
-     * - Ensures status is one of allowed values (defaults to "未开始" if missing).
+     * - Ensures status is valid (defaults to not_started if missing).
      */
     private void validateProject(Project p, boolean creating) {
         // trim
@@ -204,9 +198,9 @@ public class ProjectService {
                 throw new ToolsException(HttpStatus.BAD_REQUEST, "validation_error", "endDate must be >= startDate (" + sd + " - " + ed + ")");
         }
 
-        // status default
-        if (p.getStatus() == null || p.getStatus().isEmpty()) p.setStatus("未开始");
-        else if (!props.getAllowedStatuses().contains(p.getStatus()))
+        // status default + validate
+        if (p.getStatus() == null) p.setStatus(ProjectStatus.NOT_STARTED);
+        if (p.getStatus() == null)
             throw new ToolsException(HttpStatus.BAD_REQUEST, "validation_error", "invalid status");
 
         p.setStartDate(sd);
@@ -219,15 +213,5 @@ public class ProjectService {
 
     private boolean hasCtl(String s) {
         return StringUtil.hasControlChars(s);
-    }
-
-    /**
-     * Update project's photo URL (set to empty string when null) and persist.
-     */
-    public Project setPhotoUrl(String id, String url) {
-        Project p = get(id);
-        p.setPhotoUrl(url == null ? "" : url);
-        repo.update(id, p);
-        return p;
     }
 }

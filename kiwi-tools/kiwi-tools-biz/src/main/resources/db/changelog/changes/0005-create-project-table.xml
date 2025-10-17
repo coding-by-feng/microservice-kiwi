@@ -4,14 +4,14 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
-    <changeSet id="0001-create-projects-table" author="tools-biz">
+    <changeSet id="0001-create-project-table" author="tools-biz">
         <preConditions onFail="MARK_RAN">
             <not>
-                <tableExists tableName="projects"/>
+                <tableExists tableName="project"/>
             </not>
         </preConditions>
 
-        <createTable tableName="projects">
+        <createTable tableName="project">
             <column name="id" type="varchar(64)">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
@@ -41,23 +41,23 @@
             </column>
         </createTable>
 
-        <addUniqueConstraint tableName="projects" columnNames="project_code" constraintName="uk_projects_project_code"/>
+        <addUniqueConstraint tableName="project" columnNames="project_code" constraintName="uk_project_project_code"/>
 
-        <createIndex tableName="projects" indexName="idx_projects_created_at">
+        <createIndex tableName="project" indexName="idx_project_created_at">
             <column name="created_at"/>
         </createIndex>
-        <createIndex tableName="projects" indexName="idx_projects_start_date">
+        <createIndex tableName="project" indexName="idx_project_start_date">
             <column name="start_date"/>
         </createIndex>
-        <createIndex tableName="projects" indexName="idx_projects_end_date">
+        <createIndex tableName="project" indexName="idx_project_end_date">
             <column name="end_date"/>
         </createIndex>
-        <createIndex tableName="projects" indexName="idx_projects_status">
+        <createIndex tableName="project" indexName="idx_project_status">
             <column name="status"/>
         </createIndex>
 
         <rollback>
-            <dropTable tableName="projects"/>
+            <dropTable tableName="project"/>
         </rollback>
     </changeSet>
 

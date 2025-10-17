@@ -547,8 +547,6 @@ if [ "$ONLY_GIT_MODE" = true ]; then
   exit 0
 fi
 
-# ...existing code...
-
 # Display final configuration
 echo "=============================================="
 echo "DEPLOYMENT CONFIGURATION:"
@@ -581,12 +579,125 @@ fi
 echo "=============================================="
 echo ""
 
-# Stop all services first (critical step)
-# Add a visible guard before any docker-related action
+# === OBM/OBMAS short-circuit workflow (Maven build only, copy/send jars) ===
 if [ "$ONLY_BUILD_MAVEN" = true ]; then
-  echo "Guard: ONLY_BUILD_MAVEN=true detected before cleanup. Exiting now."
+  echo "== OBM/OBMAS FLOW: ENTER =="
+  # Determine original user's home for Maven repo and built_jar
+  if [ -n "$SUDO_USER" ]; then
+    ORIGINAL_HOME=$(eval echo "~$SUDO_USER")
+  else
+    ORIGINAL_HOME="$HOME"
+  fi
+  BUILT_DIR="$ORIGINAL_HOME/built_jar"
+  mkdir -p "$BUILT_DIR"
+
+  # Optional git operations before build
+  if [ "$SKIP_GIT" = false ]; then
+    echo "📥 Git pulling (pre-build)..."
+    ( git stash || true )
+    if ! git pull --rebase; then git pull; fi
+  else
+    echo "⏭️  Git operations skipped"
+  fi
+
+  # Ensure TTS lib is installed into the correct local repo
+  echo "📚 Installing VoiceRSS TTS library into local Maven repo..."
+  echo "📂 Using Maven repository: $ORIGINAL_HOME/.m2"
+  cd "$CURRENT_DIR/microservice-kiwi/kiwi-common/kiwi-common-tts/lib"
+  mvn -q install:install-file \
+      -Dfile=voicerss_tts.jar \
+      -DgroupId=voicerss \
+      -DartifactId=tts \
+      -Dversion=2.0 \
+      -Dpackaging=jar \
+      -Dmaven.repo.local="$ORIGINAL_HOME/.m2/repository"
+  cd "$CURRENT_DIR/microservice-kiwi/"
+
+  # Maven build
+  if [ "$BUILD_ALL_SERVICES" = true ]; then
+    echo "🔨 Running maven build for all services..."
+    mvn -q clean install -Dmaven.test.skip=true -B -Dmaven.repo.local="$ORIGINAL_HOME/.m2/repository"
+  else
+    echo "🔨 Running selective maven build..."
+    echo "📦 Building common modules first..."
+    mvn -q clean install -pl kiwi-common -am -Dmaven.test.skip=true -B -Dmaven.repo.local="$ORIGINAL_HOME/.m2/repository"
+    IFS=',' read -ra SERVICE_ARRAY <<< "$SELECTED_SERVICES"
+    for service in "${SERVICE_ARRAY[@]}"; do
+      case "$service" in
+        "upms")
+          mvn -q clean install -pl kiwi-upms/kiwi-upms-biz -am -Dmaven.test.skip=true -B -Dmaven.repo.local="$ORIGINAL_HOME/.m2/repository"
+          ;;
+        "word")
+          mvn -q clean install -pl kiwi-word/kiwi-word-biz -am -Dmaven.test.skip=true -B -Dmaven.repo.local="$ORIGINAL_HOME/.m2/repository"
+          ;;
+        "crawler")
+          mvn -q clean install -pl kiwi-word/kiwi-word-crawler -am -Dmaven.test.skip=true -B -Dmaven.repo.local="$ORIGINAL_HOME/.m2/repository"
+          ;;
+        "ai")
+          mvn -q clean install -pl kiwi-ai/kiwi-ai-biz -am -Dmaven.test.skip=true -B -Dmaven.repo.local="$ORIGINAL_HOME/.m2/repository"
+          ;;
+        *)
+          module="${MICROSERVICES[$service]}"
+          mvn -q clean install -pl "$module" -am -Dmaven.test.skip=true -B -Dmaven.repo.local="$ORIGINAL_HOME/.m2/repository"
+          ;;
+      esac
+    done
+  fi
+
+  # Copy built jars into ~/built_jar
+  echo "📦 Copying built jars into: $BUILT_DIR"
+  copy_or_warn() {
+    local src="$1"; local name="$2"
+    if [ -f "$src" ]; then
+      cp -f "$src" "$BUILT_DIR/"
+      echo "   ✅ $name"
+    else
+      echo "   ⚠️  Missing jar for $name (expected at $src)"
+    fi
+  }
+
+  # Build list and copy conditionally
+  if should_build_service "eureka"; then
+    copy_or_warn "$ORIGINAL_HOME/.m2/repository/me/fengorz/kiwi-eureka/2.0/kiwi-eureka-2.0.jar" eureka
+  fi
+  if should_build_service "config"; then
+    copy_or_warn "$ORIGINAL_HOME/.m2/repository/me/fengorz/kiwi-config/2.0/kiwi-config-2.0.jar" config
+  fi
+  if should_build_service "upms"; then
+    copy_or_warn "$ORIGINAL_HOME/.m2/repository/me/fengorz/kiwi-upms-biz/2.0/kiwi-upms-biz-2.0.jar" upms
+  fi
+  if should_build_service "auth"; then
+    copy_or_warn "$ORIGINAL_HOME/.m2/repository/me/fengorz/kiwi-auth/2.0/kiwi-auth-2.0.jar" auth
+  fi
+  if should_build_service "gate"; then
+    copy_or_warn "$ORIGINAL_HOME/.m2/repository/me/fengorz/kiwi-gateway/2.0/kiwi-gateway-2.0.jar" gateway
+  fi
+  if should_build_service "tools"; then
+    copy_or_warn "$ORIGINAL_HOME/.m2/repository/me/fengorz/kiwi-tools-biz/2.0/kiwi-tools-biz-2.0.jar" tools
+  fi
+  if should_build_service "word"; then
+    copy_or_warn "$ORIGINAL_HOME/.m2/repository/me/fengorz/kiwi-word-biz/2.0/kiwi-word-biz-2.0.jar" word-biz
+  fi
+  if should_build_service "crawler"; then
+    copy_or_warn "$ORIGINAL_HOME/.m2/repository/me/fengorz/kiwi-word-crawler/2.0/kiwi-word-crawler-2.0.jar" crawler
+  fi
+  if should_build_service "ai"; then
+    copy_or_warn "$ORIGINAL_HOME/.m2/repository/me/fengorz/kiwi-ai-biz/2.0/kiwi-ai-biz-2.0.jar" ai
+  fi
+
+  # Optionally send jars if requested (OBMAS)
+  if [ "$SEND_AFTER_BUILD" = true ]; then
+    echo "🚚 Sending jars to remote as requested by OBMAS..."
+    send_jars_remote "$ORIGINAL_HOME" || { echo "❌ Failed to send jars"; exit 1; }
+  fi
+
+  echo "== OBM/OBMAS FLOW: DONE. Exiting without any docker/cleanup steps. =="
   exit 0
 fi
+
+# Stop all services first (critical step)
+# Add a visible guard before any docker-related action
+# (OBM/OBMAS handled above)
 
 echo "=============================================="
 echo "🛑 INITIAL CLEANUP - STOPPING ALL SERVICES"
@@ -768,6 +879,34 @@ else
 
       echo "$latest"
       return 0
+    }
+
+    # Helper: find newest jar in a directory matching a given prefix
+    find_built_by_prefix() {
+      local prefix="$1"
+      local dir="$2"
+      local latest=""
+      local latest_mtime=0
+      shopt -s nullglob
+      for f in "$dir/${prefix}-"*.jar; do
+        [ -e "$f" ] || continue
+        # Resolve symlink to ensure it exists
+        if [ -L "$f" ] && [ ! -e "$f" ]; then
+          continue
+        fi
+        local mtime
+        if mtime=$(stat -c %Y "$f" 2>/dev/null); then :; else mtime=$(stat -f %m "$f" 2>/dev/null || echo 0); fi
+        if [ "$mtime" -gt "$latest_mtime" ]; then
+          latest="$f"
+          latest_mtime="$mtime"
+        fi
+      done
+      shopt -u nullglob
+      if [ -n "$latest" ]; then
+        echo "$latest"
+        return 0
+      fi
+      return 1
     }
 
     resolve_jar_path() {

@@ -1753,22 +1753,38 @@ execute_step_24_ip_update() {
     if ! is_step_completed "ip_update"; then
         print_info "Step 24: Updating IPs for hosts, .bashrc, and FastDFS config..."
 
-        # Prompt for new IP
+        # Prompt for new Infrastructure IP
         prompt_for_input "Enter new Infrastructure IP (IPv4)" "NEW_IP" "false" "^([0-9]{1,3}\.){3}[0-9]{1,3}$" "Please enter a valid IPv4 address"
+
+        # Prompt for new Service IP (allow default to current SERVICE_IP or NEW_IP)
+        CURR_SERVICE_IP=$(load_config "SERVICE_IP" 2>/dev/null || echo "")
+        [ -z "$CURR_SERVICE_IP" ] && CURR_SERVICE_IP="$NEW_IP"
+        while true; do
+            read -p "Enter new Service IP (IPv4) [default: ${CURR_SERVICE_IP}]: " NEW_SERVICE_IP
+            NEW_SERVICE_IP=${NEW_SERVICE_IP:-$CURR_SERVICE_IP}
+            if [[ "$NEW_SERVICE_IP" =~ ^([0-9]{1,3}\.){3}[0-9]{1,3}$ ]]; then
+                break
+            else
+                print_warning "Please enter a valid IPv4 address"
+            fi
+        done
 
         # Save to config
         save_config "INFRASTRUCTURE_IP" "$NEW_IP"
         save_config "FASTDFS_NON_LOCAL_IP" "$NEW_IP"
+        save_config "SERVICE_IP" "$NEW_SERVICE_IP"
 
         # Update ~/.bashrc variables
         print_info "Updating ~/.bashrc environment variables..."
         run_as_user sed -i '/export DB_IP=/d' "$SCRIPT_HOME/.bashrc" 2>/dev/null || true
         run_as_user sed -i '/export FASTDFS_NON_LOCAL_IP=/d' "$SCRIPT_HOME/.bashrc" 2>/dev/null || true
         run_as_user sed -i '/export INFRASTRUCTURE_IP=/d' "$SCRIPT_HOME/.bashrc" 2>/dev/null || true
+        run_as_user sed -i '/export SERVICE_IP=/d' "$SCRIPT_HOME/.bashrc" 2>/dev/null || true
         {
             echo "export DB_IP=\"$NEW_IP\""
             echo "export FASTDFS_NON_LOCAL_IP=\"$NEW_IP\""
             echo "export INFRASTRUCTURE_IP=\"$NEW_IP\""
+            echo "export SERVICE_IP=\"$NEW_SERVICE_IP\""
         } | run_as_user tee -a "$SCRIPT_HOME/.bashrc" > /dev/null
 
         # Source .bashrc (note: affects only subshell)
@@ -1776,7 +1792,7 @@ execute_step_24_ip_update() {
         print_success ".bashrc updated. Please run 'source ~/.bashrc' in your current shell to apply."
 
         # Update /etc/hosts block
-        print_info "Updating /etc/hosts with new IP..."
+        print_info "Updating /etc/hosts with new IPs..."
         cp /etc/hosts /etc/hosts.backup.$(date +%Y%m%d_%H%M%S)
         sed -i '/# Kiwi Infrastructure Services/,/# End Kiwi Services/d' /etc/hosts
         tee -a /etc/hosts > /dev/null << EOF
@@ -1793,47 +1809,58 @@ $NEW_IP    kiwi-chattts
 $NEW_IP    kiwi-ftp
 
 # Kiwi Microservices
-$NEW_IP    kiwi-microservice-local
-$NEW_IP    kiwi-microservice
-$NEW_IP    kiwi-eureka
-$NEW_IP    kiwi-config
-$NEW_IP    kiwi-auth
-$NEW_IP    kiwi-upms
-$NEW_IP    kiwi-gate
-$NEW_IP    kiwi-ai
-$NEW_IP    kiwi-crawler
+$NEW_SERVICE_IP    kiwi-microservice-local
+$NEW_SERVICE_IP    kiwi-microservice
+$NEW_SERVICE_IP    kiwi-eureka
+$NEW_SERVICE_IP    kiwi-config
+$NEW_SERVICE_IP    kiwi-auth
+$NEW_SERVICE_IP    kiwi-upms
+$NEW_SERVICE_IP    kiwi-gate
+$NEW_SERVICE_IP    kiwi-ai
+$NEW_SERVICE_IP    kiwi-crawler
 # End Kiwi Services
 EOF
         print_success "/etc/hosts updated"
 
         # Optionally refresh FastDFS storage container with new TRACKER_SERVER
-        if docker ps -a --format '{{.Names}}' | grep -q '^storage$'; then
-            print_info "Recreating FastDFS storage container with updated TRACKER_SERVER..."
-            # Determine image
-            FASTDFS_IMAGE=$(load_config "fastdfs_image_used")
-            if [ -z "$FASTDFS_IMAGE" ]; then
-                ARCH=$(uname -m)
-                case $ARCH in
-                    x86_64|amd64) FASTDFS_IMAGE="delron/fastdfs:latest" ;;
-                    aarch64|arm64) FASTDFS_IMAGE="ygqygq2/fastdfs-nginx:latest" ;;
-                    *) FASTDFS_IMAGE="delron/fastdfs:latest" ;;
-                esac
-            fi
-            docker stop storage >/dev/null 2>&1 || true
-            docker rm storage >/dev/null 2>&1 || true
-            docker run -tid \
-                --name storage \
-                -p 23000:23000 \
-                -p 8888:8888 \
-                -v "$SCRIPT_HOME/storage_data:/fastdfs/storage/data" \
-                -v "$SCRIPT_HOME/store_path:/fastdfs/store_path" \
-                -e TRACKER_SERVER="$NEW_IP:22122" \
-                --restart=unless-stopped \
-                "$FASTDFS_IMAGE" \
-                storage
-            print_success "FastDFS storage container recreated"
+        # Only act if FastDFS containers already exist; do not create new ones here
+        TRACKER_EXISTS=false
+        STORAGE_EXISTS=false
+        if docker ps -a --format '{{.Names}}' | grep -q '^tracker$'; then TRACKER_EXISTS=true; fi
+        if docker ps -a --format '{{.Names}}' | grep -q '^storage$'; then STORAGE_EXISTS=true; fi
+
+        if [ "$TRACKER_EXISTS" = false ] && [ "$STORAGE_EXISTS" = false ]; then
+            print_info "No existing FastDFS containers found (tracker/storage). Skipping FastDFS updates."
         else
-            print_info "FastDFS storage container not found; skip recreation."
+            if [ "$STORAGE_EXISTS" = true ]; then
+                print_info "Recreating FastDFS storage container with updated TRACKER_SERVER..."
+                # Determine image
+                FASTDFS_IMAGE=$(load_config "fastdfs_image_used")
+                if [ -z "$FASTDFS_IMAGE" ]; then
+                    ARCH=$(uname -m)
+                    case $ARCH in
+                        x86_64|amd64) FASTDFS_IMAGE="delron/fastdfs:latest" ;;
+                        aarch64|arm64) FASTDFS_IMAGE="ygqygq2/fastdfs-nginx:latest" ;;
+                        *) FASTDFS_IMAGE="delron/fastdfs:latest" ;;
+                    esac
+                fi
+                docker stop storage >/dev/null 2>&1 || true
+                docker rm storage >/dev/null 2>&1 || true
+                docker run -tid \
+                    --name storage \
+                    -p 23000:23000 \
+                    -p 8888:8888 \
+                    -v "$SCRIPT_HOME/storage_data:/fastdfs/storage/data" \
+                    -v "$SCRIPT_HOME/store_path:/fastdfs/store_path" \
+                    -e TRACKER_SERVER="$NEW_IP:22122" \
+                    --restart=unless-stopped \
+                    "$FASTDFS_IMAGE" \
+                    storage
+                print_success "FastDFS storage container recreated"
+            else
+                print_info "FastDFS storage container not found; skipping storage recreation."
+            fi
+            # Tracker container typically doesn't need IP update; leave as-is if present
         fi
 
         mark_step_completed "ip_update"

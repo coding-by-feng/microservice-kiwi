@@ -9,10 +9,15 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SETUP_SCRIPT="$(cd "$SCRIPT_DIR/.." && pwd)/set_up.sh"
-SETUP_BASE_DIR="/root/microservice-kiwi/kiwi-deploy"
+
+# Resolve target user/home and setup base dir (prefer env passed by caller)
+SCRIPT_USER="${SCRIPT_USER:-${SUDO_USER:-$(logname 2>/dev/null || echo ${USER:-root})}}"
+SCRIPT_HOME="${SCRIPT_HOME:-$(eval echo ~$SCRIPT_USER)}"
+# Store config/progress/log directly under the user's home directory
+SETUP_BASE_DIR="${KIWI_SETUP_BASE_DIR:-"$SCRIPT_HOME"}"
 CONFIG_FILE="$SETUP_BASE_DIR/.kiwi_setup_config"
 PROGRESS_FILE="$SETUP_BASE_DIR/.kiwi_setup_progress"
-LOG_FILE="$SETUP_BASE_DIR/ip_change_daemon.log"
+LOG_FILE="$SCRIPT_HOME/ip_change_daemon.log"
 PID_FILE="/var/run/kiwi-ip-change-daemon.pid"
 LOCK_FILE="/var/run/kiwi-ip-change-daemon.lock"
 
@@ -79,22 +84,13 @@ get_cfg() {
   grep -E "^${key}=" "$CONFIG_FILE" 2>/dev/null | sed -E "s/^${key}=//" | tail -n1
 }
 
-set_cfg() {
-  local key="$1" val="$2"
-  mkdir -p "$(dirname "$CONFIG_FILE")" 2>/dev/null || true
-  touch "$CONFIG_FILE" 2>/dev/null || true
-  sed -i "/^${key}=.*/d" "$CONFIG_FILE" 2>/dev/null || true
-  echo "${key}=${val}" >> "$CONFIG_FILE"
-}
-
-force_reinit_step24() {
-  if [ -f "$PROGRESS_FILE" ]; then
-    sed -i '/^ip_update$/d' "$PROGRESS_FILE" 2>/dev/null || true
-  fi
-}
-
+# Run Step 24 with optional override IPs (positional args)
 run_step24() {
-  log "Running Step 24 (IP update) via set_up.sh"
+  local ov_infra="${1:-}"
+  local ov_service="${2:-}"
+  log "Running Step 24 (IP update) via set_up.sh with overrides: infra='${ov_infra:-<none>}', service='${ov_service:-<none>}'"
+  INFRASTRUCTURE_IP_OVERRIDE="$ov_infra" \
+  SERVICE_IP_OVERRIDE="$ov_service" \
   bash "$SETUP_SCRIPT" --run-step=24 >>"$LOG_FILE" 2>&1 || log "Step 24 execution returned non-zero (see log)"
 }
 
@@ -169,7 +165,7 @@ if ! flock -n 9; then
 fi
 
 echo $$ > "$PID_FILE"
-log "Daemon main loop started (interval=${INTERVAL}s)"
+log "Daemon main loop started (interval=${INTERVAL}s, user=$SCRIPT_USER, home=$SCRIPT_HOME)"
 
 while true; do
   # Read last known IPs from config
@@ -203,11 +199,12 @@ while true; do
   fi
 
   if [ "$CHANGED" -eq 1 ]; then
-    # Update config pre-emptively so repeated scans don't re-trigger before Step 24 completes
-    [ -n "$NEW_INFRA" ] && set_cfg INFRASTRUCTURE_IP "$NEW_INFRA" && set_cfg FASTDFS_NON_LOCAL_IP "$NEW_INFRA"
-    [ -n "$NEW_SERVICE" ] && set_cfg SERVICE_IP "$NEW_SERVICE"
-    force_reinit_step24
-    run_step24
+    # Clear step 24 completion so it runs fresh and updates config itself
+    if [ -f "$PROGRESS_FILE" ]; then
+      sed -i '/^ip_update$/d' "$PROGRESS_FILE" 2>/dev/null || true
+    fi
+    # Run step 24 with explicit override values we just discovered
+    run_step24 "$NEW_INFRA" "$NEW_SERVICE"
     log "Change handled; sleeping extra to debounce."
     sleep $(( INTERVAL * 2 ))
   else

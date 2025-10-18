@@ -485,13 +485,27 @@ EOF
   echo "🌐 Sending jars to ${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_PORT}/${REMOTE_PATH:-<home>} via ${REMOTE_PROTO^^} ..."
   local any_failed=false
   shopt -s nullglob
-  for f in "$src_dir"/*.jar; do
+  # Collect files and total count for nicer progress display
+  local files=("$src_dir"/*.jar)
+  local total=${#files[@]}
+  local idx=0
+  for f in "${files[@]}"; do
     [ -e "$f" ] || continue
+    idx=$((idx+1))
     local fname
     fname="$(basename "$f")"
-    echo "   → Uploading $fname"
-    # --ftp-create-dirs creates missing remote directories
-    if ! curl -sS --fail --ftp-create-dirs -u "$REMOTE_USER:$REMOTE_PASS" -T "$f" "$base_url"; then
+    # Cross-platform file size in bytes
+    local fsize
+    if fsize=$(stat -c %s "$f" 2>/dev/null); then :; else fsize=$(stat -f %z "$f" 2>/dev/null || echo 0); fi
+    echo "   → Uploading [$idx/$total] $fname (size: ${fsize} bytes)"
+    # Use curl progress bar and a short post-upload summary; do not use -s to keep progress visible
+    # Explicitly include filename in URL to avoid any server-side ambiguity
+    if ! curl \
+         --fail --ftp-create-dirs --progress-bar \
+         --connect-timeout 10 --retry 3 --retry-delay 2 \
+         -u "$REMOTE_USER:$REMOTE_PASS" \
+         -T "$f" "${base_url}${fname}" \
+         -w "\n     ↳ Done: %{size_upload} bytes in %{time_total}s (%{speed_upload} B/s)\n"; then
       echo "     ❌ Failed to upload $fname"
       any_failed=true
     else

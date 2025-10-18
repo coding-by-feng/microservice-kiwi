@@ -2030,10 +2030,24 @@ EOF
         fi
 
         mark_step_completed "ip_update"
+
+        # Start or ensure the IP change daemon is running
+        if [ -x "$SCRIPT_DIR/infrastructure/ip_change_daemon.sh" ]; then
+            print_info "Starting Kiwi IP change daemon..."
+            "$SCRIPT_DIR/infrastructure/ip_change_daemon.sh" start || true
+            print_success "IP change daemon start attempted (check log at /root/microservice-kiwi/kiwi-deploy/ip_change_daemon.log)"
+        else
+            print_warning "IP change daemon script not found or not executable: $SCRIPT_DIR/infrastructure/ip_change_daemon.sh"
+        fi
     else
         print_info "Step 24: IP update already applied, skipping..."
         check_and_start_container "tracker" "fastdfs_setup"
         check_and_start_container "storage" "fastdfs_setup"
+        # Ensure daemon is running even if step already done
+        if [ -x "$SCRIPT_DIR/infrastructure/ip_change_daemon.sh" ]; then
+            print_info "Ensuring Kiwi IP change daemon is running..."
+            "$SCRIPT_DIR/infrastructure/ip_change_daemon.sh" start || true
+        fi
     fi
 }
 
@@ -2303,6 +2317,39 @@ show_step_menu() {
         esac
     done
 }
+
+# --- Non-interactive step runner (for automation/daemon use) ---
+RUN_STEP=""
+# Parse simple --run-step flags before main execution
+while [ $# -gt 0 ]; do
+  case "$1" in
+    --run-step=*) RUN_STEP="${1#*=}"; shift ;;
+    --run-step) shift; RUN_STEP="$1"; shift ;;
+    --run-ip-update|--step24|--run-step24) RUN_STEP="24"; shift ;;
+    *) break ;;
+  esac
+done
+
+if [ -n "$RUN_STEP" ]; then
+  # Minimal pre-checks for non-interactive mode
+  if [ "$EUID" -ne 0 ]; then
+    echo "This operation must be run as root (sudo)." >&2
+    exit 1
+  fi
+  initialize_files
+  case "$RUN_STEP" in
+    24|ip|ip_update)
+      print_info "Non-interactive: running Step 24 (IP update)"
+      execute_step_24_ip_update
+      ;;
+    *)
+      print_warning "Unsupported --run-step value: $RUN_STEP"
+      exit 2
+      ;;
+  esac
+  # Stop here in non-interactive mode
+  exit 0
+fi
 
 # MAIN EXECUTION
 # Check system requirements first

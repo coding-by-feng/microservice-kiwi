@@ -87,6 +87,17 @@ initialize_files() {
     done
 }
 
+# --- Utility: IPv4 validation (used by Step 24 overrides) ---
+is_valid_ipv4() {
+    local ip="$1"
+    [[ "$ip" =~ ^([0-9]{1,3}\.){3}[0-9]{1,3}$ ]] || return 1
+    IFS='.' read -r a b c d <<< "$ip"
+    for o in $a $b $c $d; do
+        [ "$o" -ge 0 ] && [ "$o" -le 255 ] || return 1
+    done
+    return 0
+}
+
 # Auto-detect network IPs by MAC addresses using netdiscover
 # Utility: run netdiscover quickly with timeout and stable output
 run_netdiscover_quick_scan() {
@@ -179,6 +190,37 @@ detect_network_ips() {
     else
         print_warning "Service MAC $SERVICE_MAC not found in scan."
     fi
+}
+
+# --- New: Single-Pi IP detection via hostname -I (preferred for Step 24) ---
+detect_ips_via_hostname() {
+    print_info "Detecting IPs via 'hostname -I' (single-Pi mode)..."
+    local raw ips selected
+    raw=$(hostname -I 2>/dev/null | tr -s ' ' ' ' || true)
+    if [ -z "$raw" ]; then
+        print_warning "hostname -I returned no addresses; defaulting both to 127.0.0.1"
+        save_config "INFRASTRUCTURE_IP" "127.0.0.1"
+        save_config "FASTDFS_NON_LOCAL_IP" "127.0.0.1"
+        save_config "SERVICE_IP" "127.0.0.1"
+        return 0
+    fi
+    # Prefer 192.168.x.x, else 10.x.x.x, else 172.16-31.x.x, else first IPv4
+    selected=$(echo "$raw" | tr ' ' '\n' | awk 'match($0,/^192\.168\.[0-9]+\.[0-9]+$/){print; exit}')
+    if [ -z "$selected" ]; then
+        selected=$(echo "$raw" | tr ' ' '\n' | awk 'match($0,/^10\.[0-9]+\.[0-9]+\.[0-9]+$/){print; exit}')
+    fi
+    if [ -z "$selected" ]; then
+        selected=$(echo "$raw" | tr ' ' '\n' | awk 'match($0,/^172\.(1[6-9]|2[0-9]|3[0-1])\.[0-9]+\.[0-9]+$/){print; exit}')
+    fi
+    if [ -z "$selected" ]; then
+        selected=$(echo "$raw" | tr ' ' '\n' | awk 'match($0,/^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$/){print; exit}')
+    fi
+    [ -z "$selected" ] && selected="127.0.0.1"
+    save_config "INFRASTRUCTURE_IP" "$selected"
+    save_config "FASTDFS_NON_LOCAL_IP" "$selected"
+    # In single-Pi setup, microservices run locally
+    save_config "SERVICE_IP" "127.0.0.1"
+    print_success "Infrastructure IP: $selected; Service IP: 127.0.0.1"
 }
 
 # Initialize files at script start
@@ -1891,7 +1933,7 @@ execute_step_24_ip_update() {
     if [ -n "$OV_SERVICE" ] && is_valid_ipv4 "$OV_SERVICE"; then FORCE_UPDATE=true; fi
 
     if ! is_step_completed "ip_update" || [ "$FORCE_UPDATE" = true ]; then
-        print_info "Step 24: Updating IPs for hosts, .bashrc, and FastDFS config (auto-detect via netdiscover or env overrides)..."
+        print_info "Step 24: Updating IPs for hosts, .bashrc, and FastDFS config (via hostname -I or env overrides)..."
         # Capture old values to detect change after detection
         local OLD_INFRA OLD_SERVICE
         OLD_INFRA=$(load_config "INFRASTRUCTURE_IP" 2>/dev/null || echo "")
@@ -1914,13 +1956,16 @@ execute_step_24_ip_update() {
             print_warning "Provided SERVICE_IP_OVERRIDE ('$OV_SERVICE') is not a valid IPv4; ignoring."
         fi
 
-        # If no valid overrides provided, fall back to auto-detection
+        # If no valid overrides provided, use hostname -I strategy (single-Pi)
         if [ "$USED_OVERRIDE" = false ]; then
-            # Reuse detection to ensure latest IPs
-            detect_network_ips || {
-                print_error "Auto-detection failed; cannot update IPs."
-                return 1
-            }
+            detect_ips_via_hostname
+        else
+            # If overrides used but SERVICE_IP not set, default to localhost for single-Pi
+            local cur_service
+            cur_service=$(load_config "SERVICE_IP" 2>/dev/null || echo "")
+            if [ -z "$cur_service" ]; then
+                save_config "SERVICE_IP" "127.0.0.1"
+            fi
         fi
 
         # Reload from config (now contains overrides or auto-detected values)

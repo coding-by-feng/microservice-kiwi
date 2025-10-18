@@ -1949,7 +1949,7 @@ execute_step_24_ip_update() {
 
         # Source .bashrc (note: affects only subshell)
         run_as_user bash -lc "source ~/.bashrc" || true
-        print_success ".bashrc updated. Please run 'source ~/.bashrc' in your current shell to apply."
+        print_success ".bashrc updated. After IP change, run 'source ~/.bashrc' (or 'source ~/.zshrc' if using zsh) in your current shell to apply."
 
         # Update /etc/hosts block
         print_info "Updating /etc/hosts with new IPs..."
@@ -2222,7 +2222,7 @@ display_final_summary() {
     echo "  Redis: $INFRASTRUCTURE_IP:6379 (password protected)"
     echo
     echo -e "${YELLOW}IMPORTANT NOTES:${NC}"
-    echo "1. Run 'source ~/.bashrc' to apply environment variables"
+    echo "1. Run 'source ~/.bashrc' (or 'source ~/.zshrc' if you use zsh) to apply environment variables"
     echo "2. Log out and back in for Docker permissions to take effect"
     echo "3. All configuration saved in: $CONFIG_FILE"
     echo "4. Setup progress saved in: $PROGRESS_FILE"
@@ -2454,10 +2454,9 @@ display_final_summary
 echo
 print_success "Enhanced Kiwi Microservice setup completed!"
 print_info "Log file available at: $LOG_FILE"
-print_info "Run 'source ~/.bashrc' to apply environment changes"
+print_info "Run 'source ~/.bashrc' (or 'source ~/.zshrc' if you use zsh) to apply environment changes"
 print_info "Thank you for using the enhanced setup script!"
 echo "======================================"
 
 # Exit successfully
 exit 0
-

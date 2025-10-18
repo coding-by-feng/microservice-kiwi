@@ -205,6 +205,8 @@ while true; do
     fi
     # Run step 24 with explicit override values we just discovered
     run_step24 "$NEW_INFRA" "$NEW_SERVICE"
+    # Add a reminder for interactive shells to reload environment
+    log "Reminder for $SCRIPT_USER: after IP change and Step 24, run 'source ~/.bashrc' (or 'source ~/.zshrc' if using zsh) in your shell to apply env changes."
     log "Change handled; sleeping extra to debounce."
     sleep $(( INTERVAL * 2 ))
   else

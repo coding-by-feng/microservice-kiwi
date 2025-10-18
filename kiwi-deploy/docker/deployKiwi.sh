@@ -234,16 +234,16 @@ show_help() {
   echo "  -mode=sbd     Skip Dockerfile building operation (copying Dockerfiles and JARs)"
   echo "  -mode=obm     Only build with Maven, then copy built JARs to ~/built_jar"
   echo "                Use with -s=svc1,svc2 to build only those services (e.g. -mode=obm -s=auth,gate)"
-  echo "  -mode=obmas   Only build with Maven, then send built JARs to remote via scp"
+  echo "  -mode=obmas   Only build with Maven, then send built JARs to remote via FTP"
   echo "                Supports partial builds with -s=... just like -mode=obm"
   echo "  -mode=ouej    Only use existing jars from ~/built_jar (skip git and maven)"
   echo "  -mode=osj     Only send existing jars to remote (skip git, maven, docker)"
-  echo "  -mode=og      Only perform git stash+pull (no build/deploy)"   # UPDATED
+  echo "  -mode=og      Only perform git stash+pull (no build/deploy)   # UPDATED"
   echo ""
   echo "Available options:"
   echo "  -c            Enable autoCheckService after deployment"
   echo "  -s=SERVICE    Build/deploy specific service(s) only"
-  echo "                Available services: eureka, config, upms, auth, gate, word, crawler, ai, tools"  # +tools
+  echo "                Available services: eureka, config, upms, auth, gate, word, crawler, ai, tools"
   echo "                Multiple services: -s=eureka,config,upms"
   echo "                All services: -s=all (default)"
   echo "  -help         Show this help message"
@@ -256,7 +256,7 @@ show_help() {
   echo "  sudo -E $0 -mode=sm               # Skip only maven build"
   echo "  sudo -E $0 -mode=sbd              # Skip only Dockerfile building"
   echo "  sudo -E $0 -mode=obm              # Only Maven build and copy jars to ~/built_jar"
-  echo "  sudo -E $0 -mode=obmas            # Maven build then scp jars to remote"
+  echo "  sudo -E $0 -mode=obmas            # Maven build then FTP jars to remote"
   echo "  sudo -E $0 -mode=osj              # Send jars from ~/built_jar to remote (no build)"
   echo "  sudo -E $0 -mode=ouej             # Use jars from ~/built_jar and deploy"
   echo "  sudo -E $0 -s=eureka,config       # Build only eureka and config services"
@@ -304,7 +304,7 @@ for arg in "$@"; do
       MODE="$arg"
       ONLY_BUILD_MAVEN=true
       SEND_AFTER_BUILD=true
-      echo "📦➡️  OBMAS MODE: Maven build, then send jars to remote via scp"
+      echo "📦➡️  OBMAS MODE: Maven build, then send jars to remote via FTP"
       ;;
     -mode=ouej)
       MODE="$arg"
@@ -391,7 +391,7 @@ should_build_service() {
   return 1
 }
 
-# === New: send jars to remote host via scp (first-run prompts saved) ===
+# === New: send jars to remote host via FTP (first-run prompts saved) ===
 send_jars_remote() {
   local original_home="$1"
   local src_dir="${original_home}/built_jar"
@@ -400,21 +400,25 @@ send_jars_remote() {
 
   mkdir -p "$cfg_dir"
   if [ ! -f "$cfg_file" ]; then
-    echo "📝 First-time OBMAS setup:"
-    read -p "Remote host (hostname or IP): " REMOTE_HOST
-    read -p "Remote user: " REMOTE_USER
-    # CHANGED: default remote directory -> ~/built_jar
+    echo "📝 First-time OBMAS setup (FTP):"
+    read -p "FTP host (hostname or IP): " REMOTE_HOST
+    read -p "FTP user: " REMOTE_USER
     read -p "Remote directory (default: ~/built_jar): " REMOTE_DIR
     REMOTE_DIR=${REMOTE_DIR:-"~/built_jar"}
-    read -s -p "Remote password: " REMOTE_PASS
+    read -s -p "FTP password: " REMOTE_PASS
     echo
-    # Save config (password in plaintext; file will be 600)
+    # Optional protocol/port with safe defaults
+    local REMOTE_PROTO="ftp"
+    local REMOTE_PORT="21"
+    # Save config (restrict permissions)
     umask 077
     cat > "$cfg_file" <<EOF
 REMOTE_HOST="$REMOTE_HOST"
 REMOTE_USER="$REMOTE_USER"
 REMOTE_DIR="$REMOTE_DIR"
 REMOTE_PASS="$REMOTE_PASS"
+REMOTE_PROTO="$REMOTE_PROTO"
+REMOTE_PORT="$REMOTE_PORT"
 EOF
     umask 022
     if [ -n "$SUDO_USER" ]; then
@@ -432,17 +436,24 @@ EOF
   elif [ "$REMOTE_DIR" = "~/kiwi_jars" ]; then
     echo "ℹ️  Updating OBMAS REMOTE_DIR from ~/kiwi_jars to ~/built_jar"
     REMOTE_DIR="~/built_jar"
-    umask 077
-    cat > "$cfg_file" <<EOF
-REMOTE_HOST="$REMOTE_HOST"
-REMOTE_USER="$REMOTE_USER"
-REMOTE_DIR="$REMOTE_DIR"
-REMOTE_PASS="$REMOTE_PASS"
+  fi
+  # Defaults for newly added fields
+  REMOTE_PROTO=${REMOTE_PROTO:-ftp}
+  REMOTE_PORT=${REMOTE_PORT:-21}
+
+  # Persist any migrated/defaulted values back to file
+  umask 077
+  cat > "$cfg_file" <<EOF
+REMOTE_HOST="${REMOTE_HOST}"
+REMOTE_USER="${REMOTE_USER}"
+REMOTE_DIR="${REMOTE_DIR}"
+REMOTE_PASS="${REMOTE_PASS}"
+REMOTE_PROTO="${REMOTE_PROTO}"
+REMOTE_PORT="${REMOTE_PORT}"
 EOF
-    umask 022
-    if [ -n "$SUDO_USER" ]; then
-      chown "$SUDO_USER":"$SUDO_USER" "$cfg_file" || true
-    fi
+  umask 022
+  if [ -n "$SUDO_USER" ]; then
+    chown "$SUDO_USER":"$SUDO_USER" "$cfg_file" || true
   fi
 
   if [ ! -d "$src_dir" ] || [ -z "$(ls -1 "$src_dir"/*.jar 2>/dev/null)" ]; then
@@ -450,17 +461,51 @@ EOF
     return 1
   fi
 
-  echo "🌐 Sending jars to $REMOTE_USER@$REMOTE_HOST:$REMOTE_DIR ..."
-  if command -v sshpass >/dev/null 2>&1; then
-    sshpass -p "$REMOTE_PASS" ssh -o StrictHostKeyChecking=no "$REMOTE_USER@$REMOTE_HOST" "mkdir -p \"$REMOTE_DIR\""
-    sshpass -p "$REMOTE_PASS" scp -o StrictHostKeyChecking=no "$src_dir"/*.jar "$REMOTE_USER@$REMOTE_HOST":"$REMOTE_DIR"/
-  else
-    echo "ℹ️  'sshpass' not found; using interactive ssh/scp (you may be prompted for password)."
-    ssh -o StrictHostKeyChecking=no "$REMOTE_USER@$REMOTE_HOST" "mkdir -p \"$REMOTE_DIR\""
-    scp -o StrictHostKeyChecking=no "$src_dir"/*.jar "$REMOTE_USER@$REMOTE_HOST":"$REMOTE_DIR"/
+  if ! command -v curl >/dev/null 2>&1; then
+    echo "❌ 'curl' is required for FTP upload but not found in PATH"
+    echo "   Please install curl and retry."
+    return 1
   fi
 
-  echo "✅ Jars sent to $REMOTE_USER@$REMOTE_HOST:$REMOTE_DIR"
+  # Normalize remote path for FTP (strip leading ~/) – FTP servers typically start at user's home
+  local REMOTE_PATH="$REMOTE_DIR"
+  if [[ "$REMOTE_PATH" == ~/* ]]; then
+    REMOTE_PATH="${REMOTE_PATH#~/}"
+  elif [[ "$REMOTE_PATH" == "~" ]]; then
+    REMOTE_PATH=""
+  fi
+
+  local base_url
+  if [ -n "$REMOTE_PATH" ]; then
+    base_url="${REMOTE_PROTO}://${REMOTE_HOST}:${REMOTE_PORT}/${REMOTE_PATH}/"
+  else
+    base_url="${REMOTE_PROTO}://${REMOTE_HOST}:${REMOTE_PORT}/"
+  fi
+
+  echo "🌐 Sending jars to ${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_PORT}/${REMOTE_PATH:-<home>} via ${REMOTE_PROTO^^} ..."
+  local any_failed=false
+  shopt -s nullglob
+  for f in "$src_dir"/*.jar; do
+    [ -e "$f" ] || continue
+    local fname
+    fname="$(basename "$f")"
+    echo "   → Uploading $fname"
+    # --ftp-create-dirs creates missing remote directories
+    if ! curl -sS --fail --ftp-create-dirs -u "$REMOTE_USER:$REMOTE_PASS" -T "$f" "$base_url"; then
+      echo "     ❌ Failed to upload $fname"
+      any_failed=true
+    else
+      echo "     ✅ Uploaded $fname"
+    fi
+  done
+  shopt -u nullglob
+
+  if [ "$any_failed" = true ]; then
+    echo "⚠️  Some uploads failed. Please check connectivity/credentials and retry."
+    return 1
+  fi
+
+  echo "✅ All jars sent to ${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_PORT}/${REMOTE_PATH:-<home>}"
 }
 
 # === NEW: OSJ short-circuit workflow (send-only) ===
@@ -502,7 +547,7 @@ if [ "$ONLY_SEND_JARS" = true ]; then
     exit 1
   fi
 
-  # Perform send
+  # Perform send (via FTP)
   send_jars_remote "$ORIGINAL_HOME" || { echo "❌ Failed sending jars"; exit 1; }
 
   echo "== OSJ FLOW: DONE. Exiting without any git/maven/docker steps. =="
@@ -1372,7 +1417,7 @@ selective_deployment() {
             echo "🧩 docker compose (project=kiwi-service): ${APP_TARGETS[*]}"
             $COMPOSE_CMD --project-name kiwi-service -f "$SERV_YML" up -d --no-deps --force-recreate --remove-orphans "${APP_TARGETS[@]}"
         fi
-    } else {
+    else
         echo "ℹ️  docker compose not found; falling back to legacy per-service build/run"
         for service in "${SERVICE_ARRAY[@]}"; do
             echo ""

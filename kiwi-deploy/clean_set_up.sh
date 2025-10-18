@@ -2,20 +2,26 @@
 
 # Kiwi Microservice Cleanup Script for Raspberry Pi OS
 # This script cleans up progress tracking and configuration files
+# Updated: manage files under /root/microservice-kiwi/kiwi-deploy to match setup
 
 set -e  # Exit on any error
 
 # Configuration
-PROGRESS_FILE="$(pwd)/.kiwi_setup_progress"
-CONFIG_FILE="$(pwd)/.kiwi_setup_config"
 SCRIPT_USER=${SUDO_USER:-$USER}
 SCRIPT_HOME=$(eval echo ~$SCRIPT_USER)
+SETUP_BASE_DIR="/root/microservice-kiwi/kiwi-deploy"
+PROGRESS_FILE="$SETUP_BASE_DIR/.kiwi_setup_progress"
+CONFIG_FILE="$SETUP_BASE_DIR/.kiwi_setup_config"
+LOG_FILE="$SETUP_BASE_DIR/.kiwi_setup.log"
+
+mkdir -p "$SETUP_BASE_DIR" 2>/dev/null || true
 
 echo "=================================="
 echo "Kiwi Microservice Setup Cleanup"
 echo "Running as: $(whoami)"
 echo "Target user: $SCRIPT_USER"
 echo "Target home: $SCRIPT_HOME"
+echo "Files under: $SETUP_BASE_DIR"
 echo "=================================="
 
 # Function to display menu
@@ -39,9 +45,9 @@ show_status() {
 
     echo "Progress file: $PROGRESS_FILE"
     if [ -f "$PROGRESS_FILE" ]; then
-        echo "  ✓ EXISTS ($(wc -l < "$PROGRESS_FILE") completed steps)"
-        echo "  Size: $(ls -lh "$PROGRESS_FILE" | awk '{print $5}')"
-        echo "  Last modified: $(ls -l "$PROGRESS_FILE" | awk '{print $6, $7, $8}')"
+        echo "  ✓ EXISTS ($(wc -l < \"$PROGRESS_FILE\") completed steps)"
+        echo "  Size: $(ls -lh \"$PROGRESS_FILE\" | awk '{print $5}')"
+        echo "  Last modified: $(ls -l \"$PROGRESS_FILE\" | awk '{print $6, $7, $8}')"
     else
         echo "  ✗ DOES NOT EXIST"
     fi
@@ -49,9 +55,21 @@ show_status() {
     echo
     echo "Config file: $CONFIG_FILE"
     if [ -f "$CONFIG_FILE" ]; then
-        echo "  ✓ EXISTS ($(wc -l < "$CONFIG_FILE") configuration entries)"
-        echo "  Size: $(ls -lh "$CONFIG_FILE" | awk '{print $5}')"
-        echo "  Last modified: $(ls -l "$CONFIG_FILE" | awk '{print $6, $7, $8}')"
+        echo "  ✓ EXISTS ($(wc -l < \"$CONFIG_FILE\") configuration entries)"
+        echo "  Size: $(ls -lh \"$CONFIG_FILE\" | awk '{print $5}')"
+        echo "  Last modified: $(ls -l \"$CONFIG_FILE\" | awk '{print $6, $7, $8}')"
+    else
+        echo "  ✗ DOES NOT EXIST"
+    fi
+
+    echo
+    echo "Log file: $LOG_FILE"
+    if [ -f "$LOG_FILE" ]; then
+        echo "  ✓ EXISTS"
+        echo "  Size: $(ls -lh \"$LOG_FILE\" | awk '{print $5}')"
+        echo "  Last modified: $(ls -l \"$LOG_FILE\" | awk '{print $6, $7, $8}')"
+        echo "  Last 5 lines:"
+        tail -n 5 "$LOG_FILE" || true
     else
         echo "  ✗ DOES NOT EXIST"
     fi
@@ -60,7 +78,7 @@ show_status() {
     if [ -f "$PROGRESS_FILE" ]; then
         echo "COMPLETED STEPS:"
         echo "==============="
-        cat "$PROGRESS_FILE" | sed 's/^/  ✓ /'
+        sed 's/^/  ✓ /' "$PROGRESS_FILE"
     fi
 
     echo
@@ -80,7 +98,7 @@ show_status() {
 # Function to backup files
 backup_files() {
     local timestamp=$(date '+%Y%m%d_%H%M%S')
-    local backup_dir="$(pwd)/kiwi_setup_backups"
+    local backup_dir="$SETUP_BASE_DIR/kiwi_setup_backups"
 
     echo "Creating backup directory: $backup_dir"
     mkdir -p "$backup_dir"
@@ -100,6 +118,12 @@ backup_files() {
         echo "✓ Config file backed up to: $config_backup"
     else
         echo "⚠ No config file to backup"
+    fi
+
+    if [ -f "$LOG_FILE" ]; then
+        local log_backup="$backup_dir/.kiwi_setup.log_$timestamp"
+        cp "$LOG_FILE" "$log_backup"
+        echo "✓ Log file backed up to: $log_backup"
     fi
 
     echo "✓ Backup completed in: $backup_dir"

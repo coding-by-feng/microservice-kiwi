@@ -2,9 +2,9 @@
 
 # Enhanced Kiwi Microservice Setup Script for Raspberry Pi OS
 # This script automates the complete setup process with step tracking and selective re-initialization
-# Version: 2.3 - Added docker.io fallback installation
-# CHANGE: If both official script and manual repo install fail, try: apt install -y docker.io
-# FIXED: Proper file paths, permissions, and status display
+# Version: 2.5 - Added auto IP detection during initial config (no prompts for IPs)
+# CHANGE: Auto-detect INFRASTRUCTURE_IP and SERVICE_IP via netdiscover in early config
+# FIXED: Centralized IP detection logic for reuse in Step 24
 
 set -e  # Exit on any error
 
@@ -15,9 +15,11 @@ cd "$SCRIPT_DIR"
 # Configuration - Use absolute paths
 SCRIPT_USER=${SUDO_USER:-$USER}
 SCRIPT_HOME=$(eval echo ~$SCRIPT_USER)
-PROGRESS_FILE="$SCRIPT_DIR/.kiwi_setup_progress"
-CONFIG_FILE="$SCRIPT_DIR/.kiwi_setup_config"
-LOG_FILE="$SCRIPT_DIR/.kiwi_setup.log"
+# Use root's home for setup files as per requirement
+SETUP_BASE_DIR="/root/microservice-kiwi/kiwi-deploy"
+PROGRESS_FILE="$SETUP_BASE_DIR/.kiwi_setup_progress"
+CONFIG_FILE="$SETUP_BASE_DIR/.kiwi_setup_config"
+LOG_FILE="$SETUP_BASE_DIR/.kiwi_setup.log"
 
 # Color codes for better output
 RED='\033[0;31m'
@@ -27,6 +29,9 @@ BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
 # Ensure log file exists and is writable
+# Create base directory first to avoid touch failures
+mkdir -p "$SETUP_BASE_DIR" 2>/dev/null || true
+
 touch "$LOG_FILE" 2>/dev/null || {
     LOG_FILE="/tmp/kiwi_setup.log"
     touch "$LOG_FILE"
@@ -38,25 +43,10 @@ log() {
 }
 
 # Colored output functions
-print_success() {
-    echo -e "${GREEN}✓ $1${NC}"
-    log "SUCCESS: $1"
-}
-
-print_error() {
-    echo -e "${RED}✗ $1${NC}"
-    log "ERROR: $1"
-}
-
-print_warning() {
-    echo -e "${YELLOW}⚠ $1${NC}"
-    log "WARNING: $1"
-}
-
-print_info() {
-    echo -e "${BLUE}ℹ $1${NC}"
-    log "INFO: $1"
-}
+print_success() { echo -e "${GREEN}✓ $1${NC}"; log "SUCCESS: $1"; }
+print_error() { echo -e "${RED}✗ $1${NC}"; log "ERROR: $1"; }
+print_warning() { echo -e "${YELLOW}⚠ $1${NC}"; log "WARNING: $1"; }
+print_info() { echo -e "${BLUE}ℹ $1${NC}"; log "INFO: $1"; }
 
 # Helper: find a free TCP port starting from a base in a range
 find_free_port() {
@@ -66,47 +56,129 @@ find_free_port() {
     for ((p=start; p<=end; p++)); do
         if command -v lsof >/dev/null 2>&1; then
             if ! lsof -iTCP -sTCP:LISTEN -n -P 2>/dev/null | grep -q ":$p "; then
-                echo "$p"
-                return 0
+                echo "$p"; return 0
             fi
         elif command -v ss >/dev/null 2>&1; then
             if ! ss -ltn 2>/dev/null | awk '{print $4}' | grep -q ":$p$"; then
-                echo "$p"
-                return 0
+                echo "$p"; return 0
             fi
         else
-            # Fallback using netstat if available
             if command -v netstat >/dev/null 2>&1; then
                 if ! netstat -tln 2>/dev/null | awk '{print $4}' | grep -q ":$p$"; then
-                    echo "$p"
-                    return 0
+                    echo "$p"; return 0
                 fi
             else
-                # No tools to check; optimistically return the first candidate
-                echo "$p"
-                return 0
+                echo "$p"; return 0
             fi
         fi
     done
-    # If no free port found, return start as last resort
-    echo "$start"
-    return 1
+    echo "$start"; return 1
 }
 
 # Initialize files with proper permissions
 initialize_files() {
-    # Create files if they don't exist
+    mkdir -p "$SETUP_BASE_DIR" 2>/dev/null || true
     for file in "$PROGRESS_FILE" "$CONFIG_FILE" "$LOG_FILE"; do
         if [ ! -f "$file" ]; then
             touch "$file"
-            if [ "$file" = "$CONFIG_FILE" ]; then
-                chmod 600 "$file"  # Restrictive for config with passwords
-            else
-                chmod 644 "$file"  # Readable for others
-            fi
+            if [ "$file" = "$CONFIG_FILE" ]; then chmod 600 "$file"; else chmod 644 "$file"; fi
             chown $SCRIPT_USER:$SCRIPT_USER "$file" 2>/dev/null || true
         fi
     done
+}
+
+# Auto-detect network IPs by MAC addresses using netdiscover
+# Utility: run netdiscover quickly with timeout and stable output
+run_netdiscover_quick_scan() {
+    local range="192.168.1.0/16"
+    local timeout_secs=25
+    local iface=""
+    # Try determine default interface
+    if command -v ip >/dev/null 2>&1; then
+        iface=$(ip -o -4 route show to default 2>/dev/null | awk '{for(i=1;i<=NF;i++) if($i=="dev"){print $(i+1); exit}}')
+    fi
+    # Compose command variants (prefer non-interactive print mode)
+    local out=""
+    print_info "Running network scan (up to ${timeout_secs}s): netdiscover -r ${range}${iface:+ -i ${iface}}"
+
+    if command -v timeout >/dev/null 2>&1; then
+        # Try with -P (print one-shot) and -N (no vendor/resolve) first
+        out=$(timeout ${timeout_secs}s netdiscover -r "$range" ${iface:+-i "$iface"} -P -N 2>/dev/null || true)
+        if [ -z "$out" ]; then
+            out=$(timeout ${timeout_secs}s netdiscover -r "$range" ${iface:+-i "$iface"} -P 2>/dev/null || true)
+        fi
+        if [ -z "$out" ]; then
+            out=$(timeout ${timeout_secs}s netdiscover -r "$range" ${iface:+-i "$iface"} 2>/dev/null || true)
+        fi
+    else
+        # Fallback without timeout (may take longer on large ranges)
+        out=$(netdiscover -r "$range" ${iface:+-i "$iface"} -P -N 2>/dev/null || true)
+        [ -z "$out" ] && out=$(netdiscover -r "$range" ${iface:+-i "$iface"} 2>/dev/null || true)
+    fi
+
+    # If still empty, try simple ARP table as a last resort
+    if [ -z "$out" ]; then
+        print_warning "netdiscover returned no output. Falling back to ARP tables."
+        if command -v ip >/dev/null 2>&1; then
+            out=$(ip neigh show 2>/dev/null | awk '{if($1~/^[0-9]/ && $5~/([0-9a-f]{2}:){5}[0-9a-f]{2}/) printf("%s    %s\n", $1, $5)}')
+        fi
+        if [ -z "$out" ] && command -v arp >/dev/null 2>&1; then
+            out=$(arp -an 2>/dev/null | awk '{ip=$2; gsub(/[()]/,"",ip); mac=$4; if(ip~/^[0-9]/ && mac~/([0-9a-fA-F]{2}:){5}[0-9a-fA-F]{2}/) printf("%s    %s\n", ip, tolower(mac))}')
+        fi
+    fi
+
+    # Log raw scan (trim to a reasonable size)
+    if [ -n "$out" ]; then
+        echo "----- netdiscover scan (truncated to 200 lines) -----" >> "$LOG_FILE"
+        echo "$out" | head -n 200 >> "$LOG_FILE"
+        echo "----- end scan -----" >> "$LOG_FILE"
+    fi
+
+    echo "$out"
+}
+
+# Auto-detect network IPs by MAC addresses using netdiscover
+# Sets and saves: INFRASTRUCTURE_IP, SERVICE_IP, FASTDFS_NON_LOCAL_IP (to infrastructure)
+detect_network_ips() {
+    print_info "Detecting infrastructure and service IPs via netdiscover..."
+    # Ensure netdiscover installed
+    if ! command -v netdiscover >/dev/null 2>&1; then
+        print_info "Installing netdiscover..."
+        apt-get update -y
+        apt-get install -y netdiscover || { print_error "Failed to install netdiscover"; return 1; }
+    fi
+    local INFRA_MAC="2c:cf:67:53:f1:c4"
+    local SERVICE_MAC="14:d4:24:7f:12:27"
+
+    # Perform quick scan (bounded by timeout)
+    local SCAN_RAW
+    SCAN_RAW=$(run_netdiscover_quick_scan)
+    if [ -z "$SCAN_RAW" ]; then
+        print_error "No scan output available; cannot detect IPs."
+        return 1
+    fi
+
+    # Normalize to lowercase and parse
+    local SCAN_LOWER
+    SCAN_LOWER=$(echo "$SCAN_RAW" | tr '[:upper:]' '[:lower:]')
+
+    local infra_ip service_ip
+    infra_ip=$(echo "$SCAN_LOWER" | awk -v mac="$INFRA_MAC" 'index($0, mac){print $1; exit}')
+    service_ip=$(echo "$SCAN_LOWER" | awk -v mac="$SERVICE_MAC" 'index($0, mac){print $1; exit}')
+
+    if [ -n "$infra_ip" ]; then
+        save_config "INFRASTRUCTURE_IP" "$infra_ip"
+        save_config "FASTDFS_NON_LOCAL_IP" "$infra_ip"
+        print_success "Infrastructure IP detected: $infra_ip (MAC $INFRA_MAC)"
+    else
+        print_warning "Infrastructure MAC $INFRA_MAC not found in scan."
+    fi
+    if [ -n "$service_ip" ]; then
+        save_config "SERVICE_IP" "$service_ip"
+        print_success "Service IP detected: $service_ip (MAC $SERVICE_MAC)"
+    else
+        print_warning "Service MAC $SERVICE_MAC not found in scan."
+    fi
 }
 
 # Initialize files at script start
@@ -114,7 +186,7 @@ initialize_files
 
 echo "=================================="
 echo "Enhanced Kiwi Microservice Setup for Raspberry Pi"
-echo "Version: 2.2 - Fixed File Handling"
+echo "Version: 2.5 - Auto IP detection + /root storage"
 echo "Running as: $(whoami)"
 echo "Target user: $SCRIPT_USER"
 echo "Target home: $SCRIPT_HOME"
@@ -387,47 +459,34 @@ get_db_passwords() {
         save_config "FASTDFS_HOSTNAME" "$FASTDFS_HOSTNAME"
     fi
 
-    # Load FastDFS Non-Local IP
-    if has_config "FASTDFS_NON_LOCAL_IP"; then
-        FASTDFS_NON_LOCAL_IP=$(load_config "FASTDFS_NON_LOCAL_IP")
-        print_info "Using saved FastDFS Non-Local IP: $FASTDFS_NON_LOCAL_IP"
-    else
-        print_info "FastDFS Non-Local IP is used specifically for: fastdfs.fengorz.me"
-        prompt_for_input "Enter FastDFS Non-Local IP (press Enter to use Infrastructure IP)" "input_fastdfs_ip" "false" \
-            "^$|^([0-9]{1,3}\.){3}[0-9]{1,3}$" "Please enter a valid IP address or press Enter"
-        FASTDFS_NON_LOCAL_IP=${input_fastdfs_ip}
-        save_config "FASTDFS_NON_LOCAL_IP" "$FASTDFS_NON_LOCAL_IP"
-    fi
+    # Auto-detect IPs instead of prompting
+    detect_network_ips || print_warning "Auto IP detection did not complete; ensure devices are online."
 
-    # Load Infrastructure IP
-    if has_config "INFRASTRUCTURE_IP"; then
-        INFRASTRUCTURE_IP=$(load_config "INFRASTRUCTURE_IP")
-        print_info "Using saved Infrastructure IP: $INFRASTRUCTURE_IP"
-    else
-        print_info "Infrastructure IP is used for: kiwi-ui, kiwi-redis, kiwi-rabbitmq, kiwi-db, kiwi-fastdfs, kiwi-es"
-        prompt_for_input "Enter Infrastructure IP (default: 127.0.0.1)" "input_ip" "false" \
-            "^$|^([0-9]{1,3}\.){3}[0-9]{1,3}$" "Please enter a valid IP address"
-        INFRASTRUCTURE_IP=${input_ip:-127.0.0.1}
+    # Load Infrastructure IP after detection
+    INFRASTRUCTURE_IP=$(load_config "INFRASTRUCTURE_IP" 2>/dev/null || echo "")
+    if [ -z "$INFRASTRUCTURE_IP" ]; then
+        print_warning "Infrastructure IP not detected; defaulting to 127.0.0.1"
+        INFRASTRUCTURE_IP="127.0.0.1"
         save_config "INFRASTRUCTURE_IP" "$INFRASTRUCTURE_IP"
+    else
+        print_info "Infrastructure IP set to: $INFRASTRUCTURE_IP"
     fi
 
-    # Set FastDFS Non-Local IP to Infrastructure IP if it wasn't specified
+    # Ensure FastDFS Non-Local IP mirrors infrastructure if unset
+    FASTDFS_NON_LOCAL_IP=$(load_config "FASTDFS_NON_LOCAL_IP" 2>/dev/null || echo "")
     if [ -z "$FASTDFS_NON_LOCAL_IP" ]; then
         FASTDFS_NON_LOCAL_IP="$INFRASTRUCTURE_IP"
         save_config "FASTDFS_NON_LOCAL_IP" "$FASTDFS_NON_LOCAL_IP"
-        print_info "FastDFS Non-Local IP set to Infrastructure IP: $FASTDFS_NON_LOCAL_IP"
     fi
 
-    # Load Service IP
-    if has_config "SERVICE_IP"; then
-        SERVICE_IP=$(load_config "SERVICE_IP")
-        print_info "Using saved Service IP: $SERVICE_IP"
-    else
-        print_info "Service IP is used for microservices"
-        prompt_for_input "Enter Service IP (default: 127.0.0.1)" "input_ip" "false" \
-            "^$|^([0-9]{1,3}\.){3}[0-9]{1,3}$" "Please enter a valid IP address"
-        SERVICE_IP=${input_ip:-127.0.0.1}
+    # Load Service IP after detection
+    SERVICE_IP=$(load_config "SERVICE_IP" 2>/dev/null || echo "")
+    if [ -z "$SERVICE_IP" ]; then
+        print_warning "Service IP not detected; defaulting to 127.0.0.1"
+        SERVICE_IP="127.0.0.1"
         save_config "SERVICE_IP" "$SERVICE_IP"
+    else
+        print_info "Service IP set to: $SERVICE_IP"
     fi
 
     # Load Elasticsearch passwords
@@ -1825,28 +1884,15 @@ execute_step_23_ftp_setup() {
 # New Step 24: Update IPs and configs
 execute_step_24_ip_update() {
     if ! is_step_completed "ip_update"; then
-        print_info "Step 24: Updating IPs for hosts, .bashrc, and FastDFS config..."
-
-        # Prompt for new Infrastructure IP
-        prompt_for_input "Enter new Infrastructure IP (IPv4)" "NEW_IP" "false" "^([0-9]{1,3}\.){3}[0-9]{1,3}$" "Please enter a valid IPv4 address"
-
-        # Prompt for new Service IP (allow default to current SERVICE_IP or NEW_IP)
-        CURR_SERVICE_IP=$(load_config "SERVICE_IP" 2>/dev/null || echo "")
-        [ -z "$CURR_SERVICE_IP" ] && CURR_SERVICE_IP="$NEW_IP"
-        while true; do
-            read -p "Enter new Service IP (IPv4) [default: ${CURR_SERVICE_IP}]: " NEW_SERVICE_IP
-            NEW_SERVICE_IP=${NEW_SERVICE_IP:-$CURR_SERVICE_IP}
-            if [[ "$NEW_SERVICE_IP" =~ ^([0-9]{1,3}\.){3}[0-9]{1,3}$ ]]; then
-                break
-            else
-                print_warning "Please enter a valid IPv4 address"
-            fi
-        done
-
-        # Save to config
-        save_config "INFRASTRUCTURE_IP" "$NEW_IP"
-        save_config "FASTDFS_NON_LOCAL_IP" "$NEW_IP"
-        save_config "SERVICE_IP" "$NEW_SERVICE_IP"
+        print_info "Step 24: Updating IPs for hosts, .bashrc, and FastDFS config (auto-detect via netdiscover)..."
+        # Reuse detection to ensure latest IPs
+        detect_network_ips || {
+            print_error "Auto-detection failed; cannot update IPs."
+            return 1
+        }
+        # Reload from config
+        NEW_IP=$(load_config "INFRASTRUCTURE_IP")
+        NEW_SERVICE_IP=$(load_config "SERVICE_IP")
 
         # Update ~/.bashrc variables
         print_info "Updating ~/.bashrc environment variables..."
@@ -1900,8 +1946,8 @@ EOF
 
         # Optionally refresh FastDFS storage container with new TRACKER_SERVER
         # Only act if FastDFS containers already exist; do not create new ones here
-        TRACKER_EXISTS=false
-        STORAGE_EXISTS=false
+        local TRACKER_EXISTS=false
+        local STORAGE_EXISTS=false
         if docker ps -a --format '{{.Names}}' | grep -q '^tracker$'; then TRACKER_EXISTS=true; fi
         if docker ps -a --format '{{.Names}}' | grep -q '^storage$'; then STORAGE_EXISTS=true; fi
 
@@ -1911,8 +1957,10 @@ EOF
             if [ "$STORAGE_EXISTS" = true ]; then
                 print_info "Recreating FastDFS storage container with updated TRACKER_SERVER..."
                 # Determine image
+                local FASTDFS_IMAGE
                 FASTDFS_IMAGE=$(load_config "fastdfs_image_used")
                 if [ -z "$FASTDFS_IMAGE" ]; then
+                    local ARCH
                     ARCH=$(uname -m)
                     case $ARCH in
                         x86_64|amd64) FASTDFS_IMAGE="delron/fastdfs:latest" ;;
@@ -1921,6 +1969,7 @@ EOF
                     esac
                 fi
                 # Determine HTTP port and ensure it's available; fallback if needed
+                local FASTDFS_HTTP_PORT
                 FASTDFS_HTTP_PORT=$(load_config "FASTDFS_HTTP_PORT" 2>/dev/null || echo 8888)
                 if command -v lsof >/dev/null 2>&1; then
                     if lsof -iTCP -sTCP:LISTEN -n -P 2>/dev/null | grep -q ":$FASTDFS_HTTP_PORT "; then
@@ -1938,8 +1987,8 @@ EOF
                 docker rm storage >/dev/null 2>&1 || true
 
                 # Try running storage; if port conflict occurs, retry with a new port
-                ATTEMPTS=0
-                MAX_ATTEMPTS=5
+                local ATTEMPTS=0
+                local MAX_ATTEMPTS=5
                 while true; do
                     set +e
                     docker run -tid \
@@ -1959,7 +2008,7 @@ EOF
                     fi
                     ((ATTEMPTS++))
                     if [ $ATTEMPTS -ge $MAX_ATTEMPTS ]; then
-                        print_error "Failed to recreate FastDFS storage after $ATTEMPTS attempts. Check Docker logs."
+                        print_error "Failed to start FastDFS storage after $ATTEMPTS attempts. Check Docker logs."
                         break
                     fi
                     print_warning "Port $FASTDFS_HTTP_PORT may be busy. Retrying with a new port... (attempt $ATTEMPTS)"

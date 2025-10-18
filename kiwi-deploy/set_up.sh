@@ -15,8 +15,8 @@ cd "$SCRIPT_DIR"
 # Configuration - Use absolute paths
 SCRIPT_USER=${SUDO_USER:-$USER}
 SCRIPT_HOME=$(eval echo ~$SCRIPT_USER)
-# Use root's home for setup files as per requirement
-SETUP_BASE_DIR="/root/microservice-kiwi/kiwi-deploy"
+# Use the target user's home for setup files (changed from subfolder to home path)
+SETUP_BASE_DIR="$SCRIPT_HOME"
 PROGRESS_FILE="$SETUP_BASE_DIR/.kiwi_setup_progress"
 CONFIG_FILE="$SETUP_BASE_DIR/.kiwi_setup_config"
 LOG_FILE="$SETUP_BASE_DIR/.kiwi_setup.log"
@@ -1883,16 +1883,54 @@ execute_step_23_ftp_setup() {
 
 # New Step 24: Update IPs and configs
 execute_step_24_ip_update() {
-    if ! is_step_completed "ip_update"; then
-        print_info "Step 24: Updating IPs for hosts, .bashrc, and FastDFS config (auto-detect via netdiscover)..."
-        # Reuse detection to ensure latest IPs
-        detect_network_ips || {
-            print_error "Auto-detection failed; cannot update IPs."
-            return 1
-        }
-        # Reload from config
+    # Check for explicit overrides to force update even if step is marked completed
+    local OV_INFRA OV_SERVICE FORCE_UPDATE=false
+    OV_INFRA="${INFRASTRUCTURE_IP_OVERRIDE:-}"
+    OV_SERVICE="${SERVICE_IP_OVERRIDE:-}"
+    if [ -n "$OV_INFRA" ] && is_valid_ipv4 "$OV_INFRA"; then FORCE_UPDATE=true; fi
+    if [ -n "$OV_SERVICE" ] && is_valid_ipv4 "$OV_SERVICE"; then FORCE_UPDATE=true; fi
+
+    if ! is_step_completed "ip_update" || [ "$FORCE_UPDATE" = true ]; then
+        print_info "Step 24: Updating IPs for hosts, .bashrc, and FastDFS config (auto-detect via netdiscover or env overrides)..."
+        # Capture old values to detect change after detection
+        local OLD_INFRA OLD_SERVICE
+        OLD_INFRA=$(load_config "INFRASTRUCTURE_IP" 2>/dev/null || echo "")
+        OLD_SERVICE=$(load_config "SERVICE_IP" 2>/dev/null || echo "")
+
+        # Prefer explicit overrides if provided
+        # (re-use OV_INFRA/OV_SERVICE computed above)
+        local USED_OVERRIDE=false
+        if [ -n "$OV_INFRA" ] && is_valid_ipv4 "$OV_INFRA"; then
+            save_config "INFRASTRUCTURE_IP" "$OV_INFRA"
+            save_config "FASTDFS_NON_LOCAL_IP" "$OV_INFRA"
+            USED_OVERRIDE=true
+        elif [ -n "$OV_INFRA" ]; then
+            print_warning "Provided INFRASTRUCTURE_IP_OVERRIDE ('$OV_INFRA') is not a valid IPv4; ignoring."
+        fi
+        if [ -n "$OV_SERVICE" ] && is_valid_ipv4 "$OV_SERVICE"; then
+            save_config "SERVICE_IP" "$OV_SERVICE"
+            USED_OVERRIDE=true
+        elif [ -n "$OV_SERVICE" ]; then
+            print_warning "Provided SERVICE_IP_OVERRIDE ('$OV_SERVICE') is not a valid IPv4; ignoring."
+        fi
+
+        # If no valid overrides provided, fall back to auto-detection
+        if [ "$USED_OVERRIDE" = false ]; then
+            # Reuse detection to ensure latest IPs
+            detect_network_ips || {
+                print_error "Auto-detection failed; cannot update IPs."
+                return 1
+            }
+        fi
+
+        # Reload from config (now contains overrides or auto-detected values)
         NEW_IP=$(load_config "INFRASTRUCTURE_IP")
         NEW_SERVICE_IP=$(load_config "SERVICE_IP")
+
+        # Determine whether IPs changed
+        local IP_CHANGED=false
+        if [ -n "$NEW_IP" ] && [ "$NEW_IP" != "${OLD_INFRA:-}" ]; then IP_CHANGED=true; fi
+        if [ -n "$NEW_SERVICE_IP" ] && [ "$NEW_SERVICE_IP" != "${OLD_SERVICE:-}" ]; then IP_CHANGED=true; fi
 
         # Update ~/.bashrc variables
         print_info "Updating ~/.bashrc environment variables..."
@@ -2031,11 +2069,58 @@ EOF
 
         mark_step_completed "ip_update"
 
+        # If IPs changed, redeploy services using existing jars
+        if [ "$IP_CHANGED" = true ]; then
+            print_info "IPs changed during Step 24. Redeploying services in OUEJ mode..."
+            # Load required env vars from config for deployKiwi.sh
+            local _KIWI_ENC _GROK _MYSQL _REDIS _FDFS_HOST _ES_ROOT _ES_USER _ES_PASS _FASTDFS_NL
+            _KIWI_ENC=$(load_config "KIWI_ENC_PASSWORD" 2>/dev/null || echo "")
+            _GROK=$(load_config "GROK_API_KEY" 2>/dev/null || echo "")
+            _MYSQL=$(load_config "MYSQL_ROOT_PASSWORD" 2>/dev/null || echo "")
+            _REDIS=$(load_config "REDIS_PASSWORD" 2>/dev/null || echo "")
+            _FDFS_HOST=$(load_config "FASTDFS_HOSTNAME" 2>/dev/null || echo "fastdfs.fengorz.me")
+            _ES_ROOT=$(load_config "ES_ROOT_PASSWORD" 2>/dev/null || echo "")
+            _ES_USER=$(load_config "ES_USER_NAME" 2>/dev/null || echo "")
+            _ES_PASS=$(load_config "ES_USER_PASSWORD" 2>/dev/null || echo "")
+            _FASTDFS_NL="$NEW_IP"
+
+            if [ -x "$SCRIPT_HOME/easy-deploy" ]; then
+                (
+                  cd "$SCRIPT_HOME"
+                  # Run with a preserved environment for deployKiwi.sh checks
+                  sudo -E env \
+                    KIWI_ENC_PASSWORD="$_KIWI_ENC" \
+                    DB_IP="$NEW_IP" \
+                    GROK_API_KEY="$_GROK" \
+                    MYSQL_ROOT_PASSWORD="$_MYSQL" \
+                    REDIS_PASSWORD="$_REDIS" \
+                    FASTDFS_HOSTNAME="$_FDFS_HOST" \
+                    FASTDFS_NON_LOCAL_IP="$_FASTDFS_NL" \
+                    ES_ROOT_PASSWORD="$_ES_ROOT" \
+                    ES_USER_NAME="$_ES_USER" \
+                    ES_USER_PASSWORD="$_ES_PASS" \
+                    INFRASTRUCTURE_IP="$NEW_IP" \
+                    SERVICE_IP="$NEW_SERVICE_IP" \
+                    ./easy-deploy -mode=ouej >> "$SCRIPT_HOME/deploy_after_ip_update.log" 2>&1
+                ) || print_warning "OUEJ redeploy returned non-zero; see $SCRIPT_HOME/deploy_after_ip_update.log"
+                print_success "Triggered redeploy (ouej) after IP change"
+            else
+                print_warning "easy-deploy not found at $SCRIPT_HOME/easy-deploy; skipping auto-redeploy"
+            fi
+        else
+            print_info "No IP change detected; skipping auto-redeploy"
+        fi
+
         # Start or ensure the IP change daemon is running
         if [ -x "$SCRIPT_DIR/infrastructure/ip_change_daemon.sh" ]; then
             print_info "Starting Kiwi IP change daemon..."
-            "$SCRIPT_DIR/infrastructure/ip_change_daemon.sh" start || true
-            print_success "IP change daemon start attempted (check log at /root/microservice-kiwi/kiwi-deploy/ip_change_daemon.log)"
+            # Use sudo to satisfy root requirements for daemon internals
+            sudo -E env \
+              KIWI_SETUP_BASE_DIR="$SETUP_BASE_DIR" \
+              SCRIPT_HOME="$SCRIPT_HOME" \
+              SCRIPT_USER="$SCRIPT_USER" \
+              "$SCRIPT_DIR/infrastructure/ip_change_daemon.sh" start || true
+            print_success "IP change daemon start attempted (log: $SCRIPT_HOME/ip_change_daemon.log)"
         else
             print_warning "IP change daemon script not found or not executable: $SCRIPT_DIR/infrastructure/ip_change_daemon.sh"
         fi
@@ -2046,7 +2131,11 @@ EOF
         # Ensure daemon is running even if step already done
         if [ -x "$SCRIPT_DIR/infrastructure/ip_change_daemon.sh" ]; then
             print_info "Ensuring Kiwi IP change daemon is running..."
-            "$SCRIPT_DIR/infrastructure/ip_change_daemon.sh" start || true
+            sudo -E env \
+              KIWI_SETUP_BASE_DIR="$SETUP_BASE_DIR" \
+              SCRIPT_HOME="$SCRIPT_HOME" \
+              SCRIPT_USER="$SCRIPT_USER" \
+              "$SCRIPT_DIR/infrastructure/ip_change_daemon.sh" start || true
         fi
     fi
 }
@@ -2321,34 +2410,22 @@ show_step_menu() {
 # --- Non-interactive step runner (for automation/daemon use) ---
 RUN_STEP=""
 # Parse simple --run-step flags before main execution
-while [ $# -gt 0 ]; do
-  case "$1" in
+case "${1:-}" in
     --run-step=*) RUN_STEP="${1#*=}"; shift ;;
     --run-step) shift; RUN_STEP="$1"; shift ;;
     --run-ip-update|--step24|--run-step24) RUN_STEP="24"; shift ;;
-    *) break ;;
-  esac
-done
+    *) : ;;
+esac
 
-if [ -n "$RUN_STEP" ]; then
-  # Minimal pre-checks for non-interactive mode
-  if [ "$EUID" -ne 0 ]; then
-    echo "This operation must be run as root (sudo)." >&2
-    exit 1
-  fi
-  initialize_files
-  case "$RUN_STEP" in
-    24|ip|ip_update)
+if [ -n "${RUN_STEP:-}" ]; then
+  if [ "$RUN_STEP" = "24" ]; then
       print_info "Non-interactive: running Step 24 (IP update)"
       execute_step_24_ip_update
-      ;;
-    *)
+      exit $?
+  else
       print_warning "Unsupported --run-step value: $RUN_STEP"
-      exit 2
-      ;;
-  esac
-  # Stop here in non-interactive mode
-  exit 0
+      exit 1
+  fi
 fi
 
 # MAIN EXECUTION

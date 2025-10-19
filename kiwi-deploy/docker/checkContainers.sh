@@ -53,7 +53,7 @@ show_menu() {
     echo "24) Enter container shell"
     echo "25) Stop one container"
     echo "26) Restart one container"
-    echo "27) Quick health logs (last 50 lines from all services)"  # NEW
+    echo "27) Live multi-pane logs dashboard (tail -f all)"  # UPDATED
     echo "0) Exit"
     echo ""
 }
@@ -984,6 +984,79 @@ check_all_failed() {
     fi
 }
 
+# NEW: Multi-pane tmux dashboard for live logs
+logs_dashboard() {
+    echo -e "\n=== MULTI-PANE LIVE LOGS DASHBOARD (SERVICES 1-9) ==="
+    echo "This opens a tmux session with panes for each service showing: docker logs -f (all logs)"
+    echo "- Detach: Ctrl+b then d | Close pane: Ctrl+b then x | Resize: Ctrl+b then arrow keys"
+
+    # Check tmux availability
+    if ! command -v tmux >/dev/null 2>&1; then
+        echo "✗ tmux is not installed or not found in PATH."
+        echo "Install on macOS (Homebrew): brew install tmux"
+        echo "Falling back to quick health logs (static last 50 lines)."
+        quick_health_logs
+        return
+    fi
+
+    local session="kiwi-logs"
+
+    # If session already exists, kill to rebuild
+    if tmux has-session -t "$session" 2>/dev/null; then
+        tmux kill-session -t "$session" 2>/dev/null
+    fi
+
+    # Helper to build the per-pane command
+    build_pane_cmd() {
+        local c_name="$1"
+        local s_name="$2"
+        # Use bash -lc and embed container/service names at generation time
+        echo "bash -lc 'wait_secs=0; \
+while true; do \
+  if sudo docker ps --format \"{{.Names}}\" | grep -q \"^${c_name}$\"; then \
+    echo \"=== ${s_name} (${c_name}) logs (ALL + follow) ===\"; \
+    sudo docker logs -f ${c_name}; \
+    echo \"[${s_name}] docker logs exited. Restarting in 3s...\"; \
+    sleep 3; \
+  else \
+    wait_secs=$((wait_secs+1)); \
+    clear; \
+    echo \"[${s_name}] waiting for container ${c_name} to start... (${wait_secs}s)\"; \
+    eureka_status=$(sudo docker ps --format \"{{.Names}}\" | grep -q \"^kiwi-base-kiwi-eureka-1$\" && echo up || echo down); \
+    config_status=$(sudo docker ps --format \"{{.Names}}\" | grep -q \"^kiwi-base-kiwi-config-1$\" && echo up || echo down); \
+    gate_status=$(sudo docker ps --format \"{{.Names}}\" | grep -q \"^kiwi-service-kiwi-gate-1$\" && echo up || echo down); \
+    echo \"Core health: eureka:${eureka_status} config:${config_status} gate:${gate_status}\"; \
+    if [ \"${c_name}\" = \"kiwi-service-kiwi-upms-1\" ] && [ \"$gate_status\" = \"up\" ]; then \
+       echo \"kiwi-gate is healthy. Starting kiwi-upms...\"; \
+    fi; \
+    sleep 1; \
+  fi; \
+done'"
+    }
+
+    local first=true
+    for key in {1..9}; do
+        IFS='|' read -r container_name service_name <<< "${containers[$key]}"
+        pane_cmd=$(build_pane_cmd "$container_name" "$service_name")
+        if $first; then
+            tmux new-session -d -s "$session" "$pane_cmd"
+            first=false
+        else
+            tmux split-window -t "$session" -v "$pane_cmd"
+        fi
+        tmux select-layout -t "$session" tiled >/dev/null 2>&1
+    done
+
+    # Improve usability
+    tmux set-option -t "$session" status on >/dev/null 2>&1
+    tmux set-option -t "$session" mouse on >/dev/null 2>&1
+    tmux select-layout -t "$session" tiled >/dev/null 2>&1
+
+    echo "Launching tmux dashboard..."
+    sleep 1
+    tmux attach-session -t "$session"
+}
+
 quick_health_logs() {
     echo -e "\n=== QUICK HEALTH CHECK: LAST 50 LINES FROM ALL SERVICE CONTAINERS ==="
     echo "This will show the last 50 log lines for each Kiwi microservice (1-9)."
@@ -1049,10 +1122,11 @@ while true; do
         24) enter_container ;;
         25) stop_single_container ;;
         26) restart_single_container ;;
-        27) quick_health_logs ;;  # NEW
+        27) logs_dashboard ;;  # UPDATED to tmux dashboard
         *) echo "Invalid choice. Please enter a number between 0-27." ;;
     esac
 
     echo ""
     read -p "Press Enter to continue..."
+
 done

@@ -2,8 +2,8 @@
 
 # Enhanced Kiwi Microservice Setup Script for Raspberry Pi OS
 # This script automates the complete setup process with step tracking and selective re-initialization
-# Version: 2.5 - Added auto IP detection during initial config (no prompts for IPs)
-# CHANGE: Auto-detect INFRASTRUCTURE_IP and SERVICE_IP via netdiscover in early config
+# Version: 2.6 - Prefer hostname -I for IP detection (single-Pi mode) and avoid netdiscover during Step 24
+# CHANGE: Auto-detect INFRASTRUCTURE_IP and SERVICE_IP via hostname -I in early config
 # FIXED: Centralized IP detection logic for reuse in Step 24
 
 set -e  # Exit on any error
@@ -228,7 +228,7 @@ initialize_files
 
 echo "=================================="
 echo "Enhanced Kiwi Microservice Setup for Raspberry Pi"
-echo "Version: 2.5 - Auto IP detection + /root storage"
+echo "Version: 2.6 - IP detection via hostname -I"
 echo "Running as: $(whoami)"
 echo "Target user: $SCRIPT_USER"
 echo "Target home: $SCRIPT_HOME"
@@ -501,8 +501,8 @@ get_db_passwords() {
         save_config "FASTDFS_HOSTNAME" "$FASTDFS_HOSTNAME"
     fi
 
-    # Auto-detect IPs instead of prompting
-    detect_network_ips || print_warning "Auto IP detection did not complete; ensure devices are online."
+    # Auto-detect IPs using hostname -I (single-Pi default)
+    detect_ips_via_hostname || print_warning "Auto IP detection via hostname -I failed; defaulted to localhost."
 
     # Load Infrastructure IP after detection
     INFRASTRUCTURE_IP=$(load_config "INFRASTRUCTURE_IP" 2>/dev/null || echo "")
@@ -1923,266 +1923,58 @@ execute_step_23_ftp_setup() {
     fi
 }
 
-# New Step 24: Update IPs and configs
-execute_step_24_ip_update() {
-    # Check for explicit overrides to force update even if step is marked completed
-    local OV_INFRA OV_SERVICE FORCE_UPDATE=false
-    OV_INFRA="${INFRASTRUCTURE_IP_OVERRIDE:-}"
-    OV_SERVICE="${SERVICE_IP_OVERRIDE:-}"
-    if [ -n "$OV_INFRA" ] && is_valid_ipv4 "$OV_INFRA"; then FORCE_UPDATE=true; fi
-    if [ -n "$OV_SERVICE" ] && is_valid_ipv4 "$OV_SERVICE"; then FORCE_UPDATE=true; fi
+# New: Reconcile hosts and bashrc with current config (lightweight, idempotent)
+update_hosts_and_bashrc_from_config() {
+    local CUR_IP CUR_SERVICE_IP CUR_FASTDFS_PORT
+    CUR_IP=$(load_config "INFRASTRUCTURE_IP" 2>/dev/null || echo "127.0.0.1")
+    CUR_SERVICE_IP=$(load_config "SERVICE_IP" 2>/dev/null || echo "127.0.0.1")
+    CUR_FASTDFS_PORT=$(load_config "FASTDFS_HTTP_PORT" 2>/dev/null || echo 8888)
 
-    if ! is_step_completed "ip_update" || [ "$FORCE_UPDATE" = true ]; then
-        print_info "Step 24: Updating IPs for hosts, .bashrc, and FastDFS config (via hostname -I or env overrides)..."
-        # Capture old values to detect change after detection
-        local OLD_INFRA OLD_SERVICE
-        OLD_INFRA=$(load_config "INFRASTRUCTURE_IP" 2>/dev/null || echo "")
-        OLD_SERVICE=$(load_config "SERVICE_IP" 2>/dev/null || echo "")
+    print_info "Reconciling ~/.bashrc and /etc/hosts with saved IPs..."
+    # Update ~/.bashrc exports
+    run_as_user sed -i '/export DB_IP=/d' "$SCRIPT_HOME/.bashrc" 2>/dev/null || true
+    run_as_user sed -i '/export FASTDFS_NON_LOCAL_IP=/d' "$SCRIPT_HOME/.bashrc" 2>/dev/null || true
+    run_as_user sed -i '/export INFRASTRUCTURE_IP=/d' "$SCRIPT_HOME/.bashrc" 2>/dev/null || true
+    run_as_user sed -i '/export SERVICE_IP=/d' "$SCRIPT_HOME/.bashrc" 2>/dev/null || true
+    run_as_user sed -i '/export FASTDFS_HTTP_PORT=/d' "$SCRIPT_HOME/.bashrc" 2>/dev/null || true
+    {
+        echo "export DB_IP=\"$CUR_IP\""
+        echo "export FASTDFS_NON_LOCAL_IP=\"$CUR_IP\""
+        echo "export INFRASTRUCTURE_IP=\"$CUR_IP\""
+        echo "export SERVICE_IP=\"$CUR_SERVICE_IP\""
+        echo "export FASTDFS_HTTP_PORT=\"$CUR_FASTDFS_PORT\""
+    } | run_as_user tee -a "$SCRIPT_HOME/.bashrc" > /dev/null
+    run_as_user bash -lc "source ~/.bashrc" || true
 
-        # Prefer explicit overrides if provided
-        # (re-use OV_INFRA/OV_SERVICE computed above)
-        local USED_OVERRIDE=false
-        if [ -n "$OV_INFRA" ] && is_valid_ipv4 "$OV_INFRA"; then
-            save_config "INFRASTRUCTURE_IP" "$OV_INFRA"
-            save_config "FASTDFS_NON_LOCAL_IP" "$OV_INFRA"
-            USED_OVERRIDE=true
-        elif [ -n "$OV_INFRA" ]; then
-            print_warning "Provided INFRASTRUCTURE_IP_OVERRIDE ('$OV_INFRA') is not a valid IPv4; ignoring."
-        fi
-        if [ -n "$OV_SERVICE" ] && is_valid_ipv4 "$OV_SERVICE"; then
-            save_config "SERVICE_IP" "$OV_SERVICE"
-            USED_OVERRIDE=true
-        elif [ -n "$OV_SERVICE" ]; then
-            print_warning "Provided SERVICE_IP_OVERRIDE ('$OV_SERVICE') is not a valid IPv4; ignoring."
-        fi
-
-        # If no valid overrides provided, use hostname -I strategy (single-Pi)
-        if [ "$USED_OVERRIDE" = false ]; then
-            detect_ips_via_hostname
-        else
-            # If overrides used but SERVICE_IP not set, default to localhost for single-Pi
-            local cur_service
-            cur_service=$(load_config "SERVICE_IP" 2>/dev/null || echo "")
-            if [ -z "$cur_service" ]; then
-                save_config "SERVICE_IP" "127.0.0.1"
-            fi
-        fi
-
-        # Reload from config (now contains overrides or auto-detected values)
-        NEW_IP=$(load_config "INFRASTRUCTURE_IP")
-        NEW_SERVICE_IP=$(load_config "SERVICE_IP")
-
-        # Determine whether IPs changed
-        local IP_CHANGED=false
-        if [ -n "$NEW_IP" ] && [ "$NEW_IP" != "${OLD_INFRA:-}" ]; then IP_CHANGED=true; fi
-        if [ -n "$NEW_SERVICE_IP" ] && [ "$NEW_SERVICE_IP" != "${OLD_SERVICE:-}" ]; then IP_CHANGED=true; fi
-
-        # Update ~/.bashrc variables
-        print_info "Updating ~/.bashrc environment variables..."
-        run_as_user sed -i '/export DB_IP=/d' "$SCRIPT_HOME/.bashrc" 2>/dev/null || true
-        run_as_user sed -i '/export FASTDFS_NON_LOCAL_IP=/d' "$SCRIPT_HOME/.bashrc" 2>/dev/null || true
-        run_as_user sed -i '/export INFRASTRUCTURE_IP=/d' "$SCRIPT_HOME/.bashrc" 2>/dev/null || true
-        run_as_user sed -i '/export SERVICE_IP=/d' "$SCRIPT_HOME/.bashrc" 2>/dev/null || true
-        run_as_user sed -i '/export FASTDFS_HTTP_PORT=/d' "$SCRIPT_HOME/.bashrc" 2>/dev/null || true
-        {
-            echo "export DB_IP=\"$NEW_IP\""
-            echo "export FASTDFS_NON_LOCAL_IP=\"$NEW_IP\""
-            echo "export INFRASTRUCTURE_IP=\"$NEW_IP\""
-            echo "export SERVICE_IP=\"$NEW_SERVICE_IP\""
-            echo "export FASTDFS_HTTP_PORT=\"$(load_config "FASTDFS_HTTP_PORT" 2>/dev/null || echo 8888)\""
-        } | run_as_user tee -a "$SCRIPT_HOME/.bashrc" > /dev/null
-
-        # Source .bashrc (note: affects only subshell)
-        run_as_user bash -lc "source ~/.bashrc" || true
-        print_success ".bashrc updated. After IP change, run 'source ~/.bashrc' (or 'source ~/.zshrc' if using zsh) in your current shell to apply."
-
-        # Update /etc/hosts block
-        print_info "Updating /etc/hosts with new IPs..."
-        cp /etc/hosts /etc/hosts.backup.$(date +%Y%m%d_%H%M%S)
-        sed -i '/# Kiwi Infrastructure Services/,/# End Kiwi Services/d' /etc/hosts
-        tee -a /etc/hosts > /dev/null << EOF
+    # Update /etc/hosts block
+    cp /etc/hosts /etc/hosts.backup.$(date +%Y%m%d_%H%M%S)
+    sed -i '/# Kiwi Infrastructure Services/,/# End Kiwi Services/d' /etc/hosts
+    tee -a /etc/hosts > /dev/null << EOF
 
 # Kiwi Infrastructure Services
-$NEW_IP    fastdfs.fengorz.me
-$NEW_IP    kiwi-ui
-$NEW_IP    kiwi-redis
-$NEW_IP    kiwi-rabbitmq
-$NEW_IP    kiwi-db
-$NEW_IP    kiwi-fastdfs
-$NEW_IP    kiwi-es
-$NEW_IP    kiwi-chattts
-$NEW_IP    kiwi-ftp
+$CUR_IP    fastdfs.fengorz.me
+$CUR_IP    kiwi-ui
+$CUR_IP    kiwi-redis
+$CUR_IP    kiwi-rabbitmq
+$CUR_IP    kiwi-db
+$CUR_IP    kiwi-fastdfs
+$CUR_IP    kiwi-es
+$CUR_IP    kiwi-chattts
+$CUR_IP    kiwi-ftp
 
 # Kiwi Microservices
-$NEW_SERVICE_IP    kiwi-microservice-local
-$NEW_SERVICE_IP    kiwi-microservice
-$NEW_SERVICE_IP    kiwi-eureka
-$NEW_SERVICE_IP    kiwi-config
-$NEW_SERVICE_IP    kiwi-auth
-$NEW_SERVICE_IP    kiwi-upms
-$NEW_SERVICE_IP    kiwi-gate
-$NEW_SERVICE_IP    kiwi-ai
-$NEW_SERVICE_IP    kiwi-crawler
+$CUR_SERVICE_IP    kiwi-microservice-local
+$CUR_SERVICE_IP    kiwi-microservice
+$CUR_SERVICE_IP    kiwi-eureka
+$CUR_SERVICE_IP    kiwi-config
+$CUR_SERVICE_IP    kiwi-auth
+$CUR_SERVICE_IP    kiwi-upms
+$CUR_SERVICE_IP    kiwi-gate
+$CUR_SERVICE_IP    kiwi-ai
+$CUR_SERVICE_IP    kiwi-crawler
 # End Kiwi Services
 EOF
-        print_success "/etc/hosts updated"
-
-        # Optionally refresh FastDFS storage container with new TRACKER_SERVER
-        # Only act if FastDFS containers already exist; do not create new ones here
-        local TRACKER_EXISTS=false
-        local STORAGE_EXISTS=false
-        if docker ps -a --format '{{.Names}}' | grep -q '^tracker$'; then TRACKER_EXISTS=true; fi
-        if docker ps -a --format '{{.Names}}' | grep -q '^storage$'; then STORAGE_EXISTS=true; fi
-
-        if [ "$TRACKER_EXISTS" = false ] && [ "$STORAGE_EXISTS" = false ]; then
-            print_info "No existing FastDFS containers found (tracker/storage). Skipping FastDFS updates."
-        else
-            if [ "$STORAGE_EXISTS" = true ]; then
-                print_info "Recreating FastDFS storage container with updated TRACKER_SERVER..."
-                # Determine image
-                local FASTDFS_IMAGE
-                FASTDFS_IMAGE=$(load_config "fastdfs_image_used")
-                if [ -z "$FASTDFS_IMAGE" ]; then
-                    local ARCH
-                    ARCH=$(uname -m)
-                    case $ARCH in
-                        x86_64|amd64) FASTDFS_IMAGE="delron/fastdfs:latest" ;;
-                        aarch64|arm64) FASTDFS_IMAGE="ygqygq2/fastdfs-nginx:latest" ;;
-                        *) FASTDFS_IMAGE="delron/fastdfs:latest" ;;
-                    esac
-                fi
-                # Determine HTTP port and ensure it's available; fallback if needed
-                local FASTDFS_HTTP_PORT
-                FASTDFS_HTTP_PORT=$(load_config "FASTDFS_HTTP_PORT" 2>/dev/null || echo 8888)
-                if command -v lsof >/dev/null 2>&1; then
-                    if lsof -iTCP -sTCP:LISTEN -n -P 2>/dev/null | grep -q ":$FASTDFS_HTTP_PORT "; then
-                        print_warning "Port $FASTDFS_HTTP_PORT is busy. Searching for a free port..."
-                        FASTDFS_HTTP_PORT=$(find_free_port 8888 8999)
-                        print_info "Using FastDFS HTTP port: $FASTDFS_HTTP_PORT"
-                    fi
-                fi
-                save_config "FASTDFS_HTTP_PORT" "$FASTDFS_HTTP_PORT"
-                # Update ~/.bashrc export for FASTDFS_HTTP_PORT
-                run_as_user sed -i '/export FASTDFS_HTTP_PORT=/d' "$SCRIPT_HOME/.bashrc" 2>/dev/null || true
-                echo "export FASTDFS_HTTP_PORT=\"$FASTDFS_HTTP_PORT\"" | run_as_user tee -a "$SCRIPT_HOME/.bashrc" > /dev/null
-
-                docker stop storage >/dev/null 2>&1 || true
-                docker rm storage >/dev/null 2>&1 || true
-
-                # Try running storage; if port conflict occurs, retry with a new port
-                local ATTEMPTS=0
-                local MAX_ATTEMPTS=5
-                while true; do
-                    set +e
-                    docker run -tid \
-                        --name storage \
-                        -p 23000:23000 \
-                        -p ${FASTDFS_HTTP_PORT}:8888 \
-                        -v "$SCRIPT_HOME/storage_data:/fastdfs/storage/data" \
-                        -v "$SCRIPT_HOME/store_path:/fastdfs/store_path" \
-                        -e TRACKER_SERVER="$NEW_IP:22122" \
-                        --restart=unless-stopped \
-                        "$FASTDFS_IMAGE" \
-                        storage
-                    RUN_RC=$?
-                    set -e
-                    if [ $RUN_RC -eq 0 ]; then
-                        break
-                    fi
-                    ((ATTEMPTS++))
-                    if [ $ATTEMPTS -ge $MAX_ATTEMPTS ]; then
-                        print_error "Failed to start FastDFS storage after $ATTEMPTS attempts. Check Docker logs."
-                        break
-                    fi
-                    print_warning "Port $FASTDFS_HTTP_PORT may be busy. Retrying with a new port... (attempt $ATTEMPTS)"
-                    docker rm -f storage >/dev/null 2>&1 || true
-                    FASTDFS_HTTP_PORT=$(find_free_port 8888 8999)
-                    save_config "FASTDFS_HTTP_PORT" "$FASTDFS_HTTP_PORT"
-                    run_as_user sed -i '/export FASTDFS_HTTP_PORT=/d' "$SCRIPT_HOME/.bashrc" 2>/dev/null || true
-                    echo "export FASTDFS_HTTP_PORT=\"$FASTDFS_HTTP_PORT\"" | run_as_user tee -a "$SCRIPT_HOME/.bashrc" > /dev/null
-                done
-                print_success "FastDFS storage container recreated (HTTP port ${FASTDFS_HTTP_PORT})"
-            else
-                print_info "FastDFS storage container not found; skipping storage recreation."
-            fi
-            # Reload tracker if present to ensure it uses new IP for peer references
-            if [ "$TRACKER_EXISTS" = true ]; then
-                print_info "Restarting FastDFS tracker to ensure connectivity..."
-                docker restart tracker >/dev/null 2>&1 || true
-            fi
-        fi
-
-        mark_step_completed "ip_update"
-
-        # If IPs changed, redeploy services using existing jars
-        if [ "$IP_CHANGED" = true ]; then
-            print_info "IPs changed during Step 24. Redeploying services in OUEJ mode..."
-            # Load required env vars from config for deployKiwi.sh
-            local _KIWI_ENC _GROK _MYSQL _REDIS _FDFS_HOST _ES_ROOT _ES_USER _ES_PASS _FASTDFS_NL
-            _KIWI_ENC=$(load_config "KIWI_ENC_PASSWORD" 2>/dev/null || echo "")
-            _GROK=$(load_config "GROK_API_KEY" 2>/dev/null || echo "")
-            _MYSQL=$(load_config "MYSQL_ROOT_PASSWORD" 2>/dev/null || echo "")
-            _REDIS=$(load_config "REDIS_PASSWORD" 2>/dev/null || echo "")
-            _FDFS_HOST=$(load_config "FASTDFS_HOSTNAME" 2>/dev/null || echo "fastdfs.fengorz.me")
-            _ES_ROOT=$(load_config "ES_ROOT_PASSWORD" 2>/dev/null || echo "")
-            _ES_USER=$(load_config "ES_USER_NAME" 2>/dev/null || echo "")
-            _ES_PASS=$(load_config "ES_USER_PASSWORD" 2>/dev/null || echo "")
-            _FASTDFS_NL="$NEW_IP"
-
-            if [ -x "$SCRIPT_HOME/easy-deploy" ]; then
-                (
-                  cd "$SCRIPT_HOME"
-                  # Run with a preserved environment for deployKiwi.sh checks
-                  sudo -E env \
-                    KIWI_ENC_PASSWORD="$_KIWI_ENC" \
-                    DB_IP="$NEW_IP" \
-                    GROK_API_KEY="$_GROK" \
-                    MYSQL_ROOT_PASSWORD="$_MYSQL" \
-                    REDIS_PASSWORD="$_REDIS" \
-                    FASTDFS_HOSTNAME="$_FDFS_HOST" \
-                    FASTDFS_NON_LOCAL_IP="$_FASTDFS_NL" \
-                    ES_ROOT_PASSWORD="$_ES_ROOT" \
-                    ES_USER_NAME="$_ES_USER" \
-                    ES_USER_PASSWORD="$_ES_PASS" \
-                    INFRASTRUCTURE_IP="$NEW_IP" \
-                    SERVICE_IP="$NEW_SERVICE_IP" \
-                    ./easy-deploy -mode=ouej >> "$SCRIPT_HOME/deploy_after_ip_update.log" 2>&1
-                ) || print_warning "OUEJ redeploy returned non-zero; see $SCRIPT_HOME/deploy_after_ip_update.log"
-                print_success "Triggered redeploy (ouej) after IP change"
-            else
-                print_warning "easy-deploy not found at $SCRIPT_HOME/easy-deploy; skipping auto-redeploy"
-            fi
-        else
-            print_info "No IP change detected; skipping auto-redeploy"
-        fi
-
-        # Start or ensure the IP change daemon is running
-        if [ -x "$SCRIPT_DIR/infrastructure/ip_change_daemon.sh" ]; then
-            print_info "Starting Kiwi IP change daemon..."
-            # Use sudo to satisfy root requirements for daemon internals
-            sudo -E env \
-              KIWI_SETUP_BASE_DIR="$SETUP_BASE_DIR" \
-              SCRIPT_HOME="$SCRIPT_HOME" \
-              SCRIPT_USER="$SCRIPT_USER" \
-              "$SCRIPT_DIR/infrastructure/ip_change_daemon.sh" start || true
-            print_success "IP change daemon start attempted (log: $SCRIPT_HOME/ip_change_daemon.log)"
-        else
-            print_warning "IP change daemon script not found or not executable: $SCRIPT_DIR/infrastructure/ip_change_daemon.sh"
-        fi
-    else
-        print_info "Step 24: IP update already applied, skipping..."
-        check_and_start_container "tracker" "fastdfs_setup"
-        check_and_start_container "storage" "fastdfs_setup"
-        # Ensure daemon is running even if step already done
-        if [ -x "$SCRIPT_DIR/infrastructure/ip_change_daemon.sh" ]; then
-            print_info "Ensuring Kiwi IP change daemon is running..."
-            sudo -E env \
-              KIWI_SETUP_BASE_DIR="$SETUP_BASE_DIR" \
-              SCRIPT_HOME="$SCRIPT_HOME" \
-              SCRIPT_USER="$SCRIPT_USER" \
-              "$SCRIPT_DIR/infrastructure/ip_change_daemon.sh" start || true
-        fi
-    fi
+    print_success "Reconciling complete: hosts and ~/.bashrc updated"
 }
 
 # Function to execute all setup steps

@@ -16,6 +16,17 @@
   done
 } >/dev/null 2>&1 || true
 
+# --- Additional explicit permission step per request ---
+CURRENT_DIR="$(pwd)"
+echo "🔐 Setting execute permissions for scripts..."
+# Run exactly like the user example, but guard errors if no matches
+if [ -d "$CURRENT_DIR/microservice-kiwi/kiwi-deploy/docker/" ]; then
+  chmod 777 "$CURRENT_DIR/microservice-kiwi/kiwi-deploy/docker/"*.sh 2>/dev/null || true
+fi
+if [ -d "$CURRENT_DIR/microservice-kiwi/kiwi-deploy/kiwi-ui/" ]; then
+  chmod 777 "$CURRENT_DIR/microservice-kiwi/kiwi-deploy/kiwi-ui/"*.sh 2>/dev/null || true
+fi
+
 # UI Deployment Script for Kiwi Docker Container
 # This script updates the UI files and restarts the kiwi-ui container
 # Modes:

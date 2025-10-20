@@ -232,6 +232,11 @@ fi
 
 cd "$CURRENT_DIR/microservice-kiwi/" || { echo "CRITICAL ERROR: Failed to change directory to $CURRENT_DIR/microservice-kiwi/"; exit 1; }
 
+# Set execute permissions (run in every mode)
+echo "🔐 Setting execute permissions for scripts..."
+chmod 777 "$CURRENT_DIR/microservice-kiwi/kiwi-deploy/docker/"*.sh 2>/dev/null || true
+chmod 777 "$CURRENT_DIR/microservice-kiwi/kiwi-deploy/kiwi-ui/"*.sh 2>/dev/null || true
+
 # Define available microservices
 declare -A MICROSERVICES=(
     ["eureka"]="kiwi-eureka"
@@ -255,8 +260,6 @@ show_help() {
   echo "  -mode=sbd     Skip Dockerfile building operation (copying Dockerfiles and JARs)"
   echo "  -mode=obm     Only build with Maven, then copy built JARs to ~/built_jar"
   echo "                Use with -s=svc1,svc2 to build only those services (e.g. -mode=obm -s=auth,gate)"
-  echo "  -mode=obmas   Only build with Maven, then send built JARs to remote via FTP"
-  echo "                Supports partial builds with -s=... just like -mode=obm"
   echo "  -mode=ouej    Only use existing jars from ~/built_jar (skip git and maven)"
   echo "  -mode=osj     Only send existing jars to remote (skip git, maven, docker)"
   echo "  -mode=og      Only perform git stash+pull (no build/deploy)   # UPDATED"
@@ -277,7 +280,6 @@ show_help() {
   echo "  sudo -E $0 -mode=sm               # Skip only maven build"
   echo "  sudo -E $0 -mode=sbd              # Skip only Dockerfile building"
   echo "  sudo -E $0 -mode=obm              # Only Maven build and copy jars to ~/built_jar"
-  echo "  sudo -E $0 -mode=obmas            # Maven build then FTP jars to remote"
   echo "  sudo -E $0 -mode=osj              # Send jars from ~/built_jar to remote (no build)"
   echo "  sudo -E $0 -mode=ouej             # Use jars from ~/built_jar and deploy"
   echo "  sudo -E $0 -s=eureka,config       # Build only eureka and config services"
@@ -293,7 +295,6 @@ FAST_DEPLOY_MODE=false
 SELECTED_SERVICES=""
 BUILD_ALL_SERVICES=true
 ONLY_BUILD_MAVEN=false
-SEND_AFTER_BUILD=false
 USE_EXISTING_JARS_ONLY=false
 ONLY_SEND_JARS=false
 ONLY_GIT_MODE=false
@@ -319,13 +320,7 @@ for arg in "$@"; do
     -mode=obm)
       MODE="$arg"
       ONLY_BUILD_MAVEN=true
-      echo "🧱 OBM MODE: Only Maven build and copy jars to ~/built_jar"
-      ;;
-    -mode=obmas)
-      MODE="$arg"
-      ONLY_BUILD_MAVEN=true
-      SEND_AFTER_BUILD=true
-      echo "📦➡️  OBMAS MODE: Maven build, then send jars to remote via FTP"
+      echo "🧱 OBM MODE: Only Maven build and copy jars to ~/built_jar (will stop all kiwi containers first)"
       ;;
     -mode=ouej)
       MODE="$arg"
@@ -383,7 +378,7 @@ export ONLY_GIT_MODE
 
 # Quick, centralized mode summary (helps trace the flow)
 echo "=== deployKiwi.sh MODE SUMMARY ==="
-echo "MODE: ${MODE:-<none>} | ONLY_BUILD_MAVEN=${ONLY_BUILD_MAVEN} | SEND_AFTER_BUILD=${SEND_AFTER_BUILD} | USE_EXISTING_JARS_ONLY=${USE_EXISTING_JARS_ONLY}"
+echo "MODE: ${MODE:-<none>} | ONLY_BUILD_MAVEN=${ONLY_BUILD_MAVEN} | USE_EXISTING_JARS_ONLY=${USE_EXISTING_JARS_ONLY}"
 echo "SKIP_GIT=${SKIP_GIT} | SKIP_MAVEN=${SKIP_MAVEN} | SKIP_DOCKER_BUILD=${SKIP_DOCKER_BUILD} | FAST_DEPLOY_MODE=${FAST_DEPLOY_MODE} | ONLY_SEND_JARS=${ONLY_SEND_JARS} | ONLY_GIT_MODE=${ONLY_GIT_MODE}"  # UPDATED
 echo "Selected services: $([ "$BUILD_ALL_SERVICES" = true ] && echo ALL || echo "$SELECTED_SERVICES")"
 echo "=================================="
@@ -417,11 +412,18 @@ send_jars_remote() {
   local original_home="$1"
   local src_dir="${original_home}/built_jar"
   local cfg_dir="${original_home}/.kiwi"
-  local cfg_file="${cfg_dir}/obmas.conf"
+  local old_cfg_file="${cfg_dir}/obmas.conf"
+  local cfg_file="${cfg_dir}/send.conf"
 
   mkdir -p "$cfg_dir"
+  # Backward compatibility: migrate old obmas.conf → send.conf if present
+  if [ -f "$old_cfg_file" ] && [ ! -f "$cfg_file" ]; then
+    echo "ℹ️  Migrating FTP config from obmas.conf to send.conf"
+    mv -f "$old_cfg_file" "$cfg_file" || cp -f "$old_cfg_file" "$cfg_file" || true
+  fi
+
   if [ ! -f "$cfg_file" ]; then
-    echo "📝 First-time OBMAS setup (FTP):"
+    echo "📝 First-time FTP setup (send jars):"
     read -p "FTP host (hostname or IP): " REMOTE_HOST
     read -p "FTP user: " REMOTE_USER
     read -p "Remote directory (default: ~/built_jar): " REMOTE_DIR
@@ -445,20 +447,19 @@ EOF
     if [ -n "$SUDO_USER" ]; then
       chown "$SUDO_USER":"$SUDO_USER" "$cfg_file" || true
     fi
-    echo "✅ Saved OBMAS configuration to $cfg_file"
+    echo "✅ Saved FTP configuration to $cfg_file"
   fi
 
   # shellcheck disable=SC1090
   source "$cfg_file"
 
-  # NEW: migrate old default "~/kiwi_jars" to "~/built_jar"
+  # Normalize default directory names
   if [ -z "${REMOTE_DIR:-}" ]; then
     REMOTE_DIR="~/built_jar"
   elif [ "$REMOTE_DIR" = "~/kiwi_jars" ]; then
-    echo "ℹ️  Updating OBMAS REMOTE_DIR from ~/kiwi_jars to ~/built_jar"
+    echo "ℹ️  Updating REMOTE_DIR from ~/kiwi_jars to ~/built_jar"
     REMOTE_DIR="~/built_jar"
   fi
-  # Defaults for newly added fields
   REMOTE_PROTO=${REMOTE_PROTO:-ftp}
   REMOTE_PORT=${REMOTE_PORT:-21}
 
@@ -506,7 +507,6 @@ EOF
   echo "🌐 Sending jars to ${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_PORT}/${REMOTE_PATH:-<home>} via ${REMOTE_PROTO^^} ..."
   local any_failed=false
   shopt -s nullglob
-  # Collect files and total count for nicer progress display
   local files=("$src_dir"/*.jar)
   local total=${#files[@]}
   local idx=0
@@ -515,12 +515,9 @@ EOF
     idx=$((idx+1))
     local fname
     fname="$(basename "$f")"
-    # Cross-platform file size in bytes
     local fsize
     if fsize=$(stat -c %s "$f" 2>/dev/null); then :; else fsize=$(stat -f %z "$f" 2>/dev/null || echo 0); fi
     echo "   → Uploading [$idx/$total] $fname (size: ${fsize} bytes)"
-    # Use curl progress bar and a short post-upload summary; do not use -s to keep progress visible
-    # Explicitly include filename in URL to avoid any server-side ambiguity
     if ! curl \
          --fail --ftp-create-dirs --progress-bar \
          --connect-timeout 10 --retry 3 --retry-delay 2 \
@@ -560,7 +557,7 @@ if [ "$ONLY_SEND_JARS" = true ]; then
   echo "🔎 Pre-checking jars under: $SRC_DIR"
   if [ ! -d "$SRC_DIR" ]; then
     echo "❌ Directory not found: $SRC_DIR"
-    echo "   Build jars first with -mode=obm or fetch them with -mode=obmas."
+    echo "   Build jars locally with -mode=obm first."
     exit 1
   fi
   shopt -s nullglob
@@ -578,7 +575,7 @@ if [ "$ONLY_SEND_JARS" = true ]; then
   # Ensure at least one real jar exists
   if ! find "$SRC_DIR" -maxdepth 1 -type f -name '*.jar' | grep -q .; then
     echo "❌ No valid jar files found in $SRC_DIR after cleanup."
-    echo "   Build locally with -mode=obm or re-send here first with -mode=obmas."
+    echo "   Build locally with -mode=obm first."
     exit 1
   fi
 
@@ -645,9 +642,13 @@ fi
 echo "=============================================="
 echo ""
 
-# === OBM/OBMAS short-circuit workflow (Maven build only, copy/send jars) ===
+# === OBM short-circuit workflow (Maven build only, copy jars) ===
 if [ "$ONLY_BUILD_MAVEN" = true ]; then
-  echo "== OBM/OBMAS FLOW: ENTER =="
+  echo "== OBM FLOW: ENTER =="
+
+  echo "🛑 Stopping all kiwi containers before OBM build..."
+  "$CURRENT_DIR/microservice-kiwi/kiwi-deploy/docker/stopAll.sh" || true
+
   # Determine original user's home for Maven repo and built_jar
   if [ -n "$SUDO_USER" ]; then
     ORIGINAL_HOME=$(eval echo "~$SUDO_USER")
@@ -751,19 +752,13 @@ if [ "$ONLY_BUILD_MAVEN" = true ]; then
     copy_or_warn "$ORIGINAL_HOME/.m2/repository/me/fengorz/kiwi-ai-biz/2.0/kiwi-ai-biz-2.0.jar" ai
   fi
 
-  # Optionally send jars if requested (OBMAS)
-  if [ "$SEND_AFTER_BUILD" = true ]; then
-    echo "🚚 Sending jars to remote as requested by OBMAS..."
-    send_jars_remote "$ORIGINAL_HOME" || { echo "❌ Failed to send jars"; exit 1; }
-  fi
-
-  echo "== OBM/OBMAS FLOW: DONE. Exiting without any docker/cleanup steps. =="
+  echo "== OBM FLOW: DONE. Exiting without any docker/cleanup steps. =="
   exit 0
 fi
 
 # Stop all services first (critical step)
 # Add a visible guard before any docker-related action
-# (OBM/OBMAS handled above)
+# (OBM handled above)
 
 echo "=============================================="
 echo "🛑 INITIAL CLEANUP - STOPPING ALL SERVICES"
@@ -918,7 +913,7 @@ else
       echo "🔎 Pre-checking jars under: $dir"
       if [ ! -d "$dir" ]; then
         echo "❌ Directory not found: $dir"
-        echo "   Build jars locally with -mode=obm or send them with -mode=obmas first."
+        echo "   Build jars locally with -mode=obm first."
         exit 1
       fi
       shopt -s nullglob
@@ -1001,7 +996,7 @@ else
       echo "📄 Copying eureka files..."
       cp -f "$CURRENT_DIR/microservice-kiwi/kiwi-eureka/Dockerfile" "$CURRENT_DIR/docker/kiwi/eureka/"
       eureka_jar=$(resolve_jar_path "eureka" "$ORIGINAL_HOME/.m2/repository/me/fengorz/kiwi-eureka/2.0/kiwi-eureka-2.0.jar")
-      [ -n "$eureka_jar" ] && [ -f "$eureka_jar" ] || { echo "❌ Missing jar for eureka in ${USE_EXISTING_JARS_ONLY:+$ORIGINAL_HOME/built_jar}. Use -mode=obm/obmas first."; exit 1; }
+      [ -n "$eureka_jar" ] && [ -f "$eureka_jar" ] || { echo "❌ Missing jar for eureka in ${USE_EXISTING_JARS_ONLY:+$ORIGINAL_HOME/built_jar}. Use -mode=obm first."; exit 1; }
       cp -f "$eureka_jar" "$CURRENT_DIR/docker/kiwi/eureka/"
     fi
 
@@ -1010,7 +1005,7 @@ else
       echo "📄 Copying config files..."
       cp -f "$CURRENT_DIR/microservice-kiwi/kiwi-config/Dockerfile" "$CURRENT_DIR/docker/kiwi/config/"
       config_jar=$(resolve_jar_path "config" "$ORIGINAL_HOME/.m2/repository/me/fengorz/kiwi-config/2.0/kiwi-config-2.0.jar")
-      [ -n "$config_jar" ] && [ -f "$config_jar" ] || { echo "❌ Missing jar for config in ${USE_EXISTING_JARS_ONLY:+$ORIGINAL_HOME/built_jar}. Use -mode=obm/obmas first."; exit 1; }
+      [ -n "$config_jar" ] && [ -f "$config_jar" ] || { echo "❌ Missing jar for config in ${USE_EXISTING_JARS_ONLY:+$ORIGINAL_HOME/built_jar}. Use -mode=obm first."; exit 1; }
       cp -f "$config_jar" "$CURRENT_DIR/docker/kiwi/config/"
     fi
 
@@ -1019,7 +1014,7 @@ else
       echo "📄 Copying upms files..."
       cp -f "$CURRENT_DIR/microservice-kiwi/kiwi-upms/kiwi-upms-biz/Dockerfile" "$CURRENT_DIR/docker/kiwi/upms/"
       upms_jar=$(resolve_jar_path "upms" "$ORIGINAL_HOME/.m2/repository/me/fengorz/kiwi-upms-biz/2.0/kiwi-upms-biz-2.0.jar")
-      [ -n "$upms_jar" ] && [ -f "$upms_jar" ] || { echo "❌ Missing jar for upms in ${USE_EXISTING_JARS_ONLY:+$ORIGINAL_HOME/built_jar}. Use -mode=obm/obmas first."; exit 1; }
+      [ -n "$upms_jar" ] && [ -f "$upms_jar" ] || { echo "❌ Missing jar for upms in ${USE_EXISTING_JARS_ONLY:+$ORIGINAL_HOME/built_jar}. Use -mode=obm first."; exit 1; }
       cp -f "$upms_jar" "$CURRENT_DIR/docker/kiwi/upms/"
     fi
 
@@ -1028,7 +1023,7 @@ else
       echo "📄 Copying auth files..."
       cp -f "$CURRENT_DIR/microservice-kiwi/kiwi-auth/Dockerfile" "$CURRENT_DIR/docker/kiwi/auth/"
       auth_jar=$(resolve_jar_path "auth" "$ORIGINAL_HOME/.m2/repository/me/fengorz/kiwi-auth/2.0/kiwi-auth-2.0.jar")
-      [ -n "$auth_jar" ] && [ -f "$auth_jar" ] || { echo "❌ Missing jar for auth in ${USE_EXISTING_JARS_ONLY:+$ORIGINAL_HOME/built_jar}. Use -mode=obm/obmas first."; exit 1; }
+      [ -n "$auth_jar" ] && [ -f "$auth_jar" ] || { echo "❌ Missing jar for auth in ${USE_EXISTING_JARS_ONLY:+$ORIGINAL_HOME/built_jar}. Use -mode=obm first."; exit 1; }
       cp -f "$auth_jar" "$CURRENT_DIR/docker/kiwi/auth/"
     fi
 
@@ -1037,7 +1032,7 @@ else
       echo "📄 Copying gateway files..."
       cp -f "$CURRENT_DIR/microservice-kiwi/kiwi-gateway/Dockerfile" "$CURRENT_DIR/docker/kiwi/gate/"
       gate_jar=$(resolve_jar_path "gate" "$ORIGINAL_HOME/.m2/repository/me/fengorz/kiwi-gateway/2.0/kiwi-gateway-2.0.jar")
-      [ -n "$gate_jar" ] && [ -f "$gate_jar" ] || { echo "❌ Missing jar for gate in ${USE_EXISTING_JARS_ONLY:+$ORIGINAL_HOME/built_jar}. Use -mode=obm/obmas first."; exit 1; }
+      [ -n "$gate_jar" ] && [ -f "$gate_jar" ] || { echo "❌ Missing jar for gate in ${USE_EXISTING_JARS_ONLY:+$ORIGINAL_HOME/built_jar}. Use -mode=obm first."; exit 1; }
       cp -f "$gate_jar" "$CURRENT_DIR/docker/kiwi/gate/"
     fi
 
@@ -1053,7 +1048,7 @@ else
         echo "⚠️  Tools Dockerfile not found under kiwi-tools/kiwi-tools-biz. Ensure it exists."
       fi
       tools_jar=$(resolve_jar_path "tools" "$ORIGINAL_HOME/.m2/repository/me/fengorz/kiwi-tools-biz/2.0/kiwi-tools-biz-2.0.jar")
-      [ -n "$tools_jar" ] && [ -f "$tools_jar" ] || { echo "❌ Missing jar for tools in ${USE_EXISTING_JARS_ONLY:+$ORIGINAL_HOME/built_jar}. Use -mode=obm/obmas first."; exit 1; }
+      [ -n "$tools_jar" ] && [ -f "$tools_jar" ] || { echo "❌ Missing jar for tools in ${USE_EXISTING_JARS_ONLY:+$ORIGINAL_HOME/built_jar}. Use -mode=obm first."; exit 1; }
       cp -f "$tools_jar" "$CURRENT_DIR/docker/kiwi/tools/"
     fi
 
@@ -1063,7 +1058,7 @@ else
       cp -f "$CURRENT_DIR/microservice-kiwi/kiwi-word/kiwi-word-biz/docker/biz/Dockerfile" "$CURRENT_DIR/docker/kiwi/word/biz"
       cp -f "$CURRENT_DIR/microservice-kiwi/kiwi-word/kiwi-word-biz/docker/crawler/Dockerfile" "$CURRENT_DIR/docker/kiwi/word/crawler"
       word_jar=$(resolve_jar_path "word" "$ORIGINAL_HOME/.m2/repository/me/fengorz/kiwi-word-biz/2.0/kiwi-word-biz-2.0.jar")
-      [ -n "$word_jar" ] && [ -f "$word_jar" ] || { echo "❌ Missing jar for word-biz in ${USE_EXISTING_JARS_ONLY:+$ORIGINAL_HOME/built_jar}. Use -mode=obm/obmas first."; exit 1; }
+      [ -n "$word_jar" ] && [ -f "$word_jar" ] || { echo "❌ Missing jar for word-biz in ${USE_EXISTING_JARS_ONLY:+$ORIGINAL_HOME/built_jar}. Use -mode=obm first."; exit 1; }
       cp -f "$word_jar" "$CURRENT_DIR/docker/kiwi/word/"
       cp -f "$CURRENT_DIR/gcp-credentials.json" "$CURRENT_DIR/docker/kiwi/word/bizTmp"
     fi
@@ -1073,7 +1068,7 @@ else
       echo "📄 Copying crawler files..."
       cp -f "$CURRENT_DIR/microservice-kiwi/kiwi-word/kiwi-word-crawler/Dockerfile" "$CURRENT_DIR/docker/kiwi/crawler/"
       crawler_jar=$(resolve_jar_path "crawler" "$ORIGINAL_HOME/.m2/repository/me/fengorz/kiwi-word-crawler/2.0/kiwi-word-crawler-2.0.jar")
-      [ -n "$crawler_jar" ] && [ -f "$crawler_jar" ] || { echo "❌ Missing jar for crawler in ${USE_EXISTING_JARS_ONLY:+$ORIGINAL_HOME/built_jar}. Use -mode=obm/obmas first."; exit 1; }
+      [ -n "$crawler_jar" ] && [ -f "$crawler_jar" ] || { echo "❌ Missing jar for crawler in ${USE_EXISTING_JARS_ONLY:+$ORIGINAL_HOME/built_jar}. Use -mode=obm first."; exit 1; }
       cp -f "$crawler_jar" "$CURRENT_DIR/docker/kiwi/crawler/"
     fi
 
@@ -1083,7 +1078,7 @@ else
       cp -f "$CURRENT_DIR/microservice-kiwi/kiwi-ai/kiwi-ai-biz/docker/biz/Dockerfile" "$CURRENT_DIR/docker/kiwi/ai/biz"
       cp -f "$CURRENT_DIR/microservice-kiwi/kiwi-ai/kiwi-ai-biz/docker/batch/Dockerfile" "$CURRENT_DIR/docker/kiwi/ai/batch"
       ai_jar=$(resolve_jar_path "ai" "$ORIGINAL_HOME/.m2/repository/me/fengorz/kiwi-ai-biz/2.0/kiwi-ai-biz-2.0.jar")
-      [ -n "$ai_jar" ] && [ -f "$ai_jar" ] || { echo "❌ Missing jar for ai in ${USE_EXISTING_JARS_ONLY:+$ORIGINAL_HOME/built_jar}. Use -mode=obm/obmas first."; exit 1; }
+      [ -n "$ai_jar" ] && [ -f "$ai_jar" ] || { echo "❌ Missing jar for ai in ${USE_EXISTING_JARS_ONLY:+$ORIGINAL_HOME/built_jar}. Use -mode=obm first."; exit 1; }
       cp -f "$ai_jar" "$CURRENT_DIR/docker/kiwi/ai/biz"
       cp -f "$ai_jar" "$CURRENT_DIR/docker/kiwi/ai/batch"
     fi
@@ -1486,7 +1481,7 @@ fi
 if [ "$BUILD_ALL_SERVICES" = true ]; then
   # Safety guard: if somehow ONLY_BUILD_MAVEN is still true, do not continue
   if [ "$ONLY_BUILD_MAVEN" = true ]; then
-    echo "OBM/OBMAS mode: skipping auto deployment."
+    echo "OBM mode: skipping auto deployment."
     exit 0
   fi
 

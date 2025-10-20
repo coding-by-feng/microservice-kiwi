@@ -1,5 +1,21 @@
 #!/bin/bash
 
+# --- Permission bootstrap (self-healing) ---
+{
+  SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+  DEPLOY_ROOT="$SCRIPT_DIR"  # set_up.sh sits directly under kiwi-deploy
+  # Make every .sh under kiwi-deploy executable
+  if [ -d "$DEPLOY_ROOT" ]; then
+    find "$DEPLOY_ROOT" -type f -name "*.sh" -exec chmod 777 {} \; 2>/dev/null || true
+  fi
+  # Ensure yt-dlp_linux binaries are executable if present
+  ORIG_USER="${SUDO_USER:-$USER}"
+  ORIG_HOME=$(eval echo "~$ORIG_USER")
+  for f in "$ORIG_HOME"/docker/kiwi/ai/*/yt-dlp_linux "$ORIG_HOME"/docker/kiwi/ai/yt-dlp_linux; do
+    [ -e "$f" ] && chmod +x "$f" || true
+  done
+} >/dev/null 2>&1 || true
+
 # Enhanced Kiwi Microservice Setup Script for Raspberry Pi OS
 # This script automates the complete setup process with step tracking and selective re-initialization
 # Version: 2.6 - Prefer hostname -I for IP detection (single-Pi mode) and avoid netdiscover during Step 24

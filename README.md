@@ -111,7 +111,6 @@ The legacy README documented these—condensed & clarified below.
 
 ### 6.2 Advanced Modes
 - -mode=obm    Only build with Maven, copy jars into ~/built_jar (use -s=svc1,svc2 to limit)
-- -mode=obmas  Build with Maven, then send jars to a remote host via FTP (first run asks for target)
 - -mode=ouej   Use existing jars from ~/built_jar for deployment (skip git and maven)
 - -mode=osj    Only send jars from ~/built_jar to a remote host (skip git, maven, docker)
 - -mode=og     Only run git stash + pull (no build/deploy)

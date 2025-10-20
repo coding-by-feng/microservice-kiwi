@@ -1,5 +1,21 @@
 #!/bin/bash
 
+# --- Permission bootstrap (self-healing) ---
+{
+  SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+  DEPLOY_ROOT="$(cd "$SCRIPT_DIR/.." && pwd 2>/dev/null || echo "$SCRIPT_DIR")"
+  # Ensure all .sh under kiwi-deploy are executable
+  if [ -d "$DEPLOY_ROOT" ]; then
+    find "$DEPLOY_ROOT" -type f -name "*.sh" -exec chmod 777 {} \; 2>/dev/null || true
+  fi
+  # Also ensure common helper binaries are executable (yt-dlp_linux if present)
+  ORIG_USER="${SUDO_USER:-$USER}"
+  ORIG_HOME=$(eval echo "~$ORIG_USER")
+  for f in "$ORIG_HOME"/docker/kiwi/ai/*/yt-dlp_linux "$ORIG_HOME"/docker/kiwi/ai/yt-dlp_linux; do
+    [ -e "$f" ] && chmod +x "$f" || true
+  done
+} >/dev/null 2>&1 || true
+
 # Stop autoCheckService if running
 if pgrep -f "autoCheckService.sh" >/dev/null; then
   echo "Stopping autoCheckService..."

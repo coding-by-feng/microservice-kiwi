@@ -62,7 +62,7 @@ public class WebConfig implements WebMvcConfigurer {
         protected void configure(HttpSecurity http) throws Exception {
             http
                 .antMatcher("/api/**")
-                .cors().and()
+                .cors().disable()
                 .csrf().disable()
                 .authorizeRequests()
                     .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()

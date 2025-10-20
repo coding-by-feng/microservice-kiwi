@@ -228,7 +228,8 @@ public class YouTuBeController {
                                                        @RequestParam(value = "language", required = false) String language) {
         try {
             String decodedUrl = WebTools.decode(videoUrl);
-            YtbSubtitlesResult ytbSubtitlesResult = youTuBeHelper.downloadSubtitles(decodedUrl);
+            // Use caching service to fetch subtitles (cached by normalized videoId)
+            YtbSubtitlesResult ytbSubtitlesResult = subtitleStreamingService.getScrollingSubtitles(videoUrl);
             String translatedOrRetouchedSubtitles = buildTranslatedOrRetouchedSubtitles(decodedUrl, language, ytbSubtitlesResult);
             return R.success(translatedOrRetouchedSubtitles);
         } catch (Exception e) {

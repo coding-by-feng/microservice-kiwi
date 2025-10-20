@@ -10,4 +10,7 @@
     <!-- Seed demo data (now without photo_url, 30 Auckland-related rows) -->
     <include file="db/changelog/changes/0001-create-projects-demo-data.xml" relativeToChangelogFile="false"/>
 
+    <!-- Todo module tables -->
+    <include file="db/changelog/changes/0100-create-todo-tables.xml" relativeToChangelogFile="false"/>
+
 </databaseChangeLog>

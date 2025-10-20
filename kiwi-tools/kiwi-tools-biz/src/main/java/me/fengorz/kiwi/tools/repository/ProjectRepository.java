@@ -4,8 +4,8 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.RequiredArgsConstructor;
-import me.fengorz.kiwi.tools.model.Project;
-import me.fengorz.kiwi.tools.model.ProjectStatus;
+import me.fengorz.kiwi.tools.model.project.Project;
+import me.fengorz.kiwi.tools.model.project.ProjectStatus;
 import me.fengorz.kiwi.tools.repository.mapper.ProjectMapper;
 import org.springframework.stereotype.Repository;
 

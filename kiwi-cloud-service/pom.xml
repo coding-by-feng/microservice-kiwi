@@ -44,6 +44,7 @@
         <module>../kiwi-ai/kiwi-ai-api</module>
         <module>../kiwi-ai/kiwi-ai-biz</module>
         <!-- new tools service -->
+        <module>../kiwi-tools/kiwi-tools-api</module>
         <module>../kiwi-tools/kiwi-tools-biz</module>
     </modules>
 

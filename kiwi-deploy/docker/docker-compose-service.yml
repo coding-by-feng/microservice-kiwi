@@ -14,6 +14,26 @@ services:
       timeout: 10s
       retries: 8
       start_period: 4m
+    entrypoint:
+      - /bin/bash
+      - -c
+      - |
+        echo "Waiting for kiwi-config to be healthy..."
+        wait_secs=0
+        until code=$(curl -s -o /dev/null -w '%{http_code}' http://localhost:7771/actuator/health); [ "$$code" = "200" ] || [ "$$code" = "401" ] || [ "$$code" = "403" ]; do
+          wait_secs=$$((wait_secs+1))
+          if [ $$((wait_secs % 5)) -eq 0 ]; then
+            echo "Waiting for kiwi-config to be healthy... ($$wait_secs s)"
+          fi
+          sleep 1
+        done
+        echo "kiwi-config is healthy. Starting kiwi-gate..."
+        exec java -Xmx512m \
+          -Duser.timezone=GMT+12 \
+          -Djava.awt.headless=true \
+          -Dspring.profiles.active=prod \
+          -Dlogging.file.name=/logs/gate.log \
+          -jar /app.jar
 
   kiwi-upms:
     image: kiwi-upms:2.0
@@ -36,6 +56,15 @@ services:
       - /bin/bash
       - -c
       - |
+        echo "Waiting for kiwi-config to be healthy..."
+        wait_secs=0
+        until code=$(curl -s -o /dev/null -w '%{http_code}' http://localhost:7771/actuator/health); [ "$$code" = "200" ] || [ "$$code" = "401" ] || [ "$$code" = "403" ]; do
+          wait_secs=$$((wait_secs+1))
+          if [ $$((wait_secs % 5)) -eq 0 ]; then
+            echo "Waiting for kiwi-config to be healthy... ($$wait_secs s)"
+          fi
+          sleep 1
+        done
         echo "Waiting for kiwi-gate to be healthy..."
         wait_secs=0
         until code=$(curl -s -o /dev/null -w '%{http_code}' http://localhost:9991/actuator/health); [ "$$code" = "200" ] || [ "$$code" = "401" ] || [ "$$code" = "403" ]; do
@@ -77,6 +106,15 @@ services:
       - /bin/bash
       - -c
       - |
+        echo "Waiting for kiwi-config to be healthy..."
+        wait_secs=0
+        until code=$(curl -s -o /dev/null -w '%{http_code}' http://localhost:7771/actuator/health); [ "$$code" = "200" ] || [ "$$code" = "401" ] || [ "$$code" = "403" ]; do
+          wait_secs=$$((wait_secs+1))
+          if [ $$((wait_secs % 5)) -eq 0 ]; then
+            echo "Waiting for kiwi-config to be healthy... ($$wait_secs s)"
+          fi
+          sleep 1
+        done
         echo "Waiting for kiwi-upms to be healthy..."
         wait_secs=0
         until code=$(curl -s -o /dev/null -w '%{http_code}' http://localhost:4001/actuator/health); [ "$$code" = "200" ] || [ "$$code" = "401" ] || [ "$$code" = "403" ]; do
@@ -116,6 +154,15 @@ services:
       - /bin/bash
       - -c
       - |
+        echo "Waiting for kiwi-config to be healthy..."
+        wait_secs=0
+        until code=$(curl -s -o /dev/null -w '%{http_code}' http://localhost:7771/actuator/health); [ "$$code" = "200" ] || [ "$$code" = "401" ] || [ "$$code" = "403" ]; do
+          wait_secs=$$((wait_secs+1))
+          if [ $$((wait_secs % 5)) -eq 0 ]; then
+            echo "Waiting for kiwi-config to be healthy... ($$wait_secs s)"
+          fi
+          sleep 1
+        done
         echo "Waiting for kiwi-auth to be healthy..."
         wait_secs=0
         until code=$(curl -s -o /dev/null -w '%{http_code}' http://localhost:3001/actuator/health); [ "$$code" = "200" ] || [ "$$code" = "401" ] || [ "$$code" = "403" ]; do
@@ -157,6 +204,15 @@ services:
       - /bin/bash
       - -c
       - |
+        echo "Waiting for kiwi-config to be healthy..."
+        wait_secs=0
+        until code=$(curl -s -o /dev/null -w '%{http_code}' http://localhost:7771/actuator/health); [ "$$code" = "200" ] || [ "$$code" = "401" ] || [ "$$code" = "403" ]; do
+          wait_secs=$$((wait_secs+1))
+          if [ $$((wait_secs % 5)) -eq 0 ]; then
+            echo "Waiting for kiwi-config to be healthy... ($$wait_secs s)"
+          fi
+          sleep 1
+        done
         echo "Waiting for kiwi-auth to be healthy..."
         wait_secs=0
         until code=$(curl -s -o /dev/null -w '%{http_code}' http://localhost:3001/actuator/health); [ "$$code" = "200" ] || [ "$$code" = "401" ] || [ "$$code" = "403" ]; do
@@ -193,6 +249,15 @@ services:
       - /bin/bash
       - -c
       - |
+        echo "Waiting for kiwi-config to be healthy..."
+        wait_secs=0
+        until code=$(curl -s -o /dev/null -w '%{http_code}' http://localhost:7771/actuator/health); [ "$$code" = "200" ] || [ "$$code" = "401" ] || [ "$$code" = "403" ]; do
+          wait_secs=$$((wait_secs+1))
+          if [ $$((wait_secs % 5)) -eq 0 ]; then
+            echo "Waiting for kiwi-config to be healthy... ($$wait_secs s)"
+          fi
+          sleep 1
+        done
         echo "Waiting for kiwi-auth to be healthy..."
         wait_secs=0
         until code=$(curl -s -o /dev/null -w '%{http_code}' http://localhost:3001/actuator/health); [ "$$code" = "200" ] || [ "$$code" = "401" ] || [ "$$code" = "403" ]; do
@@ -231,6 +296,15 @@ services:
       - /bin/bash
       - -c
       - |
+        echo "Waiting for kiwi-config to be healthy..."
+        wait_secs=0
+        until code=$(curl -s -o /dev/null -w '%{http_code}' http://localhost:7771/actuator/health); [ "$$code" = "200" ] || [ "$$code" = "401" ] || [ "$$code" = "403" ]; do
+          wait_secs=$$((wait_secs+1))
+          if [ $$((wait_secs % 5)) -eq 0 ]; then
+            echo "Waiting for kiwi-config to be healthy... ($$wait_secs s)"
+          fi
+          sleep 1
+        done
         echo "Waiting for kiwi-ai-biz to be healthy..."
         wait_secs=0
         until pgrep -f kiwi-ai-biz >/dev/null; do

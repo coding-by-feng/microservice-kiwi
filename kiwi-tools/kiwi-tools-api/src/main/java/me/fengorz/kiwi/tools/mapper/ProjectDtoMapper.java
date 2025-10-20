@@ -1,4 +1,4 @@
-package me.fengorz.kiwi.tools.api.mapper;
+package me.fengorz.kiwi.tools.mapper;
 
 import me.fengorz.kiwi.tools.api.project.dto.ProjectPatchRequest;
 import me.fengorz.kiwi.tools.model.project.Project;

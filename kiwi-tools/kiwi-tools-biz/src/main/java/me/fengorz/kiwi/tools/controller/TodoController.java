@@ -3,8 +3,8 @@ package me.fengorz.kiwi.tools.controller;
 import me.fengorz.kiwi.common.api.R;
 import me.fengorz.kiwi.common.sdk.web.security.SecurityUtils;
 import me.fengorz.kiwi.tools.api.todo.dto.*;
-import me.fengorz.kiwi.tools.api.todo.mapper.TodoDtoMapper;
 import me.fengorz.kiwi.tools.exception.ToolsException;
+import me.fengorz.kiwi.tools.mapper.TodoDtoMapper;
 import me.fengorz.kiwi.tools.model.todo.TodoTask;
 import me.fengorz.kiwi.tools.service.RateLimitService;
 import me.fengorz.kiwi.tools.service.todo.TodoService;
@@ -20,7 +20,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 @RestController
-@RequestMapping("/tools/todo")
+@RequestMapping("/todo")
 public class TodoController {
 
     private final TodoService service;

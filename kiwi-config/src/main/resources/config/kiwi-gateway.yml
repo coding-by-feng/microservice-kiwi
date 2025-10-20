@@ -54,6 +54,18 @@ spring:
                 name: default
                 fallbackUri: 'forward:/fallback'
 
+        # 新增：工具服务路由
+        - id: kiwi-tools-biz
+          uri: lb://kiwi-tools-biz
+          predicates:
+            - Path=/tools/**
+          filters:
+            # 降级配置
+            - name: Hystrix
+              args:
+                name: default
+                fallbackUri: 'forward:/fallback'
+
       discovery:
         locator:
           enabled: true

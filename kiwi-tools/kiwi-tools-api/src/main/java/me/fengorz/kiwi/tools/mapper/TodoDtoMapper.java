@@ -1,4 +1,4 @@
-package me.fengorz.kiwi.tools.api.todo.mapper;
+package me.fengorz.kiwi.tools.mapper;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;

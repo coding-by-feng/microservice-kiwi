@@ -1,30 +1,36 @@
 #!/bin/bash
 
 # Script to update nginx configuration in kiwi-ui container
-# This adds the proxy configuration for microservices without SSL
+# Generates the new nginx.conf (SPA + caching + proxy + websockets) with dynamic backend
 
-read -p "Enter the microservice host (e.g., kiwi-microservice): " MICROSERVICE_HOST
+set -euo pipefail
 
-if [ -z "$MICROSERVICE_HOST" ]; then
-    echo "✗ No host provided. Exiting."
-    exit 1
+# --- Input: dynamic backend ---
+read -r -p "Enter the microservice host [127.0.0.1]: " MICROSERVICE_HOST
+MICROSERVICE_HOST=${MICROSERVICE_HOST:-127.0.0.1}
+read -r -p "Enter the microservice port [9991]: " MICROSERVICE_PORT
+MICROSERVICE_PORT=${MICROSERVICE_PORT:-9991}
+
+KIWI_CONTAINER_NAME=${KIWI_CONTAINER_NAME:-kiwi-ui}
+
+if ! docker ps --format '{{.Names}}' | grep -q "^${KIWI_CONTAINER_NAME}$"; then
+  echo "✗ Container '${KIWI_CONTAINER_NAME}' not found or not running."
+  echo "  Tip: docker ps --format 'table {{.Names}}\t{{.Status}}'"
+  exit 1
 fi
 
-echo "Updating nginx configuration in kiwi-ui container..."
-echo "Using microservice host: $MICROSERVICE_HOST"
+echo "Updating nginx configuration in container: ${KIWI_CONTAINER_NAME}"
+BACKEND_URL="http://${MICROSERVICE_HOST}:${MICROSERVICE_PORT}"
+echo "Using backend -> ${BACKEND_URL}"
 
-# Backup current configuration
-docker exec kiwi-ui cp /etc/nginx/nginx.conf /etc/nginx/nginx.conf.backup
+# Backup current configuration (best-effort)
+docker exec "${KIWI_CONTAINER_NAME}" sh -c 'cp -f /etc/nginx/nginx.conf /etc/nginx/nginx.conf.backup 2>/dev/null || true'
 
-# Install vi editor in the container if not present
-docker exec kiwi-ui apt-get update
-docker exec kiwi-ui apt-get install -y vim
-
-# Create the new nginx configuration
-cat <<EOF | docker exec -i kiwi-ui tee /etc/nginx/nginx.conf > /dev/null
+# Write the new nginx configuration using a quoted heredoc to preserve $nginx_vars
+cat <<'EOF' | docker exec -i "${KIWI_CONTAINER_NAME}" tee /etc/nginx/nginx.conf >/dev/null
 user nginx;
 worker_processes auto;
-error_log /var/log/nginx/error.log warn;  # Changed from debug to warn for better performance
+error_log /var/log/nginx/error.log warn;
 pid /var/run/nginx.pid;
 
 events {
@@ -42,6 +48,10 @@ http {
     access_log /var/log/nginx/access.log main;
     sendfile on;
     keepalive_timeout 65;
+
+    # Fix for proxy headers hash optimization warning
+    proxy_headers_hash_max_size 1024;
+    proxy_headers_hash_bucket_size 128;
 
     # Global gzip settings
     gzip on;
@@ -108,7 +118,7 @@ http {
 
         # Handle WebSocket connections for AI features
         location /ai-biz {
-            proxy_pass http://192.168.1.120:9991;
+            proxy_pass @BACKEND@;
             proxy_http_version 1.1;
             proxy_set_header Upgrade $http_upgrade;
             proxy_set_header Connection "upgrade";
@@ -122,16 +132,15 @@ http {
 
         # API proxy configurations
         location /auth {
-            proxy_pass http://192.168.1.120:9991;
+            proxy_pass @BACKEND@;
             proxy_set_header Host $host;
             proxy_set_header X-Real-IP $remote_addr;
-            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
             proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
             proxy_set_header X-Forwarded-Proto $scheme;
         }
 
         location /wordBiz {
-            proxy_pass http://192.168.1.120:9991;
+            proxy_pass @BACKEND@;
             proxy_set_header Host $host;
             proxy_set_header X-Real-IP $remote_addr;
             proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
@@ -139,7 +148,7 @@ http {
         }
 
         location /code {
-            proxy_pass http://192.168.1.120:9991;
+            proxy_pass @BACKEND@;
             proxy_set_header Host $host;
             proxy_set_header X-Real-IP $remote_addr;
             proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
@@ -147,7 +156,15 @@ http {
         }
 
         location /admin {
-            proxy_pass http://192.168.1.120:9991;
+            proxy_pass @BACKEND@;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+        }
+
+        location /tools {
+            proxy_pass @BACKEND@;
             proxy_set_header Host $host;
             proxy_set_header X-Real-IP $remote_addr;
             proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
@@ -177,40 +194,45 @@ http {
 }
 EOF
 
-echo "Testing nginx configuration..."
-docker exec kiwi-ui nginx -t
+# Replace placeholder with actual backend URL (inside the container)
+docker exec "${KIWI_CONTAINER_NAME}" sh -c \
+  "sed -i 's|@BACKEND@|${BACKEND_URL//|/\\|}|g' /etc/nginx/nginx.conf"
 
-if [ $? -eq 0 ]; then
-    echo "✓ Nginx configuration test passed"
-    echo "Restarting nginx service in container..."
-    docker exec kiwi-ui nginx -s reload
+# Validate and reload
+set +e
+docker exec "${KIWI_CONTAINER_NAME}" nginx -t
+NGINX_TEST_RC=$?
+set -e
 
-    echo "Restarting kiwi-ui container to ensure all changes take effect..."
-    docker container restart kiwi-ui
-
-    echo "✓ Nginx configuration updated successfully!"
-    echo ""
-    echo "The following proxy routes are now configured with host: $MICROSERVICE_HOST"
-    echo "  - /auth      -> http://$MICROSERVICE_HOST:9991"
-    echo "  - /wordBiz   -> http://$MICROSERVICE_HOST:9991"
-    echo "  - /code      -> http://$MICROSERVICE_HOST:9991"
-    echo "  - /admin     -> http://$MICROSERVICE_HOST:9991"
-    echo ""
-    echo "You can access the application at: http://localhost:80"
-    echo "Or at: http://\$(hostname -I | awk '{print \$1}'):80"
+if [ $NGINX_TEST_RC -eq 0 ]; then
+  echo "✓ Nginx configuration test passed"
+  echo "Reloading nginx and restarting container to apply changes..."
+  docker exec "${KIWI_CONTAINER_NAME}" nginx -s reload || true
+  docker container restart "${KIWI_CONTAINER_NAME}" >/dev/null
+  echo "✓ Nginx configuration updated successfully!"
+  echo "Proxy routes now point to: ${BACKEND_URL}"
+  echo "  - /ai-biz (WebSocket-enabled)"
+  echo "  - /auth"
+  echo "  - /wordBiz"
+  echo "  - /code"
+  echo "  - /admin"
+  echo "  - /tools"
 else
-    echo "✗ Nginx configuration test failed"
-    echo "Restoring backup configuration..."
-    docker exec kiwi-ui cp /etc/nginx/nginx.conf.backup /etc/nginx/nginx.conf
-    docker exec kiwi-ui nginx -s reload
-    echo "Backup configuration restored"
-    exit 1
+  echo "✗ Nginx configuration test failed"
+  echo "Restoring backup configuration..."
+  docker exec "${KIWI_CONTAINER_NAME}" sh -c 'cp -f /etc/nginx/nginx.conf.backup /etc/nginx/nginx.conf 2>/dev/null || true'
+  docker exec "${KIWI_CONTAINER_NAME}" nginx -s reload || true
+  echo "Backup configuration restored"
+  exit 1
 fi
 
-echo ""
-echo "To check nginx status and logs:"
-echo "  docker exec kiwi-ui nginx -t                    # Test configuration"
-echo "  docker exec kiwi-ui nginx -s reload             # Reload configuration"
-echo "  docker logs kiwi-ui                             # View container logs"
-echo "  docker exec -it kiwi-ui tail -f /var/log/nginx/access.log  # View access logs"
-echo "  docker exec -it kiwi-ui tail -f /var/log/nginx/error.log   # View error logs"
+cat <<HINT
+
+To check nginx status and logs:
+  docker exec ${KIWI_CONTAINER_NAME} nginx -t                    # Test configuration
+  docker exec ${KIWI_CONTAINER_NAME} nginx -s reload             # Reload configuration
+  docker logs ${KIWI_CONTAINER_NAME}                             # View container logs
+  docker exec -it ${KIWI_CONTAINER_NAME} tail -f /var/log/nginx/access.log  # Access logs
+  docker exec -it ${KIWI_CONTAINER_NAME} tail -f /var/log/nginx/error.log   # Error logs
+
+HINT

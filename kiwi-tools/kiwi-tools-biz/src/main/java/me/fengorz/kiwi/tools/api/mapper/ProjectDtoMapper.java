@@ -1,9 +1,9 @@
 package me.fengorz.kiwi.tools.api.mapper;
 
-import me.fengorz.kiwi.tools.api.dto.*;
-import me.fengorz.kiwi.tools.model.Project;
-import me.fengorz.kiwi.tools.model.ProjectPhoto;
-import me.fengorz.kiwi.tools.model.ProjectStatus;
+import me.fengorz.kiwi.tools.api.project.dto.ProjectPatchRequest;
+import me.fengorz.kiwi.tools.model.project.Project;
+import me.fengorz.kiwi.tools.model.project.ProjectPhoto;
+import me.fengorz.kiwi.tools.model.project.ProjectStatus;
 
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 public final class ProjectDtoMapper {
     private ProjectDtoMapper() {}
 
-    public static Project toEntity(ProjectCreateRequest req) {
+    public static Project toEntity(me.fengorz.kiwi.tools.api.project.dto.ProjectCreateRequest req) {
         Project p = new Project();
         if (req == null) return p;
         p.setName(req.getName());
@@ -32,7 +32,7 @@ public final class ProjectDtoMapper {
         return p;
     }
 
-    public static Map<String, Object> toPatch(ProjectUpdateRequest req) {
+    public static Map<String, Object> toPatch(me.fengorz.kiwi.tools.api.project.dto.ProjectUpdateRequest req) {
         if (req == null) return Collections.emptyMap();
         Map<String, Object> m = new LinkedHashMap<>();
         applyBasePatch(m, req);
@@ -49,7 +49,7 @@ public final class ProjectDtoMapper {
         return m;
     }
 
-    private static void applyBasePatch(Map<String, Object> m, ProjectBaseRequest req) {
+    private static void applyBasePatch(Map<String, Object> m, me.fengorz.kiwi.tools.api.project.dto.ProjectBaseRequest req) {
         put(m, "name", req.getName());
         put(m, "clientName", req.getClientName());
         put(m, "clientPhone", req.getClientPhone());
@@ -64,9 +64,9 @@ public final class ProjectDtoMapper {
         put(m, "progressNote", req.getProgressNote());
     }
 
-    public static ProjectResponse toResponse(Project p) {
+    public static me.fengorz.kiwi.tools.api.project.dto.ProjectResponse toResponse(Project p) {
         if (p == null) return null;
-        ProjectResponse r = new ProjectResponse();
+        me.fengorz.kiwi.tools.api.project.dto.ProjectResponse r = new me.fengorz.kiwi.tools.api.project.dto.ProjectResponse();
         r.setId(p.getId());
         r.setProjectCode(p.getProjectCode());
         r.setName(p.getName());
@@ -86,14 +86,14 @@ public final class ProjectDtoMapper {
         return r;
     }
 
-    public static List<ProjectResponse> toResponseList(List<Project> list) {
+    public static List<me.fengorz.kiwi.tools.api.project.dto.ProjectResponse> toResponseList(List<Project> list) {
         if (list == null) return Collections.emptyList();
         return list.stream().map(ProjectDtoMapper::toResponse).collect(Collectors.toList());
     }
 
     @SuppressWarnings("unchecked")
-    public static PageResponse<ProjectResponse> toPageResponse(Map<String, Object> serviceResult) {
-        PageResponse<ProjectResponse> page = new PageResponse<>();
+    public static me.fengorz.kiwi.tools.api.project.dto.PageResponse<me.fengorz.kiwi.tools.api.project.dto.ProjectResponse> toPageResponse(Map<String, Object> serviceResult) {
+        me.fengorz.kiwi.tools.api.project.dto.PageResponse<me.fengorz.kiwi.tools.api.project.dto.ProjectResponse> page = new me.fengorz.kiwi.tools.api.project.dto.PageResponse<>();
         List<Project> items = (List<Project>) serviceResult.getOrDefault("items", Collections.emptyList());
         page.setItems(toResponseList(items));
         Object p = serviceResult.get("page");
@@ -105,9 +105,9 @@ public final class ProjectDtoMapper {
         return page;
     }
 
-    public static ProjectPhotoResponse toResponse(ProjectPhoto pp) {
+    public static me.fengorz.kiwi.tools.api.project.dto.ProjectPhotoResponse toResponse(ProjectPhoto pp) {
         if (pp == null) return null;
-        ProjectPhotoResponse r = new ProjectPhotoResponse();
+        me.fengorz.kiwi.tools.api.project.dto.ProjectPhotoResponse r = new me.fengorz.kiwi.tools.api.project.dto.ProjectPhotoResponse();
         r.setId(pp.getId());
         r.setProjectId(pp.getProjectId());
         r.setDfsFileId(pp.getDfsFileId());
@@ -120,7 +120,7 @@ public final class ProjectDtoMapper {
         return r;
     }
 
-    public static List<ProjectPhotoResponse> toPhotoResponseList(List<ProjectPhoto> list) {
+    public static List<me.fengorz.kiwi.tools.api.project.dto.ProjectPhotoResponse> toPhotoResponseList(List<ProjectPhoto> list) {
         if (list == null) return Collections.emptyList();
         return list.stream().map(ProjectDtoMapper::toResponse).collect(Collectors.toList());
     }

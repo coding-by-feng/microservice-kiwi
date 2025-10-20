@@ -14,12 +14,14 @@ import me.fengorz.kiwi.common.sdk.web.WebTools;
 import me.fengorz.kiwi.common.ytb.YouTuBeHelper;
 import me.fengorz.kiwi.common.ytb.YtbSubtitlesResult;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.cache.Cache;
-import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
+import java.net.URI;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
@@ -32,62 +34,175 @@ public class YtbSubtitleStreamingService {
     private final YouTuBeHelper youTuBeHelper;
     private final AiChatService aiChatService;
     private final AiStreamingService aiStreamingService;
-    private final CacheManager cacheManager;
 
     public YtbSubtitleStreamingService(YouTuBeHelper youTuBeHelper,
                                        @Qualifier("grokAiService") AiChatService aiChatService,
                                        @Qualifier("grokStreamingService") AiStreamingService aiStreamingService,
-                                       CacheManager cacheManager) {
+                                       org.springframework.cache.CacheManager cacheManager) {
         this.youTuBeHelper = youTuBeHelper;
         this.aiChatService = aiChatService;
         this.aiStreamingService = aiStreamingService;
-        this.cacheManager = cacheManager;
+    }
+
+    // ---------------------------------------
+    // Helpers
+    // ---------------------------------------
+
+    private String decode(String url) {
+        try {
+            return WebTools.decode(url);
+        } catch (Exception e) {
+            try {
+                return URLDecoder.decode(url, StandardCharsets.UTF_8.name());
+            } catch (Exception ex) {
+                return url;
+            }
+        }
     }
 
     /**
-     * Get scrolling subtitles (cached)
+     * Extract normalized YouTube video ID from various URL formats.
+     * Supported: youtu.be/{id}, youtube.com/watch?v={id}, youtube.com/shorts/{id}, youtube.com/embed/{id}
      */
-    @KiwiCacheKeyPrefix(AiConstants.CACHE_KEY_PREFIX_GROK.SUBTITLE_SCROLLING)
-    @Cacheable(cacheNames = AiConstants.CACHE_NAMES, keyGenerator = CacheConstants.CACHE_KEY_GENERATOR_BEAN,
-            unless = "#result == null")
-    public YtbSubtitlesResult getScrollingSubtitles(@KiwiCacheKey(1) String videoUrl) {
-        log.info("Fetching scrolling subtitles for video: {}", videoUrl);
-        String decodedUrl = WebTools.decode(videoUrl);
-        return youTuBeHelper.downloadSubtitles(decodedUrl);
+    private String extractVideoId(String rawUrl) {
+        if (rawUrl == null || rawUrl.isEmpty()) return rawUrl;
+        String url = decode(rawUrl).trim();
+        try {
+            if (!url.startsWith("http://") && !url.startsWith("https://")) {
+                url = "https://" + url;
+            }
+            URI uri = URI.create(url);
+            String host = uri.getHost() == null ? "" : uri.getHost().toLowerCase();
+            String path = uri.getPath() == null ? "" : uri.getPath();
+            String query = uri.getQuery();
+
+            // youtu.be/<id>
+            if (host.contains("youtu.be")) {
+                String p = path.startsWith("/") ? path.substring(1) : path;
+                return trimIdTail(p);
+            }
+
+            // youtube.com/watch?v=<id>&...
+            if (host.contains("youtube.com")) {
+                if (path.startsWith("/watch") && query != null) {
+                    for (String kv : query.split("&")) {
+                        String[] arr = kv.split("=", 2);
+                        if (arr.length == 2 && "v".equals(arr[0])) {
+                            return trimIdTail(arr[1]);
+                        }
+                    }
+                }
+                // youtube.com/shorts/<id>
+                if (path.startsWith("/shorts/")) {
+                    return trimIdTail(path.substring("/shorts/".length()));
+                }
+                // youtube.com/embed/<id>
+                if (path.startsWith("/embed/")) {
+                    return trimIdTail(path.substring("/embed/".length()));
+                }
+            }
+        } catch (Exception ignore) {
+            // fallback below
+        }
+
+        // Fallback: try to detect 11-char ID inside the string
+        String candidate = url;
+        int idx = candidate.indexOf("v=");
+        if (idx >= 0) {
+            String sub = candidate.substring(idx + 2);
+            int amp = sub.indexOf('&');
+            if (amp > 0) sub = sub.substring(0, amp);
+            return trimIdTail(sub);
+        }
+        return url; // as-is fallback
+    }
+
+    private String trimIdTail(String id) {
+        if (id == null) return null;
+        int q = id.indexOf('?');
+        if (q >= 0) id = id.substring(0, q);
+        int amp = id.indexOf('&');
+        if (amp >= 0) id = id.substring(0, amp);
+        int slash = id.indexOf('/');
+        if (slash >= 0) id = id.substring(0, slash);
+        return id;
+    }
+
+    // ---------------------------------------
+    // Public API (wrappers keep signatures stable)
+    // ---------------------------------------
+
+    /**
+     * Get scrolling subtitles (cached by normalized videoId)
+     */
+    public YtbSubtitlesResult getScrollingSubtitles(String videoUrl) {
+        String videoId = extractVideoId(videoUrl);
+        String decodedUrl = decode(videoUrl);
+        return getScrollingSubtitlesInternal(videoId, decodedUrl);
     }
 
     /**
-     * Get video title (cached)
+     * Get video title (cached by normalized videoId)
      */
-    @KiwiCacheKeyPrefix(AiConstants.CACHE_KEY_PREFIX_GROK.VIDEO_TITLE)
-    @Cacheable(cacheNames = AiConstants.CACHE_NAMES, keyGenerator = CacheConstants.CACHE_KEY_GENERATOR_BEAN,
-            unless = "#result == null")
-    public String getVideoTitle(@KiwiCacheKey(1) String videoUrl) {
-        log.info("Fetching video title for: {}", videoUrl);
-        String decodedUrl = WebTools.decode(videoUrl);
-        return youTuBeHelper.getVideoTitle(decodedUrl);
+    public String getVideoTitle(String videoUrl) {
+        String videoId = extractVideoId(videoUrl);
+        String decodedUrl = decode(videoUrl);
+        return getVideoTitleInternal(videoId, decodedUrl);
     }
 
     /**
-     * Stream subtitle translation with caching support
+     * Clean all caches scoped to this video (and optional language)
      */
-    public void streamSubtitleTranslation(String videoUrl, String language, 
-                                         Consumer<String> onChunk, 
-                                         Consumer<Exception> onError, 
-                                         Runnable onComplete) {
-        
+    public void cleanAllCaches(String videoUrl, String language) {
+        String videoId = extractVideoId(videoUrl);
+        LanguageEnum lang = (language != null && !"null".equals(language)) ?
+                LanguageConvertor.convertLanguageToEnum(language) : LanguageEnum.NONE;
+
+        // Clean caches keyed by videoId
+        cleanScrollingSubtitlesCacheById(videoId);
+        cleanVideoTitleCacheById(videoId);
+        if (language != null && !"null".equals(language)) {
+            cleanStreamingSubtitleTranslationCacheById(videoId, language);
+        }
+
+        String decodedUrl = decode(videoUrl);
+        // Clean AI translation caches (these use decoded URL as their own keys)
+        aiChatService.cleanBatchCallForYtbAndCache(decodedUrl, AiPromptModeEnum.SUBTITLE_RETOUCH_TRANSLATOR, lang);
+        aiChatService.cleanBatchCallForYtbAndCache(decodedUrl, AiPromptModeEnum.SUBTITLE_RETOUCH, lang);
+        aiChatService.cleanBatchCallForYtbAndCache(decodedUrl, AiPromptModeEnum.SUBTITLE_TRANSLATOR, lang);
+        aiChatService.cleanCallForYtbAndCache(decodedUrl, AiPromptModeEnum.SUBTITLE_RETOUCH_TRANSLATOR, lang);
+        aiChatService.cleanCallForYtbAndCache(decodedUrl, AiPromptModeEnum.SUBTITLE_TRANSLATOR, lang);
+        aiChatService.cleanCallForYtbAndCache(decodedUrl, AiPromptModeEnum.SUBTITLE_RETOUCH, lang);
+
+        log.info("All caches cleaned for videoId: {}, language: {}", videoId, language);
+    }
+
+    // ---------------------------------------
+    // Streaming API
+    // ---------------------------------------
+
+    public void streamSubtitleTranslation(String videoUrl, String language,
+                                          Consumer<String> onChunk,
+                                          Consumer<Exception> onError,
+                                          Runnable onComplete) {
         CompletableFuture.runAsync(() -> {
             try {
-                log.info("Starting subtitle translation streaming for video: {}, language: {}", videoUrl, language);
-                
-                // Check if translation is needed
-                boolean needsTranslation = language != null && 
-                                         !"null".equals(language) && 
-                                         !LanguageEnum.EN.getCode().equals(language);
-                
+                String videoId = extractVideoId(videoUrl);
+                String decodedUrl = decode(videoUrl);
+                // Normalize language to enum code for caching keys
+                LanguageEnum targetLanguageEnum = (language != null && !"null".equals(language))
+                        ? LanguageConvertor.convertLanguageToEnum(language) : null;
+                String cacheLang = targetLanguageEnum != null ? targetLanguageEnum.getCode() : language;
+
+                log.info("Starting subtitle translation streaming for videoId: {}, language: {}", videoId, cacheLang);
+
+                boolean needsTranslation = cacheLang != null &&
+                        !"null".equals(cacheLang) &&
+                        !LanguageEnum.EN.getCode().equals(cacheLang);
+
                 if (!needsTranslation) {
-                    // Get subtitles (cached) and return directly
-                    YtbSubtitlesResult subtitlesResult = getScrollingSubtitles(videoUrl);
+                    // No translation: return original subtitles
+                    YtbSubtitlesResult subtitlesResult = getScrollingSubtitlesInternal(videoId, decodedUrl);
                     if (subtitlesResult == null) {
                         onError.accept(new RuntimeException("No subtitles available for this video"));
                         return;
@@ -97,20 +212,19 @@ public class YtbSubtitleStreamingService {
                     return;
                 }
 
-                // First, check if we have cached translation
-                String cachedTranslation = getCachedStreamingSubtitleTranslation(videoUrl, language);
+                // Try cache first (videoId + language)
+                String cachedTranslation = getCachedStreamingSubtitleTranslationById(videoId, cacheLang);
                 if (cachedTranslation != null) {
-                    log.info("Found cached streaming translation for video: {}, language: {}, length: {}",
-                            videoUrl, language, cachedTranslation.length());
-                    // Stream the cached content as chunks for consistency with real streaming
+                    log.info("Found cached streaming translation for videoId: {}, language: {}, length: {}",
+                            videoId, cacheLang, cachedTranslation.length());
                     streamCachedContent(cachedTranslation, onChunk, onComplete);
                     return;
                 }
 
                 log.info("No cached translation found, performing live AI translation streaming");
 
-                // Get subtitles (cached)
-                YtbSubtitlesResult subtitlesResult = getScrollingSubtitles(videoUrl);
+                // Ensure original subtitles available (cached by id)
+                YtbSubtitlesResult subtitlesResult = getScrollingSubtitlesInternal(videoId, decodedUrl);
                 log.debug("Subtitle result: {}", subtitlesResult);
 
                 if (subtitlesResult == null) {
@@ -118,9 +232,8 @@ public class YtbSubtitleStreamingService {
                     return;
                 }
 
-                // Perform streaming translation with caching
-                LanguageEnum targetLanguage = LanguageConvertor.convertLanguageToEnum(language);
-                streamTranslationWithAiAndCache(videoUrl, language, subtitlesResult, targetLanguage, onChunk, onError, onComplete);
+                // Perform streaming translation and cache final content by (videoId, language)
+                streamTranslationWithAiAndCache(videoId, cacheLang, subtitlesResult, targetLanguageEnum, onChunk, onError, onComplete);
 
             } catch (Exception e) {
                 log.error("Error in subtitle translation streaming: {}", e.getMessage(), e);
@@ -129,26 +242,61 @@ public class YtbSubtitleStreamingService {
         });
     }
 
-    /**
-     * Stream cached content as chunks to maintain consistency with live streaming
-     */
+    // ---------------------------------------
+    // Internal cached methods (cache keys use videoId)
+    // ---------------------------------------
+
+    @KiwiCacheKeyPrefix(AiConstants.CACHE_KEY_PREFIX_GROK.SUBTITLE_SCROLLING)
+    @Cacheable(cacheNames = AiConstants.CACHE_NAMES, keyGenerator = CacheConstants.CACHE_KEY_GENERATOR_BEAN,
+            unless = "#result == null")
+    public YtbSubtitlesResult getScrollingSubtitlesInternal(@KiwiCacheKey(1) String videoId, String decodedUrl) {
+        log.info("Fetching scrolling subtitles for videoId: {}", videoId);
+        return youTuBeHelper.downloadSubtitles(decodedUrl);
+    }
+
+    @KiwiCacheKeyPrefix(AiConstants.CACHE_KEY_PREFIX_GROK.VIDEO_TITLE)
+    @Cacheable(cacheNames = AiConstants.CACHE_NAMES, keyGenerator = CacheConstants.CACHE_KEY_GENERATOR_BEAN,
+            unless = "#result == null")
+    public String getVideoTitleInternal(@KiwiCacheKey(1) String videoId, String decodedUrl) {
+        log.info("Fetching video title for videoId: {}", videoId);
+        return youTuBeHelper.getVideoTitle(decodedUrl);
+    }
+
+    @KiwiCacheKeyPrefix(AiConstants.CACHE_KEY_PREFIX_GROK.SUBTITLE_STREAMING)
+    @Cacheable(cacheNames = AiConstants.CACHE_NAMES, keyGenerator = CacheConstants.CACHE_KEY_GENERATOR_BEAN,
+            unless = "#result == null")
+    public String getCachedStreamingSubtitleTranslationById(@KiwiCacheKey(1) String videoId,
+                                                            @KiwiCacheKey(2) String language) {
+        return null; // Cache miss -> stream and CachePut later
+    }
+
+    @KiwiCacheKeyPrefix(AiConstants.CACHE_KEY_PREFIX_GROK.SUBTITLE_STREAMING)
+    @CachePut(cacheNames = AiConstants.CACHE_NAMES, keyGenerator = CacheConstants.CACHE_KEY_GENERATOR_BEAN,
+            unless = "#result == null")
+    public String cacheStreamingSubtitleTranslation(@KiwiCacheKey(1) String videoId,
+                                                    @KiwiCacheKey(2) String language,
+                                                    String translatedContent) {
+        log.info("Caching streaming subtitle translation for videoId: {}, language: {}, length: {}",
+                videoId, language, translatedContent != null ? translatedContent.length() : 0);
+        return translatedContent;
+    }
+
+    // ---------------------------------------
+    // Streaming helpers
+    // ---------------------------------------
+
     private void streamCachedContent(String cachedContent, Consumer<String> onChunk, Runnable onComplete) {
         try {
-            // Split content into reasonable chunks (e.g., by lines or paragraphs)
             String[] lines = cachedContent.split("\n");
             StringBuilder chunkBuilder = new StringBuilder();
-            int linesPerChunk = Math.max(1, lines.length / 10); // Aim for ~10 chunks
+            int linesPerChunk = Math.max(1, lines.length / 10);
 
             for (int i = 0; i < lines.length; i++) {
                 chunkBuilder.append(lines[i]).append("\n");
-
-                // Send chunk when we reach the desired size or at the end
                 if ((i + 1) % linesPerChunk == 0 || i == lines.length - 1) {
                     String chunk = chunkBuilder.toString();
                     onChunk.accept(chunk);
-                    chunkBuilder.setLength(0); // Clear for next chunk
-
-                    // Add small delay to simulate streaming behavior
+                    chunkBuilder.setLength(0);
                     try {
                         Thread.sleep(50);
                     } catch (InterruptedException e) {
@@ -157,212 +305,112 @@ public class YtbSubtitleStreamingService {
                     }
                 }
             }
-
             onComplete.run();
             log.info("Successfully streamed cached content");
         } catch (Exception e) {
             log.error("Error streaming cached content: {}", e.getMessage(), e);
-            // Fallback: send all content at once
             onChunk.accept(cachedContent);
             onComplete.run();
         }
     }
 
-    /**
-     * Stream translation using AI service with caching
-     */
     @SuppressWarnings({"unchecked", "rawtypes"})
-    private void streamTranslationWithAiAndCache(String videoUrl, String language,
+    private void streamTranslationWithAiAndCache(String videoId,
+                                                 String language,
                                                  YtbSubtitlesResult subtitlesResult,
                                                  LanguageEnum targetLanguage,
                                                  Consumer<String> onChunk,
                                                  Consumer<Exception> onError,
                                                  Runnable onComplete) {
-
         try {
             AiPromptModeEnum promptMode = AiPromptModeEnum.SUBTITLE_RETOUCH_TRANSLATOR;
             StringBuilder fullContentBuilder = new StringBuilder();
 
-            // Create wrapped callbacks that accumulate content for caching
             Consumer<String> cachingOnChunk = chunk -> {
                 fullContentBuilder.append(chunk);
-                onChunk.accept(chunk); // Forward to original callback
+                onChunk.accept(chunk);
             };
 
             Runnable cachingOnComplete = () -> {
-                // Cache the complete translated content
                 String fullTranslatedContent = fullContentBuilder.toString();
                 if (fullTranslatedContent.length() > 0) {
-                    cacheStreamingSubtitleTranslationManually(videoUrl, language, fullTranslatedContent);
-                    log.info("Cached complete streaming translation for video: {}, language: {}, length: {}",
-                            videoUrl, language, fullTranslatedContent.length());
+                    cacheStreamingSubtitleTranslation(videoId, language, fullTranslatedContent);
                 }
-                onComplete.run(); // Forward to original callback
+                onComplete.run();
             };
 
             switch (subtitlesResult.getType()) {
                 case SMALL_AUTO_GENERATED_RETURN_STRING:
-                case SMALL_PROFESSIONAL_RETURN_STRING:
-                    // Stream single content
+                case SMALL_PROFESSIONAL_RETURN_STRING: {
                     String content = (String) subtitlesResult.getPendingToBeTranslatedOrRetouchedSubtitles();
                     streamSingleContent(content, promptMode, targetLanguage, cachingOnChunk, onError, cachingOnComplete);
                     break;
-                    
+                }
                 case LARGE_AUTO_GENERATED_RETURN_LIST:
-                case LARGE_PROFESSIONAL_RETURN_LIST:
-                    // Stream batch content
+                case LARGE_PROFESSIONAL_RETURN_LIST: {
                     List<String> contentList = (List) subtitlesResult.getPendingToBeTranslatedOrRetouchedSubtitles();
                     streamBatchContent(contentList, promptMode, targetLanguage, cachingOnChunk, onError, cachingOnComplete);
                     break;
-                    
+                }
                 default:
                     onError.accept(new RuntimeException("Unsupported subtitle type: " + subtitlesResult.getType()));
             }
-            
         } catch (Exception e) {
             log.error("Error in AI streaming translation with caching: {}", e.getMessage(), e);
             onError.accept(e);
         }
     }
 
-    /**
-     * Stream single content piece
-     */
-    private void streamSingleContent(String content, AiPromptModeEnum promptMode, 
-                                    LanguageEnum targetLanguage,
-                                    Consumer<String> onChunk, 
-                                    Consumer<Exception> onError, 
-                                    Runnable onComplete) {
-        
+    private void streamSingleContent(String content,
+                                     AiPromptModeEnum promptMode,
+                                     LanguageEnum targetLanguage,
+                                     Consumer<String> onChunk,
+                                     Consumer<Exception> onError,
+                                     Runnable onComplete) {
         aiStreamingService.streamCall(
-            content,
-            promptMode,
-            targetLanguage,
-            LanguageEnum.EN, // Native language
-            onChunk,
-            onError,
-            onComplete
+                content,
+                promptMode,
+                targetLanguage,
+                LanguageEnum.EN,
+                onChunk,
+                onError,
+                onComplete
         );
     }
 
-    /**
-     * Stream batch content by combining into single request
-     */
-    private void streamBatchContent(List<String> contentList, AiPromptModeEnum promptMode, 
-                                   LanguageEnum targetLanguage,
-                                   Consumer<String> onChunk, 
-                                   Consumer<Exception> onError, 
-                                   Runnable onComplete) {
-        
-        // Combine all content into single string for streaming
+    private void streamBatchContent(List<String> contentList,
+                                    AiPromptModeEnum promptMode,
+                                    LanguageEnum targetLanguage,
+                                    Consumer<String> onChunk,
+                                    Consumer<Exception> onError,
+                                    Runnable onComplete) {
         StringBuilder combinedContent = new StringBuilder();
         for (String content : contentList) {
             combinedContent.append(content).append("\n\n");
         }
-        
         streamSingleContent(combinedContent.toString(), promptMode, targetLanguage, onChunk, onError, onComplete);
     }
 
-    /**
-     * Get cached streaming subtitle translation result (if available)
-     */
-    @KiwiCacheKeyPrefix(AiConstants.CACHE_KEY_PREFIX_GROK.SUBTITLE_STREAMING)
-    @Cacheable(cacheNames = AiConstants.CACHE_NAMES, keyGenerator = CacheConstants.CACHE_KEY_GENERATOR_BEAN,
-            unless = "#result == null")
-    public String getCachedStreamingSubtitleTranslation(@KiwiCacheKey(1) String videoUrl,
-                                                        @KiwiCacheKey(2) String language) {
-        // This method will be called only if cache miss occurs
-        // The actual translation will be handled by streamSubtitleTranslation method
-        return null; // Cache miss - will trigger actual translation
-    }
+    // ---------------------------------------
+    // Evict by videoId
+    // ---------------------------------------
 
-    /**
-     * Cache streaming subtitle translation result
-     */
-    @KiwiCacheKeyPrefix(AiConstants.CACHE_KEY_PREFIX_GROK.SUBTITLE_STREAMING)
-    public void cacheStreamingSubtitleTranslation(@KiwiCacheKey(1) String videoUrl,
-                                                  @KiwiCacheKey(2) String language,
-                                                  String translatedContent) {
-        // This method will manually put the result into cache
-        // We'll use Spring's CacheManager to manually cache the result
-        log.info("Caching streaming subtitle translation for video: {}, language: {}, content length: {}",
-                videoUrl, language, translatedContent != null ? translatedContent.length() : 0);
-    }
-
-    /**
-     * Manually cache streaming subtitle translation result using CacheManager
-     */
-    private void cacheStreamingSubtitleTranslationManually(String videoUrl, String language, String translatedContent) {
-        try {
-            Cache cache = cacheManager.getCache(AiConstants.CACHE_NAMES);
-            if (cache != null) {
-                // Generate cache key using the same pattern as the @Cacheable annotation
-                String cacheKey = AiConstants.CACHE_KEY_PREFIX_GROK.CLASS + ":" +
-                                 AiConstants.CACHE_KEY_PREFIX_GROK.SUBTITLE_STREAMING + ":" +
-                                 videoUrl + ":" + language;
-                cache.put(cacheKey, translatedContent);
-                log.info("Successfully cached streaming translation with key: {}, content length: {}",
-                        cacheKey, translatedContent.length());
-            } else {
-                log.warn("Cache '{}' not found, unable to cache streaming translation", AiConstants.CACHE_NAMES);
-            }
-        } catch (Exception e) {
-            log.error("Error manually caching streaming translation for video: {}, language: {}, error: {}",
-                    videoUrl, language, e.getMessage(), e);
-        }
-    }
-
-    /**
-     * Clean subtitle caches
-     */
     @KiwiCacheKeyPrefix(AiConstants.CACHE_KEY_PREFIX_GROK.SUBTITLE_SCROLLING)
     @CacheEvict(cacheNames = AiConstants.CACHE_NAMES, keyGenerator = CacheConstants.CACHE_KEY_GENERATOR_BEAN)
-    public void cleanScrollingSubtitlesCache(@KiwiCacheKey(1) String videoUrl) {
-        log.info("Cleaning scrolling subtitles cache for video: {}", videoUrl);
+    public void cleanScrollingSubtitlesCacheById(@KiwiCacheKey(1) String videoId) {
+        log.info("Cleaning scrolling subtitles cache for videoId: {}", videoId);
     }
 
     @KiwiCacheKeyPrefix(AiConstants.CACHE_KEY_PREFIX_GROK.VIDEO_TITLE)
     @CacheEvict(cacheNames = AiConstants.CACHE_NAMES, keyGenerator = CacheConstants.CACHE_KEY_GENERATOR_BEAN)
-    public void cleanVideoTitleCache(@KiwiCacheKey(1) String videoUrl) {
-        log.info("Cleaning video title cache for video: {}", videoUrl);
+    public void cleanVideoTitleCacheById(@KiwiCacheKey(1) String videoId) {
+        log.info("Cleaning video title cache for videoId: {}", videoId);
     }
 
-    /**
-     * Clean streaming subtitle translation cache
-     */
     @KiwiCacheKeyPrefix(AiConstants.CACHE_KEY_PREFIX_GROK.SUBTITLE_STREAMING)
     @CacheEvict(cacheNames = AiConstants.CACHE_NAMES, keyGenerator = CacheConstants.CACHE_KEY_GENERATOR_BEAN)
-    public void cleanStreamingSubtitleTranslationCache(@KiwiCacheKey(1) String videoUrl, @KiwiCacheKey(2) String language) {
-        log.info("Cleaning streaming subtitle translation cache for video: {}, language: {}", videoUrl, language);
-    }
-
-    /**
-     * Clean all caches for a video
-     */
-    public void cleanAllCaches(String videoUrl, String language) {
-        String decodedUrl = WebTools.decode(videoUrl);
-        LanguageEnum lang = (language != null && !"null".equals(language)) ? 
-                           LanguageConvertor.convertLanguageToEnum(language) : LanguageEnum.NONE;
-        
-        // Clean scrolling subtitles cache
-        cleanScrollingSubtitlesCache(videoUrl);
-        
-        // Clean video title cache
-        cleanVideoTitleCache(videoUrl);
-        
-        // Clean streaming translation cache
-        if (language != null && !"null".equals(language)) {
-            cleanStreamingSubtitleTranslationCache(videoUrl, language);
-        }
-
-        // Clean AI translation caches
-        aiChatService.cleanBatchCallForYtbAndCache(decodedUrl, AiPromptModeEnum.SUBTITLE_RETOUCH_TRANSLATOR, lang);
-        aiChatService.cleanBatchCallForYtbAndCache(decodedUrl, AiPromptModeEnum.SUBTITLE_RETOUCH, lang);
-        aiChatService.cleanBatchCallForYtbAndCache(decodedUrl, AiPromptModeEnum.SUBTITLE_TRANSLATOR, lang);
-        aiChatService.cleanCallForYtbAndCache(decodedUrl, AiPromptModeEnum.SUBTITLE_RETOUCH_TRANSLATOR, lang);
-        aiChatService.cleanCallForYtbAndCache(decodedUrl, AiPromptModeEnum.SUBTITLE_TRANSLATOR, lang);
-        aiChatService.cleanCallForYtbAndCache(decodedUrl, AiPromptModeEnum.SUBTITLE_RETOUCH, lang);
-        
-        log.info("All caches cleaned for video: {}, language: {}", videoUrl, language);
+    public void cleanStreamingSubtitleTranslationCacheById(@KiwiCacheKey(1) String videoId,
+                                                           @KiwiCacheKey(2) String language) {
+        log.info("Cleaning streaming subtitle translation cache for videoId: {}, language: {}", videoId, language);
     }
 }

@@ -1,7 +1,7 @@
 package me.fengorz.kiwi.tools;
 
 import me.fengorz.kiwi.common.sdk.util.json.KiwiJsonUtils;
-import me.fengorz.kiwi.tools.model.Project;
+import me.fengorz.kiwi.tools.model.project.Project;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;

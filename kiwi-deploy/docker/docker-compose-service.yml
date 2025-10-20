@@ -15,7 +15,7 @@ services:
       retries: 8
       start_period: 4m
     entrypoint:
-      - /bin/bash
+      - /bin/sh
       - -c
       - |
         echo "Waiting for kiwi-config to be healthy..."
@@ -53,7 +53,7 @@ services:
       retries: 8
       start_period: 4m
     entrypoint:
-      - /bin/bash
+      - /bin/sh
       - -c
       - |
         echo "Waiting for kiwi-config to be healthy..."
@@ -103,7 +103,7 @@ services:
       retries: 8
       start_period: 4m
     entrypoint:
-      - /bin/bash
+      - /bin/sh
       - -c
       - |
         echo "Waiting for kiwi-config to be healthy..."
@@ -151,7 +151,7 @@ services:
       retries: 8
       start_period: 4m
     entrypoint:
-      - /bin/bash
+      - /bin/sh
       - -c
       - |
         echo "Waiting for kiwi-config to be healthy..."
@@ -201,7 +201,7 @@ services:
       retries: 8
       start_period: 4m
     entrypoint:
-      - /bin/bash
+      - /bin/sh
       - -c
       - |
         echo "Waiting for kiwi-config to be healthy..."
@@ -246,7 +246,7 @@ services:
       retries: 8
       start_period: 4m
     entrypoint:
-      - /bin/bash
+      - /bin/sh
       - -c
       - |
         echo "Waiting for kiwi-config to be healthy..."
@@ -293,7 +293,7 @@ services:
       retries: 8
       start_period: 4m
     entrypoint:
-      - /bin/bash
+      - /bin/sh
       - -c
       - |
         echo "Waiting for kiwi-config to be healthy..."
@@ -307,7 +307,7 @@ services:
         done
         echo "Waiting for kiwi-ai-biz to be healthy..."
         wait_secs=0
-        until pgrep -f kiwi-ai-biz >/dev/null; do
+        until code=$(curl -s -o /dev/null -w '%{http_code}' http://localhost:18015/actuator/health); [ "$$code" = "200" ] || [ "$$code" = "401" ] || [ "$$code" = "403" ]; do
           wait_secs=$$((wait_secs+1))
           if [ $$((wait_secs % 5)) -eq 0 ]; then
             echo "Waiting for kiwi-ai-biz to be healthy... ($$wait_secs s)"

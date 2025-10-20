@@ -2,6 +2,10 @@ FROM eclipse-temurin:8-jdk
 
 RUN mkdir /logs
 RUN mkdir /wordTmp
+# Install curl for readiness checks and procps for pgrep healthcheck
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends curl procps \
+    && rm -rf /var/lib/apt/lists/*
 ADD kiwi-word-biz-2.0.jar app.jar
 
 

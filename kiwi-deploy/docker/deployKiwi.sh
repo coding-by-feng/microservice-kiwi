@@ -1,5 +1,26 @@
 #!/bin/bash
 
+# --- Permission bootstrap (self-healing) ---
+# Ensure all kiwi-deploy scripts are executable and common helper binaries are +x
+{
+  SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+  DEPLOY_ROOT="$(cd "$SCRIPT_DIR/.." && pwd 2>/dev/null || echo "$SCRIPT_DIR")"
+  # Make every .sh under kiwi-deploy executable
+  if [ -d "$DEPLOY_ROOT" ]; then
+    find "$DEPLOY_ROOT" -type f -name "*.sh" -exec chmod 777 {} \; 2>/dev/null || true
+  fi
+  # Make easy-* symlinks/scripts under the original user's home executable
+  ORIG_USER="${SUDO_USER:-$USER}"
+  ORIG_HOME=$(eval echo "~$ORIG_USER")
+  for f in "$ORIG_HOME"/easy-*; do
+    [ -e "$f" ] && chmod +x "$f" || true
+  done
+  # Ensure yt-dlp_linux binaries are executable if present
+  for f in "$ORIG_HOME"/docker/kiwi/ai/*/yt-dlp_linux "$ORIG_HOME"/docker/kiwi/ai/yt-dlp_linux; do
+    [ -e "$f" ] && chmod +x "$f" || true
+  done
+} >/dev/null 2>&1 || true
+
 # Method 1: Check if running with sudo -E by examining environment variables
 check_sudo_e() {
     echo "=============================================="

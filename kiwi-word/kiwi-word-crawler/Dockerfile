@@ -2,6 +2,10 @@ FROM eclipse-temurin:8-jdk
 
 RUN mkdir /logs
 RUN mkdir /crawlerTmp
+# Install curl for healthchecks and readiness scripts
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends curl \
+    && rm -rf /var/lib/apt/lists/*
 
 ADD kiwi-word-crawler-2.0.jar app.jar
 

@@ -1,5 +1,21 @@
 #!/bin/bash
 
+# --- Permission bootstrap (self-healing) ---
+{
+  SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+  DEPLOY_ROOT="$(cd "$SCRIPT_DIR/.." && pwd 2>/dev/null || echo "$SCRIPT_DIR")"
+  # Make every .sh under kiwi-deploy executable
+  if [ -d "$DEPLOY_ROOT" ]; then
+    find "$DEPLOY_ROOT" -type f -name "*.sh" -exec chmod 777 {} \; 2>/dev/null || true
+  fi
+  # Ensure yt-dlp_linux binaries are executable if present
+  ORIG_USER="${SUDO_USER:-$USER}"
+  ORIG_HOME=$(eval echo "~$ORIG_USER")
+  for f in "$ORIG_HOME"/docker/kiwi/ai/*/yt-dlp_linux "$ORIG_HOME"/docker/kiwi/ai/yt-dlp_linux; do
+    [ -e "$f" ] && chmod +x "$f" || true
+  done
+} >/dev/null 2>&1 || true
+
 # UI Deployment Script for Kiwi Docker Container
 # This script updates the UI files and restarts the kiwi-ui container
 # Modes:

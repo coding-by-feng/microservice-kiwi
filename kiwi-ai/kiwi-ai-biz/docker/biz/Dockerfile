@@ -14,6 +14,7 @@ RUN mkdir -p /logs /ai-tmp \
         ffmpeg \
         curl \
         wget \
+        procps \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 

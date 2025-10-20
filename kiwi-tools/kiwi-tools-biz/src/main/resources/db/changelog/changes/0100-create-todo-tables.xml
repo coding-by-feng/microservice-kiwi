@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet id="0100-create-todo-tables" author="tools-biz">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="todo_task"/>
+            </not>
+        </preConditions>
+
+        <createTable tableName="todo_task">
+            <column name="id" type="varchar(64)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="user_id" type="int"/>
+            <column name="title" type="varchar(200)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="varchar(2000)"/>
+            <column name="success_points" type="int" defaultValueNumeric="10">
+                <constraints nullable="false"/>
+            </column>
+            <column name="fail_points" type="int" defaultValueNumeric="-5">
+                <constraints nullable="false"/>
+            </column>
+            <column name="frequency" type="varchar(32)" defaultValue="once">
+                <constraints nullable="false"/>
+            </column>
+            <column name="custom_days" type="int"/>
+            <column name="status" type="varchar(32)" defaultValue="pending">
+                <constraints nullable="false"/>
+            </column>
+            <column name="metadata" type="text"/>
+            <column name="idempotency_key" type="varchar(128)"/>
+            <column name="created_at" type="timestamp" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="timestamp" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="deleted_at" type="timestamp"/>
+        </createTable>
+
+        <createTable tableName="todo_history">
+            <column name="id" type="varchar(64)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="user_id" type="int"/>
+            <column name="task_id" type="varchar(64)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="title" type="varchar(200)"/>
+            <column name="description" type="varchar(2000)"/>
+            <column name="success_points" type="int"/>
+            <column name="fail_points" type="int"/>
+            <column name="status" type="varchar(32)"/>
+            <column name="points_applied" type="int"/>
+            <column name="idempotency_key" type="varchar(128)"/>
+            <column name="completed_at" type="timestamp" defaultValueComputed="CURRENT_TIMESTAMP"/>
+        </createTable>
+
+        <createTable tableName="todo_trash">
+            <column name="id" type="varchar(64)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="user_id" type="int"/>
+            <column name="title" type="varchar(200)"/>
+            <column name="description" type="varchar(2000)"/>
+            <column name="success_points" type="int"/>
+            <column name="fail_points" type="int"/>
+            <column name="frequency" type="varchar(32)"/>
+            <column name="custom_days" type="int"/>
+            <column name="status" type="varchar(32)"/>
+            <column name="original_date" type="timestamp"/>
+            <column name="deleted_date" type="timestamp" defaultValueComputed="CURRENT_TIMESTAMP"/>
+        </createTable>
+
+        <createIndex tableName="todo_task" indexName="idx_todo_task_user_created">
+            <column name="user_id"/>
+            <column name="created_at"/>
+        </createIndex>
+        <createIndex tableName="todo_task" indexName="uk_todo_task_user_idem" unique="true">
+            <column name="user_id"/>
+            <column name="idempotency_key"/>
+        </createIndex>
+        <createIndex tableName="todo_history" indexName="idx_todo_history_user_completed">
+            <column name="user_id"/>
+            <column name="completed_at"/>
+        </createIndex>
+        <createIndex tableName="todo_history" indexName="uk_todo_history_user_idem" unique="true">
+            <column name="user_id"/>
+            <column name="idempotency_key"/>
+        </createIndex>
+        <createIndex tableName="todo_trash" indexName="idx_todo_trash_user_deleted">
+            <column name="user_id"/>
+            <column name="deleted_date"/>
+        </createIndex>
+
+        <rollback>
+            <dropTable tableName="todo_trash"/>
+            <dropTable tableName="todo_history"/>
+            <dropTable tableName="todo_task"/>
+        </rollback>
+    </changeSet>
+</databaseChangeLog>

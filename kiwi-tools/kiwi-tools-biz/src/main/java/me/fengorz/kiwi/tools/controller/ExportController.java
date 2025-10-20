@@ -4,7 +4,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import me.fengorz.kiwi.tools.model.Project;
+import me.fengorz.kiwi.tools.model.project.Project;
 import me.fengorz.kiwi.tools.service.ExportService;
 import me.fengorz.kiwi.tools.service.ProjectService;
 import org.springframework.http.HttpHeaders;

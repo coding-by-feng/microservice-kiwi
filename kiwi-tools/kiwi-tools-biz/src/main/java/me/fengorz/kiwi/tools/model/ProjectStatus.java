@@ -30,21 +30,21 @@ public enum ProjectStatus implements IEnum<String> {
         return code;
     }
 
-    public static ProjectStatus fromCode(String code) {
+    public static me.fengorz.kiwi.tools.model.project.ProjectStatus fromCode(String code) {
         if (code == null || code.isEmpty()) return null;
         String c = code.trim().toLowerCase(Locale.ROOT);
-        for (ProjectStatus s : values()) {
+        for (me.fengorz.kiwi.tools.model.project.ProjectStatus s : values()) {
             if (s.code.equals(c)) return s;
         }
         return null;
     }
 
     @JsonCreator
-    public static ProjectStatus fromInput(Object input) {
+    public static me.fengorz.kiwi.tools.model.project.ProjectStatus fromInput(Object input) {
         if (input == null) return null;
         String s = String.valueOf(input).trim();
         // try code first
-        ProjectStatus byCode = fromCode(s);
+        me.fengorz.kiwi.tools.model.project.ProjectStatus byCode = fromCode(s);
         if (byCode != null) return byCode;
         // accept legacy Chinese values
         switch (s) {
@@ -58,7 +58,7 @@ public enum ProjectStatus implements IEnum<String> {
                 return COMPLETED;
             default:
                 try {
-                    return ProjectStatus.valueOf(s.toUpperCase(Locale.ROOT));
+                    return me.fengorz.kiwi.tools.model.project.ProjectStatus.valueOf(s.toUpperCase(Locale.ROOT));
                 } catch (Exception ignored) {}
         }
         return null;
@@ -69,6 +69,6 @@ public enum ProjectStatus implements IEnum<String> {
     }
 
     public static String[] allowedCodes() {
-        return Arrays.stream(values()).map(ProjectStatus::getCode).toArray(String[]::new);
+        return Arrays.stream(values()).map(me.fengorz.kiwi.tools.model.project.ProjectStatus::getCode).toArray(String[]::new);
     }
 }

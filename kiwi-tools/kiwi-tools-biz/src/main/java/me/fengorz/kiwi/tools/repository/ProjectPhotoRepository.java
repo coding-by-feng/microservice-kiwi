@@ -3,7 +3,7 @@ package me.fengorz.kiwi.tools.repository;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import lombok.RequiredArgsConstructor;
-import me.fengorz.kiwi.tools.model.ProjectPhoto;
+import me.fengorz.kiwi.tools.model.project.ProjectPhoto;
 import me.fengorz.kiwi.tools.repository.mapper.ProjectPhotoMapper;
 import org.springframework.stereotype.Repository;
 

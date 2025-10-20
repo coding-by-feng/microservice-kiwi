@@ -1,11 +1,11 @@
 package me.fengorz.kiwi.tools.controller;
 
 import io.swagger.annotations.*;
-import me.fengorz.kiwi.tools.api.dto.*;
 import me.fengorz.kiwi.tools.api.mapper.ProjectDtoMapper;
+import me.fengorz.kiwi.tools.api.project.dto.ProjectPatchRequest;
 import me.fengorz.kiwi.tools.exception.ToolsException;
-import me.fengorz.kiwi.tools.model.Project;
-import me.fengorz.kiwi.tools.model.ProjectPhoto;
+import me.fengorz.kiwi.tools.model.project.Project;
+import me.fengorz.kiwi.tools.model.project.ProjectPhoto;
 import me.fengorz.kiwi.tools.service.ProjectPhotoService;
 import me.fengorz.kiwi.tools.service.ProjectService;
 import me.fengorz.kiwi.tools.service.StorageService;
@@ -72,7 +72,7 @@ public class ProjectController {
             @ApiImplicitParam(name = "archived", value = "If true/false, filter by archived flag (ignored when includeArchived=true). If null, defaults to active only.", dataType = "boolean", paramType = "query"),
             @ApiImplicitParam(name = "includeArchived", value = "If true, return only archived projects.", dataType = "boolean", paramType = "query")
     })
-    public PageResponse<ProjectResponse> listProjects(
+    public me.fengorz.kiwi.tools.api.project.dto.PageResponse<me.fengorz.kiwi.tools.api.project.dto.ProjectResponse> listProjects(
             @RequestParam(required = false) String q,
             @RequestParam(required = false) String status,
             @RequestParam(required = false) String start,
@@ -99,7 +99,7 @@ public class ProjectController {
             @ApiResponse(code = 200, message = "OK"),
             @ApiResponse(code = 404, message = "Not Found")
     })
-    public ProjectResponse getProject(@ApiParam(value = "Project id", required = true) @PathVariable String id) {
+    public me.fengorz.kiwi.tools.api.project.dto.ProjectResponse getProject(@ApiParam(value = "Project id", required = true) @PathVariable String id) {
         Project p = service.get(id);
         return ProjectDtoMapper.toResponse(p);
     }
@@ -115,7 +115,7 @@ public class ProjectController {
             @ApiResponse(code = 201, message = "Created"),
             @ApiResponse(code = 400, message = "Validation error")
     })
-    public ResponseEntity<ProjectResponse> createProject(@ApiParam(value = "Project fields", required = true) @RequestBody ProjectCreateRequest body) {
+    public ResponseEntity<me.fengorz.kiwi.tools.api.project.dto.ProjectResponse> createProject(@ApiParam(value = "Project fields", required = true) @RequestBody me.fengorz.kiwi.tools.api.project.dto.ProjectCreateRequest body) {
         Project created = service.create(ProjectDtoMapper.toEntity(body));
         return ResponseEntity.status(HttpStatus.CREATED).body(ProjectDtoMapper.toResponse(created));
     }
@@ -132,8 +132,8 @@ public class ProjectController {
         @ApiResponse(code = 400, message = "Validation error"),
         @ApiResponse(code = 404, message = "Not Found")
     })
-    public ProjectResponse updateProject(@ApiParam(value = "Project id", required = true) @PathVariable String id,
-                                 @ApiParam(value = "Partial fields to update") @RequestBody ProjectUpdateRequest body) {
+    public me.fengorz.kiwi.tools.api.project.dto.ProjectResponse updateProject(@ApiParam(value = "Project id", required = true) @PathVariable String id,
+                                                                               @ApiParam(value = "Partial fields to update") @RequestBody me.fengorz.kiwi.tools.api.project.dto.ProjectUpdateRequest body) {
         Project updated = service.update(id, ProjectDtoMapper.toPatch(body));
         return ProjectDtoMapper.toResponse(updated);
     }
@@ -149,8 +149,8 @@ public class ProjectController {
         @ApiResponse(code = 400, message = "Validation error"),
         @ApiResponse(code = 404, message = "Not Found")
     })
-    public ProjectResponse patchProject(@ApiParam(value = "Project id", required = true) @PathVariable String id,
-                                @ApiParam(value = "Fields to patch (e.g., archived)") @RequestBody ProjectPatchRequest body) {
+    public me.fengorz.kiwi.tools.api.project.dto.ProjectResponse patchProject(@ApiParam(value = "Project id", required = true) @PathVariable String id,
+                                                                              @ApiParam(value = "Fields to patch (e.g., archived)") @RequestBody ProjectPatchRequest body) {
         Project updated = service.update(id, ProjectDtoMapper.toPatch(body));
         return ProjectDtoMapper.toResponse(updated);
     }
@@ -168,9 +168,9 @@ public class ProjectController {
         @ApiResponse(code = 200, message = "OK"),
         @ApiResponse(code = 404, message = "Not Found")
     })
-    public ProjectResponse archiveProject(@ApiParam(value = "Project id", required = true) @PathVariable String id,
-                                  @RequestParam(value = "archived", required = false) Boolean archived,
-                                  @ApiParam(value = "Optional body {archived:true|false}") @RequestBody(required = false) ProjectArchiveRequest body) {
+    public me.fengorz.kiwi.tools.api.project.dto.ProjectResponse archiveProject(@ApiParam(value = "Project id", required = true) @PathVariable String id,
+                                                                                @RequestParam(value = "archived", required = false) Boolean archived,
+                                                                                @ApiParam(value = "Optional body {archived:true|false}") @RequestBody(required = false) me.fengorz.kiwi.tools.api.project.dto.ProjectArchiveRequest body) {
         if (archived == null && body != null) {
             archived = body.getArchived();
         }
@@ -210,10 +210,10 @@ public class ProjectController {
         @ApiResponse(code = 200, message = "OK"),
         @ApiResponse(code = 400, message = "Validation error")
     })
-    public ProjectPhotoResponse uploadPhoto(@ApiParam(value = "Project id", required = true) @PathVariable("id") String projectId,
-                                    @RequestPart(value = "file", required = false) MultipartFile file,
-                                    @RequestPart(value = "photo", required = false) MultipartFile photo,
-                                    HttpServletRequest request) throws IOException {
+    public me.fengorz.kiwi.tools.api.project.dto.ProjectPhotoResponse uploadPhoto(@ApiParam(value = "Project id", required = true) @PathVariable("id") String projectId,
+                                                                                  @RequestPart(value = "file", required = false) MultipartFile file,
+                                                                                  @RequestPart(value = "photo", required = false) MultipartFile photo,
+                                                                                  HttpServletRequest request) throws IOException {
         MultipartFile pic = file != null ? file : photo;
         if (pic == null || pic.isEmpty()) {
             throw new ToolsException(HttpStatus.BAD_REQUEST, "validation_error", "file is required");
@@ -225,7 +225,7 @@ public class ProjectController {
     /** List photos for a project (ordered). */
     @GetMapping("/projects/{id}/photos")
     @ApiOperation(value = "List photos by project id")
-    public List<ProjectPhotoResponse> listPhotos(@ApiParam(value = "Project id", required = true) @PathVariable("id") String projectId) {
+    public List<me.fengorz.kiwi.tools.api.project.dto.ProjectPhotoResponse> listPhotos(@ApiParam(value = "Project id", required = true) @PathVariable("id") String projectId) {
         return ProjectDtoMapper.toPhotoResponseList(photoService.list(projectId));
     }
 

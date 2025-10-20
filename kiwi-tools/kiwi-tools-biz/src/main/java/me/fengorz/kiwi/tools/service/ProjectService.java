@@ -1,8 +1,8 @@
 package me.fengorz.kiwi.tools.service;
 
 import me.fengorz.kiwi.tools.exception.ToolsException;
-import me.fengorz.kiwi.tools.model.Project;
-import me.fengorz.kiwi.tools.model.ProjectStatus;
+import me.fengorz.kiwi.tools.model.project.Project;
+import me.fengorz.kiwi.tools.model.project.ProjectStatus;
 import me.fengorz.kiwi.tools.repository.ProjectRepository;
 import me.fengorz.kiwi.tools.util.DateUtil;
 import me.fengorz.kiwi.tools.util.StringUtil;

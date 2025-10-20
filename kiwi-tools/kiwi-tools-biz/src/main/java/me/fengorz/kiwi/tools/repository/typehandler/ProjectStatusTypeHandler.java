@@ -1,6 +1,6 @@
 package me.fengorz.kiwi.tools.repository.typehandler;
 
-import me.fengorz.kiwi.tools.model.ProjectStatus;
+import me.fengorz.kiwi.tools.model.project.ProjectStatus;
 import org.apache.ibatis.type.BaseTypeHandler;
 import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.MappedJdbcTypes;

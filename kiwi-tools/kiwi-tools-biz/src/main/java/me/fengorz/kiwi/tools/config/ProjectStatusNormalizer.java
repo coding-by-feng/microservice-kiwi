@@ -3,7 +3,7 @@ package me.fengorz.kiwi.tools.config;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import me.fengorz.kiwi.tools.model.Project;
+import me.fengorz.kiwi.tools.model.project.Project;
 import me.fengorz.kiwi.tools.repository.mapper.ProjectMapper;
 import org.springframework.stereotype.Component;
 

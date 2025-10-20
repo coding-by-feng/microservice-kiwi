@@ -32,9 +32,20 @@ public class ToolsBizTestOverrides {
         return new LettuceConnectionFactory();
     }
 
-    @Bean
+    // Provide a primary DFS bean named 'dfsService' to satisfy @Qualifier("dfsService")
+    @Bean(name = "dfsService")
     @Primary
-    public DfsService dfsServiceMock() {
+    public DfsService dfsServicePrimary() {
+        return inMemoryDfs();
+    }
+
+    // Override possible ftp DFS bean by name to avoid other primaries
+    @Bean(name = "ftpDfsService")
+    public DfsService ftpDfsServiceOverride() {
+        return inMemoryDfs();
+    }
+
+    private DfsService inMemoryDfs() {
         return new DfsService() {
             private final Map<String, byte[]> store = new ConcurrentHashMap<>(); // key: group/path
 

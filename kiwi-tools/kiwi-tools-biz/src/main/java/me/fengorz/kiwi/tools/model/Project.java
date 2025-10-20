@@ -2,6 +2,7 @@ package me.fengorz.kiwi.tools.model;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.Data;
+import me.fengorz.kiwi.tools.model.project.ProjectStatus;
 import me.fengorz.kiwi.tools.repository.typehandler.ProjectStatusTypeHandler;
 
 import java.time.LocalDateTime;

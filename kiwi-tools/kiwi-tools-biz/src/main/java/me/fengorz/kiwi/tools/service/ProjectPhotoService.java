@@ -2,7 +2,7 @@ package me.fengorz.kiwi.tools.service;
 
 import me.fengorz.kiwi.common.dfs.DfsService;
 import me.fengorz.kiwi.tools.exception.ToolsException;
-import me.fengorz.kiwi.tools.model.ProjectPhoto;
+import me.fengorz.kiwi.tools.model.project.ProjectPhoto;
 import me.fengorz.kiwi.tools.repository.ProjectPhotoRepository;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;

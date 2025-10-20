@@ -13,6 +13,7 @@
     <packaging>pom</packaging>
 
     <modules>
+        <module>kiwi-tools-api</module>
         <module>kiwi-tools-biz</module>
     </modules>
 

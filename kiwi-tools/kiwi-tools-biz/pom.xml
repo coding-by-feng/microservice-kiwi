@@ -20,6 +20,13 @@
     </properties>
 
     <dependencies>
+        <!-- New: depend on shared API module -->
+        <dependency>
+            <groupId>me.fengorz</groupId>
+            <artifactId>kiwi-tools-api</artifactId>
+            <version>${kiwi.version}</version>
+        </dependency>
+
         <dependency>
             <groupId>me.fengorz</groupId>
             <artifactId>kiwi-bdf</artifactId>
@@ -116,6 +123,20 @@
 
     <build>
         <plugins>
+            <!-- Exclude moved API packages from compilation in biz module -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <excludes>
+                        <exclude>**/me/fengorz/kiwi/tools/api/dto/**/*.java</exclude>
+                        <exclude>**/me/fengorz/kiwi/tools/api/todo/dto/**/*.java</exclude>
+                        <exclude>**/me/fengorz/kiwi/tools/model/**/*.java</exclude>
+                        <exclude>**/me/fengorz/kiwi/tools/dto/**/*.java</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>aspectj-maven-plugin</artifactId>

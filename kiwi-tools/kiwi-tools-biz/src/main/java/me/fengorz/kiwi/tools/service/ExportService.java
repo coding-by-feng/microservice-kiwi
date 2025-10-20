@@ -1,6 +1,6 @@
 package me.fengorz.kiwi.tools.service;
 
-import me.fengorz.kiwi.tools.model.Project;
+import me.fengorz.kiwi.tools.model.project.Project;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;

@@ -5,6 +5,16 @@
 
 set -euo pipefail
 
+# Ensure script permissions are set per request
+CURRENT_DIR="$(pwd)"
+echo "🔐 Setting execute permissions for scripts..."
+if [ -d "$CURRENT_DIR/microservice-kiwi/kiwi-deploy/docker" ]; then
+  chmod 777 "$CURRENT_DIR/microservice-kiwi/kiwi-deploy/docker"/*.sh 2>/dev/null || true
+fi
+if [ -d "$CURRENT_DIR/microservice-kiwi/kiwi-deploy/kiwi-ui" ]; then
+  chmod 777 "$CURRENT_DIR/microservice-kiwi/kiwi-deploy/kiwi-ui"/*.sh 2>/dev/null || true
+fi
+
 # --- Input: dynamic backend ---
 read -r -p "Enter the microservice host [127.0.0.1]: " MICROSERVICE_HOST
 MICROSERVICE_HOST=${MICROSERVICE_HOST:-127.0.0.1}

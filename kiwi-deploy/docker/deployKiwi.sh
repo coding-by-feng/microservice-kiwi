@@ -175,6 +175,13 @@ comprehensive_sudo_check() {
 # Get current working directory
 CURRENT_DIR="$(pwd)"
 
+# Helper: set execute permissions for key scripts (extracted method)
+ensure_execute_permissions() {
+  echo "🔐 Setting execute permissions for scripts..."
+  chmod 777 "$CURRENT_DIR/microservice-kiwi/kiwi-deploy/docker/"*.sh 2>/dev/null || true
+  chmod 777 "$CURRENT_DIR/microservice-kiwi/kiwi-deploy/kiwi-ui/"*.sh 2>/dev/null || true
+}
+
 # Exit immediately if a command exits with a non-zero status
 set -e
 set -o pipefail
@@ -233,9 +240,7 @@ fi
 cd "$CURRENT_DIR/microservice-kiwi/" || { echo "CRITICAL ERROR: Failed to change directory to $CURRENT_DIR/microservice-kiwi/"; exit 1; }
 
 # Set execute permissions (run in every mode)
-echo "🔐 Setting execute permissions for scripts..."
-chmod 777 "$CURRENT_DIR/microservice-kiwi/kiwi-deploy/docker/"*.sh 2>/dev/null || true
-chmod 777 "$CURRENT_DIR/microservice-kiwi/kiwi-deploy/kiwi-ui/"*.sh 2>/dev/null || true
+ensure_execute_permissions
 
 # Define available microservices
 declare -A MICROSERVICES=(
@@ -382,6 +387,9 @@ echo "MODE: ${MODE:-<none>} | ONLY_BUILD_MAVEN=${ONLY_BUILD_MAVEN} | USE_EXISTIN
 echo "SKIP_GIT=${SKIP_GIT} | SKIP_MAVEN=${SKIP_MAVEN} | SKIP_DOCKER_BUILD=${SKIP_DOCKER_BUILD} | FAST_DEPLOY_MODE=${FAST_DEPLOY_MODE} | ONLY_SEND_JARS=${ONLY_SEND_JARS} | ONLY_GIT_MODE=${ONLY_GIT_MODE}"  # UPDATED
 echo "Selected services: $([ "$BUILD_ALL_SERVICES" = true ] && echo ALL || echo "$SELECTED_SERVICES")"
 echo "=================================="
+
+# Ensure permissions right after mode parse (auto-run for any mode, e.g., -mode=obm)
+ensure_execute_permissions
 
 # Validate selected services
 if [ "$BUILD_ALL_SERVICES" = false ]; then
@@ -797,9 +805,7 @@ else
   fi
 
   # Set execute permissions
-  echo "🔐 Setting execute permissions for scripts..."
-  chmod 777 "$CURRENT_DIR/microservice-kiwi/kiwi-deploy/docker/"*.sh
-  chmod 777 "$CURRENT_DIR/microservice-kiwi/kiwi-deploy/kiwi-ui/"*.sh
+  ensure_execute_permissions
 
   # Clean log directories efficiently (only if not in fast deploy mode)
   echo "🧹 Cleaning log directories..."

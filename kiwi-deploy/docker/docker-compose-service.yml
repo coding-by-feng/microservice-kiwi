@@ -27,7 +27,9 @@ services:
           fi
           sleep 10
         done
-        echo "kiwi-config is healthy. Starting kiwi-gate..."
+        echo "kiwi-config is healthy. Delaying 20s before starting kiwi-gate..."
+        sleep 20
+        echo "Starting kiwi-gate..."
         exec java -Xmx512m \
           -Duser.timezone=GMT+12 \
           -Djava.awt.headless=true \
@@ -74,7 +76,9 @@ services:
           fi
           sleep 10
         done
-        echo "kiwi-gate is healthy. Starting kiwi-upms..."
+        echo "kiwi-gate is healthy. Delaying 20s before starting kiwi-upms..."
+        sleep 20
+        echo "Starting kiwi-upms..."
         exec java -Xmx400m \
         -Duser.timezone=GMT+12 \
         -Dspring.profiles.active=prod \
@@ -115,6 +119,8 @@ services:
           fi
           sleep 10
         done
+        echo "kiwi-config is healthy. Delaying 40s before checking kiwi-upms..."
+        sleep 40
         echo "Waiting for kiwi-upms to be healthy..."
         wait_secs=0
         until code=$(curl -s -o /dev/null -w '%{http_code}' http://localhost:4001/actuator/health); [ "$$code" = "200" ] || [ "$$code" = "401" ] || [ "$$code" = "403" ]; do
@@ -172,7 +178,9 @@ services:
           fi
           sleep 10
         done
-        echo "kiwi-auth is healthy. Starting kiwi-word-biz..."
+        echo "kiwi-auth is healthy. Delaying 30s before starting kiwi-word-biz..."
+        sleep 30
+        echo "Starting kiwi-word-biz..."
         exec java -jar -Xmx1024m \
         -Duser.timezone=GMT+12 \
         -Dspring.application.name=kiwi-word-biz \
@@ -222,7 +230,9 @@ services:
           fi
           sleep 10
         done
-        echo "kiwi-auth is healthy. Starting kiwi-ai-biz..."
+        echo "kiwi-auth is healthy. Delaying 50s before starting kiwi-ai-biz..."
+        sleep 50
+        echo "Starting kiwi-ai-biz..."
         export JAVA_OPTS="-Xms512m -Xmx1048m -XX:+UseG1GC -XX:MaxGCPauseMillis=200"
         export TZ=Pacific/Auckland
         exec java $${JAVA_OPTS} -jar /app/app.jar

@@ -19,5 +19,6 @@ public class YtbSubtitlesResult implements Serializable {
     private SubtitleTypeEnum type;
     private String scrollingSubtitles;
     private Object pendingToBeTranslatedOrRetouchedSubtitles;
+    private String langCode; // e.g. en, en-US, zh-CN, zh-Hans
 
 }

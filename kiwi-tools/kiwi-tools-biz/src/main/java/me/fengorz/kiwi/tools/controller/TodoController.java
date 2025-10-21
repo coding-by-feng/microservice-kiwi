@@ -1,12 +1,13 @@
 package me.fengorz.kiwi.tools.controller;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import me.fengorz.kiwi.common.api.R;
+import me.fengorz.kiwi.common.sdk.util.json.KiwiJsonUtils;
 import me.fengorz.kiwi.common.sdk.web.security.SecurityUtils;
 import me.fengorz.kiwi.tools.api.todo.dto.*;
 import me.fengorz.kiwi.tools.exception.ToolsException;
 import me.fengorz.kiwi.tools.mapper.TodoDtoMapper;
 import me.fengorz.kiwi.tools.model.todo.TodoTask;
-import me.fengorz.kiwi.tools.service.RateLimitService;
 import me.fengorz.kiwi.tools.service.todo.TodoService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -14,42 +15,37 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/todo")
 public class TodoController {
 
     private final TodoService service;
-    private final RateLimitService rateLimitService;
-
-    public TodoController(TodoService service, RateLimitService rateLimitService) {
+    public TodoController(TodoService service) {
         this.service = service;
-        this.rateLimitService = rateLimitService;
     }
 
-    // -------- Tasks --------
-
     @GetMapping("/tasks")
-    public R<TaskListResponse> listTasks(HttpServletRequest request,
-                                      @RequestParam(required = false) Integer page,
-                                      @RequestParam(required = false) Integer pageSize,
-                                      @RequestParam(required = false) String status,
-                                      @RequestParam(required = false) String frequency,
-                                      @RequestParam(required = false) String search,
-                                      @RequestParam(required = false) String sort,
-                                      @RequestParam(required = false, name = "date") String dateStr) {
+    public R<TaskListResponse> listTasks(@RequestParam(required = false) Integer page,
+                                         @RequestParam(required = false) Integer pageSize,
+                                         @RequestParam(required = false) String status,
+                                         @RequestParam(required = false) String frequency,
+                                         @RequestParam(required = false) String search,
+                                         @RequestParam(required = false) String sort,
+                                         @RequestParam(required = false, name = "date") String dateStr) {
         Integer userId = SecurityUtils.getCurrentUserId();
         return R.success(service.listTasks(userId, page, pageSize, status, frequency, search, sort, dateStr));
     }
 
     @PostMapping(value = "/tasks", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<R<SingleTaskResponse>> createTask(HttpServletRequest request,
-                                                         @RequestHeader(value = "Idempotency-Key", required = false) String idempotencyKey,
-                                                         @RequestBody TaskCreateRequest body) {
+    public ResponseEntity<R<SingleTaskResponse>> createTask(@RequestHeader(value = "Idempotency-Key", required = false) String idempotencyKey,
+                                                            @RequestBody TaskCreateRequest body) {
         Integer userId = SecurityUtils.getCurrentUserId();
         TodoTask created = service.createTask(userId, body, idempotencyKey);
         String etag = service.computeETag(created);
@@ -61,7 +57,7 @@ public class TodoController {
     }
 
     @GetMapping("/tasks/{id}")
-    public ResponseEntity<R<SingleTaskResponse>> getTask(HttpServletRequest request, @PathVariable String id) {
+    public ResponseEntity<R<SingleTaskResponse>> getTask(@PathVariable String id) {
         Integer userId = SecurityUtils.getCurrentUserId();
         TodoTask t = service.getTask(userId, id);
         String etag = service.computeETag(t);
@@ -71,10 +67,9 @@ public class TodoController {
     }
 
     @PatchMapping(value = "/tasks/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<R<SingleTaskResponse>> updateTask(HttpServletRequest request,
-                                                         @PathVariable String id,
-                                                         @RequestHeader("If-Match") String ifMatch,
-                                                         @RequestBody TaskUpdateRequest body) {
+    public ResponseEntity<R<SingleTaskResponse>> updateTask(@PathVariable String id,
+                                                            @RequestHeader("If-Match") String ifMatch,
+                                                            @RequestBody TaskUpdateRequest body) {
         Integer userId = SecurityUtils.getCurrentUserId();
         TodoTask updated = service.updateTask(userId, id, body, ifMatch);
         String etag = service.computeETag(updated);
@@ -84,7 +79,7 @@ public class TodoController {
     }
 
     @DeleteMapping("/tasks/{id}")
-    public R<DeleteOkResponse> deleteTask(HttpServletRequest request, @PathVariable String id) {
+    public R<DeleteOkResponse> deleteTask(@PathVariable String id) {
         Integer userId = SecurityUtils.getCurrentUserId();
         Map<String, Boolean> m = service.deleteTaskToTrash(userId, id);
         DeleteOkResponse resp = new DeleteOkResponse();
@@ -93,10 +88,9 @@ public class TodoController {
     }
 
     @PostMapping(value = "/tasks/{id}/complete", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public R<CompleteTaskResponse> completeTask(HttpServletRequest request,
-                                             @PathVariable String id,
-                                             @RequestHeader("Idempotency-Key") String idempotencyKey,
-                                             @RequestBody CompleteTaskRequest body) {
+    public R<CompleteTaskResponse> completeTask(@PathVariable String id,
+                                                @RequestHeader("Idempotency-Key") String idempotencyKey,
+                                                @RequestBody CompleteTaskRequest body) {
         Integer userId = SecurityUtils.getCurrentUserId();
         Map<String, Object> data = service.completeTask(userId, id, body.getStatus(), idempotencyKey);
         CompleteTaskResponse resp = new CompleteTaskResponse();
@@ -105,7 +99,7 @@ public class TodoController {
     }
 
     @PostMapping("/tasks/{id}/reset-status")
-    public R<SingleTaskResponse> resetStatus(HttpServletRequest request, @PathVariable String id) {
+    public R<SingleTaskResponse> resetStatus(@PathVariable String id) {
         Integer userId = SecurityUtils.getCurrentUserId();
         TodoTask updated = service.resetTaskStatus(userId, id);
         SingleTaskResponse resp = new SingleTaskResponse();
@@ -114,14 +108,14 @@ public class TodoController {
     }
 
     @PostMapping("/tasks/reset-statuses")
-    public R<Map<String, Integer>> resetAll(HttpServletRequest request) {
+    public R<Map<String, Integer>> resetAll() {
         Integer userId = SecurityUtils.getCurrentUserId();
         Map<String, Integer> m = service.resetAllTasks(userId);
         return R.success(m);
     }
 
     @PostMapping("/tasks/demo")
-    public R<DemoSeedResponse> seedDemo(HttpServletRequest request) {
+    public R<DemoSeedResponse> seedDemo() {
         Integer userId = SecurityUtils.getCurrentUserId();
         int tasksCreated = service.seedDemo(userId);
         Map<String, Integer> m = new HashMap<>();
@@ -136,15 +130,14 @@ public class TodoController {
     // -------- Trash --------
 
     @GetMapping("/trash")
-    public R<TrashListResponse> listTrash(HttpServletRequest request,
-                                       @RequestParam(required = false) Integer page,
-                                       @RequestParam(required = false) Integer pageSize) {
+    public R<TrashListResponse> listTrash(@RequestParam(required = false) Integer page,
+                                          @RequestParam(required = false) Integer pageSize) {
         Integer userId = SecurityUtils.getCurrentUserId();
         return R.success(service.listTrash(userId, page, pageSize));
     }
 
     @DeleteMapping("/trash")
-    public R<ClearTrashResponse> clearTrash(HttpServletRequest request) {
+    public R<ClearTrashResponse> clearTrash() {
         Integer userId = SecurityUtils.getCurrentUserId();
         Map<String, Integer> m = service.clearTrash(userId);
         ClearTrashResponse resp = new ClearTrashResponse();
@@ -153,7 +146,7 @@ public class TodoController {
     }
 
     @DeleteMapping("/trash/{id}")
-    public R<DeleteOkResponse> deleteTrashItem(HttpServletRequest request, @PathVariable String id) {
+    public R<DeleteOkResponse> deleteTrashItem(@PathVariable String id) {
         Integer userId = SecurityUtils.getCurrentUserId();
         Map<String, Boolean> m = service.deleteTrashItem(userId, id);
         DeleteOkResponse resp = new DeleteOkResponse();
@@ -162,7 +155,7 @@ public class TodoController {
     }
 
     @PostMapping("/trash/{id}/restore")
-    public R<SingleTaskResponse> restoreFromTrash(HttpServletRequest request, @PathVariable String id) {
+    public R<SingleTaskResponse> restoreFromTrash(@PathVariable String id) {
         Integer userId = SecurityUtils.getCurrentUserId();
         TodoTask t = service.restoreFromTrash(userId, id);
         SingleTaskResponse resp = new SingleTaskResponse();
@@ -173,16 +166,15 @@ public class TodoController {
     // -------- History --------
 
     @GetMapping("/history")
-    public R<HistoryListResponse> listHistory(HttpServletRequest request,
-                                           @RequestParam(name = "date") String dateStr,
-                                           @RequestParam(required = false) Integer page,
-                                           @RequestParam(required = false) Integer pageSize) {
+    public R<HistoryListResponse> listHistory(@RequestParam(name = "date") String dateStr,
+                                              @RequestParam(required = false) Integer page,
+                                              @RequestParam(required = false) Integer pageSize) {
         Integer userId = SecurityUtils.getCurrentUserId();
         return R.success(service.listHistory(userId, dateStr, page, pageSize));
     }
 
     @DeleteMapping("/history/{id}")
-    public R<DeleteOkWithRankingMetaResponse> deleteHistory(HttpServletRequest request, @PathVariable String id) {
+    public R<DeleteOkWithRankingMetaResponse> deleteHistory(@PathVariable String id) {
         Integer userId = SecurityUtils.getCurrentUserId();
         Map<String, Object> wrapper = service.deleteHistory(userId, id);
         DeleteOkWithRankingMetaResponse resp = new DeleteOkWithRankingMetaResponse();
@@ -198,8 +190,7 @@ public class TodoController {
     // -------- Analytics --------
 
     @GetMapping("/analytics/monthly")
-    public R<AnalyticsMonthlyResponse> analyticsMonthly(HttpServletRequest request,
-                                                     @RequestParam(required = false) Integer months) {
+    public R<AnalyticsMonthlyResponse> analyticsMonthly(@RequestParam(required = false) Integer months) {
         Integer userId = SecurityUtils.getCurrentUserId();
         AnalyticsMonthlyResponse resp = new AnalyticsMonthlyResponse();
         resp.setData(service.analyticsMonthly(userId, months));
@@ -207,8 +198,7 @@ public class TodoController {
     }
 
     @GetMapping("/analytics/summary")
-    public R<AnalyticsSummaryResponse> analyticsSummary(HttpServletRequest request,
-                                                     @RequestParam(name = "month", required = false) String month) {
+    public R<AnalyticsSummaryResponse> analyticsSummary(@RequestParam(name = "month", required = false) String month) {
         Integer userId = SecurityUtils.getCurrentUserId();
         AnalyticsSummaryResponse resp = new AnalyticsSummaryResponse();
         resp.setData(service.analyticsSummary(userId, month));
@@ -218,7 +208,7 @@ public class TodoController {
     // -------- Ranking --------
 
     @GetMapping("/ranking/current")
-    public R<RankingResponse> rankingCurrent(HttpServletRequest request) {
+    public R<RankingResponse> rankingCurrent() {
         Integer userId = SecurityUtils.getCurrentUserId();
         RankingResponse resp = new RankingResponse();
         resp.setData(service.computeRanking(userId));
@@ -233,7 +223,7 @@ public class TodoController {
     // -------- Import / Export --------
 
     @GetMapping("/export/todo")
-    public R<TodoExportResponse> exportTodo(HttpServletRequest request) {
+    public R<TodoExportResponse> exportTodo() {
         Integer userId = SecurityUtils.getCurrentUserId();
         TodoExportResponse resp = new TodoExportResponse();
         resp.setData(service.exportAll(userId));
@@ -241,15 +231,13 @@ public class TodoController {
     }
 
     @PostMapping(value = "/import/todo", consumes = { MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE })
-    public R<TodoImportResponse> importTodo(HttpServletRequest request,
-                                         @RequestBody(required = false) Map<String, Object> json,
-                                         @RequestPart(name = "file", required = false) MultipartFile file) throws IOException {
-        enforceWriteRateLimit(request);
+    public R<TodoImportResponse> importTodo(@RequestBody(required = false) Map<String, Object> json,
+                                            @RequestPart(name = "file", required = false) MultipartFile file) throws IOException {
         Integer userId = SecurityUtils.getCurrentUserId();
         Map<String, Object> body = json;
         if (body == null && file != null && !file.isEmpty()) {
             String text = new String(file.getBytes(), StandardCharsets.UTF_8);
-            body = new com.fasterxml.jackson.databind.ObjectMapper().readValue(text, Map.class);
+            body = KiwiJsonUtils.fromJson(text, new TypeReference<Map<String, Object>>() {});
         }
         if (body == null) {
             throw new ToolsException(HttpStatus.BAD_REQUEST, "validation_error", "import body or file is required");
@@ -260,13 +248,4 @@ public class TodoController {
         return R.success(resp);
     }
 
-    // -------- helpers --------
-
-    // Use global rate limit helper, keep as-is
-    private void enforceWriteRateLimit(HttpServletRequest request) {
-        String ip = Optional.ofNullable(request.getHeader("X-Forwarded-For")).orElse(request.getRemoteAddr());
-        if (!rateLimitService.allowWrite(ip)) {
-            throw new ToolsException(HttpStatus.TOO_MANY_REQUESTS, "rate_limited", "Too many requests");
-        }
-    }
 }

@@ -159,17 +159,29 @@ deploy_services() {
     echo "Starting base services..."
     $COMPOSE_CMD --project-name kiwi-base -f "$COMPOSE_BASE_YML" up -d --remove-orphans --build
 
-    # Check if eureka is responding (any HTTP status means it's up)
-    until curl -s http://localhost:8762/health >/dev/null 2>&1; do
-      echo "Waiting for Eureka..."
+    # Wait for eureka to respond with a healthy HTTP status
+    echo "Checking Eureka health at http://localhost:8762/actuator/health ..."
+    wait_secs=0
+    until code=$(curl -s -o /dev/null -w '%{http_code}' http://localhost:8762/actuator/health); [ "$code" = "200" ] || [ "$code" = "401" ] || [ "$code" = "403" ]; do
+      wait_secs=$((wait_secs+10))
+      if [ $(( (wait_secs/10) % 5 )) -eq 0 ]; then
+        echo "Waiting for kiwi-eureka to be healthy... (${wait_secs}s)"
+      fi
       sleep 10
     done
+    echo "Eureka is responding (HTTP $code)."
 
-    # Check if config service is responding
-    until curl -s http://localhost:7771/health >/dev/null 2>&1; do
-      echo "Waiting for Config Service..."
+    # Wait for config service to respond with a healthy HTTP status
+    echo "Checking Config service health at http://localhost:7771/actuator/health ..."
+    wait_secs=0
+    until code=$(curl -s -o /dev/null -w '%{http_code}' http://localhost:7771/actuator/health); [ "$code" = "200" ] || [ "$code" = "401" ] || [ "$code" = "403" ]; do
+      wait_secs=$((wait_secs+10))
+      if [ $(( (wait_secs/10) % 5 )) -eq 0 ]; then
+        echo "Waiting for kiwi-config to be healthy... (${wait_secs}s)"
+      fi
       sleep 10
     done
+    echo "Config service is responding (HTTP $code)."
 
     echo "Starting application services..."
     $COMPOSE_CMD --project-name kiwi-service -f "$COMPOSE_SERVICE_YML" up -d --force-recreate --remove-orphans --build

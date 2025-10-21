@@ -36,7 +36,6 @@ public class YtbChannelServiceImplV2 extends ServiceImpl<YtbChannelMapper, YtbCh
     private final YtbVideoSubtitlesTranslationMapper subtitlesTranslationMapper;
     private final YouTubeApiService youTubeApiService;
     private final SeqService seqService;
-    private final AiChatService grokAiService;
 
     public YtbChannelServiceImplV2(YtbChannelUserMapper channelUserMapper,
                                    YtbChannelVideoMapper videoMapper,
@@ -51,7 +50,6 @@ public class YtbChannelServiceImplV2 extends ServiceImpl<YtbChannelMapper, YtbCh
         this.subtitlesTranslationMapper = subtitlesTranslationMapper;
         this.youTubeApiService = youTubeApiService;
         this.seqService = seqService;
-        this.grokAiService = grokAiService;
         log.info("YtbChannelServiceImplV2 initialized with YouTube API service");
     }
 

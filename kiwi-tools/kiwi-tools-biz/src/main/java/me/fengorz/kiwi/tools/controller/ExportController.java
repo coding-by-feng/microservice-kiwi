@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/export")
+@RequestMapping("/rangi_windows/api/export")
 @Api(tags = "Export", description = "Export project schedules as Excel or PDF")
 public class ExportController {
     private final ProjectService projectService;

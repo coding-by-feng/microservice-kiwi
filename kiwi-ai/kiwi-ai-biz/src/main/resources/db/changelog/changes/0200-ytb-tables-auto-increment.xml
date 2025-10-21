@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <!-- Ensure AUTO_INCREMENT on YouTube-related id columns -->
+
+    <changeSet id="0200-ytb-channel-id-auto-increment" author="copilot">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS
+                WHERE TABLE_SCHEMA = DATABASE()
+                  AND TABLE_NAME = 'ytb_channel'
+                  AND COLUMN_NAME = 'id'
+                  AND EXTRA LIKE '%auto_increment%'
+            </sqlCheck>
+        </preConditions>
+        <addAutoIncrement tableName="ytb_channel" columnName="id" columnDataType="INT"/>
+    </changeSet>
+
+    <changeSet id="0200-ytb-channel-user-id-auto-increment" author="copilot">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS
+                WHERE TABLE_SCHEMA = DATABASE()
+                  AND TABLE_NAME = 'ytb_channel_user'
+                  AND COLUMN_NAME = 'id'
+                  AND EXTRA LIKE '%auto_increment%'
+            </sqlCheck>
+        </preConditions>
+        <addAutoIncrement tableName="ytb_channel_user" columnName="id" columnDataType="INT"/>
+    </changeSet>
+
+    <changeSet id="0200-ytb-channel-video-id-auto-increment" author="copilot">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS
+                WHERE TABLE_SCHEMA = DATABASE()
+                  AND TABLE_NAME = 'ytb_channel_video'
+                  AND COLUMN_NAME = 'id'
+                  AND EXTRA LIKE '%auto_increment%'
+            </sqlCheck>
+        </preConditions>
+        <addAutoIncrement tableName="ytb_channel_video" columnName="id" columnDataType="INT"/>
+    </changeSet>
+
+    <changeSet id="0200-ytb-video-subtitles-id-auto-increment" author="copilot">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS
+                WHERE TABLE_SCHEMA = DATABASE()
+                  AND TABLE_NAME = 'ytb_video_subtitles'
+                  AND COLUMN_NAME = 'id'
+                  AND EXTRA LIKE '%auto_increment%'
+            </sqlCheck>
+        </preConditions>
+        <addAutoIncrement tableName="ytb_video_subtitles" columnName="id" columnDataType="INT"/>
+    </changeSet>
+
+    <changeSet id="0200-ytb-video-subtitles-translation-id-auto-increment" author="copilot">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS
+                WHERE TABLE_SCHEMA = DATABASE()
+                  AND TABLE_NAME = 'ytb_video_subtitles_translation'
+                  AND COLUMN_NAME = 'id'
+                  AND EXTRA LIKE '%auto_increment%'
+            </sqlCheck>
+        </preConditions>
+        <addAutoIncrement tableName="ytb_video_subtitles_translation" columnName="id" columnDataType="INT"/>
+    </changeSet>
+
+</databaseChangeLog>
+

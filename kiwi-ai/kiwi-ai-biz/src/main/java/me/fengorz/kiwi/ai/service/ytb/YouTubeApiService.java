@@ -16,7 +16,10 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -53,6 +56,17 @@ public class YouTubeApiService {
     }
 
     /**
+     * Ensure API key is present and not an unresolved placeholder.
+     */
+    private String getApiKeyOrThrow() {
+        String key = properties.getKey();
+        if (key == null || key.trim().isEmpty() || key.contains("{") || key.contains("}")) {
+            throw new ServiceException("YouTube API key is not configured. Set env YTB_API_KEY or property 'youtube.api.key'.");
+        }
+        return key;
+    }
+
+    /**
      * Get video details by video URL or ID
      */
     public VideoDetailsResponse getVideoDetails(String videoUrlOrId) {
@@ -66,7 +80,7 @@ public class YouTubeApiService {
         String url = UriComponentsBuilder.fromHttpUrl(properties.getBaseUrl() + "/videos")
                 .queryParam("part", "snippet,contentDetails,statistics")
                 .queryParam("id", videoId)
-                .queryParam("key", properties.getKey())
+                .queryParam("key", getApiKeyOrThrow())
                 .build()
                 .toUriString();
 
@@ -124,7 +138,7 @@ public class YouTubeApiService {
         String url = UriComponentsBuilder.fromHttpUrl(properties.getBaseUrl() + "/channels")
                 .queryParam("part", "snippet,contentDetails,statistics")
                 .queryParam("id", channelId)
-                .queryParam("key", properties.getKey())
+                .queryParam("key", getApiKeyOrThrow())
                 .build()
                 .toUriString();
 
@@ -211,7 +225,7 @@ public class YouTubeApiService {
         String url = UriComponentsBuilder.fromHttpUrl(properties.getBaseUrl() + "/captions")
                 .queryParam("part", "snippet")
                 .queryParam("videoId", videoId)
-                .queryParam("key", properties.getKey())
+                .queryParam("key", getApiKeyOrThrow())
                 .build()
                 .toUriString();
 
@@ -256,7 +270,7 @@ public class YouTubeApiService {
         log.warn("Caption download requires OAuth authentication. API key only provides limited access.");
         
         String url = UriComponentsBuilder.fromHttpUrl(properties.getBaseUrl() + "/captions/" + captionId)
-                .queryParam("key", properties.getKey())
+                .queryParam("key", getApiKeyOrThrow())
                 .queryParam("fmt", "srt")
                 .build()
                 .toUriString();
@@ -282,8 +296,8 @@ public class YouTubeApiService {
                 .queryParam("part", "snippet,contentDetails")
                 .queryParam("playlistId", playlistId)
                 .queryParam("maxResults", properties.getMaxResultsPerPage())
-                .queryParam("key", properties.getKey());
-        
+                .queryParam("key", getApiKeyOrThrow());
+
         if (pageToken != null) {
             builder.queryParam("pageToken", pageToken);
         }
@@ -363,7 +377,7 @@ public class YouTubeApiService {
                 .queryParam("type", "channel")
                 .queryParam("q", identifier)
                 .queryParam("maxResults", 1)
-                .queryParam("key", properties.getKey())
+                .queryParam("key", getApiKeyOrThrow())
                 .build()
                 .toUriString();
 
@@ -375,7 +389,10 @@ public class YouTubeApiService {
                 JsonNode items = root.get("items");
                 
                 if (items.isArray() && items.size() > 0) {
-                    return items.get(0).get("snippet").get("channelId").asText();
+                    JsonNode first = items.get(0);
+                    if (first.has("id") && first.get("id").has("channelId")) {
+                        return first.get("id").get("channelId").asText();
+                    }
                 }
             }
         } catch (IOException e) {
@@ -405,16 +422,17 @@ public class YouTubeApiService {
     }
 
     private String extractChannelId(String channelUrlOrId) {
-        if (channelUrlOrId.startsWith("UC") && channelUrlOrId.length() == 24) {
-            // Likely already a channel ID
+        // Direct channel ID
+        if (channelUrlOrId.startsWith("UC") && channelUrlOrId.length() > 20 && !channelUrlOrId.contains("/")) {
             return channelUrlOrId;
         }
         
         try {
             String decoded = URLDecoder.decode(channelUrlOrId, StandardCharsets.UTF_8.name());
-            Matcher matcher = CHANNEL_ID_PATTERN.matcher(decoded);
-            if (matcher.find()) {
-                return matcher.group(1);
+
+            Matcher channelMatcher = CHANNEL_ID_PATTERN.matcher(decoded);
+            if (channelMatcher.find()) {
+                return channelMatcher.group(1);
             }
         } catch (Exception e) {
             log.warn("Error decoding channel URL: {}", channelUrlOrId);
@@ -425,56 +443,16 @@ public class YouTubeApiService {
 
     private Map<String, String> extractThumbnails(JsonNode thumbnailsNode) {
         Map<String, String> thumbnails = new HashMap<>();
-        
-        if (thumbnailsNode != null) {
-            Iterator<String> fieldNames = thumbnailsNode.fieldNames();
-            while (fieldNames.hasNext()) {
-                String quality = fieldNames.next();
-                String url = thumbnailsNode.get(quality).get("url").asText();
-                thumbnails.put(quality, url);
-            }
+        if (thumbnailsNode == null) {
+            return thumbnails;
         }
-        
+        thumbnailsNode.fields().forEachRemaining(entry -> thumbnails.put(entry.getKey(), entry.getValue().get("url").asText()));
         return thumbnails;
     }
 
     private String extractDuration(String isoDuration) {
-        // Convert ISO 8601 duration (PT4M13S) to readable format
-        if (isoDuration == null || isoDuration.isEmpty()) {
-            return "Unknown";
-        }
-        
-        try {
-            // Simple parsing for PT format
-            String duration = isoDuration.substring(2); // Remove "PT"
-            
-            int hours = 0, minutes = 0, seconds = 0;
-            
-            if (duration.contains("H")) {
-                int hIndex = duration.indexOf("H");
-                hours = Integer.parseInt(duration.substring(0, hIndex));
-                duration = duration.substring(hIndex + 1);
-            }
-            
-            if (duration.contains("M")) {
-                int mIndex = duration.indexOf("M");
-                minutes = Integer.parseInt(duration.substring(0, mIndex));
-                duration = duration.substring(mIndex + 1);
-            }
-            
-            if (duration.contains("S")) {
-                int sIndex = duration.indexOf("S");
-                seconds = Integer.parseInt(duration.substring(0, sIndex));
-            }
-            
-            if (hours > 0) {
-                return String.format("%d:%02d:%02d", hours, minutes, seconds);
-            } else {
-                return String.format("%d:%02d", minutes, seconds);
-            }
-        } catch (Exception e) {
-            log.warn("Error parsing duration: {}", isoDuration);
-            return "Unknown";
-        }
+        // Simple pass-through for now; can be enhanced to readable format if needed
+        return isoDuration;
     }
 }
+

@@ -32,16 +32,19 @@ public class YtbSubtitleWebSocketHandler extends TextWebSocketHandler {
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final Map<String, WebSocketSession> sessions = new ConcurrentHashMap<>();
     private final Map<String, Boolean> activeStreams = new ConcurrentHashMap<>();
+    // Aggregate chunks per session to provide fullContent on completion
+    private final Map<String, StringBuilder> sessionBuffers = new ConcurrentHashMap<>();
 
     public YtbSubtitleWebSocketHandler(YtbSubtitleStreamingService subtitleStreamingService) {
         this.subtitleStreamingService = subtitleStreamingService;
     }
 
     @Override
-    public void afterConnectionEstablished(WebSocketSession session) throws Exception {
+    public void afterConnectionEstablished(WebSocketSession session) {
         String sessionId = session.getId();
         sessions.put(sessionId, session);
         activeStreams.put(sessionId, true);
+        // buffer will be created lazily when processing starts
 
         log.info("{} Connection established - SessionId: {}, RemoteAddress: {}",
                 LOG_PREFIX, sessionId, session.getRemoteAddress());
@@ -52,7 +55,7 @@ public class YtbSubtitleWebSocketHandler extends TextWebSocketHandler {
     }
 
     @Override
-    protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
+    protected void handleTextMessage(WebSocketSession session, TextMessage message) {
         String sessionId = session.getId();
         String payload = message.getPayload();
 
@@ -103,23 +106,25 @@ public class YtbSubtitleWebSocketHandler extends TextWebSocketHandler {
     }
 
     @Override
-    public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
+    public void afterConnectionClosed(WebSocketSession session, CloseStatus status) {
         String sessionId = session.getId();
         sessions.remove(sessionId);
         activeStreams.put(sessionId, false);
+        sessionBuffers.remove(sessionId);
 
         log.info("{} Connection closed - SessionId: {}, Code: {}, Reason: '{}'",
                 LOG_PREFIX, sessionId, status.getCode(), status.getReason());
     }
 
     @Override
-    public void handleTransportError(WebSocketSession session, Throwable exception) throws Exception {
+    public void handleTransportError(WebSocketSession session, Throwable exception) {
         String sessionId = session.getId();
         log.error("{} Transport error - SessionId: {}, Error: {}",
                 LOG_PREFIX, sessionId, exception.getMessage(), exception);
 
         sessions.remove(sessionId);
         activeStreams.put(sessionId, false);
+        sessionBuffers.remove(sessionId);
 
         if (session.isOpen()) {
             YtbSubtitleResponse errorResponse = YtbSubtitleResponse.error(
@@ -165,17 +170,28 @@ public class YtbSubtitleWebSocketHandler extends TextWebSocketHandler {
 
                 long startTime = System.currentTimeMillis();
 
+                // Initialize aggregation buffer for this session/request
+                sessionBuffers.put(sessionId, new StringBuilder());
+
                 // Send processing started message
                 YtbSubtitleResponse startedResponse = YtbSubtitleResponse.started("Subtitle processing started", request);
                 sendMessageWithLogging(session, startedResponse, "PROCESSING_STARTED");
 
+                // Determine effective language: if requestType is 'scrolling', bypass translation
+                String requestType = request.getRequestType() != null ? request.getRequestType().trim().toLowerCase() : "";
+                String effectiveLanguage = "scrolling".equals(requestType) ? null : request.getLanguage();
+
                 // Use the streaming service to handle the request
                 subtitleStreamingService.streamSubtitleTranslation(
                     request.getVideoUrl(),
-                    request.getLanguage(),
+                    effectiveLanguage,
                     // onChunk callback
                     chunk -> {
                         if (isSessionActive(sessionId)) {
+                            // Append chunk to buffer for fullContent on completion
+                            StringBuilder buffer = sessionBuffers.computeIfAbsent(sessionId, k -> new StringBuilder());
+                            buffer.append(chunk);
+
                             log.debug("{} Received chunk: '{}'", LOG_PREFIX, chunk);
                             YtbSubtitleResponse chunkResponse = YtbSubtitleResponse.chunk(chunk, request);
                             sendMessageWithLogging(session, chunkResponse, "AI_CHUNK");
@@ -192,6 +208,8 @@ public class YtbSubtitleWebSocketHandler extends TextWebSocketHandler {
                                     request);
                             sendMessageWithLogging(session, errorResponse, "PROCESSING_ERROR");
                         }
+                        // Clean up buffer on error
+                        sessionBuffers.remove(sessionId);
                     },
                     // onComplete callback
                     () -> {
@@ -200,12 +218,21 @@ public class YtbSubtitleWebSocketHandler extends TextWebSocketHandler {
                                 LOG_PREFIX, sessionId, processingDuration);
 
                         if (isSessionActive(sessionId)) {
+                            String fullContent = null;
+                            StringBuilder buffer = sessionBuffers.remove(sessionId);
+                            if (buffer != null && buffer.length() > 0) {
+                                fullContent = buffer.toString();
+                            }
+
                             YtbSubtitleResponse completedResponse = YtbSubtitleResponse.completed(
                                     "Subtitle processing completed successfully",
                                     request,
-                                    null, // Full content is accumulated from chunks
+                                    fullContent, // aggregated full content from chunks
                                     processingDuration);
                             sendMessageWithLogging(session, completedResponse, "COMPLETED");
+                        } else {
+                            // Ensure buffer cleanup if session inactive
+                            sessionBuffers.remove(sessionId);
                         }
                     }
                 );
@@ -219,6 +246,8 @@ public class YtbSubtitleWebSocketHandler extends TextWebSocketHandler {
                         "PROCESSING_ERROR",
                         request);
                 sendMessageWithLogging(session, errorResponse, "PROCESSING_ERROR");
+                // Clean up buffer on exception
+                sessionBuffers.remove(sessionId);
             }
         });
     }

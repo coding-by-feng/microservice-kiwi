@@ -1,5 +1,17 @@
 #!/bin/bash
 
+# Ensure Bash 4+ (associative arrays required). Try to re-exec with Homebrew bash if available.
+if [ -z "${BASH_VERSINFO:-}" ] || [ "${BASH_VERSINFO[0]}" -lt 4 ]; then
+    for candidate in /opt/homebrew/bin/bash /usr/local/bin/bash; do
+        if [ -x "$candidate" ]; then
+            exec "$candidate" "$0" "$@"
+        fi
+    done
+    echo "This script requires Bash 4+. On macOS: brew install bash"
+    echo "Then run: /opt/homebrew/bin/bash $0   or   /usr/local/bin/bash $0"
+    exit 1
+fi
+
 echo "=== KIWI CONTAINERS DEBUG MENU ==="
 
 # Define container names and their corresponding docker container names
@@ -53,7 +65,7 @@ show_menu() {
     echo "24) Enter container shell"
     echo "25) Stop one container"
     echo "26) Restart one container"
-    echo "27) Live multi-pane logs dashboard (tail -f all)"  # UPDATED
+    echo "27) Live logs dashboard (select services by numbers or names)"  # UPDATED description
     echo "0) Exit"
     echo ""
 }
@@ -984,10 +996,137 @@ check_all_failed() {
     fi
 }
 
-# NEW: Multi-pane tmux dashboard for live logs
+# NEW: helper to select which services to include in dashboard
+select_services_for_dashboard() {
+    echo -e "\n=== SELECT SERVICES FOR LIVE LOGS DASHBOARD ==="
+    echo "You can choose using numbers or names. Input can be comma- or space-separated."
+    echo ""
+    # Quick reference list (lowercase names) for fast number entry
+    echo "Quick reference (type numbers to choose):"
+    for key in {1..16}; do
+        IFS='|' read -r _ s_name <<< "${containers[$key]}"
+        printf "%d. %s\n" "$key" "$(echo "$s_name" | tr '[:upper:]' '[:lower:]')"
+    done
+    echo ""
+    echo "Application services (1-9):"
+    for key in {1..9}; do
+        IFS='|' read -r c_name s_name <<< "${containers[$key]}"
+        printf "%-3s %-18s (%s)\n" "$key)" "$s_name" "$c_name"
+    done
+    echo ""
+    echo "Infrastructure (10-16):"
+    for key in {10..16}; do
+        IFS='|' read -r c_name s_name <<< "${containers[$key]}"
+        printf "%-3s %-18s (%s)\n" "$key)" "$s_name" "$c_name"
+    done
+    echo ""
+    echo "Examples:"
+    echo "  - All application services: all  or  app"
+    echo "  - All infrastructure services: infra"
+    echo "  - One by number: 4"
+    echo "  - One by service name: AUTH"
+    echo "  - One by container name: kiwi-service-kiwi-auth-1"
+    echo "  - Multiple by numbers: 1,4,6"
+    echo "  - Multiple by service names: AUTH, UPMS"
+    echo "  - Multiple by container names: kiwi-ui kiwi-redis"
+    echo ""
+    echo "Accepted service names:"
+    local names_line=""
+    for key in {1..16}; do
+        IFS='|' read -r _ s_name <<< "${containers[$key]}"
+        names_line+="$s_name "
+    done
+    echo "  $(echo "$names_line" | sed 's/ $//')"
+    echo ""
+    read -r -p "Enter selection (default: all services 1-9): " selection
+
+    # Default to 'all' services 1..9 if empty or 'all' or 'app'
+    if [ -z "$selection" ] || [[ "$selection" =~ ^([Aa][Ll][Ll]|[Aa][Pp]{2,})$ ]]; then
+        local all_keys=""
+        for k in {1..9}; do all_keys+="$k "; done
+        echo "$all_keys"
+        return 0
+    fi
+
+    # 'infra' quick-select
+    if [[ "$selection" =~ ^[Ii][Nn][Ff][Rr][Aa]$ ]]; then
+        local infra_keys=""
+        for k in {10..16}; do infra_keys+="$k "; done
+        echo "$infra_keys"
+        return 0
+    fi
+
+    # Build name to key map (uppercased)
+    declare -A name_to_key
+    for key in {1..16}; do
+        IFS='|' read -r c_name s_name <<< "${containers[$key]}"
+        local up_service=$(echo "$s_name" | tr '[:lower:]' '[:upper:]')
+        local up_container=$(echo "$c_name" | tr '[:lower:]' '[:upper:]')
+        name_to_key[$up_service]="$key"
+        name_to_key[$up_container]="$key"
+    done
+
+    # Normalize separators: replace commas with spaces
+    selection=$(echo "$selection" | tr ',' ' ')
+
+    local selected_keys=()
+    for token in $selection; do
+        local up_token=$(echo "$token" | tr '[:lower:]' '[:upper:]')
+        # group keywords inside list
+        if [[ "$up_token" == "APP" || "$up_token" == "APPS" ]]; then
+            for k in {1..9}; do selected_keys+=("$k"); done
+            continue
+        fi
+        if [[ "$up_token" == "INFRA" ]]; then
+            for k in {10..16}; do selected_keys+=("$k"); done
+            continue
+        fi
+        if [[ "$token" =~ ^[0-9]+$ ]]; then
+            if (( token >= 1 && token <= 16 )); then
+                selected_keys+=("$token")
+            else
+                echo "Skipping invalid number: $token (valid 1-16)"
+            fi
+        else
+            if [ -n "${name_to_key[$up_token]}" ]; then
+                selected_keys+=("${name_to_key[$up_token]}")
+            else
+                echo "Skipping unknown name: $token"
+            fi
+        fi
+    done
+
+    # De-duplicate while preserving order
+    local deduped=()
+    local seen=""
+    for k in "${selected_keys[@]}"; do
+        if [[ " $seen " != *" $k "* ]]; then
+            deduped+=("$k")
+            seen+=" $k"
+        fi
+    done
+
+    if [ ${#deduped[@]} -eq 0 ]; then
+        echo "No valid selections found; defaulting to services 1-9."
+        local all_keys=""
+        for k in {1..9}; do all_keys+="$k "; done
+        echo "$all_keys"
+    else
+        echo "${deduped[*]}"
+    fi
+}
+
+# UPDATED: Multi-pane tmux dashboard for live logs (selectable services)
 logs_dashboard() {
-    echo -e "\n=== MULTI-PANE LIVE LOGS DASHBOARD (SERVICES 1-9) ==="
-    echo "This opens a tmux session with panes for each service showing: docker logs -f (all logs)"
+    # Accept space-separated keys as arguments; default to 1..9 if none
+    local keys=("$@")
+    if [ ${#keys[@]} -eq 0 ]; then
+        for k in {1..9}; do keys+=("$k"); done
+    fi
+
+    echo -e "\n=== MULTI-PANE LIVE LOGS DASHBOARD ==="
+    echo "Services included: ${#keys[@]} pane(s)"
+    echo "This opens a tmux session with panes for each selected service showing: docker logs -f"
     echo "- Detach: Ctrl+b then d | Close pane: Ctrl+b then x | Resize: Ctrl+b then arrow keys"
 
     # Check tmux availability
@@ -995,7 +1134,7 @@ logs_dashboard() {
         echo "✗ tmux is not installed or not found in PATH."
         echo "Install on macOS (Homebrew): brew install tmux"
         echo "Falling back to quick health logs (static last 50 lines)."
-        quick_health_logs
+        quick_health_logs "${keys[@]}"
         return
     fi
 
@@ -1031,11 +1170,12 @@ while true; do \
     fi; \
     sleep 1; \
   fi; \
+
 done'"
     }
 
     local first=true
-    for key in {1..9}; do
+    for key in "${keys[@]}"; do
         IFS='|' read -r container_name service_name <<< "${containers[$key]}"
         pane_cmd=$(build_pane_cmd "$container_name" "$service_name")
         if $first; then
@@ -1058,10 +1198,14 @@ done'"
 }
 
 quick_health_logs() {
-    echo -e "\n=== QUICK HEALTH CHECK: LAST 50 LINES FROM ALL SERVICE CONTAINERS ==="
-    echo "This will show the last 50 log lines for each Kiwi microservice (1-9)."
-    echo ""
-    for key in {1..9}; do
+    # Accept optional list of keys; default to 1..9
+    local keys=("$@")
+    if [ ${#keys[@]} -eq 0 ]; then
+        for k in {1..9}; do keys+=("$k"); done
+    fi
+
+    echo -e "\n=== QUICK HEALTH CHECK: LAST 50 LINES FROM SELECTED CONTAINERS ==="
+    for key in "${keys[@]}"; do
         IFS='|' read -r container_name service_name <<< "${containers[$key]}"
         check_logs "$container_name" "$service_name" "static" "50"
         echo ""
@@ -1122,7 +1266,13 @@ while true; do
         24) enter_container ;;
         25) stop_single_container ;;
         26) restart_single_container ;;
-        27) logs_dashboard ;;  # UPDATED to tmux dashboard
+        27)
+            # NEW: selection for which services to include
+            selected=$(select_services_for_dashboard)
+            # Convert to array and start dashboard
+            read -r -a sel_keys <<< "$selected"
+            logs_dashboard "${sel_keys[@]}"
+            ;;
         *) echo "Invalid choice. Please enter a number between 0-27." ;;
     esac
 

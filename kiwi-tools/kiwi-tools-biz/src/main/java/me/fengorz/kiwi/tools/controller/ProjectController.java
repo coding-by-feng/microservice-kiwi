@@ -37,7 +37,7 @@ import java.util.Map;
  *  - Max size ~5MB (configurable via Spring's multipart settings)
  */
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/rangi_windows/api")
 @Api(tags = "Projects", description = "CRUD and photo management for Projects")
 public class ProjectController {
 

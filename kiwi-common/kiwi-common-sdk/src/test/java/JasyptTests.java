@@ -30,9 +30,10 @@ public class JasyptTests {
         String plainText = "11111111";
         textEncryptor.setPassword(password);
         String cipherText = textEncryptor.encrypt(plainText);
-        String decrypt = textEncryptor.decrypt("5iq0rrNjP/KEC3o61ydTe4uXiA00BXpCCWEZnd5//BjrYwlbeWSajBkKY8q+36N44ehFQdszi7qOnc3TT5647RgxI0zYCqRQzo2HouYZy1E=");
+        String decrypt = textEncryptor.decrypt("SKdYEg+E1hatfznKqx4LcBiqYnYDcXW7");
         System.out.println(cipherText);
         System.out.println(decrypt);
+        System.out.println(textEncryptor.decrypt("ceDAameujB+jXutTPYZUe7NW7P8WoRsm"));
     }
 }
 

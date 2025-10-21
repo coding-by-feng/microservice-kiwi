@@ -1180,9 +1180,11 @@ done'"
         pane_cmd=$(build_pane_cmd "$container_name" "$service_name")
         if $first; then
             tmux new-session -d -s "$session" "$pane_cmd"
+            tmux select-pane -t "$session" -T "$service_name"
             first=false
         else
             tmux split-window -t "$session" -v "$pane_cmd"
+            tmux select-pane -t "$session" -T "$service_name"
         fi
         tmux select-layout -t "$session" tiled >/dev/null 2>&1
     done
@@ -1190,6 +1192,8 @@ done'"
     # Improve usability
     tmux set-option -t "$session" status on >/dev/null 2>&1
     tmux set-option -t "$session" mouse on >/dev/null 2>&1
+    tmux set-option -t "$session" pane-border-status top >/dev/null 2>&1
+    tmux set-option -t "$session" pane-border-format ' #{pane_index} | #{pane_title} ' >/dev/null 2>&1
     tmux select-layout -t "$session" tiled >/dev/null 2>&1
 
     echo "Launching tmux dashboard..."

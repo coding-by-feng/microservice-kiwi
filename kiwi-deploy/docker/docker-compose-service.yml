@@ -25,7 +25,7 @@ services:
           if [ $$((wait_secs % 5)) -eq 0 ]; then
             echo "Waiting for kiwi-config to be healthy... ($$wait_secs s)"
           fi
-          sleep 1
+          sleep 10
         done
         echo "kiwi-config is healthy. Starting kiwi-gate..."
         exec java -Xmx512m \
@@ -63,7 +63,7 @@ services:
           if [ $$((wait_secs % 5)) -eq 0 ]; then
             echo "Waiting for kiwi-config to be healthy... ($$wait_secs s)"
           fi
-          sleep 1
+          sleep 10
         done
         echo "Waiting for kiwi-gate to be healthy..."
         wait_secs=0
@@ -72,7 +72,7 @@ services:
           if [ $$((wait_secs % 5)) -eq 0 ]; then
             echo "Waiting for kiwi-gate to be healthy... ($$wait_secs s)"
           fi
-          sleep 1
+          sleep 10
         done
         echo "kiwi-gate is healthy. Starting kiwi-upms..."
         exec java -Xmx400m \
@@ -113,7 +113,7 @@ services:
           if [ $$((wait_secs % 5)) -eq 0 ]; then
             echo "Waiting for kiwi-config to be healthy... ($$wait_secs s)"
           fi
-          sleep 1
+          sleep 10
         done
         echo "Waiting for kiwi-upms to be healthy..."
         wait_secs=0
@@ -122,7 +122,7 @@ services:
           if [ $$((wait_secs % 5)) -eq 0 ]; then
             echo "Waiting for kiwi-upms to be healthy... ($$wait_secs s)"
           fi
-          sleep 1
+          sleep 10
         done
         echo "kiwi-upms is healthy. Starting kiwi-auth..."
         exec java -jar -Xmx256m \
@@ -161,7 +161,7 @@ services:
           if [ $$((wait_secs % 5)) -eq 0 ]; then
             echo "Waiting for kiwi-config to be healthy... ($$wait_secs s)"
           fi
-          sleep 1
+          sleep 10
         done
         echo "Waiting for kiwi-auth to be healthy..."
         wait_secs=0
@@ -170,7 +170,7 @@ services:
           if [ $$((wait_secs % 5)) -eq 0 ]; then
             echo "Waiting for kiwi-auth to be healthy... ($$wait_secs s)"
           fi
-          sleep 1
+          sleep 10
         done
         echo "kiwi-auth is healthy. Starting kiwi-word-biz..."
         exec java -jar -Xmx1024m \
@@ -211,7 +211,7 @@ services:
           if [ $$((wait_secs % 5)) -eq 0 ]; then
             echo "Waiting for kiwi-config to be healthy... ($$wait_secs s)"
           fi
-          sleep 1
+          sleep 10
         done
         echo "Waiting for kiwi-auth to be healthy..."
         wait_secs=0
@@ -220,7 +220,7 @@ services:
           if [ $$((wait_secs % 5)) -eq 0 ]; then
             echo "Waiting for kiwi-auth to be healthy... ($$wait_secs s)"
           fi
-          sleep 1
+          sleep 10
         done
         echo "kiwi-auth is healthy. Starting kiwi-ai-biz..."
         export JAVA_OPTS="-Xms512m -Xmx1048m -XX:+UseG1GC -XX:MaxGCPauseMillis=200"
@@ -256,7 +256,7 @@ services:
           if [ $$((wait_secs % 5)) -eq 0 ]; then
             echo "Waiting for kiwi-config to be healthy... ($$wait_secs s)"
           fi
-          sleep 1
+          sleep 10
         done
         echo "Waiting for kiwi-auth to be healthy..."
         wait_secs=0
@@ -265,7 +265,7 @@ services:
           if [ $$((wait_secs % 5)) -eq 0 ]; then
             echo "Waiting for kiwi-auth to be healthy... ($$wait_secs s)"
           fi
-          sleep 1
+          sleep 10
         done
         echo "kiwi-auth is healthy. Starting kiwi-tools-biz..."
         exec java -jar -Xmx256m \
@@ -303,7 +303,7 @@ services:
           if [ $$((wait_secs % 5)) -eq 0 ]; then
             echo "Waiting for kiwi-config to be healthy... ($$wait_secs s)"
           fi
-          sleep 1
+          sleep 10
         done
         echo "Waiting for kiwi-ai-biz to be healthy..."
         wait_secs=0
@@ -312,7 +312,7 @@ services:
           if [ $$((wait_secs % 5)) -eq 0 ]; then
             echo "Waiting for kiwi-ai-biz to be healthy... ($$wait_secs s)"
           fi
-          sleep 1
+          sleep 10
         done
         echo "kiwi-ai-biz is healthy. Starting kiwi-crawler..."
         exec java -jar -Xmx1000m \

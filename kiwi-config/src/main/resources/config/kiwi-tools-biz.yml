@@ -52,7 +52,7 @@ management:
 
 ignore:
   urls:
-    - /api/**
+    - /rangi_windows/api/**
 
 # Storage backend switch
 storage:

@@ -17,7 +17,5 @@ public class TodoHistory {
     private Integer failPoints;
     private String status; // success/fail
     private Integer pointsApplied;
-    private String idempotencyKey;
     private LocalDateTime completedAt;
 }
-

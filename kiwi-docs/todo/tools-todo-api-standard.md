@@ -17,13 +17,10 @@ Inner envelope (Todo endpoints)
 - Most Todo responses use an inner envelope with fields: { data: <payload>, meta?: <object> }
 - Example list response shape: { code:1, data: { data: TaskDTO[], meta: { page, pageSize, total } } }
 
-Concurrency and idempotency
+Concurrency
 - ETag/If-Match (optimistic concurrency):
   - GET /tasks/{id} and POST /tasks return an ETag response header.
   - PATCH /tasks/{id} requires header If-Match with the latest ETag; server returns 412 if mismatched (exposed as error via R wrapper).
-- Idempotency-Key:
-  - POST /tasks accepts optional Idempotency-Key header; repeated calls with the same key will return the same created record.
-  - POST /tasks/{id}/complete requires Idempotency-Key; repeated calls with the same key are safe and return the prior result.
 
 Pagination, filtering, sorting
 - Common query params on lists:
@@ -77,7 +74,6 @@ Endpoints
     data: { data: TaskDTO[], meta: PageMeta }
 
 - POST /tools/todo/tasks
-  Headers: Idempotency-Key?: string
   Body: TaskCreateRequest { title, description?, successPoints?, failPoints?, frequency?, customDays? }
   201 headers: ETag: string
   201 body: R<SingleTaskResponse> -> data: { data: TaskDTO }
@@ -98,7 +94,6 @@ Endpoints
   Note: soft delete to trash; use trash endpoints to manage.
 
 - POST /tools/todo/tasks/{id}/complete
-  Headers: Idempotency-Key: string (required)
   Body: CompleteTaskRequest { status: "success"|"fail" }
   200 body: R<CompleteTaskResponse>
     data: { task: TaskDTO, history: HistoryRecordDTO, ranking: RankingDTO }
@@ -181,9 +176,6 @@ Endpoints
 
 Headers
 - Authorization: Bearer <token>
-- Idempotency-Key: string
-  - Optional on POST /tasks (recommended)
-  - Required on POST /tasks/{id}/complete
 - ETag: string (response header on GET /tasks/{id} and POST /tasks)
 - If-Match: string (request header on PATCH /tasks/{id})
 
@@ -199,10 +191,10 @@ FE migration guidance (from local browser cache)
 - Treat server as source of truth:
   - Always read list and item data from the API; optionally cache in memory keyed by route filters (page,pageSize,status,frequency,search,date,sort).
   - On edit flows, fetch the item first to obtain the latest ETag, then send PATCH with If-Match and update local cache with the response and new ETag.
-  - On create, send Idempotency-Key to avoid duplicates (e.g., UUIDv4 per attempt); store returned ETag with the new task.
-  - On complete action, require Idempotency-Key; update task status and ranking from response.
+  - On create, store returned ETag with the new task.
+  - On complete action, update task status and ranking from response.
 - Retry/dup protection:
-  - If network retries occur, the same Idempotency-Key will make POST safe.
+  - If network retries occur, the same request will be safe due to ETag/If-Match.
 - Optimistic UI:
   - You may update UI immediately, but reconcile with server response; on 412/ETag mismatch, refetch the task and prompt user to re-apply changes.
 - Pagination:
@@ -212,7 +204,7 @@ FE migration guidance (from local browser cache)
 
 Examples
 - Create task
-  Request: POST /tools/todo/tasks  (Idempotency-Key: <uuid>)
+  Request: POST /tools/todo/tasks
   { "title": "Read 10 pages", "successPoints": 10, "failPoints": -5, "frequency": "daily" }
   Response: 201 (ETag: "abc123...")
   { "code": 1, "data": { "data": TaskDTO } }
@@ -224,7 +216,7 @@ Examples
   { "code": 1, "data": { "data": TaskDTO } }
 
 - Complete task
-  Request: POST /tools/todo/tasks/123/complete (Idempotency-Key: <uuid>)
+  Request: POST /tools/todo/tasks/123/complete
   { "status": "success" }
   Response: 200
   { "code": 1, "data": { "task": TaskDTO, "history": HistoryRecordDTO, "ranking": RankingDTO } }
@@ -237,4 +229,3 @@ Notes
 - Dates passed in query params use server date functions; ensure format is exactly YYYY-MM-DD (lists) or YYYY-MM (summary).
 - Sorting values are fixed strings; FE should present them from a constant list.
 - Rank definitions are static but served by API; FE should not hardcode thresholds.
-

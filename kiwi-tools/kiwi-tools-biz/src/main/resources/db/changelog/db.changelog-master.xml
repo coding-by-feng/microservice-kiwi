@@ -13,4 +13,7 @@
     <!-- Todo module tables -->
     <include file="db/changelog/changes/0100-create-todo-tables.xml" relativeToChangelogFile="false"/>
 
+    <!-- Drop idempotency columns and indexes from todo tables -->
+    <include file="db/changelog/changes/0101-drop-idempotency-columns.xml" relativeToChangelogFile="false"/>
+
 </databaseChangeLog>

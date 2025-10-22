@@ -61,7 +61,6 @@ public class TodoApiTest {
 
         MvcResult created = mockMvc.perform(post("/tools/todo/tasks")
                         .header("X-User-Id", userIdHeader)
-                        .header("Idempotency-Key", "e2e-create-1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(KiwiJsonUtils.toJsonPretty(create)))
                 .andExpect(status().isCreated())
@@ -148,7 +147,6 @@ public class TodoApiTest {
         complete.put("status", "success");
         MvcResult completed = mockMvc.perform(post("/tools/todo/tasks/{id}/complete", id)
                         .header("X-User-Id", userIdHeader)
-                        .header("Idempotency-Key", "comp-1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(KiwiJsonUtils.toJsonPretty(complete)))
                 .andExpect(status().isOk())
@@ -159,10 +157,9 @@ public class TodoApiTest {
         Map<String, Object> data = (Map<String, Object>) resp.get("data");
         String histId = String.valueOf(((Map) data.get("history")).get("id"));
 
-        // Idempotent repeat
+        // Repeat call (no idempotency)
         mockMvc.perform(post("/tools/todo/tasks/{id}/complete", id)
                         .header("X-User-Id", userIdHeader)
-                        .header("Idempotency-Key", "comp-1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(KiwiJsonUtils.toJsonPretty(complete)))
                 .andExpect(status().isOk())
@@ -192,7 +189,6 @@ public class TodoApiTest {
         complete.put("status", "fail");
         mockMvc.perform(post("/tools/todo/tasks/{id}/complete", id2)
                         .header("X-User-Id", userIdHeader)
-                        .header("Idempotency-Key", "comp-2")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(KiwiJsonUtils.toJsonPretty(complete)))
                 .andExpect(status().isOk());
@@ -205,13 +201,11 @@ public class TodoApiTest {
         // Complete both, then reset all
         mockMvc.perform(post("/tools/todo/tasks/{id}/complete", id1)
                         .header("X-User-Id", userIdHeader)
-                        .header("Idempotency-Key", "comp-3")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(KiwiJsonUtils.toJsonPretty(Collections.singletonMap("status", "success"))))
                 .andExpect(status().isOk());
         mockMvc.perform(post("/tools/todo/tasks/{id}/complete", id2)
                         .header("X-User-Id", userIdHeader)
-                        .header("Idempotency-Key", "comp-4")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(KiwiJsonUtils.toJsonPretty(Collections.singletonMap("status", "success"))))
                 .andExpect(status().isOk());
@@ -244,7 +238,6 @@ public class TodoApiTest {
         String id = createTask("E2E-TODO-ANALYTICS");
         mockMvc.perform(post("/tools/todo/tasks/{id}/complete", id)
                         .header("X-User-Id", userIdHeader)
-                        .header("Idempotency-Key", "comp-ana-1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(KiwiJsonUtils.toJsonPretty(Collections.singletonMap("status", "success"))))
                 .andExpect(status().isOk());
@@ -278,7 +271,6 @@ public class TodoApiTest {
         String id = createTask("E2E-TODO-EXPORT");
         mockMvc.perform(post("/tools/todo/tasks/{id}/complete", id)
                         .header("X-User-Id", userIdHeader)
-                        .header("Idempotency-Key", "comp-exp-1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(KiwiJsonUtils.toJsonPretty(Collections.singletonMap("status", "success"))))
                 .andExpect(status().isOk());
@@ -341,7 +333,6 @@ public class TodoApiTest {
         create.put("title", title);
         MvcResult created = mockMvc.perform(post("/tools/todo/tasks")
                         .header("X-User-Id", userIdHeader)
-                        .header("Idempotency-Key", UUID.randomUUID().toString())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(KiwiJsonUtils.toJsonPretty(create)))
                 .andExpect(status().isCreated())

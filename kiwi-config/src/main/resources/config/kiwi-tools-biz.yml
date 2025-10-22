@@ -96,3 +96,30 @@ rest-template:
       - "org.apache.http.conn.HttpHostConnectException"
       - "org.apache.http.NoHttpResponseException"
     backoff-period: 500  # Faster backoff for tests
+
+# Todo ranking configuration
+# This list defines the rank ladder with thresholds and levels
+# It will be bound to TodoRankingProperties (todo.ranking.ranks)
+todo:
+  ranking:
+    ranks:
+      - { key: beginner,    threshold: 0,       level: 1 }
+      - { key: trainee,     threshold: 1000,    level: 2 }
+      - { key: novice,      threshold: 3000,    level: 3 }
+      - { key: apprentice,  threshold: 6000,    level: 4 }
+      - { key: wood,        threshold: 10000,   level: 5 }
+      - { key: stone,       threshold: 13000,   level: 6 }
+      - { key: steel,       threshold: 17000,   level: 7 }
+      - { key: iron,        threshold: 22000,   level: 8 }
+      - { key: bronze,      threshold: 28500,   level: 9 }
+      - { key: silver,      threshold: 37000,   level: 10 }
+      - { key: gold,        threshold: 48000,   level: 11 }
+      - { key: platinum,    threshold: 62000,   level: 12 }
+      - { key: diamond,     threshold: 80000,   level: 13 }
+      - { key: master,      threshold: 104000,  level: 14 }
+      - { key: grandmaster, threshold: 135000,  level: 15 }
+      - { key: celestial,   threshold: 175000,  level: 16 }
+      - { key: divine,      threshold: 227000,  level: 17 }
+      - { key: immortal,    threshold: 295000,  level: 18 }
+      - { key: mythic,      threshold: 382000,  level: 19 }
+      - { key: legendary,   threshold: 495000,  level: 20 }

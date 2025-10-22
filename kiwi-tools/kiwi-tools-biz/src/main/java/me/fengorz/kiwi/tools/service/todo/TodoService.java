@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.RequiredArgsConstructor;
 import me.fengorz.kiwi.tools.api.todo.dto.*;
+import me.fengorz.kiwi.tools.config.TodoRankingProperties;
 import me.fengorz.kiwi.tools.exception.ToolsException;
 import me.fengorz.kiwi.tools.mapper.TodoDtoMapper;
 import me.fengorz.kiwi.tools.model.todo.TodoHistory;
@@ -27,6 +28,7 @@ public class TodoService {
     private final TodoTaskMapper taskMapper;
     private final TodoHistoryMapper historyMapper;
     private final TodoTrashMapper trashMapper;
+    private final TodoRankingProperties rankingProperties;
 
     public TaskListResponse listTasks(Integer userId, Integer page, Integer pageSize,
                                       String status, String frequency, String search,
@@ -278,6 +280,8 @@ public class TodoService {
         Integer total = historyMapper.selectList(new LambdaQueryWrapper<TodoHistory>().eq(TodoHistory::getUserId, userId))
                 .stream().map(h -> Optional.ofNullable(h.getPointsApplied()).orElse(0)).reduce(0, Integer::sum);
         List<RankDefinitionDTO> ranks = getRankDefs();
+        // Ensure ranks are sorted by threshold ascending (or by level)
+        ranks.sort(Comparator.comparingInt(RankDefinitionDTO::getThreshold).thenComparingInt(RankDefinitionDTO::getLevel));
         RankDefinitionDTO current = ranks.get(0);
         RankDefinitionDTO next = null;
         for (RankDefinitionDTO r : ranks) {
@@ -297,12 +301,20 @@ public class TodoService {
     }
 
     public List<RankDefinitionDTO> getRankDefs() {
+        List<RankDefinitionDTO> configured = rankingProperties != null ? rankingProperties.getRanks() : null;
+        if (configured != null && !configured.isEmpty()) {
+            // Return a defensive copy sorted by level
+            List<RankDefinitionDTO> copy = new ArrayList<>(configured);
+            copy.sort(Comparator.comparingInt(RankDefinitionDTO::getLevel));
+            return copy;
+        }
+        // Fallback defaults (minimal) if configuration missing
         List<RankDefinitionDTO> list = new ArrayList<>();
-        list.add(makeRank("novice", 0, 1));
-        list.add(makeRank("bronze", 100, 2));
-        list.add(makeRank("silver", 300, 3));
-        list.add(makeRank("gold", 600, 4));
-        list.add(makeRank("platinum", 1000, 5));
+        list.add(makeRank("beginner", 0, 1));
+        list.add(makeRank("trainee", 1000, 2));
+        list.add(makeRank("novice", 3000, 3));
+        list.add(makeRank("apprentice", 6000, 4));
+        list.add(makeRank("wood", 10000, 5));
         return list;
     }
 

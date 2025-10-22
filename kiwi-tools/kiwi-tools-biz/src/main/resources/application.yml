@@ -51,3 +51,8 @@ tools:
 ignore:
   urls:
     - /api/**
+
+youtube:
+  video:
+    batch:
+      enabled: false

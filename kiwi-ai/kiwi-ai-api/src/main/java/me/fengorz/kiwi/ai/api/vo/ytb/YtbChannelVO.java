@@ -22,4 +22,8 @@ public class YtbChannelVO implements Serializable {
 
     private Integer status;
 
+    private Boolean favorited;
+
+    private Long favoriteCount;
+
 }

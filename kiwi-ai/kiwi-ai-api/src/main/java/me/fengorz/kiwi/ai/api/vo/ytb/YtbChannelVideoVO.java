@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 /**
  * YouTube video VO for API response
@@ -21,7 +22,7 @@ public class YtbChannelVideoVO implements Serializable {
     /**
      * Video ID
      */
-    private Integer id;
+    private Long id;
 
     /**
      * Video title
@@ -33,6 +34,15 @@ public class YtbChannelVideoVO implements Serializable {
      */
     private String videoLink;
 
+    /**
+     * Video publication datetime
+     */
+    private LocalDateTime publishedAt;
+
     private Integer status;
+
+    private Boolean favorited;
+
+    private Long favoriteCount;
 
 }

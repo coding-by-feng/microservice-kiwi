@@ -39,7 +39,7 @@ public class YouTuBeHelper {
     @Value("${youtube.video.command}")
     private String command = "yt-dlp";
 
-    @Value("${youtube.video.subtitles.langs:en,en-GB,en-US,zh,zh-CN,zh-Hans,zh-Hant}")
+    @Value("${youtube.video.subtitles.langs:en,en-GB,en-US}")
     private String subtitlesLangs;
 
     public FileInputStream downloadVideo(String videoUrl) {

@@ -11,5 +11,7 @@
     <include file="db/changelog/changes/0205-ytb-channel-video-published-at.xml" relativeToChangelogFile="false"/>
     <!-- Add favorites tables for channels and videos -->
     <include file="db/changelog/changes/0210-ytb-favorites-tables.xml" relativeToChangelogFile="false"/>
+    <!-- Ensure favorites tables' id are AUTO_INCREMENT -->
+    <include file="db/changelog/changes/0215-ytb-favorites-id-auto-increment.xml" relativeToChangelogFile="false"/>
 
 </databaseChangeLog>

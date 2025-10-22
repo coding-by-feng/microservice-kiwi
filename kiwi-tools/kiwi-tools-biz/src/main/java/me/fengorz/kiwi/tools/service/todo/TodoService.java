@@ -75,19 +75,42 @@ public class TodoService {
         return '"' + Integer.toHexString(basis.hashCode()) + '"';
     }
 
-    public TodoTask createTask(Integer userId, TaskCreateRequest req, String idempotencyKey) {
+    // Normalize an ETag token: trim, drop weak prefix and surrounding quotes
+    private String normalizeETagToken(String token) {
+        if (token == null) return "";
+        String s = token.trim();
+        if (s.startsWith("W/")) {
+            s = s.substring(2).trim();
+        }
+        if (s.length() >= 2 && s.startsWith("\"") && s.endsWith("\"")) {
+            s = s.substring(1, s.length() - 1);
+        }
+        return s;
+    }
+
+    // RFC 7232 style If-Match evaluation: "*" or any matching ETag (support multiple values)
+    private boolean ifMatchSatisfied(String ifMatchHeader, TodoTask current) {
+        if (ifMatchHeader == null || ifMatchHeader.trim().isEmpty()) return false;
+        String raw = ifMatchHeader.trim();
+        if ("*".equals(raw)) return true;
+        String currentNorm = normalizeETagToken(computeETag(current));
+        // split on commas for multiple entity-tags
+        String[] parts = raw.split(",");
+        for (String part : parts) {
+            String norm = normalizeETagToken(part);
+            if (!norm.isEmpty() && norm.equals(currentNorm)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public TodoTask createTask(Integer userId, TaskCreateRequest req) {
         if (req.getTitle() == null || req.getTitle().trim().isEmpty()) {
             throw new ToolsException(HttpStatus.BAD_REQUEST, "validation_error", "title is required");
         }
-        if (idempotencyKey != null && !idempotencyKey.isEmpty()) {
-            TodoTask existing = taskMapper.selectOne(new LambdaQueryWrapper<TodoTask>()
-                    .eq(TodoTask::getUserId, userId)
-                    .eq(TodoTask::getIdempotencyKey, idempotencyKey));
-            if (existing != null) return existing;
-        }
         TodoTask t = TodoDtoMapper.toEntity(req, userId);
         t.setId(String.valueOf(IdWorker.getId()));
-        t.setIdempotencyKey(idempotencyKey);
         t.setCreatedAt(LocalDateTime.now());
         t.setUpdatedAt(t.getCreatedAt());
         taskMapper.insert(t);
@@ -96,7 +119,7 @@ public class TodoService {
 
     public TodoTask updateTask(Integer userId, String id, TaskUpdateRequest req, String ifMatch) {
         TodoTask cur = getTask(userId, id);
-        if (ifMatch == null || ifMatch.isEmpty() || !computeETag(cur).equals(ifMatch)) {
+        if (!ifMatchSatisfied(ifMatch, cur)) {
             throw new ToolsException(HttpStatus.PRECONDITION_FAILED, "precondition_failed", "ETag mismatch");
         }
         TodoDtoMapper.applyUpdate(cur, req);
@@ -125,26 +148,11 @@ public class TodoService {
         return Collections.singletonMap("ok", true);
     }
 
-    public Map<String, Object> completeTask(Integer userId, String id, String status, String idempotencyKey) {
+    public Map<String, Object> completeTask(Integer userId, String id, String status) {
         if (!"success".equals(status) && !"fail".equals(status)) {
             throw new ToolsException(HttpStatus.BAD_REQUEST, "validation_error", "status must be success|fail");
         }
-        if (idempotencyKey == null || idempotencyKey.isEmpty()) {
-            throw new ToolsException(HttpStatus.BAD_REQUEST, "validation_error", "Idempotency-Key required");
-        }
-        TodoHistory existing = historyMapper.selectOne(new LambdaQueryWrapper<TodoHistory>()
-                .eq(TodoHistory::getUserId, userId)
-                .eq(TodoHistory::getIdempotencyKey, idempotencyKey));
         TodoTask cur = getTask(userId, id);
-        if (existing != null) {
-            // Return current task state with existing history and ranking
-            RankingDTO ranking = computeRanking(userId);
-            Map<String,Object> resp = new HashMap<>();
-            resp.put("task", TodoDtoMapper.toTaskDTO(cur));
-            resp.put("history", TodoDtoMapper.toHistoryDTO(existing));
-            resp.put("ranking", ranking);
-            return resp;
-        }
         // Create history
         TodoHistory h = new TodoHistory();
         h.setId(String.valueOf(IdWorker.getId()));
@@ -156,7 +164,6 @@ public class TodoService {
         h.setFailPoints(cur.getFailPoints());
         h.setStatus(status);
         h.setPointsApplied("success".equals(status) ? cur.getSuccessPoints() : cur.getFailPoints());
-        h.setIdempotencyKey(idempotencyKey);
         h.setCompletedAt(LocalDateTime.now());
         historyMapper.insert(h);
         // Update task status

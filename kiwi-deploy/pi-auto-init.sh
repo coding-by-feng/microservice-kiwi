@@ -9,6 +9,10 @@
 #   NGROK_DOMAIN   (default: www.sweepo.co.nz)
 #   NGROK_PORT     (default: 1968)
 #   LOG_FILE       (default: $HOME/sweepo-init.log)
+#   ATTACH_TMUX    (default: 0) If set to 1, do the following interactive flow:
+#                   - tmux new-session -d -s $SESSION_NAME (if not exists)
+#                   - pre-type: "ngrok http --domain=$NGROK_DOMAIN $NGROK_PORT" in window 'ngrok' (no Enter)
+#                   - attach to the session so user can review and press Enter
 
 set -euo pipefail
 
@@ -16,6 +20,7 @@ SESSION_NAME=${SESSION_NAME:-sweepo}
 NGROK_DOMAIN=${NGROK_DOMAIN:-www.sweepo.co.nz}
 NGROK_PORT=${NGROK_PORT:-1968}
 LOG_FILE=${LOG_FILE:-"$HOME/sweepo-init.log"}
+ATTACH_TMUX=${ATTACH_TMUX:-0}
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
@@ -51,6 +56,19 @@ ensure_tmux_window() {
     return 0
   fi
   tmux new-window -t "$SESSION_NAME" -n "$win"
+}
+
+# When ATTACH_TMUX=1, prepare the session, pre-type the ngrok command, and attach for the user
+attach_and_prime_ngrok() {
+  ensure_tmux_session || return 1
+  # Use/ensure a dedicated 'ngrok' window to keep things tidy
+  ensure_tmux_window ngrok || return 1
+  tmux select-window -t "${SESSION_NAME}:ngrok"
+  # Pre-type the command without pressing Enter, even if ngrok isn't installed yet
+  tmux send-keys -t "${SESSION_NAME}:ngrok" "ngrok http --domain=${NGROK_DOMAIN} ${NGROK_PORT}"
+  log "Attaching to tmux session '${SESSION_NAME}'. The command has been typed; press Enter to run it:"
+  log "  ngrok http --domain=${NGROK_DOMAIN} ${NGROK_PORT}"
+  exec tmux attach-session -t "$SESSION_NAME"
 }
 
 start_ngrok_in_tmux() {
@@ -135,6 +153,15 @@ main() {
   log "==== SweePo Pi auto init starting ===="
 
   ensure_tmux_session || true
+
+  # Interactive attach mode: create/ensure session, pre-type ngrok command, then attach.
+  if [ "$ATTACH_TMUX" = "1" ]; then
+    attach_and_prime_ngrok
+    # exec above should replace the process; if it returns, stop further automation.
+    log "Attach mode finished/returned unexpectedly; skipping further steps."
+    return 0
+  fi
+
   start_ngrok_in_tmux || true
 
   run_easy_check || log "easy-check step encountered a problem (see log)."
@@ -145,4 +172,3 @@ main() {
 }
 
 main "$@"
-

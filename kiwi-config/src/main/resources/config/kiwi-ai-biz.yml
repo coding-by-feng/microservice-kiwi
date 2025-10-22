@@ -70,7 +70,7 @@ ai:
     subtitle-retouch-translator: "Please help me to add corresponding correct punctuation, put the #[TL] translation on the position that after the punctuation, and keep each sentence in different lines, notice that keep the original content, don't give me other information(any markdown format, other tips, or hints), and you must complete the translation of all content. Notice that if the subtitles content is already in #[TL], no need to translate, just put the original sentence and add correct punctuation."
     vocabulary-association: "List common #[TL] vocabulary as much as possible that can express the user prompt and explain the differences between them. My first language is #[NL], please explain in #[NL]."
     phrases-association: "List common #[TL] phrases as much as possible that can express the user prompt and explain the differences between them. My first language is #[NL], please explain in #[NL]."
-    selection-explanation: "Only show me the explanation of the user prompt(selected text) as well as its/their vocabulary or phrase own extensional explanation in #[TL] based on the sentences context: #[S1], notice that don't use bulletpoints' style on your response."
+    selection-explanation: "Respond only in #[TL]. Explain the selected phrase “#[S0]” strictly based on the sentence context #[S1]. Output plain text only with 1–2 concise paragraphs. Do not include headings, labels, language names/codes, English text, Markdown, bullet points, or any prefix/suffix such as 'Explanation'. Do not restate the full sentence or translate unrelated parts; focus on the meaning, nuance, mood/tense, and function in context. Do not use backslashes."
 
 youtube:
   api:

@@ -44,10 +44,10 @@ public class TodoController {
     }
 
     @PostMapping(value = "/tasks", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<R<SingleTaskResponse>> createTask(@RequestHeader(value = "Idempotency-Key", required = false) String idempotencyKey,
+    public ResponseEntity<R<SingleTaskResponse>> createTask(
                                                             @RequestBody TaskCreateRequest body) {
         Integer userId = SecurityUtils.getCurrentUserId();
-        TodoTask created = service.createTask(userId, body, idempotencyKey);
+        TodoTask created = service.createTask(userId, body);
         String etag = service.computeETag(created);
         SingleTaskResponse resp = new SingleTaskResponse();
         resp.setData(TodoDtoMapper.toTaskDTO(created));
@@ -89,10 +89,9 @@ public class TodoController {
 
     @PostMapping(value = "/tasks/{id}/complete", consumes = MediaType.APPLICATION_JSON_VALUE)
     public R<CompleteTaskResponse> completeTask(@PathVariable String id,
-                                                @RequestHeader("Idempotency-Key") String idempotencyKey,
                                                 @RequestBody CompleteTaskRequest body) {
         Integer userId = SecurityUtils.getCurrentUserId();
-        Map<String, Object> data = service.completeTask(userId, id, body.getStatus(), idempotencyKey);
+        Map<String, Object> data = service.completeTask(userId, id, body.getStatus());
         CompleteTaskResponse resp = new CompleteTaskResponse();
         resp.setData(data);
         return R.success(resp);

@@ -27,8 +27,7 @@ services:
           fi
           sleep 10
         done
-        echo "kiwi-config is healthy. Delaying 20s before starting kiwi-gate..."
-        sleep 20
+        # kiwi-config is healthy; start immediately to avoid unnecessary idle time
         echo "Starting kiwi-gate..."
         exec java -Xmx512m \
           -Duser.timezone=GMT+12 \
@@ -76,8 +75,7 @@ services:
           fi
           sleep 10
         done
-        echo "kiwi-gate is healthy. Delaying 20s before starting kiwi-upms..."
-        sleep 20
+        # kiwi-gate is healthy; start immediately
         echo "Starting kiwi-upms..."
         exec java -Xmx400m \
         -Duser.timezone=GMT+12 \
@@ -119,8 +117,7 @@ services:
           fi
           sleep 10
         done
-        echo "kiwi-config is healthy. Delaying 40s before checking kiwi-upms..."
-        sleep 40
+        # Immediately check kiwi-upms health (no fixed delay)
         echo "Waiting for kiwi-upms to be healthy..."
         wait_secs=0
         until code=$(curl -s -o /dev/null -w '%{http_code}' http://localhost:4001/actuator/health); [ "$$code" = "200" ] || [ "$$code" = "401" ] || [ "$$code" = "403" ]; do
@@ -178,8 +175,7 @@ services:
           fi
           sleep 10
         done
-        echo "kiwi-auth is healthy. Delaying 30s before starting kiwi-word-biz..."
-        sleep 30
+        # Start immediately after kiwi-auth is healthy
         echo "Starting kiwi-word-biz..."
         exec java -jar -Xmx1024m \
         -Duser.timezone=GMT+12 \
@@ -230,8 +226,9 @@ services:
           fi
           sleep 10
         done
-        echo "kiwi-auth is healthy. Delaying 50s before starting kiwi-ai-biz..."
-        sleep 50
+        # To avoid overlapping with kiwi-word-biz startup (assumed 3 minutes), delay 180s
+        echo "kiwi-auth is healthy. Delaying 180s (3 minutes) before starting kiwi-ai-biz..."
+        sleep 180
         echo "Starting kiwi-ai-biz..."
         export JAVA_OPTS="-Xms512m -Xmx1048m -XX:+UseG1GC -XX:MaxGCPauseMillis=200"
         export TZ=Pacific/Auckland
@@ -277,7 +274,10 @@ services:
           fi
           sleep 10
         done
-        echo "kiwi-auth is healthy. Starting kiwi-tools-biz..."
+        # Stagger after kiwi-ai-biz (assumed 3 minutes) to avoid overlap; total 6 minutes after kiwi-word-biz
+        echo "kiwi-auth is healthy. Delaying 360s (6 minutes) before starting kiwi-tools-biz..."
+        sleep 360
+        echo "Starting kiwi-tools-biz..."
         exec java -jar -Xmx256m \
           -Duser.timezone=GMT+12 \
           -Dspring.profiles.active=prod \

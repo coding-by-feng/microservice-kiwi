@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <!-- Drop unique index on todo_task if present -->
+    <changeSet id="0101-01-drop-idx-task-idem" author="tools-biz">
+        <preConditions onFail="MARK_RAN">
+            <indexExists tableName="todo_task" indexName="uk_todo_task_user_idem"/>
+        </preConditions>
+        <dropIndex tableName="todo_task" indexName="uk_todo_task_user_idem"/>
+        <rollback>
+            <createIndex tableName="todo_task" indexName="uk_todo_task_user_idem" unique="true">
+                <column name="user_id"/>
+                <column name="idempotency_key"/>
+            </createIndex>
+        </rollback>
+    </changeSet>
+
+    <!-- Drop unique index on todo_history if present -->
+    <changeSet id="0101-02-drop-idx-history-idem" author="tools-biz">
+        <preConditions onFail="MARK_RAN">
+            <indexExists tableName="todo_history" indexName="uk_todo_history_user_idem"/>
+        </preConditions>
+        <dropIndex tableName="todo_history" indexName="uk_todo_history_user_idem"/>
+        <rollback>
+            <createIndex tableName="todo_history" indexName="uk_todo_history_user_idem" unique="true">
+                <column name="user_id"/>
+                <column name="idempotency_key"/>
+            </createIndex>
+        </rollback>
+    </changeSet>
+
+    <!-- Drop idempotency_key from todo_task if present -->
+    <changeSet id="0101-03-drop-col-task-idem" author="tools-biz">
+        <preConditions onFail="MARK_RAN">
+            <columnExists tableName="todo_task" columnName="idempotency_key"/>
+        </preConditions>
+        <dropColumn tableName="todo_task" columnName="idempotency_key"/>
+        <rollback>
+            <addColumn tableName="todo_task">
+                <column name="idempotency_key" type="varchar(128)"/>
+            </addColumn>
+        </rollback>
+    </changeSet>
+
+    <!-- Drop idempotency_key from todo_history if present -->
+    <changeSet id="0101-04-drop-col-history-idem" author="tools-biz">
+        <preConditions onFail="MARK_RAN">
+            <columnExists tableName="todo_history" columnName="idempotency_key"/>
+        </preConditions>
+        <dropColumn tableName="todo_history" columnName="idempotency_key"/>
+        <rollback>
+            <addColumn tableName="todo_history">
+                <column name="idempotency_key" type="varchar(128)"/>
+            </addColumn>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

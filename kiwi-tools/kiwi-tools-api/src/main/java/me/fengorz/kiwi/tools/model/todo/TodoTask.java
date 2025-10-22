@@ -18,9 +18,7 @@ public class TodoTask {
     private Integer customDays;
     private String status; // pending,success,fail
     private String metadata; // JSON text
-    private String idempotencyKey;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private LocalDateTime deletedAt;
 }
-

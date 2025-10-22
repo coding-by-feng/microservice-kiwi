@@ -192,6 +192,7 @@ services:
       - KIWI_ENC_PASSWORD=${KIWI_ENC_PASSWORD}
       - DB_IP=${DB_IP}
       - GROK_API_KEY=${GROK_API_KEY}
+      - YTB_API_KEY=${YTB_API_KEY}
     volumes:
       - ~/docker/kiwi/ai/logs:/logs:Z
       - ~/docker/kiwi/ai/tmp:/ai-tmp:Z

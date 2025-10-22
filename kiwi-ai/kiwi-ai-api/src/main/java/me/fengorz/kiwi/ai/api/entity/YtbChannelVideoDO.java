@@ -43,6 +43,11 @@ public class YtbChannelVideoDO implements Serializable {
     private String videoLink;
 
     /**
+     * Video publication datetime (UTC or server local time based on storage)
+     */
+    private LocalDateTime publishedAt;
+
+    /**
      * Processing status (0: ready, 1: processing, 2: finish)
      */
     private Integer status;

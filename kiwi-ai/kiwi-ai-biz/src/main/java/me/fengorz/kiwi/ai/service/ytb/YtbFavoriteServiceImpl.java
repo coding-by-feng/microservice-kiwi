@@ -1,0 +1,181 @@
+package me.fengorz.kiwi.ai.service.ytb;
+
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import lombok.RequiredArgsConstructor;
+import me.fengorz.kiwi.ai.api.entity.YtbChannelDO;
+import me.fengorz.kiwi.ai.api.entity.YtbChannelFavoriteDO;
+import me.fengorz.kiwi.ai.api.entity.YtbChannelVideoDO;
+import me.fengorz.kiwi.ai.api.entity.YtbVideoFavoriteDO;
+import me.fengorz.kiwi.ai.api.vo.ytb.YtbChannelVO;
+import me.fengorz.kiwi.ai.api.vo.ytb.YtbChannelVideoVO;
+import me.fengorz.kiwi.ai.service.ytb.mapper.YtbChannelFavoriteMapper;
+import me.fengorz.kiwi.ai.service.ytb.mapper.YtbChannelMapper;
+import me.fengorz.kiwi.ai.service.ytb.mapper.YtbChannelVideoMapper;
+import me.fengorz.kiwi.ai.service.ytb.mapper.YtbVideoFavoriteMapper;
+import me.fengorz.kiwi.common.db.service.SeqService;
+import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.beans.BeanUtils;
+import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+@Service
+@RequiredArgsConstructor
+public class YtbFavoriteServiceImpl implements YtbFavoriteService {
+
+    private final YtbChannelFavoriteMapper channelFavoriteMapper;
+    private final YtbVideoFavoriteMapper videoFavoriteMapper;
+    private final YtbChannelMapper channelMapper;
+    private final YtbChannelVideoMapper videoMapper;
+    private final SeqService seqService;
+
+    @Override
+    public boolean favoriteChannel(Integer userId, Long channelId) {
+        YtbChannelFavoriteDO existing = channelFavoriteMapper.selectOne(new LambdaQueryWrapper<YtbChannelFavoriteDO>()
+                .eq(YtbChannelFavoriteDO::getUserId, userId)
+                .eq(YtbChannelFavoriteDO::getChannelId, channelId));
+        if (existing == null) {
+            YtbChannelFavoriteDO rec = new YtbChannelFavoriteDO()
+                    .setId(Long.valueOf(seqService.genCommonIntSequence()))
+                    .setUserId(Long.valueOf(userId))
+                    .setChannelId(channelId)
+                    .setCreateTime(LocalDateTime.now())
+                    .setIfValid(true);
+            channelFavoriteMapper.insert(rec);
+        } else if (Boolean.FALSE.equals(existing.getIfValid())) {
+            existing.setIfValid(true);
+            channelFavoriteMapper.updateById(existing);
+        }
+        return true;
+    }
+
+    @Override
+    public boolean unfavoriteChannel(Integer userId, Long channelId) {
+        YtbChannelFavoriteDO existing = channelFavoriteMapper.selectOne(new LambdaQueryWrapper<YtbChannelFavoriteDO>()
+                .eq(YtbChannelFavoriteDO::getUserId, userId)
+                .eq(YtbChannelFavoriteDO::getChannelId, channelId)
+                .eq(YtbChannelFavoriteDO::getIfValid, true));
+        if (existing != null) {
+            existing.setIfValid(false);
+            channelFavoriteMapper.updateById(existing);
+        }
+        return true;
+    }
+
+    @Override
+    public boolean favoriteVideo(Integer userId, Long videoId) {
+        YtbVideoFavoriteDO existing = videoFavoriteMapper.selectOne(new LambdaQueryWrapper<YtbVideoFavoriteDO>()
+                .eq(YtbVideoFavoriteDO::getUserId, userId)
+                .eq(YtbVideoFavoriteDO::getVideoId, videoId));
+        if (existing == null) {
+            YtbVideoFavoriteDO rec = new YtbVideoFavoriteDO()
+                    .setId(Long.valueOf(seqService.genCommonIntSequence()))
+                    .setUserId(Long.valueOf(userId))
+                    .setVideoId(videoId)
+                    .setCreateTime(LocalDateTime.now())
+                    .setIfValid(true);
+            videoFavoriteMapper.insert(rec);
+        } else if (Boolean.FALSE.equals(existing.getIfValid())) {
+            existing.setIfValid(true);
+            videoFavoriteMapper.updateById(existing);
+        }
+        return true;
+    }
+
+    @Override
+    public boolean unfavoriteVideo(Integer userId, Long videoId) {
+        YtbVideoFavoriteDO existing = videoFavoriteMapper.selectOne(new LambdaQueryWrapper<YtbVideoFavoriteDO>()
+                .eq(YtbVideoFavoriteDO::getUserId, userId)
+                .eq(YtbVideoFavoriteDO::getVideoId, videoId)
+                .eq(YtbVideoFavoriteDO::getIfValid, true));
+        if (existing != null) {
+            existing.setIfValid(false);
+            videoFavoriteMapper.updateById(existing);
+        }
+        return true;
+    }
+
+    @Override
+    public IPage<YtbChannelVO> getFavoriteChannels(Page<YtbChannelDO> page, Integer userId) {
+        List<YtbChannelFavoriteDO> favs = channelFavoriteMapper.selectList(new LambdaQueryWrapper<YtbChannelFavoriteDO>()
+                .eq(YtbChannelFavoriteDO::getUserId, userId)
+                .eq(YtbChannelFavoriteDO::getIfValid, true));
+        if (CollectionUtils.isEmpty(favs)) {
+            return new Page<>(page.getCurrent(), page.getSize(), 0);
+        }
+        List<Long> channelIds = favs.stream().map(YtbChannelFavoriteDO::getChannelId).collect(Collectors.toList());
+        IPage<YtbChannelDO> channels = new Page<>(page.getCurrent(), page.getSize());
+        channels = channelMapper.selectPage(channels, new LambdaQueryWrapper<YtbChannelDO>()
+                .in(YtbChannelDO::getId, channelIds)
+                .eq(YtbChannelDO::getIfValid, true)
+                .orderByDesc(YtbChannelDO::getCreateTime));
+
+        // Batch favorite counts and user favorited set for the paged records
+        List<Long> pageChannelIds = channels.getRecords().stream().map(YtbChannelDO::getId).collect(Collectors.toList());
+        Map<Long, Long> favCountMapLocal = new HashMap<>();
+        Set<Long> userFavSet = favs.stream().map(YtbChannelFavoriteDO::getChannelId).collect(Collectors.toSet());
+        if (!pageChannelIds.isEmpty()) {
+            List<YtbChannelFavoriteDO> allFavsForPage = channelFavoriteMapper.selectList(new LambdaQueryWrapper<YtbChannelFavoriteDO>()
+                    .in(YtbChannelFavoriteDO::getChannelId, pageChannelIds)
+                    .eq(YtbChannelFavoriteDO::getIfValid, true));
+            favCountMapLocal = allFavsForPage.stream().collect(Collectors.groupingBy(YtbChannelFavoriteDO::getChannelId, Collectors.counting()));
+        }
+        final Map<Long, Long> favCountMap = favCountMapLocal;
+
+        Page<YtbChannelVO> voPage = new Page<>(channels.getCurrent(), channels.getSize(), channels.getTotal());
+        voPage.setRecords(channels.getRecords().stream().map(ch -> YtbChannelVO.builder()
+                .channelId(ch.getId())
+                .channelName(ch.getChannelName())
+                .status(ch.getStatus())
+                .favorited(userFavSet.contains(ch.getId()))
+                .favoriteCount(favCountMap.getOrDefault(ch.getId(), 0L))
+                .build()).collect(Collectors.toList()));
+        return voPage;
+    }
+
+    @Override
+    public IPage<YtbChannelVideoVO> getFavoriteVideos(Page<YtbChannelVideoDO> page, Integer userId) {
+        List<YtbVideoFavoriteDO> favs = videoFavoriteMapper.selectList(new LambdaQueryWrapper<YtbVideoFavoriteDO>()
+                .eq(YtbVideoFavoriteDO::getUserId, userId)
+                .eq(YtbVideoFavoriteDO::getIfValid, true));
+        if (CollectionUtils.isEmpty(favs)) {
+            return new Page<>(page.getCurrent(), page.getSize(), 0);
+        }
+        List<Long> videoIds = favs.stream().map(YtbVideoFavoriteDO::getVideoId).collect(Collectors.toList());
+        IPage<YtbChannelVideoDO> videos = new Page<>(page.getCurrent(), page.getSize());
+        videos = videoMapper.selectPage(videos, new LambdaQueryWrapper<YtbChannelVideoDO>()
+                .in(YtbChannelVideoDO::getId, videoIds)
+                .eq(YtbChannelVideoDO::getIfValid, true)
+                .orderByDesc(YtbChannelVideoDO::getPublishedAt)
+                .orderByDesc(YtbChannelVideoDO::getCreateTime));
+
+        // Batch favorite counts and user favorited set for the paged records
+        List<Long> pageVideoIds = videos.getRecords().stream().map(YtbChannelVideoDO::getId).collect(Collectors.toList());
+        Map<Long, Long> favCountMapLocal = new HashMap<>();
+        Set<Long> userFavSet = favs.stream().map(YtbVideoFavoriteDO::getVideoId).collect(Collectors.toSet());
+        if (!pageVideoIds.isEmpty()) {
+            List<YtbVideoFavoriteDO> allFavsForPage = videoFavoriteMapper.selectList(new LambdaQueryWrapper<YtbVideoFavoriteDO>()
+                    .in(YtbVideoFavoriteDO::getVideoId, pageVideoIds)
+                    .eq(YtbVideoFavoriteDO::getIfValid, true));
+            favCountMapLocal = allFavsForPage.stream().collect(Collectors.groupingBy(YtbVideoFavoriteDO::getVideoId, Collectors.counting()));
+        }
+        final Map<Long, Long> favCountMap = favCountMapLocal;
+
+        Page<YtbChannelVideoVO> voPage = new Page<>(videos.getCurrent(), videos.getSize(), videos.getTotal());
+        voPage.setRecords(videos.getRecords().stream().map(v -> {
+            YtbChannelVideoVO vo = new YtbChannelVideoVO();
+            BeanUtils.copyProperties(v, vo);
+            vo.setFavorited(userFavSet.contains(v.getId()));
+            vo.setFavoriteCount(favCountMap.getOrDefault(v.getId(), 0L));
+            return vo;
+        }).collect(Collectors.toList()));
+        return voPage;
+    }
+}

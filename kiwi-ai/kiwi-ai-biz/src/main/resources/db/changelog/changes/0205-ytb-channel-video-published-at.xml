@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet id="0205-add-published-at-to-ytb-channel-video" author="copilot">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="ytb_channel_video" columnName="published_at"/>
+            </not>
+        </preConditions>
+
+        <addColumn tableName="ytb_channel_video">
+            <column name="published_at" type="DATETIME" remarks="YouTube video publication datetime"/>
+        </addColumn>
+
+        <createIndex tableName="ytb_channel_video" indexName="idx_channel_id_published_at">
+            <column name="channel_id"/>
+            <column name="published_at"/>
+        </createIndex>
+
+        <createIndex tableName="ytb_channel_video" indexName="idx_published_at">
+            <column name="published_at"/>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>
+

@@ -9,6 +9,7 @@ import me.fengorz.kiwi.ai.api.vo.ytb.YtbChannelVO;
 import me.fengorz.kiwi.ai.api.vo.ytb.YtbChannelVideoVO;
 import me.fengorz.kiwi.ai.service.ytb.YtbChannelService;
 import me.fengorz.kiwi.ai.service.ytb.YtbChannelVideoService;
+import me.fengorz.kiwi.ai.service.ytb.YtbFavoriteService;
 import me.fengorz.kiwi.common.api.R;
 import me.fengorz.kiwi.common.sdk.annotation.log.LogMarker;
 import me.fengorz.kiwi.common.sdk.controller.BaseController;
@@ -26,11 +27,14 @@ public class YtbChannelController extends BaseController {
 
     private final YtbChannelService channelService;
     private final YtbChannelVideoService videoService;
+    private final YtbFavoriteService favoriteService;
 
     public YtbChannelController(@Qualifier("ytbChannelServiceV2") YtbChannelService channelService,
-                                YtbChannelVideoService videoService) {
+                                YtbChannelVideoService videoService,
+                                YtbFavoriteService favoriteService) {
         this.channelService = channelService;
         this.videoService = videoService;
+        this.favoriteService = favoriteService;
     }
 
     /**
@@ -44,6 +48,62 @@ public class YtbChannelController extends BaseController {
         }
 
         return R.success(channelService.submitChannel(channelLinkOrName, getCurrentUserId()));
+    }
+
+    /** Favorite a channel */
+    @LogMarker
+    @PostMapping("/{channelId}/favorite")
+    public R<Boolean> favoriteChannel(@PathVariable("channelId") Long channelId) {
+        if (channelId == null) return R.failed("Channel ID cannot be empty");
+        favoriteService.favoriteChannel(getCurrentUserId(), channelId);
+        return R.success(true);
+    }
+
+    /** Unfavorite a channel */
+    @LogMarker
+    @DeleteMapping("/{channelId}/favorite")
+    public R<Boolean> unfavoriteChannel(@PathVariable("channelId") Long channelId) {
+        if (channelId == null) return R.failed("Channel ID cannot be empty");
+        favoriteService.unfavoriteChannel(getCurrentUserId(), channelId);
+        return R.success(true);
+    }
+
+    /** Favorite a video */
+    @LogMarker
+    @PostMapping("/video/{videoId}/favorite")
+    public R<Boolean> favoriteVideo(@PathVariable("videoId") Long videoId) {
+        if (videoId == null) return R.failed("Video ID cannot be empty");
+        favoriteService.favoriteVideo(getCurrentUserId(), videoId);
+        return R.success(true);
+    }
+
+    /** Unfavorite a video */
+    @LogMarker
+    @DeleteMapping("/video/{videoId}/favorite")
+    public R<Boolean> unfavoriteVideo(@PathVariable("videoId") Long videoId) {
+        if (videoId == null) return R.failed("Video ID cannot be empty");
+        favoriteService.unfavoriteVideo(getCurrentUserId(), videoId);
+        return R.success(true);
+    }
+
+    /** List favorite channels */
+    @LogMarker
+    @GetMapping("/favorites/channels")
+    public R<IPage<YtbChannelVO>> getFavoriteChannels(
+            @RequestParam(value = "current", defaultValue = "1") Integer current,
+            @RequestParam(value = "size", defaultValue = "10") Integer size) {
+        Page<YtbChannelDO> page = new Page<>(current, size);
+        return R.success(favoriteService.getFavoriteChannels(page, getCurrentUserId()));
+    }
+
+    /** List favorite videos */
+    @LogMarker
+    @GetMapping("/favorites/videos")
+    public R<IPage<YtbChannelVideoVO>> getFavoriteVideos(
+            @RequestParam(value = "current", defaultValue = "1") Integer current,
+            @RequestParam(value = "size", defaultValue = "10") Integer size) {
+        Page<YtbChannelVideoDO> page = new Page<>(current, size);
+        return R.success(favoriteService.getFavoriteVideos(page, getCurrentUserId()));
     }
 
     private static Integer getCurrentUserId() {

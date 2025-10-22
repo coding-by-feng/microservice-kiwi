@@ -16,6 +16,10 @@ import org.springframework.stereotype.Service;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -496,6 +500,67 @@ public class YouTuBeHelper {
         } catch (IOException | InterruptedException e) {
             log.error("Error executing yt-dlp to extract video links", e);
             throw new ServiceException("Failed to extract video links using yt-dlp", e);
+        }
+    }
+
+    /**
+     * Try to get video publication datetime using yt-dlp as a fallback.
+     * Priority order: release_timestamp, timestamp, upload_date.
+     *
+     * @param videoUrl YouTube video URL or ID
+     * @return LocalDateTime if parsed; null otherwise
+     */
+    public LocalDateTime getVideoPublishedAt(String videoUrl) {
+        try {
+            List<String> cmd = new ArrayList<>();
+            cmd.add(this.command);
+            cmd.add("--print");
+            // Try multiple fields; yt-dlp will print first non-empty due to | operator
+            cmd.add("%(release_timestamp|timestamp|upload_date)s");
+            cmd.add(videoUrl);
+
+            Process process = prepareProcess(cmd);
+
+            String output;
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+                output = reader.readLine();
+            }
+
+            int exit = process.waitFor();
+            if (exit != 0) {
+                log.warn("yt-dlp publish time extraction exit code {} for {}", exit, videoUrl);
+            }
+
+            if (StringUtils.isBlank(output)) {
+                return null;
+            }
+            output = output.trim();
+
+            // Parse different formats
+            // 1) Epoch seconds
+            if (output.matches("\\d{10}") || output.matches("\\d{13}")) {
+                long epoch = output.length() == 13 ? Long.parseLong(output) / 1000L : Long.parseLong(output);
+                return LocalDateTime.ofInstant(Instant.ofEpochSecond(epoch), ZoneId.systemDefault());
+            }
+            // 2) YYYYMMDD
+            if (output.matches("\\d{8}")) {
+                LocalDate date = LocalDate.of(
+                        Integer.parseInt(output.substring(0, 4)),
+                        Integer.parseInt(output.substring(4, 6)),
+                        Integer.parseInt(output.substring(6, 8))
+                );
+                return date.atStartOfDay();
+            }
+            // 3) ISO-8601/RFC3339
+            try {
+                return LocalDateTime.ofInstant(Instant.parse(output), ZoneId.systemDefault());
+            } catch (Exception ignored) {
+            }
+            log.warn("Unrecognized publish time format from yt-dlp: '{}' for {}", output, videoUrl);
+            return null;
+        } catch (Exception e) {
+            log.warn("Failed to get publish time via yt-dlp for {}: {}", videoUrl, e.getMessage());
+            return null;
         }
     }
 

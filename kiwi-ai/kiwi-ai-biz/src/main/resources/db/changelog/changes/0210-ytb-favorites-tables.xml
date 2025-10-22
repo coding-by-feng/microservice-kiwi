@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet id="0210-create-ytb-favorites-tables" author="copilot">
+        <createTable tableName="ytb_channel_favorite">
+            <column name="id" type="INT">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="user_id" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="channel_id" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="create_time" type="DATETIME" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="if_valid" type="TINYINT(1)" defaultValueNumeric="1">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addUniqueConstraint tableName="ytb_channel_favorite" columnNames="user_id,channel_id" constraintName="uk_user_channel_fav"/>
+        <createIndex tableName="ytb_channel_favorite" indexName="idx_fav_channel_id">
+            <column name="channel_id"/>
+        </createIndex>
+
+        <createTable tableName="ytb_video_favorite">
+            <column name="id" type="INT">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="user_id" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="video_id" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="create_time" type="DATETIME" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="if_valid" type="TINYINT(1)" defaultValueNumeric="1">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addUniqueConstraint tableName="ytb_video_favorite" columnNames="user_id,video_id" constraintName="uk_user_video_fav"/>
+        <createIndex tableName="ytb_video_favorite" indexName="idx_fav_video_id">
+            <column name="video_id"/>
+        </createIndex>
+
+    </changeSet>
+
+</databaseChangeLog>
+

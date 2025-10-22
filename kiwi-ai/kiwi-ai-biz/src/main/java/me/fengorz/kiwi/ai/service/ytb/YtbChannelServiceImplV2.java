@@ -14,6 +14,7 @@ import me.fengorz.kiwi.common.sdk.enumeration.LanguageEnum;
 import me.fengorz.kiwi.common.sdk.enumeration.ProcessStatusEnum;
 import me.fengorz.kiwi.common.sdk.exception.ServiceException;
 import me.fengorz.kiwi.common.sdk.web.WebTools;
+import me.fengorz.kiwi.common.ytb.YouTuBeHelper;
 import org.apache.commons.collections4.ListUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.annotation.Async;
@@ -22,8 +23,9 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
+import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -36,6 +38,8 @@ public class YtbChannelServiceImplV2 extends ServiceImpl<YtbChannelMapper, YtbCh
     private final YtbVideoSubtitlesTranslationMapper subtitlesTranslationMapper;
     private final YouTubeApiService youTubeApiService;
     private final SeqService seqService;
+    private final YouTuBeHelper youTuBeHelper;
+    private final YtbChannelFavoriteMapper channelFavoriteMapper;
 
     public YtbChannelServiceImplV2(YtbChannelUserMapper channelUserMapper,
                                    YtbChannelVideoMapper videoMapper,
@@ -43,6 +47,8 @@ public class YtbChannelServiceImplV2 extends ServiceImpl<YtbChannelMapper, YtbCh
                                    YtbVideoSubtitlesTranslationMapper subtitlesTranslationMapper,
                                    YouTubeApiService youTubeApiService,
                                    SeqService seqService,
+                                   YouTuBeHelper youTuBeHelper,
+                                   YtbChannelFavoriteMapper channelFavoriteMapper,
                                    @Qualifier("grokAiService") AiChatService grokAiService) {
         this.channelUserMapper = channelUserMapper;
         this.videoMapper = videoMapper;
@@ -50,6 +56,8 @@ public class YtbChannelServiceImplV2 extends ServiceImpl<YtbChannelMapper, YtbCh
         this.subtitlesTranslationMapper = subtitlesTranslationMapper;
         this.youTubeApiService = youTubeApiService;
         this.seqService = seqService;
+        this.youTuBeHelper = youTuBeHelper;
+        this.channelFavoriteMapper = channelFavoriteMapper;
         log.info("YtbChannelServiceImplV2 initialized with YouTube API service");
     }
 
@@ -240,13 +248,28 @@ public class YtbChannelServiceImplV2 extends ServiceImpl<YtbChannelMapper, YtbCh
                             .eq(YtbChannelVideoDO::getVideoLink, videoUrl)
                             .eq(YtbChannelVideoDO::getIfValid, true));
 
+            // Determine publishedAt from API or fallback
+            LocalDateTime publishedAt = parsePublishedAt(video.getPublishedAt());
+
             if (existingVideo != null && existingVideo.getStatus().equals(ProcessStatusEnum.FINISHED.getCode())) {
+                // update publishedAt if missing
+                if (existingVideo.getPublishedAt() == null && publishedAt != null) {
+                    existingVideo.setPublishedAt(publishedAt);
+                    videoMapper.updateById(existingVideo);
+                }
                 log.info("Video already exists and is finished: {}", existingVideo.getId());
                 return null;
             }
 
             // Get additional video details
             VideoDetailsResponse videoDetails = youTubeApiService.getVideoDetails(video.getVideoId());
+            if (publishedAt == null) {
+                publishedAt = parsePublishedAt(videoDetails.getPublishedAt());
+            }
+            if (publishedAt == null) {
+                // fallback to yt-dlp
+                publishedAt = youTuBeHelper.getVideoPublishedAt(videoUrl);
+            }
 
             // Save video to database
             Long videoId = Long.valueOf(seqService.genCommonIntSequence());
@@ -257,12 +280,21 @@ public class YtbChannelServiceImplV2 extends ServiceImpl<YtbChannelMapper, YtbCh
                         .setChannelId(channelId)
                         .setVideoTitle(videoDetails.getTitle())
                         .setVideoLink(videoUrl)
+                        .setPublishedAt(publishedAt)
                         .setStatus(ProcessStatusEnum.PROCESSING.getCode())
                         .setCreateTime(LocalDateTime.now())
                         .setIfValid(true);
 
                 videoMapper.insert(videoDO);
-                log.info("Saved video record: {}", videoId);
+                log.info("Saved video record: {} (publishedAt={})", videoId, publishedAt);
+            } else {
+                existingVideo.setVideoTitle(videoDetails.getTitle());
+                if (existingVideo.getPublishedAt() == null) {
+                    existingVideo.setPublishedAt(publishedAt);
+                }
+                existingVideo.setStatus(ProcessStatusEnum.PROCESSING.getCode());
+                videoMapper.updateById(existingVideo);
+                videoId = existingVideo.getId();
             }
 
             // Process captions
@@ -274,6 +306,23 @@ public class YtbChannelServiceImplV2 extends ServiceImpl<YtbChannelMapper, YtbCh
             log.error("Error processing video: {}", videoUrl, e);
             throw new ServiceException("Failed to process video: " + e.getMessage(), e);
         }
+    }
+
+    private LocalDateTime parsePublishedAt(String publishedAt) {
+        if (publishedAt == null || publishedAt.isEmpty()) return null;
+        try {
+            // RFC3339 / ISO8601 from YouTube API, e.g. 2024-11-12T09:30:00Z
+            OffsetDateTime odt = OffsetDateTime.parse(publishedAt, DateTimeFormatter.ISO_OFFSET_DATE_TIME);
+            return odt.toLocalDateTime();
+        } catch (Exception e) {
+            log.debug("Failed to parse publishedAt '{}' with ISO_OFFSET_DATE_TIME: {}", publishedAt, e.getMessage());
+        }
+        try {
+            // Try basic ISO
+            OffsetDateTime odt = OffsetDateTime.parse(publishedAt);
+            return odt.toLocalDateTime();
+        } catch (Exception ignored) {}
+        return null;
     }
 
     private void processVideoCaptions(Long videoId, String videoUrl) {
@@ -414,11 +463,35 @@ public class YtbChannelServiceImplV2 extends ServiceImpl<YtbChannelMapper, YtbCh
                 channelPage.getTotal()
         );
 
-        List<YtbChannelVO> records = ListUtils.emptyIfNull(channelPage.getRecords()).stream()
-                .map(this::convertToVO)
+        List<YtbChannelDO> records = ListUtils.emptyIfNull(channelPage.getRecords());
+        List<Long> channelIds = records.stream().map(YtbChannelDO::getId).collect(Collectors.toList());
+
+        Set<Long> userFavSet = new HashSet<>();
+        Map<Long, Long> favCountMap = new HashMap<>();
+        if (!channelIds.isEmpty()) {
+            List<YtbChannelFavoriteDO> userFavs = channelFavoriteMapper.selectList(new LambdaQueryWrapper<YtbChannelFavoriteDO>()
+                    .eq(YtbChannelFavoriteDO::getUserId, userId)
+                    .in(YtbChannelFavoriteDO::getChannelId, channelIds)
+                    .eq(YtbChannelFavoriteDO::getIfValid, true));
+            userFavSet.addAll(userFavs.stream().map(YtbChannelFavoriteDO::getChannelId).collect(Collectors.toSet()));
+
+            List<YtbChannelFavoriteDO> allFavs = channelFavoriteMapper.selectList(new LambdaQueryWrapper<YtbChannelFavoriteDO>()
+                    .in(YtbChannelFavoriteDO::getChannelId, channelIds)
+                    .eq(YtbChannelFavoriteDO::getIfValid, true));
+            favCountMap.putAll(allFavs.stream().collect(Collectors.groupingBy(YtbChannelFavoriteDO::getChannelId, Collectors.counting())));
+        }
+
+        List<YtbChannelVO> vos = records.stream()
+                .map(ch -> YtbChannelVO.builder()
+                        .channelId(ch.getId())
+                        .channelName(ch.getChannelName())
+                        .status(ch.getStatus())
+                        .favorited(userFavSet.contains(ch.getId()))
+                        .favoriteCount(favCountMap.getOrDefault(ch.getId(), 0L))
+                        .build())
                 .collect(Collectors.toList());
 
-        voPage.setRecords(records);
+        voPage.setRecords(vos);
         return voPage;
     }
 
@@ -450,3 +523,4 @@ public class YtbChannelServiceImplV2 extends ServiceImpl<YtbChannelMapper, YtbCh
                 .build();
     }
 }
+

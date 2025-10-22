@@ -6,15 +6,21 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.ai.api.entity.*;
-import me.fengorz.kiwi.ai.api.vo.ytb.*;
+import me.fengorz.kiwi.ai.api.vo.ytb.ChannelDetailsResponse;
+import me.fengorz.kiwi.ai.api.vo.ytb.ChannelVideoResponse;
+import me.fengorz.kiwi.ai.api.vo.ytb.VideoDetailsResponse;
+import me.fengorz.kiwi.ai.api.vo.ytb.YtbChannelVO;
 import me.fengorz.kiwi.ai.service.AiChatService;
 import me.fengorz.kiwi.ai.service.ytb.mapper.*;
 import me.fengorz.kiwi.common.db.service.SeqService;
+import me.fengorz.kiwi.common.sdk.enumeration.AiPromptModeEnum;
 import me.fengorz.kiwi.common.sdk.enumeration.LanguageEnum;
 import me.fengorz.kiwi.common.sdk.enumeration.ProcessStatusEnum;
 import me.fengorz.kiwi.common.sdk.exception.ServiceException;
 import me.fengorz.kiwi.common.sdk.web.WebTools;
+import me.fengorz.kiwi.common.ytb.SubtitleTypeEnum;
 import me.fengorz.kiwi.common.ytb.YouTuBeHelper;
+import me.fengorz.kiwi.common.ytb.YtbSubtitlesResult;
 import org.apache.commons.collections4.ListUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.annotation.Async;
@@ -40,6 +46,7 @@ public class YtbChannelServiceImplV2 extends ServiceImpl<YtbChannelMapper, YtbCh
     private final SeqService seqService;
     private final YouTuBeHelper youTuBeHelper;
     private final YtbChannelFavoriteMapper channelFavoriteMapper;
+    private final AiChatService grokAiService;
 
     public YtbChannelServiceImplV2(YtbChannelUserMapper channelUserMapper,
                                    YtbChannelVideoMapper videoMapper,
@@ -58,6 +65,7 @@ public class YtbChannelServiceImplV2 extends ServiceImpl<YtbChannelMapper, YtbCh
         this.seqService = seqService;
         this.youTuBeHelper = youTuBeHelper;
         this.channelFavoriteMapper = channelFavoriteMapper;
+        this.grokAiService = grokAiService;
         log.info("YtbChannelServiceImplV2 initialized with YouTube API service");
     }
 
@@ -268,7 +276,7 @@ public class YtbChannelServiceImplV2 extends ServiceImpl<YtbChannelMapper, YtbCh
             }
             if (publishedAt == null) {
                 // fallback to yt-dlp
-                publishedAt = youTuBeHelper.getVideoPublishedAt(videoUrl);
+                publishedAt = null;
             }
 
             // Save video to database
@@ -329,44 +337,30 @@ public class YtbChannelServiceImplV2 extends ServiceImpl<YtbChannelMapper, YtbCh
         log.info("Processing captions for video ID: {}", videoId);
 
         try {
-            List<CaptionResponse> captions = youTubeApiService.getVideoCaptions(videoUrl);
-
-            if (captions.isEmpty()) {
-                log.info("No captions available for video: {}", videoId);
+            // Fetch real subtitles via yt-dlp helper (no OAuth required)
+            YtbSubtitlesResult result = youTuBeHelper.downloadSubtitles(videoUrl);
+            if (result == null || result.getScrollingSubtitles() == null) {
+                log.info("No subtitles available for video: {}", videoId);
                 return;
             }
 
-            // Find English captions (prefer manual over auto-generated)
-            CaptionResponse selectedCaption = captions.stream()
-                    .filter(c -> c.getLanguage().startsWith("en") && !c.getIsAutoSynced())
-                    .findFirst()
-                    .orElse(captions.stream()
-                            .filter(c -> c.getLanguage().startsWith("en"))
-                            .findFirst()
-                            .orElse(captions.get(0)));
+            // Map helper subtitle type to DB type: 1=professional, 2=auto-generated
+            Integer subtitleType = mapSubtitleType(result.getType());
 
-            log.info("Selected caption: language={}, isAutoSynced={}",
-                    selectedCaption.getLanguage(), selectedCaption.getIsAutoSynced());
-
-            // Save subtitle record
             Long subtitlesId = Long.valueOf(seqService.genCommonIntSequence());
-
-            Integer subtitleType = selectedCaption.getIsAutoSynced() ? 2 : 1; // 1=professional, 2=auto-generated
-
             YtbVideoSubtitlesDO subtitlesDO = new YtbVideoSubtitlesDO()
                     .setId(subtitlesId)
                     .setVideoId(videoId)
                     .setType(subtitleType)
-                    .setSubtitlesText("Caption available - ID: " + selectedCaption.getId()) // Placeholder
+                    .setSubtitlesText(result.getScrollingSubtitles())
                     .setStatus(ProcessStatusEnum.PROCESSING.getCode())
                     .setCreateTime(LocalDateTime.now())
                     .setIfValid(true);
-
             subtitlesMapper.insert(subtitlesDO);
-            log.info("Saved subtitles record: {}", subtitlesId);
+            log.info("Saved subtitles record with full text: {}", subtitlesId);
 
-            // Process translations
-            processSubtitleTranslations(subtitlesId, videoUrl, selectedCaption);
+            // Save translations (EN original + ZH_CN AI translation)
+            processSubtitleTranslations(subtitlesId, videoUrl, result);
 
             // Update subtitles status to FINISH
             subtitlesDO.setStatus(ProcessStatusEnum.FINISHED.getCode());
@@ -377,19 +371,32 @@ public class YtbChannelServiceImplV2 extends ServiceImpl<YtbChannelMapper, YtbCh
         }
     }
 
-    private void processSubtitleTranslations(Long subtitlesId, String videoUrl, CaptionResponse caption) {
-        // Save English original
+    private Integer mapSubtitleType(SubtitleTypeEnum typeEnum) {
+        if (typeEnum == null) return 1;
+        switch (typeEnum) {
+            case SMALL_AUTO_GENERATED_RETURN_STRING:
+            case LARGE_AUTO_GENERATED_RETURN_LIST:
+                return 2; // auto-generated
+            case SMALL_PROFESSIONAL_RETURN_STRING:
+            case LARGE_PROFESSIONAL_RETURN_LIST:
+            default:
+                return 1; // professional
+        }
+    }
+
+    private void processSubtitleTranslations(Long subtitlesId, String videoUrl, YtbSubtitlesResult result) {
+        // Save English original with real content
         saveSubtitleTranslation(
                 subtitlesId,
                 LanguageEnum.EN,
-                "Original caption - ID: " + caption.getId(),
+                result.getScrollingSubtitles(),
                 ProcessStatusEnum.FINISHED.getCode(),
                 false
         );
 
         // Generate Chinese translation
         try {
-            Long translationId = saveSubtitleTranslation(
+            Long zhTransId = saveSubtitleTranslation(
                     subtitlesId,
                     LanguageEnum.ZH_CN,
                     "",
@@ -397,13 +404,25 @@ public class YtbChannelServiceImplV2 extends ServiceImpl<YtbChannelMapper, YtbCh
                     true
             );
 
-            // For now, we'll use a placeholder since we can't download caption content without OAuth
-            String translatedContent = "Translation requires OAuth authentication for caption download";
+            String translatedContent;
+            Object pendingObj = result.getPendingToBeTranslatedOrRetouchedSubtitles();
+            if (pendingObj instanceof List) {
+                @SuppressWarnings("unchecked")
+                List<String> lines = (List<String>) pendingObj;
+                // Batch translate lines
+                translatedContent = grokAiService.batchCallForYtbAndCache(videoUrl, lines, AiPromptModeEnum.SUBTITLE_TRANSLATOR, LanguageEnum.ZH_CN);
+            } else if (pendingObj instanceof String) {
+                String text = (String) pendingObj;
+                translatedContent = grokAiService.callForYtbAndCache(videoUrl, text, AiPromptModeEnum.SUBTITLE_TRANSLATOR, LanguageEnum.ZH_CN);
+            } else {
+                // Fallback to translating the whole scrolling text
+                translatedContent = grokAiService.callForYtbAndCache(videoUrl, result.getScrollingSubtitles(), AiPromptModeEnum.SUBTITLE_TRANSLATOR, LanguageEnum.ZH_CN);
+            }
 
-            updateSubtitleTranslation(translationId, translatedContent, ProcessStatusEnum.FINISHED.getCode());
-
+            updateSubtitleTranslation(zhTransId, translatedContent, ProcessStatusEnum.FINISHED.getCode());
         } catch (Exception e) {
             log.error("Error creating Chinese translation: {}", e.getMessage(), e);
+            // Mark translation as READY for reprocessing later
             saveSubtitleTranslation(
                     subtitlesId,
                     LanguageEnum.ZH_CN,

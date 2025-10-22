@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <!-- Add AUTO_INCREMENT to favorites tables' primary keys if missing -->
+
+    <changeSet id="0215-ytb-channel-favorite-id-auto-increment" author="copilot">
+        <preConditions onFail="MARK_RAN">
+            <and>
+                <tableExists tableName="ytb_channel_favorite"/>
+                <sqlCheck expectedResult="0">
+                    SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS
+                    WHERE TABLE_SCHEMA = DATABASE()
+                      AND TABLE_NAME = 'ytb_channel_favorite'
+                      AND COLUMN_NAME = 'id'
+                      AND EXTRA LIKE '%auto_increment%'
+                </sqlCheck>
+            </and>
+        </preConditions>
+        <addAutoIncrement tableName="ytb_channel_favorite" columnName="id" columnDataType="INT"/>
+    </changeSet>
+
+    <changeSet id="0215-ytb-video-favorite-id-auto-increment" author="copilot">
+        <preConditions onFail="MARK_RAN">
+            <and>
+                <tableExists tableName="ytb_video_favorite"/>
+                <sqlCheck expectedResult="0">
+                    SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS
+                    WHERE TABLE_SCHEMA = DATABASE()
+                      AND TABLE_NAME = 'ytb_video_favorite'
+                      AND COLUMN_NAME = 'id'
+                      AND EXTRA LIKE '%auto_increment%'
+                </sqlCheck>
+            </and>
+        </preConditions>
+        <addAutoIncrement tableName="ytb_video_favorite" columnName="id" columnDataType="INT"/>
+    </changeSet>
+
+</databaseChangeLog>
+

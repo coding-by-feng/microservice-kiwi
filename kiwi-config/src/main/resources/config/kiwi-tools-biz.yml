@@ -100,6 +100,8 @@ rest-template:
 # Todo ranking configuration
 # This list defines the rank ladder with thresholds and levels
 # It will be bound to TodoRankingProperties (todo.ranking.ranks)
+
+# --- TODO MODULE CONFIGURATION ---
 todo:
   ranking:
     ranks:
@@ -123,3 +125,78 @@ todo:
       - { key: immortal,    threshold: 295000,  level: 18 }
       - { key: mythic,      threshold: 382000,  level: 19 }
       - { key: legendary,   threshold: 495000,  level: 20 }
+  demo:
+    tasks:
+      # Study
+      - title: "Study: 30-minute focused reading"
+        description: "Read a technical chapter or article for 30 minutes with notes"
+        successPoints: 15
+        failPoints: -5
+        frequency: daily
+        category: study
+      - title: "Study: Vocabulary review"
+        description: "Review 20 words using spaced repetition"
+        successPoints: 10
+        failPoints: -5
+        frequency: daily
+        category: study
+      # Work
+      - title: "Work: Plan the day"
+        description: "Write top 3 priorities and time blocks"
+        successPoints: 8
+        failPoints: -3
+        frequency: daily
+        category: work
+      - title: "Work: Deep work session"
+        description: "60-minute distraction-free coding/writing"
+        successPoints: 20
+        failPoints: -8
+        frequency: daily
+        category: work
+      # Health
+      - title: "Health: Hydration"
+        description: "Drink at least 8 glasses of water"
+        successPoints: 6
+        failPoints: -2
+        frequency: daily
+        category: health
+      - title: "Health: Sleep before 23:00"
+        description: "Go to bed before 11 PM to ensure rest"
+        successPoints: 12
+        failPoints: -6
+        frequency: daily
+        category: health
+      # Workout
+      - title: "Workout: 30-minute run"
+        description: "Outdoor or treadmill run for at least 30 minutes"
+        successPoints: 18
+        failPoints: -7
+        frequency: weekly
+        category: workout
+      - title: "Workout: Strength training"
+        description: "Full-body routine: push, pull, legs (45 minutes)"
+        successPoints: 20
+        failPoints: -8
+        frequency: weekly
+        category: workout
+      # Personal
+      - title: "Personal: Budget review"
+        description: "Track expenses and adjust monthly budget"
+        successPoints: 12
+        failPoints: -4
+        frequency: weekly
+        category: personal
+      - title: "Personal: Family call"
+        description: "Call parents or close family for at least 15 minutes"
+        successPoints: 10
+        failPoints: -3
+        frequency: weekly
+        category: personal
+      # Custom cycle example (every 3 days)
+      - title: "Study: Algorithm practice"
+        description: "Solve 2 problems and review solutions"
+        successPoints: 16
+        failPoints: -6
+        frequency: custom
+        customDays: 3
+        category: study

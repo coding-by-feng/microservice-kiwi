@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.RequiredArgsConstructor;
 import me.fengorz.kiwi.tools.api.todo.dto.*;
+import me.fengorz.kiwi.tools.config.TodoDemoProperties;
 import me.fengorz.kiwi.tools.config.TodoRankingProperties;
 import me.fengorz.kiwi.tools.exception.ToolsException;
 import me.fengorz.kiwi.tools.mapper.TodoDtoMapper;
@@ -29,6 +30,7 @@ public class TodoService {
     private final TodoHistoryMapper historyMapper;
     private final TodoTrashMapper trashMapper;
     private final TodoRankingProperties rankingProperties;
+    private final TodoDemoProperties demoProperties;
 
     public TaskListResponse listTasks(Integer userId, Integer page, Integer pageSize,
                                       String status, String frequency, String search,
@@ -417,8 +419,11 @@ public class TodoService {
                             Map<String,Object> m = (Map<String,Object>)item;
                             String title = String.valueOf(m.getOrDefault("title", ""));
                             if (title.isEmpty()) { skipped++; continue; }
-                            // skip duplicates by same title existing for user
-                            long exists = taskMapper.selectCount(new LambdaQueryWrapper<TodoTask>().eq(TodoTask::getUserId, userId).eq(TodoTask::getTitle, title));
+                            // skip duplicates by same title existing for user (non-deleted only)
+                            long exists = taskMapper.selectCount(new LambdaQueryWrapper<TodoTask>()
+                                    .eq(TodoTask::getUserId, userId)
+                                    .eq(TodoTask::getTitle, title)
+                                    .isNull(TodoTask::getDeletedAt));
                             if (exists > 0) { skipped++; continue; }
                             TodoTask t = new TodoTask();
                             t.setId(String.valueOf(IdWorker.getId()));
@@ -503,23 +508,42 @@ public class TodoService {
     }
 
     public int seedDemo(Integer userId) {
-        // Simple guard to prevent reseeding frequently: if any task titled Demo Task 1 exists, reject
-        long exists = taskMapper.selectCount(new LambdaQueryWrapper<TodoTask>().eq(TodoTask::getUserId, userId).like(TodoTask::getTitle, "Demo Task"));
-        if (exists > 0) {
-            throw new ToolsException(HttpStatus.TOO_MANY_REQUESTS, "rate_limited", "Demo data already exists");
+        // Seed demo tasks defined in configuration; skip those already present (non-deleted)
+        List<TodoDemoProperties.TaskDef> defs = demoProperties.getTasks();
+        if (defs == null || defs.isEmpty()) {
+            throw new ToolsException(HttpStatus.BAD_REQUEST, "config_missing", "No demo tasks configured");
         }
-        String[] titles = {"Demo Task 1", "Demo Task 2", "Demo Task 3"};
-        for (String t : titles) {
+        int created = 0;
+        for (TodoDemoProperties.TaskDef def : defs) {
+            if (def.getTitle() == null || def.getTitle().trim().isEmpty()) {
+                continue;
+            }
+            // Skip if a non-deleted task with same title already exists
+            long exists = taskMapper.selectCount(new LambdaQueryWrapper<TodoTask>()
+                    .eq(TodoTask::getUserId, userId)
+                    .eq(TodoTask::getTitle, def.getTitle())
+                    .isNull(TodoTask::getDeletedAt));
+            if (exists > 0) {
+                continue;
+            }
             TodoTask task = new TodoTask();
             task.setId(String.valueOf(IdWorker.getId()));
             task.setUserId(userId);
-            task.setTitle(t);
-            task.setSuccessPoints(10); task.setFailPoints(-5);
-            task.setFrequency("once"); task.setStatus("pending");
-            task.setCreatedAt(LocalDateTime.now()); task.setUpdatedAt(task.getCreatedAt());
+            task.setTitle(def.getTitle());
+            task.setDescription(def.getDescription());
+            task.setSuccessPoints(Optional.ofNullable(def.getSuccessPoints()).orElse(10));
+            task.setFailPoints(Optional.ofNullable(def.getFailPoints()).orElse(-5));
+            task.setFrequency(Optional.ofNullable(def.getFrequency()).orElse("once"));
+            if (def.getCustomDays() != null) {
+                task.setCustomDays(def.getCustomDays());
+            }
+            task.setStatus("pending");
+            task.setCreatedAt(LocalDateTime.now());
+            task.setUpdatedAt(task.getCreatedAt());
             taskMapper.insert(task);
+            created++;
         }
-        return titles.length;
+        return created;
     }
 }
 

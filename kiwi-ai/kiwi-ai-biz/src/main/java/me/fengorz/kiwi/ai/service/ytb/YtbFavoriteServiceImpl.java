@@ -103,6 +103,49 @@ public class YtbFavoriteServiceImpl implements YtbFavoriteService {
     }
 
     @Override
+    public boolean favoriteVideoByUrl(Integer userId, String videoUrl) {
+        if (videoUrl == null || videoUrl.trim().isEmpty()) {
+            return false;
+        }
+        YtbChannelVideoDO video = videoMapper.selectOne(new LambdaQueryWrapper<YtbChannelVideoDO>()
+                .eq(YtbChannelVideoDO::getVideoLink, videoUrl));
+        if (video == null) {
+            YtbChannelVideoDO toSave = new YtbChannelVideoDO()
+                    .setId(Long.valueOf(seqService.genCommonIntSequence()))
+                    .setChannelId(0L)
+                    .setVideoTitle(deriveTitleFromUrl(videoUrl))
+                    .setVideoLink(videoUrl)
+                    .setStatus(0)
+                    .setCreateTime(LocalDateTime.now())
+                    .setIfValid(true);
+            try {
+                videoMapper.insert(toSave);
+            } catch (Exception ignore) {
+                // Duplicate/race: ignore and re-query
+            }
+            video = videoMapper.selectOne(new LambdaQueryWrapper<YtbChannelVideoDO>()
+                    .eq(YtbChannelVideoDO::getVideoLink, videoUrl));
+            if (video == null) {
+                return false;
+            }
+        }
+        return this.favoriteVideo(userId, video.getId());
+    }
+
+    @Override
+    public boolean unfavoriteVideoByUrl(Integer userId, String videoUrl) {
+        if (videoUrl == null || videoUrl.trim().isEmpty()) {
+            return false;
+        }
+        YtbChannelVideoDO video = videoMapper.selectOne(new LambdaQueryWrapper<YtbChannelVideoDO>()
+                .eq(YtbChannelVideoDO::getVideoLink, videoUrl));
+        if (video == null) {
+            return false;
+        }
+        return this.unfavoriteVideo(userId, video.getId());
+    }
+
+    @Override
     public IPage<YtbChannelVO> getFavoriteChannels(Page<YtbChannelDO> page, Integer userId) {
         List<YtbChannelFavoriteDO> favs = channelFavoriteMapper.selectList(new LambdaQueryWrapper<YtbChannelFavoriteDO>()
                 .eq(YtbChannelFavoriteDO::getUserId, userId)
@@ -177,5 +220,27 @@ public class YtbFavoriteServiceImpl implements YtbFavoriteService {
             return vo;
         }).collect(Collectors.toList()));
         return voPage;
+    }
+
+    private String deriveTitleFromUrl(String videoUrl) {
+        try {
+            java.net.URI uri = java.net.URI.create(videoUrl);
+            String query = uri.getQuery();
+            if (query != null) {
+                for (String pair : query.split("&")) {
+                    String[] kv = pair.split("=", 2);
+                    if (kv.length == 2 && "v".equalsIgnoreCase(kv[0]) && kv[1] != null && !kv[1].isEmpty()) {
+                        return "YouTube Video " + kv[1];
+                    }
+                }
+            }
+            String path = uri.getPath();
+            if (path != null && path.contains("/shorts/")) {
+                String id = path.substring(path.indexOf("/shorts/") + 8);
+                if (!id.isEmpty()) return "YouTube Short " + id;
+            }
+        } catch (Exception ignore) {
+        }
+        return videoUrl;
     }
 }

@@ -17,8 +17,11 @@ public interface YtbFavoriteService {
 
     boolean unfavoriteVideo(Integer userId, Long videoId);
 
+    boolean favoriteVideoByUrl(Integer userId, String videoUrl);
+
+    boolean unfavoriteVideoByUrl(Integer userId, String videoUrl);
+
     IPage<YtbChannelVO> getFavoriteChannels(Page<YtbChannelDO> page, Integer userId);
 
     IPage<YtbChannelVideoVO> getFavoriteVideos(Page<YtbChannelVideoDO> page, Integer userId);
 }
-

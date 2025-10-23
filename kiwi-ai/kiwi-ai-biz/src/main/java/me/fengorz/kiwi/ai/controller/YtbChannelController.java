@@ -86,6 +86,26 @@ public class YtbChannelController extends BaseController {
         return R.success(true);
     }
 
+    /** Favorite a video by URL */
+    @LogMarker
+    @PostMapping("/video/favorite")
+    public R<Boolean> favoriteVideoByUrl(@RequestParam("videoUrl") String videoUrl) {
+        if (!StringUtils.hasText(videoUrl)) return R.failed("Video URL cannot be empty");
+        boolean ok = favoriteService.favoriteVideoByUrl(getCurrentUserId(), videoUrl);
+        if (!ok) return R.failed("Failed to create video record");
+        return R.success(true);
+    }
+
+    /** Unfavorite a video by URL */
+    @LogMarker
+    @DeleteMapping("/video/favorite")
+    public R<Boolean> unfavoriteVideoByUrl(@RequestParam("videoUrl") String videoUrl) {
+        if (!StringUtils.hasText(videoUrl)) return R.failed("Video URL cannot be empty");
+        boolean ok = favoriteService.unfavoriteVideoByUrl(getCurrentUserId(), videoUrl);
+        if (!ok) return R.failed("Video not found");
+        return R.success(true);
+    }
+
     /** List favorite channels */
     @LogMarker
     @GetMapping("/favorites/channels")

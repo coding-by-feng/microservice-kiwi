@@ -360,7 +360,7 @@ public class YtbChannelServiceImplV2 extends ServiceImpl<YtbChannelMapper, YtbCh
             log.info("Saved subtitles record with full text: {}", subtitlesId);
 
             // Save translations (EN original + ZH_CN AI translation)
-            processSubtitleTranslations(subtitlesId, videoUrl, result);
+            // processSubtitleTranslations(subtitlesId, videoUrl, result);
 
             // Update subtitles status to FINISH
             subtitlesDO.setStatus(ProcessStatusEnum.FINISHED.getCode());

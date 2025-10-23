@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -56,9 +57,8 @@ public class YtbChannelSyncScheduler {
                             .eq(YtbChannelDO::getIfValid, true)
                             .and(wrapper -> wrapper
                                     // READY, FAILED, or FINISHED without time constraint
-                                    .in(YtbChannelDO::getStatus, Arrays.asList(
-                                            ProcessStatusEnum.FAILED.getCode(),
-                                            ProcessStatusEnum.FINISHED.getCode()
+                                    .in(YtbChannelDO::getStatus, Collections.singletonList(
+                                            ProcessStatusEnum.READY.getCode()
                                     ))
                                     // Or PROCESSING but stuck for a long time
                                     .or(w -> w

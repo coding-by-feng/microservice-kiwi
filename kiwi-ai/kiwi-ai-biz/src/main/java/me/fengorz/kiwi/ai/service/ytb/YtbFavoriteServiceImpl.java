@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.ai.api.entity.YtbChannelDO;
 import me.fengorz.kiwi.ai.api.entity.YtbChannelFavoriteDO;
 import me.fengorz.kiwi.ai.api.entity.YtbChannelVideoDO;
@@ -15,6 +16,7 @@ import me.fengorz.kiwi.ai.service.ytb.mapper.YtbChannelMapper;
 import me.fengorz.kiwi.ai.service.ytb.mapper.YtbChannelVideoMapper;
 import me.fengorz.kiwi.ai.service.ytb.mapper.YtbVideoFavoriteMapper;
 import me.fengorz.kiwi.common.db.service.SeqService;
+import me.fengorz.kiwi.common.ytb.YouTuBeHelper;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -28,6 +30,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class YtbFavoriteServiceImpl implements YtbFavoriteService {
 
     private final YtbChannelFavoriteMapper channelFavoriteMapper;
@@ -35,6 +38,8 @@ public class YtbFavoriteServiceImpl implements YtbFavoriteService {
     private final YtbChannelMapper channelMapper;
     private final YtbChannelVideoMapper videoMapper;
     private final SeqService seqService;
+    // Inject YouTube helper to fetch real video titles
+    private final YouTuBeHelper youTuBeHelper;
 
     @Override
     public boolean favoriteChannel(Integer userId, Long channelId) {
@@ -110,10 +115,12 @@ public class YtbFavoriteServiceImpl implements YtbFavoriteService {
         YtbChannelVideoDO video = videoMapper.selectOne(new LambdaQueryWrapper<YtbChannelVideoDO>()
                 .eq(YtbChannelVideoDO::getVideoLink, videoUrl));
         if (video == null) {
+            // Resolve real title using yt-dlp; fallback to URL-derived title if it fails
+            String realTitle = resolveVideoTitleSafely(videoUrl);
             YtbChannelVideoDO toSave = new YtbChannelVideoDO()
                     .setId(Long.valueOf(seqService.genCommonIntSequence()))
                     .setChannelId(0L)
-                    .setVideoTitle(deriveTitleFromUrl(videoUrl))
+                    .setVideoTitle(realTitle)
                     .setVideoLink(videoUrl)
                     .setStatus(0)
                     .setCreateTime(LocalDateTime.now())
@@ -127,6 +134,19 @@ public class YtbFavoriteServiceImpl implements YtbFavoriteService {
                     .eq(YtbChannelVideoDO::getVideoLink, videoUrl));
             if (video == null) {
                 return false;
+            }
+        } else {
+            // If record exists but title looks like a URL, try to backfill the real title
+            if (video.getVideoTitle() == null || video.getVideoTitle().startsWith("http")) {
+                try {
+                    String realTitle = youTuBeHelper.getVideoTitle(videoUrl);
+                    if (realTitle != null && !realTitle.trim().isEmpty()) {
+                        video.setVideoTitle(realTitle.trim());
+                        videoMapper.updateById(video);
+                    }
+                } catch (Exception e) {
+                    log.warn("Failed to backfill real title for video {}: {}", videoUrl, e.getMessage());
+                }
             }
         }
         return this.favoriteVideo(userId, video.getId());
@@ -242,5 +262,17 @@ public class YtbFavoriteServiceImpl implements YtbFavoriteService {
         } catch (Exception ignore) {
         }
         return videoUrl;
+    }
+
+    private String resolveVideoTitleSafely(String videoUrl) {
+        try {
+            String title = youTuBeHelper.getVideoTitle(videoUrl);
+            if (title != null && !title.trim().isEmpty()) {
+                return title.trim();
+            }
+        } catch (Exception e) {
+            log.warn("Failed to fetch video title via yt-dlp for {}: {}", videoUrl, e.getMessage());
+        }
+        return deriveTitleFromUrl(videoUrl);
     }
 }

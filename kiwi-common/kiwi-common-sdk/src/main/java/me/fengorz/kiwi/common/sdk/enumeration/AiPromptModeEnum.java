@@ -45,6 +45,14 @@ public enum AiPromptModeEnum {
     SUBTITLE_RETOUCH_TRANSLATOR("subtitle-retouch-translator", "NA", 1),
     VOCABULARY_ASSOCIATION("vocabulary-association", "NA", 3),
     PHRASES_ASSOCIATION("phrases-association", "NA", 3),
+    /**
+     * Expand/associate a vocabulary item across parts of speech (verbs, nouns, adverbs, adjectives).
+     */
+    VOCABULARY_CHARACTER_EXPANSION("vocabulary-character-expansion", "NA", 0),
+    /**
+     * Ambiguous vocabulary or phrase association/correction (spell-correction and commonly-confused items).
+     */
+    AMBIGUOUS_ASSOCIATION_CORRECTION("ambiguous-association-correction", "NA", 0),
     SELECTION_EXPLANATION("selection-explanation", "#[SM]", 0),
     CHAT("chat", "NA", 1),
     ;

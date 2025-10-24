@@ -17,8 +17,6 @@ import me.fengorz.kiwi.ai.service.ytb.mapper.YtbChannelVideoMapper;
 import me.fengorz.kiwi.ai.service.ytb.mapper.YtbVideoFavoriteMapper;
 import me.fengorz.kiwi.common.db.service.SeqService;
 import me.fengorz.kiwi.common.ytb.YouTuBeHelper;
-import org.apache.commons.collections4.CollectionUtils;
-import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -170,7 +168,7 @@ public class YtbFavoriteServiceImpl implements YtbFavoriteService {
         List<YtbChannelFavoriteDO> favs = channelFavoriteMapper.selectList(new LambdaQueryWrapper<YtbChannelFavoriteDO>()
                 .eq(YtbChannelFavoriteDO::getUserId, userId)
                 .eq(YtbChannelFavoriteDO::getIfValid, true));
-        if (CollectionUtils.isEmpty(favs)) {
+        if (org.apache.commons.collections4.CollectionUtils.isEmpty(favs)) {
             return new Page<>(page.getCurrent(), page.getSize(), 0);
         }
         List<Long> channelIds = favs.stream().map(YtbChannelFavoriteDO::getChannelId).collect(Collectors.toList());
@@ -208,7 +206,7 @@ public class YtbFavoriteServiceImpl implements YtbFavoriteService {
         List<YtbVideoFavoriteDO> favs = videoFavoriteMapper.selectList(new LambdaQueryWrapper<YtbVideoFavoriteDO>()
                 .eq(YtbVideoFavoriteDO::getUserId, userId)
                 .eq(YtbVideoFavoriteDO::getIfValid, true));
-        if (CollectionUtils.isEmpty(favs)) {
+        if (org.apache.commons.collections4.CollectionUtils.isEmpty(favs)) {
             return new Page<>(page.getCurrent(), page.getSize(), 0);
         }
         List<Long> videoIds = favs.stream().map(YtbVideoFavoriteDO::getVideoId).collect(Collectors.toList());
@@ -234,12 +232,37 @@ public class YtbFavoriteServiceImpl implements YtbFavoriteService {
         Page<YtbChannelVideoVO> voPage = new Page<>(videos.getCurrent(), videos.getSize(), videos.getTotal());
         voPage.setRecords(videos.getRecords().stream().map(v -> {
             YtbChannelVideoVO vo = new YtbChannelVideoVO();
-            BeanUtils.copyProperties(v, vo);
+            org.springframework.beans.BeanUtils.copyProperties(v, vo);
             vo.setFavorited(userFavSet.contains(v.getId()));
             vo.setFavoriteCount(favCountMap.getOrDefault(v.getId(), 0L));
             return vo;
-        }).collect(Collectors.toList()));
+        }).collect(java.util.stream.Collectors.toList()));
         return voPage;
+    }
+
+    @Override
+    public boolean isVideoFavorited(Integer userId, Long videoId) {
+        if (userId == null || videoId == null) {
+            return false;
+        }
+        YtbVideoFavoriteDO existing = videoFavoriteMapper.selectOne(new LambdaQueryWrapper<YtbVideoFavoriteDO>()
+                .eq(YtbVideoFavoriteDO::getUserId, userId)
+                .eq(YtbVideoFavoriteDO::getVideoId, videoId)
+                .eq(YtbVideoFavoriteDO::getIfValid, true));
+        return existing != null;
+    }
+
+    @Override
+    public boolean isVideoFavoritedByUrl(Integer userId, String videoUrl) {
+        if (userId == null || videoUrl == null || videoUrl.trim().isEmpty()) {
+            return false;
+        }
+        YtbChannelVideoDO video = videoMapper.selectOne(new LambdaQueryWrapper<YtbChannelVideoDO>()
+                .eq(YtbChannelVideoDO::getVideoLink, videoUrl));
+        if (video == null) {
+            return false;
+        }
+        return isVideoFavorited(userId, video.getId());
     }
 
     private String deriveTitleFromUrl(String videoUrl) {

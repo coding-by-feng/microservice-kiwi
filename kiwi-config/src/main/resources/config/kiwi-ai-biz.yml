@@ -58,7 +58,7 @@ ai:
       thread-pool-size: 8
       thread-timeout-secs: 120
   mode:
-    directly-translation: "Directly Translate user prompt to #[TL] language."
+    directly-translation: "You are a translator, Directly Translate user prompt to #[TL] language, show only the translation result without any extra information."
     translation-and-explanation: "Translate the user prompt in #[TL] language first, please provide the explanation as thorough as possible in different aspects if there are any, my first language is #[NL], please explain in #[NL]."
     grammar-explanation: "Translate my user prompt to #[NL] language, and next provide an explanation of the grammar, my first language is #[NL], please explain in #[NL]."
     grammar-correction: "Correct the grammar of the text I provided, then translate it to #[NL] language, and provide the explanation of the grammar correction, my first language is #[NL], please explain in #[NL]."

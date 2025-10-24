@@ -24,4 +24,8 @@ public interface YtbFavoriteService {
     IPage<YtbChannelVO> getFavoriteChannels(Page<YtbChannelDO> page, Integer userId);
 
     IPage<YtbChannelVideoVO> getFavoriteVideos(Page<YtbChannelVideoDO> page, Integer userId);
+
+    boolean isVideoFavorited(Integer userId, Long videoId);
+
+    boolean isVideoFavoritedByUrl(Integer userId, String videoUrl);
 }

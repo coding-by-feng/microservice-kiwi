@@ -86,6 +86,15 @@ public class YtbChannelController extends BaseController {
         return R.success(true);
     }
 
+    /** Check if a video is favorited by videoId */
+    @LogMarker
+    @GetMapping("/video/{videoId}/favorite")
+    public R<Boolean> isVideoFavorited(@PathVariable("videoId") Long videoId) {
+        if (videoId == null) return R.failed("Video ID cannot be empty");
+        boolean favorited = favoriteService.isVideoFavorited(getCurrentUserId(), videoId);
+        return R.success(favorited);
+    }
+
     /** Favorite a video by URL */
     @LogMarker
     @PostMapping("/video/favorite")
@@ -104,6 +113,15 @@ public class YtbChannelController extends BaseController {
         boolean ok = favoriteService.unfavoriteVideoByUrl(getCurrentUserId(), videoUrl);
         if (!ok) return R.failed("Video not found");
         return R.success(true);
+    }
+
+    /** Check if a video is favorited by videoUrl */
+    @LogMarker
+    @GetMapping("/video/favorite")
+    public R<Boolean> isVideoFavoritedByUrl(@RequestParam("videoUrl") String videoUrl) {
+        if (!StringUtils.hasText(videoUrl)) return R.failed("Video URL cannot be empty");
+        boolean favorited = favoriteService.isVideoFavoritedByUrl(getCurrentUserId(), videoUrl);
+        return R.success(favorited);
     }
 
     /** List favorite channels */

@@ -53,7 +53,7 @@ ai:
     api:
       key: ${GROK_API_KEY}  # Replace with the actual API key
       endpoint: https://api.x.ai/v1/chat/completions  # Hypothetical endpoint
-      model: "grok-4-fast-reasoning"
+      model: "grok-4-fast-non-reasoning"
       thread-prompts-line-size: 400
       thread-pool-size: 8
       thread-timeout-secs: 120

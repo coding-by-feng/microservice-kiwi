@@ -42,8 +42,8 @@ import static me.fengorz.kiwi.common.tts.TtsConstants.BEAN_NAMES.BAIDU_TTS_SERVI
 @Service
 public class AudioServiceImpl implements AudioService {
 
-    @Resource(name = "googleTtsService")
-    private TtsService ttsService;
+    @Resource(name = "deepgramAura2TtsService")
+    private TtsService deepgramTtsService;
     @Resource(name = BAIDU_TTS_SERVICE_IMPL)
     private BaiduTtsService baiduTtsService;
     @Resource(name = "fastDfsService")
@@ -60,13 +60,13 @@ public class AudioServiceImpl implements AudioService {
 
     @Override
     public String generateEnglishVoice(String englishText) throws DfsOperateException, TtsException {
-        byte[] bytes = ttsService.speechEnglish(englishText);
+        byte[] bytes = deepgramTtsService.speechEnglish(englishText);
         return dfsService.uploadFile(new ByteArrayInputStream(bytes), bytes.length, ApiCrawlerConstants.EXT_MP3);
     }
 
     @Override
     public String generateChineseVoice(String chineseText) throws DfsOperateException, TtsException {
-        byte[] bytes = ttsService.speechChinese(chineseText);
+        byte[] bytes = deepgramTtsService.speechChinese(chineseText);
         return dfsService.uploadFile(new ByteArrayInputStream(bytes), bytes.length, ApiCrawlerConstants.EXT_MP3);
     }
 

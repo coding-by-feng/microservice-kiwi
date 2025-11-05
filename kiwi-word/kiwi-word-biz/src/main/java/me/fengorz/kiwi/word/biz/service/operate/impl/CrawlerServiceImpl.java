@@ -88,8 +88,8 @@ public class CrawlerServiceImpl implements CrawlerService {
     private DfsService dfsService;
     private final SeqService seqService;
     private final OperateService operateService;
-    @Resource(name = "googleTtsService")
-    private TtsService ttsService;
+    @Resource(name = "deepgramAura2TtsService")
+    private TtsService deepgramTtsService;
     private final ReviewService reviewService;
 
     private final static Map<String, Object> FETCH_BARRIER = new ConcurrentHashMap<>();
@@ -317,7 +317,7 @@ public class CrawlerServiceImpl implements CrawlerService {
     public void generateTtsVoice(ReviseAudioGenerationEnum type) {
         try {
             log.info("Method generateTtsVoice is starting! type={}", type.name());
-            if (!ttsService.hasValidApiKey()) {
+            if (!deepgramTtsService.hasValidApiKey()) {
                 log.info("There is not valid api key!");
                 return;
             }
@@ -395,7 +395,7 @@ public class CrawlerServiceImpl implements CrawlerService {
     public void reGenIncorrectAudioByVoicerss() {
         try {
             log.info("Method reGenIncorrectAudioByVoicerss is starting!");
-            if (!ttsService.hasValidApiKey()) {
+            if (!deepgramTtsService.hasValidApiKey()) {
                 log.info("There is not valid api key!");
                 return;
             }

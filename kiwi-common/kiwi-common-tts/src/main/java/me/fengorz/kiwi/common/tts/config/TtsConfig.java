@@ -18,7 +18,9 @@ package me.fengorz.kiwi.common.tts.config;
 
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.tts.model.BaiduTtsProperties;
+import me.fengorz.kiwi.common.tts.model.DeepgramTtsProperties;
 import me.fengorz.kiwi.common.tts.model.TtsProperties;
+import okhttp3.OkHttpClient;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -51,6 +53,17 @@ public class TtsConfig {
     @ConfigurationProperties(prefix = "tts.baidu")
     public BaiduTtsProperties baiduTtsProperties() {
         return new BaiduTtsProperties();
+    }
+
+    @Bean
+    @ConfigurationProperties(prefix = "tts.deepgram")
+    public DeepgramTtsProperties deepgramTtsProperties() {
+        return new DeepgramTtsProperties();
+    }
+
+    @Bean
+    public OkHttpClient ttsOkHttpClient() {
+        return new OkHttpClient();
     }
 
 }

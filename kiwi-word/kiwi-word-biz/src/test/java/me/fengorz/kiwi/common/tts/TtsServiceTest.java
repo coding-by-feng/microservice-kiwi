@@ -54,9 +54,8 @@ public class TtsServiceTest {
     private TtsProperties ttsProperties;
 
     @Autowired
-    @Qualifier("googleTtsService")
-//    @Qualifier("voiceRssTtsService")
-    private TtsService ttsService;
+    @Qualifier("deepgramAura2TtsService")
+    private TtsService deepgramTtsService;
 
     @Autowired
     @Qualifier(BAIDU_TTS_SERVICE_IMPL)
@@ -68,7 +67,7 @@ public class TtsServiceTest {
     @Test
     @Disabled
     void autoSelectApiKey() {
-        String apiKey = ttsService.autoSelectApiKey();
+        String apiKey = deepgramTtsService.autoSelectApiKey();
         assertTrue(ttsProperties.listApiKey().contains(apiKey));
         log.info("autoSelectApiKey >>>> {}", apiKey);
     }
@@ -76,69 +75,69 @@ public class TtsServiceTest {
     @Test
     @Disabled
     void increaseApiKeyUsedTime() {
-        Assertions.assertDoesNotThrow(() -> ttsService.increaseApiKeyUsedTime("d2f5e9a0fbf14318a475d808c0dddc62"));
+        Assertions.assertDoesNotThrow(() -> deepgramTtsService.increaseApiKeyUsedTime("d2f5e9a0fbf14318a475d808c0dddc62"));
     }
 
     @Test
     @Disabled
     void useTtsApiKey() {
         Assertions.assertDoesNotThrow(() -> {
-            ttsService.useTtsApiKey(ttsProperties.getApiKey10(), 350);
-            ttsService.useTtsApiKey(ttsProperties.getApiKey11(), 350);
-            ttsService.useTtsApiKey(ttsProperties.getApiKey12(), 350);
-            ttsService.useTtsApiKey(ttsProperties.getApiKey13(), 350);
-            ttsService.useTtsApiKey(ttsProperties.getApiKey14(), 350);
-            ttsService.useTtsApiKey(ttsProperties.getApiKey15(), 0);
-            ttsService.useTtsApiKey(ttsProperties.getApiKey16(), 0);
-            ttsService.useTtsApiKey(ttsProperties.getApiKey17(), 0);
-            ttsService.useTtsApiKey(ttsProperties.getApiKey18(), 0);
-            ttsService.useTtsApiKey(ttsProperties.getApiKey19(), 0);
-            ttsService.useTtsApiKey(ttsProperties.getApiKey20(), 0);
+            deepgramTtsService.useTtsApiKey(ttsProperties.getApiKey10(), 350);
+            deepgramTtsService.useTtsApiKey(ttsProperties.getApiKey11(), 350);
+            deepgramTtsService.useTtsApiKey(ttsProperties.getApiKey12(), 350);
+            deepgramTtsService.useTtsApiKey(ttsProperties.getApiKey13(), 350);
+            deepgramTtsService.useTtsApiKey(ttsProperties.getApiKey14(), 350);
+            deepgramTtsService.useTtsApiKey(ttsProperties.getApiKey15(), 0);
+            deepgramTtsService.useTtsApiKey(ttsProperties.getApiKey16(), 0);
+            deepgramTtsService.useTtsApiKey(ttsProperties.getApiKey17(), 0);
+            deepgramTtsService.useTtsApiKey(ttsProperties.getApiKey18(), 0);
+            deepgramTtsService.useTtsApiKey(ttsProperties.getApiKey19(), 0);
+            deepgramTtsService.useTtsApiKey(ttsProperties.getApiKey20(), 0);
         });
     }
 
     @Test
     @Disabled
     void queryTtsApiKeyUsed() {
-        Assertions.assertEquals(0, ttsService.queryTtsApiKeyUsed(ttsProperties.getApiKey10()));
+        Assertions.assertEquals(0, deepgramTtsService.queryTtsApiKeyUsed(ttsProperties.getApiKey10()));
     }
 
 
     @Test
     @Disabled
     void deprecateApiKeyToday() {
-        Assertions.assertDoesNotThrow(() -> ttsService.deprecateApiKeyToday(ttsProperties.getApiKey1()));
+        Assertions.assertDoesNotThrow(() -> deepgramTtsService.deprecateApiKeyToday(ttsProperties.getApiKey1()));
         Assertions.assertEquals(TtsConstants.API_KEY_MAX_USE_TIME,
-                ttsService.queryTtsApiKeyUsed(ttsProperties.getApiKey1()));
+                deepgramTtsService.queryTtsApiKeyUsed(ttsProperties.getApiKey1()));
     }
 
     @Test
     @Disabled
     void queryApiKeyUsed() {
         log.info("queryTtsApiKeyUsed [{}] used times is {}", ttsProperties.getApiKey10(),
-                ttsService.queryTtsApiKeyUsed(ttsProperties.getApiKey10()));
+                deepgramTtsService.queryTtsApiKeyUsed(ttsProperties.getApiKey10()));
         log.info("queryTtsApiKeyUsed [{}] used times is {}", ttsProperties.getApiKey11(),
-                ttsService.queryTtsApiKeyUsed(ttsProperties.getApiKey11()));
+                deepgramTtsService.queryTtsApiKeyUsed(ttsProperties.getApiKey11()));
         log.info("queryTtsApiKeyUsed [{}] used times is {}", ttsProperties.getApiKey12(),
-                ttsService.queryTtsApiKeyUsed(ttsProperties.getApiKey12()));
+                deepgramTtsService.queryTtsApiKeyUsed(ttsProperties.getApiKey12()));
         log.info("queryTtsApiKeyUsed [{}] used times is {}", ttsProperties.getApiKey13(),
-                ttsService.queryTtsApiKeyUsed(ttsProperties.getApiKey13()));
+                deepgramTtsService.queryTtsApiKeyUsed(ttsProperties.getApiKey13()));
         log.info("queryTtsApiKeyUsed [{}] used times is {}", ttsProperties.getApiKey14(),
-                ttsService.queryTtsApiKeyUsed(ttsProperties.getApiKey14()));
+                deepgramTtsService.queryTtsApiKeyUsed(ttsProperties.getApiKey14()));
     }
 
     @Test
     @Disabled
     void refreshAllApiKey() {
-        Assertions.assertDoesNotThrow(() -> ttsService.refreshAllApiKey());
+        Assertions.assertDoesNotThrow(() -> deepgramTtsService.refreshAllApiKey());
     }
 
     @Test
     void queryAllTtsApiKeyUsed() {
         log.info("queryTtsApiKeyUsed [total] used times is {}",
-                ttsService.queryTtsApiKeyUsed(TtsConstants.CACHE_KEY_PREFIX_TTS.TOTAL_API_KEY));
+                deepgramTtsService.queryTtsApiKeyUsed(TtsConstants.CACHE_KEY_PREFIX_TTS.TOTAL_API_KEY));
         for (String apiKey : ttsProperties.listApiKey()) {
-            log.info("queryTtsApiKeyUsed [{}] used times is {}", apiKey, ttsService.queryTtsApiKeyUsed(apiKey));
+            log.info("queryTtsApiKeyUsed [{}] used times is {}", apiKey, deepgramTtsService.queryTtsApiKeyUsed(apiKey));
         }
     }
 
@@ -146,7 +145,7 @@ public class TtsServiceTest {
     @Disabled
     void assertTtsApiKeyNotNull() {
         for (String apiKey : ttsProperties.listApiKey()) {
-            assertNotNull(ttsService.queryTtsApiKeyUsed(apiKey));
+            assertNotNull(deepgramTtsService.queryTtsApiKeyUsed(apiKey));
         }
     }
 
@@ -174,8 +173,8 @@ public class TtsServiceTest {
     @SneakyThrows
     @Test
     public void testTts() {
-        byte[] data = ttsService.speechChinese("你好，我的名字是卡森，我正在奥克兰学习，我非常喜欢这里的环境和人们！");
-//        byte[] data = ttsService.speechEnglish("hello, my name is Kason, and I am studying in Auckland, I love the environment and people here!");
+        byte[] data = deepgramTtsService.speechChinese("你好，我的名字是卡森，我正在奥克兰学习，我非常喜欢这里的环境和人们！");
+//        byte[] data = deepgramTtsService.speechEnglish("hello, my name is Kason, and I am studying in Auckland, I love the environment and people here!");
         assertNotNull(data);
         try {
             Util.writeBytesToFileSystem(data, "/Users/zhanshifeng/Documents/temp/tts_test.mp3");

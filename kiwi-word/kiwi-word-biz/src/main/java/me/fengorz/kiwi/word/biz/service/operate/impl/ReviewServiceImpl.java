@@ -97,8 +97,8 @@ public class ReviewServiceImpl implements ReviewService {
     @Resource(name = "fastDfsService")
     private DfsService dfsService;
     private final AudioService audioService;
-    @Resource(name = "googleTtsService")
-    private TtsService ttsService;
+    @Resource(name = "deepgramAura2TtsService")
+    private TtsService deepgramTtsService;
     private final ParaphraseTtsGenerationPayload paraphraseTtsGenerationPayload;
     private final RevisePermanentAudioHelper revisePermanentAudioHelper;
 
@@ -144,7 +144,7 @@ public class ReviewServiceImpl implements ReviewService {
     public void increase(int type, Integer userId) {
         if (ReviseDailyCounterTypeEnum.REVIEW_AUDIO_VOICERSS_TTS_COUNTER.getType() == type) {
             synchronized (BARRIER) {
-                ttsService.voiceRssGlobalIncreaseCounter();
+                deepgramTtsService.voiceRssGlobalIncreaseCounter();
             }
         }
         WordReviewDailyCounterDO counter = findReviewCounterDO(userId, type);

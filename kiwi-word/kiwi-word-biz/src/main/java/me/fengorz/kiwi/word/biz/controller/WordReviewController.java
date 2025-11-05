@@ -47,14 +47,14 @@ import java.util.List;
 public class WordReviewController extends AbstractFileController {
 
     private final ReviewService reviewService;
-    private final TtsService voiceRssTtsService;
+    private final TtsService deepgramTtsService;
     @Resource(name = "fastDfsService")
     private DfsService dfsService;
 
     public WordReviewController(ReviewService reviewService,
-                                @Qualifier("googleTtsService") TtsService voiceRssTtsService) {
+                                @Qualifier("deepgramAura2TtsService") TtsService deepgramTtsService) {
         this.reviewService = reviewService;
-        this.voiceRssTtsService = voiceRssTtsService;
+        this.deepgramTtsService = deepgramTtsService;
     }
 
     @GetMapping("/getReviewBreakpointPageNumber/{listId}")
@@ -70,7 +70,7 @@ public class WordReviewController extends AbstractFileController {
 
     @GetMapping("/refreshAllApiKey")
     public R<Void> refreshAllApiKey() {
-        voiceRssTtsService.refreshAllApiKey();
+        deepgramTtsService.refreshAllApiKey();
         return R.success();
     }
 
@@ -175,18 +175,18 @@ public class WordReviewController extends AbstractFileController {
 
     @GetMapping("/autoSelectApiKey")
     public R<String> autoSelectApiKey() {
-        return R.success(voiceRssTtsService.autoSelectApiKey());
+        return R.success(deepgramTtsService.autoSelectApiKey());
     }
 
     @PutMapping("/increaseApiKeyUsedTime/{apiKey}")
     public R<Void> increaseApiKeyUsedTime(@PathVariable("apiKey") String apiKey) {
-        voiceRssTtsService.increaseApiKeyUsedTime(apiKey);
+        deepgramTtsService.increaseApiKeyUsedTime(apiKey);
         return R.success();
     }
 
     @PutMapping("/deprecateApiKeyToday/{apiKey}")
     public R<Void> deprecateApiKeyToday(@PathVariable("apiKey") String apiKey) {
-        voiceRssTtsService.deprecateApiKeyToday(apiKey);
+        deepgramTtsService.deprecateApiKeyToday(apiKey);
         return R.success();
     }
 

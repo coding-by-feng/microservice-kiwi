@@ -21,13 +21,8 @@ import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.sdk.exception.tts.TtsException;
 import me.fengorz.kiwi.common.tts.enumeration.TtsSourceEnum;
 import me.fengorz.kiwi.common.tts.model.DeepgramTtsProperties;
-import me.fengorz.kiwi.common.tts.service.TtsBaseService;
-import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
-import okhttp3.ResponseBody;
+import me.fengorz.kiwi.common.tts.service.TtsService;
+import okhttp3.*;
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
 import org.springframework.stereotype.Service;
@@ -41,7 +36,7 @@ import java.io.IOException;
 @Slf4j
 @Service("deepgramAura2TtsService")
 @RequiredArgsConstructor
-public class DeepgramAura2TtsService implements TtsBaseService {
+public class DeepgramAura2TtsService implements TtsService {
 
     private static final String HEADER_AUTHORIZATION = "Authorization";
     private static final String HEADER_CONTENT_TYPE = "Content-Type";

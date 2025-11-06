@@ -1560,13 +1560,36 @@ execute_step_12_env_vars_setup() {
 
 execute_step_13_ytdlp_download() {
     if ! is_step_completed "ytdlp_download"; then
-        print_info "Step 13: Downloading yt-dlp..."
-        YT_DLP_VERSION="2024.12.06"
-        wget "https://github.com/yt-dlp/yt-dlp/releases/download/${YT_DLP_VERSION}/yt-dlp_linux" -O /tmp/yt-dlp_linux
-        chmod +x /tmp/yt-dlp_linux
-        run_as_user cp /tmp/yt-dlp_linux "$SCRIPT_HOME/docker/kiwi/ai/biz/"
-        run_as_user cp /tmp/yt-dlp_linux "$SCRIPT_HOME/docker/kiwi/ai/batch/"
-        rm /tmp/yt-dlp_linux
+        print_info "Step 13: Downloading yt-dlp (latest)..."
+        local url="https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp_linux"
+        local tmp_file="/tmp/yt-dlp_linux"
+
+        # Try curl first, fallback to wget
+        if command -v curl >/dev/null 2>&1; then
+            if ! curl -L --fail -o "$tmp_file" "$url"; then
+                print_warning "curl failed to download yt-dlp; trying wget..."
+                if ! command -v wget >/dev/null 2>&1 || ! wget -O "$tmp_file" "$url"; then
+                    print_error "Unable to download yt-dlp (curl/wget both failed)."
+                    return 1
+                fi
+            fi
+        else
+            if ! command -v wget >/dev/null 2>&1 || ! wget -O "$tmp_file" "$url"; then
+                print_error "Neither curl nor wget available to download yt-dlp."
+                return 1
+            fi
+        fi
+
+        if [ ! -s "$tmp_file" ]; then
+            print_error "Downloaded yt-dlp file is empty. Aborting."
+            rm -f "$tmp_file"
+            return 1
+        fi
+
+        chmod +x "$tmp_file"
+        run_as_user cp "$tmp_file" "$SCRIPT_HOME/docker/kiwi/ai/biz/yt-dlp_linux"
+        run_as_user cp "$tmp_file" "$SCRIPT_HOME/docker/kiwi/ai/batch/yt-dlp_linux"
+        rm -f "$tmp_file"
         print_success "yt-dlp downloaded"
         mark_step_completed "ytdlp_download"
     else

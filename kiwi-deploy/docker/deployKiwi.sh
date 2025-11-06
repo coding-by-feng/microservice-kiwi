@@ -21,6 +21,48 @@
   done
 } >/dev/null 2>&1 || true
 
+# Helper: download latest yt-dlp into AI docker contexts (biz, batch)
+download_latest_ytdlp() {
+  echo "⬇️  Downloading latest yt-dlp (linux) for AI docker contexts..."
+  local url="https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp_linux"
+  local tmp_file="/tmp/yt-dlp_linux.$$"
+  local dest_biz="$CURRENT_DIR/docker/kiwi/ai/biz"
+  local dest_batch="$CURRENT_DIR/docker/kiwi/ai/batch"
+
+  mkdir -p "$dest_biz" "$dest_batch"
+
+  # Prefer curl; fallback to wget
+  if command -v curl >/dev/null 2>&1; then
+    if ! curl -L --fail -o "$tmp_file" "$url"; then
+      echo "⚠️  curl failed to download yt-dlp; trying wget..."
+      if ! command -v wget >/dev/null 2>&1 || ! wget -O "$tmp_file" "$url"; then
+        echo "❌ Unable to download yt-dlp (curl/wget both failed)."
+        return 1
+      fi
+    fi
+  else
+    if ! command -v wget >/dev/null 2>&1 || ! wget -O "$tmp_file" "$url"; then
+      echo "❌ Neither curl nor wget available to download yt-dlp."
+      return 1
+    fi
+  fi
+
+  # Basic validation and install
+  if [ ! -s "$tmp_file" ]; then
+    echo "❌ Downloaded yt-dlp file is empty. Aborting copy."
+    rm -f "$tmp_file"
+    return 1
+  fi
+
+  chmod +x "$tmp_file"
+  cp -f "$tmp_file" "$dest_biz/yt-dlp_linux"
+  cp -f "$tmp_file" "$dest_batch/yt-dlp_linux"
+  rm -f "$tmp_file"
+  echo "✅ yt-dlp placed at:"
+  echo "   - $dest_biz/yt-dlp_linux"
+  echo "   - $dest_batch/yt-dlp_linux"
+}
+
 # Method 1: Check if running with sudo -E by examining environment variables
 check_sudo_e() {
     echo "=============================================="
@@ -902,6 +944,11 @@ else
 
   # Move Dockerfiles and JARs efficiently
   if [ "$SKIP_DOCKER_BUILD" = false ]; then
+    # Download latest yt-dlp into AI docker contexts before build (only if AI is selected)
+    if should_build_service "ai"; then
+      download_latest_ytdlp || echo "⚠️  Proceeding without updating yt-dlp (download failed)."
+    fi
+
     # Get the original user's home directory for JAR files
     if [ -n "$SUDO_USER" ]; then
       ORIGINAL_HOME=$(eval echo "~$SUDO_USER")

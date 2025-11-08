@@ -41,4 +41,8 @@ public class Project {
     private LocalDateTime createdAt; // ISO 8601 UTC
 
     private Boolean archived; // default in DB is false
+
+    // New fields
+    private Boolean glassOrdered; // default false
+    private Boolean glassManufactured; // default false
 }

@@ -31,7 +31,7 @@ public class ExportService {
             Sheet sheet = workbook.createSheet("施工安排表");
             String[] headers = new String[]{
                 "项目ID", "项目编号", "项目名称", "客户", "客户电话", "地址", "销售", "安装", "团队成员",
-                "开始日期", "结束日期", "状态", "今日任务", "进度备注", "创建时间", "已归档"
+                "开始日期", "结束日期", "状态", "今日任务", "进度备注", "创建时间", "已归档", "玻璃已下单", "玻璃已生产"
             };
             Row header = sheet.createRow(0);
             XSSFFont font = workbook.createFont();
@@ -62,6 +62,8 @@ public class ExportService {
                 row.createCell(13).setCellValue(nvl(p.getProgressNote()));
                 row.createCell(14).setCellValue(formatDateTime(p));
                 row.createCell(15).setCellValue(yn(p.getArchived()));
+                row.createCell(16).setCellValue(yn(p.getGlassOrdered()));
+                row.createCell(17).setCellValue(yn(p.getGlassManufactured()));
             }
             for (int i = 0; i < headers.length; i++) sheet.autoSizeColumn(i);
             workbook.write(out);

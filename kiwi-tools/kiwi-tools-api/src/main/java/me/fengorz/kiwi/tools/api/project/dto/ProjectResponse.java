@@ -56,4 +56,10 @@ public class ProjectResponse {
 
     @ApiModelProperty(value = "Archive flag")
     private Boolean archived;
+
+    @ApiModelProperty(value = "Whether window glass has been ordered", example = "false")
+    private Boolean glassOrdered;
+
+    @ApiModelProperty(value = "Whether window glass has been manufactured", example = "false")
+    private Boolean glassManufactured;
 }

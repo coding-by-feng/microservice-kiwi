@@ -1,5 +1,6 @@
 package me.fengorz.kiwi.tools.model.project;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -22,5 +23,9 @@ public class Project {
     private String progressNote; // text
     private LocalDateTime createdAt; // ISO 8601 UTC
     private Boolean archived; // default in DB is false
+    // New fields: window glass ordered / manufactured flags
+    @TableField("glass_ordered")
+    private Boolean glassOrdered; // default false
+    @TableField("glass_manufactured")
+    private Boolean glassManufactured; // default false
 }
-

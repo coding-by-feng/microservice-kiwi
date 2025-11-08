@@ -29,6 +29,9 @@ public final class ProjectDtoMapper {
         p.setStatus(ProjectStatus.fromInput(req.getStatus()));
         p.setTodayTask(req.getTodayTask());
         p.setProgressNote(req.getProgressNote());
+        // new flags
+        p.setGlassOrdered(req.getGlassOrdered());
+        p.setGlassManufactured(req.getGlassManufactured());
         return p;
     }
 
@@ -62,6 +65,9 @@ public final class ProjectDtoMapper {
         put(m, "status", req.getStatus());
         put(m, "todayTask", req.getTodayTask());
         put(m, "progressNote", req.getProgressNote());
+        // new flags
+        put(m, "glassOrdered", req.getGlassOrdered());
+        put(m, "glassManufactured", req.getGlassManufactured());
     }
 
     public static me.fengorz.kiwi.tools.api.project.dto.ProjectResponse toResponse(Project p) {
@@ -83,6 +89,9 @@ public final class ProjectDtoMapper {
         r.setProgressNote(p.getProgressNote());
         r.setCreatedAt(p.getCreatedAt());
         r.setArchived(p.getArchived());
+        // new flags
+        r.setGlassOrdered(p.getGlassOrdered());
+        r.setGlassManufactured(p.getGlassManufactured());
         return r;
     }
 

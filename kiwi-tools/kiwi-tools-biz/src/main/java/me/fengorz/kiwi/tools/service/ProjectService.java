@@ -149,6 +149,23 @@ public class ProjectService {
             Boolean a = getBool(m, "archived");
             if (a != null) p.setArchived(a);
         }
+        // new flags
+        if (m.containsKey("glassOrdered")) {
+            Boolean v = getBool(m, "glassOrdered");
+            if (v != null) p.setGlassOrdered(v);
+        }
+        if (m.containsKey("glass_ordered")) {
+            Boolean v = getBool(m, "glass_ordered");
+            if (v != null) p.setGlassOrdered(v);
+        }
+        if (m.containsKey("glassManufactured")) {
+            Boolean v = getBool(m, "glassManufactured");
+            if (v != null) p.setGlassManufactured(v);
+        }
+        if (m.containsKey("glass_manufactured")) {
+            Boolean v = getBool(m, "glass_manufactured");
+            if (v != null) p.setGlassManufactured(v);
+        }
     }
 
     /**

@@ -13,5 +13,7 @@
     <include file="db/changelog/changes/0210-ytb-favorites-tables.xml" relativeToChangelogFile="false"/>
     <!-- Ensure favorites tables' id are AUTO_INCREMENT -->
     <include file="db/changelog/changes/0215-ytb-favorites-id-auto-increment.xml" relativeToChangelogFile="false"/>
+    <!-- Add favorite flag to AI call history -->
+    <include file="db/changelog/changes/0220-ai-call-history-favorite-column.xml" relativeToChangelogFile="false"/>
 
 </databaseChangeLog>

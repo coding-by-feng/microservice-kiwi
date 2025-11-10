@@ -1,12 +1,8 @@
 package me.fengorz.kiwi.ai.api.model.response;
 
-import lombok.Data;
-import lombok.experimental.Accessors;
 import me.fengorz.kiwi.ai.api.model.request.YtbSubtitleRequest;
 import me.fengorz.kiwi.common.api.ws.WsConstants;
 
-@Data
-@Accessors(chain = true)
 public class YtbSubtitleResponse {
 
     private String type;
@@ -27,26 +23,38 @@ public class YtbSubtitleResponse {
         this.timestamp = System.currentTimeMillis();
     }
 
+    // Getters
+    public String getType() { return type; }
+    public String getMessage() { return message; }
+    public String getChunk() { return chunk; }
+    public String getFullContent() { return fullContent; }
+    public String getErrorCode() { return errorCode; }
+    public Long getTimestamp() { return timestamp; }
+    public Long getProcessingDuration() { return processingDuration; }
+    public YtbSubtitleRequest getOriginalRequest() { return originalRequest; }
+    public Integer getCurrentStep() { return currentStep; }
+    public Integer getTotalSteps() { return totalSteps; }
+    public String getCurrentStepDescription() { return currentStepDescription; }
+
+    // Chainable setters
+    public YtbSubtitleResponse setType(String type) { this.type = type; return this; }
+    public YtbSubtitleResponse setMessage(String message) { this.message = message; return this; }
+    public YtbSubtitleResponse setChunk(String chunk) { this.chunk = chunk; return this; }
+    public YtbSubtitleResponse setFullContent(String fullContent) { this.fullContent = fullContent; return this; }
+    public YtbSubtitleResponse setErrorCode(String errorCode) { this.errorCode = errorCode; return this; }
+    public YtbSubtitleResponse setTimestamp(Long timestamp) { this.timestamp = timestamp; return this; }
+    public YtbSubtitleResponse setProcessingDuration(Long processingDuration) { this.processingDuration = processingDuration; return this; }
+    public YtbSubtitleResponse setOriginalRequest(YtbSubtitleRequest originalRequest) { this.originalRequest = originalRequest; return this; }
+    public YtbSubtitleResponse setCurrentStep(Integer currentStep) { this.currentStep = currentStep; return this; }
+    public YtbSubtitleResponse setTotalSteps(Integer totalSteps) { this.totalSteps = totalSteps; return this; }
+    public YtbSubtitleResponse setCurrentStepDescription(String currentStepDescription) { this.currentStepDescription = currentStepDescription; return this; }
+
     // Convenience type checking methods
-    public boolean ifConnected() {
-        return WsConstants.TYPE_CONNECTED.equals(type);
-    }
-
-    public boolean ifStarted() {
-        return WsConstants.TYPE_STARTED.equals(type);
-    }
-
-    public boolean ifChunk() {
-        return WsConstants.TYPE_CHUNK.equals(type);
-    }
-
-    public boolean ifCompleted() {
-        return WsConstants.TYPE_COMPLETED.equals(type);
-    }
-
-    public boolean ifError() {
-        return WsConstants.TYPE_ERROR.equals(type);
-    }
+    public boolean ifConnected() { return WsConstants.TYPE_CONNECTED.equals(type); }
+    public boolean ifStarted() { return WsConstants.TYPE_STARTED.equals(type); }
+    public boolean ifChunk() { return WsConstants.TYPE_CHUNK.equals(type); }
+    public boolean ifCompleted() { return WsConstants.TYPE_COMPLETED.equals(type); }
+    public boolean ifError() { return WsConstants.TYPE_ERROR.equals(type); }
 
     // Factory methods for different response types
     public static YtbSubtitleResponse connected(String message) {

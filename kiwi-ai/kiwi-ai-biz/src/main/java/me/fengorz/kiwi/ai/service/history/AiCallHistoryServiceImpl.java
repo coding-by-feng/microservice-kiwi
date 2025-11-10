@@ -88,6 +88,7 @@ public class AiCallHistoryServiceImpl extends ServiceImpl<AiCallHistoryMapper, A
                     .setTimestamp(requestTimestamp)
                     .setIsDelete(false)
                     .setIsArchive(false)
+                    .setIsFavorite(false)
                     .setCreateTime(LocalDateTime.now());
 
             // Save to database
@@ -118,6 +119,9 @@ public class AiCallHistoryServiceImpl extends ServiceImpl<AiCallHistoryMapper, A
                 break;
             case ARCHIVED:
                 queryWrapper.eq(AiCallHistoryDO::getIsArchive, true);
+                break;
+            case FAVORITE:
+                queryWrapper.eq(AiCallHistoryDO::getIsFavorite, true);
                 break;
             case ALL:
                 // No additional filter for archive status
@@ -260,6 +264,37 @@ public class AiCallHistoryServiceImpl extends ServiceImpl<AiCallHistoryMapper, A
         } catch (Exception e) {
             log.error("Error deleting AI call history record - ID: {}, User: {}, Error: {}", 
                     id, userId, e.getMessage(), e);
+            return false;
+        }
+    }
+
+    @Override
+    public boolean setFavoriteStatus(Long id, Long userId, Boolean favorite) {
+        log.info("Setting favorite status - ID: {}, User: {}, favorite: {}", id, userId, favorite);
+        try {
+            AiCallHistoryDO existingRecord = this.getOne(new LambdaQueryWrapper<AiCallHistoryDO>()
+                    .eq(AiCallHistoryDO::getId, id)
+                    .eq(AiCallHistoryDO::getUserId, userId)
+                    .eq(AiCallHistoryDO::getIsDelete, false));
+            if (existingRecord == null) {
+                log.warn("Record not found or not owned by user - ID: {}, User: {}", id, userId);
+                return false;
+            }
+            if (favorite != null && favorite.equals(existingRecord.getIsFavorite())) {
+                log.info("Favorite status unchanged - ID: {}", id);
+                return true;
+            }
+            existingRecord.setIsFavorite(Boolean.TRUE.equals(favorite));
+            existingRecord.setUpdateTime(LocalDateTime.now());
+            boolean result = this.updateById(existingRecord);
+            if (result) {
+                log.info("Favorite status updated - ID: {}", id);
+            } else {
+                log.error("Failed to update favorite status - ID: {}", id);
+            }
+            return result;
+        } catch (Exception e) {
+            log.error("Error updating favorite status - ID: {}, User: {}, Error: {}", id, userId, e.getMessage(), e);
             return false;
         }
     }

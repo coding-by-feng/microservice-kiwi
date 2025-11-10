@@ -73,6 +73,11 @@ public class AiCallHistoryDO implements Serializable {
     private Boolean isArchive;
 
     /**
+     * Favorite flag (0: not favorite, 1: favorite)
+     */
+    private Boolean isFavorite;
+
+    /**
      * Record creation time
      */
     private LocalDateTime createTime;

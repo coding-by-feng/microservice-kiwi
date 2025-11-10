@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.ai.api.entity.AiCallHistoryDO;
 import me.fengorz.kiwi.ai.api.enums.HistoryFilterEnum;
+import me.fengorz.kiwi.ai.api.model.request.Favorite;
 import me.fengorz.kiwi.ai.api.vo.AiCallHistoryVO;
 import me.fengorz.kiwi.ai.api.vo.AiResponseVO;
 import me.fengorz.kiwi.ai.service.AiChatService;
@@ -212,6 +213,38 @@ public class AiController extends BaseController {
         } catch (Exception e) {
             log.error("Error deleting history item with ID {}: {}", id, e.getMessage(), e);
             return R.failed("Failed to delete history item");
+        }
+    }
+
+    /**
+     * Set favorite status for an AI call history item
+     *
+     * @param id History item ID
+     * @param favorite Favorite request body
+     * @return Success or failure response
+     */
+    @LogMarker
+    @PutMapping("/history/{id}/favorite")
+    public R<String> setFavorite(@PathVariable("id") Long id, @RequestBody Favorite favorite) {
+        try {
+            Integer userId = getCurrentUserId();
+            if (userId == null) {
+                return R.failed("User not authenticated");
+            }
+            if (id == null || id <= 0) {
+                return R.failed("Invalid history item ID");
+            }
+            if (favorite == null || favorite.getFavorite() == null) {
+                return R.failed("Favorite status is required");
+            }
+            boolean result = aiCallHistoryService.setFavoriteStatus(id, Long.valueOf(userId), favorite.getFavorite());
+            if (result) {
+                return R.success(favorite.getFavorite() ? "Marked as favorite" : "Unmarked as favorite");
+            }
+            return R.failed("Failed to update favorite status. Item may not exist or doesn't belong to current user.");
+        } catch (Exception e) {
+            log.error("Error setting favorite status for ID {}: {}", id, e.getMessage(), e);
+            return R.failed("Failed to update favorite status");
         }
     }
 

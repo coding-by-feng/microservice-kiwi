@@ -58,4 +58,9 @@ public class AiCallHistoryVO implements Serializable {
      * Record creation time
      */
     private LocalDateTime createTime;
+
+    /**
+     * Whether this history item is marked favorite
+     */
+    private Boolean isFavorite;
 }

@@ -1,9 +1,5 @@
 package me.fengorz.kiwi.ai.api.model.response;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.experimental.SuperBuilder;
 import me.fengorz.kiwi.ai.api.model.request.AiStreamingRequest;
 import me.fengorz.kiwi.common.api.ws.WsConstants;
 
@@ -15,10 +11,6 @@ import java.io.Serializable;
  * @Author Kason Zhan
  * @Date 06/03/2025
  */
-@Data
-@SuperBuilder
-@NoArgsConstructor
-@AllArgsConstructor
 public class AiStreamingResponse implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -78,6 +70,34 @@ public class AiStreamingResponse implements Serializable {
      */
     private String metadata;
 
+    public AiStreamingResponse() {}
+
+    // Getters
+    public String getType() { return type; }
+    public String getMessage() { return message; }
+    public String getChunk() { return chunk; }
+    public Integer getChunkIndex() { return chunkIndex; }
+    public Integer getTotalChunks() { return totalChunks; }
+    public String getFullResponse() { return fullResponse; }
+    public Long getTimestamp() { return timestamp; }
+    public AiStreamingRequest getRequest() { return request; }
+    public Long getProcessingDuration() { return processingDuration; }
+    public String getErrorCode() { return errorCode; }
+    public String getMetadata() { return metadata; }
+
+    // Chainable setters
+    public AiStreamingResponse setType(String type) { this.type = type; return this; }
+    public AiStreamingResponse setMessage(String message) { this.message = message; return this; }
+    public AiStreamingResponse setChunk(String chunk) { this.chunk = chunk; return this; }
+    public AiStreamingResponse setChunkIndex(Integer chunkIndex) { this.chunkIndex = chunkIndex; return this; }
+    public AiStreamingResponse setTotalChunks(Integer totalChunks) { this.totalChunks = totalChunks; return this; }
+    public AiStreamingResponse setFullResponse(String fullResponse) { this.fullResponse = fullResponse; return this; }
+    public AiStreamingResponse setTimestamp(Long timestamp) { this.timestamp = timestamp; return this; }
+    public AiStreamingResponse setRequest(AiStreamingRequest request) { this.request = request; return this; }
+    public AiStreamingResponse setProcessingDuration(Long processingDuration) { this.processingDuration = processingDuration; return this; }
+    public AiStreamingResponse setErrorCode(String errorCode) { this.errorCode = errorCode; return this; }
+    public AiStreamingResponse setMetadata(String metadata) { this.metadata = metadata; return this; }
+
     // Convenience methods for type checking
 
     public boolean ifError() {
@@ -102,80 +122,72 @@ public class AiStreamingResponse implements Serializable {
 
     // Convenience factory methods
     public static AiStreamingResponse connected(String message) {
-        return AiStreamingResponse.builder()
-                .type(WsConstants.TYPE_CONNECTED)
-                .message(message)
-                .timestamp(System.currentTimeMillis())
-                .build();
+        return new AiStreamingResponse()
+                .setType(WsConstants.TYPE_CONNECTED)
+                .setMessage(message)
+                .setTimestamp(System.currentTimeMillis());
     }
 
     public static AiStreamingResponse started(String message, AiStreamingRequest request) {
-        return AiStreamingResponse.builder()
-                .type(WsConstants.TYPE_STARTED)
-                .message(message)
-                .request(request)
-                .timestamp(System.currentTimeMillis())
-                .build();
+        return new AiStreamingResponse()
+                .setType(WsConstants.TYPE_STARTED)
+                .setMessage(message)
+                .setRequest(request)
+                .setTimestamp(System.currentTimeMillis());
     }
 
     public static AiStreamingResponse chunk(String chunk, AiStreamingRequest request) {
-        return AiStreamingResponse.builder()
-                .type(WsConstants.TYPE_CHUNK)
-                .chunk(chunk)
-                .request(request)
-                .timestamp(System.currentTimeMillis())
-                .build();
+        return new AiStreamingResponse()
+                .setType(WsConstants.TYPE_CHUNK)
+                .setChunk(chunk)
+                .setRequest(request)
+                .setTimestamp(System.currentTimeMillis());
     }
 
     public static AiStreamingResponse chunk(String chunk, Integer chunkIndex, Integer totalChunks, AiStreamingRequest request) {
-        return AiStreamingResponse.builder()
-                .type(WsConstants.TYPE_CHUNK)
-                .chunk(chunk)
-                .chunkIndex(chunkIndex)
-                .totalChunks(totalChunks)
-                .request(request)
-                .timestamp(System.currentTimeMillis())
-                .build();
+        return new AiStreamingResponse()
+                .setType(WsConstants.TYPE_CHUNK)
+                .setChunk(chunk)
+                .setChunkIndex(chunkIndex)
+                .setTotalChunks(totalChunks)
+                .setRequest(request)
+                .setTimestamp(System.currentTimeMillis());
     }
 
     public static AiStreamingResponse completed(String message, AiStreamingRequest request, String fullResponse) {
-        return AiStreamingResponse.builder()
-                .type(WsConstants.TYPE_COMPLETED)
-                .message(message)
-                .request(request)
-                .fullResponse(fullResponse)
-                .timestamp(System.currentTimeMillis())
-                .build();
+        return new AiStreamingResponse()
+                .setType(WsConstants.TYPE_COMPLETED)
+                .setMessage(message)
+                .setRequest(request)
+                .setFullResponse(fullResponse)
+                .setTimestamp(System.currentTimeMillis());
     }
 
     public static AiStreamingResponse completed(String message, AiStreamingRequest request, String fullResponse, Long processingDuration) {
-        return AiStreamingResponse.builder()
-                .type(WsConstants.TYPE_COMPLETED)
-                .message(message)
-                .request(request)
-                .fullResponse(fullResponse)
-                .processingDuration(processingDuration)
-                .timestamp(System.currentTimeMillis())
-                .build();
+        return new AiStreamingResponse()
+                .setType(WsConstants.TYPE_COMPLETED)
+                .setMessage(message)
+                .setRequest(request)
+                .setFullResponse(fullResponse)
+                .setProcessingDuration(processingDuration)
+                .setTimestamp(System.currentTimeMillis());
     }
 
     public static AiStreamingResponse error(String message, AiStreamingRequest request) {
-        return AiStreamingResponse.builder()
-                .type(WsConstants.TYPE_ERROR)
-                .message(message)
-                .request(request)
-                .timestamp(System.currentTimeMillis())
-                .build();
+        return new AiStreamingResponse()
+                .setType(WsConstants.TYPE_ERROR)
+                .setMessage(message)
+                .setRequest(request)
+                .setTimestamp(System.currentTimeMillis());
     }
 
     public static AiStreamingResponse error(String message, String errorCode, AiStreamingRequest request) {
-        return AiStreamingResponse.builder()
-                .type(WsConstants.TYPE_ERROR)
-                .message(message)
-                .errorCode(errorCode)
-                .request(request)
-                .timestamp(System.currentTimeMillis())
-                .build();
+        return new AiStreamingResponse()
+                .setType(WsConstants.TYPE_ERROR)
+                .setMessage(message)
+                .setErrorCode(errorCode)
+                .setRequest(request)
+                .setTimestamp(System.currentTimeMillis());
     }
 
     /**

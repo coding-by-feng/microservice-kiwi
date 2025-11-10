@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet id="20251111-01-add-ai-call-history-favorite-column" author="kason">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="ai_call_history" columnName="is_favorite"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="ai_call_history">
+            <column name="is_favorite" type="TINYINT(1)" defaultValueNumeric="0" remarks="Favorite flag (0: not favorite, 1: favorite)">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+        <modifySql dbms="mysql">
+            <append value=" COMMENT 'Favorite flag (0: not favorite, 1: favorite)'"/>
+        </modifySql>
+    </changeSet>
+
+    <changeSet id="20251111-02-add-index-user-favorite" author="kason">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <indexExists tableName="ai_call_history" indexName="idx_ai_call_history_user_favorite"/>
+            </not>
+        </preConditions>
+        <createIndex tableName="ai_call_history" indexName="idx_ai_call_history_user_favorite">
+            <column name="user_id"/>
+            <column name="is_favorite"/>
+        </createIndex>
+    </changeSet>
+</databaseChangeLog>
+

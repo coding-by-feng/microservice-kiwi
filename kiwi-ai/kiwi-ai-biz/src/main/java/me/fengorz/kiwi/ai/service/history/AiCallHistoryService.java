@@ -60,4 +60,14 @@ public interface AiCallHistoryService extends IService<AiCallHistoryDO> {
      * @return true if deleted successfully, false otherwise
      */
     boolean deleteCallHistory(Long id, Long userId);
+
+    /**
+     * Set favorite status for a history record
+     *
+     * @param id       record ID
+     * @param userId   user ID
+     * @param favorite desired favorite status (true mark favorite, false unmark)
+     * @return true if updated
+     */
+    boolean setFavoriteStatus(Long id, Long userId, Boolean favorite);
 }

@@ -276,10 +276,10 @@ services:
           sleep 10
         done
         # Stagger after kiwi-ai-biz (assumed 3 minutes) to avoid overlap; total 6 minutes after kiwi-word-biz
-        echo "kiwi-auth is healthy. Delaying 360s (6 minutes) before starting kiwi-tools-biz..."
-        sleep 360
+        echo "kiwi-auth is healthy. Delaying 60s (6 minutes) before starting kiwi-tools-biz..."
+        sleep 60
         echo "Starting kiwi-tools-biz..."
-        exec java -jar -Xmx256m \
+        exec java -jar -Xmx700m \
           -Duser.timezone=GMT+12 \
           -Dspring.profiles.active=prod \
           -Dlogging.file.name=/logs/tools-biz.log \

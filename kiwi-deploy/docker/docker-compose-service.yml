@@ -228,8 +228,8 @@ services:
           sleep 10
         done
         # To avoid overlapping with kiwi-word-biz startup (assumed 3 minutes), delay 180s
-        echo "kiwi-auth is healthy. Delaying 180s (3 minutes) before starting kiwi-ai-biz..."
-        sleep 180
+        echo "kiwi-auth is healthy. Delaying 360s (6˚ minutes) before starting kiwi-ai-biz..."
+        sleep 360
         echo "Starting kiwi-ai-biz..."
         export JAVA_OPTS="-Xms512m -Xmx1048m -XX:+UseG1GC -XX:MaxGCPauseMillis=200"
         export TZ=Pacific/Auckland
@@ -276,8 +276,8 @@ services:
           sleep 10
         done
         # Stagger after kiwi-ai-biz (assumed 3 minutes) to avoid overlap; total 6 minutes after kiwi-word-biz
-        echo "kiwi-auth is healthy. Delaying 60s (6 minutes) before starting kiwi-tools-biz..."
-        sleep 60
+        echo "kiwi-auth is healthy. Delaying 20s (6 minutes) before starting kiwi-tools-biz..."
+        sleep 20
         echo "Starting kiwi-tools-biz..."
         exec java -jar -Xmx700m \
           -Duser.timezone=GMT+12 \

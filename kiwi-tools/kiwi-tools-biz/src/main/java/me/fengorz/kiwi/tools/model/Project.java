@@ -38,11 +38,9 @@ public class Project {
 
     private String progressNote; // text
 
+    private String changeNote; // 项目变更
+
     private LocalDateTime createdAt; // ISO 8601 UTC
 
     private Boolean archived; // default in DB is false
-
-    // New fields
-    private Boolean glassOrdered; // default false
-    private Boolean glassManufactured; // default false
 }

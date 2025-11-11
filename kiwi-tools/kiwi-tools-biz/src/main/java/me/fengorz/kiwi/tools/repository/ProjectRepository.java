@@ -36,13 +36,7 @@ public class ProjectRepository {
         if (p.getArchived() == null) {
             p.setArchived(false);
         }
-        // default new flags so API response reflects DB defaults
-        if (p.getGlassOrdered() == null) {
-            p.setGlassOrdered(false);
-        }
-        if (p.getGlassManufactured() == null) {
-            p.setGlassManufactured(false);
-        }
+        // removed legacy glass flags initialization
         mapper.insert(p);
         return p;
     }

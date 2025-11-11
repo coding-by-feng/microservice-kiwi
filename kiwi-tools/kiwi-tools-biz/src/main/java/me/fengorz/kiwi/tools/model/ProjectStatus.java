@@ -11,9 +11,11 @@ import java.util.Locale;
 
 @Getter
 public enum ProjectStatus implements IEnum<String> {
-    NOT_STARTED("not_started", "未开始"),
-    IN_PROGRESS("in_progress", "施工中"),
-    COMPLETED("completed", "完成");
+    GLASS_ORDERED("glass_ordered", "玻璃已下单"),
+    DOORS_WINDOWS_PRODUCED("doors_windows_produced", "门窗已生产"),
+    DOORS_WINDOWS_DELIVERED("doors_windows_delivered", "门窗已送货"),
+    DOORS_WINDOWS_INSTALLED("doors_windows_installed", "门窗已安装"),
+    FINAL_PAYMENT_RECEIVED("final_payment_received", "尾款已收到");
 
     @EnumValue
     private final String code;
@@ -30,36 +32,45 @@ public enum ProjectStatus implements IEnum<String> {
         return code;
     }
 
-    public static me.fengorz.kiwi.tools.model.project.ProjectStatus fromCode(String code) {
+    public static ProjectStatus fromCode(String code) {
         if (code == null || code.isEmpty()) return null;
         String c = code.trim().toLowerCase(Locale.ROOT);
-        for (me.fengorz.kiwi.tools.model.project.ProjectStatus s : values()) {
+        for (ProjectStatus s : values()) {
             if (s.code.equals(c)) return s;
         }
         return null;
     }
 
     @JsonCreator
-    public static me.fengorz.kiwi.tools.model.project.ProjectStatus fromInput(Object input) {
+    public static ProjectStatus fromInput(Object input) {
         if (input == null) return null;
         String s = String.valueOf(input).trim();
-        // try code first
-        me.fengorz.kiwi.tools.model.project.ProjectStatus byCode = fromCode(s);
+        switch (s.toLowerCase(Locale.ROOT)) {
+            case "not_started": return GLASS_ORDERED;
+            case "in_progress": return DOORS_WINDOWS_PRODUCED;
+            case "completed": return FINAL_PAYMENT_RECEIVED;
+        }
+        ProjectStatus byCode = fromCode(s);
         if (byCode != null) return byCode;
-        // accept legacy Chinese values
         switch (s) {
-            case "未开始":
-                return NOT_STARTED;
+            case "玻璃已下单": return GLASS_ORDERED;
+            case "门窗已生产": return DOORS_WINDOWS_PRODUCED;
+            case "门窗已送货": return DOORS_WINDOWS_DELIVERED;
+            case "门窗已安装": return DOORS_WINDOWS_INSTALLED;
+            case "尾款已收到": return FINAL_PAYMENT_RECEIVED;
+            case "未开始": return GLASS_ORDERED;
             case "进行中":
-            case "施工中":
-                return IN_PROGRESS;
+            case "施工中": return DOORS_WINDOWS_PRODUCED;
             case "已完成":
-            case "完成":
-                return COMPLETED;
+            case "完成": return FINAL_PAYMENT_RECEIVED;
             default:
-                try {
-                    return me.fengorz.kiwi.tools.model.project.ProjectStatus.valueOf(s.toUpperCase(Locale.ROOT));
-                } catch (Exception ignored) {}
+                String u = s.toUpperCase(Locale.ROOT);
+                if (u.contains("GLASS") && u.contains("ORDER")) return GLASS_ORDERED;
+                if ((u.contains("DOOR") || u.contains("WINDOW")) && (u.contains("PRODUCED") || u.contains("MADE") || u.contains("MANUFACTURED"))) return DOORS_WINDOWS_PRODUCED;
+                if ((u.contains("DOOR") || u.contains("WINDOW")) && u.contains("DELIVER")) return DOORS_WINDOWS_DELIVERED;
+                if ((u.contains("DOOR") || u.contains("WINDOW")) && u.contains("INSTALL")) return DOORS_WINDOWS_INSTALLED;
+                if (u.contains("FINAL") && (u.contains("RECEIV") || u.contains("PAID") || u.contains("PAYMENT"))) return FINAL_PAYMENT_RECEIVED;
+                try { return ProjectStatus.valueOf(u); } catch (Exception ignored) {}
         }
         return null;
     }
@@ -69,6 +80,6 @@ public enum ProjectStatus implements IEnum<String> {
     }
 
     public static String[] allowedCodes() {
-        return Arrays.stream(values()).map(me.fengorz.kiwi.tools.model.project.ProjectStatus::getCode).toArray(String[]::new);
+        return Arrays.stream(values()).map(ProjectStatus::getCode).toArray(String[]::new);
     }
 }

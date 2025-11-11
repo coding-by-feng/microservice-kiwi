@@ -19,17 +19,22 @@ public class ProjectStatusNormalizer {
     @PostConstruct
     public void normalize() {
         try {
-            // 未开始 -> not_started
-            mapper.update(new Project(), new UpdateWrapper<Project>().eq("status", "未开始").set("status", "not_started"));
-            // 进行中/施工中 -> in_progress
-            mapper.update(new Project(), new UpdateWrapper<Project>().eq("status", "进行中").set("status", "in_progress"));
-            mapper.update(new Project(), new UpdateWrapper<Project>().eq("status", "施工中").set("status", "in_progress"));
-            // 已完成/完成 -> completed
-            mapper.update(new Project(), new UpdateWrapper<Project>().eq("status", "已完成").set("status", "completed"));
-            mapper.update(new Project(), new UpdateWrapper<Project>().eq("status", "完成").set("status", "completed"));
+            // Map legacy textual statuses to new codes
+            // 未开始/legacy not_started -> glass_ordered
+            mapper.update(new Project(), new UpdateWrapper<Project>().eq("status", "未开始").set("status", "glass_ordered"));
+            mapper.update(new Project(), new UpdateWrapper<Project>().eq("status", "not_started").set("status", "glass_ordered"));
+
+            // 进行中/施工中/legacy in_progress -> doors_windows_produced
+            mapper.update(new Project(), new UpdateWrapper<Project>().eq("status", "进行中").set("status", "doors_windows_produced"));
+            mapper.update(new Project(), new UpdateWrapper<Project>().eq("status", "施工中").set("status", "doors_windows_produced"));
+            mapper.update(new Project(), new UpdateWrapper<Project>().eq("status", "in_progress").set("status", "doors_windows_produced"));
+
+            // 已完成/完成/legacy completed -> final_payment_received
+            mapper.update(new Project(), new UpdateWrapper<Project>().eq("status", "已完成").set("status", "final_payment_received"));
+            mapper.update(new Project(), new UpdateWrapper<Project>().eq("status", "完成").set("status", "final_payment_received"));
+            mapper.update(new Project(), new UpdateWrapper<Project>().eq("status", "completed").set("status", "final_payment_received"));
         } catch (Exception e) {
             log.warn("Project status normalization skipped ({}).", e.toString());
         }
     }
 }
-

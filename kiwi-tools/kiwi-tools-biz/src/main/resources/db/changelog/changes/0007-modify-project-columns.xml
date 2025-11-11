@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet id="0007-modify-project-columns" author="tools-biz">
+        <!-- Add new change_note text column if missing -->
+        <preConditions onFail="CONTINUE">
+            <not>
+                <columnExists tableName="project" columnName="change_note"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="project">
+            <column name="change_note" type="TEXT"/>
+        </addColumn>
+        <rollback>
+            <dropColumn tableName="project" columnName="change_note"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="0007-drop-glass-flags" author="tools-biz">
+        <!-- Drop legacy glass flags if they exist -->
+        <preConditions onFail="MARK_RAN">
+            <or>
+                <columnExists tableName="project" columnName="glass_ordered"/>
+                <columnExists tableName="project" columnName="glass_manufactured"/>
+            </or>
+        </preConditions>
+        <dropColumn tableName="project" columnName="glass_manufactured"/>
+        <dropColumn tableName="project" columnName="glass_ordered"/>
+        <rollback>
+            <addColumn tableName="project">
+                <column name="glass_ordered" type="BOOLEAN" defaultValueBoolean="false">
+                    <constraints nullable="false"/>
+                </column>
+                <column name="glass_manufactured" type="BOOLEAN" defaultValueBoolean="false">
+                    <constraints nullable="false"/>
+                </column>
+            </addColumn>
+        </rollback>
+    </changeSet>
+</databaseChangeLog>
+

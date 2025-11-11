@@ -145,26 +145,11 @@ public class ProjectService {
         if (m.containsKey("today_task")) p.setTodayTask(getStr(m, "today_task"));
         if (m.containsKey("progressNote")) p.setProgressNote(getStr(m, "progressNote"));
         if (m.containsKey("progress_note")) p.setProgressNote(getStr(m, "progress_note"));
+        if (m.containsKey("changeNote")) p.setChangeNote(getStr(m, "changeNote"));
+        if (m.containsKey("change_note")) p.setChangeNote(getStr(m, "change_note"));
         if (m.containsKey("archived")) {
             Boolean a = getBool(m, "archived");
             if (a != null) p.setArchived(a);
-        }
-        // new flags
-        if (m.containsKey("glassOrdered")) {
-            Boolean v = getBool(m, "glassOrdered");
-            if (v != null) p.setGlassOrdered(v);
-        }
-        if (m.containsKey("glass_ordered")) {
-            Boolean v = getBool(m, "glass_ordered");
-            if (v != null) p.setGlassOrdered(v);
-        }
-        if (m.containsKey("glassManufactured")) {
-            Boolean v = getBool(m, "glassManufactured");
-            if (v != null) p.setGlassManufactured(v);
-        }
-        if (m.containsKey("glass_manufactured")) {
-            Boolean v = getBool(m, "glass_manufactured");
-            if (v != null) p.setGlassManufactured(v);
         }
     }
 
@@ -216,7 +201,7 @@ public class ProjectService {
         }
 
         // status default + validate
-        if (p.getStatus() == null) p.setStatus(ProjectStatus.NOT_STARTED);
+        if (p.getStatus() == null) p.setStatus(ProjectStatus.GLASS_ORDERED);
         if (p.getStatus() == null)
             throw new ToolsException(HttpStatus.BAD_REQUEST, "validation_error", "invalid status");
 

@@ -4,7 +4,8 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
-    <changeSet id="0006-add-project-glass-flags" author="tools-biz">
+    <!-- Obsolete: glass_* flags removed from model. Keep rollback only. -->
+    <changeSet id="0006-add-project-glass-flags" author="tools-biz" runOnChange="true" context="skip">
         <preConditions onFail="MARK_RAN">
             <not>
                 <columnExists tableName="project" columnName="glass_ordered"/>
@@ -27,4 +28,3 @@
     </changeSet>
 
 </databaseChangeLog>
-

@@ -31,7 +31,7 @@ public class ExportService {
             Sheet sheet = workbook.createSheet("施工安排表");
             String[] headers = new String[]{
                 "项目ID", "项目编号", "项目名称", "客户", "客户电话", "地址", "销售", "安装", "团队成员",
-                "开始日期", "结束日期", "状态", "今日任务", "进度备注", "创建时间", "已归档", "玻璃已下单", "玻璃已生产"
+                "开始日期", "结束日期", "状态", "今日任务", "进度备注", "项目变更", "创建时间", "已归档"
             };
             Row header = sheet.createRow(0);
             XSSFFont font = workbook.createFont();
@@ -60,10 +60,9 @@ public class ExportService {
                 row.createCell(11).setCellValue(p.getStatus() == null ? "" : p.getStatus().getLabelZh());
                 row.createCell(12).setCellValue(nvl(p.getTodayTask()));
                 row.createCell(13).setCellValue(nvl(p.getProgressNote()));
-                row.createCell(14).setCellValue(formatDateTime(p));
-                row.createCell(15).setCellValue(yn(p.getArchived()));
-                row.createCell(16).setCellValue(yn(p.getGlassOrdered()));
-                row.createCell(17).setCellValue(yn(p.getGlassManufactured()));
+                row.createCell(14).setCellValue(nvl(p.getChangeNote()));
+                row.createCell(15).setCellValue(formatDateTime(p));
+                row.createCell(16).setCellValue(yn(p.getArchived()));
             }
             for (int i = 0; i < headers.length; i++) sheet.autoSizeColumn(i);
             workbook.write(out);
@@ -161,7 +160,8 @@ public class ExportService {
                     yn(p.getArchived()),
                     formatDateTime(p)
                 };
-                String detail = "任务: " + nvl(p.getTodayTask()) + " | 备注: " + nvl(p.getProgressNote());
+                String detail = "任务: " + nvl(p.getTodayTask()) + " | 备注: " + nvl(p.getProgressNote()) +
+                                " | 变更: " + nvl(p.getChangeNote());
 
                 // Wrap each cell to fit width (max 2 lines for cells; detail can be multi-line)
                 List<List<String>> wrappedCells = new ArrayList<>();

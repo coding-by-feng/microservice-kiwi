@@ -51,15 +51,12 @@ public class ProjectResponse {
     @ApiModelProperty(value = "Progress note")
     private String progressNote;
 
+    @ApiModelProperty(value = "Project change note (项目变更)")
+    private String changeNote;
+
     @ApiModelProperty(value = "Creation timestamp (ISO 8601)")
     private LocalDateTime createdAt;
 
     @ApiModelProperty(value = "Archive flag")
     private Boolean archived;
-
-    @ApiModelProperty(value = "Whether window glass has been ordered", example = "false")
-    private Boolean glassOrdered;
-
-    @ApiModelProperty(value = "Whether window glass has been manufactured", example = "false")
-    private Boolean glassManufactured;
 }

@@ -45,9 +45,6 @@ public abstract class ProjectBaseRequest {
     @ApiModelProperty(value = "Progress note", example = "Tile delivered")
     private String progressNote;
 
-    @ApiModelProperty(value = "Whether window glass has been ordered", example = "false")
-    private Boolean glassOrdered;
-
-    @ApiModelProperty(value = "Whether window glass has been manufactured", example = "false")
-    private Boolean glassManufactured;
+    @ApiModelProperty(value = "Project change note (项目变更)", example = "Scope updated: add balcony door")
+    private String changeNote;
 }

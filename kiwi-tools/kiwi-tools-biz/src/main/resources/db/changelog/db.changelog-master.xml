@@ -22,4 +22,6 @@
     <!-- Drop idempotency columns and indexes from todo tables -->
     <include file="db/changelog/changes/0101-drop-idempotency-columns.xml" relativeToChangelogFile="false"/>
 
+    <!-- Add per-status timestamp columns to project -->
+    <include file="db/changelog/changes/0008-add-project-status-timestamps.xml" relativeToChangelogFile="false"/>
 </databaseChangeLog>

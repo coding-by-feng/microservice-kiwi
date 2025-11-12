@@ -59,4 +59,16 @@ public class ProjectResponse {
 
     @ApiModelProperty(value = "Archive flag")
     private Boolean archived;
+
+    // New per-status timestamps
+    @ApiModelProperty(value = "Timestamp when status first became glass_ordered")
+    private LocalDateTime glassOrderedAt;
+    @ApiModelProperty(value = "Timestamp when status first became doors_windows_produced")
+    private LocalDateTime doorsWindowsProducedAt;
+    @ApiModelProperty(value = "Timestamp when status first became doors_windows_delivered")
+    private LocalDateTime doorsWindowsDeliveredAt;
+    @ApiModelProperty(value = "Timestamp when status first became doors_windows_installed")
+    private LocalDateTime doorsWindowsInstalledAt;
+    @ApiModelProperty(value = "Timestamp when status first became final_payment_received")
+    private LocalDateTime finalPaymentReceivedAt;
 }

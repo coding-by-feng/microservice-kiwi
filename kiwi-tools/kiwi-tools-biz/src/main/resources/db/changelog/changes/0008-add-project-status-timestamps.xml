@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet id="0008-add-project-status-timestamps" author="tools-biz">
+        <preConditions onFail="CONTINUE">
+            <not>
+                <columnExists tableName="project" columnName="glass_ordered_at"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="project">
+            <column name="glass_ordered_at" type="TIMESTAMP"/>
+            <column name="doors_windows_produced_at" type="TIMESTAMP"/>
+            <column name="doors_windows_delivered_at" type="TIMESTAMP"/>
+            <column name="doors_windows_installed_at" type="TIMESTAMP"/>
+            <column name="final_payment_received_at" type="TIMESTAMP"/>
+        </addColumn>
+        <rollback>
+            <dropColumn tableName="project" columnName="final_payment_received_at"/>
+            <dropColumn tableName="project" columnName="doors_windows_installed_at"/>
+            <dropColumn tableName="project" columnName="doors_windows_delivered_at"/>
+            <dropColumn tableName="project" columnName="doors_windows_produced_at"/>
+            <dropColumn tableName="project" columnName="glass_ordered_at"/>
+        </rollback>
+    </changeSet>
+</databaseChangeLog>
+

@@ -86,6 +86,12 @@ public final class ProjectDtoMapper {
         r.setChangeNote(p.getChangeNote());
         r.setCreatedAt(p.getCreatedAt());
         r.setArchived(p.getArchived());
+        // New status timestamp fields
+        r.setGlassOrderedAt(p.getGlassOrderedAt());
+        r.setDoorsWindowsProducedAt(p.getDoorsWindowsProducedAt());
+        r.setDoorsWindowsDeliveredAt(p.getDoorsWindowsDeliveredAt());
+        r.setDoorsWindowsInstalledAt(p.getDoorsWindowsInstalledAt());
+        r.setFinalPaymentReceivedAt(p.getFinalPaymentReceivedAt());
         return r;
     }
 

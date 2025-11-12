@@ -23,4 +23,11 @@ public class Project {
     private String changeNote; // 项目变更
     private LocalDateTime createdAt; // ISO 8601 UTC
     private Boolean archived; // default in DB is false
+
+    // New: status transition timestamps (first time reaching each status)
+    private LocalDateTime glassOrderedAt; // when status becomes glass_ordered
+    private LocalDateTime doorsWindowsProducedAt; // when status becomes doors_windows_produced
+    private LocalDateTime doorsWindowsDeliveredAt; // when status becomes doors_windows_delivered
+    private LocalDateTime doorsWindowsInstalledAt; // when status becomes doors_windows_installed
+    private LocalDateTime finalPaymentReceivedAt; // when status becomes final_payment_received
 }

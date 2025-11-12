@@ -81,6 +81,8 @@ public class ProjectService {
     public Project create(Project in) {
         validateProject(in, true);
         in.setCreatedAt(LocalDateTime.now());
+        // Initialize status timestamp for current status if not set
+        applyStatusTimestampIfNeeded(null, in);
         return repo.save(in);
     }
 
@@ -90,8 +92,11 @@ public class ProjectService {
      */
     public Project update(String id, Map<String, Object> patch) {
         Project existing = get(id);
+        ProjectStatus oldStatus = existing.getStatus();
         applyPatch(existing, patch);
         validateProject(existing, false);
+        // If status changed, set first-time timestamp for the new status
+        applyStatusTimestampIfNeeded(oldStatus, existing);
         repo.update(id, existing);
         return existing;
     }
@@ -215,5 +220,29 @@ public class ProjectService {
 
     private boolean hasCtl(String s) {
         return StringUtil.hasControlChars(s);
+    }
+
+    private void applyStatusTimestampIfNeeded(ProjectStatus oldStatus, Project p) {
+        ProjectStatus newStatus = p.getStatus();
+        if (newStatus == null) return;
+        if (oldStatus != null && oldStatus == newStatus) return; // no change
+        LocalDateTime now = LocalDateTime.now();
+        switch (newStatus) {
+            case GLASS_ORDERED:
+                if (p.getGlassOrderedAt() == null) p.setGlassOrderedAt(now);
+                break;
+            case DOORS_WINDOWS_PRODUCED:
+                if (p.getDoorsWindowsProducedAt() == null) p.setDoorsWindowsProducedAt(now);
+                break;
+            case DOORS_WINDOWS_DELIVERED:
+                if (p.getDoorsWindowsDeliveredAt() == null) p.setDoorsWindowsDeliveredAt(now);
+                break;
+            case DOORS_WINDOWS_INSTALLED:
+                if (p.getDoorsWindowsInstalledAt() == null) p.setDoorsWindowsInstalledAt(now);
+                break;
+            case FINAL_PAYMENT_RECEIVED:
+                if (p.getFinalPaymentReceivedAt() == null) p.setFinalPaymentReceivedAt(now);
+                break;
+        }
     }
 }

@@ -15,7 +15,13 @@ CREATE TABLE IF NOT EXISTS project (
   progress_note VARCHAR(2000),
   photo_url     VARCHAR(512),
   created_at    TIMESTAMP,
-  archived      BOOLEAN DEFAULT FALSE
+  archived      BOOLEAN DEFAULT FALSE,
+  change_note   VARCHAR(2000),
+  glass_ordered_at TIMESTAMP,
+  doors_windows_produced_at TIMESTAMP,
+  doors_windows_delivered_at TIMESTAMP,
+  doors_windows_installed_at TIMESTAMP,
+  final_payment_received_at TIMESTAMP
 );
 
 CREATE INDEX IF NOT EXISTS idx_project_created_at ON project(created_at);

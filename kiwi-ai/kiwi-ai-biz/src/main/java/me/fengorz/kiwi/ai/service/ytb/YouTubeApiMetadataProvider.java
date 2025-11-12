@@ -36,7 +36,8 @@ public class YouTubeApiMetadataProvider implements YouTubeMetadataProvider {
 
     @Override
     public String getChannelName(String channelUrlOrId) {
-        return youTubeApiService.getChannelDetails(channelUrlOrId).getTitle();
+        ChannelVideoResponse details = youTubeApiService.getChannelDetails(channelUrlOrId);
+        return details != null ? details.getTitle() : null;
     }
 
     @Override

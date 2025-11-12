@@ -208,7 +208,7 @@ public class YtDlpMetadataProvider implements YouTubeMetadataProvider {
                 if (skipWarning(line)) {
                     continue;
                 }
-                output.append(line);
+                output.append(line).append('\n');
             }
         }
         return output;

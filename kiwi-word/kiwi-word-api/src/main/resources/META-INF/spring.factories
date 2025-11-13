@@ -1,5 +1,0 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  me.fengorz.kiwi.word.api.feign.fallback.DictFetchApiFallback,\
-  me.fengorz.kiwi.word.api.feign.fallback.QueryApiFallback,\
-  me.fengorz.kiwi.word.api.feign.factory.BizApiFallbackFactory,\
-  me.fengorz.kiwi.word.api.feign.factory.QueryApiFallbackFactory

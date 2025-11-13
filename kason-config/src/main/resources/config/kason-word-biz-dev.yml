@@ -1,0 +1,26 @@
+spring:
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: ENC(2PE/BMMoNPbRCEaIyGfcSw==)
+    password: ENC(zF1rDpn+u8RZX5OTor7BpHzprZyrH+3P)
+    url: jdbc:mysql://${DB_IP}:3306/kason_db?useSSL=true&requireSSL=true&useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&serverTimezone=Pacific/Auckland
+    hikari:
+      connection-test-query: SELECT 1
+      max-lifetime: 1800000
+      connection-timeout: 60000
+      initialization-fail-timeout: 60000
+      maximum-pool-size: 20
+      minimum-idle: 10
+
+me:
+  fengorz:
+    file:
+      crawler:
+        voice:
+          tmpPath: "/Users/zhanshifeng/Documents/myDocument/temp/microSerivceVocabularyEnhancer"
+      vocabulary:
+        word:
+          list:
+            path: "/Users/zhanshifeng/Downloads"
+

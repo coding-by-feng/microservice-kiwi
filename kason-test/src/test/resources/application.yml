@@ -1,0 +1,100 @@
+# 加解密根密码
+jasypt:
+  encryptor:
+    password: ${KASON_ENC_PASSWORD}
+    poolSize: 2
+
+spring:
+  redis:
+    host: kason-redis
+    password: ENC(H2wp5eUHhX+b3JrwEtcBEl1/0b3IyoIf)
+    port: 6379
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 10MB
+      max-request-size: 20MB
+  rabbitmq:
+    host: kason-rabbitmq
+    port: 5672
+    username: ENC(K6oRfaFZN7XSXbmJrXHiXQ==)
+    password: ENC(cvON8OapdxM7/Tq88I5JuA==)
+  elasticsearch:
+    rest:
+      uris: kason-es:9200
+      username: ENC(NKy6wa5SuHBhQmfLWf6Zv8wf8sPMaE0b)
+      password: ENC(oj9wNYu52oQH1d9T0zHeGDLz7P7em71u)
+  main:
+    allow-bean-definition-overriding: true
+  cloud:
+    gcp:
+      credentials:
+        location: ENC(SKTDak156J1xoFO0cQdB7lDhUtDqbM/BUrKo6etGEAfvPkevmscWBkr10CE2i55nXlenU7dNjq8=)
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: ENC(2PE/BMMoNPbRCEaIyGfcSw==)
+    password: ENC(zF1rDpn+u8RZX5OTor7BpHzprZyrH+3P)
+    url: jdbc:mysql://${DB_IP}:3306/kason_db?allowPublicKeyRetrieval=true&useUnicode=true&characterEncoding=UTF-8&useSSL=false&autoReconnect=true&serverTimezone=Pacific/Auckland
+    hikari:
+      max-lifetime: 60000
+      connection-timeout: 60000
+      maximum-pool-size: 4
+
+# feign 配置
+feign:
+  hystrix:
+    enabled: true
+  okhttp:
+    enabled: true
+  httpclient:
+    enabled: false
+  client:
+    config:
+      default:
+        connectTimeout: 60000
+        readTimeout: 60000
+
+# hystrix 配置
+hystrix:
+  threadpool:
+    default:
+      # 配置线程池
+      coreSize: 100
+      queueSizeRejectionThreshold: 120
+  command:
+    default:
+      circuitBreaker:
+        requestVolumeThreshold: 150
+      execution:
+        isolation:
+          strategy: SEMAPHORE
+          semaphore:
+            maxConcurrentRequests: 120
+          thread:
+            timeoutInMilliseconds: 100000
+  shareSecurityContext: true
+
+
+#请求处理的超时时间
+ribbon:
+  ReadTimeout: 100000
+  ConnectTimeout: 100000
+
+# mybaits-plus配置
+mybatis-plus:
+  mapper-locations: classpath*:mapper/**/*Mapper.xml
+  global-config:
+    banner: false
+    db-config:
+      id-type: id_worker
+      table-underline: true
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+      select-strategy: NOT_EMPTY
+  configuration:
+    map-underscore-to-camel-case: true
+
+dfs:
+  gcp:
+    bucket-name: kasondict-bucket

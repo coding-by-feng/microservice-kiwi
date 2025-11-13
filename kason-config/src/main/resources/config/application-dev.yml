@@ -1,0 +1,186 @@
+# 加解密根密码
+jasypt:
+  encryptor:
+    password: ${KASON_ENC_PASSWORD}
+    poolSize: 2
+
+spring:
+  redis:
+    host: kason-redis
+    password: ENC(uxuSI1Bl5AelC8dYvJUvMhsRbasVD4zh)
+    port: 6379
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 10MB
+      max-request-size: 20MB
+  rabbitmq:
+    host: kason-rabbitmq
+    port: 5672
+    username: ENC(K6oRfaFZN7XSXbmJrXHiXQ==)
+    password: ENC(cvON8OapdxM7/Tq88I5JuA==)
+  elasticsearch:
+    rest:
+      uris: kason-es:9200
+      username: ENC(NKy6wa5SuHBhQmfLWf6Zv8wf8sPMaE0b)
+      password: ENC(oj9wNYu52oQH1d9T0zHeGDLz7P7em71u)
+  main:
+    allow-bean-definition-overriding: true
+  cloud:
+    gcp:
+      project-id: ENC(5q3wUNe5RH6F8ORU+aaVqa5XK6bF5pJwdHzcloHX3Uz2PyTTN5C7kw==)
+      credentials:
+        location: ENC(cicvoPPUGdVt01NMX91FN2X7ud3c6Fiu5CchvC8LDYEFENPuURkzAL0TXBJSBpaqs1w2Gbv5nZg=)
+
+# feign 配置
+feign:
+  hystrix:
+    enabled: true
+  okhttp:
+    enabled: true
+  httpclient:
+    enabled: false
+  client:
+    config:
+      default:
+        connectTimeout: 60000
+        readTimeout: 60000
+
+# hystrix 配置
+hystrix:
+  threadpool:
+    default:
+      # 配置线程池
+      coreSize: 100
+      queueSizeRejectionThreshold: 120
+  command:
+    default:
+      circuitBreaker:
+        requestVolumeThreshold: 150
+      execution:
+        isolation:
+          strategy: SEMAPHORE
+          semaphore:
+            maxConcurrentRequests: 120
+          thread:
+            timeoutInMilliseconds: 100000
+  shareSecurityContext: true
+
+
+#请求处理的超时时间
+ribbon:
+  ReadTimeout: 100000
+  ConnectTimeout: 100000
+
+# mybaits-plus配置
+mybatis-plus:
+  mapper-locations: classpath*:mapper/**/*Mapper.xml
+  global-config:
+    banner: false
+    db-config:
+      id-type: id_worker
+      table-underline: true
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+      select-strategy: NOT_EMPTY
+  configuration:
+    map-underscore-to-camel-case: true
+
+# spring security 配置
+security:
+  oauth2:
+    resource:
+      loadBalanced: true
+      token-info-uri: http://kason-auth/oauth/check_token
+
+fdfs:
+  connect-timeout: 6000000
+  so-timeout: 6000000
+  thumb-image:
+    width: 150
+    height: 150
+  tracker-list: kason-fastdfs:22122
+
+dfs:
+  gcp:
+    bucket-name: kasondict-bucket
+
+# 避免 Elasticsearch health check failed 异常
+management:
+  health:
+    elasticsearch:
+      enabled: false
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+
+ignore:
+  urls:
+    - /actuator/**
+
+tts:
+  chattts:
+    api:
+      # Base URL of your ChatTTS API service
+      base-url: http://kason-chattts:8000
+      # Request timeout in seconds
+      timeout: 30
+      # Number of retry attempts
+      retry-count: 3
+  baidu:
+    app-id: "20116041"
+    api-key: ENC(/9nXqvG1VIte1VrACwZ683gw2o2K3fpRdAweh0edh1nFLd1CvjH4oA==)
+    secret-key: ENC(G1gyeiupF4SDLkxRGm6FJ5a+Xxpp36sIrrtUnu5xZFKtZGnA7WYCPy+t+XHO0Kaa)
+    access-token: ENC(wykNby8I8mtu8pV5zd8khs8oUoF1GSFuS+y7zVGGhvHCF6+sUSUeSK3p3Q57wddHbZjYujpgoUMisz+fneF4E8tOpgTpdlThYC4j/tHtJfs=)
+  deepgram:
+    # Configure the Deepgram API key via externalized configuration or a secret vault instead of hardcoding it.
+    # Example value supplied by the ops team: b381f559eeb06fbb9d04dd1b2e13ae313d6d37fa
+    api-key: ${DEEPGRAM_API_KEY:}
+    base-url: https://api.deepgram.com/v1/speak
+    english-model: aura-asteria-en
+    chinese-model: aura-lingxi-zh
+  voicerss:
+    url: 'https://api.voicerss.org/?key={}&r=-2&hl=en-us&v=Mary&c=MP3&f=16khz_16bit_stereo&src=test'
+    # feng_orz
+    api-key-1: '02df0a8f48b641548ec4224c24ebff0e'
+    # 132
+    api-key-2: '0e3c0a35570543249f743f74c027ef8b'
+    # 121
+    api-key-3: 'a65b84ea89b14011af581b3335e40d63'
+    # DIDI
+    api-key-4: '587527ea30b44778b6bbca2bcac95f38'
+    # feng_kason
+    api-key-5: '664f011d4efc4937b4d75a8b962f0323'
+    # feng_kason_zhan
+    api-key-6: '59a1e3301e4943edaab90166e3c1aafb'
+    # feng_nz
+    api-key-7: '58d4baef52414088998cbbda9751c8e2'
+    # feng_fyy
+    api-key-8: '484727a997cb46458741fa3bd361d9cc'
+    # feng_kason_tts
+    api-key-9: '38825b383ed54a10a8e43b8e6fc87157'
+    # feng_kason_tts_1
+    api-key-10: 'b5c1a89b9f8a4ddf877dbe324ed6dc31'
+    # feng_kason_tts_2
+    api-key-11: 'bb264a8707224eb3bd6016be38ac79f4'
+    # feng_kason_tts_3
+    api-key-12: 'e99c0f6ed10a4413944d5e38c11af71f'
+    # feng_kason_tts_4
+    api-key-13: '69e101571e4d42508421749987557d00'
+    # feng_kason_tts_5
+    api-key-14: '43b6b8d3ea0148e6bc0bfe3023b15a76'
+    # feng_kason_tts_6
+    api-key-15: 'c73302b470154c31b6da9b40e3ae37f1'
+    # feng_kason_tts_7
+    api-key-16: '1d6ad4ecb6a941d28d24647e9c01e004'
+    # feng_kason_tts_8
+    api-key-17: '37ab852142474b79877ccf1b69dc4710'
+    # feng_kason_tts_9
+    api-key-18: 'ab2ffba4979e4f89a6d094405fed8f8f'
+    # feng_kason_tts_10
+    api-key-19: '47fea283e4384cfe811fa785f95bdadf'
+    # feng_kason_tts_11
+    api-key-20: '5682d96cc30a48a3a6a9ee5afcd67b11'
+    # kason_s_f_zhan
+    api-key-21: 'fdbfa7e01ef34ab6b1af4890e824ef1b'

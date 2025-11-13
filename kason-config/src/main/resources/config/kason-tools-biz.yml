@@ -1,0 +1,202 @@
+security:
+  oauth2:
+    client:
+      client-id: ENC(wORgugqWfXlIuzbal/3pjXTNXij/RSpo)
+      client-secret: ENC(rMd1buB3iI+si+W99eB+QFa3QburIEmY)
+      scope: server
+
+# 数据源
+spring:
+  main:
+    allow-bean-definition-overriding: true
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: ENC(2PE/BMMoNPbRCEaIyGfcSw==)
+    password: ENC(zF1rDpn+u8RZX5OTor7BpHzprZyrH+3P)
+    url: jdbc:mysql://${DB_IP}:3306/kason_db?allowPublicKeyRetrieval=true&useUnicode=true&characterEncoding=UTF-8&useSSL=false&autoReconnect=true&serverTimezone=Pacific/Auckland
+    hikari:
+      connection-test-query: SELECT 1
+      maximum-pool-size: 30  # Increase but within MySQL's max_connections limit
+      connection-timeout: 300000  # Fail faster when connections unavailable
+      idle-timeout: 300000  # Release idle connections sooner (5 minutes)
+      max-lifetime: 1200000  # Shorter connection lifetime (20 minutes)
+      keepalive-time: 240000  # Keep connections alive with periodic pings
+      leak-detection-threshold: 300000  # Detect connection leaks  task:
+    execution:
+      pool:
+        core-size: 1
+        max-size: 1
+        queue-capacity: 100
+      thread-name-prefix: YTB-subtitles-thread-
+
+# FTP configuration
+ftp:
+  host: kason-ftp
+  port: 21
+  username: ENC(LnyjqsOsAhLH6oOlKozLFg==)
+  password: ENC(PvjdIGuFWiYPJ4VxpWK+nAeW/V+Je+xV)
+  base-dir: /rangi_windows
+  passive-mode: true
+  connect-timeout: 15000
+  data-timeout: 30000
+
+management:
+  health:
+    elasticsearch:
+      enabled: false
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+
+ignore:
+  urls:
+    - /rangi_windows/api/**
+
+# Storage backend switch
+storage:
+  backend: ftp
+
+ms:
+  config:
+    exclude-db: false
+    exclude-cache: true
+
+rest-template:
+  http-client:
+    max-total-connections: 20  # Lower for tests to reduce resource usage
+    max-connections-per-route: 10
+    validate-after-inactivity: 500
+    connection-time-to-live: 10
+  request-factory:
+    connect-timeout: 100000  # Faster timeouts for tests
+    read-timeout: 100000
+  retry:
+    max-attempts: 3  # Fewer retries for faster tests
+    retryable-exceptions:
+      - "me.fengorz.kason.common.sdk.exception.ai.GrokAiException"
+      # REST Client Exceptions (General)
+
+      - "org.springframework.web.client.RestClientException"
+      - "org.springframework.web.client.ResourceAccessException"
+
+      # HTTP Server Errors (5xx) - Usually transient
+      - "org.springframework.web.client.HttpServerErrorException"
+
+      # Network/Connection Exceptions
+      - "java.net.SocketTimeoutException"
+      - "java.net.ConnectException"
+      - "java.net.SocketException"
+      - "java.net.UnknownHostException"
+      - "java.io.IOException"
+      - "javax.net.ssl.SSLException"
+      - "javax.net.ssl.SSLHandshakeException"
+      - "org.apache.http.conn.ConnectTimeoutException"
+      - "org.apache.http.conn.HttpHostConnectException"
+      - "org.apache.http.NoHttpResponseException"
+    backoff-period: 500  # Faster backoff for tests
+
+# Todo ranking configuration
+# This list defines the rank ladder with thresholds and levels
+# It will be bound to TodoRankingProperties (todo.ranking.ranks)
+
+# --- TODO MODULE CONFIGURATION ---
+todo:
+  ranking:
+    ranks:
+      - { key: beginner,    threshold: 0,       level: 1 }
+      - { key: trainee,     threshold: 1000,    level: 2 }
+      - { key: novice,      threshold: 3000,    level: 3 }
+      - { key: apprentice,  threshold: 6000,    level: 4 }
+      - { key: wood,        threshold: 10000,   level: 5 }
+      - { key: stone,       threshold: 13000,   level: 6 }
+      - { key: steel,       threshold: 17000,   level: 7 }
+      - { key: iron,        threshold: 22000,   level: 8 }
+      - { key: bronze,      threshold: 28500,   level: 9 }
+      - { key: silver,      threshold: 37000,   level: 10 }
+      - { key: gold,        threshold: 48000,   level: 11 }
+      - { key: platinum,    threshold: 62000,   level: 12 }
+      - { key: diamond,     threshold: 80000,   level: 13 }
+      - { key: master,      threshold: 104000,  level: 14 }
+      - { key: grandmaster, threshold: 135000,  level: 15 }
+      - { key: celestial,   threshold: 175000,  level: 16 }
+      - { key: divine,      threshold: 227000,  level: 17 }
+      - { key: immortal,    threshold: 295000,  level: 18 }
+      - { key: mythic,      threshold: 382000,  level: 19 }
+      - { key: legendary,   threshold: 495000,  level: 20 }
+  demo:
+    tasks:
+      # Study
+      - title: "Study: 30-minute focused reading"
+        description: "Read a technical chapter or article for 30 minutes with notes"
+        successPoints: 15
+        failPoints: -5
+        frequency: daily
+        category: study
+      - title: "Study: Vocabulary review"
+        description: "Review 20 words using spaced repetition"
+        successPoints: 10
+        failPoints: -5
+        frequency: daily
+        category: study
+      # Work
+      - title: "Work: Plan the day"
+        description: "Write top 3 priorities and time blocks"
+        successPoints: 8
+        failPoints: -3
+        frequency: daily
+        category: work
+      - title: "Work: Deep work session"
+        description: "60-minute distraction-free coding/writing"
+        successPoints: 20
+        failPoints: -8
+        frequency: daily
+        category: work
+      # Health
+      - title: "Health: Hydration"
+        description: "Drink at least 8 glasses of water"
+        successPoints: 6
+        failPoints: -2
+        frequency: daily
+        category: health
+      - title: "Health: Sleep before 23:00"
+        description: "Go to bed before 11 PM to ensure rest"
+        successPoints: 12
+        failPoints: -6
+        frequency: daily
+        category: health
+      # Workout
+      - title: "Workout: 30-minute run"
+        description: "Outdoor or treadmill run for at least 30 minutes"
+        successPoints: 18
+        failPoints: -7
+        frequency: weekly
+        category: workout
+      - title: "Workout: Strength training"
+        description: "Full-body routine: push, pull, legs (45 minutes)"
+        successPoints: 20
+        failPoints: -8
+        frequency: weekly
+        category: workout
+      # Personal
+      - title: "Personal: Budget review"
+        description: "Track expenses and adjust monthly budget"
+        successPoints: 12
+        failPoints: -4
+        frequency: weekly
+        category: personal
+      - title: "Personal: Family call"
+        description: "Call parents or close family for at least 15 minutes"
+        successPoints: 10
+        failPoints: -3
+        frequency: weekly
+        category: personal
+      # Custom cycle example (every 3 days)
+      - title: "Study: Algorithm practice"
+        description: "Solve 2 problems and review solutions"
+        successPoints: 16
+        failPoints: -6
+        frequency: custom
+        customDays: 3
+        category: study

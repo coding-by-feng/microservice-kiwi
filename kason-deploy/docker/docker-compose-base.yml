@@ -1,0 +1,55 @@
+services:
+  kason-eureka:
+    image: kason-eureka:2.0
+    user: root
+    environment:
+      - KASON_ENC_PASSWORD=${KASON_ENC_PASSWORD}
+      - DB_IP=${DB_IP}
+    ports:
+      - '8762:8762'
+    volumes:
+      - ~/docker/kason/eureka/logs:/logs:Z
+    network_mode: "host"
+    healthcheck:
+      test: ["CMD-SHELL", "code=$(curl -s -o /dev/null -w '%{http_code}' http://localhost:8762/actuator/health); [ \"$$code\" = \"200\" ] || [ \"$$code\" = \"401\" ] || [ \"$$code\" = \"403\" ]"]
+      interval: 30s
+      timeout: 10s
+      retries: 4
+      start_period: 3m
+
+  kason-config:
+    image: kason-config:2.0
+    user: root
+    environment:
+      - KASON_ENC_PASSWORD=${KASON_ENC_PASSWORD}
+      - DB_IP=${DB_IP}
+    ports:
+      - '7771:7771'
+    volumes:
+      - ~/docker/kason/config/logs:/logs:Z
+    network_mode: "host"
+    depends_on:
+      - kason-eureka
+    healthcheck:
+      test: ["CMD-SHELL", "code=$(curl -s -o /dev/null -w '%{http_code}' http://localhost:7771/actuator/health); [ \"$$code\" = \"200\" ] || [ \"$$code\" = \"401\" ] || [ \"$$code\" = \"403\" ]"]
+      interval: 30s
+      timeout: 10s
+      retries: 4
+      start_period: 3m
+    entrypoint:
+      - /bin/sh
+      - -c
+      - |
+        echo "Waiting for kason-eureka to be healthy..."
+        wait_secs=0
+        until code=$(curl -s -o /dev/null -w '%{http_code}' http://localhost:8762/actuator/health); [ "$$code" = "200" ] || [ "$$code" = "401" ] || [ "$$code" = "403" ]; do
+          wait_secs=$$((wait_secs+1))
+          if [ $$((wait_secs % 5)) -eq 0 ]; then
+            echo "Waiting for kason-eureka to be healthy... ($$wait_secs s)"
+          fi
+          sleep 10
+        done
+        echo "kason-eureka is healthy. Starting kason-config..."
+        exec java -Xmx128m \
+          -Duser.timezone=GMT+12 \
+          -jar /app.jar

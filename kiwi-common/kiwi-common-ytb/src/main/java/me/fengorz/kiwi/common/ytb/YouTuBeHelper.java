@@ -6,10 +6,8 @@ import me.fengorz.kiwi.common.sdk.annotation.cache.KiwiCacheKeyPrefix;
 import me.fengorz.kiwi.common.sdk.constant.CacheConstants;
 import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
 import me.fengorz.kiwi.common.sdk.exception.ServiceException;
-import me.fengorz.kiwi.common.ytb.metadata.YouTubeMetadataProvider;
-import me.fengorz.kiwi.common.ytb.metadata.YtDlpMetadataProvider;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -18,7 +16,10 @@ import org.springframework.stereotype.Service;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.time.Instant;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -28,20 +29,6 @@ import java.util.Optional;
 @Service
 @KiwiCacheKeyPrefix(YtbConstants.CACHE_KEY_PREFIX_YTB.CLASS)
 public class YouTuBeHelper {
-
-    private final YouTubeMetadataProvider metadataProvider;
-
-    @Autowired
-    public YouTuBeHelper(YouTubeMetadataProvider metadataProvider) {
-        this.metadataProvider = metadataProvider;
-    }
-
-    /**
-     * Default constructor for scenarios (e.g. unit tests) where Spring injection is unavailable.
-     */
-    public YouTuBeHelper() {
-        this.metadataProvider = new YtDlpMetadataProvider();
-    }
 
     @Value("${youtube.video.download.path}")
     private String downloadPath;
@@ -104,7 +91,7 @@ public class YouTuBeHelper {
             unless = "#result == null")
     public YtbSubtitlesResult downloadSubtitles(@KiwiCacheKey(1) String videoUrl) {
         try {
-            List<String> command = new ArrayList<>();
+           List<String> command = new ArrayList<>();
             command.add(this.command);
             command.add("--write-subs");
             command.add("--write-auto-sub");
@@ -234,13 +221,49 @@ public class YouTuBeHelper {
 
     public String getVideoTitle(String videoUrl) {
         try {
-            String title = metadataProvider.getVideoTitle(videoUrl);
+            List<String> command = new ArrayList<>();
+            command.add(this.command);
+            command.add("--get-title");
+            command.add(videoUrl);
+
+            Process process = prepareProcess(command);
+
+            StringBuilder output = buildTitleOutput(process);
+
+            int exitCode = process.waitFor();
+            if (exitCode != 0) {
+                throw new RuntimeException("Failed to get video title, exit code: " + exitCode);
+            }
+
+            // Extract only the last line (which contains the actual title)
+            String fullOutput = output.toString().trim();
+            int lastNewLineIndex = fullOutput.lastIndexOf('\n');
+            String title;
+            if (lastNewLineIndex >= 0) {
+                title = fullOutput.substring(lastNewLineIndex + 1).trim();
+            } else {
+                title = fullOutput; // If there's only one line
+            }
+
             log.info("Video title retrieved: {}", title);
             return title;
+
         } catch (Exception e) {
             log.error("Error getting video title for URL: {}", videoUrl, e);
             throw new RuntimeException("Failed to get video title: " + e.getMessage(), e);
         }
+    }
+
+    private static StringBuilder buildTitleOutput(Process process) throws IOException {
+        StringBuilder output = new StringBuilder();
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                if (skipWarning(line)) continue;
+                output.append(line);
+            }
+        }
+        return output;
     }
 
     private static boolean skipWarning(String line) {
@@ -374,9 +397,55 @@ public class YouTuBeHelper {
      * @throws ServiceException If extraction fails
      */
     public String extractChannelNameWithYtDlp(String channelUrl) throws ServiceException {
-        String channelName = metadataProvider.getChannelName(channelUrl);
-        log.info("Resolved channel name: {}", channelName);
-        return channelName;
+        ProcessBuilder processBuilder = new ProcessBuilder(
+                this.command,
+                "--skip-download",
+                "--print", "channel",
+                "--playlist-items", "1",
+                channelUrl
+        );
+
+        processBuilder.redirectErrorStream(true);
+
+        try {
+            Process process = processBuilder.start();
+
+            StringBuilder output = extractChannelName(process);
+
+            // Wait for the process to complete
+            int exitCode = process.waitFor();
+
+            if (exitCode == 0) {
+                String channelName = output.toString().trim();
+                log.info("Successfully extracted channel name using yt-dlp: {}", channelName);
+                return channelName;
+            } else {
+                log.error("yt-dlp exited with code {}: {}", exitCode, output);
+                throw new ServiceException("Failed to extract channel name: yt-dlp exited with code " + exitCode);
+            }
+
+        } catch (IOException | InterruptedException e) {
+            log.error("Error executing yt-dlp", e);
+            throw new ServiceException("Failed to extract channel name using yt-dlp", e);
+        }
+    }
+
+    @NotNull
+    private static StringBuilder extractChannelName(Process process) throws IOException {
+        StringBuilder output = new StringBuilder();
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                if (skipWarning(line)) {
+                    continue;
+                }
+                // Found a non-warning, non-empty line (likely the channel name)
+                output.append(line.trim());
+                // Don't break here - continue reading to drain the process output
+                // but we'll only keep the first valid line
+            }
+        }
+        return output;
     }
 
     /**
@@ -387,9 +456,51 @@ public class YouTuBeHelper {
      * @throws ServiceException If extraction fails
      */
     public List<String> extractAllVideoLinks(String channelLink) throws ServiceException {
-        List<String> videoLinks = metadataProvider.listChannelVideoLinks(channelLink);
-        log.info("Resolved {} video links for channel {}", videoLinks.size(), channelLink);
-        return videoLinks;
+        List<String> videoLinks = new ArrayList<>();
+
+        ProcessBuilder processBuilder = new ProcessBuilder(
+                this.command,
+                "--flat-playlist",
+                "--get-id",
+                channelLink
+        );
+
+        processBuilder.redirectErrorStream(true);
+
+        try {
+            Process process = processBuilder.start();
+
+            // Read the output (video IDs)
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    // Skip warning lines and empty lines
+                    if (skipWarning(line)) {
+                        continue;
+                    }
+
+                    // Create full YouTube URL from video ID
+                    String videoLink = "https://www.youtube.com/watch?v=" + line.trim();
+                    videoLinks.add(videoLink);
+                }
+            }
+
+            // Wait for the process to complete
+            int exitCode = process.waitFor();
+
+            if (exitCode != 0) {
+                log.error("yt-dlp exited with code {} when extracting video links from channel: {}",
+                        exitCode, channelLink);
+                throw new ServiceException("Failed to extract video links: yt-dlp exited with code " + exitCode);
+            }
+
+            log.info("Successfully extracted {} video links from channel: {}", videoLinks.size(), channelLink);
+            return videoLinks;
+
+        } catch (IOException | InterruptedException e) {
+            log.error("Error executing yt-dlp to extract video links", e);
+            throw new ServiceException("Failed to extract video links using yt-dlp", e);
+        }
     }
 
     /**
@@ -400,11 +511,57 @@ public class YouTuBeHelper {
      * @return LocalDateTime if parsed; null otherwise
      */
     public LocalDateTime getVideoPublishedAt(String videoUrl) {
-        LocalDateTime publishedAt = metadataProvider.getVideoPublishedAt(videoUrl);
-        if (publishedAt == null) {
-            log.warn("No publish time available for {}", videoUrl);
+        try {
+            List<String> cmd = new ArrayList<>();
+            cmd.add(this.command);
+            cmd.add("--print");
+            // Try multiple fields; yt-dlp will print first non-empty due to | operator
+            cmd.add("%(release_timestamp|timestamp|upload_date)s");
+            cmd.add(videoUrl);
+
+            Process process = prepareProcess(cmd);
+
+            String output;
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+                output = reader.readLine();
+            }
+
+            int exit = process.waitFor();
+            if (exit != 0) {
+                log.warn("yt-dlp publish time extraction exit code {} for {}", exit, videoUrl);
+            }
+
+            if (StringUtils.isBlank(output)) {
+                return null;
+            }
+            output = output.trim();
+
+            // Parse different formats
+            // 1) Epoch seconds
+            if (output.matches("\\d{10}") || output.matches("\\d{13}")) {
+                long epoch = output.length() == 13 ? Long.parseLong(output) / 1000L : Long.parseLong(output);
+                return LocalDateTime.ofInstant(Instant.ofEpochSecond(epoch), ZoneId.systemDefault());
+            }
+            // 2) YYYYMMDD
+            if (output.matches("\\d{8}")) {
+                LocalDate date = LocalDate.of(
+                        Integer.parseInt(output.substring(0, 4)),
+                        Integer.parseInt(output.substring(4, 6)),
+                        Integer.parseInt(output.substring(6, 8))
+                );
+                return date.atStartOfDay();
+            }
+            // 3) ISO-8601/RFC3339
+            try {
+                return LocalDateTime.ofInstant(Instant.parse(output), ZoneId.systemDefault());
+            } catch (Exception ignored) {
+            }
+            log.warn("Unrecognized publish time format from yt-dlp: '{}' for {}", output, videoUrl);
+            return null;
+        } catch (Exception e) {
+            log.warn("Failed to get publish time via yt-dlp for {}: {}", videoUrl, e.getMessage());
+            return null;
         }
-        return publishedAt;
     }
 
 }

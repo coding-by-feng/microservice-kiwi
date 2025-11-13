@@ -1,0 +1,13 @@
+package me.fengorz.kason.tools.api.project.dto;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+
+@Data
+@ApiModel(description = "Partial update body for a Project (PATCH)")
+public class ProjectPatchRequest extends ProjectBaseRequest {
+    @ApiModelProperty(value = "Archive flag", example = "false")
+    private Boolean archived;
+}
+

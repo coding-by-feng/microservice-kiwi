@@ -1,0 +1,23 @@
+jasypt:
+  encryptor:
+    password: ${KASON_ENC_PASSWORD}
+    poolSize: 2
+
+server:
+  port: ${PORT:0}
+
+spring:
+  application:
+    name: kason-ai
+  profiles:
+    active: test
+  cloud:
+    config:
+      enabled: false
+    loadbalancer:
+      ribbon:
+        enabled: false
+
+eureka:
+  client:
+    enabled: false

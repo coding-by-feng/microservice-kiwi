@@ -1,0 +1,3 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  me.fengorz.kason.upms.api.feign.factory.UserApiFallbackFactory,\
+  me.fengorz.kason.upms.api.feign.fallback.UserApiFallback

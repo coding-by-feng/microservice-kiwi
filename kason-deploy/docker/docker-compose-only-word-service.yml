@@ -1,0 +1,26 @@
+services:
+  kason-word-biz:
+    image: kason-word-biz:2.0
+    user: root
+    environment:
+      - KASON_ENC_PASSWORD=${KASON_ENC_PASSWORD}
+      - DB_IP=${DB_IP}
+    volumes:
+      - ~/docker/kason/word/logs:/logs:Z
+      - ~/docker/kason/word/bizTmp:/wordTmp:Z
+    network_mode: "host"
+  kason-crawler:
+    image: kason-crawler:2.0
+    user: root
+    restart: always
+    environment:
+      - KASON_ENC_PASSWORD=${KASON_ENC_PASSWORD}
+      - DB_IP=${DB_IP}
+    volumes:
+      - ~/docker/kason/crawler/logs:/logs:Z
+      - ~/docker/kason/crawler/tmp:/crawlerTmp:Z
+    network_mode: "host"
+    depends_on:
+      - kason-word-biz
+
+

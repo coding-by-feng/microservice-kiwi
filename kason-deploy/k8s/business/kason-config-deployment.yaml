@@ -1,0 +1,34 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: kason-config
+  namespace: kason-be-business
+spec:
+  replicas: 1
+  revisionHistoryLimit: 3
+  strategy:
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app: kason-config
+    matchExpressions:
+    - {key: app, operator: In, values: [kason-eureka] }
+  template:
+    metadata:
+      labels:
+        app: kason-config
+    spec:
+      containers:
+      - image: kason-config:2.0
+        name: kason-config
+        ports:
+        - containerPort: 7771
+        resources: {}
+        volumeMounts:
+        - mountPath: /logs
+          name: kason-config-claim
+      volumes:
+      - name: kason-config-claim
+        hostPath:
+          path: /root/docker/kason/config/logs
+status: {}

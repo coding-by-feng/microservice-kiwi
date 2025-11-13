@@ -27,6 +27,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.redis.core.RedisTemplate;
 
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
@@ -47,6 +48,9 @@ public class YtbChannelServiceImplV2 extends ServiceImpl<YtbChannelMapper, YtbCh
     private final YouTuBeHelper youTuBeHelper;
     private final YtbChannelFavoriteMapper channelFavoriteMapper;
     private final AiChatService grokAiService;
+    private final RedisTemplate<String, Object> redisTemplate;
+
+    private static final String CHANNEL_VIDEO_CACHE_PREFIX = "kiwi:ytb:channel:videos:";
 
     public YtbChannelServiceImplV2(YtbChannelUserMapper channelUserMapper,
                                    YtbChannelVideoMapper videoMapper,
@@ -56,7 +60,8 @@ public class YtbChannelServiceImplV2 extends ServiceImpl<YtbChannelMapper, YtbCh
                                    SeqService seqService,
                                    YouTuBeHelper youTuBeHelper,
                                    YtbChannelFavoriteMapper channelFavoriteMapper,
-                                   @Qualifier("grokAiService") AiChatService grokAiService) {
+                                   @Qualifier("grokAiService") AiChatService grokAiService,
+                                   RedisTemplate<String, Object> redisTemplate) {
         this.channelUserMapper = channelUserMapper;
         this.videoMapper = videoMapper;
         this.subtitlesMapper = subtitlesMapper;
@@ -66,6 +71,7 @@ public class YtbChannelServiceImplV2 extends ServiceImpl<YtbChannelMapper, YtbCh
         this.youTuBeHelper = youTuBeHelper;
         this.channelFavoriteMapper = channelFavoriteMapper;
         this.grokAiService = grokAiService;
+        this.redisTemplate = redisTemplate;
         log.info("YtbChannelServiceImplV2 initialized with YouTube API service");
     }
 
@@ -162,35 +168,45 @@ public class YtbChannelServiceImplV2 extends ServiceImpl<YtbChannelMapper, YtbCh
             List<ChannelVideoResponse> videos = youTubeApiService.getChannelVideos(channel.getChannelLink());
             log.info("Retrieved {} videos from channel: {}", videos.size(), channel.getChannelName());
 
+            List<ChannelVideoResponse> videosToProcess = videos.stream()
+                    .filter(video -> shouldProcessVideo(channelId, video))
+                    .collect(Collectors.toList());
+
+            int skippedByCache = videos.size() - videosToProcess.size();
+            if (skippedByCache > 0) {
+                log.info("Skipped {} cached videos for channel ID: {}", skippedByCache, channelId);
+            }
+
             int processedCount = 0;
             int successCount = 0;
             int failureCount = 0;
 
             // Process each video
-            for (ChannelVideoResponse video : videos) {
+            for (ChannelVideoResponse video : videosToProcess) {
                 try {
                     String videoUrl = "https://www.youtube.com/watch?v=" + video.getVideoId();
-                    log.info("Processing video {}/{}: {}", processedCount + 1, videos.size(), videoUrl);
+                    log.info("Processing video {}/{}: {}", processedCount + 1, videosToProcess.size(), videoUrl);
 
-                    Optional.ofNullable(processVideoWithApi(channelId, video))
-                            .ifPresent(videoId -> {
-                                // Update video status to FINISH after processing
-                                log.info("Updating video status to FINISH for video ID: {}", videoId);
-                                YtbChannelVideoDO videoToUpdate = videoMapper.selectById(videoId);
-                                if (videoToUpdate != null) {
-                                    videoToUpdate.setStatus(ProcessStatusEnum.FINISHED.getCode());
-                                    videoMapper.updateById(videoToUpdate);
-                                    log.info("Video status updated to FINISH for video ID: {}", videoId);
-                                }
-                            });
+                    Long processedVideoId = processVideoWithApi(channelId, video);
+                    if (processedVideoId != null) {
+                        // Update video status to FINISH after processing
+                        log.info("Updating video status to FINISH for video ID: {}", processedVideoId);
+                        YtbChannelVideoDO videoToUpdate = videoMapper.selectById(processedVideoId);
+                        if (videoToUpdate != null) {
+                            videoToUpdate.setStatus(ProcessStatusEnum.FINISHED.getCode());
+                            videoMapper.updateById(videoToUpdate);
+                            log.info("Video status updated to FINISH for video ID: {}", processedVideoId);
+                            cacheVideoMetadata(channelId, video.getVideoId(), videoToUpdate.getVideoTitle());
+                        }
+                        successCount++;
+                    }
 
                     processedCount++;
-                    successCount++;
 
                     // Log progress periodically
-                    if (processedCount % 10 == 0 || processedCount == videos.size()) {
+                    if (processedCount % 10 == 0 || processedCount == videosToProcess.size()) {
                         log.info("Processed {}/{} videos for channel ID: {}, Success: {}, Failure: {}",
-                                processedCount, videos.size(), channelId, successCount, failureCount);
+                                processedCount, videosToProcess.size(), channelId, successCount, failureCount);
                     }
                 } catch (Exception e) {
                     failureCount++;
@@ -203,7 +219,7 @@ public class YtbChannelServiceImplV2 extends ServiceImpl<YtbChannelMapper, YtbCh
                     ProcessStatusEnum.FINISHED, "Channel status updated to FINISH for channel ID: {}");
 
             log.info("Completed synchronization of videos for channel ID: {}, Total: {}, Success: {}, Failure: {}",
-                    channelId, videos.size(), successCount, failureCount);
+                    channelId, videosToProcess.size(), successCount, failureCount);
 
         } catch (Exception e) {
             log.error("Failed to synchronize videos for channel ID: {}, Error: {}", channelId, e.getMessage(), e);
@@ -265,6 +281,8 @@ public class YtbChannelServiceImplV2 extends ServiceImpl<YtbChannelMapper, YtbCh
                     existingVideo.setPublishedAt(publishedAt);
                     videoMapper.updateById(existingVideo);
                 }
+                cacheVideoMetadata(channelId, video.getVideoId(),
+                        Optional.ofNullable(existingVideo.getVideoTitle()).orElse(video.getTitle()));
                 log.info("Video already exists and is finished: {}", existingVideo.getId());
                 return null;
             }
@@ -308,12 +326,54 @@ public class YtbChannelServiceImplV2 extends ServiceImpl<YtbChannelMapper, YtbCh
             // Process captions
             processVideoCaptions(videoId, videoUrl);
 
+            cacheVideoMetadata(channelId, video.getVideoId(), videoDetails.getTitle());
+
             return videoId;
 
         } catch (Exception e) {
             log.error("Error processing video: {}", videoUrl, e);
             throw new ServiceException("Failed to process video: " + e.getMessage(), e);
         }
+    }
+
+    private boolean shouldProcessVideo(Long channelId, ChannelVideoResponse video) {
+        if (video == null) {
+            return false;
+        }
+        boolean cached = isVideoCached(channelId, video.getVideoId());
+        if (cached) {
+            log.debug("Video {} for channel {} found in cache, skipping", video.getVideoId(), channelId);
+        }
+        return !cached;
+    }
+
+    private boolean isVideoCached(Long channelId, String videoId) {
+        if (channelId == null || videoId == null) {
+            return false;
+        }
+        try {
+            return Boolean.TRUE.equals(redisTemplate.opsForHash().hasKey(buildChannelCacheKey(channelId), videoId));
+        } catch (Exception e) {
+            log.warn("Failed to check cache for channel {} video {}: {}", channelId, videoId, e.getMessage());
+            return false;
+        }
+    }
+
+    private void cacheVideoMetadata(Long channelId, String videoId, String title) {
+        if (channelId == null || videoId == null) {
+            return;
+        }
+        try {
+            String cacheKey = buildChannelCacheKey(channelId);
+            String cacheValue = Optional.ofNullable(title).orElse("");
+            redisTemplate.opsForHash().put(cacheKey, videoId, cacheValue);
+        } catch (Exception e) {
+            log.warn("Failed to cache video metadata for channel {} video {}: {}", channelId, videoId, e.getMessage());
+        }
+    }
+
+    private String buildChannelCacheKey(Long channelId) {
+        return CHANNEL_VIDEO_CACHE_PREFIX + channelId;
     }
 
     private LocalDateTime parsePublishedAt(String publishedAt) {

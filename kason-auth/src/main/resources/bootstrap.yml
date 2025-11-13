@@ -1,0 +1,43 @@
+jasypt:
+  encryptor:
+    password: ${KASON_ENC_PASSWORD}
+    poolSize: 2
+
+logging:
+  level:
+    org.springframework.boot: DEBUG
+    me.fengorz.kason.*: DEBUG
+
+server:
+  port: 3001
+
+spring:
+  application:
+    name: kason-auth
+  main:
+    allow-bean-definition-overriding: true
+  cloud:
+    config:
+      fail-fast: true
+      name: ${spring.application.name}
+      discovery:
+        service-id: kason-config
+        enabled: true
+      profile: ${spring.profiles.active}
+
+eureka:
+  instance:
+    prefer-ip-address: true
+    instance-id: kason-auth
+  client:
+    service-url:
+      defaultZone: http://${eureka.security.username}:${eureka.security.password}@kason-eureka:8762/eureka
+  security:
+    username: ENC(SKdYEg+E1hatfznKqx4LcBiqYnYDcXW7)
+    password: ENC(ceDAameujB+jXutTPYZUe7NW7P8WoRsm)
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: 'health'

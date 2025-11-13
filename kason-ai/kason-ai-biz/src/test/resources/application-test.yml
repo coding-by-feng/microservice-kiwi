@@ -1,0 +1,147 @@
+logging:
+  level:
+    root: DEBUG
+    it.ozimov.embedded.redis: DEBUG
+    redis.embedded: DEBUG
+
+spring:
+  application:
+    name: kason-ai
+  profiles:
+    active: test
+  cloud:
+    config:
+      fail-fast: true
+      name: ${spring.application.name}
+      profile: ${spring.profiles.active}
+      discovery:
+        enabled: false
+        service-id: kason-config
+      enabled: false
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: ENC(2PE/BMMoNPbRCEaIyGfcSw==)
+    password: ENC(zF1rDpn+u8RZX5OTor7BpHzprZyrH+3P)
+    url: jdbc:mysql://${DB_IP}:3306/kason_db?allowPublicKeyRetrieval=true&useUnicode=true&characterEncoding=UTF-8&useSSL=false&autoReconnect=true&serverTimezone=Pacific/Auckland
+    hikari:
+      connection-test-query: SELECT 1
+      max-lifetime: 1800000
+      connection-timeout: 60000
+      initialization-fail-timeout: 60000
+      maximum-pool-size: 20
+      minimum-idle: 10
+  redis:
+    host: kason-redis
+    password: ENC(uxuSI1Bl5AelC8dYvJUvMhsRbasVD4zh)
+    port: 6379
+  main:
+    allow-bean-definition-overriding: true
+  oauth2:
+    resource:
+      token-info-uri: http://localhost:8080/dummy-uri  # Dummy URI to bypass remote token validation
+      client-id: dummy-client
+      client-secret: dummy-secret
+  task:
+    execution:
+      pool:
+        core-size: 1
+        max-size: 1
+        queue-capacity: 100
+      thread-name-prefix: YTB-subtitles-thread-
+
+ai:
+  grok:
+    api:
+      key: ${GROK_API_KEY}  # Replace with the actual API key
+      endpoint: https://api.x.ai/v1/chat/completions  # Hypothetical endpoint
+      model: "grok-3-mini"
+      thread-prompts-line-size: 500
+      thread-pool-size: 8
+      thread-timeout-secs: 120
+  openai:
+    api:
+      key: ${OPENAI_API_KEY}
+      stt-endpoint: https://api.openai.com/v1/audio/transcriptions
+      model: "whisper-1"
+
+  mode:
+    directly-translation: "Directly Translate my prompt to #[TL] language."
+    translation-and-explanation: "Translate the prompt in #[TL] language first, please provide the explanation as thorough as possible in different aspects if there are any, my first language is #[NL], please explain in #[NL]."
+    grammar-explanation: "Translate my prompt to #[NL] language, and next provide an explanation of the grammar, my first language is #[NL], please explain in #[NL]."
+    grammar-correction: "Correct the grammar of the text I provided, then translate it to #[NL] language, and provide the explanation of the grammar correction, my first language is #[NL], please explain in #[NL]."
+    vocabulary-explanation: "Explain the vocabulary in both of #[NL] and #[TL] language, please provide the paraphrase in both of #[NL] and #[TL] language in different vocabulary classes, for example, verb, noun, adverb, etc. and also provide the demo #[TL] sentences that use this vocabulary with its translation in #[NL] language of each class. Be careful that skip the vocabulary classes if the vocabulary doesn't have them."
+    synonym: "List the synonym for the given word, please provide the paraphrase in both of #[NL] and #[TL] language of the synonym, and also provide the #[TL] sentences that use this synonym with its translation in #[NL] language."
+    antonym: "List the antonym for the given word, please provide the paraphrase in both of #[NL] and #[TL] language of the antonym, and also provide the #[TL] sentences that use this antonym with its translation in #[NL] language."
+    subtitle-translator: "Please help me to translate each sentence in #[NL](if the language is already in #[NL], no need to translate, just put the original sentence and add correct punctuation) language and put the each translation on the position after each punctuation, notice that don't give me other information(any markdown format, other tips, or hints), you must complete all the translation."
+    subtitle-retouch: "Please help me to add corresponding correct punctuation, notice that don't give me other non-subtitles information, keep the original subtitles content, and you must complete all the subtitle lines."
+    subtitle-retouch-translator: "Please help me to add corresponding correct punctuation, put the #[TL] translation on the position that after the punctuation, and keep each sentence in different lines, notice that keep the original content, don't give me other information(any markdown format, other tips, or hints), and you must complete the translation of all content. Notice that if the subtitles content is already in #[TL], no need to translate, just put the original sentence and add correct punctuation."
+    vocabulary-association: "List common #[TL] vocabulary as much as possible that can express the prompt and explain the differences between them. My first language is #[NL], please explain in #[NL]."
+    phrases-association: "List common #[TL] phrases as much as possible that can express the prompt and explain the differences between them. My first language is #[NL], please explain in #[NL]."
+    selection-explanation: "Only show me the explanation of the user prompt(selected text) as well as its/their vacabulary or phrase explanation in #[TL] based on the sentences context: #[S1], notice that don't use bulletpoints' style on your response."
+
+ms:
+  config:
+    exclude-db: false
+    exclude-cache: false
+
+rest-template:
+  http-client:
+    max-total-connections: 100  # Lower for tests to reduce resource usage
+    max-connections-per-route: 20
+    validate-after-inactivity: 500
+    connection-time-to-live: 20
+  request-factory:
+    connect-timeout: 100000  # Faster timeouts for tests
+    read-timeout: 100000
+  retry:
+    max-attempts: 3  # Fewer retries for faster tests
+    retryable-exceptions:
+      # REST Client Exceptions (General)
+      - "org.springframework.web.client.RestClientException"
+      - "org.springframework.web.client.ResourceAccessException"
+
+      # HTTP Server Errors (5xx) - Usually transient
+      - "org.springframework.web.client.HttpServerErrorException"
+
+      # Network/Connection Exceptions
+      - "java.net.SocketTimeoutException"
+      - "java.net.ConnectException"
+      - "java.net.SocketException"
+      - "java.net.UnknownHostException"
+      - "java.io.IOException"
+      - "javax.net.ssl.SSLException"
+      - "javax.net.ssl.SSLHandshakeException"
+      - "org.apache.http.conn.ConnectTimeoutException"
+      - "org.apache.http.conn.HttpHostConnectException"
+      - "org.apache.http.NoHttpResponseException"
+    backoff-period: 500  # Faster backoff for tests
+
+ignore:
+  urls:
+    - /ai/**
+    - /ai-biz/**
+  userNames:
+    - admin
+
+youtube:
+  oauth:
+    client-secrets-file: ${YTB_OAUTH_CLIENT_SECRETS_FILE}
+    access-token: ${YTB_OAUTH_ACCESS_TOKEN}
+  video:
+    command: yt-dlp
+    download:
+      path: ENC(6MovVGMc/hsrID5qMQQxJx8yxkHvzUU7DQij+0bDKHWFCwoGwO/ZC9BTVvl+ZHJt)
+    large-subtitles:
+      threshold: 1000
+
+
+# Custom async executor configuration
+async:
+  executor:
+    thread:
+      core-pool-size: 1
+      max-pool-size: 1
+      queue-capacity: 100
+      thread-name-prefix: YTB-subtitles-thread-
+      rejected-execution-policy: CALLER_RUNS  # Options: ABORT, CALLER_RUNS, DISCARD, DISCARD_OLDEST

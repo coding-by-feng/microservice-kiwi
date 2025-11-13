@@ -1,0 +1,3 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  me.fengorz.kason.common.mq.rabbitmq.config.ResourcePropertiesConfig
+

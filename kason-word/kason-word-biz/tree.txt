@@ -1,0 +1,621 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] ----------------------< me.fengorz:kason-word-biz >----------------------
+[INFO] Building kason-word-biz 1.0-SNAPSHOT
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- maven-dependency-plugin:3.1.1:tree (default-cli) @ kason-word-biz ---
+Downloading from alimaven: http://maven.aliyun.com/nexus/content/repositories/central/org/codehaus/plexus/plexus-utils/1.1/plexus-utils-1.1.pom
+Downloaded from alimaven: http://maven.aliyun.com/nexus/content/repositories/central/org/codehaus/plexus/plexus-utils/1.1/plexus-utils-1.1.pom (0 B at 0 B/s)
+Downloading from alimaven: http://maven.aliyun.com/nexus/content/repositories/central/org/apache/maven/maven-artifact/2.0.5/maven-artifact-2.0.5.pom
+Progress (1): 727 B
+                   
+Downloaded from alimaven: http://maven.aliyun.com/nexus/content/repositories/central/org/apache/maven/maven-artifact/2.0.5/maven-artifact-2.0.5.pom (727 B at 2.5 kB/s)
+Progress (1): 4.1/7.6 kB
+Progress (1): 7.6 kB    
+                    
+Downloaded from alimaven: http://maven.aliyun.com/nexus/content/repositories/central/org/apache/maven/shared/maven-artifact-transfer/0.9.1/maven-artifact-transfer-0.9.1.pom (7.6 kB at 20 kB/s)
+Progress (1): 2.3/108 kB
+Progress (1): 5.1/108 kB
+Progress (2): 5.1/108 kB | 2.3/123 kB
+Progress (2): 7.9/108 kB | 2.3/123 kB
+Progress (2): 7.9/108 kB | 5.1/123 kB
+Progress (3): 7.9/108 kB | 5.1/123 kB | 2.3/35 kB
+Progress (3): 11/108 kB | 5.1/123 kB | 2.3/35 kB 
+Progress (3): 11/108 kB | 7.9/123 kB | 2.3/35 kB
+Progress (3): 11/108 kB | 7.9/123 kB | 5.1/35 kB
+Progress (3): 11/108 kB | 11/123 kB | 5.1/35 kB 
+Progress (4): 11/108 kB | 11/123 kB | 5.1/35 kB | 2.3/560 kB
+Progress (4): 11/108 kB | 11/123 kB | 7.9/35 kB | 2.3/560 kB
+Progress (4): 11/108 kB | 11/123 kB | 7.9/35 kB | 5.1/560 kB
+Progress (4): 11/108 kB | 11/123 kB | 7.9/35 kB | 7.9/560 kB
+Progress (4): 11/108 kB | 11/123 kB | 7.9/35 kB | 11/560 kB 
+Progress (4): 14/108 kB | 11/123 kB | 7.9/35 kB | 11/560 kB
+Progress (4): 16/108 kB | 11/123 kB | 7.9/35 kB | 11/560 kB
+Progress (4): 19/108 kB | 11/123 kB | 7.9/35 kB | 11/560 kB
+Progress (4): 22/108 kB | 11/123 kB | 7.9/35 kB | 11/560 kB
+Progress (4): 25/108 kB | 11/123 kB | 7.9/35 kB | 11/560 kB
+Progress (4): 28/108 kB | 11/123 kB | 7.9/35 kB | 11/560 kB
+Progress (4): 28/108 kB | 14/123 kB | 7.9/35 kB | 11/560 kB
+Progress (4): 30/108 kB | 14/123 kB | 7.9/35 kB | 11/560 kB
+Progress (4): 30/108 kB | 14/123 kB | 11/35 kB | 11/560 kB 
+Progress (4): 33/108 kB | 14/123 kB | 11/35 kB | 11/560 kB
+Progress (4): 33/108 kB | 16/123 kB | 11/35 kB | 11/560 kB
+Progress (4): 36/108 kB | 16/123 kB | 11/35 kB | 11/560 kB
+Progress (4): 36/108 kB | 16/123 kB | 14/35 kB | 11/560 kB
+Progress (4): 36/108 kB | 19/123 kB | 14/35 kB | 11/560 kB
+Progress (4): 36/108 kB | 19/123 kB | 16/35 kB | 11/560 kB
+Progress (4): 36/108 kB | 19/123 kB | 19/35 kB | 11/560 kB
+Progress (4): 36/108 kB | 19/123 kB | 22/35 kB | 11/560 kB
+Progress (4): 36/108 kB | 19/123 kB | 25/35 kB | 11/560 kB
+Progress (4): 36/108 kB | 22/123 kB | 25/35 kB | 11/560 kB
+Progress (4): 36/108 kB | 25/123 kB | 25/35 kB | 11/560 kB
+Progress (4): 36/108 kB | 25/123 kB | 28/35 kB | 11/560 kB
+Progress (4): 36/108 kB | 25/123 kB | 28/35 kB | 14/560 kB
+Progress (4): 36/108 kB | 28/123 kB | 28/35 kB | 14/560 kB
+Progress (4): 36/108 kB | 28/123 kB | 28/35 kB | 16/560 kB
+Progress (4): 36/108 kB | 28/123 kB | 30/35 kB | 16/560 kB
+Progress (4): 36/108 kB | 28/123 kB | 30/35 kB | 19/560 kB
+Progress (4): 36/108 kB | 30/123 kB | 30/35 kB | 19/560 kB
+Progress (4): 36/108 kB | 30/123 kB | 30/35 kB | 22/560 kB
+Progress (4): 36/108 kB | 30/123 kB | 33/35 kB | 22/560 kB
+Progress (4): 36/108 kB | 30/123 kB | 33/35 kB | 25/560 kB
+Progress (4): 36/108 kB | 33/123 kB | 33/35 kB | 25/560 kB
+Progress (4): 36/108 kB | 33/123 kB | 33/35 kB | 28/560 kB
+Progress (4): 36/108 kB | 36/123 kB | 33/35 kB | 28/560 kB
+Progress (4): 36/108 kB | 36/123 kB | 33/35 kB | 30/560 kB
+Progress (4): 36/108 kB | 36/123 kB | 33/35 kB | 33/560 kB
+Progress (4): 36/108 kB | 36/123 kB | 33/35 kB | 36/560 kB
+Progress (4): 39/108 kB | 36/123 kB | 33/35 kB | 36/560 kB
+Progress (4): 42/108 kB | 36/123 kB | 33/35 kB | 36/560 kB
+Progress (4): 44/108 kB | 36/123 kB | 33/35 kB | 36/560 kB
+Progress (4): 47/108 kB | 36/123 kB | 33/35 kB | 36/560 kB
+Progress (4): 50/108 kB | 36/123 kB | 33/35 kB | 36/560 kB
+Progress (4): 50/108 kB | 36/123 kB | 35 kB | 36/560 kB   
+Progress (4): 53/108 kB | 36/123 kB | 35 kB | 36/560 kB
+Progress (4): 53/108 kB | 39/123 kB | 35 kB | 36/560 kB
+Progress (4): 56/108 kB | 39/123 kB | 35 kB | 36/560 kB
+Progress (4): 56/108 kB | 42/123 kB | 35 kB | 36/560 kB
+Progress (4): 58/108 kB | 42/123 kB | 35 kB | 36/560 kB
+Progress (4): 58/108 kB | 44/123 kB | 35 kB | 36/560 kB
+Progress (4): 61/108 kB | 44/123 kB | 35 kB | 36/560 kB
+Progress (4): 61/108 kB | 47/123 kB | 35 kB | 36/560 kB
+Progress (4): 64/108 kB | 47/123 kB | 35 kB | 36/560 kB
+Progress (4): 64/108 kB | 50/123 kB | 35 kB | 36/560 kB
+Progress (4): 67/108 kB | 50/123 kB | 35 kB | 36/560 kB
+Progress (4): 67/108 kB | 53/123 kB | 35 kB | 36/560 kB
+Progress (4): 67/108 kB | 53/123 kB | 35 kB | 39/560 kB
+Progress (4): 67/108 kB | 56/123 kB | 35 kB | 39/560 kB
+Progress (4): 70/108 kB | 56/123 kB | 35 kB | 39/560 kB
+Progress (4): 70/108 kB | 58/123 kB | 35 kB | 39/560 kB
+Progress (4): 70/108 kB | 58/123 kB | 35 kB | 42/560 kB
+Progress (4): 70/108 kB | 61/123 kB | 35 kB | 42/560 kB
+Progress (4): 72/108 kB | 61/123 kB | 35 kB | 42/560 kB
+Progress (4): 72/108 kB | 64/123 kB | 35 kB | 42/560 kB
+Progress (4): 72/108 kB | 64/123 kB | 35 kB | 44/560 kB
+Progress (4): 72/108 kB | 67/123 kB | 35 kB | 44/560 kB
+Progress (4): 75/108 kB | 67/123 kB | 35 kB | 44/560 kB
+Progress (4): 75/108 kB | 70/123 kB | 35 kB | 44/560 kB
+Progress (4): 75/108 kB | 70/123 kB | 35 kB | 47/560 kB
+Progress (4): 78/108 kB | 70/123 kB | 35 kB | 47/560 kB
+Progress (4): 78/108 kB | 70/123 kB | 35 kB | 50/560 kB
+Progress (4): 81/108 kB | 70/123 kB | 35 kB | 50/560 kB
+Progress (4): 81/108 kB | 72/123 kB | 35 kB | 50/560 kB
+Progress (4): 84/108 kB | 72/123 kB | 35 kB | 50/560 kB
+Progress (4): 84/108 kB | 72/123 kB | 35 kB | 53/560 kB
+Progress (4): 86/108 kB | 72/123 kB | 35 kB | 53/560 kB
+Progress (4): 86/108 kB | 75/123 kB | 35 kB | 53/560 kB
+Progress (4): 86/108 kB | 75/123 kB | 35 kB | 56/560 kB
+Progress (4): 86/108 kB | 78/123 kB | 35 kB | 56/560 kB
+Progress (4): 86/108 kB | 78/123 kB | 35 kB | 58/560 kB
+Progress (4): 86/108 kB | 81/123 kB | 35 kB | 58/560 kB
+Progress (4): 86/108 kB | 81/123 kB | 35 kB | 61/560 kB
+Progress (4): 86/108 kB | 84/123 kB | 35 kB | 61/560 kB
+Progress (4): 86/108 kB | 84/123 kB | 35 kB | 64/560 kB
+Progress (4): 86/108 kB | 86/123 kB | 35 kB | 64/560 kB
+Progress (4): 86/108 kB | 86/123 kB | 35 kB | 67/560 kB
+Progress (4): 86/108 kB | 86/123 kB | 35 kB | 70/560 kB
+Progress (4): 86/108 kB | 86/123 kB | 35 kB | 72/560 kB
+Progress (4): 86/108 kB | 86/123 kB | 35 kB | 75/560 kB
+Progress (4): 86/108 kB | 86/123 kB | 35 kB | 78/560 kB
+Progress (4): 86/108 kB | 86/123 kB | 35 kB | 81/560 kB
+Progress (4): 86/108 kB | 86/123 kB | 35 kB | 84/560 kB
+Progress (4): 86/108 kB | 86/123 kB | 35 kB | 86/560 kB
+Progress (4): 86/108 kB | 86/123 kB | 35 kB | 89/560 kB
+Progress (4): 89/108 kB | 86/123 kB | 35 kB | 89/560 kB
+Progress (4): 92/108 kB | 86/123 kB | 35 kB | 89/560 kB
+Progress (4): 92/108 kB | 89/123 kB | 35 kB | 89/560 kB
+Progress (4): 95/108 kB | 89/123 kB | 35 kB | 89/560 kB
+Progress (4): 95/108 kB | 92/123 kB | 35 kB | 89/560 kB
+Progress (4): 98/108 kB | 92/123 kB | 35 kB | 89/560 kB
+Progress (4): 100/108 kB | 92/123 kB | 35 kB | 89/560 kB
+Progress (4): 100/108 kB | 95/123 kB | 35 kB | 89/560 kB
+Progress (4): 103/108 kB | 95/123 kB | 35 kB | 89/560 kB
+Progress (4): 103/108 kB | 98/123 kB | 35 kB | 89/560 kB
+Progress (4): 106/108 kB | 98/123 kB | 35 kB | 89/560 kB
+Progress (4): 106/108 kB | 100/123 kB | 35 kB | 89/560 kB
+Progress (4): 108 kB | 100/123 kB | 35 kB | 89/560 kB    
+Progress (4): 108 kB | 103/123 kB | 35 kB | 89/560 kB
+Progress (4): 108 kB | 106/123 kB | 35 kB | 89/560 kB
+Progress (4): 108 kB | 109/123 kB | 35 kB | 89/560 kB
+Progress (4): 108 kB | 109/123 kB | 35 kB | 92/560 kB
+Progress (4): 108 kB | 112/123 kB | 35 kB | 92/560 kB
+Progress (4): 108 kB | 112/123 kB | 35 kB | 95/560 kB
+Progress (4): 108 kB | 114/123 kB | 35 kB | 95/560 kB
+Progress (4): 108 kB | 114/123 kB | 35 kB | 98/560 kB
+Progress (4): 108 kB | 117/123 kB | 35 kB | 98/560 kB
+Progress (4): 108 kB | 120/123 kB | 35 kB | 98/560 kB
+Progress (4): 108 kB | 123/123 kB | 35 kB | 98/560 kB
+Progress (4): 108 kB | 123 kB | 35 kB | 98/560 kB    
+Progress (4): 108 kB | 123 kB | 35 kB | 100/560 kB
+Progress (4): 108 kB | 123 kB | 35 kB | 103/560 kB
+Progress (4): 108 kB | 123 kB | 35 kB | 106/560 kB
+Progress (4): 108 kB | 123 kB | 35 kB | 109/560 kB
+Progress (4): 108 kB | 123 kB | 35 kB | 112/560 kB
+Progress (4): 108 kB | 123 kB | 35 kB | 114/560 kB
+Progress (4): 108 kB | 123 kB | 35 kB | 117/560 kB
+Progress (4): 108 kB | 123 kB | 35 kB | 120/560 kB
+Progress (4): 108 kB | 123 kB | 35 kB | 123/560 kB
+Progress (4): 108 kB | 123 kB | 35 kB | 126/560 kB
+Progress (4): 108 kB | 123 kB | 35 kB | 128/560 kB
+Progress (4): 108 kB | 123 kB | 35 kB | 131/560 kB
+Progress (4): 108 kB | 123 kB | 35 kB | 134/560 kB
+Progress (4): 108 kB | 123 kB | 35 kB | 137/560 kB
+Progress (4): 108 kB | 123 kB | 35 kB | 140/560 kB
+Progress (4): 108 kB | 123 kB | 35 kB | 142/560 kB
+Progress (4): 108 kB | 123 kB | 35 kB | 145/560 kB
+Progress (4): 108 kB | 123 kB | 35 kB | 148/560 kB
+Progress (4): 108 kB | 123 kB | 35 kB | 151/560 kB
+Progress (4): 108 kB | 123 kB | 35 kB | 154/560 kB
+Progress (4): 108 kB | 123 kB | 35 kB | 156/560 kB
+Progress (4): 108 kB | 123 kB | 35 kB | 159/560 kB
+Progress (4): 108 kB | 123 kB | 35 kB | 162/560 kB
+Progress (4): 108 kB | 123 kB | 35 kB | 165/560 kB
+Progress (4): 108 kB | 123 kB | 35 kB | 168/560 kB
+Progress (4): 108 kB | 123 kB | 35 kB | 170/560 kB
+Progress (4): 108 kB | 123 kB | 35 kB | 173/560 kB
+Progress (4): 108 kB | 123 kB | 35 kB | 176/560 kB
+Progress (4): 108 kB | 123 kB | 35 kB | 179/560 kB
+Progress (4): 108 kB | 123 kB | 35 kB | 182/560 kB
+Progress (4): 108 kB | 123 kB | 35 kB | 184/560 kB
+Progress (4): 108 kB | 123 kB | 35 kB | 187/560 kB
+Progress (4): 108 kB | 123 kB | 35 kB | 190/560 kB
+Progress (4): 108 kB | 123 kB | 35 kB | 193/560 kB
+Progress (4): 108 kB | 123 kB | 35 kB | 196/560 kB
+Progress (4): 108 kB | 123 kB | 35 kB | 198/560 kB
+Progress (4): 108 kB | 123 kB | 35 kB | 201/560 kB
+Progress (4): 108 kB | 123 kB | 35 kB | 204/560 kB
+Progress (4): 108 kB | 123 kB | 35 kB | 207/560 kB
+Progress (4): 108 kB | 123 kB | 35 kB | 210/560 kB
+Progress (4): 108 kB | 123 kB | 35 kB | 212/560 kB
+Progress (4): 108 kB | 123 kB | 35 kB | 215/560 kB
+                                                  
+Downloaded from alimaven: http://maven.aliyun.com/nexus/content/repositories/central/org/apache/maven/shared/maven-artifact-transfer/0.9.1/maven-artifact-transfer-0.9.1.jar (123 kB at 113 kB/s)
+Progress (3): 108 kB | 35 kB | 218/560 kB
+Progress (3): 108 kB | 35 kB | 221/560 kB
+Progress (3): 108 kB | 35 kB | 224/560 kB
+Progress (3): 108 kB | 35 kB | 226/560 kB
+Progress (3): 108 kB | 35 kB | 229/560 kB
+Progress (3): 108 kB | 35 kB | 232/560 kB
+Progress (3): 108 kB | 35 kB | 235/560 kB
+Progress (3): 108 kB | 35 kB | 238/560 kB
+Progress (3): 108 kB | 35 kB | 240/560 kB
+Progress (3): 108 kB | 35 kB | 243/560 kB
+Progress (3): 108 kB | 35 kB | 246/560 kB
+Progress (3): 108 kB | 35 kB | 249/560 kB
+Progress (3): 108 kB | 35 kB | 252/560 kB
+Progress (3): 108 kB | 35 kB | 254/560 kB
+Progress (3): 108 kB | 35 kB | 257/560 kB
+Progress (3): 108 kB | 35 kB | 260/560 kB
+Progress (3): 108 kB | 35 kB | 263/560 kB
+Progress (3): 108 kB | 35 kB | 266/560 kB
+Progress (3): 108 kB | 35 kB | 268/560 kB
+Progress (3): 108 kB | 35 kB | 271/560 kB
+                                         
+Downloaded from alimaven: http://maven.aliyun.com/nexus/content/repositories/central/org/apache/maven/shared/maven-dependency-analyzer/1.10/maven-dependency-analyzer-1.10.jar (35 kB at 31 kB/s)
+Progress (2): 108 kB | 274/560 kB
+Progress (2): 108 kB | 277/560 kB
+Progress (2): 108 kB | 280/560 kB
+Progress (2): 108 kB | 282/560 kB
+Progress (2): 108 kB | 285/560 kB
+Progress (2): 108 kB | 288/560 kB
+Progress (2): 108 kB | 291/560 kB
+Progress (2): 108 kB | 294/560 kB
+Progress (2): 108 kB | 296/560 kB
+Progress (2): 108 kB | 299/560 kB
+Progress (2): 108 kB | 302/560 kB
+Progress (2): 108 kB | 305/560 kB
+Progress (2): 108 kB | 308/560 kB
+Progress (2): 108 kB | 310/560 kB
+Progress (2): 108 kB | 313/560 kB
+Progress (2): 108 kB | 316/560 kB
+Progress (2): 108 kB | 319/560 kB
+Progress (2): 108 kB | 322/560 kB
+Progress (2): 108 kB | 324/560 kB
+Progress (2): 108 kB | 327/560 kB
+Progress (2): 108 kB | 330/560 kB
+Progress (2): 108 kB | 333/560 kB
+Progress (2): 108 kB | 336/560 kB
+Progress (2): 108 kB | 338/560 kB
+Progress (2): 108 kB | 341/560 kB
+                                 
+Downloaded from alimaven: http://maven.aliyun.com/nexus/content/repositories/central/org/ow2/asm/asm/6.1.1/asm-6.1.1.jar (108 kB at 89 kB/s)
+Progress (1): 344/560 kB
+Progress (1): 347/560 kB
+Progress (1): 350/560 kB
+Progress (1): 352/560 kB
+Progress (1): 355/560 kB
+Progress (1): 358/560 kB
+Progress (1): 361/560 kB
+Progress (1): 364/560 kB
+Progress (1): 366/560 kB
+Progress (1): 369/560 kB
+Progress (1): 372/560 kB
+Progress (1): 375/560 kB
+Progress (1): 378/560 kB
+Progress (1): 380/560 kB
+Progress (1): 383/560 kB
+Progress (1): 386/560 kB
+Progress (1): 389/560 kB
+Progress (1): 392/560 kB
+Progress (1): 394/560 kB
+Progress (1): 397/560 kB
+Progress (1): 400/560 kB
+Progress (1): 403/560 kB
+Progress (1): 406/560 kB
+Progress (1): 408/560 kB
+Progress (1): 411/560 kB
+Progress (1): 414/560 kB
+Progress (1): 417/560 kB
+Progress (1): 420/560 kB
+Progress (1): 422/560 kB
+Progress (1): 425/560 kB
+Progress (1): 428/560 kB
+Progress (1): 431/560 kB
+Progress (1): 434/560 kB
+Progress (1): 436/560 kB
+Progress (1): 439/560 kB
+Progress (1): 442/560 kB
+Progress (1): 445/560 kB
+Progress (1): 448/560 kB
+Progress (1): 450/560 kB
+Progress (1): 453/560 kB
+Progress (1): 456/560 kB
+Progress (1): 459/560 kB
+Progress (1): 462/560 kB
+Progress (1): 464/560 kB
+Progress (1): 467/560 kB
+Progress (1): 470/560 kB
+Progress (1): 473/560 kB
+Progress (1): 476/560 kB
+Progress (1): 478/560 kB
+Progress (1): 481/560 kB
+Progress (1): 484/560 kB
+Progress (1): 487/560 kB
+Progress (1): 490/560 kB
+Progress (1): 492/560 kB
+Progress (1): 495/560 kB
+Progress (1): 498/560 kB
+Progress (1): 501/560 kB
+Progress (1): 504/560 kB
+Progress (1): 506/560 kB
+Progress (1): 509/560 kB
+Progress (1): 512/560 kB
+Progress (1): 515/560 kB
+Progress (1): 518/560 kB
+Progress (1): 520/560 kB
+Progress (1): 523/560 kB
+Progress (1): 526/560 kB
+Progress (1): 529/560 kB
+Progress (1): 532/560 kB
+Progress (1): 534/560 kB
+Progress (1): 537/560 kB
+Progress (1): 540/560 kB
+Progress (1): 543/560 kB
+Progress (1): 546/560 kB
+Progress (1): 548/560 kB
+Progress (1): 551/560 kB
+Progress (1): 554/560 kB
+Progress (1): 557/560 kB
+Progress (1): 560/560 kB
+Progress (1): 560 kB    
+                    
+Downloaded from alimaven: http://maven.aliyun.com/nexus/content/repositories/central/org/apache/commons/commons-compress/1.16.1/commons-compress-1.16.1.jar (560 kB at 346 kB/s)
+[INFO] me.fengorz:kason-word-biz:jar:1.0-SNAPSHOT
+[INFO] +- me.fengorz:kason-word-api:jar:1.0-SNAPSHOT:compile
+[INFO] |  \- me.fengorz:kason-common-sdk:jar:1.0-SNAPSHOT:compile
+[INFO] |     +- me.fengorz:kason-common-api:jar:1.0-SNAPSHOT:compile
+[INFO] |     +- me.fengorz:kason-common-dfs:jar:1.0-SNAPSHOT:compile
+[INFO] |     \- me.fengorz:kason-common-mq:jar:1.0-SNAPSHOT:compile
+[INFO] +- me.fengorz:kason-bdf:jar:1.0-SNAPSHOT:compile
+[INFO] |  +- me.fengorz:kason-upms-api:jar:1.0-SNAPSHOT:compile
+[INFO] +- me.fengorz:kason-common-es:jar:1.0-SNAPSHOT:compile
+Downloaded from alimaven: http://maven.aliyun.com/nexus/content/repositories/central/commons-logging/commons-logging/1.0.4/commons-logging-1.0.4.jar (0 B at 0 B/s)
+Downloading from alimaven: http://maven.aliyun.com/nexus/content/repositories/central/org/apache/maven/shared/maven-artifact-transfer/0.9.1/maven-artifact-transfer-0.9.1.jar
+Downloaded from alimaven: http://maven.aliyun.com/nexus/content/repositories/central/org/apache/maven/doxia/doxia-core/1.2/doxia-core-1.2.jar (0 B at 0 B/s)
+Progress (1): 2.3/108 kBProgress (1): 5.1/108 kBProgress (2): 5.1/108 kB | 2.3/123 kBProgress (2): 7.9/108 kB | 2.3/123 kBProgress (2): 7.9/108 kB | 5.1/123 kBProgress (3): 7.9/108 kB | 5.1/123 kB | 2.3/35 kBProgress (3): 11/108 kB | 5.1/123 kB | 2.3/35 kB Progress (3): 11/108 kB | 7.9/123 kB | 2.3/35 kBProgress (3): 11/108 kB | 7.9/123 kB | 5.1/35 kBProgress (3): 11/108 kB | 11/123 kB | 5.1/35 kB Progress (4): 11/108 kB | 11/123 kB | 5.1/35 kB | 2.3/560 kBProgress (4): 11/108 kB | 11/123 kB | 7.9/35 kB | 2.3/560 kBProgress (4): 11/108 kB | 11/123 kB | 7.9/35 kB | 5.1/560 kBProgress (4): 11/108 kB | 11/123 kB | 7.9/35 kB | 7.9/560 kBProgress (4): 11/108 kB | 11/123 kB | 7.9/35 kB | 11/560 kB Progress (4): 14/108 kB | 11/123 kB | 7.9/35 kB | 11/560 kBProgress (4): 16/108 kB | 11/123 kB | 7.9/35 kB | 11/560 kBProgress (4): 19/108 kB | 11/123 kB | 7.9/35 kB | 11/560 kBProgress (4): 22/108 kB | 11/123 kB | 7.9/35 kB | 11/560 kBProgress (4): 25/108 kB | 11/123 kB | 7.9/35 kB | 11/560 kBProgress (4): 28/108 kB | 11/123 kB | 7.9/35 kB | 11/560 kBProgress (4): 28/108 kB | 14/123 kB | 7.9/35 kB | 11/560 kBProgress (4): 30/108 kB | 14/123 kB | 7.9/35 kB | 11/560 kBProgress (4): 30/108 kB | 14/123 kB | 11/35 kB | 11/560 kB Progress (4): 33/108 kB | 14/123 kB | 11/35 kB | 11/560 kBProgress (4): 33/108 kB | 16/123 kB | 11/35 kB | 11/560 kBProgress (4): 36/108 kB | 16/123 kB | 11/35 kB | 11/560 kBProgress (4): 36/108 kB | 16/123 kB | 14/35 kB | 11/560 kBProgress (4): 36/108 kB | 19/123 kB | 14/35 kB | 11/560 kBProgress (4): 36/108 kB | 19/123 kB | 16/35 kB | 11/560 kBProgress (4): 36/108 kB | 19/123 kB | 19/35 kB | 11/560 kBProgress (4): 36/108 kB | 19/123 kB | 22/35 kB | 11/560 kBProgress (4): 36/108 kB | 19/123 kB | 25/35 kB | 11/560 kBProgress (4): 36/108 kB | 22/123 kB | 25/35 kB | 11/560 kBProgress (4): 36/108 kB | 25/123 kB | 25/35 kB | 11/560 kBProgress (4): 36/108 kB | 25/123 kB | 28/35 kB | 11/560 kBProgress (4): 36/108 kB | 25/123 kB | 28/35 kB | 14/560 kBProgress (4): 36/108 kB | 28/123 kB | 28/35 kB | 14/560 kBProgress (4): 36/108 kB | 28/123 kB | 28/35 kB | 16/560 kBProgress (4): 36/108 kB | 28/123 kB | 30/35 kB | 16/560 kBProgress (4): 36/108 kB | 28/123 kB | 30/35 kB | 19/560 kBProgress (4): 36/108 kB | 30/123 kB | 30/35 kB | 19/560 kBProgress (4): 36/108 kB | 30/123 kB | 30/35 kB | 22/560 kBProgress (4): 36/108 kB | 30/123 kB | 33/35 kB | 22/560 kBProgress (4): 36/108 kB | 30/123 kB | 33/35 kB | 25/560 kBProgress (4): 36/108 kB | 33/123 kB | 33/35 kB | 25/560 kBProgress (4): 36/108 kB | 33/123 kB | 33/35 kB | 28/560 kBProgress (4): 36/108 kB | 36/123 kB | 33/35 kB | 28/560 kBProgress (4): 36/108 kB | 36/123 kB | 33/35 kB | 30/560 kBProgress (4): 36/108 kB | 36/123 kB | 33/35 kB | 33/560 kBProgress (4): 36/108 kB | 36/123 kB | 33/35 kB | 36/560 kBProgress (4): 39/108 kB | 36/123 kB | 33/35 kB | 36/560 kBProgress (4): 42/108 kB | 36/123 kB | 33/35 kB | 36/560 kBProgress (4): 44/108 kB | 36/123 kB | 33/35 kB | 36/560 kBProgress (4): 47/108 kB | 36/123 kB | 33/35 kB | 36/560 kBProgress (4): 50/108 kB | 36/123 kB | 33/35 kB | 36/560 kBProgress (4): 50/108 kB | 36/123 kB | 35 kB | 36/560 kB   Progress (4): 53/108 kB | 36/123 kB | 35 kB | 36/560 kBProgress (4): 53/108 kB | 39/123 kB | 35 kB | 36/560 kBProgress (4): 56/108 kB | 39/123 kB | 35 kB | 36/560 kBProgress (4): 56/108 kB | 42/123 kB | 35 kB | 36/560 kBProgress (4): 58/108 kB | 42/123 kB | 35 kB | 36/560 kBProgress (4): 58/108 kB | 44/123 kB | 35 kB | 36/560 kBProgress (4): 61/108 kB | 44/123 kB | 35 kB | 36/560 kBProgress (4): 61/108 kB | 47/123 kB | 35 kB | 36/560 kBProgress (4): 64/108 kB | 47/123 kB | 35 kB | 36/560 kBProgress (4): 64/108 kB | 50/123 kB | 35 kB | 36/560 kBProgress (4): 67/108 kB | 50/123 kB | 35 kB | 36/560 kBProgress (4): 67/108 kB | 53/123 kB | 35 kB | 36/560 kBProgress (4): 67/108 kB | 53/123 kB | 35 kB | 39/560 kBProgress (4): 67/108 kB | 56/123 kB | 35 kB | 39/560 kBProgress (4): 70/108 kB | 56/123 kB | 35 kB | 39/560 kBProgress (4): 70/108 kB | 58/123 kB | 35 kB | 39/560 kBProgress (4): 70/108 kB | 58/123 kB | 35 kB | 42/560 kBProgress (4): 70/108 kB | 61/123 kB | 35 kB | 42/560 kBProgress (4): 72/108 kB | 61/123 kB | 35 kB | 42/560 kBProgress (4): 72/108 kB | 64/123 kB | 35 kB | 42/560 kBProgress (4): 72/108 kB | 64/123 kB | 35 kB | 44/560 kBProgress (4): 72/108 kB | 67/123 kB | 35 kB | 44/560 kBProgress (4): 75/108 kB | 67/123 kB | 35 kB | 44/560 kBProgress (4): 75/108 kB | 70/123 kB | 35 kB | 44/560 kBProgress (4): 75/108 kB | 70/123 kB | 35 kB | 47/560 kBProgress (4): 78/108 kB | 70/123 kB | 35 kB | 47/560 kBProgress (4): 78/108 kB | 70/123 kB | 35 kB | 50/560 kBProgress (4): 81/108 kB | 70/123 kB | 35 kB | 50/560 kBProgress (4): 81/108 kB | 72/123 kB | 35 kB | 50/560 kBProgress (4): 84/108 kB | 72/123 kB | 35 kB | 50/560 kBProgress (4): 84/108 kB | 72/123 kB | 35 kB | 53/560 kBProgress (4): 86/108 kB | 72/123 kB | 35 kB | 53/560 kBProgress (4): 86/108 kB | 75/123 kB | 35 kB | 53/560 kBProgress (4): 86/108 kB | 75/123 kB | 35 kB | 56/560 kBProgress (4): 86/108 kB | 78/123 kB | 35 kB | 56/560 kBProgress (4): 86/108 kB | 78/123 kB | 35 kB | 58/560 kBProgress (4): 86/108 kB | 81/123 kB | 35 kB | 58/560 kBProgress (4): 86/108 kB | 81/123 kB | 35 kB | 61/560 kBProgress (4): 86/108 kB | 84/123 kB | 35 kB | 61/560 kBProgress (4): 86/108 kB | 84/123 kB | 35 kB | 64/560 kBProgress (4): 86/108 kB | 86/123 kB | 35 kB | 64/560 kBProgress (4): 86/108 kB | 86/123 kB | 35 kB | 67/560 kBProgress (4): 86/108 kB | 86/123 kB | 35 kB | 70/560 kBProgress (4): 86/108 kB | 86/123 kB | 35 kB | 72/560 kBProgress (4): 86/108 kB | 86/123 kB | 35 kB | 75/560 kBProgress (4): 86/108 kB | 86/123 kB | 35 kB | 78/560 kBProgress (4): 86/108 kB | 86/123 kB | 35 kB | 81/560 kBProgress (4): 86/108 kB | 86/123 kB | 35 kB | 84/560 kBProgress (4): 86/108 kB | 86/123 kB | 35 kB | 86/560 kBProgress (4): 86/108 kB | 86/123 kB | 35 kB | 89/560 kBProgress (4): 89/108 kB | 86/123 kB | 35 kB | 89/560 kBProgress (4): 92/108 kB | 86/123 kB | 35 kB | 89/560 kBProgress (4): 92/108 kB | 89/123 kB | 35 kB | 89/560 kBProgress (4): 95/108 kB | 89/123 kB | 35 kB | 89/560 kBProgress (4): 95/108 kB | 92/123 kB | 35 kB | 89/560 kBProgress (4): 98/108 kB | 92/123 kB | 35 kB | 89/560 kBProgress (4): 100/108 kB | 92/123 kB | 35 kB | 89/560 kBProgress (4): 100/108 kB | 95/123 kB | 35 kB | 89/560 kBProgress (4): 103/108 kB | 95/123 kB | 35 kB | 89/560 kBProgress (4): 103/108 kB | 98/123 kB | 35 kB | 89/560 kBProgress (4): 106/108 kB | 98/123 kB | 35 kB | 89/560 kBProgress (4): 106/108 kB | 100/123 kB | 35 kB | 89/560 kBProgress (4): 108 kB | 100/123 kB | 35 kB | 89/560 kB    Progress (4): 108 kB | 103/123 kB | 35 kB | 89/560 kBProgress (4): 108 kB | 106/123 kB | 35 kB | 89/560 kBProgress (4): 108 kB | 109/123 kB | 35 kB | 89/560 kBProgress (4): 108 kB | 109/123 kB | 35 kB | 92/560 kBProgress (4): 108 kB | 112/123 kB | 35 kB | 92/560 kBProgress (4): 108 kB | 112/123 kB | 35 kB | 95/560 kBProgress (4): 108 kB | 114/123 kB | 35 kB | 95/560 kBProgress (4): 108 kB | 114/123 kB | 35 kB | 98/560 kBProgress (4): 108 kB | 117/123 kB | 35 kB | 98/560 kBProgress (4): 108 kB | 120/123 kB | 35 kB | 98/560 kBProgress (4): 108 kB | 123/123 kB | 35 kB | 98/560 kBProgress (4): 108 kB | 123 kB | 35 kB | 98/560 kB    Progress (4): 108 kB | 123 kB | 35 kB | 100/560 kBProgress (4): 108 kB | 123 kB | 35 kB | 103/560 kBProgress (4): 108 kB | 123 kB | 35 kB | 106/560 kBProgress (4): 108 kB | 123 kB | 35 kB | 109/560 kBProgress (4): 108 kB | 123 kB | 35 kB | 112/560 kBProgress (4): 108 kB | 123 kB | 35 kB | 114/560 kBProgress (4): 108 kB | 123 kB | 35 kB | 117/560 kBProgress (4): 108 kB | 123 kB | 35 kB | 120/560 kBProgress (4): 108 kB | 123 kB | 35 kB | 123/560 kBProgress (4): 108 kB | 123 kB | 35 kB | 126/560 kBProgress (4): 108 kB | 123 kB | 35 kB | 128/560 kBProgress (4): 108 kB | 123 kB | 35 kB | 131/560 kBProgress (4): 108 kB | 123 kB | 35 kB | 134/560 kBProgress (4): 108 kB | 123 kB | 35 kB | 137/560 kBProgress (4): 108 kB | 123 kB | 35 kB | 140/560 kBProgress (4): 108 kB | 123 kB | 35 kB | 142/560 kBProgress (4): 108 kB | 123 kB | 35 kB | 145/560 kBProgress (4): 108 kB | 123 kB | 35 kB | 148/560 kBProgress (4): 108 kB | 123 kB | 35 kB | 151/560 kBProgress (4): 108 kB | 123 kB | 35 kB | 154/560 kBProgress (4): 108 kB | 123 kB | 35 kB | 156/560 kBProgress (4): 108 kB | 123 kB | 35 kB | 159/560 kBProgress (4): 108 kB | 123 kB | 35 kB | 162/560 kBProgress (4): 108 kB | 123 kB | 35 kB | 165/560 kBProgress (4): 108 kB | 123 kB | 35 kB | 168/560 kBProgress (4): 108 kB | 123 kB | 35 kB | 170/560 kBProgress (4): 108 kB | 123 kB | 35 kB | 173/560 kBProgress (4): 108 kB | 123 kB | 35 kB | 176/560 kBProgress (4): 108 kB | 123 kB | 35 kB | 179/560 kBProgress (4): 108 kB | 123 kB | 35 kB | 182/560 kBProgress (4): 108 kB | 123 kB | 35 kB | 184/560 kBProgress (4): 108 kB | 123 kB | 35 kB | 187/560 kBProgress (4): 108 kB | 123 kB | 35 kB | 190/560 kBProgress (4): 108 kB | 123 kB | 35 kB | 193/560 kBProgress (4): 108 kB | 123 kB | 35 kB | 196/560 kBProgress (4): 108 kB | 123 kB | 35 kB | 198/560 kBProgress (4): 108 kB | 123 kB | 35 kB | 201/560 kBProgress (4): 108 kB | 123 kB | 35 kB | 204/560 kBProgress (4): 108 kB | 123 kB | 35 kB | 207/560 kBProgress (4): 108 kB | 123 kB | 35 kB | 210/560 kBProgress (4): 108 kB | 123 kB | 35 kB | 212/560 kBProgress (4): 108 kB | 123 kB | 35 kB | 215/560 kB                                                  Downloaded from alimaven: http://maven.aliyun.com/nexus/content/repositories/central/org/apache/maven/shared/maven-artifact-transfer/0.9.1/maven-artifact-transfer-0.9.1.jar (123 kB at 113 kB/s)
+Progress (3): 108 kB | 35 kB | 218/560 kBProgress (3): 108 kB | 35 kB | 221/560 kBProgress (3): 108 kB | 35 kB | 224/560 kBProgress (3): 108 kB | 35 kB | 226/560 kBProgress (3): 108 kB | 35 kB | 229/560 kBProgress (3): 108 kB | 35 kB | 232/560 kBProgress (3): 108 kB | 35 kB | 235/560 kBProgress (3): 108 kB | 35 kB | 238/560 kBProgress (3): 108 kB | 35 kB | 240/560 kBProgress (3): 108 kB | 35 kB | 243/560 kBProgress (3): 108 kB | 35 kB | 246/560 kBProgress (3): 108 kB | 35 kB | 249/560 kBProgress (3): 108 kB | 35 kB | 252/560 kBProgress (3): 108 kB | 35 kB | 254/560 kBProgress (3): 108 kB | 35 kB | 257/560 kBProgress (3): 108 kB | 35 kB | 260/560 kBProgress (3): 108 kB | 35 kB | 263/560 kBProgress (3): 108 kB | 35 kB | 266/560 kBProgress (3): 108 kB | 35 kB | 268/560 kBProgress (3): 108 kB | 35 kB | 271/560 kB                                         Downloaded from alimaven: http://maven.aliyun.com/nexus/content/repositories/central/org/apache/maven/shared/maven-dependency-analyzer/1.10/maven-dependency-analyzer-1.10.jar (35 kB at 31 kB/s)
+Progress (2): 108 kB | 274/560 kBProgress (2): 108 kB | 277/560 kBProgress (2): 108 kB | 280/560 kBProgress (2): 108 kB | 282/560 kBProgress (2): 108 kB | 285/560 kBProgress (2): 108 kB | 288/560 kBProgress (2): 108 kB | 291/560 kBProgress (2): 108 kB | 294/560 kBProgress (2): 108 kB | 296/560 kBProgress (2): 108 kB | 299/560 kBProgress (2): 108 kB | 302/560 kBProgress (2): 108 kB | 305/560 kBProgress (2): 108 kB | 308/560 kBProgress (2): 108 kB | 310/560 kBProgress (2): 108 kB | 313/560 kBProgress (2): 108 kB | 316/560 kBProgress (2): 108 kB | 319/560 kBProgress (2): 108 kB | 322/560 kBProgress (2): 108 kB | 324/560 kBProgress (2): 108 kB | 327/560 kBProgress (2): 108 kB | 330/560 kBProgress (2): 108 kB | 333/560 kBProgress (2): 108 kB | 336/560 kBProgress (2): 108 kB | 338/560 kBProgress (2): 108 kB | 341/560 kB                                 Downloaded from alimaven: http://maven.aliyun.com/nexus/content/repositories/central/org/ow2/asm/asm/6.1.1/asm-6.1.1.jar (108 kB at 89 kB/s)
+Progress (1): 344/560 kBProgress (1): 347/560 kBProgress (1): 350/560 kBProgress (1): 352/560 kBProgress (1): 355/560 kBProgress (1): 358/560 kBProgress (1): 361/560 kBProgress (1): 364/560 kBProgress (1): 366/560 kBProgress (1): 369/560 kBProgress (1): 372/560 kBProgress (1): 375/560 kBProgress (1): 378/560 kBProgress (1): 380/560 kBProgress (1): 383/560 kBProgress (1): 386/560 kBProgress (1): 389/560 kBProgress (1): 392/560 kBProgress (1): 394/560 kBProgress (1): 397/560 kBProgress (1): 400/560 kBProgress (1): 403/560 kBProgress (1): 406/560 kBProgress (1): 408/560 kBProgress (1): 411/560 kBProgress (1): 414/560 kBProgress (1): 417/560 kBProgress (1): 420/560 kBProgress (1): 422/560 kBProgress (1): 425/560 kBProgress (1): 428/560 kBProgress (1): 431/560 kBProgress (1): 434/560 kBProgress (1): 436/560 kBProgress (1): 439/560 kBProgress (1): 442/560 kBProgress (1): 445/560 kBProgress (1): 448/560 kBProgress (1): 450/560 kBProgress (1): 453/560 kBProgress (1): 456/560 kBProgress (1): 459/560 kBProgress (1): 462/560 kBProgress (1): 464/560 kBProgress (1): 467/560 kBProgress (1): 470/560 kBProgress (1): 473/560 kBProgress (1): 476/560 kBProgress (1): 478/560 kBProgress (1): 481/560 kBProgress (1): 484/560 kBProgress (1): 487/560 kBProgress (1): 490/560 kBProgress (1): 492/560 kBProgress (1): 495/560 kBProgress (1): 498/560 kBProgress (1): 501/560 kBProgress (1): 504/560 kBProgress (1): 506/560 kBProgress (1): 509/560 kBProgress (1): 512/560 kBProgress (1): 515/560 kBProgress (1): 518/560 kBProgress (1): 520/560 kBProgress (1): 523/560 kBProgress (1): 526/560 kBProgress (1): 529/560 kBProgress (1): 532/560 kBProgress (1): 534/560 kBProgress (1): 537/560 kBProgress (1): 540/560 kBProgress (1): 543/560 kBProgress (1): 546/560 kBProgress (1): 548/560 kBProgress (1): 551/560 kBProgress (1): 554/560 kBProgress (1): 557/560 kBProgress (1): 560/560 kBProgress (1): 560 kB                        Downloaded from alimaven: http://maven.aliyun.com/nexus/content/repositories/central/org/apache/commons/commons-compress/1.16.1/commons-compress-1.16.1.jar (560 kB at 346 kB/s)
+[INFO] Verbose not supported since maven-dependency-plugin 3.0
+[INFO] me.fengorz:kiwi-word-biz:jar:1.0-SNAPSHOT
+[INFO] +- me.fengorz:kiwi-word-api:jar:1.0-SNAPSHOT:compile
+[INFO] |  \- me.fengorz:kiwi-common-sdk:jar:1.0-SNAPSHOT:compile
+[INFO] |     +- me.fengorz:kiwi-common-api:jar:1.0-SNAPSHOT:compile
+[INFO] |     +- me.fengorz:kiwi-common-dfs:jar:1.0-SNAPSHOT:compile
+[INFO] |     |  \- com.github.tobato:fastdfs-client:jar:1.26.7:compile
+[INFO] |     |     +- org.slf4j:jcl-over-slf4j:jar:1.7.26:compile
+[INFO] |     |     +- commons-beanutils:commons-beanutils:jar:1.9.3:compile
+[INFO] |     |     +- commons-io:commons-io:jar:2.4:compile
+[INFO] |     |     +- org.apache.commons:commons-pool2:jar:2.6.2:compile
+[INFO] |     |     \- net.coobird:thumbnailator:jar:0.4.8:compile
+[INFO] |     \- me.fengorz:kiwi-common-mq:jar:1.0-SNAPSHOT:compile
+[INFO] |        \- org.springframework.boot:spring-boot-starter-amqp:jar:2.1.7.RELEASE:compile
+[INFO] |           +- org.springframework:spring-messaging:jar:5.1.9.RELEASE:compile
+[INFO] |           \- org.springframework.amqp:spring-rabbit:jar:2.1.8.RELEASE:compile
+[INFO] |              +- org.springframework.amqp:spring-amqp:jar:2.1.8.RELEASE:compile
+[INFO] |              |  \- org.springframework.retry:spring-retry:jar:1.2.4.RELEASE:compile
+[INFO] |              \- com.rabbitmq:amqp-client:jar:5.4.3:compile
+[INFO] +- me.fengorz:kiwi-bdf:jar:1.0-SNAPSHOT:compile
+[INFO] |  +- me.fengorz:kiwi-upms-api:jar:1.0-SNAPSHOT:compile
+[INFO] |  +- org.springframework.cloud:spring-cloud-starter-security:jar:2.1.3.RELEASE:compile
+[INFO] |  |  +- org.springframework.cloud:spring-cloud-security:jar:2.1.3.RELEASE:compile
+[INFO] |  |  |  \- org.springframework.boot:spring-boot-starter-security:jar:2.1.7.RELEASE:compile
+[INFO] |  |  +- javax.activation:javax.activation-api:jar:1.2.0:compile
+[INFO] |  |  \- javax.xml.bind:jaxb-api:jar:2.3.1:compile
+[INFO] |  \- org.springframework.security.oauth.boot:spring-security-oauth2-autoconfigure:jar:2.1.2.RELEASE:compile
+[INFO] |     +- com.fasterxml.jackson.core:jackson-annotations:jar:2.9.0:compile
+[INFO] |     +- com.sun.xml.bind:jaxb-core:jar:2.3.0.1:compile
+[INFO] |     +- com.sun.xml.bind:jaxb-impl:jar:2.3.0.1:compile
+[INFO] |     +- org.springframework.boot:spring-boot:jar:2.1.7.RELEASE:compile
+[INFO] |     +- org.springframework.security.oauth:spring-security-oauth2:jar:2.3.6.RELEASE:compile
+[INFO] |     |  +- org.springframework.security:spring-security-core:jar:5.1.6.RELEASE:compile
+[INFO] |     |  +- org.springframework.security:spring-security-config:jar:5.1.6.RELEASE:compile
+[INFO] |     |  +- org.springframework.security:spring-security-web:jar:5.1.6.RELEASE:compile
+[INFO] |     |  +- commons-codec:commons-codec:jar:1.11:compile
+[INFO] |     |  \- org.codehaus.jackson:jackson-mapper-asl:jar:1.9.13:compile
+[INFO] |     |     \- org.codehaus.jackson:jackson-core-asl:jar:1.9.13:compile
+[INFO] |     \- org.springframework.security:spring-security-jwt:jar:1.0.9.RELEASE:compile
+[INFO] |        \- org.bouncycastle:bcpkix-jdk15on:jar:1.56:compile
+[INFO] |           \- org.bouncycastle:bcprov-jdk15on:jar:1.56:compile
+[INFO] +- me.fengorz:kiwi-common-es:jar:1.0-SNAPSHOT:compile
+[INFO] |  \- org.springframework.data:spring-data-elasticsearch:jar:3.1.10.RELEASE:compile
+[INFO] |     +- org.springframework:spring-context:jar:5.1.9.RELEASE:compile
+[INFO] |     +- org.springframework:spring-tx:jar:5.1.9.RELEASE:compile
+[INFO] |     +- org.springframework.data:spring-data-commons:jar:2.1.10.RELEASE:compile
+[INFO] |     +- joda-time:joda-time:jar:2.10.3:compile
+[INFO] |     +- org.elasticsearch.client:transport:jar:6.4.3:compile
+[INFO] |     |  +- org.elasticsearch:elasticsearch:jar:6.4.3:compile
+[INFO] |     |  |  +- org.elasticsearch:elasticsearch-core:jar:6.4.3:compile
+[INFO] |     |  |  +- org.elasticsearch:elasticsearch-secure-sm:jar:6.4.3:compile
+[INFO] |     |  |  +- org.elasticsearch:elasticsearch-x-content:jar:6.4.3:compile
+[INFO] |     |  |  |  +- com.fasterxml.jackson.dataformat:jackson-dataformat-smile:jar:2.9.9:compile
+[INFO] |     |  |  |  +- com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:jar:2.9.9:compile
+[INFO] |     |  |  |  \- com.fasterxml.jackson.dataformat:jackson-dataformat-cbor:jar:2.9.9:compile
+[INFO] |     |  |  +- org.apache.lucene:lucene-core:jar:7.4.0:compile
+[INFO] |     |  |  +- org.apache.lucene:lucene-analyzers-common:jar:7.4.0:compile
+[INFO] |     |  |  +- org.apache.lucene:lucene-backward-codecs:jar:7.4.0:compile
+[INFO] |     |  |  +- org.apache.lucene:lucene-grouping:jar:7.4.0:compile
+[INFO] |     |  |  +- org.apache.lucene:lucene-highlighter:jar:7.4.0:compile
+[INFO] |     |  |  +- org.apache.lucene:lucene-join:jar:7.4.0:compile
+[INFO] |     |  |  +- org.apache.lucene:lucene-memory:jar:7.4.0:compile
+[INFO] |     |  |  +- org.apache.lucene:lucene-misc:jar:7.4.0:compile
+[INFO] |     |  |  +- org.apache.lucene:lucene-queries:jar:7.4.0:compile
+[INFO] |     |  |  +- org.apache.lucene:lucene-queryparser:jar:7.4.0:compile
+[INFO] |     |  |  +- org.apache.lucene:lucene-sandbox:jar:7.4.0:compile
+[INFO] |     |  |  +- org.apache.lucene:lucene-spatial:jar:7.4.0:compile
+[INFO] |     |  |  +- org.apache.lucene:lucene-spatial-extras:jar:7.4.0:compile
+[INFO] |     |  |  +- org.apache.lucene:lucene-spatial3d:jar:7.4.0:compile
+[INFO] |     |  |  +- org.apache.lucene:lucene-suggest:jar:7.4.0:compile
+[INFO] |     |  |  +- org.elasticsearch:elasticsearch-cli:jar:6.4.3:compile
+[INFO] |     |  |  |  \- net.sf.jopt-simple:jopt-simple:jar:5.0.2:compile
+[INFO] |     |  |  +- com.carrotsearch:hppc:jar:0.7.1:compile
+[INFO] |     |  |  +- com.tdunning:t-digest:jar:3.2:compile
+[INFO] |     |  |  +- org.apache.logging.log4j:log4j-api:jar:2.11.2:compile
+[INFO] |     |  |  \- org.elasticsearch:jna:jar:4.5.1:compile
+[INFO] |     |  +- org.elasticsearch.plugin:reindex-client:jar:6.4.3:compile
+[INFO] |     |  |  \- org.elasticsearch.client:elasticsearch-rest-client:jar:6.4.3:compile
+[INFO] |     |  |     +- org.apache.httpcomponents:httpasyncclient:jar:4.1.4:compile
+[INFO] |     |  |     \- org.apache.httpcomponents:httpcore-nio:jar:4.4.11:compile
+[INFO] |     |  +- org.elasticsearch.plugin:lang-mustache-client:jar:6.4.3:compile
+[INFO] |     |  |  \- com.github.spullara.mustache.java:compiler:jar:0.9.3:compile
+[INFO] |     |  +- org.elasticsearch.plugin:percolator-client:jar:6.4.3:compile
+[INFO] |     |  +- org.elasticsearch.plugin:parent-join-client:jar:6.4.3:compile
+[INFO] |     |  \- org.elasticsearch.plugin:rank-eval-client:jar:6.4.3:compile
+[INFO] |     +- com.fasterxml.jackson.core:jackson-core:jar:2.9.9:compile
+[INFO] |     \- org.elasticsearch.plugin:transport-netty4-client:jar:6.4.3:compile
+[INFO] |        +- io.netty:netty-buffer:jar:4.1.38.Final:compile
+[INFO] |        +- io.netty:netty-codec:jar:4.1.38.Final:compile
+[INFO] |        +- io.netty:netty-codec-http:jar:4.1.38.Final:compile
+[INFO] |        \- io.netty:netty-resolver:jar:4.1.38.Final:compile
+[INFO] +- org.springframework.boot:spring-boot-starter-web:jar:2.1.7.RELEASE:compile
+[INFO] |  +- org.springframework.boot:spring-boot-starter:jar:2.1.7.RELEASE:compile
+[INFO] |  |  +- org.springframework.boot:spring-boot-starter-logging:jar:2.1.7.RELEASE:compile
+[INFO] |  |  |  +- ch.qos.logback:logback-classic:jar:1.2.3:compile
+[INFO] |  |  |  |  \- ch.qos.logback:logback-core:jar:1.2.3:compile
+[INFO] |  |  |  +- org.apache.logging.log4j:log4j-to-slf4j:jar:2.11.2:compile
+[INFO] |  |  |  \- org.slf4j:jul-to-slf4j:jar:1.7.26:compile
+[INFO] |  |  +- javax.annotation:javax.annotation-api:jar:1.3.2:compile
+[INFO] |  |  \- org.yaml:snakeyaml:jar:1.23:compile
+[INFO] |  +- org.springframework.boot:spring-boot-starter-json:jar:2.1.7.RELEASE:compile
+[INFO] |  |  +- com.fasterxml.jackson.datatype:jackson-datatype-jdk8:jar:2.9.9:compile
+[INFO] |  |  +- com.fasterxml.jackson.datatype:jackson-datatype-jsr310:jar:2.9.9:compile
+[INFO] |  |  \- com.fasterxml.jackson.module:jackson-module-parameter-names:jar:2.9.9:compile
+[INFO] |  +- org.hibernate.validator:hibernate-validator:jar:6.0.17.Final:compile
+[INFO] |  |  +- javax.validation:validation-api:jar:2.0.1.Final:compile
+[INFO] |  |  \- org.jboss.logging:jboss-logging:jar:3.3.2.Final:compile
+[INFO] |  +- org.springframework:spring-web:jar:5.1.9.RELEASE:compile
+[INFO] |  |  \- org.springframework:spring-beans:jar:5.1.9.RELEASE:compile
+[INFO] |  \- org.springframework:spring-webmvc:jar:5.1.9.RELEASE:compile
+[INFO] |     +- org.springframework:spring-aop:jar:5.1.9.RELEASE:compile
+[INFO] |     \- org.springframework:spring-expression:jar:5.1.9.RELEASE:compile
+[INFO] +- org.springframework.boot:spring-boot-starter-undertow:jar:2.1.7.RELEASE:compile
+[INFO] |  +- io.undertow:undertow-core:jar:2.0.23.Final:compile
+[INFO] |  |  +- org.jboss.xnio:xnio-api:jar:3.3.8.Final:compile
+[INFO] |  |  \- org.jboss.xnio:xnio-nio:jar:3.3.8.Final:runtime
+[INFO] |  +- io.undertow:undertow-servlet:jar:2.0.23.Final:compile
+[INFO] |  |  \- org.jboss.spec.javax.annotation:jboss-annotations-api_1.2_spec:jar:1.0.2.Final:compile
+[INFO] |  +- io.undertow:undertow-websockets-jsr:jar:2.0.23.Final:compile
+[INFO] |  |  \- org.jboss.spec.javax.websocket:jboss-websocket-api_1.1_spec:jar:1.1.4.Final:compile
+[INFO] |  \- org.glassfish:javax.el:jar:3.0.0:compile
+[INFO] +- org.springframework.cloud:spring-cloud-starter-config:jar:2.1.3.RELEASE:compile
+[INFO] |  +- org.springframework.cloud:spring-cloud-starter:jar:2.1.2.RELEASE:compile
+[INFO] |  |  +- org.springframework.cloud:spring-cloud-context:jar:2.1.2.RELEASE:compile
+[INFO] |  |  \- org.springframework.security:spring-security-rsa:jar:1.0.7.RELEASE:compile
+[INFO] |  +- org.springframework.cloud:spring-cloud-config-client:jar:2.1.3.RELEASE:compile
+[INFO] |  \- com.fasterxml.jackson.core:jackson-databind:jar:2.9.9:compile
+[INFO] +- org.springframework.boot:spring-boot-starter-data-redis:jar:2.3.0.RELEASE:compile
+[INFO] |  +- org.springframework.data:spring-data-redis:jar:2.1.10.RELEASE:compile
+[INFO] |  |  +- org.springframework.data:spring-data-keyvalue:jar:2.1.10.RELEASE:compile
+[INFO] |  |  +- org.springframework:spring-oxm:jar:5.1.9.RELEASE:compile
+[INFO] |  |  \- org.springframework:spring-context-support:jar:5.1.9.RELEASE:compile
+[INFO] |  \- io.lettuce:lettuce-core:jar:5.1.8.RELEASE:compile
+[INFO] |     +- io.netty:netty-common:jar:4.1.38.Final:compile
+[INFO] |     +- io.netty:netty-handler:jar:4.1.38.Final:compile
+[INFO] |     +- io.netty:netty-transport:jar:4.1.38.Final:compile
+[INFO] |     \- io.projectreactor:reactor-core:jar:3.2.11.RELEASE:compile
+[INFO] +- org.springframework.boot:spring-boot-starter-jdbc:jar:2.1.7.RELEASE:compile
+[INFO] |  +- com.zaxxer:HikariCP:jar:3.2.0:compile
+[INFO] |  \- org.springframework:spring-jdbc:jar:5.1.9.RELEASE:compile
+[INFO] +- org.springframework.cloud:spring-cloud-starter-openfeign:jar:2.1.2.RELEASE:compile
+[INFO] |  +- org.springframework.cloud:spring-cloud-openfeign-core:jar:2.1.2.RELEASE:compile
+[INFO] |  |  +- org.springframework.boot:spring-boot-starter-aop:jar:2.1.7.RELEASE:compile
+[INFO] |  |  \- io.github.openfeign.form:feign-form-spring:jar:3.8.0:compile
+[INFO] |  |     +- io.github.openfeign.form:feign-form:jar:3.8.0:compile
+[INFO] |  |     \- commons-fileupload:commons-fileupload:jar:1.4:compile
+[INFO] |  +- org.springframework.cloud:spring-cloud-commons:jar:2.1.2.RELEASE:compile
+[INFO] |  |  \- org.springframework.security:spring-security-crypto:jar:5.1.6.RELEASE:compile
+[INFO] |  +- io.github.openfeign:feign-core:jar:10.2.3:compile
+[INFO] |  +- io.github.openfeign:feign-slf4j:jar:10.2.3:compile
+[INFO] |  \- io.github.openfeign:feign-hystrix:jar:10.2.3:compile
+[INFO] |     \- com.netflix.archaius:archaius-core:jar:0.7.6:compile
+[INFO] |        \- com.google.code.findbugs:jsr305:jar:3.0.1:runtime
+[INFO] +- org.springframework.boot:spring-boot-starter-actuator:jar:2.1.7.RELEASE:compile
+[INFO] |  +- org.springframework.boot:spring-boot-actuator-autoconfigure:jar:2.1.7.RELEASE:compile
+[INFO] |  |  \- org.springframework.boot:spring-boot-actuator:jar:2.1.7.RELEASE:compile
+[INFO] |  \- io.micrometer:micrometer-core:jar:1.1.5:compile
+[INFO] |     +- org.hdrhistogram:HdrHistogram:jar:2.1.9:compile
+[INFO] |     \- org.latencyutils:LatencyUtils:jar:2.0.3:compile
+[INFO] +- io.springfox:springfox-swagger2:jar:2.9.2:compile
+[INFO] |  +- io.swagger:swagger-annotations:jar:1.5.20:compile
+[INFO] |  +- io.swagger:swagger-models:jar:1.5.20:compile
+[INFO] |  +- io.springfox:springfox-spi:jar:2.9.2:compile
+[INFO] |  |  \- io.springfox:springfox-core:jar:2.9.2:compile
+[INFO] |  +- io.springfox:springfox-schema:jar:2.9.2:compile
+[INFO] |  +- io.springfox:springfox-swagger-common:jar:2.9.2:compile
+[INFO] |  +- io.springfox:springfox-spring-web:jar:2.9.2:compile
+[INFO] |  +- com.google.guava:guava:jar:20.0:compile
+[INFO] |  +- com.fasterxml:classmate:jar:1.4.0:compile
+[INFO] |  +- org.slf4j:slf4j-api:jar:1.7.26:compile
+[INFO] |  +- org.springframework.plugin:spring-plugin-core:jar:1.2.0.RELEASE:compile
+[INFO] |  +- org.springframework.plugin:spring-plugin-metadata:jar:1.2.0.RELEASE:compile
+[INFO] |  \- org.mapstruct:mapstruct:jar:1.2.0.Final:compile
+[INFO] +- com.baomidou:mybatis-plus-boot-starter:jar:3.2.0:compile
+[INFO] |  +- com.baomidou:mybatis-plus:jar:3.2.0:compile
+[INFO] |  |  \- com.baomidou:mybatis-plus-extension:jar:3.2.0:compile
+[INFO] |  |     +- com.baomidou:mybatis-plus-core:jar:3.2.0:compile
+[INFO] |  |     |  +- com.baomidou:mybatis-plus-annotation:jar:3.2.0:compile
+[INFO] |  |     |  +- com.github.jsqlparser:jsqlparser:jar:2.1:compile
+[INFO] |  |     |  \- org.mybatis:mybatis:jar:3.5.2:compile
+[INFO] |  |     \- org.mybatis:mybatis-spring:jar:2.0.2:compile
+[INFO] |  \- org.springframework.boot:spring-boot-autoconfigure:jar:2.1.7.RELEASE:compile
+[INFO] +- org.springframework.boot:spring-boot-starter-validation:jar:2.1.7.RELEASE:compile
+[INFO] |  \- org.apache.tomcat.embed:tomcat-embed-el:jar:9.0.22:compile
+[INFO] +- org.springframework.cloud:spring-cloud-starter-netflix-eureka-client:jar:2.1.2.RELEASE:compile
+[INFO] |  +- org.springframework.cloud:spring-cloud-netflix-hystrix:jar:2.1.2.RELEASE:compile
+[INFO] |  +- org.springframework.cloud:spring-cloud-netflix-eureka-client:jar:2.1.2.RELEASE:compile
+[INFO] |  +- com.netflix.eureka:eureka-client:jar:1.9.12:compile
+[INFO] |  |  +- org.codehaus.jettison:jettison:jar:1.3.7:runtime
+[INFO] |  |  |  \- stax:stax-api:jar:1.0.1:runtime
+[INFO] |  |  +- com.netflix.netflix-commons:netflix-eventbus:jar:0.3.0:runtime
+[INFO] |  |  |  +- com.netflix.netflix-commons:netflix-infix:jar:0.3.0:runtime
+[INFO] |  |  |  |  +- commons-jxpath:commons-jxpath:jar:1.3:runtime
+[INFO] |  |  |  |  +- org.antlr:antlr-runtime:jar:3.4:runtime
+[INFO] |  |  |  |  |  +- org.antlr:stringtemplate:jar:3.2.1:runtime
+[INFO] |  |  |  |  |  \- antlr:antlr:jar:2.7.7:runtime
+[INFO] |  |  |  |  \- com.google.code.gson:gson:jar:2.8.5:runtime
+[INFO] |  |  |  \- org.apache.commons:commons-math:jar:2.2:runtime
+[INFO] |  |  +- javax.ws.rs:jsr311-api:jar:1.1.1:runtime
+[INFO] |  |  +- com.netflix.servo:servo-core:jar:0.12.21:runtime
+[INFO] |  |  +- com.sun.jersey:jersey-core:jar:1.19.1:runtime
+[INFO] |  |  +- com.sun.jersey:jersey-client:jar:1.19.1:runtime
+[INFO] |  |  +- com.sun.jersey.contribs:jersey-apache-client4:jar:1.19.1:runtime
+[INFO] |  |  +- org.apache.httpcomponents:httpclient:jar:4.5.9:compile
+[INFO] |  |  |  \- org.apache.httpcomponents:httpcore:jar:4.4.11:compile
+[INFO] |  |  +- com.google.inject:guice:jar:4.1.0:runtime
+[INFO] |  |  |  +- javax.inject:javax.inject:jar:1:runtime
+[INFO] |  |  |  \- aopalliance:aopalliance:jar:1.0:runtime
+[INFO] |  |  \- com.github.vlsi.compactmap:compactmap:jar:1.2.1:runtime
+[INFO] |  |     \- com.github.andrewoma.dexx:dexx-collections:jar:0.2:runtime
+[INFO] |  +- com.netflix.eureka:eureka-core:jar:1.9.12:compile
+[INFO] |  |  \- com.fasterxml.woodstox:woodstox-core:jar:5.0.3:runtime
+[INFO] |  |     \- org.codehaus.woodstox:stax2-api:jar:3.1.4:runtime
+[INFO] |  +- org.springframework.cloud:spring-cloud-starter-netflix-archaius:jar:2.1.2.RELEASE:compile
+[INFO] |  |  +- org.springframework.cloud:spring-cloud-netflix-archaius:jar:2.1.2.RELEASE:compile
+[INFO] |  |  \- commons-configuration:commons-configuration:jar:1.8:compile
+[INFO] |  |     \- commons-lang:commons-lang:jar:2.6:compile
+[INFO] |  +- org.springframework.cloud:spring-cloud-starter-netflix-ribbon:jar:2.1.2.RELEASE:compile
+[INFO] |  |  +- com.netflix.ribbon:ribbon:jar:2.3.0:compile
+[INFO] |  |  |  +- com.netflix.ribbon:ribbon-transport:jar:2.3.0:runtime
+[INFO] |  |  |  |  +- io.reactivex:rxnetty-contexts:jar:0.4.9:runtime
+[INFO] |  |  |  |  \- io.reactivex:rxnetty-servo:jar:0.4.9:runtime
+[INFO] |  |  |  \- io.reactivex:rxnetty:jar:0.4.9:runtime
+[INFO] |  |  +- com.netflix.ribbon:ribbon-core:jar:2.3.0:compile
+[INFO] |  |  +- com.netflix.ribbon:ribbon-httpclient:jar:2.3.0:compile
+[INFO] |  |  |  +- commons-collections:commons-collections:jar:3.2.2:compile
+[INFO] |  |  |  \- com.netflix.netflix-commons:netflix-commons-util:jar:0.3.0:runtime
+[INFO] |  |  +- com.netflix.ribbon:ribbon-loadbalancer:jar:2.3.0:compile
+[INFO] |  |  |  \- com.netflix.netflix-commons:netflix-statistics:jar:0.1.1:runtime
+[INFO] |  |  \- io.reactivex:rxjava:jar:1.3.8:compile
+[INFO] |  +- com.netflix.ribbon:ribbon-eureka:jar:2.3.0:compile
+[INFO] |  \- com.thoughtworks.xstream:xstream:jar:1.4.10:compile
+[INFO] |     +- xmlpull:xmlpull:jar:1.1.3.1:compile
+[INFO] |     \- xpp3:xpp3_min:jar:1.1.4c:compile
+[INFO] +- org.springframework.boot:spring-boot-configuration-processor:jar:2.1.7.RELEASE:compile (optional) 
+[INFO] +- org.springframework.cloud:spring-cloud-starter-netflix-hystrix:jar:2.1.2.RELEASE:compile
+[INFO] |  +- org.springframework.cloud:spring-cloud-netflix-ribbon:jar:2.1.2.RELEASE:compile
+[INFO] |  +- com.netflix.hystrix:hystrix-core:jar:1.5.18:compile
+[INFO] |  +- com.netflix.hystrix:hystrix-serialization:jar:1.5.18:compile
+[INFO] |  |  \- com.fasterxml.jackson.module:jackson-module-afterburner:jar:2.9.9:runtime
+[INFO] |  +- com.netflix.hystrix:hystrix-metrics-event-stream:jar:1.5.18:compile
+[INFO] |  +- com.netflix.hystrix:hystrix-javanica:jar:1.5.18:compile
+[INFO] |  |  \- org.ow2.asm:asm:jar:5.0.4:runtime
+[INFO] |  \- io.reactivex:rxjava-reactive-streams:jar:1.2.1:compile
+[INFO] |     \- org.reactivestreams:reactive-streams:jar:1.0.2:compile
+[INFO] +- org.springframework.boot:spring-boot-starter-test:jar:2.1.7.RELEASE:test
+[INFO] |  +- org.springframework.boot:spring-boot-test:jar:2.1.7.RELEASE:test
+[INFO] |  +- org.springframework.boot:spring-boot-test-autoconfigure:jar:2.1.7.RELEASE:test
+[INFO] |  +- com.jayway.jsonpath:json-path:jar:2.4.0:test
+[INFO] |  |  \- net.minidev:json-smart:jar:2.3:test
+[INFO] |  |     \- net.minidev:accessors-smart:jar:1.2:test
+[INFO] |  +- junit:junit:jar:4.13:test
+[INFO] |  +- org.assertj:assertj-core:jar:3.11.1:test
+[INFO] |  +- org.mockito:mockito-core:jar:2.23.4:test
+[INFO] |  |  +- net.bytebuddy:byte-buddy:jar:1.9.16:compile
+[INFO] |  |  +- net.bytebuddy:byte-buddy-agent:jar:1.9.16:test
+[INFO] |  |  \- org.objenesis:objenesis:jar:2.6:test
+[INFO] |  +- org.hamcrest:hamcrest-core:jar:1.3:test
+[INFO] |  +- org.hamcrest:hamcrest-library:jar:1.3:test
+[INFO] |  +- org.skyscreamer:jsonassert:jar:1.5.0:test
+[INFO] |  |  \- com.vaadin.external.google:android-json:jar:0.0.20131108.vaadin1:test
+[INFO] |  +- org.springframework:spring-core:jar:5.1.9.RELEASE:compile
+[INFO] |  |  \- org.springframework:spring-jcl:jar:5.1.9.RELEASE:compile
+[INFO] |  +- org.springframework:spring-test:jar:5.1.9.RELEASE:test
+[INFO] |  \- org.xmlunit:xmlunit-core:jar:2.6.3:test
+[INFO] +- org.projectlombok:lombok:jar:1.18.8:compile
+[INFO] +- org.apache.commons:commons-lang3:jar:3.8.1:compile
+[INFO] +- mysql:mysql-connector-java:jar:8.0.17:compile
+[INFO] +- cn.hutool:hutool-all:jar:4.6.3:compile
+[INFO] +- com.github.ulisesbocchio:jasypt-spring-boot-starter:jar:2.1.0:compile
+[INFO] |  \- com.github.ulisesbocchio:jasypt-spring-boot:jar:2.1.0:compile
+[INFO] |     \- org.jasypt:jasypt:jar:1.9.2:compile
+[INFO] +- javax.servlet:javax.servlet-api:jar:4.0.1:compile
+[INFO] +- org.springframework:spring-aspects:jar:5.1.9.RELEASE:compile
+[INFO] |  \- org.aspectj:aspectjweaver:jar:1.9.4:compile
+[INFO] \- org.aspectj:aspectjrt:jar:1.9.4:compile
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  5.819 s
+[INFO] Finished at: 2020-11-17T18:46:14+08:00
+[INFO] ------------------------------------------------------------------------

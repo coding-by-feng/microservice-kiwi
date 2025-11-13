@@ -1,0 +1,35 @@
+server:
+  port: 5002
+
+logging:
+  level:
+    org.springframework.boot: DEBUG
+    me.fengorz.kason.*: DEBUG
+
+spring:
+  application:
+    name: kason-flow
+  profiles:
+    active: dev,prod
+  cloud:
+    config:
+      fail-fast: true
+      name: ${spring.application.name}
+      discovery:
+        service-id: kason-config
+        enabled: true
+      profile: ${spring.profiles.active}
+  main:
+    allow-bean-definition-overriding: true
+  security:
+    user:
+      password: zsf
+      name: zsf
+
+eureka:
+  instance:
+    prefer-ip-address: true
+  client:
+    service-url:
+      defaultZone: http://codingByFeng:123456@kason-eureka:8762/eureka
+

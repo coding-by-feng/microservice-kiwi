@@ -1,0 +1,42 @@
+jasypt:
+  encryptor:
+    password: ${KASON_ENC_PASSWORD}
+    poolSize: 2
+
+logging:
+  level:
+    org.springframework.boot: DEBUG
+    me.fengorz.kason.*: DEBUG
+
+server:
+  port: 6001
+
+spring:
+  application:
+    name: kason-word-crawler
+  profiles:
+    active: dev,prod
+  cloud:
+    config:
+      fail-fast: true
+      name: ${spring.application.name}
+      profile: ${spring.profiles.active}
+      discovery:
+        enabled: true
+        service-id: kason-config
+
+eureka:
+  instance:
+    prefer-ip-address: true
+  client:
+    service-url:
+      defaultZone: http://${eureka.security.username}:${eureka.security.password}@kason-eureka:8762/eureka
+  security:
+    username: ENC(SKdYEg+E1hatfznKqx4LcBiqYnYDcXW7)
+    password: ENC(ceDAameujB+jXutTPYZUe7NW7P8WoRsm)
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: 'health'

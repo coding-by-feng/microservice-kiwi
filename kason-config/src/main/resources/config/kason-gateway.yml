@@ -1,0 +1,91 @@
+spring:
+  main:
+    allow-bean-definition-overriding: true
+  cloud:
+    gateway:
+      routes:
+        # 认证中心
+        - id: kason-auth
+          uri: lb://kason-auth
+          predicates:
+            - Path=/auth/**
+          filters:
+            # 验证码处理
+            - ValidateCodeGatewayFilter
+            # 前端密码解密
+            - PasswordDecoderGatewayFilter
+
+        - id: kason-upms
+          uri: lb://kason-upms
+          predicates:
+            - Path=/admin/**
+          filters:
+            - ValidateCodeGatewayFilter
+            - name: RequestRateLimiter
+              args:
+                key-resolver: '#{@remoteAddrKeyResolver}'
+                redis-rate-limiter.replenishRate: 10
+                redis-rate-limiter.burstCapacity: 20
+            # 降级配置
+            - name: Hystrix
+              args:
+                name: default
+                fallbackUri: 'forward:/fallback'
+
+        - id: kason-word-biz
+          uri: lb://kason-word-biz
+          predicates:
+            - Path=/wordBiz/**
+          filters:
+            # 降级配置
+            - name: Hystrix
+              args:
+                name: default
+                fallbackUri: 'forward:/fallback'
+
+        - id: kason-ai-biz
+          uri: lb://kason-ai-biz
+          predicates:
+            - Path=/ai-biz/**
+          filters:
+            # 降级配置
+            - name: Hystrix
+              args:
+                name: default
+                fallbackUri: 'forward:/fallback'
+
+        # 新增：工具服务路由
+        - id: kason-tools-biz
+          uri: lb://kason-tools-biz
+          predicates:
+            - Path=/tools/**
+          filters:
+            # 降级配置
+            - name: Hystrix
+              args:
+                name: default
+                fallbackUri: 'forward:/fallback'
+
+      discovery:
+        locator:
+          enabled: true
+
+security:
+  encode:
+    # 前端密码密钥，必须16位
+    key: 'MyKasonVocabulary'
+  skip-url-slash-count: 1
+
+# 不校验验证码终端
+ignore:
+  clients:
+    - test:non_auth
+    - test:test
+    - daemon:non_auth
+  codeVerifyChannels:
+    - /sys/user/oneClickRegister
+
+ms:
+  config:
+    exclude-db: true
+    exclude-cache: false

@@ -1,0 +1,545 @@
+package me.fengorz.kason.ai.service.ytb;
+
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import lombok.extern.slf4j.Slf4j;
+import me.fengorz.kason.ai.api.entity.*;
+import me.fengorz.kason.ai.api.vo.ytb.ChannelDetailsResponse;
+import me.fengorz.kason.ai.api.vo.ytb.ChannelVideoResponse;
+import me.fengorz.kason.ai.api.vo.ytb.VideoDetailsResponse;
+import me.fengorz.kason.ai.api.vo.ytb.YtbChannelVO;
+import me.fengorz.kason.ai.service.AiChatService;
+import me.fengorz.kason.ai.service.ytb.mapper.*;
+import me.fengorz.kason.common.db.service.SeqService;
+import me.fengorz.kason.common.sdk.enumeration.AiPromptModeEnum;
+import me.fengorz.kason.common.sdk.enumeration.LanguageEnum;
+import me.fengorz.kason.common.sdk.enumeration.ProcessStatusEnum;
+import me.fengorz.kason.common.sdk.exception.ServiceException;
+import me.fengorz.kason.common.sdk.web.WebTools;
+import me.fengorz.kason.common.ytb.SubtitleTypeEnum;
+import me.fengorz.kason.common.ytb.YouTuBeHelper;
+import me.fengorz.kason.common.ytb.YtbSubtitlesResult;
+import org.apache.commons.collections4.ListUtils;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
+import java.util.stream.Collectors;
+
+@Slf4j
+@Service("ytbChannelServiceV2")
+public class YtbChannelServiceImplV2 extends ServiceImpl<YtbChannelMapper, YtbChannelDO> implements YtbChannelService {
+
+    private final YtbChannelUserMapper channelUserMapper;
+    private final YtbChannelVideoMapper videoMapper;
+    private final YtbVideoSubtitlesMapper subtitlesMapper;
+    private final YtbVideoSubtitlesTranslationMapper subtitlesTranslationMapper;
+    private final YouTubeApiService youTubeApiService;
+    private final SeqService seqService;
+    private final YouTuBeHelper youTuBeHelper;
+    private final YtbChannelFavoriteMapper channelFavoriteMapper;
+    private final AiChatService grokAiService;
+
+    public YtbChannelServiceImplV2(YtbChannelUserMapper channelUserMapper,
+                                   YtbChannelVideoMapper videoMapper,
+                                   YtbVideoSubtitlesMapper subtitlesMapper,
+                                   YtbVideoSubtitlesTranslationMapper subtitlesTranslationMapper,
+                                   YouTubeApiService youTubeApiService,
+                                   SeqService seqService,
+                                   YouTuBeHelper youTuBeHelper,
+                                   YtbChannelFavoriteMapper channelFavoriteMapper,
+                                   @Qualifier("grokAiService") AiChatService grokAiService) {
+        this.channelUserMapper = channelUserMapper;
+        this.videoMapper = videoMapper;
+        this.subtitlesMapper = subtitlesMapper;
+        this.subtitlesTranslationMapper = subtitlesTranslationMapper;
+        this.youTubeApiService = youTubeApiService;
+        this.seqService = seqService;
+        this.youTuBeHelper = youTuBeHelper;
+        this.channelFavoriteMapper = channelFavoriteMapper;
+        this.grokAiService = grokAiService;
+        log.info("YtbChannelServiceImplV2 initialized with YouTube API service");
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Long submitChannel(String channelLinkOrName, Integer userId) {
+        log.info("Submitting channel with linkOrName: {}, userId: {}", channelLinkOrName, userId);
+
+        String channelLink;
+        String channelName;
+        String channelId;
+
+        try {
+            // Decode the input
+            String decodedInput = channelLinkOrName.startsWith("http") ?
+                    WebTools.decode(channelLinkOrName) : channelLinkOrName;
+
+            log.info("Decoded input: {}", decodedInput);
+
+            // Get channel details using YouTube API
+            ChannelDetailsResponse channelDetails = youTubeApiService.getChannelDetails(decodedInput);
+
+            channelId = channelDetails.getChannelId();
+            channelName = channelDetails.getTitle();
+            channelLink = "https://www.youtube.com/channel/" + channelId;
+
+            log.info("Retrieved channel details - ID: {}, Name: {}, Link: {}", channelId, channelName, channelLink);
+
+        } catch (Exception e) {
+            log.error("Failed to get channel details using YouTube API: {}", e.getMessage(), e);
+            throw new ServiceException("Failed to retrieve channel information: " + e.getMessage(), e);
+        }
+
+        // Check if channel already exists
+        log.info("Checking if channel already exists: {}", channelLink);
+        YtbChannelDO existingChannel = this.getOne(new LambdaQueryWrapper<YtbChannelDO>()
+                .eq(YtbChannelDO::getChannelLink, channelLink)
+                .eq(YtbChannelDO::getIfValid, true));
+
+        Long finalChannelId;
+        if (existingChannel == null) {
+            log.info("Channel does not exist, creating new channel record");
+            Long newId = Long.valueOf(seqService.genCommonIntSequence());
+            log.info("Generated new channel ID: {}", newId);
+
+            YtbChannelDO newChannel = new YtbChannelDO()
+                    .setId(newId)
+                    .setChannelLink(channelLink)
+                    .setChannelName(channelName)
+                    .setCreateTime(LocalDateTime.now())
+                    .setStatus(ProcessStatusEnum.READY.getCode())
+                    .setIfValid(true);
+            this.save(newChannel);
+            finalChannelId = newChannel.getId();
+            log.info("Saved new channel with ID: {}", finalChannelId);
+        } else {
+            finalChannelId = existingChannel.getId();
+            log.info("Channel already exists with ID: {}", finalChannelId);
+        }
+
+        // Handle user subscription
+        handleUserSubscription(userId, finalChannelId);
+
+        return finalChannelId;
+    }
+
+    @Override
+    @Async
+    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRES_NEW)
+    public void syncChannelVideos(Long channelId) {
+        log.info("Starting synchronization of videos for channel ID: {}", channelId);
+
+        YtbChannelDO channel = this.getById(channelId);
+        if (channel == null) {
+            log.error("Channel not found with ID: {}", channelId);
+            return;
+        }
+
+        // Check if already processing
+        if (ProcessStatusEnum.PROCESSING.getCode().equals(channel.getStatus()) &&
+                channel.getCreateTime().isAfter(LocalDateTime.now().minusMinutes(10))) {
+            log.info("Channel ID: {} is already being processed, skipping", channelId);
+            return;
+        }
+
+        try {
+            log.info("Found channel: ID={}, name={}, link={}", channelId, channel.getChannelName(), channel.getChannelLink());
+
+            updateChannelStatus("Updating channel status to PROCESSING for channel ID: {}", channelId, channel,
+                    ProcessStatusEnum.PROCESSING, "Channel status updated to PROCESSING for channel ID: {}");
+
+            // Get all videos from channel using YouTube API
+            log.info("Extracting video links from channel: {}", channel.getChannelLink());
+            List<ChannelVideoResponse> videos = youTubeApiService.getChannelVideos(channel.getChannelLink());
+            log.info("Retrieved {} videos from channel: {}", videos.size(), channel.getChannelName());
+
+            int processedCount = 0;
+            int successCount = 0;
+            int failureCount = 0;
+
+            // Process each video
+            for (ChannelVideoResponse video : videos) {
+                try {
+                    String videoUrl = "https://www.youtube.com/watch?v=" + video.getVideoId();
+                    log.info("Processing video {}/{}: {}", processedCount + 1, videos.size(), videoUrl);
+
+                    Optional.ofNullable(processVideoWithApi(channelId, video))
+                            .ifPresent(videoId -> {
+                                // Update video status to FINISH after processing
+                                log.info("Updating video status to FINISH for video ID: {}", videoId);
+                                YtbChannelVideoDO videoToUpdate = videoMapper.selectById(videoId);
+                                if (videoToUpdate != null) {
+                                    videoToUpdate.setStatus(ProcessStatusEnum.FINISHED.getCode());
+                                    videoMapper.updateById(videoToUpdate);
+                                    log.info("Video status updated to FINISH for video ID: {}", videoId);
+                                }
+                            });
+
+                    processedCount++;
+                    successCount++;
+
+                    // Log progress periodically
+                    if (processedCount % 10 == 0 || processedCount == videos.size()) {
+                        log.info("Processed {}/{} videos for channel ID: {}, Success: {}, Failure: {}",
+                                processedCount, videos.size(), channelId, successCount, failureCount);
+                    }
+                } catch (Exception e) {
+                    failureCount++;
+                    log.error("Error processing video: {}, Error: {}", video.getVideoId(), e.getMessage(), e);
+                }
+            }
+
+            // Update channel status to FINISH
+            updateChannelStatus("Updating channel status to FINISH for channel ID: {}", channelId, channel,
+                    ProcessStatusEnum.FINISHED, "Channel status updated to FINISH for channel ID: {}");
+
+            log.info("Completed synchronization of videos for channel ID: {}, Total: {}, Success: {}, Failure: {}",
+                    channelId, videos.size(), successCount, failureCount);
+
+        } catch (Exception e) {
+            log.error("Failed to synchronize videos for channel ID: {}, Error: {}", channelId, e.getMessage(), e);
+            YtbChannelDO channelToUpdate = this.getById(channelId);
+            if (channelToUpdate != null) {
+                updateChannelStatus("Resetting channel status to FAILED for retry, channel ID: {}",
+                        channelId, channelToUpdate, ProcessStatusEnum.FAILED,
+                        "Channel status reset to FAILED for channel ID: {}");
+            }
+        }
+    }
+
+    // Private helper methods
+
+    private void handleUserSubscription(Integer userId, Long channelId) {
+        log.info("Checking if user {} already subscribed to channel {}", userId, channelId);
+        YtbChannelUserDO existingSubscription = channelUserMapper.selectOne(
+                new LambdaQueryWrapper<YtbChannelUserDO>()
+                        .eq(YtbChannelUserDO::getUserId, userId)
+                        .eq(YtbChannelUserDO::getChannelId, channelId)
+                        .eq(YtbChannelUserDO::getIfValid, true));
+
+        if (existingSubscription == null) {
+            log.info("User {} not subscribed to channel {}, creating subscription", userId, channelId);
+            Long subscriptionId = Long.valueOf(seqService.genCommonIntSequence());
+            log.info("Generated new subscription ID: {}", subscriptionId);
+
+            YtbChannelUserDO newSubscription = new YtbChannelUserDO()
+                    .setId(subscriptionId)
+                    .setUserId(Long.valueOf(userId))
+                    .setChannelId(channelId)
+                    .setCreateTime(LocalDateTime.now())
+                    .setIfValid(true);
+            channelUserMapper.insert(newSubscription);
+            log.info("Saved new subscription with ID: {}", subscriptionId);
+        } else {
+            log.info("User {} already subscribed to channel {}", userId, channelId);
+        }
+    }
+
+    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRES_NEW)
+    private Long processVideoWithApi(Long channelId, ChannelVideoResponse video) {
+        String videoUrl = "https://www.youtube.com/watch?v=" + video.getVideoId();
+        log.info("Processing video for channel {}: {}", channelId, videoUrl);
+
+        try {
+            // Check if video already exists
+            YtbChannelVideoDO existingVideo = videoMapper.selectOne(
+                    new LambdaQueryWrapper<YtbChannelVideoDO>()
+                            .eq(YtbChannelVideoDO::getVideoLink, videoUrl)
+                            .eq(YtbChannelVideoDO::getIfValid, true));
+
+            // Determine publishedAt from API or fallback
+            LocalDateTime publishedAt = parsePublishedAt(video.getPublishedAt());
+
+            if (existingVideo != null && existingVideo.getStatus().equals(ProcessStatusEnum.FINISHED.getCode())) {
+                // update publishedAt if missing
+                if (existingVideo.getPublishedAt() == null && publishedAt != null) {
+                    existingVideo.setPublishedAt(publishedAt);
+                    videoMapper.updateById(existingVideo);
+                }
+                log.info("Video already exists and is finished: {}", existingVideo.getId());
+                return null;
+            }
+
+            // Get additional video details
+            VideoDetailsResponse videoDetails = youTubeApiService.getVideoDetails(video.getVideoId());
+            if (publishedAt == null) {
+                publishedAt = parsePublishedAt(videoDetails.getPublishedAt());
+            }
+            if (publishedAt == null) {
+                // fallback to yt-dlp
+                publishedAt = null;
+            }
+
+            // Save video to database
+            Long videoId = Long.valueOf(seqService.genCommonIntSequence());
+
+            if (existingVideo == null) {
+                YtbChannelVideoDO videoDO = new YtbChannelVideoDO()
+                        .setId(videoId)
+                        .setChannelId(channelId)
+                        .setVideoTitle(videoDetails.getTitle())
+                        .setVideoLink(videoUrl)
+                        .setPublishedAt(publishedAt)
+                        .setStatus(ProcessStatusEnum.PROCESSING.getCode())
+                        .setCreateTime(LocalDateTime.now())
+                        .setIfValid(true);
+
+                videoMapper.insert(videoDO);
+                log.info("Saved video record: {} (publishedAt={})", videoId, publishedAt);
+            } else {
+                existingVideo.setVideoTitle(videoDetails.getTitle());
+                if (existingVideo.getPublishedAt() == null) {
+                    existingVideo.setPublishedAt(publishedAt);
+                }
+                existingVideo.setStatus(ProcessStatusEnum.PROCESSING.getCode());
+                videoMapper.updateById(existingVideo);
+                videoId = existingVideo.getId();
+            }
+
+            // Process captions
+            processVideoCaptions(videoId, videoUrl);
+
+            return videoId;
+
+        } catch (Exception e) {
+            log.error("Error processing video: {}", videoUrl, e);
+            throw new ServiceException("Failed to process video: " + e.getMessage(), e);
+        }
+    }
+
+    private LocalDateTime parsePublishedAt(String publishedAt) {
+        if (publishedAt == null || publishedAt.isEmpty()) return null;
+        try {
+            // RFC3339 / ISO8601 from YouTube API, e.g. 2024-11-12T09:30:00Z
+            OffsetDateTime odt = OffsetDateTime.parse(publishedAt, DateTimeFormatter.ISO_OFFSET_DATE_TIME);
+            return odt.toLocalDateTime();
+        } catch (Exception e) {
+            log.debug("Failed to parse publishedAt '{}' with ISO_OFFSET_DATE_TIME: {}", publishedAt, e.getMessage());
+        }
+        try {
+            // Try basic ISO
+            OffsetDateTime odt = OffsetDateTime.parse(publishedAt);
+            return odt.toLocalDateTime();
+        } catch (Exception ignored) {}
+        return null;
+    }
+
+    private void processVideoCaptions(Long videoId, String videoUrl) {
+        log.info("Processing captions for video ID: {}", videoId);
+
+        try {
+            // Fetch real subtitles via yt-dlp helper (no OAuth required)
+            YtbSubtitlesResult result = youTuBeHelper.downloadSubtitles(videoUrl);
+            if (result == null || result.getScrollingSubtitles() == null) {
+                log.info("No subtitles available for video: {}", videoId);
+                return;
+            }
+
+            // Map helper subtitle type to DB type: 1=professional, 2=auto-generated
+            Integer subtitleType = mapSubtitleType(result.getType());
+
+            Long subtitlesId = Long.valueOf(seqService.genCommonIntSequence());
+            YtbVideoSubtitlesDO subtitlesDO = new YtbVideoSubtitlesDO()
+                    .setId(subtitlesId)
+                    .setVideoId(videoId)
+                    .setType(subtitleType)
+                    .setSubtitlesText(result.getScrollingSubtitles())
+                    .setStatus(ProcessStatusEnum.PROCESSING.getCode())
+                    .setCreateTime(LocalDateTime.now())
+                    .setIfValid(true);
+            subtitlesMapper.insert(subtitlesDO);
+            log.info("Saved subtitles record with full text: {}", subtitlesId);
+
+            // Save translations (EN original + ZH_CN AI translation)
+            // processSubtitleTranslations(subtitlesId, videoUrl, result);
+
+            // Update subtitles status to FINISH
+            subtitlesDO.setStatus(ProcessStatusEnum.FINISHED.getCode());
+            subtitlesMapper.updateById(subtitlesDO);
+
+        } catch (Exception e) {
+            log.error("Error processing captions for video: {}", videoId, e);
+        }
+    }
+
+    private Integer mapSubtitleType(SubtitleTypeEnum typeEnum) {
+        if (typeEnum == null) return 1;
+        switch (typeEnum) {
+            case SMALL_AUTO_GENERATED_RETURN_STRING:
+            case LARGE_AUTO_GENERATED_RETURN_LIST:
+                return 2; // auto-generated
+            case SMALL_PROFESSIONAL_RETURN_STRING:
+            case LARGE_PROFESSIONAL_RETURN_LIST:
+            default:
+                return 1; // professional
+        }
+    }
+
+    private void processSubtitleTranslations(Long subtitlesId, String videoUrl, YtbSubtitlesResult result) {
+        // Save English original with real content
+        saveSubtitleTranslation(
+                subtitlesId,
+                LanguageEnum.EN,
+                result.getScrollingSubtitles(),
+                ProcessStatusEnum.FINISHED.getCode(),
+                false
+        );
+
+        // Generate Chinese translation
+        try {
+            Long zhTransId = saveSubtitleTranslation(
+                    subtitlesId,
+                    LanguageEnum.ZH_CN,
+                    "",
+                    ProcessStatusEnum.PROCESSING.getCode(),
+                    true
+            );
+
+            String translatedContent;
+            Object pendingObj = result.getPendingToBeTranslatedOrRetouchedSubtitles();
+            if (pendingObj instanceof List) {
+                @SuppressWarnings("unchecked")
+                List<String> lines = (List<String>) pendingObj;
+                // Batch translate lines
+                translatedContent = grokAiService.batchCallForYtbAndCache(videoUrl, lines, AiPromptModeEnum.SUBTITLE_TRANSLATOR, LanguageEnum.ZH_CN);
+            } else if (pendingObj instanceof String) {
+                String text = (String) pendingObj;
+                translatedContent = grokAiService.callForYtbAndCache(videoUrl, text, AiPromptModeEnum.SUBTITLE_TRANSLATOR, LanguageEnum.ZH_CN);
+            } else {
+                // Fallback to translating the whole scrolling text
+                translatedContent = grokAiService.callForYtbAndCache(videoUrl, result.getScrollingSubtitles(), AiPromptModeEnum.SUBTITLE_TRANSLATOR, LanguageEnum.ZH_CN);
+            }
+
+            updateSubtitleTranslation(zhTransId, translatedContent, ProcessStatusEnum.FINISHED.getCode());
+        } catch (Exception e) {
+            log.error("Error creating Chinese translation: {}", e.getMessage(), e);
+            // Mark translation as READY for reprocessing later
+            saveSubtitleTranslation(
+                    subtitlesId,
+                    LanguageEnum.ZH_CN,
+                    "",
+                    ProcessStatusEnum.READY.getCode(),
+                    true
+            );
+        }
+    }
+
+    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRES_NEW)
+    private Long saveSubtitleTranslation(Long subtitlesId, LanguageEnum language, String translation,
+                                         Integer status, boolean fromAi) {
+        Long translationId = Long.valueOf(seqService.genCommonIntSequence());
+
+        YtbVideoSubtitlesTranslationDO translationDO = new YtbVideoSubtitlesTranslationDO()
+                .setId(translationId)
+                .setSubtitlesId(subtitlesId)
+                .setLang(language.getCode())
+                .setTranslation(translation)
+                .setType(1)
+                .setStatus(status)
+                .setFromAi(fromAi)
+                .setCreateTime(LocalDateTime.now())
+                .setIfValid(true);
+
+        subtitlesTranslationMapper.insert(translationDO);
+        return translationId;
+    }
+
+    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRES_NEW)
+    private void updateSubtitleTranslation(Long translationId, String translation, Integer status) {
+        YtbVideoSubtitlesTranslationDO translationDO = subtitlesTranslationMapper.selectById(translationId);
+        if (translationDO != null) {
+            translationDO.setTranslation(translation).setStatus(status);
+            subtitlesTranslationMapper.updateById(translationDO);
+        }
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRES_NEW)
+    public void updateChannelStatus(String previousLogFormat, Long channelId, YtbChannelDO channel,
+                                    ProcessStatusEnum status, String postLogFormat) {
+        log.info(previousLogFormat, channelId);
+        channel.setStatus(status.getCode());
+        this.updateById(channel);
+        log.info(postLogFormat, channelId);
+    }
+
+    @Override
+    public IPage<YtbChannelVO> getUserChannelPageVO(Page<YtbChannelDO> page, Integer userId) {
+        IPage<YtbChannelDO> channelPage = getUserChannelPage(page, userId);
+
+        IPage<YtbChannelVO> voPage = new Page<>(
+                channelPage.getCurrent(),
+                channelPage.getSize(),
+                channelPage.getTotal()
+        );
+
+        List<YtbChannelDO> records = ListUtils.emptyIfNull(channelPage.getRecords());
+        List<Long> channelIds = records.stream().map(YtbChannelDO::getId).collect(Collectors.toList());
+
+        Set<Long> userFavSet = new HashSet<>();
+        Map<Long, Long> favCountMap = new HashMap<>();
+        if (!channelIds.isEmpty()) {
+            List<YtbChannelFavoriteDO> userFavs = channelFavoriteMapper.selectList(new LambdaQueryWrapper<YtbChannelFavoriteDO>()
+                    .eq(YtbChannelFavoriteDO::getUserId, userId)
+                    .in(YtbChannelFavoriteDO::getChannelId, channelIds)
+                    .eq(YtbChannelFavoriteDO::getIfValid, true));
+            userFavSet.addAll(userFavs.stream().map(YtbChannelFavoriteDO::getChannelId).collect(Collectors.toSet()));
+
+            List<YtbChannelFavoriteDO> allFavs = channelFavoriteMapper.selectList(new LambdaQueryWrapper<YtbChannelFavoriteDO>()
+                    .in(YtbChannelFavoriteDO::getChannelId, channelIds)
+                    .eq(YtbChannelFavoriteDO::getIfValid, true));
+            favCountMap.putAll(allFavs.stream().collect(Collectors.groupingBy(YtbChannelFavoriteDO::getChannelId, Collectors.counting())));
+        }
+
+        List<YtbChannelVO> vos = records.stream()
+                .map(ch -> YtbChannelVO.builder()
+                        .channelId(ch.getId())
+                        .channelName(ch.getChannelName())
+                        .status(ch.getStatus())
+                        .favorited(userFavSet.contains(ch.getId()))
+                        .favoriteCount(favCountMap.getOrDefault(ch.getId(), 0L))
+                        .build())
+                .collect(Collectors.toList());
+
+        voPage.setRecords(vos);
+        return voPage;
+    }
+
+    private IPage<YtbChannelDO> getUserChannelPage(Page<YtbChannelDO> page, Integer userId) {
+        List<YtbChannelUserDO> userSubscriptions = channelUserMapper.selectList(
+                new LambdaQueryWrapper<YtbChannelUserDO>()
+                        .eq(YtbChannelUserDO::getUserId, userId)
+                        .eq(YtbChannelUserDO::getIfValid, true));
+
+        List<Long> channelIds = userSubscriptions.stream()
+                .map(YtbChannelUserDO::getChannelId)
+                .collect(Collectors.toList());
+
+        if (channelIds.isEmpty()) {
+            return page.setRecords(null);
+        }
+
+        return this.page(page, new LambdaQueryWrapper<YtbChannelDO>()
+                .in(YtbChannelDO::getId, channelIds)
+                .eq(YtbChannelDO::getIfValid, true)
+                .orderByDesc(YtbChannelDO::getCreateTime));
+    }
+
+    private YtbChannelVO convertToVO(YtbChannelDO channelDO) {
+        return YtbChannelVO.builder()
+                .channelId(channelDO.getId())
+                .channelName(channelDO.getChannelName())
+                .status(channelDO.getStatus())
+                .build();
+    }
+}
+

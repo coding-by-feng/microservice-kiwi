@@ -1,0 +1,39 @@
+security:
+  oauth2:
+    client:
+      client-id: ENC(wORgugqWfXlIuzbal/3pjXTNXij/RSpo)
+      client-secret: ENC(rMd1buB3iI+si+W99eB+QFa3QburIEmY)
+      scope: server
+
+# 数据源
+spring:
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: ENC(2PE/BMMoNPbRCEaIyGfcSw==)
+    password: ENC(zF1rDpn+u8RZX5OTor7BpHzprZyrH+3P)
+    url: jdbc:mysql://${DB_IP}:3306/kason_db?allowPublicKeyRetrieval=true&useUnicode=true&characterEncoding=UTF-8&useSSL=false&autoReconnect=true&serverTimezone=Pacific/Auckland
+    hikari:
+      max-lifetime: 60000
+      connection-timeout: 60000
+      maximum-pool-size: 10
+  main:
+    allow-bean-definition-overriding: true
+
+ms:
+  config:
+    exclude-db: false
+    exclude-cache: false
+
+# Google OAuth2 Configuration
+google:
+  oauth2:
+    client-id: ${GOOGLE_OAUTH2_CLIENT_ID}
+    client-secret: ${GOOGLE_OAUTH2_CLIENT_SECRET}
+    redirect-uri: ${GOOGLE_OAUTH2_REDIRECT_URI:http://localhost:9991/auth/oauth/google/callback}
+    homePage: ${HOME_PAGE:http://localhost:8080/#/index/tools/detail}
+    check-token-endpoint-url: http://kason-auth:3001/oauth/check_token
+    scopes:
+      - openid
+      - profile
+      - email

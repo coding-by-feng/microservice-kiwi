@@ -1,0 +1,334 @@
+services:
+  kason-gate:
+    image: kason-gate:2.0
+    user: root
+    environment:
+      - KASON_ENC_PASSWORD=${KASON_ENC_PASSWORD}
+      - DB_IP=${DB_IP}
+    volumes:
+      - ~/docker/kason/gate/logs:/logs:Z
+    network_mode: "host"
+    healthcheck:
+      test: ["CMD-SHELL", "code=$(curl -s -o /dev/null -w '%{http_code}' http://localhost:9991/actuator/health); [ \"$$code\" = \"200\" ] || [ \"$$code\" = \"401\" ] || [ \"$$code\" = \"403\" ]"]
+      interval: 30s
+      timeout: 10s
+      retries: 8
+      start_period: 4m
+    entrypoint:
+      - /bin/sh
+      - -c
+      - |
+        echo "Waiting for kason-config to be healthy..."
+        wait_secs=0
+        until code=$(curl -s -o /dev/null -w '%{http_code}' http://localhost:7771/actuator/health); [ "$$code" = "200" ] || [ "$$code" = "401" ] || [ "$$code" = "403" ]; do
+          wait_secs=$$((wait_secs+1))
+          if [ $$((wait_secs % 5)) -eq 0 ]; then
+            echo "Waiting for kason-config to be healthy... ($$wait_secs s)"
+          fi
+          sleep 10
+        done
+        # kason-config is healthy; start immediately to avoid unnecessary idle time
+        echo "Starting kason-gate..."
+        exec java -Xmx512m \
+          -Duser.timezone=GMT+12 \
+          -Djava.awt.headless=true \
+          -Dspring.profiles.active=prod \
+          -Dlogging.file.name=/logs/gate.log \
+          -jar /app.jar
+
+  kason-upms:
+    image: kason-upms:2.0
+    user: root
+    environment:
+      - KASON_ENC_PASSWORD=${KASON_ENC_PASSWORD}
+      - DB_IP=${DB_IP}
+    volumes:
+      - ~/docker/kason/upms/logs:/logs:Z
+    network_mode: "host"
+    depends_on:
+      - kason-gate
+    healthcheck:
+      test: ["CMD-SHELL", "code=$(curl -s -o /dev/null -w '%{http_code}' http://localhost:4001/actuator/health); [ \"$$code\" = \"200\" ] || [ \"$$code\" = \"401\" ] || [ \"$$code\" = \"403\" ]"]
+      interval: 30s
+      timeout: 10s
+      retries: 8
+      start_period: 4m
+    entrypoint:
+      - /bin/sh
+      - -c
+      - |
+        echo "Waiting for kason-config to be healthy..."
+        wait_secs=0
+        until code=$(curl -s -o /dev/null -w '%{http_code}' http://localhost:7771/actuator/health); [ "$$code" = "200" ] || [ "$$code" = "401" ] || [ "$$code" = "403" ]; do
+          wait_secs=$$((wait_secs+1))
+          if [ $$((wait_secs % 5)) -eq 0 ]; then
+            echo "Waiting for kason-config to be healthy... ($$wait_secs s)"
+          fi
+          sleep 10
+        done
+        echo "Waiting for kason-gate to be healthy..."
+        wait_secs=0
+        until code=$(curl -s -o /dev/null -w '%{http_code}' http://localhost:9991/actuator/health); [ "$$code" = "200" ] || [ "$$code" = "401" ] || [ "$$code" = "403" ]; do
+          wait_secs=$$((wait_secs+1))
+          if [ $$((wait_secs % 5)) -eq 0 ]; then
+            echo "Waiting for kason-gate to be healthy... ($$wait_secs s)"
+          fi
+          sleep 10
+        done
+        # kason-gate is healthy; start immediately
+        echo "Starting kason-upms..."
+        exec java -Xmx400m \
+        -Duser.timezone=GMT+12 \
+        -Dspring.profiles.active=prod \
+        -Dlogging.file.name=/logs/upms-biz.log \
+        -jar /app.jar
+
+  kason-auth:
+    image: kason-auth:2.0
+    user: root
+    environment:
+      - KASON_ENC_PASSWORD=${KASON_ENC_PASSWORD}
+      - DB_IP=${DB_IP}
+      - GOOGLE_OAUTH2_CLIENT_ID=${GOOGLE_OAUTH2_CLIENT_ID}
+      - GOOGLE_OAUTH2_CLIENT_SECRET=${GOOGLE_OAUTH2_CLIENT_SECRET}
+      - GOOGLE_OAUTH2_REDIRECT_URI=${GOOGLE_OAUTH2_REDIRECT_URI}
+      - HOME_PAGE=${HOME_PAGE}
+    volumes:
+      - ~/docker/kason/auth/logs:/logs:Z
+    network_mode: "host"
+    depends_on:
+      - kason-upms
+    healthcheck:
+      test: ["CMD-SHELL", "code=$(curl -s -o /dev/null -w '%{http_code}' http://localhost:3001/actuator/health); [ \"$$code\" = \"200\" ] || [ \"$$code\" = \"401\" ] || [ \"$$code\" = \"403\" ]"]
+      interval: 30s
+      timeout: 10s
+      retries: 8
+      start_period: 4m
+    entrypoint:
+      - /bin/sh
+      - -c
+      - |
+        echo "Waiting for kason-config to be healthy..."
+        wait_secs=0
+        until code=$(curl -s -o /dev/null -w '%{http_code}' http://localhost:7771/actuator/health); [ "$$code" = "200" ] || [ "$$code" = "401" ] || [ "$$code" = "403" ]; do
+          wait_secs=$$((wait_secs+1))
+          if [ $$((wait_secs % 5)) -eq 0 ]; then
+            echo "Waiting for kason-config to be healthy... ($$wait_secs s)"
+          fi
+          sleep 10
+        done
+        # Immediately check kason-upms health (no fixed delay)
+        echo "Waiting for kason-upms to be healthy..."
+        wait_secs=0
+        until code=$(curl -s -o /dev/null -w '%{http_code}' http://localhost:4001/actuator/health); [ "$$code" = "200" ] || [ "$$code" = "401" ] || [ "$$code" = "403" ]; do
+          wait_secs=$$((wait_secs+1))
+          if [ $$((wait_secs % 5)) -eq 0 ]; then
+            echo "Waiting for kason-upms to be healthy... ($$wait_secs s)"
+          fi
+          sleep 10
+        done
+        echo "kason-upms is healthy. Starting kason-auth..."
+        exec java -jar -Xmx256m \
+        -Duser.timezone=GMT+12 \
+        -Dspring.profiles.active=prod \
+        -Dlogging.file.name=/logs/auth.log \
+        /app.jar
+
+  kason-word-biz:
+    image: kason-word-biz:2.0
+    user: root
+    environment:
+      - KASON_ENC_PASSWORD=${KASON_ENC_PASSWORD}
+      - DB_IP=${DB_IP}
+      - GOOGLE_APPLICATION_CREDENTIALS=${GOOGLE_APPLICATION_CREDENTIALS}
+    volumes:
+      - ~/docker/kason/word/logs:/logs:Z
+      - ~/docker/kason/word/bizTmp:/wordTmp:Z
+    network_mode: "host"
+    depends_on:
+      - kason-auth
+    healthcheck:
+      test: ["CMD", "pgrep", "-f", "kason-word-biz"]
+      interval: 30s
+      timeout: 10s
+      retries: 8
+      start_period: 4m
+    entrypoint:
+      - /bin/sh
+      - -c
+      - |
+        echo "Waiting for kason-config to be healthy..."
+        wait_secs=0
+        until code=$(curl -s -o /dev/null -w '%{http_code}' http://localhost:7771/actuator/health); [ "$$code" = "200" ] || [ "$$code" = "401" ] || [ "$$code" = "403" ]; do
+          wait_secs=$$((wait_secs+1))
+          if [ $$((wait_secs % 5)) -eq 0 ]; then
+            echo "Waiting for kason-config to be healthy... ($$wait_secs s)"
+          fi
+          sleep 10
+        done
+        echo "Waiting for kason-auth to be healthy..."
+        wait_secs=0
+        until code=$(curl -s -o /dev/null -w '%{http_code}' http://localhost:3001/actuator/health); [ "$$code" = "200" ] || [ "$$code" = "401" ] || [ "$$code" = "403" ]; do
+          wait_secs=$$((wait_secs+1))
+          if [ $$((wait_secs % 5)) -eq 0 ]; then
+            echo "Waiting for kason-auth to be healthy... ($$wait_secs s)"
+          fi
+          sleep 10
+        done
+        # Start immediately after kason-auth is healthy
+        echo "Starting kason-word-biz..."
+        exec java -jar -Xmx1024m \
+        -Duser.timezone=GMT+12 \
+        -Dspring.application.name=kason-word-biz \
+        -Dspring.profiles.active=prod \
+        -Dcom.sun.management.autodiscovery=true \
+        -Dlogging.file.name=/logs/word-biz.log \
+        /app.jar
+
+  kason-ai-biz:
+    image: kason-ai-biz:2.0
+    user: root
+    environment:
+      - KASON_ENC_PASSWORD=${KASON_ENC_PASSWORD}
+      - DB_IP=${DB_IP}
+      - GROK_API_KEY=${GROK_API_KEY}
+      - YTB_API_KEY=${YTB_API_KEY}
+    volumes:
+      - ~/docker/kason/ai/logs:/logs:Z
+      - ~/docker/kason/ai/tmp:/ai-tmp:Z
+    network_mode: "host"
+    depends_on:
+      - kason-word-biz
+    healthcheck:
+      test: ["CMD", "pgrep", "-f", "kason-ai-biz"]
+      interval: 30s
+      timeout: 10s
+      retries: 8
+      start_period: 4m
+    entrypoint:
+      - /bin/sh
+      - -c
+      - |
+        echo "Waiting for kason-config to be healthy..."
+        wait_secs=0
+        until code=$(curl -s -o /dev/null -w '%{http_code}' http://localhost:7771/actuator/health); [ "$$code" = "200" ] || [ "$$code" = "401" ] || [ "$$code" = "403" ]; do
+          wait_secs=$$((wait_secs+1))
+          if [ $$((wait_secs % 5)) -eq 0 ]; then
+            echo "Waiting for kason-config to be healthy... ($$wait_secs s)"
+          fi
+          sleep 10
+        done
+        echo "Waiting for kason-auth to be healthy..."
+        wait_secs=0
+        until code=$(curl -s -o /dev/null -w '%{http_code}' http://localhost:3001/actuator/health); [ "$$code" = "200" ] || [ "$$code" = "401" ] || [ "$$code" = "403" ]; do
+          wait_secs=$$((wait_secs+1))
+          if [ $$((wait_secs % 5)) -eq 0 ]; then
+            echo "Waiting for kason-auth to be healthy... ($$wait_secs s)"
+          fi
+          sleep 10
+        done
+        # To avoid overlapping with kason-word-biz startup (assumed 3 minutes), delay 180s
+        echo "kason-auth is healthy. Delaying 360s (6˚ minutes) before starting kason-ai-biz..."
+        sleep 360
+        echo "Starting kason-ai-biz..."
+        export JAVA_OPTS="-Xms512m -Xmx1048m -XX:+UseG1GC -XX:MaxGCPauseMillis=200"
+        export TZ=Pacific/Auckland
+        exec java $${JAVA_OPTS} -jar /app/app.jar
+
+  kason-tools-biz:
+    image: kason-tools-biz:2.0
+    user: root
+    environment:
+      - KASON_ENC_PASSWORD=${KASON_ENC_PASSWORD}
+      - DB_IP=${DB_IP}
+      - GOOGLE_APPLICATION_CREDENTIALS=${GOOGLE_APPLICATION_CREDENTIALS}
+    volumes:
+      - ~/docker/kason/tools/logs:/logs:Z
+    network_mode: "host"
+    depends_on:
+      - kason-auth
+    healthcheck:
+      test: ["CMD", "pgrep", "-f", "kason-tools-biz"]
+      interval: 30s
+      timeout: 10s
+      retries: 8
+      start_period: 4m
+    entrypoint:
+      - /bin/sh
+      - -c
+      - |
+        echo "Waiting for kason-config to be healthy..."
+        wait_secs=0
+        until code=$(curl -s -o /dev/null -w '%{http_code}' http://localhost:7771/actuator/health); [ "$$code" = "200" ] || [ "$$code" = "401" ] || [ "$$code" = "403" ]; do
+          wait_secs=$$((wait_secs+1))
+          if [ $$((wait_secs % 5)) -eq 0 ]; then
+            echo "Waiting for kason-config to be healthy... ($$wait_secs s)"
+          fi
+          sleep 10
+        done
+        echo "Waiting for kason-auth to be healthy..."
+        wait_secs=0
+        until code=$(curl -s -o /dev/null -w '%{http_code}' http://localhost:3001/actuator/health); [ "$$code" = "200" ] || [ "$$code" = "401" ] || [ "$$code" = "403" ]; do
+          wait_secs=$$((wait_secs+1))
+          if [ $$((wait_secs % 5)) -eq 0 ]; then
+            echo "Waiting for kason-auth to be healthy... ($$wait_secs s)"
+          fi
+          sleep 10
+        done
+        # Stagger after kason-ai-biz (assumed 3 minutes) to avoid overlap; total 6 minutes after kason-word-biz
+        echo "kason-auth is healthy. Delaying 20s (6 minutes) before starting kason-tools-biz..."
+        sleep 20
+        echo "Starting kason-tools-biz..."
+        exec java -jar -Xmx700m \
+          -Duser.timezone=GMT+12 \
+          -Dspring.profiles.active=prod \
+          -Dlogging.file.name=/logs/tools-biz.log \
+          /app.jar
+
+  kason-crawler:
+    image: kason-crawler:2.0
+    user: root
+    environment:
+      - KASON_ENC_PASSWORD=${KASON_ENC_PASSWORD}
+      - DB_IP=${DB_IP}
+    volumes:
+      - ~/docker/kason/crawler/logs:/logs:Z
+      - ~/docker/kason/crawler/tmp:/crawlerTmp:Z
+    network_mode: "host"
+    depends_on:
+      - kason-ai-biz
+    healthcheck:
+      test: ["CMD-SHELL", "code=$(curl -s -o /dev/null -w '%{http_code}' http://localhost:6001/actuator/health); [ \"$$code\" = \"200\" ] || [ \"$$code\" = \"401\" ] || [ \"$$code\" = \"403\" ]"]
+      interval: 30s
+      timeout: 10s
+      retries: 8
+      start_period: 4m
+    entrypoint:
+      - /bin/sh
+      - -c
+      - |
+        echo "Waiting for kason-config to be healthy..."
+        wait_secs=0
+        until code=$(curl -s -o /dev/null -w '%{http_code}' http://localhost:7771/actuator/health); [ "$$code" = "200" ] || [ "$$code" = "401" ] || [ "$$code" = "403" ]; do
+          wait_secs=$$((wait_secs+1))
+          if [ $$((wait_secs % 5)) -eq 0 ]; then
+            echo "Waiting for kason-config to be healthy... ($$wait_secs s)"
+          fi
+          sleep 10
+        done
+        echo "Waiting for kason-ai-biz to be healthy..."
+        wait_secs=0
+        until code=$(curl -s -o /dev/null -w '%{http_code}' http://localhost:18015/actuator/health); [ "$$code" = "200" ] || [ "$$code" = "401" ] || [ "$$code" = "403" ]; do
+          wait_secs=$$((wait_secs+1))
+          if [ $$((wait_secs % 5)) -eq 0 ]; then
+            echo "Waiting for kason-ai-biz to be healthy... ($$wait_secs s)"
+          fi
+          sleep 10
+        done
+        echo "kason-ai-biz is healthy. Starting kason-crawler..."
+        exec java -jar -Xmx1000m \
+            -Duser.timezone=GMT+12 \
+            -Xmn300m \
+            -Dspring.profiles.active=prod \
+            -Dlogging.file.name=/logs/crawler.log \
+            /app.jar

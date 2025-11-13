@@ -1,4 +1,4 @@
-# Kiwi Microservice Platform
+# Kason Microservice Platform
 
 A modular Spring Cloud (Hoxton) / Spring Boot 2.3 based microservice platform that bundles infrastructure automation, service discovery, centralized config, API gateway, auth, content & document processing, AI utilities (YouTube subtitle translation + TTS), and deployment helper scripts optimized for edge devices (e.g. Raspberry Pi) and standard Linux servers.
 
@@ -19,18 +19,18 @@ A modular Spring Cloud (Hoxton) / Spring Boot 2.3 based microservice platform th
 
 | Module | Purpose |
 |--------|---------|
-| kiwi-eureka | Service discovery (Eureka Server) |
-| kiwi-config | Centralized configuration server |
-| kiwi-gateway | Edge routing / reverse proxy (Spring Cloud Gateway) |
-| kiwi-auth | Auth / token issuing (OAuth2 legacy) |
-| kiwi-upms | User & permission management (RBAC) |
-| kiwi-word | Document & content handling (includes crawler submodule) |
-| kiwi-ai | AI utilities (subtitle translation streaming, possibly TTS, NLP hooks) |
-| kiwi-common | Shared libraries: cache, DB, DFS, ES, MQ, SDK, YouTube, TTS, etc. |
-| kiwi-test | Test scaffolding / integration experiments |
-| kiwi-deploy | Infra + deployment scripts, docker resources |
-| kiwi-sql | Database initialization & maintenance SQL scripts |
-| kiwi-docs | Supplemental design / integration notes |
+| kason-eureka | Service discovery (Eureka Server) |
+| kason-config | Centralized configuration server |
+| kason-gateway | Edge routing / reverse proxy (Spring Cloud Gateway) |
+| kason-auth | Auth / token issuing (OAuth2 legacy) |
+| kason-upms | User & permission management (RBAC) |
+| kason-word | Document & content handling (includes crawler submodule) |
+| kason-ai | AI utilities (subtitle translation streaming, possibly TTS, NLP hooks) |
+| kason-common | Shared libraries: cache, DB, DFS, ES, MQ, SDK, YouTube, TTS, etc. |
+| kason-test | Test scaffolding / integration experiments |
+| kason-deploy | Infra + deployment scripts, docker resources |
+| kason-sql | Database initialization & maintenance SQL scripts |
+| kason-docs | Supplemental design / integration notes |
 
 Additional domain modules (finance, flow, generator, aws, etc.) are experimental or auxiliary.
 
@@ -49,9 +49,9 @@ Additional domain modules (finance, flow, generator, aws, etc.) are experimental
 
 ---
 ## 4. Architecture Overview
-1. Entry → kiwi-gateway (API Gateway) handles routing, auth delegation, cross-cutting filters.
-2. Config externalization through kiwi-config (backed by Git repo / file system—configure in application.yml).
-3. Discovery via kiwi-eureka; each service registers & uses logical names.
+1. Entry → kason-gateway (API Gateway) handles routing, auth delegation, cross-cutting filters.
+2. Config externalization through kason-config (backed by Git repo / file system—configure in application.yml).
+3. Discovery via kason-eureka; each service registers & uses logical names.
 4. Core services (auth, upms, word, ai, crawler) implement domain logic; rely on common libs for consistency.
 5. Data & infra layer: MySQL (relational), Redis (cache / session), RabbitMQ (async), ES (search), FastDFS (files), Nginx (static + reverse proxy UI).
 6. AI pipeline (YouTube subtitle translation): WebSocket streaming endpoint emits tokens progressively; results cached to avoid repeated Grok / LLM streaming calls for same video URL + target language.
@@ -66,8 +66,8 @@ Additional domain modules (finance, flow, generator, aws, etc.) are experimental
 
 ### 5.2 Clone
 ```bash
-git clone https://github.com/coding-by-feng/microservice-kiwi.git
-cd microservice-kiwi
+git clone https://github.com/coding-by-feng/microservice-kason.git
+cd microservice-kason
 ```
 
 ### 5.3 Build All
@@ -78,14 +78,14 @@ mvn -T 1C clean package -DskipTests
 
 ### 5.4 Run Core Services (Local Dev)
 Order (suggested):
-1. kiwi-eureka
-2. kiwi-config
-3. kiwi-gateway
-4. kiwi-auth / kiwi-upms / kiwi-word / kiwi-ai (as needed)
+1. kason-eureka
+2. kason-config
+3. kason-gateway
+4. kason-auth / kason-upms / kason-word / kason-ai (as needed)
 
 Example:
 ```bash
-cd kiwi-eureka && mvn spring-boot:run
+cd kason-eureka && mvn spring-boot:run
 ```
 Repeat per service. Provide required application-local.yml overrides (DB creds, Redis, etc.).
 
@@ -133,7 +133,7 @@ Populate (e.g. in ~/.bashrc or deployment .env injection):
 
 | Variable | Meaning |
 |----------|---------|
-| KIWI_ENC_PASSWORD | Encryption password for jasypt-secured properties |
+| KASON_ENC_PASSWORD | Encryption password for jasypt-secured properties |
 | GROK_API_KEY | API key for Grok / LLM integration |
 | DB_IP | MySQL host (infra IP) |
 | MYSQL_ROOT_PASSWORD | MySQL root password |
@@ -178,7 +178,7 @@ Repeated translation for the same videoUrl (+ targetLang) should reuse cached re
 
 Pattern (illustrative):
 ```java
-@KiwiCacheKeyPrefix(AiConstants.CACHE_KEY_PREFIX_GROK.VIDEO_TITLE)
+@KasonCacheKeyPrefix(AiConstants.CACHE_KEY_PREFIX_GROK.VIDEO_TITLE)
 @Cacheable(
   cacheNames = AiConstants.CACHE_NAMES,
   keyGenerator = CacheConstants.CACHE_KEY_GENERATOR_BEAN,
@@ -187,7 +187,7 @@ public SubtitleResult translateAndCache(String videoUrl, String targetLang) { ..
 ```
 Recommended cache key structure:
 ```
-KIWI:GROK:SUBTITLE:{hash(videoUrl)}:{targetLang}
+KASON:GROK:SUBTITLE:{hash(videoUrl)}:{targetLang}
 ```
 If a cached aggregate transcript exists, server may:
 1. Immediately send a priming frame { cached:true, progress:1.0 }
@@ -209,18 +209,18 @@ Suggestions (some implemented via common libs):
 
 ---
 ## 10. Data & SQL Assets
-`kiwi-sql/` contains initialization & maintenance scripts:
+`kason-sql/` contains initialization & maintenance scripts:
 - `init.sql`, `common.sql`, `ai_initialize.sql`, `ytb_table_initialize.sql`, etc.
 Run selectively rather than blind import—review for destructive operations (e.g. cleaner.sql, truncateAll.sql).
 
 ---
 ## 11. Docker & Images
-Each service often has a Dockerfile (e.g., kiwi-auth, kiwi-config, gateway, etc.). Build with:
+Each service often has a Dockerfile (e.g., kason-auth, kason-config, gateway, etc.). Build with:
 ```bash
 mvn -T 1C clean package -DskipTests
 # Example build
-cd kiwi-auth
-docker build -t kiwi-auth:2.0 .
+cd kason-auth
+docker build -t kason-auth:2.0 .
 ```
 The deployment scripts orchestrate multi-service builds with tagging consistency. For AI service Python utilities (e.g., yt-dlp) prefer installing via pip3 in a slim base image (refactor Dockerfiles accordingly; keep layers minimal, use --no-cache-dir, and pin versions for reproducibility).
 
@@ -235,7 +235,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends python3 python3
   && apt-get purge -y --auto-remove \
   && rm -rf /var/lib/apt/lists/*
 
-COPY target/kiwi-ai-*.jar /app/app.jar
+COPY target/kason-ai-*.jar /app/app.jar
 ENTRYPOINT ["java","-jar","/app/app.jar"]
 ```
 
@@ -267,7 +267,7 @@ docker logs <container>
 ### 13.3 Cache Invalidation
 If subtitles stale: flush selective key instead of full Redis FLUSHALL.
 ```bash
-redis-cli --pass $REDIS_PASSWORD KEYS 'KIWI:GROK:SUBTITLE:*' | xargs -r redis-cli --pass $REDIS_PASSWORD DEL
+redis-cli --pass $REDIS_PASSWORD KEYS 'KASON:GROK:SUBTITLE:*' | xargs -r redis-cli --pass $REDIS_PASSWORD DEL
 ```
 ### 13.4 Memory Constraints (Edge Devices)
 - Lower ES heap (`ES_JAVA_OPTS=-Xms256m -Xmx256m`)
@@ -309,11 +309,11 @@ See root LICENSE file. (Ensure compatibility of third-party assets before distri
 # Build all (skip tests)
 mvn -T 1C clean package -DskipTests
 # Run eureka
-docker run -d --name kiwi-eureka kiwi-eureka:2.0
+docker run -d --name kason-eureka kason-eureka:2.0
 # Kill process on 8080
 lsof -ti :8080 | xargs -r kill -9
 # Clear subtitle cache (pattern example)
-redis-cli KEYS 'KIWI:GROK:SUBTITLE:*' | xargs -r redis-cli DEL
+redis-cli KEYS 'KASON:GROK:SUBTITLE:*' | xargs -r redis-cli DEL
 ```
 
 ---
@@ -321,7 +321,7 @@ redis-cli KEYS 'KIWI:GROK:SUBTITLE:*' | xargs -r redis-cli DEL
 1. Review service logs (`easy-check` or docker logs)
 2. Verify env variables loaded
 3. Inspect network / DNS for service discovery issues
-4. Consult `kiwi-docs/` for integration specifics
+4. Consult `kason-docs/` for integration specifics
 5. Open an issue referencing reproduction steps
 
 ---

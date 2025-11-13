@@ -294,7 +294,7 @@ public class YtbFavoriteServiceImpl implements YtbFavoriteService {
                 return title.trim();
             }
         } catch (Exception e) {
-            log.warn("Failed to fetch video title via YouTube helper for {}: {}", videoUrl, e.getMessage());
+            log.warn("Failed to fetch video title via yt-dlp for {}: {}", videoUrl, e.getMessage());
         }
         return deriveTitleFromUrl(videoUrl);
     }

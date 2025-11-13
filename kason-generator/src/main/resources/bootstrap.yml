@@ -1,0 +1,17 @@
+jasypt:
+  encryptor:
+    password: ${KASON_ENC_PASSWORD}
+    poolSize: 2
+
+logging:
+  level:
+    org.springframework.boot: DEBUG
+    me.fengorz.kason.*: DEBUG
+
+server:
+  port: 5003
+spring:
+  application:
+    name: kason-generator
+
+

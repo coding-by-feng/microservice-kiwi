@@ -1,0 +1,5 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  me.fengorz.kason.word.api.feign.fallback.DictFetchApiFallback,\
+  me.fengorz.kason.word.api.feign.fallback.QueryApiFallback,\
+  me.fengorz.kason.word.api.feign.factory.BizApiFallbackFactory,\
+  me.fengorz.kason.word.api.feign.factory.QueryApiFallbackFactory

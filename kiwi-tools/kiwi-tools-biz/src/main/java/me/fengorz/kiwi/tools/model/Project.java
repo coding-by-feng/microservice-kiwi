@@ -32,7 +32,7 @@ public class Project {
     private String endDate; // YYYY-MM-DD
 
     @TableField(typeHandler = ProjectStatusTypeHandler.class)
-    private ProjectStatus status; // not_started, in_progress, completed
+    private ProjectStatus status;
 
     private String todayTask; // text
 

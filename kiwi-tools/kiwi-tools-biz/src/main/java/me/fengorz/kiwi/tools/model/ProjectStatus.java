@@ -45,11 +45,6 @@ public enum ProjectStatus implements IEnum<String> {
     public static ProjectStatus fromInput(Object input) {
         if (input == null) return null;
         String s = String.valueOf(input).trim();
-        switch (s.toLowerCase(Locale.ROOT)) {
-            case "not_started": return GLASS_ORDERED;
-            case "in_progress": return DOORS_WINDOWS_PRODUCED;
-            case "completed": return FINAL_PAYMENT_RECEIVED;
-        }
         ProjectStatus byCode = fromCode(s);
         if (byCode != null) return byCode;
         switch (s) {
@@ -58,11 +53,6 @@ public enum ProjectStatus implements IEnum<String> {
             case "门窗已送货": return DOORS_WINDOWS_DELIVERED;
             case "门窗已安装": return DOORS_WINDOWS_INSTALLED;
             case "尾款已收到": return FINAL_PAYMENT_RECEIVED;
-            case "未开始": return GLASS_ORDERED;
-            case "进行中":
-            case "施工中": return DOORS_WINDOWS_PRODUCED;
-            case "已完成":
-            case "完成": return FINAL_PAYMENT_RECEIVED;
             default:
                 String u = s.toUpperCase(Locale.ROOT);
                 if (u.contains("GLASS") && u.contains("ORDER")) return GLASS_ORDERED;

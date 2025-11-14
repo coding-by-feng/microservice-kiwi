@@ -134,11 +134,29 @@ public class StorageService {
         }
         if (ext == null || ext.isEmpty()) {
             String ctype = file.getContentType();
-            if (ctype != null && ctype.startsWith("image/")) {
-                ext = ctype.substring("image/".length());
+            if (ctype != null) {
+                if (ctype.startsWith("image/")) {
+                    ext = ctype.substring("image/".length());
+                } else if (ctype.startsWith("video/")) {
+                    ext = ctype.substring("video/".length());
+                }
             }
         }
-        if (ext == null || ext.isEmpty()) ext = "jpg"; // sensible default
+        if (ext == null || ext.isEmpty()) {
+            String name = original;
+            if (name != null) {
+                String m = URLConnection.guessContentTypeFromName(name);
+                if (m != null) {
+                    if (m.startsWith("image/")) ext = m.substring("image/".length());
+                    else if (m.startsWith("video/")) ext = m.substring("video/".length());
+                }
+            }
+        }
+        if (ext == null || ext.isEmpty()) {
+            String ctype = file.getContentType();
+            if (ctype != null && ctype.startsWith("video/")) ext = "mp4"; // sensible default for videos
+            else ext = "jpg"; // default for images/unknown
+        }
         return ext;
     }
 

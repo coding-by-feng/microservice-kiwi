@@ -164,7 +164,7 @@ public class ProjectService {
      * - Rejects control characters in identity/short fields.
      * - Validates name length (1–100), clientPhone length (<=30), address (<=200), salesPerson/installer (<=100).
      * - Validates dates (YYYY-MM-DD) and ensures endDate >= startDate when both present.
-     * - Ensures status is valid (defaults to not_started if missing).
+     * - Ensures status is valid (defaults to glass_ordered if missing).
      */
     private void validateProject(Project p, boolean creating) {
         // trim

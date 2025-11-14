@@ -36,7 +36,9 @@ public abstract class ProjectBaseRequest {
     @ApiModelProperty(value = "End date (YYYY-MM-DD)", example = "2025-10-15")
     private String endDate;
 
-    @ApiModelProperty(value = "Project status code", allowableValues = "not_started,in_progress,completed", example = "in_progress")
+    @ApiModelProperty(value = "Project status code",
+            allowableValues = "glass_ordered,doors_windows_produced,doors_windows_delivered,doors_windows_installed,final_payment_received",
+            example = "doors_windows_produced")
     private String status;
 
     @ApiModelProperty(value = "Today's task note", example = "Install cabinets")

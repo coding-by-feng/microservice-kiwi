@@ -19,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -30,15 +31,16 @@ import java.util.Map;
  * Auth: optional Bearer token via Authorization header (no enforcement here; gateway can enforce later).
  * Content types:
  *  - JSON for CRUD
- *  - multipart/form-data for photo upload (field name: "photo")
+ *  - multipart/form-data for media upload (field name: "photo" or "file")
  *
  * Upload constraints:
- *  - Only image/* content types
- *  - Max size ~5MB (configurable via Spring's multipart settings)
+ *  - image/* and video/* content types are supported
+ *  - Max single photo size: tools.photo-max-size (e.g., 5MB default here)
+ *  - Max single video size: tools.video-max-size (30MB by default)
  */
 @RestController
 @RequestMapping("/rangi_windows/api")
-@Api(tags = "Projects", description = "CRUD and photo management for Projects")
+@Api(tags = "Projects", description = "CRUD and media (photo/video) management for Projects")
 public class ProjectController {
 
     private final ProjectService service;
@@ -62,7 +64,7 @@ public class ProjectController {
     @ApiOperation(value = "List projects with filter/sort/pagination", notes = "Returns a page envelope: { items, page, pageSize, total }")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "q", value = "Free-text search across name/address", dataType = "string", paramType = "query"),
-            @ApiImplicitParam(name = "status", value = "Status code filter", allowableValues = "not_started,in_progress,completed", dataType = "string", paramType = "query"),
+            @ApiImplicitParam(name = "status", value = "Status code filter", allowableValues = "glass_ordered,doors_windows_produced,doors_windows_delivered,doors_windows_installed,final_payment_received", dataType = "string", paramType = "query"),
             @ApiImplicitParam(name = "start", value = "Start date (YYYY-MM-DD)", dataType = "string", paramType = "query"),
             @ApiImplicitParam(name = "end", value = "End date (YYYY-MM-DD)", dataType = "string", paramType = "query"),
             @ApiImplicitParam(name = "page", value = "Page number (1-based)", dataType = "int", paramType = "query"),
@@ -201,10 +203,10 @@ public class ProjectController {
      */
     // POST /api/projects/:id/photo
     @PostMapping(value = "/projects/{id}/photo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @ApiOperation(value = "Upload a project photo", notes = "Use form field 'file' or 'photo'. Only image/* is allowed.")
+    @ApiOperation(value = "Upload a project media (photo or video)", notes = "Use form field 'file' or 'photo'. Supports image/* and video/*. Photo max: tools.photo-max-size; Video max: tools.video-max-size")
     @ApiImplicitParams({
-        @ApiImplicitParam(name = "file", value = "Image file", dataType = "__file", paramType = "form", required = false),
-        @ApiImplicitParam(name = "photo", value = "Alternate image field", dataType = "__file", paramType = "form", required = false)
+        @ApiImplicitParam(name = "file", value = "Image or video file", dataType = "__file", paramType = "form", required = false),
+        @ApiImplicitParam(name = "photo", value = "Alternate media field", dataType = "__file", paramType = "form", required = false)
     })
     @ApiResponses({
         @ApiResponse(code = 200, message = "OK"),
@@ -220,6 +222,33 @@ public class ProjectController {
         }
         ProjectPhoto saved = photoService.upload(projectId, pic, request);
         return ProjectDtoMapper.toResponse(saved);
+    }
+
+    /**
+     * Upload multiple photos to a project.
+     * Accepts multipart/form-data arrays with field names: files[] or photos[] or repeated 'file'/'photo'.
+     */
+    @PostMapping(value = "/projects/{id}/photos", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @ApiOperation(value = "Upload multiple project media files (photos or videos)", notes = "Use fields 'files' or 'photos' or repeat 'file/photo'. Supports image/* and video/*. Photo max: tools.photo-max-size; Video max: tools.video-max-size")
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "files", value = "Media files (image/* or video/*)", dataType = "__file", paramType = "form", required = false, allowMultiple = true),
+        @ApiImplicitParam(name = "photos", value = "Alternate media files", dataType = "__file", paramType = "form", required = false, allowMultiple = true),
+        @ApiImplicitParam(name = "file", value = "Media file (repeatable)", dataType = "__file", paramType = "form", required = false),
+        @ApiImplicitParam(name = "photo", value = "Alternate media file (repeatable)", dataType = "__file", paramType = "form", required = false)
+    })
+    public List<me.fengorz.kiwi.tools.api.project.dto.ProjectPhotoResponse> uploadPhotos(@ApiParam(value = "Project id", required = true) @PathVariable("id") String projectId,
+                                                                                         @RequestPart(value = "files", required = false) List<MultipartFile> files,
+                                                                                         @RequestPart(value = "photos", required = false) List<MultipartFile> photos,
+                                                                                         @RequestPart(value = "file", required = false) MultipartFile file,
+                                                                                         @RequestPart(value = "photo", required = false) MultipartFile photo,
+                                                                                         HttpServletRequest request) throws IOException {
+        List<MultipartFile> all = new ArrayList<>();
+        if (files != null) all.addAll(files);
+        if (photos != null) all.addAll(photos);
+        if (file != null) all.add(file);
+        if (photo != null) all.add(photo);
+        List<ProjectPhoto> saved = photoService.uploadMany(projectId, all, request);
+        return ProjectDtoMapper.toPhotoResponseList(saved);
     }
 
     /** List photos for a project (ordered). */

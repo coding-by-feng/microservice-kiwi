@@ -19,7 +19,8 @@ public class ProjectStatusNormalizer {
     @PostConstruct
     public void normalize() {
         try {
-            // Map legacy textual statuses to new codes
+            // One-time DB cleanup: migrate legacy statuses to new codes.
+            // This does not re-enable legacy inputs at the API level.
             // 未开始/legacy not_started -> glass_ordered
             mapper.update(new Project(), new UpdateWrapper<Project>().eq("status", "未开始").set("status", "glass_ordered"));
             mapper.update(new Project(), new UpdateWrapper<Project>().eq("status", "not_started").set("status", "glass_ordered"));

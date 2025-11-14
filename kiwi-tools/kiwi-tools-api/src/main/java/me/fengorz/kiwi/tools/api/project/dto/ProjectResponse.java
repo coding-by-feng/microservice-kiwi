@@ -42,7 +42,7 @@ public class ProjectResponse {
     @ApiModelProperty(value = "End date (YYYY-MM-DD)")
     private String endDate;
 
-    @ApiModelProperty(value = "Status code", allowableValues = "not_started,in_progress,completed")
+    @ApiModelProperty(value = "Status code", allowableValues = "glass_ordered,doors_windows_produced,doors_windows_delivered,doors_windows_installed,final_payment_received")
     private String status;
 
     @ApiModelProperty(value = "Today's task")

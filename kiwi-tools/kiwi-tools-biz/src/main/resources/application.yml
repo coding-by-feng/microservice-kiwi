@@ -3,8 +3,8 @@ server:
 spring:
   servlet:
     multipart:
-      max-file-size: 5MB
-      max-request-size: 6MB
+      max-file-size: 30MB
+      max-request-size: 35MB
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
@@ -40,13 +40,15 @@ tools:
   upload-rate-limit-per-min: 30
   idempotency-ttl-minutes: 60
   allowed-statuses:
-    # keep legacy Chinese and new code values to be backward compatible
-    - "未开始"
-    - "进行中"
-    - "已完成"
-    - "not_started"
-    - "in_progress"
-    - "completed"
+    - "glass_ordered"
+    - "doors_windows_produced"
+    - "doors_windows_delivered"
+    - "doors_windows_installed"
+    - "final_payment_received"
+  # Max single photo upload enforced by ProjectPhotoService
+  photo-max-size: 5MB
+  # Max single video upload enforced by ProjectPhotoService
+  video-max-size: 30MB
 
 ignore:
   urls:

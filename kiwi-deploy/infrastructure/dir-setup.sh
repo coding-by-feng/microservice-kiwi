@@ -1,10 +1,10 @@
 cd ~
-mkdir microservice-kiwi docker storage_data store_path tracker_data
+mkdir -p microservice-kiwi docker
 cd docker/
-mkdir kiwi ui rabbitmq mysql
+mkdir -p kiwi ui rabbitmq mysql
 cd kiwi
-mkdir auth config crawler eureka gate upms word
-mkdir auth/logs config/logs crawler/logs crawler/tmp eureka/logs gate/logs upms/logs word/logs word/bizTmp word/crawlerTmp word/biz word/crawler
+mkdir -p auth config crawler eureka gate upms word
+mkdir -p auth/logs config/logs crawler/logs crawler/tmp eureka/logs gate/logs upms/logs word/logs word/bizTmp word/crawlerTmp word/biz word/crawler
 cd ../ui
-mkdir dist nginx
+mkdir -p dist nginx
 # download gcp key json on root directory

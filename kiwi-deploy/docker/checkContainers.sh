@@ -30,8 +30,6 @@ declare -A containers=(
     ["12"]="kiwi-rabbit|RABBITMQ"
     ["13"]="kiwi-ui|KIWI-UI"
     ["14"]="kiwi-es|ELASTICSEARCH"
-    ["15"]="storage|FASTDFS-STORAGE"
-    ["16"]="tracker|FASTDFS-TRACKER"
 )
 
 show_menu() {
@@ -51,21 +49,19 @@ show_menu() {
     echo "12) RABBITMQ (kiwi-rabbit)"
     echo "13) KIWI-UI (kiwi-ui)"
     echo "14) ELASTICSEARCH (kiwi-es)"
-    echo "15) FASTDFS-STORAGE (storage)"
-    echo "16) FASTDFS-TRACKER (tracker)"
     echo ""
     echo "Additional options:"
-    echo "17) Check all failed containers"
-    echo "18) Check connectivity tests"
-    echo "19) Show resource usage"
-    echo "20) Show container status"
-    echo "21) Check and start stopped containers"
-    echo "22) Start all stopped Kiwi containers"
-    echo "23) Start infrastructure containers only"
-    echo "24) Enter container shell"
-    echo "25) Stop one container"
-    echo "26) Restart one container"
-    echo "27) Live logs dashboard (select services by numbers or names)"  # UPDATED description
+    echo "15) Check all failed containers"
+    echo "16) Check connectivity tests"
+    echo "17) Show resource usage"
+    echo "18) Show container status"
+    echo "19) Check and start stopped containers"
+    echo "20) Start all stopped Kiwi containers"
+    echo "21) Start infrastructure containers only"
+    echo "22) Enter container shell"
+    echo "23) Stop one container"
+    echo "24) Restart one container"
+    echo "25) Live logs dashboard (select services by numbers or names)"  # UPDATED description
     echo "0) Exit"
     echo ""
 }
@@ -218,7 +214,7 @@ restart_single_container() {
     echo ""
 
     # Show all containers with their current status
-    for key in {1..16}; do   # UPDATED (was 1..15)
+    for key in {1..14}; do   # UPDATED range
         IFS='|' read -r container_name service_name <<< "${containers[$key]}"
         if sudo docker ps --format "{{.Names}}" | grep -q "^${container_name}$"; then
             status="RUNNING"
@@ -237,9 +233,9 @@ restart_single_container() {
     fi
 
     echo ""
-    read -p "Enter container number to restart (1-16): " container_choice   # UPDATED
-    if [[ ! $container_choice =~ ^([1-9]|1[0-6])$ ]]; then                  # UPDATED
-        echo "Invalid choice. Please enter a number between 1-16."
+    read -p "Enter container number to restart (1-14): " container_choice   # UPDATED
+    if [[ ! $container_choice =~ ^([1-9]|1[0-4])$ ]]; then                  # UPDATED
+        echo "Invalid choice. Please enter a number between 1-14."
         return
     fi
 
@@ -247,12 +243,18 @@ restart_single_container() {
 
     # Check if container exists
     if ! sudo docker ps -a --format "{{.Names}}" | grep -q "^${container_name}$"; then
-        echo "✗ Container $service_name does not exist. Cannot restart."
-        return
+        echo "✗ Container $service_name does not exist"
+        return 1
     fi
 
-    echo ""
-    echo "You selected: $service_name ($container_name)"
+    # Check if container is running
+    local is_running=false
+    if sudo docker ps --format "{{.Names}}" | grep -q "^${container_name}$"; then
+        is_running=true
+        echo "Container is currently RUNNING"
+    else
+        echo "Container is currently STOPPED"
+    fi
 
     # Warning for critical infrastructure containers
     case $container_choice in
@@ -302,7 +304,7 @@ stop_single_container() {
 
     # Show current status and only display running containers
     local running_containers=()
-    for key in {1..16}; do   # UPDATED (was 1..15)
+    for key in {1..14}; do   # UPDATED range
         IFS='|' read -r container_name service_name <<< "${containers[$key]}"
         if sudo docker ps --format "{{.Names}}" | grep -q "^${container_name}$"; then
             running_containers+=("$key")
@@ -453,8 +455,6 @@ start_infrastructure_containers() {
     echo "  - Redis"
     echo "  - RabbitMQ"
     echo "  - Elasticsearch"
-    echo "  - FastDFS Storage"
-    echo "  - FastDFS Tracker"
     echo "  - Kiwi UI (with port 80 check)"
     echo ""
     echo "NOTE: Each container will wait 30 seconds after starting to ensure proper initialization."
@@ -465,14 +465,12 @@ start_infrastructure_containers() {
         return
     fi
 
-    # Infrastructure containers in dependency order
+    # Infrastructure containers in dependency order (FastDFS removed)
     local infra_order=(
         "10|kiwi-mysql|MYSQL"
         "11|kiwi-redis|REDIS"
         "12|kiwi-rabbit|RABBITMQ"
         "14|kiwi-es|ELASTICSEARCH"
-        "15|storage|FASTDFS-STORAGE"
-        "16|tracker|FASTDFS-TRACKER"
     )
 
     echo -e "\n=== STARTING INFRASTRUCTURE SERVICES ==="
@@ -553,15 +551,15 @@ enter_container() {
     echo -e "\n=== ENTER CONTAINER SHELL ==="
     echo "Choose which container to enter:"
     echo ""
-    for key in {1..16}; do   # UPDATED
+    for key in {1..14}; do   # UPDATED
         IFS='|' read -r container_name service_name <<< "${containers[$key]}"
         echo "$key) $service_name ($container_name)"
     done
     echo ""
-    read -p "Enter container number (1-16): " container_choice  # UPDATED
+    read -p "Enter container number (1-14): " container_choice  # UPDATED
 
-    if [[ ! $container_choice =~ ^([1-9]|1[0-6])$ ]]; then      # UPDATED
-        echo "Invalid choice. Please enter a number between 1-16."
+    if [[ ! $container_choice =~ ^([1-9]|1[0-4])$ ]]; then      # UPDATED
+        echo "Invalid choice. Please enter a number between 1-14."
         return
     fi
 
@@ -720,7 +718,7 @@ check_and_start_containers() {
     echo -e "\n=== CHECKING ALL CONTAINER STATUS ==="
     local stopped_containers=()
 
-    for key in {1..16}; do   # UPDATED
+    for key in {1..14}; do   # UPDATED
         IFS='|' read -r container_name service_name <<< "${containers[$key]}"
         if ! check_container_status "$container_name" "$service_name"; then
             if sudo docker ps -a --format "{{.Names}}" | grep -q "^${container_name}$"; then
@@ -766,15 +764,13 @@ start_all_kiwi_containers() {
         return
     fi
 
-    # Start infrastructure first
+    # Start infrastructure first (FastDFS removed)
     echo -e "\n=== PHASE 1: STARTING INFRASTRUCTURE ==="
     local infra_order=(
         "10|kiwi-mysql|MYSQL"
         "11|kiwi-redis|REDIS"
         "12|kiwi-rabbit|RABBITMQ"
         "14|kiwi-es|ELASTICSEARCH"
-        "15|storage|FASTDFS-STORAGE"
-        "16|tracker|FASTDFS-TRACKER"
     )
 
     local total_infra=${#infra_order[@]}
@@ -898,20 +894,6 @@ check_connectivity() {
     else
         echo "✗ Elasticsearch connection failed"
     fi
-
-    echo -e "\nTesting FastDFS Tracker..."
-    if sudo docker exec tracker ps aux | grep fdfs_trackerd >/dev/null 2>&1; then
-        echo "✓ FastDFS Tracker is running"
-    else
-        echo "✗ FastDFS Tracker check failed"
-    fi
-
-    echo -e "\nTesting FastDFS Storage..."
-    if sudo docker exec storage ps aux | grep fdfs_storaged >/dev/null 2>&1; then
-        echo "✓ FastDFS Storage is running"
-    else
-        echo "✗ FastDFS Storage check failed"
-    fi
 }
 
 show_resource_usage() {
@@ -924,7 +906,7 @@ show_container_status() {
     printf "%-30s %-15s %-20s\n" "CONTAINER NAME" "STATUS" "PORTS"
     printf "%-30s %-15s %-20s\n" "------------------------------" "---------------" "--------------------"
 
-    for key in {1..16}; do   # UPDATED
+    for key in {1..14}; do   # UPDATED range
         IFS='|' read -r container_name service_name <<< "${containers[$key]}"
         if sudo docker ps --format "{{.Names}}\t{{.Status}}\t{{.Ports}}" | grep -q "^${container_name}"; then
             status="RUNNING"
@@ -953,7 +935,7 @@ check_all_failed() {
         read -p "How many log lines to show for each container? (default: 30): " lines
         lines=${lines:-30}
 
-        for key in {1..9}; do    # UPDATED (was 1..8)
+        for key in {1..9}; do    # UPDATED app range only
             IFS='|' read -r container_name service_name <<< "${containers[$key]}"
             check_logs "$container_name" "$service_name" "static" "$lines"
             echo ""
@@ -964,14 +946,14 @@ check_all_failed() {
 
         echo ""
         echo "Choose which service container to monitor:"
-        for key in {1..9}; do    # UPDATED (was 1..8)
+        for key in {1..9}; do    # UPDATED app range only
             IFS='|' read -r container_name service_name <<< "${containers[$key]}"
             echo "$key) $service_name ($container_name)"
         done
         echo ""
-        read -p "Enter container number (1-9): " container_choice  # UPDATED
+        read -p "Enter container number (1-9): " container_choice
 
-        if [[ $container_choice =~ ^[1-9]$ ]]; then  # UPDATED (was ^[1-8$])
+        if [[ $container_choice =~ ^[1-9]$ ]]; then
             IFS='|' read -r container_name service_name <<< "${containers[$container_choice]}"
             echo ""
             echo "Note: Press 'q' + Enter or Ctrl+C to stop monitoring."
@@ -996,14 +978,14 @@ check_all_failed() {
     fi
 }
 
-# NEW: helper to select which services to include in dashboard
+# UPDATED: Multi-pane tmux dashboard selection helpers
 select_services_for_dashboard() {
     echo -e "\n=== SELECT SERVICES FOR LIVE LOGS DASHBOARD ==="
     echo "You can choose using numbers or names. Input can be comma- or space-separated."
     echo ""
     # Quick reference list (lowercase names) for fast number entry
     echo "Quick reference (type numbers to choose):"
-    for key in {1..16}; do
+    for key in {1..14}; do
         IFS='|' read -r _ s_name <<< "${containers[$key]}"
         printf "%d. %s\n" "$key" "$(echo "$s_name" | tr '[:upper:]' '[:lower:]')"
     done
@@ -1014,8 +996,8 @@ select_services_for_dashboard() {
         printf "%-3s %-18s (%s)\n" "$key)" "$s_name" "$c_name"
     done
     echo ""
-    echo "Infrastructure (10-16):"
-    for key in {10..16}; do
+    echo "Infrastructure (10-14):"
+    for key in {10..14}; do
         IFS='|' read -r c_name s_name <<< "${containers[$key]}"
         printf "%-3s %-18s (%s)\n" "$key)" "$s_name" "$c_name"
     done
@@ -1032,7 +1014,7 @@ select_services_for_dashboard() {
     echo ""
     echo "Accepted service names:"
     local names_line=""
-    for key in {1..16}; do
+    for key in {1..14}; do
         IFS='|' read -r _ s_name <<< "${containers[$key]}"
         names_line+="$s_name "
     done
@@ -1051,14 +1033,14 @@ select_services_for_dashboard() {
     # 'infra' quick-select
     if [[ "$selection" =~ ^[Ii][Nn][Ff][Rr][Aa]$ ]]; then
         local infra_keys=""
-        for k in {10..16}; do infra_keys+="$k "; done
+        for k in {10..14}; do infra_keys+="$k "; done
         echo "$infra_keys"
         return 0
     fi
 
     # Build name to key map (uppercased)
     declare -A name_to_key
-    for key in {1..16}; do
+    for key in {1..14}; do
         IFS='|' read -r c_name s_name <<< "${containers[$key]}"
         local up_service=$(echo "$s_name" | tr '[:lower:]' '[:upper:]')
         local up_container=$(echo "$c_name" | tr '[:lower:]' '[:upper:]')
@@ -1078,14 +1060,14 @@ select_services_for_dashboard() {
             continue
         fi
         if [[ "$up_token" == "INFRA" ]]; then
-            for k in {10..16}; do selected_keys+=("$k"); done
+            for k in {10..14}; do selected_keys+=("$k"); done
             continue
         fi
         if [[ "$token" =~ ^[0-9]+$ ]]; then
-            if (( token >= 1 && token <= 16 )); then
+            if (( token >= 1 && token <= 14 )); then
                 selected_keys+=("$token")
             else
-                echo "Skipping invalid number: $token (valid 1-16)"
+                echo "Skipping invalid number: $token (valid 1-14)"
             fi
         else
             if [ -n "${name_to_key[$up_token]}" ]; then
@@ -1220,14 +1202,14 @@ quick_health_logs() {
 # Main loop
 while true; do
     show_menu
-    read -p "Enter your choice (0-27): " choice   # UPDATED
+    read -p "Enter your choice (0-25): " choice   # UPDATED
 
     case $choice in
         0)
             echo "Exiting..."
             exit 0
             ;;
-        1|2|3|4|5|6|7|8|9|10|11|12|13|14|15|16)
+        1|2|3|4|5|6|7|8|9|10|11|12|13|14)
             IFS='|' read -r container_name service_name <<< "${containers[$choice]}"
 
             # First check if container is running
@@ -1260,24 +1242,22 @@ while true; do
             # Show logs if container is running or user chose not to start
             show_log_options "$container_name" "$service_name"
             ;;
-        17) check_all_failed ;;
-        18) check_connectivity ;;
-        19) show_resource_usage ;;
-        20) show_container_status ;;
-        21) check_and_start_containers ;;
-        22) start_all_kiwi_containers ;;
-        23) start_infrastructure_containers ;;
-        24) enter_container ;;
-        25) stop_single_container ;;
-        26) restart_single_container ;;
-        27)
-            # NEW: selection for which services to include
+        15) check_all_failed ;;
+        16) check_connectivity ;;
+        17) show_resource_usage ;;
+        18) show_container_status ;;
+        19) check_and_start_containers ;;
+        20) start_all_kiwi_containers ;;
+        21) start_infrastructure_containers ;;
+        22) enter_container ;;
+        23) stop_single_container ;;
+        24) restart_single_container ;;
+        25)
             selected=$(select_services_for_dashboard)
-            # Convert to array and start dashboard
             read -r -a sel_keys <<< "$selected"
             logs_dashboard "${sel_keys[@]}"
             ;;
-        *) echo "Invalid choice. Please enter a number between 0-27." ;;
+        *) echo "Invalid choice. Please enter a number between 0-25." ;;
     esac
 
     echo ""

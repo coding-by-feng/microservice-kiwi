@@ -165,7 +165,7 @@ run_netdiscover_quick_scan() {
 }
 
 # Auto-detect network IPs by MAC addresses using netdiscover
-# Sets and saves: INFRASTRUCTURE_IP, SERVICE_IP, FASTDFS_NON_LOCAL_IP (to infrastructure)
+# Sets and saves: INFRASTRUCTURE_IP, SERVICE_IP
 detect_network_ips() {
     print_info "Detecting infrastructure and service IPs via netdiscover..."
     # Ensure netdiscover installed
@@ -195,7 +195,6 @@ detect_network_ips() {
 
     if [ -n "$infra_ip" ]; then
         save_config "INFRASTRUCTURE_IP" "$infra_ip"
-        save_config "FASTDFS_NON_LOCAL_IP" "$infra_ip"
         print_success "Infrastructure IP detected: $infra_ip (MAC $INFRA_MAC)"
     else
         print_warning "Infrastructure MAC $INFRA_MAC not found in scan."
@@ -216,7 +215,6 @@ detect_ips_via_hostname() {
     if [ -z "$raw" ]; then
         print_warning "hostname -I returned no addresses; defaulting both to 127.0.0.1"
         save_config "INFRASTRUCTURE_IP" "127.0.0.1"
-        save_config "FASTDFS_NON_LOCAL_IP" "127.0.0.1"
         save_config "SERVICE_IP" "127.0.0.1"
         return 0
     fi
@@ -233,7 +231,6 @@ detect_ips_via_hostname() {
     fi
     [ -z "$selected" ] && selected="127.0.0.1"
     save_config "INFRASTRUCTURE_IP" "$selected"
-    save_config "FASTDFS_NON_LOCAL_IP" "$selected"
     # In single-Pi setup, microservices run locally
     save_config "SERVICE_IP" "127.0.0.1"
     print_success "Infrastructure IP: $selected; Service IP: 127.0.0.1"
@@ -507,16 +504,6 @@ get_db_passwords() {
         save_config "REDIS_PASSWORD" "$REDIS_PASSWORD"
     fi
 
-    # Load FastDFS hostname
-    if has_config "FASTDFS_HOSTNAME"; then
-        FASTDFS_HOSTNAME=$(load_config "FASTDFS_HOSTNAME")
-        print_info "Using saved FastDFS hostname: $FASTDFS_HOSTNAME"
-    else
-        prompt_for_input "Enter FastDFS hostname (e.g., fastdfs.fengorz.me)" "FASTDFS_HOSTNAME" "false" \
-            "^[a-zA-Z0-9][a-zA-Z0-9.-]+[a-zA-Z0-9]$" "Please enter a valid hostname"
-        save_config "FASTDFS_HOSTNAME" "$FASTDFS_HOSTNAME"
-    fi
-
     # Auto-detect IPs using hostname -I (single-Pi default)
     detect_ips_via_hostname || print_warning "Auto IP detection via hostname -I failed; defaulted to localhost."
 
@@ -528,13 +515,6 @@ get_db_passwords() {
         save_config "INFRASTRUCTURE_IP" "$INFRASTRUCTURE_IP"
     else
         print_info "Infrastructure IP set to: $INFRASTRUCTURE_IP"
-    fi
-
-    # Ensure FastDFS Non-Local IP mirrors infrastructure if unset
-    FASTDFS_NON_LOCAL_IP=$(load_config "FASTDFS_NON_LOCAL_IP" 2>/dev/null || echo "")
-    if [ -z "$FASTDFS_NON_LOCAL_IP" ]; then
-        FASTDFS_NON_LOCAL_IP="$INFRASTRUCTURE_IP"
-        save_config "FASTDFS_NON_LOCAL_IP" "$FASTDFS_NON_LOCAL_IP"
     fi
 
     # Load Service IP after detection
@@ -668,14 +648,14 @@ show_step_status() {
         "Setup MySQL"
         "Setup Redis"
         "Setup RabbitMQ"
-        "Setup FastDFS"
+        "REMOVED: FastDFS setup (no-op)"
         "Maven library installation"
         "Setup deployment script"
         "Setup Elasticsearch"
         "Install IK Tokenizer"
         "Setup Nginx and UI"
         "Setup FTP server"
-        "Update service IPs (.bashrc, hosts, FastDFS)"
+        "Update service IPs (.bashrc, hosts)"
     )
 
     echo "Step Completion Status:"
@@ -731,15 +711,11 @@ show_step_status() {
     fi
 
     if [ -n "$DOCKER_CMD" ]; then
-        # Read configured FastDFS HTTP port (for display)
-        FASTDFS_PORT_EXPECTED=$(load_config "FASTDFS_HTTP_PORT" 2>/dev/null || echo 8888)
-        # Define containers to check
+        # Define containers to check (FastDFS removed)
         declare -a CONTAINERS=(
             "kiwi-mysql:MySQL Database:3306"
             "kiwi-redis:Redis Cache:6379"
             "kiwi-rabbit:RabbitMQ Message Queue:5672,15672"
-            "tracker:FastDFS Tracker:22122"
-            "storage:FastDFS Storage:23000,${FASTDFS_PORT_EXPECTED}"
             "kiwi-es:Elasticsearch:9200,9300"
             "kiwi-ui:Web UI (Nginx):80"
             "kiwi-ftp:FTP Server:21,21100-21110"
@@ -788,8 +764,6 @@ show_step_status() {
         echo "Network Configuration:"
         echo "  Infrastructure IP: $(load_config "INFRASTRUCTURE_IP" || echo "not set")"
         echo "  Service IP: $(load_config "SERVICE_IP" || echo "not set")"
-        echo "  FastDFS Hostname: $(load_config "FASTDFS_HOSTNAME" || echo "not set")"
-        echo "  FastDFS Non-Local IP: $(load_config "FASTDFS_NON_LOCAL_IP" || echo "not set")"
         echo
         echo "User Configuration:"
         echo "  Sudo Username: $(load_config "SUDO_USERNAME" || echo "not set")"
@@ -876,14 +850,14 @@ select_steps_to_reinitialize() {
     echo "14. mysql_setup             - Setup MySQL"
     echo "15. redis_setup             - Setup Redis"
     echo "16. rabbitmq_setup          - Setup RabbitMQ"
-    echo "17. fastdfs_setup           - Setup FastDFS"
+    echo "17. fastdfs_setup           - REMOVED (no-op)"
     echo "18. maven_lib_install       - Maven library installation"
     echo "19. deployment_setup        - Setup deployment script"
     echo "20. elasticsearch_setup     - Setup Elasticsearch"
     echo "21. ik_tokenizer_install    - Install IK Tokenizer"
     echo "22. nginx_ui_setup          - Setup Nginx and UI"
     echo "23. ftp_setup               - Setup FTP server"
-    echo "24. ip_update               - Update service IPs (.bashrc, hosts, FastDFS)"
+    echo "24. ip_update               - Update service IPs (.bashrc, hosts)"
     echo "25. ALL                     - Re-initialize all steps"
     echo "26. BACK                    - Return to main menu"
     echo
@@ -1426,7 +1400,7 @@ execute_step_9_directories_created() {
     if ! is_step_completed "directories_created"; then
         print_info "Step 9: Creating directory structure..."
         cd "$SCRIPT_HOME"
-        run_as_user mkdir -p microservice-kiwi docker storage_data store_path tracker_data
+        run_as_user mkdir -p microservice-kiwi docker
         run_as_user mkdir -p docker/kiwi docker/ui docker/rabbitmq docker/mysql
         cd "$SCRIPT_HOME/docker/kiwi"
         run_as_user mkdir -p auth config crawler eureka gate upms word ai
@@ -1489,12 +1463,10 @@ execute_step_11_hosts_configured() {
         tee -a /etc/hosts > /dev/null << EOF
 
 # Kiwi Infrastructure Services
-$FASTDFS_NON_LOCAL_IP    fastdfs.fengorz.me
 $INFRASTRUCTURE_IP    kiwi-ui
 $INFRASTRUCTURE_IP    kiwi-redis
 $INFRASTRUCTURE_IP    kiwi-rabbitmq
 $INFRASTRUCTURE_IP    kiwi-db
-$INFRASTRUCTURE_IP    kiwi-fastdfs
 $INFRASTRUCTURE_IP    kiwi-es
 $INFRASTRUCTURE_IP    kiwi-chattts
 $INFRASTRUCTURE_IP    kiwi-ftp
@@ -1526,14 +1498,11 @@ execute_step_12_env_vars_setup() {
         run_as_user sed -i '/export DB_IP=/d' "$SCRIPT_HOME/.bashrc" 2>/dev/null || true
         run_as_user sed -i '/export MYSQL_ROOT_PASSWORD=/d' "$SCRIPT_HOME/.bashrc" 2>/dev/null || true
         run_as_user sed -i '/export REDIS_PASSWORD=/d' "$SCRIPT_HOME/.bashrc" 2>/dev/null || true
-        run_as_user sed -i '/export FASTDFS_HOSTNAME=/d' "$SCRIPT_HOME/.bashrc" 2>/dev/null || true
-        run_as_user sed -i '/export FASTDFS_NON_LOCAL_IP=/d' "$SCRIPT_HOME/.bashrc" 2>/dev/null || true
         run_as_user sed -i '/export ES_ROOT_PASSWORD=/d' "$SCRIPT_HOME/.bashrc" 2>/dev/null || true
         run_as_user sed -i '/export ES_USER_NAME=/d' "$SCRIPT_HOME/.bashrc" 2>/dev/null || true
         run_as_user sed -i '/export ES_USER_PASSWORD=/d' "$SCRIPT_HOME/.bashrc" 2>/dev/null || true
         run_as_user sed -i '/export INFRASTRUCTURE_IP=/d' "$SCRIPT_HOME/.bashrc" 2>/dev/null || true
         run_as_user sed -i '/export SERVICE_IP=/d' "$SCRIPT_HOME/.bashrc" 2>/dev/null || true
-        run_as_user sed -i '/export FASTDFS_HTTP_PORT=/d' "$SCRIPT_HOME/.bashrc" 2>/dev/null || true
         {
             echo ""
             echo "# Kiwi Microservice Environment Variables"
@@ -1542,14 +1511,11 @@ execute_step_12_env_vars_setup() {
             echo "export GROK_API_KEY=\"$GROK_API_KEY\""
             echo "export MYSQL_ROOT_PASSWORD=\"$MYSQL_ROOT_PASSWORD\""
             echo "export REDIS_PASSWORD=\"$REDIS_PASSWORD\""
-            echo "export FASTDFS_HOSTNAME=\"$FASTDFS_HOSTNAME\""
-            echo "export FASTDFS_NON_LOCAL_IP=\"$FASTDFS_NON_LOCAL_IP\""
             echo "export ES_ROOT_PASSWORD=\"$ES_ROOT_PASSWORD\""
             echo "export ES_USER_NAME=\"$ES_USER_NAME\""
             echo "export ES_USER_PASSWORD=\"$ES_USER_PASSWORD\""
             echo "export INFRASTRUCTURE_IP=\"$INFRASTRUCTURE_IP\""
             echo "export SERVICE_IP=\"$SERVICE_IP\""
-            echo "export FASTDFS_HTTP_PORT=\"$(load_config "FASTDFS_HTTP_PORT" 2>/dev/null || echo 8888)\""
         } | run_as_user tee -a "$SCRIPT_HOME/.bashrc" > /dev/null
         print_success "Environment variables configured"
         mark_step_completed "env_vars_setup"
@@ -1694,86 +1660,12 @@ execute_step_16_rabbitmq_setup() {
 }
 
 execute_step_17_fastdfs_setup() {
+    # FastDFS support removed; keep step as no-op for compatibility
     if ! is_step_completed "fastdfs_setup"; then
-        print_info "Step 17: Setting up FastDFS..."
-        ARCH=$(uname -m)
-        case $ARCH in
-            x86_64|amd64)
-                FASTDFS_IMAGE="delron/fastdfs:latest"
-                ;;
-            aarch64|arm64)
-                FASTDFS_IMAGE="ygqygq2/fastdfs-nginx:latest"
-                ;;
-            *)
-                FASTDFS_IMAGE="delron/fastdfs:latest"
-                print_warning "Unknown architecture, using default image"
-                ;;
-        esac
-        print_info "Using FastDFS image: $FASTDFS_IMAGE"
-        docker pull "$FASTDFS_IMAGE"
-        docker stop tracker storage 2>/dev/null || true
-        docker rm tracker storage 2>/dev/null || true
-        run_as_user mkdir -p "$SCRIPT_HOME/tracker_data" "$SCRIPT_HOME/storage_data" "$SCRIPT_HOME/store_path"
-
-        # Determine FastDFS HTTP port (host) with auto-fallback if busy
-        FASTDFS_HTTP_PORT=$(load_config "FASTDFS_HTTP_PORT" 2>/dev/null || echo "")
-        if [ -z "$FASTDFS_HTTP_PORT" ]; then
-            FASTDFS_HTTP_PORT=$(find_free_port 8888 8999)
-        else
-            if command -v lsof >/dev/null 2>&1; then
-                if lsof -iTCP -sTCP:LISTEN -n -P 2>/dev/null | grep -q ":$FASTDFS_HTTP_PORT "; then
-                    FASTDFS_HTTP_PORT=$(find_free_port 8888 8999)
-                fi
-            fi
-        fi
-        save_config "FASTDFS_HTTP_PORT" "$FASTDFS_HTTP_PORT"
-
-        docker run -tid \
-            --name tracker \
-            -p 22122:22122 \
-            -v "$SCRIPT_HOME/tracker_data:/fastdfs/tracker/data" \
-            --restart=unless-stopped \
-            "$FASTDFS_IMAGE" \
-            tracker
-        sleep 10
-
-        # Try running storage; if port conflict occurs, retry with a new port
-        ATTEMPTS=0
-        MAX_ATTEMPTS=5
-        while true; do
-            set +e
-            docker run -tid \
-                --name storage \
-                -p 23000:23000 \
-                -p ${FASTDFS_HTTP_PORT}:8888 \
-                -v "$SCRIPT_HOME/storage_data:/fastdfs/storage/data" \
-                -v "$SCRIPT_HOME/store_path:/fastdfs/store_path" \
-                -e TRACKER_SERVER="$FASTDFS_NON_LOCAL_IP:22122" \
-                --restart=unless-stopped \
-                "$FASTDFS_IMAGE" \
-                storage
-            RUN_RC=$?
-            set -e
-            if [ $RUN_RC -eq 0 ]; then
-                break
-            fi
-            ((ATTEMPTS++))
-            if [ $ATTEMPTS -ge $MAX_ATTEMPTS ]; then
-                print_error "Failed to start FastDFS storage after $ATTEMPTS attempts. Check Docker logs."
-                break
-            fi
-            print_warning "Port $FASTDFS_HTTP_PORT may be busy. Retrying with a new port... (attempt $ATTEMPTS)"
-            docker rm -f storage >/dev/null 2>&1 || true
-            FASTDFS_HTTP_PORT=$(find_free_port 8888 8999)
-            save_config "FASTDFS_HTTP_PORT" "$FASTDFS_HTTP_PORT"
-        done
-        print_success "FastDFS setup completed (HTTP port ${FASTDFS_HTTP_PORT})"
-        save_config "fastdfs_image_used" "$FASTDFS_IMAGE"
+        print_info "Step 17: FastDFS setup skipped (component removed)."
         mark_step_completed "fastdfs_setup"
     else
-        print_info "Step 17: FastDFS already set up, skipping..."
-        check_and_start_container "tracker" "fastdfs_setup"
-        check_and_start_container "storage" "fastdfs_setup"
+        print_info "Step 17: FastDFS already marked skipped, continuing..."
     fi
 }
 
@@ -1964,10 +1856,9 @@ execute_step_23_ftp_setup() {
 
 # New: Reconcile hosts and bashrc with current config (lightweight, idempotent)
 update_hosts_and_bashrc_from_config() {
-    local CUR_IP CUR_SERVICE_IP CUR_FASTDFS_PORT
+    local CUR_IP CUR_SERVICE_IP
     CUR_IP=$(load_config "INFRASTRUCTURE_IP" 2>/dev/null || echo "127.0.0.1")
     CUR_SERVICE_IP=$(load_config "SERVICE_IP" 2>/dev/null || echo "127.0.0.1")
-    CUR_FASTDFS_PORT=$(load_config "FASTDFS_HTTP_PORT" 2>/dev/null || echo 8888)
 
     print_info "Reconciling ~/.bashrc and /etc/hosts with saved IPs..."
     # Update ~/.bashrc exports
@@ -1978,25 +1869,21 @@ update_hosts_and_bashrc_from_config() {
     run_as_user sed -i '/export FASTDFS_HTTP_PORT=/d' "$SCRIPT_HOME/.bashrc" 2>/dev/null || true
     {
         echo "export DB_IP=\"$CUR_IP\""
-        echo "export FASTDFS_NON_LOCAL_IP=\"$CUR_IP\""
         echo "export INFRASTRUCTURE_IP=\"$CUR_IP\""
         echo "export SERVICE_IP=\"$CUR_SERVICE_IP\""
-        echo "export FASTDFS_HTTP_PORT=\"$CUR_FASTDFS_PORT\""
     } | run_as_user tee -a "$SCRIPT_HOME/.bashrc" > /dev/null
     run_as_user bash -lc "source ~/.bashrc" || true
 
-    # Update /etc/hosts block
+    # Update /etc/hosts block (FastDFS entries removed)
     cp /etc/hosts /etc/hosts.backup.$(date +%Y%m%d_%H%M%S)
     sed -i '/# Kiwi Infrastructure Services/,/# End Kiwi Services/d' /etc/hosts
     tee -a /etc/hosts > /dev/null << EOF
 
 # Kiwi Infrastructure Services
-$CUR_IP    fastdfs.fengorz.me
 $CUR_IP    kiwi-ui
 $CUR_IP    kiwi-redis
 $CUR_IP    kiwi-rabbitmq
 $CUR_IP    kiwi-db
-$CUR_IP    kiwi-fastdfs
 $CUR_IP    kiwi-es
 $CUR_IP    kiwi-chattts
 $CUR_IP    kiwi-ftp
@@ -2057,7 +1944,6 @@ display_final_summary() {
     echo "OS Version: $(lsb_release -d 2>/dev/null | cut -f2 || echo 'Unknown')"
     echo
     echo -e "${BLUE}NETWORK CONFIGURATION:${NC}"
-    echo "  FastDFS IP: $FASTDFS_NON_LOCAL_IP"
     echo "  Infrastructure IP: $INFRASTRUCTURE_IP"
     echo "  Service IP: $SERVICE_IP"
     echo
@@ -2068,7 +1954,7 @@ display_final_summary() {
     echo "  $SCRIPT_HOME/easy-check      - Check container status"
     echo
     echo -e "${BLUE}CONTAINER STATUS:${NC}"
-    CONTAINERS=("kiwi-mysql" "kiwi-redis" "kiwi-rabbit" "tracker" "storage" "kiwi-es" "kiwi-ui" "kiwi-ftp")
+    CONTAINERS=("kiwi-mysql" "kiwi-redis" "kiwi-rabbit" "kiwi-es" "kiwi-ui" "kiwi-ftp")
     RUNNING_COUNT=0
     TOTAL_COUNT=${#CONTAINERS[@]}
     for container in "${CONTAINERS[@]}"; do
@@ -2084,14 +1970,10 @@ display_final_summary() {
     echo
     echo "Container Summary: $RUNNING_COUNT/$TOTAL_COUNT running"
     echo
-    # Load configured FastDFS HTTP port for display
-    local FASTDFS_HTTP_PORT_SUMMARY
-    FASTDFS_HTTP_PORT_SUMMARY=$(load_config "FASTDFS_HTTP_PORT" 2>/dev/null || echo 8888)
     echo -e "${BLUE}WEB INTERFACES:${NC}"
     echo "  RabbitMQ: http://$INFRASTRUCTURE_IP:15672 (guest/guest)"
     echo "  Elasticsearch: http://$INFRASTRUCTURE_IP:9200"
     echo "  Kiwi UI: http://$INFRASTRUCTURE_IP:80"
-    echo "  FastDFS: http://$FASTDFS_NON_LOCAL_IP:${FASTDFS_HTTP_PORT_SUMMARY}"
     echo
     echo -e "${BLUE}DATABASE CONNECTIONS:${NC}"
     echo "  MySQL: $INFRASTRUCTURE_IP:3306 (root / [password])"

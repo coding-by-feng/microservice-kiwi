@@ -98,13 +98,10 @@ kill_process_on_port() {
 deploy_ui() {
     echo "🚀 Starting UI deployment process..."
 
-    # Get the actual user's home directory
-    USER_HOME=$(getent passwd $SUDO_USER | cut -d: -f6 2>/dev/null || echo $HOME)
-
     # Step 1: Clean up existing UI dist directory first
     echo "🧹 Cleaning up existing UI distribution files..."
-    if [ -d "$USER_HOME/docker/ui/dist" ]; then
-        rm -rf "$USER_HOME/docker/ui/dist"
+    if [ -d "$HOME/docker/ui/dist" ]; then
+        rm -rf "$HOME/docker/ui/dist"
         echo "✅ Old dist directory removed"
     else
         echo "ℹ️  No existing dist directory found"
@@ -112,20 +109,20 @@ deploy_ui() {
 
     # Step 2: Move dist.zip to docker directory
     echo "📦 Moving dist.zip to docker directory..."
-    if [ ! -f "$USER_HOME/dist.zip" ]; then
-        echo "❌ Error: $USER_HOME/dist.zip not found!"
+    if [ ! -f "$HOME/dist.zip" ]; then
+        echo "❌ Error: $HOME/dist.zip not found!"
         exit 1
     fi
-    mv "$USER_HOME/dist.zip" "$USER_HOME/docker/ui"
+    mv "$HOME/dist.zip" "$HOME/docker/ui"
     echo "✅ dist.zip moved successfully"
 
     # Step 3: Navigate to docker/ui directory and extract
     echo "📂 Navigating to docker/ui directory..."
-    cd "$USER_HOME/docker/ui/"
+    cd "$HOME/docker/ui/"
 
     echo "📤 Extracting dist.zip..."
     if [ ! -f dist.zip ]; then
-        echo "❌ Error: dist.zip not found in $USER_HOME/docker/ui/"
+        echo "❌ Error: dist.zip not found in $HOME/docker/ui/"
         exit 1
     fi
     unzip -q dist.zip

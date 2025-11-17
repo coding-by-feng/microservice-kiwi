@@ -5,7 +5,7 @@
 
 # Configuration
 CONTAINER_NAME="kiwi-mysql"
-BACKUP_DIR="/home/kason/mysql_backups"
+BACKUP_DIR="$HOME/mysql_backups"
 DATE=$(date +"%Y%m%d_%H%M%S")
 MYSQL_USER="root"  # Change this to your MySQL user
 MYSQL_PASSWORD=""  # You'll be prompted or set this

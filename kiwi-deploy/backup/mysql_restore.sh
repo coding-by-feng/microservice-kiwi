@@ -13,7 +13,7 @@
 #
 # Flags:
 #   -c <container>    Docker container name (default: kiwi-mysql)
-#   -b <backup_dir>   Backup directory (default: /home/kason/mysql_backups)
+#   -b <backup_dir>   Backup directory (default: $HOME/mysql_backups)
 #   -f <file>         Backup file to restore (absolute or relative)
 #   -d <database>     Target database name (override for single DB restore)
 #   -a                Treat file as all-databases backup (override detection)
@@ -26,7 +26,8 @@
 set -o pipefail
 
 CONTAINER_NAME="kiwi-mysql"
-BACKUP_DIR="/home/kason/mysql_backups"
+# Default backup directory now uses current user's HOME for portability
+BACKUP_DIR="$HOME/mysql_backups"
 MYSQL_USER="root"
 MYSQL_PASSWORD=""
 DRY_RUN=false
@@ -68,6 +69,21 @@ while getopts ":c:b:f:d:u:p:anyh" opt; do
   esac
 done
 
+# Ensure backup directory exists (create if missing)
+ensure_backup_dir() {
+  if [ ! -d "$BACKUP_DIR" ]; then
+    print_step "Creating backup directory '$BACKUP_DIR'"
+    if $DRY_RUN; then
+      print_info "(dry-run) mkdir -p '$BACKUP_DIR'"
+    else
+      if ! mkdir -p "$BACKUP_DIR"; then
+        print_error "Failed to create directory '$BACKUP_DIR'"; exit 1
+      fi
+      chmod 700 "$BACKUP_DIR" 2>/dev/null || true
+    fi
+  fi
+}
+
 check_container() {
   if ! sudo docker ps --format '{{.Names}}' | grep -q "^${CONTAINER_NAME}$"; then
     print_error "Container '${CONTAINER_NAME}' is not running."; exit 1
@@ -93,7 +109,6 @@ test_connection() {
 list_backups() {
   print_step "Listing available backups in $BACKUP_DIR"
   local files=("$BACKUP_DIR"/*.sql.gz "$BACKUP_DIR"/*.sql)
-  # Remove literal patterns if no match
   files=("${files[@]}")
   local present=()
   for f in "${files[@]}"; do
@@ -117,6 +132,7 @@ list_backups() {
 }
 
 resolve_backup_file() {
+  ensure_backup_dir
   if [ -z "$BACKUP_FILE" ]; then
     list_backups
   else
@@ -234,11 +250,13 @@ show_summary() {
     echo "Target DB: $TARGET_DB"
   fi
   echo "Dry Run: $DRY_RUN"
+  echo "Backup Dir: $BACKUP_DIR"
   echo "----------------------------"
 }
 
 main() {
   print_step "Starting MySQL restore process"
+  ensure_backup_dir
   check_container
   prompt_password
   test_connection

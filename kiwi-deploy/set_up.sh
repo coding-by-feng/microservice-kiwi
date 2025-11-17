@@ -1403,7 +1403,7 @@ execute_step_9_directories_created() {
         run_as_user mkdir -p microservice-kiwi docker
         run_as_user mkdir -p docker/kiwi docker/ui docker/rabbitmq docker/mysql
         cd "$SCRIPT_HOME/docker/kiwi"
-        run_as_user mkdir -p auth config crawler eureka gate upms word ai
+        run_as_user mkdir -p auth config crawler eureka gate upms word ai tools
         run_as_user mkdir -p auth/logs config/logs crawler/logs crawler/tmp
         run_as_user mkdir -p eureka/logs gate/logs upms/logs word/logs
         run_as_user mkdir -p word/bizTmp word/crawlerTmp word/biz word/crawler

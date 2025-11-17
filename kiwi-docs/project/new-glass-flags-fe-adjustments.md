@@ -1,3 +1,7 @@
+# DEPRECATED – See project-stages-fe-adjustments.md
+
+This document is superseded by `project-stages-fe-adjustments.md`, which describes the new stages (glass/frame/purchase/transport/install/repair) with remarks. The old glassOrdered/glassManufactured guidance below is retained for historical context only.
+
 # Project Module: New Glass Flags (glassOrdered, glassManufactured)
 
 Date: 2025-11-08
@@ -50,7 +54,6 @@ export interface Project {
   projectCode: string;
   name: string;
   clientName?: string;
-  clientPhone?: string;
   address?: string;
   salesPerson?: string;
   installer?: string;
@@ -138,20 +141,19 @@ Adding two booleans is negligible. Excel export column expansion is minimal. No 
 1: 项目编号
 2: 项目名称
 3: 客户
-4: 客户电话
-5: 地址
-6: 销售
-7: 安装
-8: 团队成员
-9: 开始日期
-10: 结束日期
-11: 状态
-12: 今日任务
-13: 进度备注
-14: 创建时间
-15: 已归档
-16: 玻璃已下单  (NEW)
-17: 玻璃已生产  (NEW)
+4: 地址
+5: 销售
+6: 安装
+7: 团队成员
+8: 开始日期
+9: 结束日期
+10: 状态
+11: 今日任务
+12: 进度备注
+13: 创建时间
+14: 已归档
+15: 玻璃已下单  (NEW)
+16: 玻璃已生产  (NEW)
 ```
 
 ## 13. Backend Reference
@@ -169,4 +171,3 @@ Open a ticket with priority and proposed UX.
 
 ---
 For any clarification, tag backend maintainers or refer to `ExportService` and `ProjectDtoMapper` implementations.
-

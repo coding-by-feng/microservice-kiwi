@@ -2,6 +2,7 @@ package me.fengorz.kiwi.tools.controller;
 
 import io.swagger.annotations.*;
 import me.fengorz.kiwi.tools.api.project.dto.ProjectPatchRequest;
+import me.fengorz.kiwi.tools.api.project.dto.ProjectStagesDto;
 import me.fengorz.kiwi.tools.exception.ToolsException;
 import me.fengorz.kiwi.tools.mapper.ProjectDtoMapper;
 import me.fengorz.kiwi.tools.model.project.Project;
@@ -64,7 +65,12 @@ public class ProjectController {
     @ApiOperation(value = "List projects with filter/sort/pagination", notes = "Returns a page envelope: { items, page, pageSize, total }")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "q", value = "Free-text search across name/address", dataType = "string", paramType = "query"),
-            @ApiImplicitParam(name = "status", value = "Status code filter", allowableValues = "glass_ordered,doors_windows_produced,doors_windows_delivered,doors_windows_installed,final_payment_received", dataType = "string", paramType = "query"),
+            @ApiImplicitParam(name = "glass", value = "Stage: 玻璃 完成?", dataType = "boolean", paramType = "query"),
+            @ApiImplicitParam(name = "frame", value = "Stage: 框架 完成?", dataType = "boolean", paramType = "query"),
+            @ApiImplicitParam(name = "purchase", value = "Stage: 采购 完成?", dataType = "boolean", paramType = "query"),
+            @ApiImplicitParam(name = "transport", value = "Stage: 运输 完成?", dataType = "boolean", paramType = "query"),
+            @ApiImplicitParam(name = "install", value = "Stage: 安装 完成?", dataType = "boolean", paramType = "query"),
+            @ApiImplicitParam(name = "repair", value = "Stage: 维修 完成?", dataType = "boolean", paramType = "query"),
             @ApiImplicitParam(name = "start", value = "Start date (YYYY-MM-DD)", dataType = "string", paramType = "query"),
             @ApiImplicitParam(name = "end", value = "End date (YYYY-MM-DD)", dataType = "string", paramType = "query"),
             @ApiImplicitParam(name = "page", value = "Page number (1-based)", dataType = "int", paramType = "query"),
@@ -76,7 +82,12 @@ public class ProjectController {
     })
     public me.fengorz.kiwi.tools.api.project.dto.PageResponse<me.fengorz.kiwi.tools.api.project.dto.ProjectResponse> listProjects(
             @RequestParam(required = false) String q,
-            @RequestParam(required = false) String status,
+            @RequestParam(required = false) Boolean glass,
+            @RequestParam(required = false) Boolean frame,
+            @RequestParam(required = false) Boolean purchase,
+            @RequestParam(required = false) Boolean transport,
+            @RequestParam(required = false) Boolean install,
+            @RequestParam(required = false) Boolean repair,
             @RequestParam(required = false) String start,
             @RequestParam(required = false) String end,
             @RequestParam(required = false) Integer page,
@@ -86,7 +97,8 @@ public class ProjectController {
             @RequestParam(required = false) Boolean archived,
             @RequestParam(required = false) Boolean includeArchived
     ) {
-        Map<String, Object> res = service.list(q, status, start, end, page, pageSize, sortBy, sortOrder, archived, includeArchived);
+        Map<String, Object> res = service.list(q, glass, frame, purchase, transport, install, repair,
+                start, end, page, pageSize, sortBy, sortOrder, archived, includeArchived);
         return ProjectDtoMapper.toPageResponse(res);
     }
 
@@ -119,6 +131,11 @@ public class ProjectController {
     })
     public ResponseEntity<me.fengorz.kiwi.tools.api.project.dto.ProjectResponse> createProject(@ApiParam(value = "Project fields", required = true) @RequestBody me.fengorz.kiwi.tools.api.project.dto.ProjectCreateRequest body) {
         Project created = service.create(ProjectDtoMapper.toEntity(body));
+        // attach incoming stages if provided via PATCH call afterwards
+        if (body.getStages() != null) {
+            service.update(created.getId(), java.util.Collections.singletonMap("stages", body.getStages()));
+            created = service.get(created.getId());
+        }
         return ResponseEntity.status(HttpStatus.CREATED).body(ProjectDtoMapper.toResponse(created));
     }
 
@@ -152,7 +169,7 @@ public class ProjectController {
         @ApiResponse(code = 404, message = "Not Found")
     })
     public me.fengorz.kiwi.tools.api.project.dto.ProjectResponse patchProject(@ApiParam(value = "Project id", required = true) @PathVariable String id,
-                                                                              @ApiParam(value = "Fields to patch (e.g., archived)") @RequestBody ProjectPatchRequest body) {
+                                                                              @ApiParam(value = "Fields to patch (e.g., archived, stages)") @RequestBody ProjectPatchRequest body) {
         Project updated = service.update(id, ProjectDtoMapper.toPatch(body));
         return ProjectDtoMapper.toResponse(updated);
     }
@@ -299,5 +316,26 @@ public class ProjectController {
     @ApiOperation(value = "Delete all photos for a project", notes = "Idempotent: deletes all and returns 204")
     public void deleteAllPhotos(@ApiParam(value = "Project id", required = true) @PathVariable("id") String projectId) {
         photoService.deleteAll(projectId);
+    }
+
+    /**
+     * PATCH /api/projects/{id}/stages
+     *
+     * Update project stage flags only.
+     */
+    // PATCH /api/projects/:id/stages
+    @PatchMapping(value = "/projects/{id}/stages", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "Update project stage flags only")
+    @ApiResponses({
+        @ApiResponse(code = 200, message = "OK"),
+        @ApiResponse(code = 400, message = "Validation error"),
+        @ApiResponse(code = 404, message = "Not Found")
+    })
+    public me.fengorz.kiwi.tools.api.project.dto.ProjectResponse patchProjectStages(@ApiParam(value = "Project id", required = true) @PathVariable String id,
+                                                                                     @ApiParam(value = "Stage flags") @RequestBody ProjectStagesDto stages) {
+        java.util.Map<String, Object> patch = new java.util.HashMap<>();
+        patch.put("stages", stages);
+        Project updated = service.update(id, patch);
+        return ProjectDtoMapper.toResponse(updated);
     }
 }

@@ -30,8 +30,10 @@ public class ExportService {
         try (XSSFWorkbook workbook = new XSSFWorkbook(); ByteArrayOutputStream out = new ByteArrayOutputStream()) {
             Sheet sheet = workbook.createSheet("施工安排表");
             String[] headers = new String[]{
-                "项目ID", "项目编号", "项目名称", "客户", "客户电话", "地址", "销售", "安装", "团队成员",
-                "开始日期", "结束日期", "状态", "今日任务", "进度备注", "项目变更", "创建时间", "已归档"
+                "项目ID", "项目编号", "项目名称", "客户", "地址", "销售", "安装", "团队成员",
+                "开始日期", "结束日期", "玻璃", "玻璃备注", "框架", "框架备注", "采购", "采购备注",
+                "运输", "运输备注", "安装阶段", "安装备注", "维修", "维修备注",
+                "今日任务", "进度备注", "项目变更", "创建时间", "已归档"
             };
             Row header = sheet.createRow(0);
             XSSFFont font = workbook.createFont();
@@ -50,19 +52,29 @@ public class ExportService {
                 row.createCell(1).setCellValue(nvl(p.getProjectCode()));
                 row.createCell(2).setCellValue(nvl(p.getName()));
                 row.createCell(3).setCellValue(nvl(p.getClientName()));
-                row.createCell(4).setCellValue(nvl(p.getClientPhone()));
-                row.createCell(5).setCellValue(nvl(p.getAddress()));
-                row.createCell(6).setCellValue(nvl(p.getSalesPerson()));
-                row.createCell(7).setCellValue(nvl(p.getInstaller()));
-                row.createCell(8).setCellValue(nvl(p.getTeamMembers()));
-                row.createCell(9).setCellValue(nvl(p.getStartDate()));
-                row.createCell(10).setCellValue(nvl(p.getEndDate()));
-                row.createCell(11).setCellValue(p.getStatus() == null ? "" : p.getStatus().getLabelZh());
-                row.createCell(12).setCellValue(nvl(p.getTodayTask()));
-                row.createCell(13).setCellValue(nvl(p.getProgressNote()));
-                row.createCell(14).setCellValue(nvl(p.getChangeNote()));
-                row.createCell(15).setCellValue(formatDateTime(p));
-                row.createCell(16).setCellValue(yn(p.getArchived()));
+                row.createCell(4).setCellValue(nvl(p.getAddress()));
+                row.createCell(5).setCellValue(nvl(p.getSalesPerson()));
+                row.createCell(6).setCellValue(nvl(p.getInstaller()));
+                row.createCell(7).setCellValue(nvl(p.getTeamMembers()));
+                row.createCell(8).setCellValue(nvl(p.getStartDate()));
+                row.createCell(9).setCellValue(nvl(p.getEndDate()));
+                row.createCell(10).setCellValue(yn(p.getStages() != null && Boolean.TRUE.equals(p.getStages().getGlass())));
+                row.createCell(11).setCellValue(nvl(p.getStages() != null ? p.getStages().getGlassRemark() : null));
+                row.createCell(12).setCellValue(yn(p.getStages() != null && Boolean.TRUE.equals(p.getStages().getFrame())));
+                row.createCell(13).setCellValue(nvl(p.getStages() != null ? p.getStages().getFrameRemark() : null));
+                row.createCell(14).setCellValue(yn(p.getStages() != null && Boolean.TRUE.equals(p.getStages().getPurchase())));
+                row.createCell(15).setCellValue(nvl(p.getStages() != null ? p.getStages().getPurchaseRemark() : null));
+                row.createCell(16).setCellValue(yn(p.getStages() != null && Boolean.TRUE.equals(p.getStages().getTransport())));
+                row.createCell(17).setCellValue(nvl(p.getStages() != null ? p.getStages().getTransportRemark() : null));
+                row.createCell(18).setCellValue(yn(p.getStages() != null && Boolean.TRUE.equals(p.getStages().getInstall())));
+                row.createCell(19).setCellValue(nvl(p.getStages() != null ? p.getStages().getInstallRemark() : null));
+                row.createCell(20).setCellValue(yn(p.getStages() != null && Boolean.TRUE.equals(p.getStages().getRepair())));
+                row.createCell(21).setCellValue(nvl(p.getStages() != null ? p.getStages().getRepairRemark() : null));
+                row.createCell(22).setCellValue(nvl(p.getTodayTask()));
+                row.createCell(23).setCellValue(nvl(p.getProgressNote()));
+                row.createCell(24).setCellValue(nvl(p.getChangeNote()));
+                row.createCell(25).setCellValue(formatDateTime(p));
+                row.createCell(26).setCellValue(yn(p.getArchived()));
             }
             for (int i = 0; i < headers.length; i++) sheet.autoSizeColumn(i);
             workbook.write(out);
@@ -71,8 +83,6 @@ public class ExportService {
     }
 
     public byte[] toPdf(List<Project> projects) throws IOException {
-        // Page/layout constants
-        // final PDRectangle PAGE_SIZE = PDRectangle.A4.rotate();
         final PDRectangle PAGE_SIZE = rotate(PDRectangle.A4);
         final float MARGIN = 36f;
         final float HEADER_HEIGHT = 24f;
@@ -104,35 +114,21 @@ public class ExportService {
             cs.endText();
             y -= HEADER_HEIGHT;
 
-            // Table header
             String[] headers = new String[]{
-                "ID", "编号", "名称", "客户", "地址", "开始", "结束", "状态", "归档", "创建时间"
+                "编号", "名称", "客户", "地址", "开始", "结束",
+                "玻璃", "框架", "采购", "运输", "安装", "维修",
+                "归档", "创建时间"
             };
-            // Column widths (percentages sum ~100%)
-            float[] colPercents = new float[]{6, 10, 18, 12, 18, 8, 8, 8, 5, 7};
+            float[] colPercents = new float[]{12, 16, 12, 18, 7, 7, 5, 5, 5, 5, 5, 5, 5, 8};
             float[] colWidths = new float[colPercents.length];
             for (int i = 0; i < colPercents.length; i++) colWidths[i] = tableWidth * (colPercents[i] / 100f);
 
-            // Draw header background
-            cs.setNonStrokingColor(240); // light gray
+            cs.setNonStrokingColor(240);
             cs.addRect(tableLeft, y - TABLE_HEADER_HEIGHT, tableWidth, TABLE_HEADER_HEIGHT);
             cs.fill();
-            cs.setNonStrokingColor(0); // reset to black
+            cs.setNonStrokingColor(0);
 
-            // Header texts
-            float x = tableLeft + 2f;
-            cs.beginText();
-            cs.setFont(headerFont, 9);
-            cs.newLineAtOffset(x, y - TABLE_HEADER_HEIGHT + 4f);
-            for (int i = 0; i < headers.length; i++) {
-                cs.showText(sanitizeForFont(headerFont, headers[i]));
-                // move to next column
-                x += colWidths[i];
-                cs.newLineAtOffset(colWidths[i], 0); // this offset accumulates; we handle manually by resetting text on each cell below
-            }
-            cs.endText();
-            // Re-draw header texts cell-by-cell to control positioning
-            x = tableLeft + 4f;
+            float x = tableLeft + 4f;
             float cursorY = y - 13f;
             for (int i = 0; i < headers.length; i++) {
                 cs.beginText();
@@ -142,33 +138,31 @@ public class ExportService {
                 cs.endText();
                 x += colWidths[i];
             }
-
             y -= TABLE_HEADER_HEIGHT;
 
-            // Row rendering function
             for (Project p : projects) {
-                // Prepare row cell strings (single line cells)
                 String[] row = new String[]{
-                    nvl(p.getId()),
-                    nvl(p.getProjectCode()),
-                    nvl(p.getName()),
-                    nvl(p.getClientName()),
-                    nvl(p.getAddress()),
-                    nvl(p.getStartDate()),
-                    nvl(p.getEndDate()),
-                    p.getStatus() == null ? "" : p.getStatus().getLabelZh(),
+                    nvl(p.getProjectCode()), nvl(p.getName()), nvl(p.getClientName()), nvl(p.getAddress()),
+                    nvl(p.getStartDate()), nvl(p.getEndDate()),
+                    yn(p.getStages() != null && Boolean.TRUE.equals(p.getStages().getGlass())),
+                    yn(p.getStages() != null && Boolean.TRUE.equals(p.getStages().getFrame())),
+                    yn(p.getStages() != null && Boolean.TRUE.equals(p.getStages().getPurchase())),
+                    yn(p.getStages() != null && Boolean.TRUE.equals(p.getStages().getTransport())),
+                    yn(p.getStages() != null && Boolean.TRUE.equals(p.getStages().getInstall())),
+                    yn(p.getStages() != null && Boolean.TRUE.equals(p.getStages().getRepair())),
                     yn(p.getArchived()),
                     formatDateTime(p)
                 };
-                String detail = "任务: " + nvl(p.getTodayTask()) + " | 备注: " + nvl(p.getProgressNote()) +
-                                " | 变更: " + nvl(p.getChangeNote());
+                String detail = "任务: " + nvl(p.getTodayTask()) +
+                                " | 备注: " + nvl(p.getProgressNote()) +
+                                " | 变更: " + nvl(p.getChangeNote()) +
+                                " | 阶段备注: " + joinRemarks(p);
 
-                // Wrap each cell to fit width (max 2 lines for cells; detail can be multi-line)
                 List<List<String>> wrappedCells = new ArrayList<>();
                 int maxCellLines = 1;
                 for (int i = 0; i < row.length; i++) {
                     List<String> lines = wrapText(cellFont, 8, row[i], colWidths[i] - 6f);
-                    if (lines.size() > 2) lines = lines.subList(0, 2); // cap to 2 lines to keep table compact
+                    if (lines.size() > 2) lines = lines.subList(0, 2);
                     wrappedCells.add(lines);
                     maxCellLines = Math.max(maxCellLines, lines.size());
                 }
@@ -176,23 +170,19 @@ public class ExportService {
 
                 float rowHeight = (maxCellLines * ROW_LINE_HEIGHT);
                 float detailHeight = detailLines.isEmpty() ? 0f : (DETAIL_LINE_GAP + detailLines.size() * ROW_LINE_HEIGHT);
-                float requiredHeight = rowHeight + detailHeight + 6f; // padding
+                float requiredHeight = rowHeight + detailHeight + 6f;
 
-                // Pagination check
                 if (y - requiredHeight < MARGIN) {
-                    // new page
                     cs.close();
                     page = new PDPage(PAGE_SIZE);
                     doc.addPage(page);
                     cs = new PDPageContentStream(doc, page);
                     y = pageHeight - MARGIN;
 
-                    // redraw header background
                     cs.setNonStrokingColor(240);
                     cs.addRect(tableLeft, y - TABLE_HEADER_HEIGHT, tableWidth, TABLE_HEADER_HEIGHT);
                     cs.fill();
                     cs.setNonStrokingColor(0);
-                    // redraw header texts
                     x = tableLeft + 4f;
                     cursorY = y - 13f;
                     for (int i = 0; i < headers.length; i++) {
@@ -206,7 +196,6 @@ public class ExportService {
                     y -= TABLE_HEADER_HEIGHT;
                 }
 
-                // Draw row cells text
                 float textY = y - 4f;
                 for (int line = 0; line < maxCellLines; line++) {
                     x = tableLeft + 3f;
@@ -221,7 +210,6 @@ public class ExportService {
                     }
                 }
 
-                // Draw detail line(s)
                 float detailYStart = y - rowHeight - DETAIL_LINE_GAP;
                 for (int i = 0; i < detailLines.size(); i++) {
                     cs.beginText();
@@ -231,7 +219,6 @@ public class ExportService {
                     cs.endText();
                 }
 
-                // Optional: draw horizontal separators
                 cs.moveTo(tableLeft, y);
                 cs.lineTo(tableRight, y);
                 cs.stroke();
@@ -242,7 +229,6 @@ public class ExportService {
                 y -= requiredHeight;
             }
 
-            // draw bottom line
             cs.moveTo(tableLeft, y);
             cs.lineTo(tableRight, y);
             cs.stroke();
@@ -257,7 +243,6 @@ public class ExportService {
 
     private String formatDateTime(Project p) {
         if (p.getCreatedAt() == null) return "";
-        // yyyy-MM-dd HH:mm for compact readability
         try {
             DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
             return fmt.format(p.getCreatedAt());
@@ -268,10 +253,7 @@ public class ExportService {
 
     private String yn(Boolean b) { return Boolean.TRUE.equals(b) ? "是" : "否"; }
 
-    // ---------- PDF font helpers ----------
-
     private PDFont loadCjkFontOrDefault(PDDocument doc, boolean bold) {
-        // Try a few common CJK fonts packaged under /fonts
         String[] candidates = bold
             ? new String[]{"/fonts/NotoSansSC-Bold.otf", "/fonts/NotoSansCJKsc-Bold.otf", "/fonts/SourceHanSansCN-Bold.otf", "/fonts/SimHei.ttf"}
             : new String[]{"/fonts/NotoSansSC-Regular.otf", "/fonts/NotoSansCJKsc-Regular.otf", "/fonts/SourceHanSansCN-Regular.otf", "/fonts/SimSun.ttf"};
@@ -279,40 +261,30 @@ public class ExportService {
             PDFont f = tryLoadFont(doc, path);
             if (f != null) return f;
         }
-        // Fallback (no Chinese glyphs) – will sanitize text to ASCII subset
         return bold ? PDType1Font.HELVETICA_BOLD : PDType1Font.HELVETICA;
     }
 
     private PDFont tryLoadFont(PDDocument doc, String classpath) {
         try (InputStream in = ExportService.class.getResourceAsStream(classpath)) {
             if (in == null) return null;
-            return PDType0Font.load(doc, in, true); // embed
+            return PDType0Font.load(doc, in, true);
         } catch (Throwable ignore) {
             return null;
         }
     }
 
     private String sanitizeForFont(PDFont font, String text) {
-        // If we’re on a Unicode font (PDType0Font), assume it has glyphs; return as-is.
         if (font instanceof PDType0Font) return text;
-        // Fallback Type1 fonts: strip/replace non-ASCII to avoid encode errors.
         StringBuilder sb = new StringBuilder(text.length());
         text.codePoints().forEach(cp -> {
-            if (cp >= 32 && cp <= 126) {
-                sb.appendCodePoint(cp);
-            } else {
-                sb.append('?');
-            }
+            if (cp >= 32 && cp <= 126) sb.appendCodePoint(cp); else sb.append('?');
         });
         return sb.toString();
     }
 
-    // ---------- text wrap helper ----------
     private List<String> wrapText(PDFont font, float fontSize, String text, float maxWidth) throws IOException {
         List<String> lines = new ArrayList<>();
-        if (text == null || text.isEmpty()) {
-            return lines;
-        }
+        if (text == null || text.isEmpty()) return lines;
         String[] words = text.replace("\r", "").split("\n");
         for (String paragraph : words) {
             StringBuilder line = new StringBuilder();
@@ -320,7 +292,6 @@ public class ExportService {
                 line.append(paragraph.charAt(i));
                 float w = stringWidth(font, fontSize, line.toString());
                 if (w > maxWidth) {
-                    // back off one char if possible
                     if (line.length() > 1) {
                         String l = line.substring(0, line.length() - 1);
                         if (!l.trim().isEmpty()) lines.add(l);
@@ -338,12 +309,28 @@ public class ExportService {
     }
 
     private float stringWidth(PDFont font, float fontSize, String text) throws IOException {
-        // approximate width; safe for both Type0 and Type1 fonts
         return font.getStringWidth(text) / 1000f * fontSize;
     }
 
-    // ---------- rectangle helper (landscape) ----------
     private static PDRectangle rotate(PDRectangle r) {
         return new PDRectangle(r.getHeight(), r.getWidth());
+    }
+
+    private String joinRemarks(Project p) {
+        if (p.getStages() == null) return "";
+        StringBuilder sb = new StringBuilder();
+        appendRemark(sb, "玻璃", p.getStages().getGlassRemark());
+        appendRemark(sb, "框架", p.getStages().getFrameRemark());
+        appendRemark(sb, "采购", p.getStages().getPurchaseRemark());
+        appendRemark(sb, "运输", p.getStages().getTransportRemark());
+        appendRemark(sb, "安装", p.getStages().getInstallRemark());
+        appendRemark(sb, "维修", p.getStages().getRepairRemark());
+        return sb.toString();
+    }
+    private void appendRemark(StringBuilder sb, String label, String remark) {
+        if (remark != null && !remark.trim().isEmpty()) {
+            if (sb.length() > 0) sb.append("; ");
+            sb.append(label).append(": ").append(remark.trim());
+        }
     }
 }

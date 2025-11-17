@@ -21,9 +21,6 @@ public class ProjectResponse {
     @ApiModelProperty(value = "Client name", example = "张三")
     private String clientName;
 
-    @ApiModelProperty(value = "Client phone", example = "+86-13800000000")
-    private String clientPhone;
-
     @ApiModelProperty(value = "Address")
     private String address;
 
@@ -42,9 +39,6 @@ public class ProjectResponse {
     @ApiModelProperty(value = "End date (YYYY-MM-DD)")
     private String endDate;
 
-    @ApiModelProperty(value = "Status code", allowableValues = "glass_ordered,doors_windows_produced,doors_windows_delivered,doors_windows_installed,final_payment_received")
-    private String status;
-
     @ApiModelProperty(value = "Today's task")
     private String todayTask;
 
@@ -60,15 +54,7 @@ public class ProjectResponse {
     @ApiModelProperty(value = "Archive flag")
     private Boolean archived;
 
-    // New per-status timestamps
-    @ApiModelProperty(value = "Timestamp when status first became glass_ordered")
-    private LocalDateTime glassOrderedAt;
-    @ApiModelProperty(value = "Timestamp when status first became doors_windows_produced")
-    private LocalDateTime doorsWindowsProducedAt;
-    @ApiModelProperty(value = "Timestamp when status first became doors_windows_delivered")
-    private LocalDateTime doorsWindowsDeliveredAt;
-    @ApiModelProperty(value = "Timestamp when status first became doors_windows_installed")
-    private LocalDateTime doorsWindowsInstalledAt;
-    @ApiModelProperty(value = "Timestamp when status first became final_payment_received")
-    private LocalDateTime finalPaymentReceivedAt;
+    // New: nested stages
+    @ApiModelProperty(value = "Per-stage flags")
+    private ProjectStagesDto stages;
 }

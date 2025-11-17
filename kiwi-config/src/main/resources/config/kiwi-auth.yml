@@ -37,3 +37,8 @@ google:
       - openid
       - profile
       - email
+
+kiwi:
+  auth:
+    simple:
+      passcode: ENC(k+kBJDsen820+e/LUE4mkA==)

@@ -6,7 +6,7 @@ youtube:
     large-subtitles:
       threshold: 1000
     batch:
-      enabled: true
+      enabled: false
   migration:
     # Enable hybrid mode for gradual migration
     enabled: false

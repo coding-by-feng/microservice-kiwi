@@ -11,8 +11,7 @@ import me.fengorz.kiwi.tools.repository.mapper.ProjectStageStatusMapper;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Repository
 @RequiredArgsConstructor
@@ -89,34 +88,24 @@ public class ProjectRepository {
                                 Boolean stageTransport, Boolean stageInstall, Boolean stageRepair,
                                 LocalDate start, LocalDate end, String sortBy, String sortOrder,
                                 int page, int pageSize, Boolean archived, Boolean includeArchived) {
-        LambdaQueryWrapper<Project> qw = buildWrapper(q, start, end, archived, includeArchived);
-        applySort(qw, sortBy, sortOrder);
+        // sanitize sort
+        String sortColumn = sanitizeSortColumn(toSnake(sortBy == null || sortBy.isEmpty() ? "created_at" : sortBy));
+        String sortDir = ("desc".equalsIgnoreCase(sortOrder)) ? "desc" : "asc";
+        // pagination (MyBatis-Plus will auto-apply when Page is the first parameter)
         Page<Project> mp = new Page<>(page, pageSize);
-        List<Project> records = mapper.selectPage(mp, qw).getRecords();
-        records.forEach(pr -> {
-            ProjectStageStatus s = stageMapper.selectById(pr.getId());
-            pr.setStages(s != null ? s : ProjectStageStatus.empty(pr.getId()));
-        });
-        if (anyNonNull(stageGlass, stageFrame, stagePurchase, stageTransport, stageInstall, stageRepair)) {
-            records.removeIf(pr -> !matchesStages(pr.getStages(), stageGlass, stageFrame, stagePurchase, stageTransport, stageInstall, stageRepair));
-        }
-        return records;
+        List<Project> list = mapper.searchJoined(mp, q, stageGlass, stageFrame, stagePurchase, stageTransport, stageInstall, stageRepair,
+                start, end, archived, includeArchived, sortColumn, sortDir);
+        // ensure non-null stages like previous behavior
+        list.forEach(p -> { if (p.getStages() == null) p.setStages(ProjectStageStatus.empty(p.getId())); });
+        return list;
     }
 
     public long count(String q, Boolean stageGlass, Boolean stageFrame, Boolean stagePurchase,
                       Boolean stageTransport, Boolean stageInstall, Boolean stageRepair,
                       LocalDate start, LocalDate end, Boolean archived, Boolean includeArchived) {
-        LambdaQueryWrapper<Project> qw = buildWrapper(q, start, end, archived, includeArchived);
-        long cnt = mapper.selectCount(qw);
-        if (anyNonNull(stageGlass, stageFrame, stagePurchase, stageTransport, stageInstall, stageRepair)) {
-            // approximate by loading ids then filtering; for performance, a join is recommended later
-            List<Project> list = mapper.selectList(qw.last("limit 100000"));
-            return list.stream().map(Project::getId).distinct().filter(id -> {
-                ProjectStageStatus s = stageMapper.selectById(id);
-                return matchesStages(s, stageGlass, stageFrame, stagePurchase, stageTransport, stageInstall, stageRepair);
-            }).count();
-        }
-        return cnt;
+        // Use SQL-level count with same filters for accuracy and performance
+        return mapper.countJoined(q, stageGlass, stageFrame, stagePurchase, stageTransport, stageInstall, stageRepair,
+                start, end, archived, includeArchived);
     }
 
     private LambdaQueryWrapper<Project> buildWrapper(String q, LocalDate start, LocalDate end,
@@ -185,5 +174,15 @@ public class ProjectRepository {
             else sb.append(c);
         }
         return sb.toString();
+    }
+
+    private String sanitizeSortColumn(String col) {
+        if (col == null) return "created_at";
+        String s = col.replaceAll("[^a-z0-9_]", "");
+        if (s.isEmpty()) return "created_at";
+        Set<String> allowed = new HashSet<>(Arrays.asList(
+                "created_at","start_date","end_date","project_code","name","client_name","address","sales_person","installer","archived"
+        ));
+        return allowed.contains(s) ? s : "created_at";
     }
 }

@@ -86,7 +86,7 @@ http {
 
     server {
         listen 80;
-        server_name localhost kason-pi kason-pi.local;
+        server_name localhost;
         root /usr/share/nginx/html;
         index index.html;
 

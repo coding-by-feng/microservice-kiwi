@@ -2,7 +2,7 @@ package me.fengorz.kiwi.tools.service;
 
 import me.fengorz.kiwi.tools.exception.ToolsException;
 import me.fengorz.kiwi.tools.model.project.Project;
-import me.fengorz.kiwi.tools.model.project.ProjectStatus;
+import me.fengorz.kiwi.tools.model.project.ProjectStageStatus;
 import me.fengorz.kiwi.tools.repository.ProjectRepository;
 import me.fengorz.kiwi.tools.util.DateUtil;
 import me.fengorz.kiwi.tools.util.StringUtil;
@@ -21,11 +21,11 @@ import static cn.hutool.core.map.MapUtil.getStr;
 /**
  * ProjectService encapsulates core business logic for Project CRUD and listing.
  * Responsibilities:
- * - Validate incoming data (lengths, control characters, date formats/order, status).
+ * - Validate incoming data (lengths, control characters, date formats/order).
  * - Apply partial updates (PATCH-like behavior for PUT body with partial fields).
  * - Enforce pagination, sorting, and date-overlap filtering (delegates to repository for search).
  * - Generate server fields (createdAt).
- * <p>
+ *
  * Notes:
  * - sortBy expects snake_case keys: created_at (default), start_date, end_date, project_code.
  */
@@ -38,15 +38,12 @@ public class ProjectService {
     }
 
     /**
-     * List projects with optional free-text search, status filter, date-overlap filter,
+     * List projects with optional free-text search, stage filters, date-overlap filter,
      * pagination, and sorting.
-     * <p>
-     * Notes:
-     * - sortBy expects snake_case keys: created_at (default), start_date, end_date, project_code.
-     * - sortOrder defaults to desc.
-     * - Date overlap: projects whose [startDate, endDate] overlaps the [start, end] window.
      */
-    public Map<String, Object> list(String q, String status, String start, String end,
+    public Map<String, Object> list(String q,
+                                    Boolean glass, Boolean frame, Boolean purchase, Boolean transport, Boolean install, Boolean repair,
+                                    String start, String end,
                                     Integer page, Integer pageSize, String sortBy, String sortOrder,
                                     Boolean archived, Boolean includeArchived) {
         int p = (page == null || page < 1) ? 1 : page;
@@ -55,9 +52,8 @@ public class ProjectService {
         String so = (sortOrder == null || sortOrder.isEmpty()) ? "desc" : sortOrder;
         LocalDate s = start != null && !start.isEmpty() ? LocalDate.parse(start) : null;
         LocalDate e = end != null && !end.isEmpty() ? LocalDate.parse(end) : null;
-        ProjectStatus st = ProjectStatus.fromInput(status);
-        List<Project> items = repo.search(q, st, s, e, sb, so, p, ps, archived, includeArchived);
-        long total = repo.count(q, st, s, e, archived, includeArchived);
+        List<Project> items = repo.search(q, glass, frame, purchase, transport, install, repair, s, e, sb, so, p, ps, archived, includeArchived);
+        long total = repo.count(q, glass, frame, purchase, transport, install, repair, s, e, archived, includeArchived);
         Map<String, Object> resp = new HashMap<>();
         resp.put("items", items);
         resp.put("page", p);
@@ -66,54 +62,35 @@ public class ProjectService {
         return resp;
     }
 
-    /**
-     * Fetch a project by id or throw 404 if missing.
-     */
+    /** Fetch a project by id or throw 404 if missing. */
     public Project get(String id) {
         return repo.findById(id).orElseThrow(() -> new ToolsException(HttpStatus.NOT_FOUND, "not_found", "Project not found"));
     }
 
-    /**
-     * Create a new project after validating fields.
-     * Server-generated fields:
-     * - createdAt: ISO-8601 instant (UTC)
-     */
+    /** Create a new project after validating fields. */
     public Project create(Project in) {
         validateProject(in, true);
         in.setCreatedAt(LocalDateTime.now());
-        // Initialize status timestamp for current status if not set
-        applyStatusTimestampIfNeeded(null, in);
+        // stages are initialized in repository if null
         return repo.save(in);
     }
 
-    /**
-     * Update a project with a partial body. Only keys present in the map are applied.
-     * The resulting entity is re-validated before saving.
-     */
+    /** Update a project with a partial body. Only keys present in the map are applied. */
     public Project update(String id, Map<String, Object> patch) {
         Project existing = get(id);
-        ProjectStatus oldStatus = existing.getStatus();
         applyPatch(existing, patch);
         validateProject(existing, false);
-        // If status changed, set first-time timestamp for the new status
-        applyStatusTimestampIfNeeded(oldStatus, existing);
         repo.update(id, existing);
         return existing;
     }
 
-    /**
-     * Delete a project by id (404 if not found).
-     */
+    /** Delete a project by id (404 if not found). */
     public void delete(String id) {
-        // ensure exists
         get(id);
         repo.delete(id);
     }
 
-    /**
-     * Archive/unarchive a project. Default target=true when null.
-     * Idempotent: returns current entity if no change required.
-     */
+    /** Archive/unarchive a project. Default target=true when null. */
     public Project archive(String id, Boolean archived) {
         Project p = get(id);
         boolean target = archived == null || archived;
@@ -125,16 +102,11 @@ public class ProjectService {
         return p;
     }
 
-    /**
-     * Apply a JSON-like patch into an existing Project. Missing keys are ignored.
-     * String values are preserved as-is here; overall trimming happens in validateProject().
-     */
+    /** Apply a JSON-like patch into an existing Project. Missing keys are ignored. */
     private void applyPatch(Project p, Map<String, Object> m) {
         if (m.containsKey("name")) p.setName(getStr(m, "name"));
         if (m.containsKey("clientName")) p.setClientName(getStr(m, "clientName"));
         if (m.containsKey("client_name")) p.setClientName(getStr(m, "client_name"));
-        if (m.containsKey("clientPhone")) p.setClientPhone(getStr(m, "clientPhone"));
-        if (m.containsKey("client_phone")) p.setClientPhone(getStr(m, "client_phone"));
         if (m.containsKey("address")) p.setAddress(getStr(m, "address"));
         if (m.containsKey("salesPerson")) p.setSalesPerson(getStr(m, "salesPerson"));
         if (m.containsKey("sales_person")) p.setSalesPerson(getStr(m, "sales_person"));
@@ -145,7 +117,6 @@ public class ProjectService {
         if (m.containsKey("start_date")) p.setStartDate(getStr(m, "start_date"));
         if (m.containsKey("endDate")) p.setEndDate(getStr(m, "endDate"));
         if (m.containsKey("end_date")) p.setEndDate(getStr(m, "end_date"));
-        if (m.containsKey("status")) p.setStatus(ProjectStatus.fromInput(m.get("status")));
         if (m.containsKey("todayTask")) p.setTodayTask(getStr(m, "todayTask"));
         if (m.containsKey("today_task")) p.setTodayTask(getStr(m, "today_task"));
         if (m.containsKey("progressNote")) p.setProgressNote(getStr(m, "progressNote"));
@@ -156,21 +127,33 @@ public class ProjectService {
             Boolean a = getBool(m, "archived");
             if (a != null) p.setArchived(a);
         }
+        // stages comes as ProjectStagesDto (DTO). Convert and attach to entity, repository will upsert.
+        Object stages = m.get("stages");
+        if (stages instanceof me.fengorz.kiwi.tools.api.project.dto.ProjectStagesDto) {
+            me.fengorz.kiwi.tools.api.project.dto.ProjectStagesDto dto = (me.fengorz.kiwi.tools.api.project.dto.ProjectStagesDto) stages;
+            ProjectStageStatus s = p.getStages() != null ? p.getStages() : new ProjectStageStatus();
+            s.setProjectId(p.getId());
+            if (dto.getGlass() != null) s.setGlass(dto.getGlass());
+            if (dto.getGlassRemark() != null) s.setGlassRemark(dto.getGlassRemark());
+            if (dto.getFrame() != null) s.setFrame(dto.getFrame());
+            if (dto.getFrameRemark() != null) s.setFrameRemark(dto.getFrameRemark());
+            if (dto.getPurchase() != null) s.setPurchase(dto.getPurchase());
+            if (dto.getPurchaseRemark() != null) s.setPurchaseRemark(dto.getPurchaseRemark());
+            if (dto.getTransport() != null) s.setTransport(dto.getTransport());
+            if (dto.getTransportRemark() != null) s.setTransportRemark(dto.getTransportRemark());
+            if (dto.getInstall() != null) s.setInstall(dto.getInstall());
+            if (dto.getInstallRemark() != null) s.setInstallRemark(dto.getInstallRemark());
+            if (dto.getRepair() != null) s.setRepair(dto.getRepair());
+            if (dto.getRepairRemark() != null) s.setRepairRemark(dto.getRepairRemark());
+            p.setStages(s);
+        }
     }
 
-    /**
-     * Validate user-provided fields according to the spec.
-     * - Trims strings (converts blanks to null for validation simplicity).
-     * - Rejects control characters in identity/short fields.
-     * - Validates name length (1–100), clientPhone length (<=30), address (<=200), salesPerson/installer (<=100).
-     * - Validates dates (YYYY-MM-DD) and ensures endDate >= startDate when both present.
-     * - Ensures status is valid (defaults to glass_ordered if missing).
-     */
+    /** Validate user-provided fields according to the spec. */
     private void validateProject(Project p, boolean creating) {
         // trim
         p.setName(trim(p.getName()));
         p.setClientName(trim(p.getClientName()));
-        p.setClientPhone(trim(p.getClientPhone()));
         p.setAddress(trim(p.getAddress()));
         p.setSalesPerson(trim(p.getSalesPerson()));
         p.setInstaller(trim(p.getInstaller()));
@@ -180,11 +163,9 @@ public class ProjectService {
 
         if (p.getName() == null || p.getName().isEmpty() || p.getName().length() > 100)
             throw new ToolsException(HttpStatus.BAD_REQUEST, "validation_error", "name is required (1-100)");
-        if (hasCtl(p.getName()) || hasCtl(p.getClientName()) || hasCtl(p.getClientPhone()) || hasCtl(p.getAddress())
+        if (hasCtl(p.getName()) || hasCtl(p.getClientName()) || hasCtl(p.getAddress())
                 || hasCtl(p.getSalesPerson()) || hasCtl(p.getInstaller()))
             throw new ToolsException(HttpStatus.BAD_REQUEST, "validation_error", "contains control characters");
-        if (p.getClientPhone() != null && p.getClientPhone().length() > 30)
-            throw new ToolsException(HttpStatus.BAD_REQUEST, "validation_error", "clientPhone too long");
         if (p.getAddress() != null && p.getAddress().length() > 200)
             throw new ToolsException(HttpStatus.BAD_REQUEST, "validation_error", "address too long");
         if (p.getSalesPerson() != null && p.getSalesPerson().length() > 100)
@@ -201,48 +182,13 @@ public class ProjectService {
             throw new ToolsException(HttpStatus.BAD_REQUEST, "validation_error", "endDate invalid format");
         if (sd != null && ed != null) {
             if (DateUtil.parseDate(ed).isBefore(DateUtil.parseDate(sd)))
-                // print the dates
                 throw new ToolsException(HttpStatus.BAD_REQUEST, "validation_error", "endDate must be >= startDate (" + sd + " - " + ed + ")");
         }
-
-        // status default + validate
-        if (p.getStatus() == null) p.setStatus(ProjectStatus.GLASS_ORDERED);
-        if (p.getStatus() == null)
-            throw new ToolsException(HttpStatus.BAD_REQUEST, "validation_error", "invalid status");
 
         p.setStartDate(sd);
         p.setEndDate(ed);
     }
 
-    private String trim(String s) {
-        return StringUtil.trimToNull(s);
-    }
-
-    private boolean hasCtl(String s) {
-        return StringUtil.hasControlChars(s);
-    }
-
-    private void applyStatusTimestampIfNeeded(ProjectStatus oldStatus, Project p) {
-        ProjectStatus newStatus = p.getStatus();
-        if (newStatus == null) return;
-        if (oldStatus != null && oldStatus == newStatus) return; // no change
-        LocalDateTime now = LocalDateTime.now();
-        switch (newStatus) {
-            case GLASS_ORDERED:
-                if (p.getGlassOrderedAt() == null) p.setGlassOrderedAt(now);
-                break;
-            case DOORS_WINDOWS_PRODUCED:
-                if (p.getDoorsWindowsProducedAt() == null) p.setDoorsWindowsProducedAt(now);
-                break;
-            case DOORS_WINDOWS_DELIVERED:
-                if (p.getDoorsWindowsDeliveredAt() == null) p.setDoorsWindowsDeliveredAt(now);
-                break;
-            case DOORS_WINDOWS_INSTALLED:
-                if (p.getDoorsWindowsInstalledAt() == null) p.setDoorsWindowsInstalledAt(now);
-                break;
-            case FINAL_PAYMENT_RECEIVED:
-                if (p.getFinalPaymentReceivedAt() == null) p.setFinalPaymentReceivedAt(now);
-                break;
-        }
-    }
+    private String trim(String s) { return StringUtil.trimToNull(s); }
+    private boolean hasCtl(String s) { return StringUtil.hasControlChars(s); }
 }

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet id="0103-create-project-stage-status" author="copilot">
+        <createTable tableName="project_stage_status">
+            <column name="project_id" type="varchar(64)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="glass" type="boolean"/>
+            <column name="glass_remark" type="varchar(255)"/>
+            <column name="frame" type="boolean"/>
+            <column name="frame_remark" type="varchar(255)"/>
+            <column name="purchase" type="boolean"/>
+            <column name="purchase_remark" type="varchar(255)"/>
+            <column name="transport" type="boolean"/>
+            <column name="transport_remark" type="varchar(255)"/>
+            <column name="install" type="boolean"/>
+            <column name="install_remark" type="varchar(255)"/>
+            <column name="repair" type="boolean"/>
+            <column name="repair_remark" type="varchar(255)"/>
+        </createTable>
+        <addForeignKeyConstraint constraintName="fk_stage_project"
+                                  baseTableName="project_stage_status" baseColumnNames="project_id"
+                                  referencedTableName="project" referencedColumnNames="id"
+                                  onDelete="CASCADE"/>
+    </changeSet>
+</databaseChangeLog>

@@ -23,7 +23,6 @@ Models
   - projectCode: string (server-generated, e.g., "P-001")
   - name: string (1..100) Required
   - clientName: string (0..100)
-  - clientPhone: string (0..30)
   - address: string (0..200)
   - salesPerson: string (0..100)
   - installer: string (0..100)
@@ -120,6 +119,7 @@ Breaking changes for FE
 - list endpoint returns page envelope {items, page, pageSize, total}; FE must read fields from items[]
 - archived filtering: defaults to active-only; includeArchived=true shows both. archived query param forces archived-only when true, active-only when false.
 - sortBy uses snake_case DB columns (e.g., created_at, start_date); previous variants must be updated.
+- clientPhone field has been removed from Project model and APIs. Use clientName and address for contact reference.
 
 Examples
 - Create
@@ -137,4 +137,3 @@ Examples
 
 Notes
 - Swagger annotations added to controllers and models. Import the generated OpenAPI (via springfox if enabled) or rely on this markdown for FE AI refactor prompts.
-

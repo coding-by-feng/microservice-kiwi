@@ -2,8 +2,7 @@ package me.fengorz.kiwi.tools.model;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.Data;
-import me.fengorz.kiwi.tools.model.project.ProjectStatus;
-import me.fengorz.kiwi.tools.repository.typehandler.ProjectStatusTypeHandler;
+import me.fengorz.kiwi.tools.model.project.ProjectStageStatus;
 
 import java.time.LocalDateTime;
 
@@ -17,8 +16,6 @@ public class Project {
 
     private String clientName; // 0-100
 
-    private String clientPhone; // 0-30
-
     private String address; // 0-200
 
     private String salesPerson; // 0-100
@@ -31,9 +28,6 @@ public class Project {
 
     private String endDate; // YYYY-MM-DD
 
-    @TableField(typeHandler = ProjectStatusTypeHandler.class)
-    private ProjectStatus status;
-
     private String todayTask; // text
 
     private String progressNote; // text
@@ -44,10 +38,6 @@ public class Project {
 
     private Boolean archived; // default in DB is false
 
-    // New: status transition timestamps (first time reaching each status)
-    private LocalDateTime glassOrderedAt; // when status becomes glass_ordered
-    private LocalDateTime doorsWindowsProducedAt; // when status becomes doors_windows_produced
-    private LocalDateTime doorsWindowsDeliveredAt; // when status becomes doors_windows_delivered
-    private LocalDateTime doorsWindowsInstalledAt; // when status becomes doors_windows_installed
-    private LocalDateTime finalPaymentReceivedAt; // when status becomes final_payment_received
+    @TableField(exist = false)
+    private ProjectStageStatus stages;
 }

@@ -24,4 +24,10 @@
 
     <!-- Add per-status timestamp columns to project -->
     <include file="db/changelog/changes/0008-add-project-status-timestamps.xml" relativeToChangelogFile="false"/>
+
+    <!-- Drop client_phone from project -->
+    <include file="db/changelog/changes/0102-drop-project-client-phone.xml" relativeToChangelogFile="false"/>
+
+    <!-- New: create one-to-one stage status table -->
+    <include file="db/changelog/changes/0103-create-project-stage-status.xml" relativeToChangelogFile="false"/>
 </databaseChangeLog>

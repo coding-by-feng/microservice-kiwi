@@ -41,4 +41,3 @@ public class ProjectStatusTypeHandler extends BaseTypeHandler<ProjectStatus> {
         return s;
     }
 }
-

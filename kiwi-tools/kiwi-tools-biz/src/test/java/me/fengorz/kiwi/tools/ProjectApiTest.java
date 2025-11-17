@@ -78,7 +78,6 @@ public class ProjectApiTest {
         body.put("status", "not_started");
         // dummy required fields (adapt to your actual request model validation)
         body.put("clientName", "测试客户");
-        body.put("clientPhone", "13800000000");
         body.put("address", "上海市浦东新区世纪大道1号");
         body.put("salesPerson", "Alice");
         body.put("installer", "Bob");

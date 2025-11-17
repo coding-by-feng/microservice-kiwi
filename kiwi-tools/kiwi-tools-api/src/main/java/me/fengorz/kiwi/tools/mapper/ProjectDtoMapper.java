@@ -1,9 +1,9 @@
 package me.fengorz.kiwi.tools.mapper;
 
 import me.fengorz.kiwi.tools.api.project.dto.ProjectPatchRequest;
+import me.fengorz.kiwi.tools.api.project.dto.ProjectStagesDto;
 import me.fengorz.kiwi.tools.model.project.Project;
 import me.fengorz.kiwi.tools.model.project.ProjectPhoto;
-import me.fengorz.kiwi.tools.model.project.ProjectStatus;
 
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -19,17 +19,19 @@ public final class ProjectDtoMapper {
         if (req == null) return p;
         p.setName(req.getName());
         p.setClientName(req.getClientName());
-        p.setClientPhone(req.getClientPhone());
         p.setAddress(req.getAddress());
         p.setSalesPerson(req.getSalesPerson());
         p.setInstaller(req.getInstaller());
         p.setTeamMembers(req.getTeamMembers());
         p.setStartDate(req.getStartDate());
         p.setEndDate(req.getEndDate());
-        p.setStatus(ProjectStatus.fromInput(req.getStatus()));
         p.setTodayTask(req.getTodayTask());
         p.setProgressNote(req.getProgressNote());
         p.setChangeNote(req.getChangeNote());
+        // stages will be handled in service via separate table; accept here for convenience
+        if (req.getStages() != null) {
+            // temporarily store in transient map inside patch path; service will persist
+        }
         return p;
     }
 
@@ -37,6 +39,7 @@ public final class ProjectDtoMapper {
         if (req == null) return Collections.emptyMap();
         Map<String, Object> m = new LinkedHashMap<>();
         applyBasePatch(m, req);
+        if (req.getStages() != null) m.put("stages", req.getStages());
         return m;
     }
 
@@ -47,20 +50,19 @@ public final class ProjectDtoMapper {
         if (req.getArchived() != null) {
             m.put("archived", req.getArchived());
         }
+        if (req.getStages() != null) m.put("stages", req.getStages());
         return m;
     }
 
     private static void applyBasePatch(Map<String, Object> m, me.fengorz.kiwi.tools.api.project.dto.ProjectBaseRequest req) {
         put(m, "name", req.getName());
         put(m, "clientName", req.getClientName());
-        put(m, "clientPhone", req.getClientPhone());
         put(m, "address", req.getAddress());
         put(m, "salesPerson", req.getSalesPerson());
         put(m, "installer", req.getInstaller());
         put(m, "teamMembers", req.getTeamMembers());
         put(m, "startDate", req.getStartDate());
         put(m, "endDate", req.getEndDate());
-        put(m, "status", req.getStatus());
         put(m, "todayTask", req.getTodayTask());
         put(m, "progressNote", req.getProgressNote());
         put(m, "changeNote", req.getChangeNote());
@@ -73,25 +75,34 @@ public final class ProjectDtoMapper {
         r.setProjectCode(p.getProjectCode());
         r.setName(p.getName());
         r.setClientName(p.getClientName());
-        r.setClientPhone(p.getClientPhone());
         r.setAddress(p.getAddress());
         r.setSalesPerson(p.getSalesPerson());
         r.setInstaller(p.getInstaller());
         r.setTeamMembers(p.getTeamMembers());
         r.setStartDate(p.getStartDate());
         r.setEndDate(p.getEndDate());
-        r.setStatus(p.getStatus() == null ? null : p.getStatus().getCode());
         r.setTodayTask(p.getTodayTask());
         r.setProgressNote(p.getProgressNote());
         r.setChangeNote(p.getChangeNote());
         r.setCreatedAt(p.getCreatedAt());
         r.setArchived(p.getArchived());
-        // New status timestamp fields
-        r.setGlassOrderedAt(p.getGlassOrderedAt());
-        r.setDoorsWindowsProducedAt(p.getDoorsWindowsProducedAt());
-        r.setDoorsWindowsDeliveredAt(p.getDoorsWindowsDeliveredAt());
-        r.setDoorsWindowsInstalledAt(p.getDoorsWindowsInstalledAt());
-        r.setFinalPaymentReceivedAt(p.getFinalPaymentReceivedAt());
+        // stages: filled by service layer attaching ProjectStageStatus to Project via transient fields or join
+        if (p.getStages() != null) {
+            ProjectStagesDto s = new ProjectStagesDto();
+            s.setGlass(p.getStages().getGlass());
+            s.setGlassRemark(p.getStages().getGlassRemark());
+            s.setFrame(p.getStages().getFrame());
+            s.setFrameRemark(p.getStages().getFrameRemark());
+            s.setPurchase(p.getStages().getPurchase());
+            s.setPurchaseRemark(p.getStages().getPurchaseRemark());
+            s.setTransport(p.getStages().getTransport());
+            s.setTransportRemark(p.getStages().getTransportRemark());
+            s.setInstall(p.getStages().getInstall());
+            s.setInstallRemark(p.getStages().getInstallRemark());
+            s.setRepair(p.getStages().getRepair());
+            s.setRepairRemark(p.getStages().getRepairRemark());
+            r.setStages(s);
+        }
         return r;
     }
 

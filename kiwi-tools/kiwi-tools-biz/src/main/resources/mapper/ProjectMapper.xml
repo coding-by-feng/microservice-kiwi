@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="me.fengorz.kiwi.tools.repository.mapper.ProjectMapper">
+
+    <resultMap id="ProjectWithStages" type="me.fengorz.kiwi.tools.model.project.Project">
+        <id property="id" column="id"/>
+        <result property="projectCode" column="project_code"/>
+        <result property="name" column="name"/>
+        <result property="clientName" column="client_name"/>
+        <result property="address" column="address"/>
+        <result property="salesPerson" column="sales_person"/>
+        <result property="installer" column="installer"/>
+        <result property="teamMembers" column="team_members"/>
+        <result property="startDate" column="start_date"/>
+        <result property="endDate" column="end_date"/>
+        <result property="todayTask" column="today_task"/>
+        <result property="progressNote" column="progress_note"/>
+        <result property="changeNote" column="change_note"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="archived" column="archived"/>
+        <!-- stages mapping -->
+        <association property="stages" javaType="me.fengorz.kiwi.tools.model.project.ProjectStageStatus">
+            <id property="projectId" column="project_id"/>
+            <result property="glass" column="glass"/>
+            <result property="glassRemark" column="glass_remark"/>
+            <result property="frame" column="frame"/>
+            <result property="frameRemark" column="frame_remark"/>
+            <result property="purchase" column="purchase"/>
+            <result property="purchaseRemark" column="purchase_remark"/>
+            <result property="transport" column="transport"/>
+            <result property="transportRemark" column="transport_remark"/>
+            <result property="install" column="install"/>
+            <result property="installRemark" column="install_remark"/>
+            <result property="repair" column="repair"/>
+            <result property="repairRemark" column="repair_remark"/>
+        </association>
+    </resultMap>
+
+    <sql id="BaseSelect">
+        select p.id, p.project_code, p.name, p.client_name, p.address, p.sales_person, p.installer,
+               p.team_members, p.start_date, p.end_date, p.today_task, p.progress_note, p.created_at,
+               p.archived,
+               s.project_id, s.glass, s.glass_remark, s.frame, s.frame_remark,
+               s.purchase, s.purchase_remark, s.transport, s.transport_remark,
+               s.install, s.install_remark, s.repair, s.repair_remark
+        from project p
+        left join project_stage_status s on s.project_id = p.id
+    </sql>
+
+    <select id="searchJoined" resultMap="ProjectWithStages">
+        <include refid="BaseSelect"/>
+        <where>
+            <if test="q != null and q != ''">
+                and (p.project_code like concat('%', #{q}, '%')
+                     or p.name like concat('%', #{q}, '%')
+                     or p.client_name like concat('%', #{q}, '%')
+                     or p.address like concat('%', #{q}, '%'))
+            </if>
+            <if test="start != null or end != null">
+                and (
+                    (p.start_date is not null or p.end_date is not null)
+                    and (coalesce(p.start_date, p.end_date) &lt;= coalesce(#{end}, '9999-12-31')
+                         and coalesce(p.end_date, p.start_date) &gt;= coalesce(#{start}, '0000-01-01'))
+                )
+            </if>
+            <choose>
+                <when test="includeArchived != null and includeArchived">
+                    and p.archived = true
+                </when>
+                <otherwise>
+                    and p.archived = coalesce(#{archived}, false)
+                </otherwise>
+            </choose>
+            <if test="stageGlass != null">
+                and coalesce(s.glass, false) = #{stageGlass}
+            </if>
+            <if test="stageFrame != null">
+                and coalesce(s.frame, false) = #{stageFrame}
+            </if>
+            <if test="stagePurchase != null">
+                and coalesce(s.purchase, false) = #{stagePurchase}
+            </if>
+            <if test="stageTransport != null">
+                and coalesce(s.transport, false) = #{stageTransport}
+            </if>
+            <if test="stageInstall != null">
+                and coalesce(s.install, false) = #{stageInstall}
+            </if>
+            <if test="stageRepair != null">
+                and coalesce(s.repair, false) = #{stageRepair}
+            </if>
+        </where>
+        order by ${sortColumn} ${sortOrder}
+    </select>
+
+    <select id="countJoined" resultType="long">
+        select count(*)
+        from project p
+        left join project_stage_status s on s.project_id = p.id
+        <where>
+            <if test="q != null and q != ''">
+                and (p.project_code like concat('%', #{q}, '%')
+                     or p.name like concat('%', #{q}, '%')
+                     or p.client_name like concat('%', #{q}, '%')
+                     or p.address like concat('%', #{q}, '%'))
+            </if>
+            <if test="start != null or end != null">
+                and (
+                    (p.start_date is not null or p.end_date is not null)
+                    and (coalesce(p.start_date, p.end_date) &lt;= coalesce(#{end}, '9999-12-31')
+                         and coalesce(p.end_date, p.start_date) &gt;= coalesce(#{start}, '0000-01-01'))
+                )
+            </if>
+            <choose>
+                <when test="includeArchived != null and includeArchived">
+                    and p.archived = true
+                </when>
+                <otherwise>
+                    and p.archived = coalesce(#{archived}, false)
+                </otherwise>
+            </choose>
+            <if test="stageGlass != null">
+                and coalesce(s.glass, false) = #{stageGlass}
+            </if>
+            <if test="stageFrame != null">
+                and coalesce(s.frame, false) = #{stageFrame}
+            </if>
+            <if test="stagePurchase != null">
+                and coalesce(s.purchase, false) = #{stagePurchase}
+            </if>
+            <if test="stageTransport != null">
+                and coalesce(s.transport, false) = #{stageTransport}
+            </if>
+            <if test="stageInstall != null">
+                and coalesce(s.install, false) = #{stageInstall}
+            </if>
+            <if test="stageRepair != null">
+                and coalesce(s.repair, false) = #{stageRepair}
+            </if>
+        </where>
+    </select>
+
+</mapper>

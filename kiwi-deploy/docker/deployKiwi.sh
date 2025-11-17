@@ -224,6 +224,17 @@ ensure_execute_permissions() {
   chmod 777 "$CURRENT_DIR/microservice-kiwi/kiwi-deploy/kiwi-ui/"*.sh 2>/dev/null || true
 }
 
+# NEW: Recursively ensure all kiwi-deploy shell scripts are executable (runs at EXIT)
+ensure_deploy_permissions_recursive() {
+  local script_dir
+  local deploy_root
+  script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+  deploy_root="$(cd "$script_dir/.." && pwd 2>/dev/null || echo "$script_dir")"
+  if [ -d "$deploy_root" ]; then
+    find "$deploy_root" -type f -name "*.sh" -exec chmod 777 {} \; 2>/dev/null || true
+  fi
+}
+
 # Exit immediately if a command exits with a non-zero status
 set -e
 set -o pipefail
@@ -270,6 +281,8 @@ error_handler() {
 
 # Set error trap
 trap 'rc=$?; error_handler ${LINENO} "$BASH_COMMAND" "$rc"' ERR
+# Set exit trap to always restore script permissions (addresses git pull resetting +x)
+trap 'ensure_deploy_permissions_recursive' EXIT
 
 # Check if script is run with sudo privileges
 if [ "$EUID" -ne 0 ]; then
@@ -712,6 +725,8 @@ if [ "$ONLY_BUILD_MAVEN" = true ]; then
     echo "📥 Git pulling (pre-build)..."
     ( git stash || true )
     if ! git pull --rebase; then git pull; fi
+    # Immediately restore script permissions after git pull
+    ensure_deploy_permissions_recursive
   else
     echo "⏭️  Git operations skipped"
   fi

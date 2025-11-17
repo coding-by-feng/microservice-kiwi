@@ -1731,7 +1731,7 @@ execute_step_20_elasticsearch_setup() {
             --restart=unless-stopped \
             elasticsearch:7.17.9
         print_info "Waiting for Elasticsearch to start..."
-        sleep 60
+        sleep 10
         print_info "Creating Elasticsearch users..."
         # Use correct binary path and run as the 'elasticsearch' user. Pass password via -p.
         # If the user already exists, reset the password instead of failing.
@@ -1739,10 +1739,62 @@ execute_step_20_elasticsearch_setup() {
           || docker exec -u elasticsearch kiwi-es /usr/share/elasticsearch/bin/elasticsearch-users passwd root -p "$ES_ROOT_PASSWORD"
         docker exec -u elasticsearch kiwi-es /usr/share/elasticsearch/bin/elasticsearch-users useradd "$ES_USER_NAME" -p "$ES_USER_PASSWORD" -r superuser \
           || docker exec -u elasticsearch kiwi-es /usr/share/elasticsearch/bin/elasticsearch-users passwd "$ES_USER_NAME" -p "$ES_USER_PASSWORD"
-        docker exec kiwi-es curl -X PUT "localhost:9200/kiwi_vocabulary" \
-            -u "root:$ES_ROOT_PASSWORD" \
-            -H "Content-Type: application/json" \
-            -d '{"settings": {"number_of_shards": 1, "number_of_replicas": 0}}' 2>/dev/null
+
+        # Wait for HTTP API readiness with auth (up to ~2 min)
+        print_info "Waiting for Elasticsearch API to become reachable..."
+        ES_URL="http://localhost:9200"
+        ES_READY=false
+        for i in {1..60}; do
+            STATUS=$(docker exec kiwi-es curl -s -u "root:$ES_ROOT_PASSWORD" -o /dev/null -w "%{http_code}" "$ES_URL" || echo "")
+            if [ "$STATUS" = "200" ]; then
+                ES_READY=true
+                break
+            fi
+            sleep 2
+        done
+        if [ "$ES_READY" != true ]; then
+            print_warning "Elasticsearch API not reachable yet; continuing with best effort."
+        fi
+
+        # Wait for at least yellow cluster health (indices can be created at yellow)
+        for i in {1..60}; do
+            HEALTH=$(docker exec kiwi-es curl -s -u "root:$ES_ROOT_PASSWORD" "$ES_URL/_cluster/health" 2>/dev/null | grep -oE '"status":"(green|yellow|red)"' | cut -d '"' -f4)
+            if [ "$HEALTH" = "green" ] || [ "$HEALTH" = "yellow" ]; then
+                break
+            fi
+            sleep 2
+        done
+
+        # Create index kiwi_vocabulary if not exists (idempotent)
+        EXIST_CODE=$(docker exec kiwi-es curl -s -o /dev/null -w "%{http_code}" -u "root:$ES_ROOT_PASSWORD" -I "$ES_URL/kiwi_vocabulary" || echo "")
+        if [ "$EXIST_CODE" = "200" ]; then
+            print_info "Elasticsearch index 'kiwi_vocabulary' already exists. Skipping creation."
+        else
+            print_info "Creating Elasticsearch index 'kiwi_vocabulary'..."
+            CREATE_RESP=$(docker exec kiwi-es curl -s -u "root:$ES_ROOT_PASSWORD" -H "Content-Type: application/json" -X PUT "$ES_URL/kiwi_vocabulary" -d '{
+                "settings": {
+                    "number_of_shards": 1,
+                    "number_of_replicas": 0
+                },
+                "mappings": {
+                    "properties": {
+                        "wordId": {"type": "integer"},
+                        "wordName": {"type": "keyword"},
+                        "isCollect": {"type": "keyword"},
+                        "isLogin": {"type": "keyword"},
+                        "characterVOList": {"type": "nested"}
+                    }
+                }
+            }' 2>/dev/null)
+            # Verify creation
+            VERIFY_CODE=$(docker exec kiwi-es curl -s -o /dev/null -w "%{http_code}" -u "root:$ES_ROOT_PASSWORD" -I "$ES_URL/kiwi_vocabulary" || echo "")
+            if [ "$VERIFY_CODE" = "200" ]; then
+                print_success "Elasticsearch index 'kiwi_vocabulary' created successfully"
+            else
+                print_warning "Failed to verify creation of 'kiwi_vocabulary'. Response: $CREATE_RESP"
+            fi
+        fi
+
         print_success "Elasticsearch setup completed"
         mark_step_completed "elasticsearch_setup"
     else
@@ -1970,6 +2022,7 @@ $CUR_SERVICE_IP    kiwi-upms
 $CUR_SERVICE_IP    kiwi-gate
 $CUR_SERVICE_IP    kiwi-ai
 $CUR_SERVICE_IP    kiwi-crawler
+$CUR_SERVICE_IP    kiwi-tools
 # End Kiwi Services
 EOF
     print_success "Reconciling complete: hosts and ~/.bashrc updated"

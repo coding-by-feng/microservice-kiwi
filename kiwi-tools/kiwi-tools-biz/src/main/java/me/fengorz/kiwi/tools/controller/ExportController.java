@@ -44,7 +44,8 @@ public class ExportController {
                                               @RequestParam(required = false) String end,
                                               @RequestParam(required = false) Boolean archived,
                                               @RequestParam(required = false) Boolean includeArchived) throws Exception {
-        Map<String, Object> res = projectService.list(null, null, start, end, 1, 10000, "start_date", "asc", archived, includeArchived);
+        Map<String, Object> res = projectService.list(null, null, null, null, null, null, null,
+                start, end, 1, 10000, "start_date", "asc", archived, includeArchived);
         @SuppressWarnings("unchecked")
         List<Project> items = (List<Project>) res.get("items");
         byte[] data = exportService.toExcel(items);
@@ -68,7 +69,8 @@ public class ExportController {
                                             @RequestParam(required = false) String end,
                                             @RequestParam(required = false) Boolean archived,
                                             @RequestParam(required = false) Boolean includeArchived) throws Exception {
-        Map<String, Object> res = projectService.list(null, null, start, end, 1, 10000, "start_date", "asc", archived, includeArchived);
+        Map<String, Object> res = projectService.list(null, null, null, null, null, null, null,
+                start, end, 1, 10000, "start_date", "asc", archived, includeArchived);
         @SuppressWarnings("unchecked")
         List<Project> items = (List<Project>) res.get("items");
         byte[] data = exportService.toPdf(items);

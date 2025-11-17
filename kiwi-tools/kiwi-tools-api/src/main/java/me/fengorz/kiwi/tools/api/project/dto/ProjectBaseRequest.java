@@ -15,9 +15,6 @@ public abstract class ProjectBaseRequest {
     @ApiModelProperty(value = "Client name", example = "张三")
     private String clientName;
 
-    @ApiModelProperty(value = "Client phone", example = "+86-13800000000")
-    private String clientPhone;
-
     @ApiModelProperty(value = "Project address", example = "上海市徐汇区...")
     private String address;
 
@@ -36,11 +33,6 @@ public abstract class ProjectBaseRequest {
     @ApiModelProperty(value = "End date (YYYY-MM-DD)", example = "2025-10-15")
     private String endDate;
 
-    @ApiModelProperty(value = "Project status code",
-            allowableValues = "glass_ordered,doors_windows_produced,doors_windows_delivered,doors_windows_installed,final_payment_received",
-            example = "doors_windows_produced")
-    private String status;
-
     @ApiModelProperty(value = "Today's task note", example = "Install cabinets")
     private String todayTask;
 
@@ -49,4 +41,8 @@ public abstract class ProjectBaseRequest {
 
     @ApiModelProperty(value = "Project change note (项目变更)", example = "Scope updated: add balcony door")
     private String changeNote;
+
+    // New: per-stage completion flags
+    @ApiModelProperty(value = "Stage flags: 玻璃/框架/采购/运输/安装/维修")
+    private ProjectStagesDto stages;
 }

@@ -5,9 +5,8 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
-@ApiModel(description = "Partial update body for a Project (PATCH)")
+@ApiModel(description = "PATCH subset fields for project update, including stages")
 public class ProjectPatchRequest extends ProjectBaseRequest {
-    @ApiModelProperty(value = "Archive flag", example = "false")
+    @ApiModelProperty(value = "Archive flag, when true marks as archived; false un-archives")
     private Boolean archived;
 }
-

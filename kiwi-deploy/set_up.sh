@@ -1749,13 +1749,80 @@ execute_step_20_elasticsearch_setup() {
 execute_step_21_ik_tokenizer_install() {
     if ! is_step_completed "ik_tokenizer_install"; then
         print_info "Step 21: Installing IK Tokenizer..."
-        docker exec kiwi-es elasticsearch-plugin install \
-            https://github.com/medcl/elasticsearch-analysis-ik/releases/download/v7.17.9/elasticsearch-analysis-ik-7.17.9.zip \
-            --batch
-        docker restart kiwi-es
-        sleep 30
-        print_success "IK Tokenizer installed"
-        mark_step_completed "ik_tokenizer_install"
+
+        # Short-circuit if plugin already present
+        if docker exec kiwi-es elasticsearch-plugin list 2>/dev/null | grep -q "\banalysis-ik\b"; then
+            print_success "IK Tokenizer already installed in kiwi-es"
+            mark_step_completed "ik_tokenizer_install"
+            return 0
+        fi
+
+        ES_VERSION="7.17.9"
+        HOST_TMP="/tmp/ik-plugin.zip"
+        TARGET_TMP="/tmp/ik-plugin.zip"
+
+        # Candidate URLs: prefer Latest.zip first as requested, then versioned plugin packages
+        CANDIDATES=(
+            "https://release.infinilabs.com/analysis/ik/${ES_VERSION}/elasticsearch-analysis-ik-${ES_VERSION}.zip"
+            "https://github.com/infinilabs/analysis-ik/archive/refs/tags/Latest.zip"
+        )
+
+        installed=false
+        for url in "${CANDIDATES[@]}"; do
+            print_info "Trying IK plugin URL: $url"
+            rm -f "$HOST_TMP" 2>/dev/null || true
+
+            # Download on host (curl first, then wget)
+            if command -v curl >/dev/null 2>&1; then
+                curl -L --fail -o "$HOST_TMP" "$url" || true
+            fi
+            if [ ! -s "$HOST_TMP" ] && command -v wget >/dev/null 2>&1; then
+                wget -O "$HOST_TMP" "$url" || true
+            fi
+
+            if [ ! -s "$HOST_TMP" ]; then
+                print_warning "Download failed from: $url"
+                continue
+            fi
+
+            print_info "Copying plugin to container: kiwi-es:${TARGET_TMP}"
+            if ! docker cp "$HOST_TMP" kiwi-es:"$TARGET_TMP"; then
+                print_warning "docker cp failed for: $url"
+                continue
+            fi
+
+            print_info "Installing IK plugin inside container from: ${TARGET_TMP}"
+            if docker exec -u elasticsearch kiwi-es /usr/share/elasticsearch/bin/elasticsearch-plugin install -b "file:${TARGET_TMP}"; then
+                installed=true
+                break
+            else
+                print_warning "Install failed for candidate: $url. Will try next candidate."
+                docker exec kiwi-es rm -f "$TARGET_TMP" 2>/dev/null || true
+            fi
+        done
+
+        if [ "$installed" = true ]; then
+            print_success "IK Tokenizer installed successfully"
+            docker exec kiwi-es rm -f "$TARGET_TMP" 2>/dev/null || true
+            docker restart kiwi-es || true
+            print_info "Waiting 30 seconds for Elasticsearch to restart..."
+            sleep 30
+            # Verify installation
+            if docker exec kiwi-es elasticsearch-plugin list 2>/dev/null | grep -q "\banalysis-ik\b"; then
+                print_success "IK Tokenizer verified after restart"
+            else
+                print_warning "IK Tokenizer not listed after restart; please check container logs"
+            fi
+            mark_step_completed "ik_tokenizer_install"
+        else
+            print_error "Failed to install IK Tokenizer from all candidates."
+            echo "Candidates tried:"
+            for u in "${CANDIDATES[@]}"; do echo "  - $u"; done
+            echo "You can retry this step later from the menu or install manually inside the container:"
+            echo "  docker exec -it kiwi-es bash"
+            echo "  /usr/share/elasticsearch/bin/elasticsearch-plugin install -b <valid-ik-plugin-url>"
+            return 1
+        fi
     else
         print_info "Step 21: IK Tokenizer already installed, skipping..."
     fi

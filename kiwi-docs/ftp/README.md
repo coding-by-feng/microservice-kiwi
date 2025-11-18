@@ -1,128 +1,93 @@
-# kiwi-ftp
+# Kiwi FTP Service
 
-A lightweight vsftpd FTP server container.
+Single-user vsftpd container with user chrooted to their home directory (/home/$FTP_USER). Host directory is mounted directly to that home path. Passive ports 21100-21110 exposed; optional PASV_ADDRESS for NAT/macOS.
 
-- No credentials baked into the image.
-- Provide FTP_USER and FTP_PASS via environment variables at runtime.
-- Optional PASV_ADDRESS support for NAT/macOS environments.
+## Why the change
+Original image used FTP_BASE_DIR=/rangi_windows and attempted to set the password even when FTP_USER was empty or the user had not yet been created, producing repeated `chpasswd: pam_chauthtok() failed` errors. Root directory requirement (home) was unmet. This refactor:
+- Validates FTP_USER / FTP_PASS are non-empty and username matches [a-zA-Z0-9._-]
+- Creates user first under /home/$FTP_USER then sets password (single attempt)
+- Chroots via vsftpd default and maps host storage into that home directory
+- Adds clearer logging and optional PASV_ADDRESS injection
 
-## Initialize (interactive)
-If you prefer an interactive setup that prompts for FTP_USER and FTP_PASS (and re-prompts if left empty):
-
+## Build & Run (interactive)
 ```sh
 cd kiwi-deploy/ftp
-chmod +x ./init_ftp.sh
 ./init_ftp.sh
+# Follow prompts: username, password, host directory, (PASV_ADDRESS on macOS)
 ```
+Image tag default: kiwi-ftp:1.1
+Container name default: kiwi-ftp
 
-- On macOS, the script maps ports 21 and 21100-21110 and will suggest a PASV_ADDRESS to advertise to clients.
-- On Linux, it uses `--network host` by default.
-
-## Manual steps
-Follow these steps to build and run manually with your own credentials.
-
+## Non-interactive quick start
 ```sh
-# Create a directory for the Dockerfile
-mkdir -p ~/kiwi-ftp
-cd ~/kiwi-ftp
+export FTP_USER=demo
+export FTP_PASS='ChangeMe123'
+export FTP_HOST_DIR=$PWD/ftp-data
+mkdir -p "$FTP_HOST_DIR"
+cd kiwi-deploy/ftp
+IMAGE_TAG=kiwi-ftp:1.1 CONTAINER_NAME=kiwi-ftp ./init_ftp.sh <<EOF
 
-# Save the Dockerfile (copy the content from the artifact above)
-nano Dockerfile
 
-# Build the image
-sudo docker build -t kiwi-ftp:1.0 .
-
-# Run the container with custom credentials
-sudo docker run -d \
-  --name kiwi-ftp \
-  --network host \
-  --restart unless-stopped \
-  -e FTP_USER=xxx \
-  -e FTP_PASS=xxx \
-  -e FTP_BASE_DIR=/rangi_windows \
-  -v /rangi_windows:/rangi_windows \
-  kiwi-ftp:1.0
+EOF
 ```
+(Empty heredoc just skips interactive prompts if env vars provided.)
 
-Note for macOS/NAT:
-- Docker Desktop does not support `--network host`. Use port mappings and set PASV_ADDRESS to your host IP.
+On macOS add `PASV_ADDRESS=$(ipconfig getifaddr en0)` if needed.
 
+## Direct docker run (already built)
 ```sh
-HOST_IP=192.168.1.100  # replace with your LAN/public IP
-sudo docker run -d \
-  --name kiwi-ftp \
-  --restart unless-stopped \
-  -p 21:21 \
-  -p 21100-21110:21100-21110 \
-  -e FTP_USER=xxx \
-  -e FTP_PASS=xxx \
-  -e FTP_BASE_DIR=/rangi_windows \
-  -e PASV_ADDRESS=$HOST_IP \
-  -v /rangi_windows:/rangi_windows \
-  kiwi-ftp:1.0
+docker build -t kiwi-ftp:1.1 kiwi-deploy/ftp
+mkdir -p ftp-data
+docker run -d --name kiwi-ftp \
+  -e FTP_USER=demo -e FTP_PASS='ChangeMe123' \
+  -v "$PWD/ftp-data":/home/demo \
+  -p 21:21 -p 21100-21110:21100-21110 \
+  kiwi-ftp:1.1
 ```
+Add `-e PASV_ADDRESS=<public_ip>` when behind NAT.
 
-## Build
-
+## Verify container state
 ```sh
-# From the repo root or this directory
-docker build -t kiwi-ftp:1.0 kiwi-deploy/ftp
+docker exec -it kiwi-ftp grep demo /etc/passwd
+docker exec -it kiwi-ftp ls -ld /home/demo
+docker logs kiwi-ftp | tail -n 20
 ```
+You should see home `/home/demo`, correct ownership, and startup log without chpasswd errors.
 
-## Run
-
-Bind-mount the directory you want to expose and set FTP_BASE_DIR to match the mount location inside the container.
-
-### Linux (host networking)
-If your Docker host supports host networking (Linux), you can run:
-
+## Test FTP login (lftp example)
 ```sh
-docker run -d \
-  --name kiwi-ftp \
-  --network host \
-  --restart unless-stopped \
-  -e FTP_USER=<your-user> \
-  -e FTP_PASS=<your-pass> \
-  -e FTP_BASE_DIR=/rangi_windows \
-  -v /rangi_windows:/rangi_windows \
-  kiwi-ftp:1.0
+lftp -u demo,ChangeMe123 localhost
+lftp> pwd
+lftp> put somefile.txt
 ```
-
-### macOS / NAT environments
-Docker Desktop on macOS does not support `--network host`. Expose the FTP control and passive ports and set `PASV_ADDRESS` to your host's reachable IP (LAN or public IP):
-
-```sh
-# Replace 192.168.1.100 with your Mac's LAN IP or your public IP if clients connect over the internet
-HOST_IP=192.168.1.100
-
-docker run -d \
-  --name kiwi-ftp \
-  --restart unless-stopped \
-  -p 21:21 \
-  -p 21100-21110:21100-21110 \
-  -e FTP_USER=<your-user> \
-  -e FTP_PASS=<your-pass> \
-  -e FTP_BASE_DIR=/rangi_windows \
-  -e PASV_ADDRESS=$HOST_IP \
-  -v /rangi_windows:/rangi_windows \
-  kiwi-ftp:1.0
-```
-
-Notes:
-- Ensure your firewall allows inbound TCP on port 21 and 21100-21110.
-- `PASV_ADDRESS` is optional on Linux/host networking, but typically required behind NAT or on macOS.
-- The container creates the user if it does not exist, sets the password, and chroots the user into `FTP_BASE_DIR`.
-
-## Environment variables
-- `FTP_USER` (required): Login username.
-- `FTP_PASS` (required): Login password.
-- `FTP_BASE_DIR` (optional, default `/rangi_windows`): The FTP root directory and the user's home inside the container. Should match the mount path used with `-v`.
-- `PASV_ADDRESS` (optional): External IP/hostname to advertise for passive connections (useful on macOS or behind NAT).
-
-## Ports
-- Control: 21/tcp
-- Passive data: 21100-21110/tcp
+Passive mode issues: ensure ports 21100-21110 open; set PASV_ADDRESS to external IP/hostname when connecting from outside host.
 
 ## Troubleshooting
-- If login works but directory listing fails, verify that passive ports are open and `PASV_ADDRESS` is set to an IP reachable by the client.
-- If you see `ERROR: FTP_USER and FTP_PASS must be set via environment variables.`, ensure you provided `-e FTP_USER=... -e FTP_PASS=...` at `docker run`.
+- chpasswd error: Check FTP_USER not empty; inspect `docker logs`. Recreate container after setting env vars.
+- Permission denied uploading: Host directory ownership inside container should be your FTP user; run `docker exec chown demo:demo /home/demo` if needed.
+- Cannot list directory (chroot): Ensure `allow_writeable_chroot=YES` present (already configured).
+- Passive mode stalls: Provide `-e PASV_ADDRESS=<external_ip>` and open the passive port range in firewall/security groups.
+
+## Security Notes
+- Password transmitted in cleartext unless using FTPS (not configured yet). Avoid using sensitive credentials.
+- Consider enabling TLS (future enhancement): add certificate, set `ssl_enable=YES` and related directives.
+- Limit exposure: on Linux prefer `--network host` only if appropriate; otherwise map ports explicitly similar to macOS style.
+
+## Future Enhancements
+- Multi-user support via mounting a provisioning file and iterating user creation
+- Optional TLS/FTPS
+- Healthcheck script
+
+## Clean Up
+```sh
+docker rm -f kiwi-ftp
+docker rmi kiwi-ftp:1.1
+```
+
+## Differences from previous version
+Old: ENV FTP_BASE_DIR, password set regardless of user creation, potential empty username.
+New: Home-based chroot, deterministic mount, validation & logging.
+
+---
+Last updated: 2025-11-19
+

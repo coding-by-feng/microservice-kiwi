@@ -114,71 +114,6 @@ is_valid_ipv4() {
     return 0
 }
 
-# --- New: OS detection and Docker APT repo correction utilities ---
-get_os_info() {
-    # Populates global OS_ID, OS_VERSION_CODENAME, OS_ID_LIKE
-    OS_ID=""; OS_VERSION_CODENAME=""; OS_ID_LIKE=""
-    if [ -r /etc/os-release ]; then
-        . /etc/os-release
-        OS_ID="$ID"
-        OS_VERSION_CODENAME="${VERSION_CODENAME:-}"
-        OS_ID_LIKE="${ID_LIKE:-}"
-    fi
-    if [ -z "$OS_VERSION_CODENAME" ]; then
-        OS_VERSION_CODENAME=$(lsb_release -cs 2>/dev/null || echo "")
-    fi
-}
-
-resolve_docker_repo_tuple() {
-    # Echos "distro codename", where distro is one of: ubuntu|debian|raspbian
-    get_os_info
-    local distro="debian"
-    if echo "$OS_ID" | grep -qi ubuntu || echo "$OS_ID_LIKE" | grep -qi ubuntu; then
-        distro="ubuntu"
-    elif echo "$OS_ID" | grep -qi raspbian; then
-        distro="raspbian"
-    else
-        distro="debian"
-    fi
-    local codename="$OS_VERSION_CODENAME"
-    if [ -z "$codename" ]; then
-        codename=$(lsb_release -cs 2>/dev/null || echo "stable")
-    fi
-    echo "$distro $codename"
-}
-
-ensure_docker_apt_repo_correct() {
-    # If docker.list exists and is mismatched (e.g., debian focal), fix it to proper distro/codename
-    local list_file="/etc/apt/sources.list.d/docker.list"
-    [ ! -f "$list_file" ] && return 0
-
-    local desired distro codename arch
-    desired=$(resolve_docker_repo_tuple)
-    distro=${desired%% *}
-    codename=${desired##* }
-    arch=$(dpkg --print-architecture 2>/dev/null || echo "$(uname -m)")
-
-    local current_line
-    current_line=$(grep -E '^deb ' "$list_file" 2>/dev/null | head -n1 || true)
-    # Build desired line
-    local desired_line="deb [arch=${arch} signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/${distro} ${codename} stable"
-
-    # Ensure keyring exists
-    mkdir -p /etc/apt/keyrings
-    if [ ! -s /etc/apt/keyrings/docker.gpg ]; then
-        print_info "Adding Docker APT GPG key..."
-        curl -fsSL https://download.docker.com/linux/${distro}/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg
-        chmod a+r /etc/apt/keyrings/docker.gpg 2>/dev/null || true
-    fi
-
-    # If current line mismatched, rewrite file
-    if [ "$current_line" != "$desired_line" ]; then
-        print_warning "Adjusting Docker APT repo to match OS: linux/${distro} ${codename}"
-        cp "$list_file" "${list_file}.bak.$(date +%Y%m%d_%H%M%S)" 2>/dev/null || true
-        echo "$desired_line" > "$list_file"
-    fi
-}
-
 # Auto-detect network IPs by MAC addresses using netdiscover
 # Utility: run netdiscover quickly with timeout and stable output
 run_netdiscover_quick_scan() {
@@ -1198,25 +1133,27 @@ execute_step_2_system_update() {
     if ! is_step_completed "system_update"; then
         print_info "Step 2: Updating system and installing essential packages..."
 
-        # Attempt to correct a misconfigured Docker APT repo before updating
-        ensure_docker_apt_repo_correct || true
-
-        # Update package lists with fallback in case of bad third-party repos
-        set +e
-        apt-get update -y
-        local update_rc=$?
-        set -e
-        if [ $update_rc -ne 0 ]; then
-            print_warning "apt-get update failed. Attempting to disable problematic Docker repo and retry..."
-            if [ -f /etc/apt/sources.list.d/docker.list ]; then
-                mv /etc/apt/sources.list.d/docker.list /etc/apt/sources.list.d/docker.list.disabled.$(date +%Y%m%d_%H%M%S) || true
+        # --- Preflight: repair incorrect Docker APT repository (common prior run issue) ---
+        if [ -f /etc/apt/sources.list.d/docker.list ]; then
+            if grep -q "download.docker.com/linux/debian" /etc/apt/sources.list.d/docker.list; then
+                OS_ID=$(awk -F= '/^ID=/{gsub(/"/,"",$2);print $2}' /etc/os-release 2>/dev/null || echo "")
+                CODENAME=$(lsb_release -cs 2>/dev/null || awk -F= '/^VERSION_CODENAME=/{gsub(/"/,"",$2);print $2}' /etc/os-release 2>/dev/null || echo "")
+                if [ "$OS_ID" = "ubuntu" ]; then
+                    if grep -q "$CODENAME" /etc/apt/sources.list.d/docker.list; then
+                        print_warning "Found Docker repo using debian path for Ubuntu ($CODENAME); correcting to ubuntu path..."
+                        sed -i "s#https://download.docker.com/linux/debian#https://download.docker.com/linux/ubuntu#g" /etc/apt/sources.list.d/docker.list || true
+                        print_success "Docker APT repository path corrected (ubuntu/$CODENAME)."
+                    fi
+                fi
             fi
-            apt-get update -y
         fi
+
+        # Update package lists
+        apt update
 
         # Install essential packages
         print_info "Installing essential packages..."
-        apt-get install -y \
+        apt install -y \
             curl \
             wget \
             ca-certificates \
@@ -1266,17 +1203,18 @@ execute_step_3_docker_install() {
 
             # Add Docker's official GPG key
             mkdir -p /etc/apt/keyrings
-            # Determine correct repo path (ubuntu/debian/raspbian) and codename
-            repo_tuple=$(resolve_docker_repo_tuple)
-            repo_distro=${repo_tuple%% *}
-            repo_codename=${repo_tuple##* }
-            curl -fsSL https://download.docker.com/linux/${repo_distro}/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg
-            chmod a+r /etc/apt/keyrings/docker.gpg 2>/dev/null || true
+            curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg
 
-            # Set up the repository
-            echo \
-              "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/${repo_distro} \
-              ${repo_codename} stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
+            # --- OS-aware repository selection (fix for 404 when using debian path on Ubuntu) ---
+            OS_ID=$(awk -F= '/^ID=/{gsub(/"/,"",$2);print $2}' /etc/os-release 2>/dev/null || echo "")
+            CODENAME=$(lsb_release -cs 2>/dev/null || awk -F= '/^VERSION_CODENAME=/{gsub(/"/,"",$2);print $2}' /etc/os-release 2>/dev/null || echo "")
+            case "$OS_ID" in
+                ubuntu) DOCKER_DIST="ubuntu" ;;
+                debian|raspbian) DOCKER_DIST="debian" ;;
+                *) DOCKER_DIST="debian"; print_warning "Unrecognized OS ID '$OS_ID'; defaulting Docker repo to 'debian'" ;;
+            esac
+            print_info "Configuring Docker APT repo for '$DOCKER_DIST' ($CODENAME)..."
+            echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/${DOCKER_DIST} ${CODENAME} stable" > /etc/apt/sources.list.d/docker.list
 
             # Update and install Docker
             apt-get update
@@ -2061,19 +1999,6 @@ execute_step_23_ftp_setup() {
     fi
 }
 
-# Step 24: Update service IPs (.bashrc, hosts)
-execute_step_24_ip_update() {
-    print_info "Step 24: Reconciling IP configuration and hosts files..."
-    # Always re-detect local IP preference and reconcile; idempotent
-    detect_ips_via_hostname || true
-    update_hosts_and_bashrc_from_config
-    if ! is_step_completed "ip_update"; then
-        mark_step_completed "ip_update"
-    else
-        print_info "Step 24: ip_update already marked completed; reconciliation done again."
-    fi
-}
-
 # New: Reconcile hosts and bashrc with current config (lightweight, idempotent)
 update_hosts_and_bashrc_from_config() {
     local CUR_IP CUR_SERVICE_IP
@@ -2124,6 +2049,267 @@ EOF
     print_success "Reconciling complete: hosts and ~/.bashrc updated"
 }
 
+# Function to execute all setup steps
+execute_all_setup_steps() {
+    print_info "Starting full automatic setup process..."
+    execute_step_1_sudo_user_setup
+    execute_step_2_system_update
+    execute_step_3_docker_install
+    execute_step_4_docker_setup
+    execute_step_5_docker_cleanup
+    execute_step_6_docker_compose_install
+    execute_step_7_python_install
+    execute_step_8_maven_config
+    execute_step_9_directories_created
+    execute_step_10_git_setup
+    execute_step_11_hosts_configured
+    execute_step_12_env_vars_setup
+    execute_step_13_ytdlp_download
+    execute_step_14_mysql_setup
+    execute_step_15_redis_setup
+    execute_step_16_rabbitmq_setup
+    execute_step_17_fastdfs_setup
+    execute_step_18_maven_lib_install
+    execute_step_19_deployment_setup
+    execute_step_20_elasticsearch_setup
+    execute_step_21_ik_tokenizer_install
+    execute_step_22_nginx_ui_setup
+    execute_step_23_ftp_setup
+    print_success "All setup steps completed"
+}
+
+# Function to display final summary
+display_final_summary() {
+    echo
+    echo "======================================"
+    echo -e "${GREEN}SETUP COMPLETED SUCCESSFULLY!${NC}"
+    echo "======================================"
+    echo "Target user: $SCRIPT_USER"
+    echo "Home directory: $SCRIPT_HOME"
+    echo "Architecture: $(uname -m)"
+    echo "OS Version: $(lsb_release -d 2>/dev/null | cut -f2 || echo 'Unknown')"
+    echo
+    echo -e "${BLUE}NETWORK CONFIGURATION:${NC}"
+    echo "  Infrastructure IP: $INFRASTRUCTURE_IP"
+    echo "  Service IP: $SERVICE_IP"
+    echo
+    echo -e "${BLUE}AVAILABLE SHORTCUTS:${NC}"
+    echo "  $SCRIPT_HOME/easy-deploy     - Deploy Kiwi services"
+    echo "  $SCRIPT_HOME/easy-stop       - Stop all services"
+    echo "  $SCRIPT_HOME/easy-deploy-ui  - Deploy UI"
+    echo "  $SCRIPT_HOME/easy-check      - Check container status"
+    echo
+    echo -e "${BLUE}CONTAINER STATUS:${NC}"
+    CONTAINERS=("kiwi-mysql" "kiwi-redis" "kiwi-rabbit" "kiwi-es" "kiwi-ui" "kiwi-ftp")
+    RUNNING_COUNT=0
+    TOTAL_COUNT=${#CONTAINERS[@]}
+    for container in "${CONTAINERS[@]}"; do
+        if docker ps --format '{{.Names}}' 2>/dev/null | grep -q "^${container}$"; then
+            echo -e "  ${GREEN}✓${NC} $container - RUNNING"
+            ((RUNNING_COUNT++))
+        elif docker ps -a --format '{{.Names}}' 2>/dev/null | grep -q "^${container}$"; then
+            echo -e "  ${YELLOW}⚠${NC} $container - STOPPED"
+        else
+            echo -e "  ${RED}✗${NC} $container - NOT FOUND"
+        fi
+    done
+    echo
+    echo "Container Summary: $RUNNING_COUNT/$TOTAL_COUNT running"
+    echo
+    echo -e "${BLUE}WEB INTERFACES:${NC}"
+    echo "  RabbitMQ: http://$INFRASTRUCTURE_IP:15672 (guest/guest)"
+    echo "  Elasticsearch: http://$INFRASTRUCTURE_IP:9200"
+    echo "  Kiwi UI: http://$INFRASTRUCTURE_IP:80"
+    echo
+    echo -e "${BLUE}DATABASE CONNECTIONS:${NC}"
+    echo "  MySQL: $INFRASTRUCTURE_IP:3306 (root / [password])"
+    echo "  Redis: $INFRASTRUCTURE_IP:6379 (password protected)"
+    echo
+    echo -e "${YELLOW}IMPORTANT NOTES:${NC}"
+    echo "1. Run 'source ~/.bashrc' (or 'source ~/.zshrc' if you use zsh) to apply environment variables"
+    echo "2. Log out and back in for Docker permissions to take effect"
+    echo "3. All configuration saved in: $CONFIG_FILE"
+    echo "4. Setup progress saved in: $PROGRESS_FILE"
+    echo "5. Complete log available at: $LOG_FILE"
+    echo
+    echo -e "${GREEN}Setup completed successfully!${NC}"
+    echo "======================================"
+}
+
+# === Interactive step selection menu ===
+show_step_menu() {
+    local TOTAL_STEPS=24
+
+    get_step_func() {
+        local n="$1"
+        case "$n" in
+            1)  echo execute_step_1_sudo_user_setup ;;
+            2)  echo execute_step_2_system_update ;;
+            3)  echo execute_step_3_docker_install ;;
+            4)  echo execute_step_4_docker_setup ;;
+            5)  echo execute_step_5_docker_cleanup ;;
+            6)  echo execute_step_6_docker_compose_install ;;
+            7)  echo execute_step_7_python_install ;;
+            8)  echo execute_step_8_maven_config ;;
+            9)  echo execute_step_9_directories_created ;;
+            10) echo execute_step_10_git_setup ;;
+            11) echo execute_step_11_hosts_configured ;;
+            12) echo execute_step_12_env_vars_setup ;;
+            13) echo execute_step_13_ytdlp_download ;;
+            14) echo execute_step_14_mysql_setup ;;
+            15) echo execute_step_15_redis_setup ;;
+            16) echo execute_step_16_rabbitmq_setup ;;
+            17) echo execute_step_17_fastdfs_setup ;;
+            18) echo execute_step_18_maven_lib_install ;;
+            19) echo execute_step_19_deployment_setup ;;
+            20) echo execute_step_20_elasticsearch_setup ;;
+            21) echo execute_step_21_ik_tokenizer_install ;;
+            22) echo execute_step_22_nginx_ui_setup ;;
+            23) echo execute_step_23_ftp_setup ;;
+            24) echo execute_step_24_ip_update ;;
+            *)  echo "" ;;
+        esac
+    }
+
+    run_step_by_number() {
+        local n="$1"
+        local func
+        func="$(get_step_func "$n")"
+        if [ -z "$func" ]; then
+            print_warning "Unknown step number: $n"
+            return 1
+        fi
+        if ! type -t "$func" >/dev/null 2>&1; then
+            print_warning "Step function not defined: $func (step $n)"
+            return 1
+        fi
+        print_info "Running step $n via $func ..."
+        "$func"
+    }
+
+    run_range_or_list() {
+        local spec="$1"
+        # Accept formats like "5", "5-9", "3,7,10", "3,5-7,12"
+        local IFS=','
+        for token in $spec; do
+            if [[ "$token" =~ ^[0-9]+-[0-9]+$ ]]; then
+                local start=${token%-*}
+                local end=${token#*-}
+                if [ "$start" -gt "$end" ]; then
+                    local tmp=$start; start=$end; end=$tmp
+                fi
+                local i
+                for (( i=start; i<=end; i++ )); do
+                    run_step_by_number "$i"
+                done
+            elif [[ "$token" =~ ^[0-9]+$ ]]; then
+                run_step_by_number "$token"
+            else
+                print_warning "Invalid token: $token (ignored)"
+            fi
+        done
+    }
+
+    continue_from_first_incomplete() {
+        local first_incomplete=-1
+        local i
+        for (( i=1; i<=TOTAL_STEPS; i++ )); do
+            local step_name
+            step_name="$(get_step_func "$i" | sed 's/^execute_//;s/_/ /g')"
+            if ! is_step_completed "$step_name" 2>/dev/null; then
+                first_incomplete=$i
+                break
+            fi
+        done
+        if [ "$first_incomplete" -lt 0 ]; then
+            print_info "All steps are already marked completed. Nothing to continue."
+            return 0
+        fi
+        print_info "Continuing from first incomplete step: $first_incomplete"
+        local j
+        for (( j=first_incomplete; j<=TOTAL_STEPS; j++ )); do
+            run_step_by_number "$j"
+        done
+    }
+
+    show_status() {
+        echo ""
+        echo "===== Setup Progress Status ====="
+        local completed=0
+        local i
+        for (( i=1; i<=TOTAL_STEPS; i++ )); do
+            local func="$(get_step_func "$i")"
+            [ -z "$func" ] && continue
+            local step_key
+            step_key="$(echo "$func" | sed 's/^execute_//')"
+            local label
+            label="Step $i: ${step_key//_/ }"
+            if is_step_completed "$step_key" 2>/dev/null; then
+                echo -e "  ${GREEN}✓${NC} $label"
+                ((completed++))
+            else
+                echo -e "  ${YELLOW}•${NC} $label"
+            fi
+        done
+        echo "---------------------------------"
+        echo "Completed: $completed/$TOTAL_STEPS"
+        echo "Config file: $CONFIG_FILE"
+        echo "Progress file: $PROGRESS_FILE"
+        echo "Log file: $LOG_FILE"
+        echo "================================="
+        echo ""
+    }
+
+    while true; do
+        echo ""
+        echo "========== Setup Menu =========="
+        echo "1) Full automatic setup (recommended)"
+        echo "2) Run specific step(s) (e.g. 10 or 5-9 or 3,7,12)"
+        echo "3) Re-initialize a step (clear completion flag)"
+        echo "4) Continue from first incomplete step"
+        echo "5) Show status"
+        echo "6) Exit"
+        echo "================================"
+        read -p "Choose an option [1-6]: " choice
+        case "$choice" in
+            1)
+                # Return to main to run full automatic
+                return 0
+                ;;
+            2)
+                read -p "Enter step number(s) or range(s): " spec
+                run_range_or_list "$spec"
+                display_final_summary
+                exit 0
+                ;;
+            3)
+                read -p "Enter step number to re-initialize: " stepn
+                if [[ "$stepn" =~ ^[0-9]+$ ]] && [ "$stepn" -ge 1 ] && [ "$stepn" -le "$TOTAL_STEPS" ]; then
+                    local func="$(get_step_func "$stepn")"
+                    local key="$(echo "$func" | sed 's/^execute_//')"
+                    force_reinitialize_step "$key"
+                else
+                    print_warning "Invalid step number: $stepn"
+                fi
+                ;;
+            4)
+                continue_from_first_incomplete
+                display_final_summary
+                exit 0
+                ;;
+            5)
+                show_status
+                ;;
+            6)
+                echo "Exiting without changes."
+                exit 0
+                ;;
+            *)
+                print_warning "Invalid choice. Please select 1-6."
+                ;;
+        esac
+    done
+}
 
 # --- Non-interactive step runner (for automation/daemon use) ---
 RUN_STEP=""

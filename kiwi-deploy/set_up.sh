@@ -1443,22 +1443,67 @@ execute_step_10_git_setup() {
     if ! is_step_completed "git_setup"; then
         print_info "Step 10: Setting up Git repository..."
         cd "$SCRIPT_HOME/microservice-kiwi/"
+
+        # Ensure repo directory exists and is owned by target user
+        if [ ! -d "$SCRIPT_HOME/microservice-kiwi" ]; then
+            run_as_user mkdir -p "$SCRIPT_HOME/microservice-kiwi"
+        fi
+        # Quick ownership/permission fix for repo and .git
+        chown -R $SCRIPT_USER:$SCRIPT_USER "$SCRIPT_HOME/microservice-kiwi" 2>/dev/null || true
+        [ -d .git ] && chmod -R u+rwX .git 2>/dev/null || true
+
         if [ -d ".git" ]; then
+            # If git status fails for the target user, attempt a repair then fallback to clean .git
             if ! run_as_user_home git status >/dev/null 2>&1; then
-                print_warning "Git repository corrupted, cleaning up..."
-                run_as_user rm -rf .git
+                print_warning "Git repository not accessible by $SCRIPT_USER. Repairing permissions..."
+                chown -R $SCRIPT_USER:$SCRIPT_USER . .git 2>/dev/null || true
+                chmod -R u+rwX .git 2>/dev/null || true
+                if ! run_as_user_home git status >/dev/null 2>&1; then
+                    print_warning "Git repo still inaccessible; resetting .git"
+                    rm -rf .git 2>/dev/null || true
+                fi
             fi
         fi
+
         if [ ! -d ".git" ]; then
             print_info "Initializing Git repository..."
             run_as_user_home git init
-            run_as_user_home git remote add origin https://github.com/coding-by-feng/microservice-kiwi.git
+            # Add origin if missing
+            if ! run_as_user_home git remote get-url origin >/dev/null 2>&1; then
+                run_as_user_home git remote add origin https://github.com/coding-by-feng/microservice-kiwi.git || true
+            fi
         fi
+
         print_info "Fetching latest code..."
-        run_as_user_home git fetch --all
-        run_as_user_home git reset --hard origin/master
-        run_as_user_home git branch --set-upstream-to=origin/master master 2>/dev/null || true
-        run_as_user_home git pull
+        if ! run_as_user_home git fetch --all --prune; then
+            print_warning "git fetch failed; retrying after permission repair"
+            chown -R $SCRIPT_USER:$SCRIPT_USER .git 2>/dev/null || true
+            chmod -R u+rwX .git 2>/dev/null || true
+            run_as_user_home git fetch --all --prune
+        fi
+
+        # Determine default branch from remote HEAD, fallback to common names
+        DEFAULT_BRANCH=$(run_as_user_home git symbolic-ref --quiet --short refs/remotes/origin/HEAD 2>/dev/null | sed 's|^origin/||' || true)
+        if [ -z "$DEFAULT_BRANCH" ]; then
+            run_as_user_home git remote set-head origin -a >/dev/null 2>&1 || true
+            DEFAULT_BRANCH=$(run_as_user_home git symbolic-ref --quiet --short refs/remotes/origin/HEAD 2>/dev/null | sed 's|^origin/||' || true)
+        fi
+        if [ -z "$DEFAULT_BRANCH" ]; then
+            for b in master main develop; do
+                if run_as_user_home git rev-parse --verify "origin/$b" >/dev/null 2>&1; then
+                    DEFAULT_BRANCH="$b"
+                    break
+                fi
+            done
+        fi
+        [ -z "$DEFAULT_BRANCH" ] && DEFAULT_BRANCH="master"
+
+        print_info "Checking out and syncing branch: $DEFAULT_BRANCH"
+        run_as_user_home git checkout -B "$DEFAULT_BRANCH" >/dev/null 2>&1 || true
+        run_as_user_home git reset --hard "origin/$DEFAULT_BRANCH"
+        run_as_user_home git branch --set-upstream-to="origin/$DEFAULT_BRANCH" "$DEFAULT_BRANCH" 2>/dev/null || true
+        run_as_user_home git pull --ff-only 2>/dev/null || true
+
         print_info "Creating deployment shortcuts..."
         cd "$SCRIPT_HOME"
         # Shortcuts (symlinks) in user's home
@@ -1472,7 +1517,7 @@ execute_step_10_git_setup() {
         run_as_user ln -sf "$SCRIPT_HOME/microservice-kiwi/kiwi-deploy/set_up.sh" "$SCRIPT_HOME/easy-setup"
         # Ensure shortcuts are executable
         run_as_user chmod +x "$SCRIPT_HOME/easy-"*
-        GIT_COMMIT_HASH=$(run_as_user_home git rev-parse HEAD 2>/dev/null || echo "unknown")
+        GIT_COMMIT_HASH=$(run_as_user_home git -C "$SCRIPT_HOME/microservice-kiwi" rev-parse HEAD 2>/dev/null || echo "unknown")
         save_config "git_commit_hash" "$GIT_COMMIT_HASH"
         print_success "Git repository setup completed"
         mark_step_completed "git_setup"

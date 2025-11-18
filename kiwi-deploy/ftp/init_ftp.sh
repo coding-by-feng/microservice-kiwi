@@ -3,16 +3,17 @@ set -eu
 
 # Init script to build and run kiwi-ftp with interactive credential prompts.
 # - Prompts for FTP_USER and FTP_PASS (re-prompts until non-empty)
+# - Optional host directory (FTP_HOST_DIR) mounted to /home/$FTP_USER inside container
 # - On macOS (Darwin), uses port mappings and asks for PASV_ADDRESS (tries to auto-detect)
 # - On Linux, uses --network host
-# - Ensures FTP_BASE_DIR exists and is mounted
+# - Ensures host directory exists
 
 SCRIPT_DIR=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
-IMAGE_TAG=${IMAGE_TAG:-kiwi-ftp:1.0}
+IMAGE_TAG=${IMAGE_TAG:-kiwi-ftp:1.1}
 CONTAINER_NAME=${CONTAINER_NAME:-kiwi-ftp}
-DEFAULT_BASE_DIR=${FTP_BASE_DIR:-/rangi_windows}
 OS=$(uname -s || echo Unknown)
 DOCKER_BIN=${DOCKER_BIN:-docker}
+DEFAULT_HOST_DIR="${FTP_HOST_DIR:-$(pwd)/ftp-data}" # default on host
 
 require_cmd() {
   if ! command -v "$1" >/dev/null 2>&1; then
@@ -68,46 +69,51 @@ detect_macos_ip() {
       return 0
     fi
   done
-  # Fallback: none
   return 1
 }
 
-# 0) Pre-flight
+valid_username() {
+  case "$1" in
+    *[!a-zA-Z0-9._-]*|"" ) return 1 ;;
+    * ) return 0 ;;
+  esac
+}
+
 require_cmd "$DOCKER_BIN"
 
-# 1) Collect inputs
+# Collect inputs
 prompt_nonempty FTP_USER "Enter FTP username: " "${FTP_USER-}"
+if ! valid_username "$FTP_USER"; then
+  echo "ERROR: Invalid FTP username. Allowed: a-z A-Z 0-9 . _ -" >&2
+  exit 1
+fi
 prompt_secret  FTP_PASS "Enter FTP password: " "${FTP_PASS-}"
-prompt_with_default FTP_BASE_DIR "Enter FTP base dir inside container [${DEFAULT_BASE_DIR}]: " "${DEFAULT_BASE_DIR}"
+prompt_with_default FTP_HOST_DIR "Enter host directory to map to /home/$FTP_USER [${DEFAULT_HOST_DIR}]: " "${DEFAULT_HOST_DIR}"
 
-# Ensure FTP_BASE_DIR is absolute
-case "$FTP_BASE_DIR" in
+# Ensure host dir is absolute
+case "$FTP_HOST_DIR" in
   /*) ;; # absolute OK
-  *) FTP_BASE_DIR="$(pwd)/$FTP_BASE_DIR" ;;
-esac
+  *) FTP_HOST_DIR="$(pwd)/$FTP_HOST_DIR" ;;
+ esac
 
-HOST_DIR="$FTP_BASE_DIR"
-
-# Create base dir if missing (try without and with sudo)
-if [ ! -d "$HOST_DIR" ]; then
-  if ! mkdir -p "$HOST_DIR" 2>/dev/null; then
-    echo "Creating $HOST_DIR with sudo..." >&2
-    sudo mkdir -p "$HOST_DIR"
+if [ ! -d "$FTP_HOST_DIR" ]; then
+  if ! mkdir -p "$FTP_HOST_DIR" 2>/dev/null; then
+    echo "Creating $FTP_HOST_DIR with sudo..." >&2
+    sudo mkdir -p "$FTP_HOST_DIR"
   fi
 fi
 
-# 2) Build image
+# Build image
 echo "Building image $IMAGE_TAG from $SCRIPT_DIR ..."
 "$DOCKER_BIN" build -t "$IMAGE_TAG" "$SCRIPT_DIR"
 
-# 3) Remove existing container if present
+# Remove existing container if present
 if "$DOCKER_BIN" ps -a --format '{{.Names}}' | grep -q "^${CONTAINER_NAME}$"; then
   echo "Removing existing container: $CONTAINER_NAME"
   "$DOCKER_BIN" rm -f "$CONTAINER_NAME" >/dev/null 2>&1 || true
 fi
 
-# 4) Run container (macOS vs Linux)
-RUN_ARGS_COMMON="-d --name $CONTAINER_NAME --restart unless-stopped -e FTP_USER=$FTP_USER -e FTP_PASS=$FTP_PASS -e FTP_BASE_DIR=$FTP_BASE_DIR -v $HOST_DIR:$FTP_BASE_DIR"
+RUN_ARGS_COMMON="-d --name $CONTAINER_NAME --restart unless-stopped -e FTP_USER=$FTP_USER -e FTP_PASS=$FTP_PASS -v $FTP_HOST_DIR:/home/$FTP_USER"
 
 if [ "$OS" = "Darwin" ]; then
   echo "Detected macOS: exposing ports 21 and 21100-21110."
@@ -127,10 +133,10 @@ else
   "$DOCKER_BIN" run $RUN_ARGS_COMMON --network host "$IMAGE_TAG"
 fi
 
-# 5) Done
 CID=$("$DOCKER_BIN" ps -aqf name="^${CONTAINER_NAME}$" | head -n1)
 if [ -n "$CID" ]; then
   echo "Container started: $CONTAINER_NAME ($CID)"
+  echo "Host dir mounted: $FTP_HOST_DIR -> /home/$FTP_USER"
 else
   echo "Container start attempted; check '$DOCKER_BIN ps -a' for status." >&2
 fi

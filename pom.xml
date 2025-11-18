@@ -216,6 +216,23 @@
     </dependencyManagement>
 
     <build>
+        <plugins>
+            <!-- Ensure Lombok annotation processing is available during both compile and test-compile -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.1</version>
+                <configuration>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>${lombok.version}</version>
+                        </path>
+                    </annotationProcessorPaths>
+                </configuration>
+            </plugin>
+        </plugins>
         <pluginManagement>
             <plugins>
                 <!-- https://www.mojohaus.org/aspectj-maven-plugin -->

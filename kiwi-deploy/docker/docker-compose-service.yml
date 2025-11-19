@@ -15,26 +15,14 @@ services:
       retries: 8
       start_period: 4m
     entrypoint:
-      - /bin/sh
-      - -c
-      - |
-        echo "Waiting for kiwi-config to be healthy..."
-        wait_secs=0
-        until code=$(curl -s -o /dev/null -w '%{http_code}' http://localhost:7771/actuator/health); [ "$$code" = "200" ] || [ "$$code" = "401" ] || [ "$$code" = "403" ]; do
-          wait_secs=$$((wait_secs+1))
-          if [ $$((wait_secs % 5)) -eq 0 ]; then
-            echo "Waiting for kiwi-config to be healthy... ($$wait_secs s)"
-          fi
-          sleep 10
-        done
-        # kiwi-config is healthy; start immediately to avoid unnecessary idle time
-        echo "Starting kiwi-gate..."
-        exec java -Xmx512m \
-          -Duser.timezone=GMT+12 \
-          -Djava.awt.headless=true \
-          -Dspring.profiles.active=prod \
-          -Dlogging.file.name=/logs/gate.log \
-          -jar /app.jar
+      - java
+      - -Xmx512m
+      - -Duser.timezone=GMT+12
+      - -Djava.awt.headless=true
+      - -Dspring.profiles.active=prod
+      - -Dlogging.file.name=/logs/gate.log
+      - -jar
+      - /app.jar
 
   kiwi-upms:
     image: kiwi-upms:2.0
@@ -46,7 +34,8 @@ services:
       - ~/docker/kiwi/upms/logs:/logs:Z
     network_mode: "host"
     depends_on:
-      - kiwi-gate
+      kiwi-gate:
+        condition: service_healthy
     healthcheck:
       test: ["CMD-SHELL", "code=$(curl -s -o /dev/null -w '%{http_code}' http://localhost:4001/actuator/health); [ \"$$code\" = \"200\" ] || [ \"$$code\" = \"401\" ] || [ \"$$code\" = \"403\" ]"]
       interval: 30s
@@ -54,34 +43,13 @@ services:
       retries: 8
       start_period: 4m
     entrypoint:
-      - /bin/sh
-      - -c
-      - |
-        echo "Waiting for kiwi-config to be healthy..."
-        wait_secs=0
-        until code=$(curl -s -o /dev/null -w '%{http_code}' http://localhost:7771/actuator/health); [ "$$code" = "200" ] || [ "$$code" = "401" ] || [ "$$code" = "403" ]; do
-          wait_secs=$$((wait_secs+1))
-          if [ $$((wait_secs % 5)) -eq 0 ]; then
-            echo "Waiting for kiwi-config to be healthy... ($$wait_secs s)"
-          fi
-          sleep 10
-        done
-        echo "Waiting for kiwi-gate to be healthy..."
-        wait_secs=0
-        until code=$(curl -s -o /dev/null -w '%{http_code}' http://localhost:9991/actuator/health); [ "$$code" = "200" ] || [ "$$code" = "401" ] || [ "$$code" = "403" ]; do
-          wait_secs=$$((wait_secs+1))
-          if [ $$((wait_secs % 5)) -eq 0 ]; then
-            echo "Waiting for kiwi-gate to be healthy... ($$wait_secs s)"
-          fi
-          sleep 10
-        done
-        # kiwi-gate is healthy; start immediately
-        echo "Starting kiwi-upms..."
-        exec java -Xmx400m \
-        -Duser.timezone=GMT+12 \
-        -Dspring.profiles.active=prod \
-        -Dlogging.file.name=/logs/upms-biz.log \
-        -jar /app.jar
+      - java
+      - -Xmx400m
+      - -Duser.timezone=GMT+12
+      - -Dspring.profiles.active=prod
+      - -Dlogging.file.name=/logs/upms-biz.log
+      - -jar
+      - /app.jar
 
   kiwi-auth:
     image: kiwi-auth:2.0
@@ -97,7 +65,8 @@ services:
       - ~/docker/kiwi/auth/logs:/logs:Z
     network_mode: "host"
     depends_on:
-      - kiwi-upms
+      kiwi-upms:
+        condition: service_healthy
     healthcheck:
       test: ["CMD-SHELL", "code=$(curl -s -o /dev/null -w '%{http_code}' http://localhost:3001/actuator/health); [ \"$$code\" = \"200\" ] || [ \"$$code\" = \"401\" ] || [ \"$$code\" = \"403\" ]"]
       interval: 30s
@@ -105,34 +74,13 @@ services:
       retries: 8
       start_period: 4m
     entrypoint:
-      - /bin/sh
-      - -c
-      - |
-        echo "Waiting for kiwi-config to be healthy..."
-        wait_secs=0
-        until code=$(curl -s -o /dev/null -w '%{http_code}' http://localhost:7771/actuator/health); [ "$$code" = "200" ] || [ "$$code" = "401" ] || [ "$$code" = "403" ]; do
-          wait_secs=$$((wait_secs+1))
-          if [ $$((wait_secs % 5)) -eq 0 ]; then
-            echo "Waiting for kiwi-config to be healthy... ($$wait_secs s)"
-          fi
-          sleep 10
-        done
-        # Immediately check kiwi-upms health (no fixed delay)
-        echo "Waiting for kiwi-upms to be healthy..."
-        wait_secs=0
-        until code=$(curl -s -o /dev/null -w '%{http_code}' http://localhost:4001/actuator/health); [ "$$code" = "200" ] || [ "$$code" = "401" ] || [ "$$code" = "403" ]; do
-          wait_secs=$$((wait_secs+1))
-          if [ $$((wait_secs % 5)) -eq 0 ]; then
-            echo "Waiting for kiwi-upms to be healthy... ($$wait_secs s)"
-          fi
-          sleep 10
-        done
-        echo "kiwi-upms is healthy. Starting kiwi-auth..."
-        exec java -jar -Xmx256m \
-        -Duser.timezone=GMT+12 \
-        -Dspring.profiles.active=prod \
-        -Dlogging.file.name=/logs/auth.log \
-        /app.jar
+      - java
+      - -Xmx256m
+      - -Duser.timezone=GMT+12
+      - -Dspring.profiles.active=prod
+      - -Dlogging.file.name=/logs/auth.log
+      - -jar
+      - /app.jar
 
   kiwi-word-biz:
     image: kiwi-word-biz:2.0
@@ -146,7 +94,8 @@ services:
       - ~/docker/kiwi/word/bizTmp:/wordTmp:Z
     network_mode: "host"
     depends_on:
-      - kiwi-auth
+      kiwi-auth:
+        condition: service_healthy
     healthcheck:
       test: ["CMD", "pgrep", "-f", "kiwi-word-biz"]
       interval: 30s
@@ -154,36 +103,15 @@ services:
       retries: 8
       start_period: 4m
     entrypoint:
-      - /bin/sh
-      - -c
-      - |
-        echo "Waiting for kiwi-config to be healthy..."
-        wait_secs=0
-        until code=$(curl -s -o /dev/null -w '%{http_code}' http://localhost:7771/actuator/health); [ "$$code" = "200" ] || [ "$$code" = "401" ] || [ "$$code" = "403" ]; do
-          wait_secs=$$((wait_secs+1))
-          if [ $$((wait_secs % 5)) -eq 0 ]; then
-            echo "Waiting for kiwi-config to be healthy... ($$wait_secs s)"
-          fi
-          sleep 10
-        done
-        echo "Waiting for kiwi-auth to be healthy..."
-        wait_secs=0
-        until code=$(curl -s -o /dev/null -w '%{http_code}' http://localhost:3001/actuator/health); [ "$$code" = "200" ] || [ "$$code" = "401" ] || [ "$$code" = "403" ]; do
-          wait_secs=$$((wait_secs+1))
-          if [ $$((wait_secs % 5)) -eq 0 ]; then
-            echo "Waiting for kiwi-auth to be healthy... ($$wait_secs s)"
-          fi
-          sleep 10
-        done
-        # Start immediately after kiwi-auth is healthy
-        echo "Starting kiwi-word-biz..."
-        exec java -jar -Xmx1024m \
-        -Duser.timezone=GMT+12 \
-        -Dspring.application.name=kiwi-word-biz \
-        -Dspring.profiles.active=prod \
-        -Dcom.sun.management.autodiscovery=true \
-        -Dlogging.file.name=/logs/word-biz.log \
-        /app.jar
+      - java
+      - -Xmx1024m
+      - -Duser.timezone=GMT+12
+      - -Dspring.application.name=kiwi-word-biz
+      - -Dspring.profiles.active=prod
+      - -Dcom.sun.management.autodiscovery=true
+      - -Dlogging.file.name=/logs/word-biz.log
+      - -jar
+      - /app.jar
 
   kiwi-ai-biz:
     image: kiwi-ai-biz:2.0
@@ -198,7 +126,10 @@ services:
       - ~/docker/kiwi/ai/tmp:/ai-tmp:Z
     network_mode: "host"
     depends_on:
-      - kiwi-word-biz
+      kiwi-word-biz:
+        condition: service_healthy
+      kiwi-auth:
+        condition: service_healthy
     healthcheck:
       test: ["CMD", "pgrep", "-f", "kiwi-ai-biz"]
       interval: 30s
@@ -206,34 +137,14 @@ services:
       retries: 8
       start_period: 4m
     entrypoint:
-      - /bin/sh
-      - -c
-      - |
-        echo "Waiting for kiwi-config to be healthy..."
-        wait_secs=0
-        until code=$(curl -s -o /dev/null -w '%{http_code}' http://localhost:7771/actuator/health); [ "$$code" = "200" ] || [ "$$code" = "401" ] || [ "$$code" = "403" ]; do
-          wait_secs=$$((wait_secs+1))
-          if [ $$((wait_secs % 5)) -eq 0 ]; then
-            echo "Waiting for kiwi-config to be healthy... ($$wait_secs s)"
-          fi
-          sleep 10
-        done
-        echo "Waiting for kiwi-auth to be healthy..."
-        wait_secs=0
-        until code=$(curl -s -o /dev/null -w '%{http_code}' http://localhost:3001/actuator/health); [ "$$code" = "200" ] || [ "$$code" = "401" ] || [ "$$code" = "403" ]; do
-          wait_secs=$$((wait_secs+1))
-          if [ $$((wait_secs % 5)) -eq 0 ]; then
-            echo "Waiting for kiwi-auth to be healthy... ($$wait_secs s)"
-          fi
-          sleep 10
-        done
-        # To avoid overlapping with kiwi-word-biz startup (assumed 3 minutes), delay 180s
-        echo "kiwi-auth is healthy. Delaying 360s (6˚ minutes) before starting kiwi-ai-biz..."
-        sleep 360
-        echo "Starting kiwi-ai-biz..."
-        export JAVA_OPTS="-Xms512m -Xmx1048m -XX:+UseG1GC -XX:MaxGCPauseMillis=200"
-        export TZ=Pacific/Auckland
-        exec java $${JAVA_OPTS} -jar /app/app.jar
+      - java
+      - -Xms512m
+      - -Xmx1048m
+      - -XX:+UseG1GC
+      - -XX:MaxGCPauseMillis=200
+      - -Duser.timezone=GMT+12
+      - -jar
+      - /app/app.jar
 
   kiwi-tools-biz:
     image: kiwi-tools-biz:2.0
@@ -246,7 +157,10 @@ services:
       - ~/docker/kiwi/tools/logs:/logs:Z
     network_mode: "host"
     depends_on:
-      - kiwi-auth
+      kiwi-ai-biz:
+        condition: service_healthy
+      kiwi-auth:
+        condition: service_healthy
     healthcheck:
       test: ["CMD", "pgrep", "-f", "kiwi-tools-biz"]
       interval: 30s
@@ -254,36 +168,13 @@ services:
       retries: 8
       start_period: 4m
     entrypoint:
-      - /bin/sh
-      - -c
-      - |
-        echo "Waiting for kiwi-config to be healthy..."
-        wait_secs=0
-        until code=$(curl -s -o /dev/null -w '%{http_code}' http://localhost:7771/actuator/health); [ "$$code" = "200" ] || [ "$$code" = "401" ] || [ "$$code" = "403" ]; do
-          wait_secs=$$((wait_secs+1))
-          if [ $$((wait_secs % 5)) -eq 0 ]; then
-            echo "Waiting for kiwi-config to be healthy... ($$wait_secs s)"
-          fi
-          sleep 10
-        done
-        echo "Waiting for kiwi-auth to be healthy..."
-        wait_secs=0
-        until code=$(curl -s -o /dev/null -w '%{http_code}' http://localhost:3001/actuator/health); [ "$$code" = "200" ] || [ "$$code" = "401" ] || [ "$$code" = "403" ]; do
-          wait_secs=$$((wait_secs+1))
-          if [ $$((wait_secs % 5)) -eq 0 ]; then
-            echo "Waiting for kiwi-auth to be healthy... ($$wait_secs s)"
-          fi
-          sleep 10
-        done
-        # Stagger after kiwi-ai-biz (assumed 3 minutes) to avoid overlap; total 6 minutes after kiwi-word-biz
-        echo "kiwi-auth is healthy. Delaying 20s (6 minutes) before starting kiwi-tools-biz..."
-        sleep 20
-        echo "Starting kiwi-tools-biz..."
-        exec java -jar -Xmx700m \
-          -Duser.timezone=GMT+12 \
-          -Dspring.profiles.active=prod \
-          -Dlogging.file.name=/logs/tools-biz.log \
-          /app.jar
+      - java
+      - -Xmx700m
+      - -Duser.timezone=GMT+12
+      - -Dspring.profiles.active=prod
+      - -Dlogging.file.name=/logs/tools-biz.log
+      - -jar
+      - /app.jar
 
   kiwi-crawler:
     image: kiwi-crawler:2.0
@@ -296,7 +187,8 @@ services:
       - ~/docker/kiwi/crawler/tmp:/crawlerTmp:Z
     network_mode: "host"
     depends_on:
-      - kiwi-ai-biz
+      kiwi-ai-biz:
+        condition: service_healthy
     healthcheck:
       test: ["CMD-SHELL", "code=$(curl -s -o /dev/null -w '%{http_code}' http://localhost:6001/actuator/health); [ \"$$code\" = \"200\" ] || [ \"$$code\" = \"401\" ] || [ \"$$code\" = \"403\" ]"]
       interval: 30s
@@ -304,31 +196,11 @@ services:
       retries: 8
       start_period: 4m
     entrypoint:
-      - /bin/sh
-      - -c
-      - |
-        echo "Waiting for kiwi-config to be healthy..."
-        wait_secs=0
-        until code=$(curl -s -o /dev/null -w '%{http_code}' http://localhost:7771/actuator/health); [ "$$code" = "200" ] || [ "$$code" = "401" ] || [ "$$code" = "403" ]; do
-          wait_secs=$$((wait_secs+1))
-          if [ $$((wait_secs % 5)) -eq 0 ]; then
-            echo "Waiting for kiwi-config to be healthy... ($$wait_secs s)"
-          fi
-          sleep 10
-        done
-        echo "Waiting for kiwi-ai-biz to be healthy..."
-        wait_secs=0
-        until code=$(curl -s -o /dev/null -w '%{http_code}' http://localhost:18015/actuator/health); [ "$$code" = "200" ] || [ "$$code" = "401" ] || [ "$$code" = "403" ]; do
-          wait_secs=$$((wait_secs+1))
-          if [ $$((wait_secs % 5)) -eq 0 ]; then
-            echo "Waiting for kiwi-ai-biz to be healthy... ($$wait_secs s)"
-          fi
-          sleep 10
-        done
-        echo "kiwi-ai-biz is healthy. Starting kiwi-crawler..."
-        exec java -jar -Xmx1000m \
-            -Duser.timezone=GMT+12 \
-            -Xmn300m \
-            -Dspring.profiles.active=prod \
-            -Dlogging.file.name=/logs/crawler.log \
-            /app.jar
+      - java
+      - -Xmx1000m
+      - -Duser.timezone=GMT+12
+      - -Xmn300m
+      - -Dspring.profiles.active=prod
+      - -Dlogging.file.name=/logs/crawler.log
+      - -jar
+      - /app.jar

@@ -57,3 +57,7 @@ cache-control:
     - /word/review/downloadReviewAudio
     - /word/review/character/downloadReviewAudio
     - /grammar/mp3
+
+# Storage backend switch
+storage:
+  backend: ftp

@@ -11,7 +11,7 @@ import me.fengorz.kiwi.common.sdk.constant.CacheConstants;
 import me.fengorz.kiwi.common.sdk.enumeration.AiPromptModeEnum;
 import me.fengorz.kiwi.common.sdk.enumeration.LanguageEnum;
 import me.fengorz.kiwi.common.sdk.web.WebTools;
-import me.fengorz.kiwi.common.ytb.YouTuBeHelper;
+import me.fengorz.kiwi.ai.service.ytb.YouTuBeApiHelper;
 import me.fengorz.kiwi.common.ytb.YtbSubtitlesResult;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.annotation.CacheEvict;
@@ -31,15 +31,15 @@ import java.util.function.Consumer;
 @KiwiCacheKeyPrefix(AiConstants.CACHE_KEY_PREFIX_GROK.CLASS)
 public class YtbSubtitleStreamingService {
 
-    private final YouTuBeHelper youTuBeHelper;
+    private final YouTuBeApiHelper youTuBeApiHelper;
     private final AiChatService aiChatService;
     private final AiStreamingService aiStreamingService;
 
-    public YtbSubtitleStreamingService(YouTuBeHelper youTuBeHelper,
+    public YtbSubtitleStreamingService(YouTuBeApiHelper youTuBeApiHelper,
                                        @Qualifier("grokAiService") AiChatService aiChatService,
                                        @Qualifier("grokStreamingService") AiStreamingService aiStreamingService,
                                        org.springframework.cache.CacheManager cacheManager) {
-        this.youTuBeHelper = youTuBeHelper;
+        this.youTuBeApiHelper = youTuBeApiHelper;
         this.aiChatService = aiChatService;
         this.aiStreamingService = aiStreamingService;
     }
@@ -251,7 +251,7 @@ public class YtbSubtitleStreamingService {
             unless = "#result == null")
     public YtbSubtitlesResult getScrollingSubtitlesInternal(@KiwiCacheKey(1) String videoId, String decodedUrl) {
         log.info("Fetching scrolling subtitles for videoId: {}", videoId);
-        return youTuBeHelper.downloadSubtitles(decodedUrl);
+        return youTuBeApiHelper.downloadSubtitles(decodedUrl);
     }
 
     @KiwiCacheKeyPrefix(AiConstants.CACHE_KEY_PREFIX_GROK.VIDEO_TITLE)
@@ -259,7 +259,7 @@ public class YtbSubtitleStreamingService {
             unless = "#result == null")
     public String getVideoTitleInternal(@KiwiCacheKey(1) String videoId, String decodedUrl) {
         log.info("Fetching video title for videoId: {}", videoId);
-        return youTuBeHelper.getVideoTitle(decodedUrl);
+        return youTuBeApiHelper.getVideoTitle(decodedUrl);
     }
 
     @KiwiCacheKeyPrefix(AiConstants.CACHE_KEY_PREFIX_GROK.SUBTITLE_STREAMING)

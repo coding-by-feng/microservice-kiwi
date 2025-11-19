@@ -329,12 +329,15 @@ show_help() {
   echo "                Available services: eureka, config, upms, auth, gate, word, crawler, ai, tools"
   echo "                Multiple services: -s=eureka,config,upms"
   echo "                All services: -s=all (default)"
+  echo "  branch=NAME   Select git branch for -mode=og (default: master)"
+  echo "  -branch=NAME  Same as above"
   echo "  -help         Show this help message"
   echo ""
   echo "If no mode is specified, all operations will be executed."
   echo ""
   echo "Examples:"
   echo "  sudo -E $0                        # Full deployment (all services)"
+  echo "  sudo -E $0 -mode=og branch=feature/x  # Only git, switch to feature/x and pull"
   echo "  sudo -E $0 -mode=sg               # Skip only git operations"
   echo "  sudo -E $0 -mode=sm               # Skip only maven build"
   echo "  sudo -E $0 -mode=sbd              # Skip only Dockerfile building"
@@ -357,6 +360,7 @@ ONLY_BUILD_MAVEN=false
 USE_EXISTING_JARS_ONLY=false
 ONLY_SEND_JARS=false
 ONLY_GIT_MODE=false
+TARGET_BRANCH="master"   # NEW: default branch for OG mode
 
 # Process all arguments
 for arg in "$@"; do
@@ -404,6 +408,14 @@ for arg in "$@"; do
       SKIP_DOCKER_BUILD=true
       echo "🪄 OG MODE: Only git stash/pull (no Maven/Docker/deploy)"  # UPDATED
       ;;
+    branch=*)
+      TARGET_BRANCH="${arg#branch=}"
+      echo "🌿 Target git branch: $TARGET_BRANCH"
+      ;;
+    -branch=*)
+      TARGET_BRANCH="${arg#-branch=}"
+      echo "🌿 Target git branch: $TARGET_BRANCH"
+      ;;
     -s=*)
       SELECTED_SERVICES="${arg#-s=}"
       if [ "$SELECTED_SERVICES" != "all" ]; then
@@ -438,8 +450,11 @@ export ONLY_GIT_MODE
 # Quick, centralized mode summary (helps trace the flow)
 echo "=== deployKiwi.sh MODE SUMMARY ==="
 echo "MODE: ${MODE:-<none>} | ONLY_BUILD_MAVEN=${ONLY_BUILD_MAVEN} | USE_EXISTING_JARS_ONLY=${USE_EXISTING_JARS_ONLY}"
-echo "SKIP_GIT=${SKIP_GIT} | SKIP_MAVEN=${SKIP_MAVEN} | SKIP_DOCKER_BUILD=${SKIP_DOCKER_BUILD} | FAST_DEPLOY_MODE=${FAST_DEPLOY_MODE} | ONLY_SEND_JARS=${ONLY_SEND_JARS} | ONLY_GIT_MODE=${ONLY_GIT_MODE}"  # UPDATED
+echo "SKIP_GIT=${SKIP_GIT} | SKIP_MAVEN=${SKIP_MAVEN} | SKIP_DOCKER_BUILD=${SKIP_DOCKER_BUILD} | FAST_DEPLOY_MODE=${FAST_DEPLOY_MODE} | ONLY_SEND_JARS=${ONLY_SEND_JARS} | ONLY_GIT_MODE=${ONLY_GIT_MODE}"
 echo "Selected services: $([ "$BUILD_ALL_SERVICES" = true ] && echo ALL || echo "$SELECTED_SERVICES")"
+if [ "$ONLY_GIT_MODE" = true ]; then
+  echo "Git branch: $TARGET_BRANCH"
+fi
 echo "=================================="
 
 # Ensure permissions right after mode parse (auto-run for any mode, e.g., -mode=obm)
@@ -651,11 +666,39 @@ fi
 # === OG short-circuit workflow (Only Git) ===
 if [ "$ONLY_GIT_MODE" = true ]; then
   echo "== OG FLOW: ENTER =="
-  echo "📥 Performing git operations only (stash + pull)..."
+  echo "📥 Performing git operations only (fetch + checkout + pull)..."
   # Ensure we are at project root (already cd'ed earlier, but enforce)
   cd "$CURRENT_DIR/microservice-kiwi/" || { echo "❌ Cannot cd to project root"; exit 1; }
-  git stash || true
-  git pull --rebase || git pull
+
+  # Ensure git is available
+  if ! command -v git >/dev/null 2>&1; then
+    echo "❌ git command not found. Please install git."
+    exit 1
+  fi
+
+  echo "🔄 git fetch --all --prune"
+  if ! git fetch --all --prune; then
+    echo "❌ git fetch failed"
+    exit 1
+  fi
+
+  echo "🧺 Stashing local changes (if any)"
+  git add -A >/dev/null 2>&1 || true
+  git stash push -u -m "deployKiwi og auto-stash $(date '+%F %T')" || git stash || true
+
+  echo "🌿 Switching to branch '$TARGET_BRANCH'..."
+  if git show-ref --verify --quiet "refs/heads/$TARGET_BRANCH"; then
+    git checkout "$TARGET_BRANCH" || { echo "❌ git checkout $TARGET_BRANCH failed"; exit 1; }
+  elif git show-ref --verify --quiet "refs/remotes/origin/$TARGET_BRANCH"; then
+    git checkout -B "$TARGET_BRANCH" "origin/$TARGET_BRANCH" || { echo "❌ git checkout -B $TARGET_BRANCH origin/$TARGET_BRANCH failed"; exit 1; }
+  else
+    echo "❌ Branch '$TARGET_BRANCH' not found locally or on origin."
+    echo "   Use 'branch=<name>' with an existing branch. Aborting."
+    exit 1
+  fi
+
+  echo "⬇️  Pulling latest for '$TARGET_BRANCH' (rebase)"
+  git pull --rebase --autostash || git pull || true
 
   # NEW: After git-only update, ensure kiwi-deploy shell scripts are executable
   echo "🔐 Updating permissions for kiwi-deploy shell scripts..."

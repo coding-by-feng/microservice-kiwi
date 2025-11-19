@@ -1,7 +1,7 @@
 FROM alpine:3.19
 
-# Install vsftpd and shadow (for chpasswd)
-RUN apk add --no-cache vsftpd shadow
+# Install vsftpd and shadow (for user management) and openssl (for password hashing)
+RUN apk add --no-cache vsftpd shadow openssl
 
 # Configure vsftpd
 RUN echo "listen=YES" > /etc/vsftpd/vsftpd.conf && \
@@ -54,9 +54,9 @@ if [ -n "${PASV_ADDRESS:-}" ]; then\n\
   fi\n\
 fi\n\
 \
-# Create FTP user if not exists\n\
+# Create FTP user if not exists (shadow suite)\n\
 if ! id "$FTP_USER" >/dev/null 2>&1; then\n\
-  adduser -D -h "$HOME_DIR" -s /bin/sh "$FTP_USER" || { echo "ERROR: Failed to add user." >&2; exit 1; }\n\
+  useradd -m -d "$HOME_DIR" -s /bin/sh "$FTP_USER" || { echo "ERROR: Failed to add user." >&2; exit 1; }\n\
 fi\n\
 \
 # Ensure home directory exists and ownership is correct\n\
@@ -64,8 +64,9 @@ mkdir -p "$HOME_DIR"\n\
 chown "$FTP_USER:$FTP_USER" "$HOME_DIR"\n\
 chmod 755 "$HOME_DIR"\n\
 \
-# Set password\n\
-if ! printf "%s:%s\n" "$FTP_USER" "$FTP_PASS" | chpasswd 2>/dev/null; then\n\
+# Set password (SHA-512) using usermod with hashed value to avoid chpasswd issues\n\
+HASH=$(openssl passwd -6 "$FTP_PASS") || { echo "ERROR: Failed to hash password." >&2; exit 1; }\n\
+if ! usermod -p "$HASH" "$FTP_USER"; then\n\
   echo "ERROR: Failed to set password for user '\''$FTP_USER'\''." >&2\n\
   exit 1\n\
 fi\n\

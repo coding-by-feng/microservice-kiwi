@@ -2,7 +2,17 @@
 
 # --- Permission bootstrap (self-healing) ---
 {
-  SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+  # Resolve the real directory of this script, following symlinks
+  resolve_script_dir() {
+    local SOURCE="${BASH_SOURCE[0]}"
+    while [ -h "$SOURCE" ]; do
+      local DIR="$(cd -P "$(dirname "$SOURCE")" && pwd)"
+      SOURCE="$(readlink "$SOURCE")"
+      [[ $SOURCE != /* ]] && SOURCE="$DIR/$SOURCE"
+    done
+    cd -P "$(dirname "$SOURCE")" && pwd
+  }
+  SCRIPT_DIR="$(resolve_script_dir)"
   DEPLOY_ROOT="$SCRIPT_DIR"  # set_up.sh sits directly under kiwi-deploy
   # Make every .sh under kiwi-deploy executable
   if [ -d "$DEPLOY_ROOT" ]; then
@@ -25,7 +35,7 @@
 set -e  # Exit on any error
 
 # Store the script's directory for consistent paths
-SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+SCRIPT_DIR="${SCRIPT_DIR:-$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )}"
 cd "$SCRIPT_DIR"
 
 # Configuration - Use absolute paths
@@ -2017,13 +2027,27 @@ execute_step_23_ftp_setup() {
         FTP_BASE_DIR_VAL=${input_base_dir:-$DEFAULT_FTP_BASE_DIR}
         save_config "FTP_BASE_DIR" "$FTP_BASE_DIR_VAL"
 
-        # Ensure init script exists and is executable
+        # Ensure init script exists and is executable (with robust path resolution)
         FTP_INIT_SCRIPT="$SCRIPT_DIR/ftp/init_ftp.sh"
         if [ ! -f "$FTP_INIT_SCRIPT" ]; then
-            print_error "FTP initializer not found at $FTP_INIT_SCRIPT"
+            # Try project-root based path
+            ALT_INIT1="$SCRIPT_HOME/microservice-kiwi/kiwi-deploy/ftp/init_ftp.sh"
+            if [ -f "$ALT_INIT1" ]; then
+                FTP_INIT_SCRIPT="$ALT_INIT1"
+            else
+                # Try to locate via find under repository
+                ALT_INIT2=$(find "$SCRIPT_HOME/microservice-kiwi" -maxdepth 4 -type f -name "init_ftp.sh" 2>/dev/null | head -n1)
+                if [ -n "$ALT_INIT2" ] && [ -f "$ALT_INIT2" ]; then
+                    FTP_INIT_SCRIPT="$ALT_INIT2"
+                fi
+            fi
+        fi
+        if [ ! -f "$FTP_INIT_SCRIPT" ]; then
+            print_error "FTP initializer not found (looked for $SCRIPT_DIR/ftp/init_ftp.sh and alternatives)."
             return 1
         fi
         chmod +x "$FTP_INIT_SCRIPT" || true
+        save_config "ftp_init_script_path" "$FTP_INIT_SCRIPT"
 
         # Run the initializer non-interactively when possible by passing envs
         print_info "Building and starting kiwi-ftp container..."
@@ -2040,7 +2064,122 @@ execute_step_23_ftp_setup() {
         mark_step_completed "ftp_setup"
     else
         print_info "Step 23: FTP already set up, checking status..."
-        check_and_start_container "kiwi-ftp" "ftp_setup"
+        # Determine container state
+        local exists running status_line
+        exists=$(docker ps -a --format '{{.Names}}' 2>/dev/null | grep -q '^kiwi-ftp$' && echo yes || echo no)
+        running=$(docker ps --format '{{.Names}}' 2>/dev/null | grep -q '^kiwi-ftp$' && echo yes || echo no)
+        status_line=$(docker ps -a --filter 'name=^kiwi-ftp$' --format '{{.Status}}' 2>/dev/null | head -n1 || echo "")
+
+        if [ "$exists" = "no" ]; then
+            print_warning "kiwi-ftp does not exist (setup may have been incomplete or container was removed). Attempting re-initialization..."
+
+            # Load existing configuration without prompting
+            FTP_USER_CFG=$(load_config "FTP_USER" 2>/dev/null || echo "")
+            FTP_PASS_CFG=$(load_config "FTP_PASS" 2>/dev/null || echo "")
+            FTP_BASE_DIR_VAL=$(load_config "FTP_BASE_DIR" 2>/dev/null || echo "")
+            [ -z "$FTP_BASE_DIR_VAL" ] && FTP_BASE_DIR_VAL="/rangi_windows"
+
+            # Ensure init script exists and is executable (with robust path resolution)
+            FTP_INIT_SCRIPT="$SCRIPT_DIR/ftp/init_ftp.sh"
+            if [ ! -f "$FTP_INIT_SCRIPT" ]; then
+                ALT_INIT1="$SCRIPT_HOME/microservice-kiwi/kiwi-deploy/ftp/init_ftp.sh"
+                if [ -f "$ALT_INIT1" ]; then
+                    FTP_INIT_SCRIPT="$ALT_INIT1"
+                else
+                    ALT_INIT2=$(find "$SCRIPT_HOME/microservice-kiwi" -maxdepth 4 -type f -name "init_ftp.sh" 2>/dev/null | head -n1)
+                    if [ -n "$ALT_INIT2" ] && [ -f "$ALT_INIT2" ]; then
+                        FTP_INIT_SCRIPT="$ALT_INIT2"
+                    fi
+                fi
+            fi
+            if [ ! -f "$FTP_INIT_SCRIPT" ]; then
+                print_error "FTP initializer not found (looked for $SCRIPT_DIR/ftp/init_ftp.sh and alternatives)."
+                return 1
+            fi
+            chmod +x "$FTP_INIT_SCRIPT" || true
+            save_config "ftp_init_script_path" "$FTP_INIT_SCRIPT"
+
+            # Prompt if credentials missing
+            if [ -z "$FTP_USER_CFG" ]; then
+                prompt_for_input "Enter FTP username" "FTP_USER_CFG" "false"
+                save_config "FTP_USER" "$FTP_USER_CFG"
+            fi
+            if [ -z "$FTP_PASS_CFG" ]; then
+                prompt_for_input "Enter FTP password" "FTP_PASS_CFG" "true"
+                save_config "FTP_PASS" "$FTP_PASS_CFG"
+            fi
+
+            print_info "Re-initializing kiwi-ftp container..."
+            FTP_USER="$FTP_USER_CFG" FTP_PASS="$FTP_PASS_CFG" FTP_BASE_DIR="$FTP_BASE_DIR_VAL" "$FTP_INIT_SCRIPT"
+
+            sleep 2
+            if docker ps --format '{{.Names}}' 2>/dev/null | grep -q '^kiwi-ftp$'; then
+                print_success "FTP container 'kiwi-ftp' is running after re-initialization"
+                save_config "ftp_setup_reinitialized_at" "$(date '+%Y-%m-%d %H:%M:%S')"
+            else
+                print_error "Failed to (re)initialize kiwi-ftp. Please check the initializer logs."
+                save_config "kiwi-ftp_status_check" "reinit_failed"
+                return 1
+            fi
+        else
+            if [ "$running" = "yes" ]; then
+                print_success "kiwi-ftp is already running"
+                save_config "kiwi-ftp_status_check" "running"
+            else
+                print_warning "kiwi-ftp exists but is not running (status: ${status_line:-unknown}). Rebuilding and re-initializing..."
+                # Remove the faulty container to ensure fresh start with rebuilt image
+                docker rm -f kiwi-ftp 2>/dev/null || true
+
+                # Load existing configuration without prompting
+                FTP_USER_CFG=$(load_config "FTP_USER" 2>/dev/null || echo "")
+                FTP_PASS_CFG=$(load_config "FTP_PASS" 2>/dev/null || echo "")
+                FTP_BASE_DIR_VAL=$(load_config "FTP_BASE_DIR" 2>/dev/null || echo "")
+                [ -z "$FTP_BASE_DIR_VAL" ] && FTP_BASE_DIR_VAL="/rangi_windows"
+
+                # Ensure init script exists and is executable (with robust path resolution)
+                FTP_INIT_SCRIPT="$SCRIPT_DIR/ftp/init_ftp.sh"
+                if [ ! -f "$FTP_INIT_SCRIPT" ]; then
+                    ALT_INIT1="$SCRIPT_HOME/microservice-kiwi/kiwi-deploy/ftp/init_ftp.sh"
+                    if [ -f "$ALT_INIT1" ]; then
+                        FTP_INIT_SCRIPT="$ALT_INIT1"
+                    else
+                        ALT_INIT2=$(find "$SCRIPT_HOME/microservice-kiwi" -maxdepth 4 -type f -name "init_ftp.sh" 2>/dev/null | head -n1)
+                        if [ -n "$ALT_INIT2" ] && [ -f "$ALT_INIT2" ]; then
+                            FTP_INIT_SCRIPT="$ALT_INIT2"
+                        fi
+                    fi
+                fi
+                if [ ! -f "$FTP_INIT_SCRIPT" ]; then
+                    print_error "FTP initializer not found (looked for $SCRIPT_DIR/ftp/init_ftp.sh and alternatives)."
+                    return 1
+                fi
+                chmod +x "$FTP_INIT_SCRIPT" || true
+                save_config "ftp_init_script_path" "$FTP_INIT_SCRIPT"
+
+                # Prompt if credentials missing
+                if [ -z "$FTP_USER_CFG" ]; then
+                    prompt_for_input "Enter FTP username" "FTP_USER_CFG" "false"
+                    save_config "FTP_USER" "$FTP_USER_CFG"
+                fi
+                if [ -z "$FTP_PASS_CFG" ]; then
+                    prompt_for_input "Enter FTP password" "FTP_PASS_CFG" "true"
+                    save_config "FTP_PASS" "$FTP_PASS_CFG"
+                fi
+
+                print_info "Re-initializing kiwi-ftp container..."
+                FTP_USER="$FTP_USER_CFG" FTP_PASS="$FTP_PASS_CFG" FTP_BASE_DIR="$FTP_BASE_DIR_VAL" "$FTP_INIT_SCRIPT"
+
+                sleep 2
+                if docker ps --format '{{.Names}}' 2>/dev/null | grep -q '^kiwi-ftp$'; then
+                    print_success "FTP container 'kiwi-ftp' is running after re-initialization"
+                    save_config "ftp_setup_reinitialized_at" "$(date '+%Y-%m-%d %H:%M:%S')"
+                else
+                    print_error "Failed to (re)initialize kiwi-ftp. Please check the initializer logs."
+                    save_config "kiwi-ftp_status_check" "reinit_failed"
+                    return 1
+                fi
+            fi
+        fi
     fi
 }
 
@@ -2092,6 +2231,18 @@ $CUR_SERVICE_IP    kiwi-tools
 # End Kiwi Services
 EOF
     print_success "Reconciling complete: hosts and ~/.bashrc updated"
+}
+
+# Step 24: Update service IPs (.bashrc and /etc/hosts)
+execute_step_24_ip_update() {
+    if ! is_step_completed "ip_update"; then
+        print_info "Step 24: Updating service IPs (.bashrc, hosts)..."
+        update_hosts_and_bashrc_from_config
+        mark_step_completed "ip_update"
+    else
+        print_info "Step 24: IP update previously completed; reconciling again to ensure consistency..."
+        update_hosts_and_bashrc_from_config
+    fi
 }
 
 # Function to execute all setup steps

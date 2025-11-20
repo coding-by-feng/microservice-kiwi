@@ -46,7 +46,6 @@ public class AudioServiceImpl implements AudioService {
     private TtsService deepgramTtsService;
     @Resource(name = BAIDU_TTS_SERVICE_IMPL)
     private BaiduTtsService baiduTtsService;
-    @Resource(name = "fastDfsService")
     private DfsService dfsService;
 
     @Override

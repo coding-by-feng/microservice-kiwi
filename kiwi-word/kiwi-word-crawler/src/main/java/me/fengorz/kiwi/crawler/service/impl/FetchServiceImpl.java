@@ -44,7 +44,6 @@ import me.fengorz.kiwi.word.api.feign.DictFetchApi;
 import me.fengorz.kiwi.word.api.feign.QueryApi;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -61,7 +60,6 @@ public class FetchServiceImpl implements FetchService {
     private final DictFetchApi dictFetchApi;
     private final QueryApi queryApi;
     private final MqSender MQSender;
-    @Resource(name = "fastDfsService")
     private DfsService dfsService;
 
     @Override

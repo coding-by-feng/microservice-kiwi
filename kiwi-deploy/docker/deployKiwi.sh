@@ -1003,7 +1003,7 @@ else
   if [ "$SKIP_DOCKER_BUILD" = false ]; then
     # Download latest yt-dlp into AI docker contexts before build (only if AI is selected)
     if should_build_service "ai"; then
-      download_latest_ytdlp || echo "⚠️  Proceeding without updating yt-dlp (download failed)."
+      # (Reverted) No host yt-dlp download; container will install via pip
     fi
 
     # Get the original user's home directory for JAR files

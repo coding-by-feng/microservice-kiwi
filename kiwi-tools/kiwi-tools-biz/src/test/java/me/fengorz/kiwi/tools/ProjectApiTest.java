@@ -39,7 +39,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc(addFilters = false)
 @ActiveProfiles("test")
 @SpringBootTest(
-        classes = {ToolsBizTestApplication.class, ToolsBizTestOverrides.class},
+        classes = {ToolsBizTestApplication.class},
         webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @Import(ProjectApiTest.DummyRedisTestConfig.class)
 public class ProjectApiTest {

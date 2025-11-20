@@ -9,7 +9,7 @@ import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
 import me.fengorz.kiwi.common.sdk.enumeration.AiPromptModeEnum;
 import me.fengorz.kiwi.common.sdk.enumeration.LanguageEnum;
 import me.fengorz.kiwi.common.sdk.web.WebTools;
-import me.fengorz.kiwi.common.ytb.YouTuBeHelper;
+import me.fengorz.kiwi.common.ytb.YouTubeClient;
 import me.fengorz.kiwi.common.ytb.YtbSubtitlesResult;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpHeaders;
@@ -29,14 +29,14 @@ import java.util.UUID;
 @RequestMapping("/ai/ytb/video")
 public class YouTuBeController {
 
-    private final YouTuBeHelper youTuBeHelper;
+    private final YouTubeClient youTubeClient;
     private final AiChatService grokAiService;
     private final YtbSubtitleStreamingService subtitleStreamingService;
 
-    public YouTuBeController(YouTuBeHelper youTuBeHelper,
+    public YouTuBeController(YouTubeClient youTubeClient,
                              @Qualifier("grokAiService") AiChatService grokAiService,
                              YtbSubtitleStreamingService subtitleStreamingService) {
-        this.youTuBeHelper = youTuBeHelper;
+        this.youTubeClient = youTubeClient;
         this.grokAiService = grokAiService;
         this.subtitleStreamingService = subtitleStreamingService;
     }
@@ -44,7 +44,7 @@ public class YouTuBeController {
     @GetMapping("/download")
     public ResponseEntity<StreamingResponseBody> downloadVideo(@RequestParam("url") String videoUrl) {
         try {
-            InputStream inputStream = youTuBeHelper.downloadVideo(WebTools.decode(videoUrl));
+            InputStream inputStream = youTubeClient.downloadVideo(WebTools.decode(videoUrl));
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
             headers.setContentDispositionFormData("attachment", UUID.randomUUID().toString());
@@ -59,6 +59,9 @@ public class YouTuBeController {
             };
 
             return new ResponseEntity<>(stream, headers, HttpStatus.OK);
+        } catch (UnsupportedOperationException uoe) {
+            log.warn("Video download not supported in current YouTube mode: {}", uoe.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
@@ -319,3 +322,4 @@ public class YouTuBeController {
         }
     }
 }
+

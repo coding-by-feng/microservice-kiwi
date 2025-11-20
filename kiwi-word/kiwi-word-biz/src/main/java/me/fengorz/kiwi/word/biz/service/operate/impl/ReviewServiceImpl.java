@@ -65,7 +65,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Resource;
 import java.io.ByteArrayInputStream;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -94,10 +93,8 @@ public class ReviewServiceImpl implements ReviewService {
     private final WordMainMapper wordMainMapper;
     private final CharacterMapper characterMapper;
     private final ParaphraseStarRelMapper paraphraseStarRelMapper;
-    @Resource(name = "fastDfsService")
     private DfsService dfsService;
     private final AudioService audioService;
-    @Resource(name = "deepgramAura2TtsService")
     private TtsService deepgramTtsService;
     private final ParaphraseTtsGenerationPayload paraphraseTtsGenerationPayload;
     private final RevisePermanentAudioHelper revisePermanentAudioHelper;

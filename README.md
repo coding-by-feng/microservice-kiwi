@@ -326,3 +326,28 @@ redis-cli KEYS 'KIWI:GROK:SUBTITLE:*' | xargs -r redis-cli DEL
 
 ---
 > This README is a condensed, modernized rewrite emphasizing architecture, extensibility, and the AI streaming subtitle workflow. For legacy step-by-step provisioning details, consult earlier revisions or the deployment scripts themselves.
+
+## YouTube Data Source Switching
+
+Set `youtube.mode` in your application configuration (application.yml / application.properties) to choose implementation:
+
+- `api` (default): Uses YouTube Data API (OAuth/key required) via `YouTuBeApiHelper`.
+- `yt-dlp`: Uses local yt-dlp CLI tool (no API quota required) via `YouTuBeHelper`.
+
+Example (application.yml):
+
+```
+youtube:
+  mode: yt-dlp
+  video:
+    command: yt-dlp
+    download:
+      path: /tmp/ytb-downloads
+    subtitles:
+      langs: en,en-GB,en-US
+    large-subtitles:
+      threshold: 200
+```
+
+When in `api` mode, video binary download is not supported; the `/ai/ytb/video/download` endpoint will return 400.
+When in `yt-dlp` mode, subtitles and titles are resolved via the CLI. Caching logic remains unchanged.

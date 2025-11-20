@@ -17,8 +17,9 @@
 package me.fengorz.kiwi.common.dfs;
 
 import com.github.tobato.fastdfs.exception.FdfsServerException;
-import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.api.R;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -27,9 +28,10 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 /**
  * @Description 全局的异常处理器 @Author Kason Zhan @Date 2019/11/26 3:28 PM
  */
-@Slf4j
 @RestControllerAdvice
 public class GlobalDfsExceptionHandler {
+
+    private static final Logger log = LoggerFactory.getLogger(GlobalDfsExceptionHandler.class);
 
     @ExceptionHandler({FdfsServerException.class})
     @ResponseStatus(HttpStatus.NO_CONTENT)

@@ -39,7 +39,7 @@ import java.util.Set;
  * @Author Kason Zhan
  * @Date 2019/11/4 10:58 AM
  */
-@Service("fastDfsService")
+@Service
 @ConditionalOnProperty(name = "storage.backend", havingValue = "fastdfs", matchIfMissing = true)
 @Slf4j
 @RequiredArgsConstructor

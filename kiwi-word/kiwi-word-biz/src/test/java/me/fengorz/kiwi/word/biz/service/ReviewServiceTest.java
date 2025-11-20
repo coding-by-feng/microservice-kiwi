@@ -58,7 +58,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import javax.annotation.Resource;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -88,7 +87,6 @@ public class ReviewServiceTest {
     @Autowired
     private ParaphraseService paraphraseService;
 
-    @Resource(name = "fastDfsService")
     private DfsService dfsService;
 
     @Autowired

@@ -5,7 +5,6 @@ import me.fengorz.kiwi.tools.config.ToolsProperties;
 import me.fengorz.kiwi.tools.exception.ToolsException;
 import me.fengorz.kiwi.tools.model.project.ProjectPhoto;
 import me.fengorz.kiwi.tools.repository.ProjectPhotoRepository;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.util.unit.DataSize;
@@ -24,7 +23,7 @@ public class ProjectPhotoService {
     private final DfsService dfsService;
     private final ToolsProperties toolsProperties;
 
-    public ProjectPhotoService(ProjectPhotoRepository repo, StorageService storageService, @Qualifier("dfsService") DfsService dfsService, ToolsProperties toolsProperties) {
+    public ProjectPhotoService(ProjectPhotoRepository repo, StorageService storageService, DfsService dfsService, ToolsProperties toolsProperties) {
         this.repo = repo;
         this.storageService = storageService;
         this.dfsService = dfsService;

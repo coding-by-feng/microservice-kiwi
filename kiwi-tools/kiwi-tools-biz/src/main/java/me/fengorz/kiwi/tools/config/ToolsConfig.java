@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.bdf.config.CoreConfig;
 import me.fengorz.kiwi.common.cache.redis.config.CacheConfig;
 import me.fengorz.kiwi.common.db.config.DbConfig;
+import me.fengorz.kiwi.common.dfs.DfsConfig;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -15,7 +16,7 @@ import org.springframework.context.annotation.Import;
 @Slf4j
 @Configuration
 @ComponentScan(basePackages = "me.fengorz.kiwi.**")
-@Import({CoreConfig.class, DbConfig.class})
+@Import({CoreConfig.class, DbConfig.class, DfsConfig.class})
 public class ToolsConfig {
 
     public ToolsConfig() {

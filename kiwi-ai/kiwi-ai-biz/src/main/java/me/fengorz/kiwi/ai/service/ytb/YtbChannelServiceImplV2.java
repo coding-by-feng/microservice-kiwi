@@ -49,14 +49,14 @@ public class YtbChannelServiceImplV2 extends ServiceImpl<YtbChannelMapper, YtbCh
     private final AiChatService grokAiService;
 
     public YtbChannelServiceImplV2(YtbChannelUserMapper channelUserMapper,
-            YtbChannelVideoMapper videoMapper,
-            YtbVideoSubtitlesMapper subtitlesMapper,
-            YtbVideoSubtitlesTranslationMapper subtitlesTranslationMapper,
-            YouTubeApiService youTubeApiService,
-            SeqService seqService,
-            YouTubeClient youTubeClient,
-            YtbChannelFavoriteMapper channelFavoriteMapper,
-            @Qualifier("grokAiService") AiChatService grokAiService) {
+                                   YtbChannelVideoMapper videoMapper,
+                                   YtbVideoSubtitlesMapper subtitlesMapper,
+                                   YtbVideoSubtitlesTranslationMapper subtitlesTranslationMapper,
+                                   YouTubeApiService youTubeApiService,
+                                   SeqService seqService,
+                                   YouTubeClient youTubeClient,
+                                   YtbChannelFavoriteMapper channelFavoriteMapper,
+                                   @Qualifier("grokAiService") AiChatService grokAiService) {
         this.channelUserMapper = channelUserMapper;
         this.videoMapper = videoMapper;
         this.subtitlesMapper = subtitlesMapper;
@@ -80,8 +80,8 @@ public class YtbChannelServiceImplV2 extends ServiceImpl<YtbChannelMapper, YtbCh
 
         try {
             // Decode the input
-            String decodedInput = channelLinkOrName.startsWith("http") ? WebTools.decode(channelLinkOrName)
-                    : channelLinkOrName;
+            String decodedInput = channelLinkOrName.startsWith("http") ?
+                    WebTools.decode(channelLinkOrName) : channelLinkOrName;
 
             log.info("Decoded input: {}", decodedInput);
 
@@ -152,8 +152,7 @@ public class YtbChannelServiceImplV2 extends ServiceImpl<YtbChannelMapper, YtbCh
         }
 
         try {
-            log.info("Found channel: ID={}, name={}, link={}", channelId, channel.getChannelName(),
-                    channel.getChannelLink());
+            log.info("Found channel: ID={}, name={}, link={}", channelId, channel.getChannelName(), channel.getChannelLink());
 
             updateChannelStatus("Updating channel status to PROCESSING for channel ID: {}", channelId, channel,
                     ProcessStatusEnum.PROCESSING, "Channel status updated to PROCESSING for channel ID: {}");
@@ -318,8 +317,7 @@ public class YtbChannelServiceImplV2 extends ServiceImpl<YtbChannelMapper, YtbCh
     }
 
     private LocalDateTime parsePublishedAt(String publishedAt) {
-        if (publishedAt == null || publishedAt.isEmpty())
-            return null;
+        if (publishedAt == null || publishedAt.isEmpty()) return null;
         try {
             // RFC3339 / ISO8601 from YouTube API, e.g. 2024-11-12T09:30:00Z
             OffsetDateTime odt = OffsetDateTime.parse(publishedAt, DateTimeFormatter.ISO_OFFSET_DATE_TIME);
@@ -331,8 +329,7 @@ public class YtbChannelServiceImplV2 extends ServiceImpl<YtbChannelMapper, YtbCh
             // Try basic ISO
             OffsetDateTime odt = OffsetDateTime.parse(publishedAt);
             return odt.toLocalDateTime();
-        } catch (Exception ignored) {
-        }
+        } catch (Exception ignored) {}
         return null;
     }
 
@@ -375,8 +372,7 @@ public class YtbChannelServiceImplV2 extends ServiceImpl<YtbChannelMapper, YtbCh
     }
 
     private Integer mapSubtitleType(SubtitleTypeEnum typeEnum) {
-        if (typeEnum == null)
-            return 1;
+        if (typeEnum == null) return 1;
         switch (typeEnum) {
             case SMALL_AUTO_GENERATED_RETURN_STRING:
             case LARGE_AUTO_GENERATED_RETURN_LIST:
@@ -395,7 +391,8 @@ public class YtbChannelServiceImplV2 extends ServiceImpl<YtbChannelMapper, YtbCh
                 LanguageEnum.EN,
                 result.getScrollingSubtitles(),
                 ProcessStatusEnum.FINISHED.getCode(),
-                false);
+                false
+        );
 
         // Generate Chinese translation
         try {
@@ -404,7 +401,8 @@ public class YtbChannelServiceImplV2 extends ServiceImpl<YtbChannelMapper, YtbCh
                     LanguageEnum.ZH_CN,
                     "",
                     ProcessStatusEnum.PROCESSING.getCode(),
-                    true);
+                    true
+            );
 
             String translatedContent;
             Object pendingObj = result.getPendingToBeTranslatedOrRetouchedSubtitles();
@@ -412,16 +410,13 @@ public class YtbChannelServiceImplV2 extends ServiceImpl<YtbChannelMapper, YtbCh
                 @SuppressWarnings("unchecked")
                 List<String> lines = (List<String>) pendingObj;
                 // Batch translate lines
-                translatedContent = grokAiService.batchCallForYtbAndCache(videoUrl, lines,
-                        AiPromptModeEnum.SUBTITLE_TRANSLATOR, LanguageEnum.ZH_CN);
+                translatedContent = grokAiService.batchCallForYtbAndCache(videoUrl, lines, AiPromptModeEnum.SUBTITLE_TRANSLATOR, LanguageEnum.ZH_CN);
             } else if (pendingObj instanceof String) {
                 String text = (String) pendingObj;
-                translatedContent = grokAiService.callForYtbAndCache(videoUrl, text,
-                        AiPromptModeEnum.SUBTITLE_TRANSLATOR, LanguageEnum.ZH_CN);
+                translatedContent = grokAiService.callForYtbAndCache(videoUrl, text, AiPromptModeEnum.SUBTITLE_TRANSLATOR, LanguageEnum.ZH_CN);
             } else {
                 // Fallback to translating the whole scrolling text
-                translatedContent = grokAiService.callForYtbAndCache(videoUrl, result.getScrollingSubtitles(),
-                        AiPromptModeEnum.SUBTITLE_TRANSLATOR, LanguageEnum.ZH_CN);
+                translatedContent = grokAiService.callForYtbAndCache(videoUrl, result.getScrollingSubtitles(), AiPromptModeEnum.SUBTITLE_TRANSLATOR, LanguageEnum.ZH_CN);
             }
 
             updateSubtitleTranslation(zhTransId, translatedContent, ProcessStatusEnum.FINISHED.getCode());
@@ -433,13 +428,14 @@ public class YtbChannelServiceImplV2 extends ServiceImpl<YtbChannelMapper, YtbCh
                     LanguageEnum.ZH_CN,
                     "",
                     ProcessStatusEnum.READY.getCode(),
-                    true);
+                    true
+            );
         }
     }
 
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRES_NEW)
     private Long saveSubtitleTranslation(Long subtitlesId, LanguageEnum language, String translation,
-            Integer status, boolean fromAi) {
+                                         Integer status, boolean fromAi) {
         Long translationId = Long.valueOf(seqService.genCommonIntSequence());
 
         YtbVideoSubtitlesTranslationDO translationDO = new YtbVideoSubtitlesTranslationDO()
@@ -469,7 +465,7 @@ public class YtbChannelServiceImplV2 extends ServiceImpl<YtbChannelMapper, YtbCh
     @Override
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRES_NEW)
     public void updateChannelStatus(String previousLogFormat, Long channelId, YtbChannelDO channel,
-            ProcessStatusEnum status, String postLogFormat) {
+                                    ProcessStatusEnum status, String postLogFormat) {
         log.info(previousLogFormat, channelId);
         channel.setStatus(status.getCode());
         this.updateById(channel);
@@ -483,7 +479,8 @@ public class YtbChannelServiceImplV2 extends ServiceImpl<YtbChannelMapper, YtbCh
         IPage<YtbChannelVO> voPage = new Page<>(
                 channelPage.getCurrent(),
                 channelPage.getSize(),
-                channelPage.getTotal());
+                channelPage.getTotal()
+        );
 
         List<YtbChannelDO> records = ListUtils.emptyIfNull(channelPage.getRecords());
         List<Long> channelIds = records.stream().map(YtbChannelDO::getId).collect(Collectors.toList());
@@ -491,19 +488,16 @@ public class YtbChannelServiceImplV2 extends ServiceImpl<YtbChannelMapper, YtbCh
         Set<Long> userFavSet = new HashSet<>();
         Map<Long, Long> favCountMap = new HashMap<>();
         if (!channelIds.isEmpty()) {
-            List<YtbChannelFavoriteDO> userFavs = channelFavoriteMapper
-                    .selectList(new LambdaQueryWrapper<YtbChannelFavoriteDO>()
-                            .eq(YtbChannelFavoriteDO::getUserId, userId)
-                            .in(YtbChannelFavoriteDO::getChannelId, channelIds)
-                            .eq(YtbChannelFavoriteDO::getIfValid, true));
+            List<YtbChannelFavoriteDO> userFavs = channelFavoriteMapper.selectList(new LambdaQueryWrapper<YtbChannelFavoriteDO>()
+                    .eq(YtbChannelFavoriteDO::getUserId, userId)
+                    .in(YtbChannelFavoriteDO::getChannelId, channelIds)
+                    .eq(YtbChannelFavoriteDO::getIfValid, true));
             userFavSet.addAll(userFavs.stream().map(YtbChannelFavoriteDO::getChannelId).collect(Collectors.toSet()));
 
-            List<YtbChannelFavoriteDO> allFavs = channelFavoriteMapper
-                    .selectList(new LambdaQueryWrapper<YtbChannelFavoriteDO>()
-                            .in(YtbChannelFavoriteDO::getChannelId, channelIds)
-                            .eq(YtbChannelFavoriteDO::getIfValid, true));
-            favCountMap.putAll(allFavs.stream()
-                    .collect(Collectors.groupingBy(YtbChannelFavoriteDO::getChannelId, Collectors.counting())));
+            List<YtbChannelFavoriteDO> allFavs = channelFavoriteMapper.selectList(new LambdaQueryWrapper<YtbChannelFavoriteDO>()
+                    .in(YtbChannelFavoriteDO::getChannelId, channelIds)
+                    .eq(YtbChannelFavoriteDO::getIfValid, true));
+            favCountMap.putAll(allFavs.stream().collect(Collectors.groupingBy(YtbChannelFavoriteDO::getChannelId, Collectors.counting())));
         }
 
         List<YtbChannelVO> vos = records.stream()
@@ -548,3 +542,4 @@ public class YtbChannelServiceImplV2 extends ServiceImpl<YtbChannelMapper, YtbCh
                 .build();
     }
 }
+

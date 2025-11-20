@@ -30,7 +30,7 @@ import java.util.Objects;
 @Slf4j
 @Service
 @KiwiCacheKeyPrefix(YtbConstants.CACHE_KEY_PREFIX_YTB.CLASS)
-public class YouTuBeApiHelper {
+public class YouTuBeApiHelper implements me.fengorz.kiwi.common.ytb.YouTubeClient {
 
     private final YouTubeApiService youTubeApiService;
 
@@ -53,6 +53,7 @@ public class YouTuBeApiHelper {
     @KiwiCacheKeyPrefix(YtbConstants.CACHE_KEY_PREFIX_YTB.SUBTITLES)
     @Cacheable(cacheNames = YtbConstants.CACHE_NAMES, keyGenerator = CacheConstants.CACHE_KEY_GENERATOR_BEAN,
             unless = "#result == null")
+    @Override
     public YtbSubtitlesResult downloadSubtitles(@KiwiCacheKey(1) String videoUrl) {
         List<CaptionResponse> captions = youTubeApiService.getVideoCaptions(videoUrl);
         if (CollectionUtils.isEmpty(captions)) {
@@ -73,9 +74,15 @@ public class YouTuBeApiHelper {
         return buildResult(videoUrl, selected, parseResult);
     }
 
+    @Override
     public String getVideoTitle(String videoUrl) {
         VideoDetailsResponse details = youTubeApiService.getVideoDetails(videoUrl);
         return details.getTitle();
+    }
+
+    @Override
+    public java.io.InputStream downloadVideo(String videoUrl) {
+        throw new UnsupportedOperationException("Video download not supported via YouTube Data API mode");
     }
 
     private CaptionResponse selectCaptionByLanguage(List<CaptionResponse> captions) {

@@ -1003,7 +1003,11 @@ else
   if [ "$SKIP_DOCKER_BUILD" = false ]; then
     # Download latest yt-dlp into AI docker contexts before build (only if AI is selected)
     if should_build_service "ai"; then
-      # (Reverted) No host yt-dlp download; container will install via pip
+      if ! download_latest_ytdlp; then
+        echo "❌ Cannot proceed: failed to download yt-dlp for AI build context."
+        echo "   Hint: check network or try again later."
+        exit 1
+      fi
     fi
 
     # Get the original user's home directory for JAR files
@@ -1191,6 +1195,24 @@ else
       [ -n "$ai_jar" ] && [ -f "$ai_jar" ] || { echo "❌ Missing jar for ai in ${USE_EXISTING_JARS_ONLY:+$ORIGINAL_HOME/built_jar}. Use -mode=obm first."; exit 1; }
       cp -f "$ai_jar" "$CURRENT_DIR/docker/kiwi/ai/biz"
       cp -f "$ai_jar" "$CURRENT_DIR/docker/kiwi/ai/batch"
+
+      # Ensure yt-dlp helper scripts are present in build contexts for Dockerfile COPY
+      SRC_AI_BIZ_SCRIPTS="$CURRENT_DIR/microservice-kiwi/kiwi-ai/kiwi-ai-biz/docker/biz"
+      for script in yt-dlp-auto-update.sh entrypoint-with-cron.sh; do
+        if [ -f "$SRC_AI_BIZ_SCRIPTS/$script" ]; then
+          cp -f "$SRC_AI_BIZ_SCRIPTS/$script" "$CURRENT_DIR/docker/kiwi/ai/biz/"
+          cp -f "$SRC_AI_BIZ_SCRIPTS/$script" "$CURRENT_DIR/docker/kiwi/ai/batch/" 2>/dev/null || true
+        else
+          echo "⚠️  Missing AI helper script in repo: $SRC_AI_BIZ_SCRIPTS/$script"
+        fi
+      done
+      chmod +x "$CURRENT_DIR/docker/kiwi/ai/biz/"*.sh 2>/dev/null || true
+      chmod +x "$CURRENT_DIR/docker/kiwi/ai/batch/"*.sh 2>/dev/null || true
+
+      # yt-dlp binary should have been downloaded earlier to these contexts as yt-dlp_linux
+      # Re-affirm permissions just in case
+      [ -f "$CURRENT_DIR/docker/kiwi/ai/biz/yt-dlp_linux" ] && chmod +x "$CURRENT_DIR/docker/kiwi/ai/biz/yt-dlp_linux" || true
+      [ -f "$CURRENT_DIR/docker/kiwi/ai/batch/yt-dlp_linux" ] && chmod +x "$CURRENT_DIR/docker/kiwi/ai/batch/yt-dlp_linux" || true
     fi
 
   else

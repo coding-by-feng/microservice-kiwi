@@ -9,6 +9,7 @@ export YTDLP_BIN
 
 # Ensure log directory exists
 mkdir -p /var/log
+: > /var/log/yt-dlp-update.log || true
 
 # Install cron job if not present
 CRON_FILE="/etc/cron.d/yt-dlp-update"
@@ -17,17 +18,17 @@ if [ ! -f "$CRON_FILE" ]; then
   chmod 0644 "$CRON_FILE"
 fi
 
-# Ensure cron is running
-service cron start || (
-  echo "Falling back to crond";
-  if command -v crond >/dev/null 2>&1; then
-    crond
-  fi
-)
+# Start cron daemon (Debian/Ubuntu: cron; Alpine: crond)
+if command -v cron >/dev/null 2>&1; then
+  cron || true
+elif command -v crond >/dev/null 2>&1; then
+  crond || true
+else
+  echo "⚠️  No cron daemon found in image"
+fi
 
 # Run immediate update on container start to avoid waiting a day
 /usr/local/bin/yt-dlp-auto-update || echo "Initial yt-dlp update failed; continuing"
 
 # Launch application
-exec java ${JAVA_OPTS:-""} -jar /app/app.jar
-
+exec java ${JAVA_OPTS:-""} -jar /app/app.jar "$@"

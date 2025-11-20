@@ -16,7 +16,7 @@ import me.fengorz.kiwi.ai.service.ytb.mapper.YtbChannelMapper;
 import me.fengorz.kiwi.ai.service.ytb.mapper.YtbChannelVideoMapper;
 import me.fengorz.kiwi.ai.service.ytb.mapper.YtbVideoFavoriteMapper;
 import me.fengorz.kiwi.common.db.service.SeqService;
-import me.fengorz.kiwi.common.ytb.YouTuBeHelper;
+import me.fengorz.kiwi.common.ytb.YouTubeClient;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -37,7 +37,7 @@ public class YtbFavoriteServiceImpl implements YtbFavoriteService {
     private final YtbChannelVideoMapper videoMapper;
     private final SeqService seqService;
     // Inject YouTube helper to fetch real video titles
-    private final YouTuBeHelper youTuBeHelper;
+    private final YouTubeClient youTubeClient;
 
     @Override
     public boolean favoriteChannel(Integer userId, Long channelId) {
@@ -137,7 +137,7 @@ public class YtbFavoriteServiceImpl implements YtbFavoriteService {
             // If record exists but title looks like a URL, try to backfill the real title
             if (video.getVideoTitle() == null || video.getVideoTitle().startsWith("http")) {
                 try {
-                    String realTitle = youTuBeHelper.getVideoTitle(videoUrl);
+                    String realTitle = youTubeClient.getVideoTitle(videoUrl);
                     if (realTitle != null && !realTitle.trim().isEmpty()) {
                         video.setVideoTitle(realTitle.trim());
                         videoMapper.updateById(video);
@@ -289,12 +289,12 @@ public class YtbFavoriteServiceImpl implements YtbFavoriteService {
 
     private String resolveVideoTitleSafely(String videoUrl) {
         try {
-            String title = youTuBeHelper.getVideoTitle(videoUrl);
+            String title = youTubeClient.getVideoTitle(videoUrl);
             if (title != null && !title.trim().isEmpty()) {
                 return title.trim();
             }
         } catch (Exception e) {
-            log.warn("Failed to fetch video title via yt-dlp for {}: {}", videoUrl, e.getMessage());
+            log.warn("Failed to fetch video title via current YouTube client for {}: {}", videoUrl, e.getMessage());
         }
         return deriveTitleFromUrl(videoUrl);
     }

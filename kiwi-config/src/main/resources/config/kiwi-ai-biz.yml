@@ -75,6 +75,8 @@ ai:
     ambiguous-association-correction: "Correction:  | Alternatives: alt1, alt2, alt3; Detect and correct misspelled or ambiguous words/phrases. Provide the corrected form and list closely related or commonly confused alternatives, all in #[TL]. If no clear correction exists, set Correction to Unknown but still list Alternatives. Plain text only."
 
 youtube:
+  # Select implementation: api (YouTube Data API) or yt-dlp (local CLI)
+  mode: yt-dlp # Change to yt-dlp to use local extraction without API quotas
   api:
     # Get your API key from Google Cloud Console
     # Enable YouTube Data API v3
@@ -96,6 +98,14 @@ youtube:
     enabled: false
 
   video:
+    # Path where yt-dlp will store temporary downloads (ensure writable)
+    download:
+      path: /tmp/ytb-downloads
+    # yt-dlp executable command (must be in PATH or absolute path)
+    command: yt-dlp
+    # Ordered preferred subtitle languages (first match wins)
+    subtitles:
+      langs: en,en-GB,en-US
     large-subtitles:
       threshold: 100
 

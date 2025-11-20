@@ -19,7 +19,7 @@ import me.fengorz.kiwi.common.sdk.enumeration.ProcessStatusEnum;
 import me.fengorz.kiwi.common.sdk.exception.ServiceException;
 import me.fengorz.kiwi.common.sdk.web.WebTools;
 import me.fengorz.kiwi.common.ytb.SubtitleTypeEnum;
-import me.fengorz.kiwi.common.ytb.YouTuBeHelper;
+import me.fengorz.kiwi.common.ytb.YouTubeClient;
 import me.fengorz.kiwi.common.ytb.YtbSubtitlesResult;
 import org.apache.commons.collections4.ListUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -44,7 +44,7 @@ public class YtbChannelServiceImplV2 extends ServiceImpl<YtbChannelMapper, YtbCh
     private final YtbVideoSubtitlesTranslationMapper subtitlesTranslationMapper;
     private final YouTubeApiService youTubeApiService;
     private final SeqService seqService;
-    private final YouTuBeHelper youTuBeHelper;
+    private final YouTubeClient youTubeClient;
     private final YtbChannelFavoriteMapper channelFavoriteMapper;
     private final AiChatService grokAiService;
 
@@ -54,7 +54,7 @@ public class YtbChannelServiceImplV2 extends ServiceImpl<YtbChannelMapper, YtbCh
                                    YtbVideoSubtitlesTranslationMapper subtitlesTranslationMapper,
                                    YouTubeApiService youTubeApiService,
                                    SeqService seqService,
-                                   YouTuBeHelper youTuBeHelper,
+                                   YouTubeClient youTubeClient,
                                    YtbChannelFavoriteMapper channelFavoriteMapper,
                                    @Qualifier("grokAiService") AiChatService grokAiService) {
         this.channelUserMapper = channelUserMapper;
@@ -63,7 +63,7 @@ public class YtbChannelServiceImplV2 extends ServiceImpl<YtbChannelMapper, YtbCh
         this.subtitlesTranslationMapper = subtitlesTranslationMapper;
         this.youTubeApiService = youTubeApiService;
         this.seqService = seqService;
-        this.youTuBeHelper = youTuBeHelper;
+        this.youTubeClient = youTubeClient;
         this.channelFavoriteMapper = channelFavoriteMapper;
         this.grokAiService = grokAiService;
         log.info("YtbChannelServiceImplV2 initialized with YouTube API service");
@@ -338,7 +338,7 @@ public class YtbChannelServiceImplV2 extends ServiceImpl<YtbChannelMapper, YtbCh
 
         try {
             // Fetch real subtitles via yt-dlp helper (no OAuth required)
-            YtbSubtitlesResult result = youTuBeHelper.downloadSubtitles(videoUrl);
+            YtbSubtitlesResult result = youTubeClient.downloadSubtitles(videoUrl);
             if (result == null || result.getScrollingSubtitles() == null) {
                 log.info("No subtitles available for video: {}", videoId);
                 return;

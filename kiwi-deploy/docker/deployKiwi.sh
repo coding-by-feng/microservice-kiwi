@@ -1004,7 +1004,6 @@ else
     # Download latest yt-dlp into AI docker contexts before build (only if AI is selected)
     if should_build_service "ai"; then
       # (Reverted) No host yt-dlp download; container will install via pip
-      :
     fi
 
     # Get the original user's home directory for JAR files

@@ -35,7 +35,6 @@ import me.fengorz.kiwi.word.biz.service.operate.OperateService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Resource;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -56,7 +55,6 @@ public class CleanerServiceImpl implements CleanerService {
     private final PronunciationService pronunciationService;
     private final WordMainVariantService variantService;
     private final ParaphrasePhraseService phraseService;
-    @Resource(name = "fastDfsService")
     private DfsService dfsService;
 
     @Override

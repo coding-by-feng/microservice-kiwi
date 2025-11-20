@@ -22,7 +22,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringRunner.class)
 @AutoConfigureMockMvc(addFilters = false)
 @ActiveProfiles("test")
-@SpringBootTest(classes = {ToolsBizTestApplication.class, ToolsBizTestOverrides.class},
+@SpringBootTest(classes = {ToolsBizTestApplication.class},
         webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 public class ProjectListFilterTest {
 

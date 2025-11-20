@@ -29,6 +29,12 @@
             <artifactId>commons-net</artifactId>
             <version>3.10.0</version>
         </dependency>
+        <!-- Mock FTP server for integration tests (supports real FTP commands) -->
+        <dependency>
+            <groupId>org.mockftpserver</groupId>
+            <artifactId>MockFtpServer</artifactId>
+            <version>3.0.0</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
-
 </project>

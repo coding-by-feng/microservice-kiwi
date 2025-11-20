@@ -36,7 +36,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -54,7 +53,6 @@ public class ReviewAudioServiceImpl extends ServiceImpl<ReviewAudioMapper, WordR
     private final ReviewAudioMapper mapper;
     private final ParaphraseExampleService paraphraseExampleService;
     private final SeqService seqService;
-    @Resource(name = "fastDfsService")
     private DfsService dfsService;
 
     @Override

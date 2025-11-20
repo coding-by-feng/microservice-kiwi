@@ -1,14 +1,13 @@
 package me.fengorz.kiwi.common.dfs.ftp;
 
 import com.github.tobato.fastdfs.domain.fdfs.MetaData;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.dfs.DfsConstants;
-import me.fengorz.kiwi.common.dfs.DfsService;
 import me.fengorz.kiwi.common.sdk.exception.dfs.DfsOperateDeleteException;
 import me.fengorz.kiwi.common.sdk.exception.dfs.DfsOperateException;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 
@@ -22,15 +21,15 @@ import java.util.Date;
 import java.util.Set;
 import java.util.UUID;
 
-@Service("ftpDfsService")
+@Service
 @ConditionalOnProperty(name = "storage.backend", havingValue = "ftp")
-@Slf4j
-@RequiredArgsConstructor
-public class FtpDfsServiceImpl implements DfsService {
+public class FtpDfsServiceImpl implements me.fengorz.kiwi.common.dfs.DfsService {
 
+    private static final Logger log = LoggerFactory.getLogger(FtpDfsServiceImpl.class);
     private static final String GROUP = "ftp";
-
     private final FtpProperties props;
+
+    public FtpDfsServiceImpl(FtpProperties props) { this.props = props; }
 
     @Override
     public String uploadFile(InputStream inputStream, long size, String extName) throws DfsOperateException {

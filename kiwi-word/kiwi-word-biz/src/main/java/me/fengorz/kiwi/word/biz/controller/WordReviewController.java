@@ -31,7 +31,6 @@ import me.fengorz.kiwi.word.biz.service.operate.ReviewService;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
@@ -48,7 +47,6 @@ public class WordReviewController extends AbstractFileController {
 
     private final ReviewService reviewService;
     private final TtsService deepgramTtsService;
-    @Resource(name = "fastDfsService")
     private DfsService dfsService;
 
     public WordReviewController(ReviewService reviewService,

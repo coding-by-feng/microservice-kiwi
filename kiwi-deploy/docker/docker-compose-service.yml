@@ -228,7 +228,7 @@ services:
           sleep 10
         done
         # To avoid overlapping with kiwi-word-biz startup (assumed 3 minutes), delay 180s
-        echo "kiwi-auth is healthy. Delaying 360s (6˚ minutes) before starting kiwi-ai-biz..."
+        echo "kiwi-auth is healthy. Delaying 100s before starting kiwi-ai-biz..."
         sleep 100
         echo "Starting kiwi-ai-biz..."
         export JAVA_OPTS="-Xms512m -Xmx1048m -XX:+UseG1GC -XX:MaxGCPauseMillis=200"

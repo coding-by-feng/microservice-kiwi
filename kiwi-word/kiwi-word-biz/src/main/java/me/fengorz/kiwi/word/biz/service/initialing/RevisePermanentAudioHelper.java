@@ -29,7 +29,6 @@ import me.fengorz.kiwi.word.api.entity.WordReviewAudioDO;
 import me.fengorz.kiwi.word.biz.service.base.ReviewAudioService;
 import me.fengorz.kiwi.word.biz.service.operate.AudioService;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
@@ -61,7 +60,7 @@ public class RevisePermanentAudioHelper implements InitializingBean {
     private final ApplicationContext applicationContext;
 
     public RevisePermanentAudioHelper(ReviewAudioService reviewAudioService,
-                                      @Qualifier("fastDfsService") DfsService dfsService,
+                                      DfsService dfsService,
                                       AudioService audioService,
                                       ApplicationContext applicationContext) {
         this.reviewAudioService = reviewAudioService;

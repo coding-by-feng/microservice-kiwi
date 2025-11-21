@@ -50,7 +50,8 @@ public class YtbSubtitleWebSocketHandler extends TextWebSocketHandler {
                 LOG_PREFIX, sessionId, session.getRemoteAddress());
 
         // Send welcome message
-        YtbSubtitleResponse welcomeResponse = YtbSubtitleResponse.connected("YouTube Subtitle WebSocket connection established");
+        YtbSubtitleResponse welcomeResponse = YtbSubtitleResponse
+                .connected("YouTube Subtitle WebSocket connection established");
         sendMessageWithLogging(session, welcomeResponse, "CONNECTION_ESTABLISHED");
     }
 
@@ -174,68 +175,71 @@ public class YtbSubtitleWebSocketHandler extends TextWebSocketHandler {
                 sessionBuffers.put(sessionId, new StringBuilder());
 
                 // Send processing started message
-                YtbSubtitleResponse startedResponse = YtbSubtitleResponse.started("Subtitle processing started", request);
+                YtbSubtitleResponse startedResponse = YtbSubtitleResponse.started("Subtitle processing started",
+                        request);
                 sendMessageWithLogging(session, startedResponse, "PROCESSING_STARTED");
 
-                // Determine effective language: if requestType is 'scrolling', bypass translation
-                String requestType = request.getRequestType() != null ? request.getRequestType().trim().toLowerCase() : "";
+                // Determine effective language: if requestType is 'scrolling', bypass
+                // translation
+                String requestType = request.getRequestType() != null ? request.getRequestType().trim().toLowerCase()
+                        : "";
                 String effectiveLanguage = "scrolling".equals(requestType) ? null : request.getLanguage();
 
                 // Use the streaming service to handle the request
                 subtitleStreamingService.streamSubtitleTranslation(
-                    request.getVideoUrl(),
-                    effectiveLanguage,
-                    // onChunk callback
-                    chunk -> {
-                        if (isSessionActive(sessionId)) {
-                            // Append chunk to buffer for fullContent on completion
-                            StringBuilder buffer = sessionBuffers.computeIfAbsent(sessionId, k -> new StringBuilder());
-                            buffer.append(chunk);
+                        request.getVideoUrl(),
+                        effectiveLanguage,
+                        // onChunk callback
+                        chunk -> {
+                            if (isSessionActive(sessionId)) {
+                                // Append chunk to buffer for fullContent on completion
+                                StringBuilder buffer = sessionBuffers.computeIfAbsent(sessionId,
+                                        k -> new StringBuilder());
+                                buffer.append(chunk);
 
-                            log.debug("{} Received chunk: '{}'", LOG_PREFIX, chunk);
-                            YtbSubtitleResponse chunkResponse = YtbSubtitleResponse.chunk(chunk, request);
-                            sendMessageWithLogging(session, chunkResponse, "AI_CHUNK");
-                        }
-                    },
-                    // onError callback
-                    error -> {
-                        if (isSessionActive(sessionId)) {
-                            log.error("{} Subtitle processing error - SessionId: {}, Error: {}",
-                                    LOG_PREFIX, sessionId, error.getMessage(), error);
-                            YtbSubtitleResponse errorResponse = YtbSubtitleResponse.error(
-                                    "Subtitle processing failed: " + error.getMessage(),
-                                    "PROCESSING_ERROR",
-                                    request);
-                            sendMessageWithLogging(session, errorResponse, "PROCESSING_ERROR");
-                        }
-                        // Clean up buffer on error
-                        sessionBuffers.remove(sessionId);
-                    },
-                    // onComplete callback
-                    () -> {
-                        long processingDuration = System.currentTimeMillis() - startTime;
-                        log.info("{} Subtitle processing completed - SessionId: {}, Duration: {}ms",
-                                LOG_PREFIX, sessionId, processingDuration);
-
-                        if (isSessionActive(sessionId)) {
-                            String fullContent = null;
-                            StringBuilder buffer = sessionBuffers.remove(sessionId);
-                            if (buffer != null && buffer.length() > 0) {
-                                fullContent = buffer.toString();
+                                log.debug("{} Received chunk: '{}'", LOG_PREFIX, chunk);
+                                YtbSubtitleResponse chunkResponse = YtbSubtitleResponse.chunk(chunk, request);
+                                sendMessageWithLogging(session, chunkResponse, "AI_CHUNK");
                             }
-
-                            YtbSubtitleResponse completedResponse = YtbSubtitleResponse.completed(
-                                    "Subtitle processing completed successfully",
-                                    request,
-                                    fullContent, // aggregated full content from chunks
-                                    processingDuration);
-                            sendMessageWithLogging(session, completedResponse, "COMPLETED");
-                        } else {
-                            // Ensure buffer cleanup if session inactive
+                        },
+                        // onError callback
+                        error -> {
+                            if (isSessionActive(sessionId)) {
+                                log.error("{} Subtitle processing error - SessionId: {}, Error: {}",
+                                        LOG_PREFIX, sessionId, error.getMessage(), error);
+                                YtbSubtitleResponse errorResponse = YtbSubtitleResponse.error(
+                                        "Subtitle processing failed: " + error.getMessage(),
+                                        "PROCESSING_ERROR",
+                                        request);
+                                sendMessageWithLogging(session, errorResponse, "PROCESSING_ERROR");
+                            }
+                            // Clean up buffer on error
                             sessionBuffers.remove(sessionId);
-                        }
-                    }
-                );
+                        },
+                        // onComplete callback
+                        () -> {
+                            long processingDuration = System.currentTimeMillis() - startTime;
+                            log.info("{} Subtitle processing completed - SessionId: {}, Duration: {}ms",
+                                    LOG_PREFIX, sessionId, processingDuration);
+
+                            if (isSessionActive(sessionId)) {
+                                String fullContent = null;
+                                StringBuilder buffer = sessionBuffers.remove(sessionId);
+                                if (buffer != null && buffer.length() > 0) {
+                                    fullContent = buffer.toString();
+                                }
+
+                                YtbSubtitleResponse completedResponse = YtbSubtitleResponse.completed(
+                                        "Subtitle processing completed successfully",
+                                        request,
+                                        fullContent, // aggregated full content from chunks
+                                        processingDuration);
+                                sendMessageWithLogging(session, completedResponse, "COMPLETED");
+                            } else {
+                                // Ensure buffer cleanup if session inactive
+                                sessionBuffers.remove(sessionId);
+                            }
+                        });
 
             } catch (Exception e) {
                 log.error("{} Error processing subtitle request - SessionId: {}, Error: {}",

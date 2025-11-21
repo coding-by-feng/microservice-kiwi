@@ -27,7 +27,8 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class AiCallHistoryServiceImpl extends ServiceImpl<AiCallHistoryMapper, AiCallHistoryDO> implements AiCallHistoryService {
+public class AiCallHistoryServiceImpl extends ServiceImpl<AiCallHistoryMapper, AiCallHistoryDO>
+        implements AiCallHistoryService {
 
     private final SeqService seqService;
 
@@ -44,8 +45,7 @@ public class AiCallHistoryServiceImpl extends ServiceImpl<AiCallHistoryMapper, A
                             .eq(AiCallHistoryDO::getPromptMode, request.getPromptMode())
                             .eq(AiCallHistoryDO::getPrompt, request.getPrompt())
                             .eq(AiCallHistoryDO::getIsDelete, false)
-                            .last("LIMIT 1")
-            );
+                            .last("LIMIT 1"));
 
             if (existingRecord != null) {
                 log.info("AI call history already exists for user: {} and aiUrl: {}, skipping save. Existing ID: {}",
@@ -72,8 +72,7 @@ public class AiCallHistoryServiceImpl extends ServiceImpl<AiCallHistoryMapper, A
             if (request.getTimestamp() != null) {
                 requestTimestamp = LocalDateTime.ofInstant(
                         Instant.ofEpochMilli(request.getTimestamp()),
-                        ZoneId.systemDefault()
-                );
+                        ZoneId.systemDefault());
             }
 
             // Create history record
@@ -103,8 +102,9 @@ public class AiCallHistoryServiceImpl extends ServiceImpl<AiCallHistoryMapper, A
     }
 
     @Override
-    public IPage<AiCallHistoryVO> getUserCallHistory(Page<AiCallHistoryDO> page, Long userId, HistoryFilterEnum filter) {
-        log.info("Getting AI call history for user: {}, page: {}, size: {}, filter: {}", 
+    public IPage<AiCallHistoryVO> getUserCallHistory(Page<AiCallHistoryDO> page, Long userId,
+            HistoryFilterEnum filter) {
+        log.info("Getting AI call history for user: {}, page: {}, size: {}, filter: {}",
                 userId, page.getCurrent(), page.getSize(), filter.getCode());
 
         // Build query wrapper based on filter
@@ -130,7 +130,7 @@ public class AiCallHistoryServiceImpl extends ServiceImpl<AiCallHistoryMapper, A
 
         // Add ordering
         queryWrapper.orderByDesc(AiCallHistoryDO::getTimestamp)
-                   .orderByDesc(AiCallHistoryDO::getCreateTime);
+                .orderByDesc(AiCallHistoryDO::getCreateTime);
 
         // Query user's call history
         IPage<AiCallHistoryDO> historyPage = this.page(page, queryWrapper);
@@ -147,18 +147,18 @@ public class AiCallHistoryServiceImpl extends ServiceImpl<AiCallHistoryMapper, A
         voPage.setTotal(historyPage.getTotal());
         voPage.setRecords(historyVOList);
 
-        log.info("Retrieved {} AI call history records for user: {} with filter: {}", 
+        log.info("Retrieved {} AI call history records for user: {} with filter: {}",
                 historyVOList.size(), userId, filter.getCode());
         return voPage;
     }
 
     @Override
     public IPage<AiCallHistoryVO> getUserCallHistory(Page<AiCallHistoryDO> page, Long userId) {
-        log.info("Getting AI call history for user: {}, page: {}, size: {}", 
+        log.info("Getting AI call history for user: {}, page: {}, size: {}",
                 userId, page.getCurrent(), page.getSize());
 
         // Query user's call history ordered by timestamp desc
-        IPage<AiCallHistoryDO> historyPage = this.page(page, 
+        IPage<AiCallHistoryDO> historyPage = this.page(page,
                 new LambdaQueryWrapper<AiCallHistoryDO>()
                         .eq(AiCallHistoryDO::getUserId, userId)
                         .eq(AiCallHistoryDO::getIsDelete, false)
@@ -208,18 +208,18 @@ public class AiCallHistoryServiceImpl extends ServiceImpl<AiCallHistoryMapper, A
             // Archive the record
             existingRecord.setIsArchive(true);
             existingRecord.setUpdateTime(LocalDateTime.now());
-            
+
             boolean result = this.updateById(existingRecord);
-            
+
             if (result) {
                 log.info("Successfully archived AI call history record - ID: {}", id);
             } else {
                 log.error("Failed to archive AI call history record - ID: {}", id);
             }
-            
+
             return result;
         } catch (Exception e) {
-            log.error("Error archiving AI call history record - ID: {}, User: {}, Error: {}", 
+            log.error("Error archiving AI call history record - ID: {}, User: {}, Error: {}",
                     id, userId, e.getMessage(), e);
             return false;
         }
@@ -251,18 +251,18 @@ public class AiCallHistoryServiceImpl extends ServiceImpl<AiCallHistoryMapper, A
             // Soft delete the record
             existingRecord.setIsDelete(true);
             existingRecord.setUpdateTime(LocalDateTime.now());
-            
+
             boolean result = this.updateById(existingRecord);
-            
+
             if (result) {
                 log.info("Successfully deleted AI call history record - ID: {}", id);
             } else {
                 log.error("Failed to delete AI call history record - ID: {}", id);
             }
-            
+
             return result;
         } catch (Exception e) {
-            log.error("Error deleting AI call history record - ID: {}, User: {}, Error: {}", 
+            log.error("Error deleting AI call history record - ID: {}, User: {}, Error: {}",
                     id, userId, e.getMessage(), e);
             return false;
         }

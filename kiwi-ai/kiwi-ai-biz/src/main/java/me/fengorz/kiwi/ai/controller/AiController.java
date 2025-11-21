@@ -40,64 +40,78 @@ public class AiController extends BaseController {
     @LogMarker(isPrintParameter = true)
     @GetMapping("/directly-translation/{language}/{originalText}")
     public R<AiResponseVO> directlyTranslation(@PathVariable(value = "originalText") String originalText,
-                                               @PathVariable(value = "language") String language) {
+            @PathVariable(value = "language") String language) {
         String decodedOriginalText = WebTools.decode(originalText);
-        return R.success(PojoBuilder.buildDirectlyTranslationVO(decodedOriginalText, LanguageConvertor.convertLanguageToEnum(language),
-                aiService.call(decodedOriginalText, AiPromptModeEnum.DIRECTLY_TRANSLATION, LanguageEnum.LANGUAGE_MAP.get(language))));
+        return R.success(PojoBuilder.buildDirectlyTranslationVO(decodedOriginalText,
+                LanguageConvertor.convertLanguageToEnum(language),
+                aiService.call(decodedOriginalText, AiPromptModeEnum.DIRECTLY_TRANSLATION,
+                        LanguageEnum.LANGUAGE_MAP.get(language))));
     }
 
     @LogMarker(isPrintParameter = true)
     @GetMapping("/translation-and-explanation/{language}/{originalText}")
     public R<AiResponseVO> translationAndExplanation(@PathVariable(value = "originalText") String originalText,
-                                                     @PathVariable(value = "language") String language) {
+            @PathVariable(value = "language") String language) {
         String decodedOriginalText = WebTools.decode(originalText);
-        return R.success(PojoBuilder.buildDirectlyTranslationVO(decodedOriginalText, LanguageConvertor.convertLanguageToEnum(language),
-                aiService.call(decodedOriginalText, AiPromptModeEnum.TRANSLATION_AND_EXPLANATION, LanguageEnum.LANGUAGE_MAP.get(language))));
+        return R.success(PojoBuilder.buildDirectlyTranslationVO(decodedOriginalText,
+                LanguageConvertor.convertLanguageToEnum(language),
+                aiService.call(decodedOriginalText, AiPromptModeEnum.TRANSLATION_AND_EXPLANATION,
+                        LanguageEnum.LANGUAGE_MAP.get(language))));
     }
 
     @LogMarker(isPrintParameter = true)
     @GetMapping("/grammar-explanation/{language}/{originalText}")
     public R<AiResponseVO> grammarExplanation(@PathVariable(value = "originalText") String originalText,
-                                              @PathVariable(value = "language") String language) {
+            @PathVariable(value = "language") String language) {
         String decodedOriginalText = WebTools.decode(originalText);
-        return R.success(PojoBuilder.buildDirectlyTranslationVO(decodedOriginalText, LanguageConvertor.convertLanguageToEnum(language),
-                aiService.call(decodedOriginalText, AiPromptModeEnum.GRAMMAR_EXPLANATION, LanguageEnum.LANGUAGE_MAP.get(language))));
+        return R.success(PojoBuilder.buildDirectlyTranslationVO(decodedOriginalText,
+                LanguageConvertor.convertLanguageToEnum(language),
+                aiService.call(decodedOriginalText, AiPromptModeEnum.GRAMMAR_EXPLANATION,
+                        LanguageEnum.LANGUAGE_MAP.get(language))));
     }
 
     @LogMarker(isPrintParameter = true)
     @GetMapping("/grammar-correction/{language}/{originalText}")
     public R<AiResponseVO> grammarCorrection(@PathVariable(value = "originalText") String originalText,
-                                             @PathVariable(value = "language") String language) {
+            @PathVariable(value = "language") String language) {
         String decodedOriginalText = WebTools.decode(originalText);
-        return R.success(PojoBuilder.buildDirectlyTranslationVO(decodedOriginalText, LanguageConvertor.convertLanguageToEnum(language),
-                aiService.call(decodedOriginalText, AiPromptModeEnum.GRAMMAR_CORRECTION, LanguageEnum.LANGUAGE_MAP.get(language))));
+        return R.success(PojoBuilder.buildDirectlyTranslationVO(decodedOriginalText,
+                LanguageConvertor.convertLanguageToEnum(language),
+                aiService.call(decodedOriginalText, AiPromptModeEnum.GRAMMAR_CORRECTION,
+                        LanguageEnum.LANGUAGE_MAP.get(language))));
     }
 
     @LogMarker(isPrintParameter = true)
     @GetMapping("/vocabulary-explanation/{language}/{originalText}")
     public R<AiResponseVO> vocabularyExplanation(@PathVariable(value = "originalText") String originalText,
-                                                 @PathVariable(value = "language") String language) {
+            @PathVariable(value = "language") String language) {
         String decodedOriginalText = WebTools.decode(originalText);
-        return R.success(PojoBuilder.buildDirectlyTranslationVO(decodedOriginalText, LanguageConvertor.convertLanguageToEnum(language),
-                aiService.call(decodedOriginalText, AiPromptModeEnum.VOCABULARY_EXPLANATION, LanguageEnum.LANGUAGE_MAP.get(language))));
+        return R.success(PojoBuilder.buildDirectlyTranslationVO(decodedOriginalText,
+                LanguageConvertor.convertLanguageToEnum(language),
+                aiService.call(decodedOriginalText, AiPromptModeEnum.VOCABULARY_EXPLANATION,
+                        LanguageEnum.LANGUAGE_MAP.get(language))));
     }
 
     @LogMarker(isPrintParameter = true)
     @GetMapping("/synonym/{language}/{originalText}")
     public R<AiResponseVO> synonym(@PathVariable(value = "originalText") String originalText,
-                                   @PathVariable(value = "language") String language) {
+            @PathVariable(value = "language") String language) {
         String decodedOriginalText = WebTools.decode(originalText);
-        return R.success(PojoBuilder.buildDirectlyTranslationVO(decodedOriginalText, LanguageConvertor.convertLanguageToEnum(language),
-                aiService.call(decodedOriginalText, AiPromptModeEnum.SYNONYM, LanguageEnum.LANGUAGE_MAP.get(language))));
+        return R.success(PojoBuilder.buildDirectlyTranslationVO(decodedOriginalText,
+                LanguageConvertor.convertLanguageToEnum(language),
+                aiService.call(decodedOriginalText, AiPromptModeEnum.SYNONYM,
+                        LanguageEnum.LANGUAGE_MAP.get(language))));
     }
 
     @LogMarker(isPrintParameter = true)
     @GetMapping("/antonym/{language}/{originalText}")
     public R<AiResponseVO> antonym(@PathVariable(value = "originalText") String originalText,
-                                   @PathVariable(value = "language") String language) {
+            @PathVariable(value = "language") String language) {
         String decodedOriginalText = WebTools.decode(originalText);
-        return R.success(PojoBuilder.buildDirectlyTranslationVO(decodedOriginalText, LanguageConvertor.convertLanguageToEnum(language),
-                aiService.call(decodedOriginalText, AiPromptModeEnum.ANTONYM, LanguageEnum.LANGUAGE_MAP.get(language))));
+        return R.success(PojoBuilder.buildDirectlyTranslationVO(decodedOriginalText,
+                LanguageConvertor.convertLanguageToEnum(language),
+                aiService.call(decodedOriginalText, AiPromptModeEnum.ANTONYM,
+                        LanguageEnum.LANGUAGE_MAP.get(language))));
     }
 
     /**
@@ -136,8 +150,9 @@ public class AiController extends BaseController {
 
             // Convert filter string to enum
             HistoryFilterEnum filterEnum = HistoryFilterEnum.fromCode(filter);
-            
-            IPage<AiCallHistoryVO> resultPage = aiCallHistoryService.getUserCallHistory(page, Long.valueOf(userId), filterEnum);
+
+            IPage<AiCallHistoryVO> resultPage = aiCallHistoryService.getUserCallHistory(page, Long.valueOf(userId),
+                    filterEnum);
 
             return R.success(resultPage);
         } catch (Exception e) {
@@ -169,11 +184,12 @@ public class AiController extends BaseController {
 
             // Archive the history item
             boolean result = aiCallHistoryService.archiveCallHistory(id, Long.valueOf(userId));
-            
+
             if (result) {
                 return R.success("History item archived successfully");
             } else {
-                return R.failed("Failed to archive history item. Item may not exist or doesn't belong to current user.");
+                return R.failed(
+                        "Failed to archive history item. Item may not exist or doesn't belong to current user.");
             }
         } catch (Exception e) {
             log.error("Error archiving history item with ID {}: {}", id, e.getMessage(), e);
@@ -204,7 +220,7 @@ public class AiController extends BaseController {
 
             // Delete the history item
             boolean result = aiCallHistoryService.deleteCallHistory(id, Long.valueOf(userId));
-            
+
             if (result) {
                 return R.success("History item deleted successfully");
             } else {
@@ -219,7 +235,7 @@ public class AiController extends BaseController {
     /**
      * Set favorite status for an AI call history item
      *
-     * @param id History item ID
+     * @param id       History item ID
      * @param favorite Favorite request body
      * @return Success or failure response
      */

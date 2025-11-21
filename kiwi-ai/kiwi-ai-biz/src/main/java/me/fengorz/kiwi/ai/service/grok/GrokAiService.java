@@ -42,8 +42,8 @@ public class GrokAiService implements AiChatService {
     private final AiModeProperties modeProperties;
 
     public GrokAiService(@Qualifier("aiRestTemplate") RestTemplate restTemplate,
-                         @Qualifier("aiRetryTemplate") RetryTemplate retryTemplate,
-                         GrokApiProperties grokApiProperties, AiModeProperties modeProperties) {
+            @Qualifier("aiRetryTemplate") RetryTemplate retryTemplate,
+            GrokApiProperties grokApiProperties, AiModeProperties modeProperties) {
         this.restTemplate = restTemplate;
         this.retryTemplate = retryTemplate;
         this.grokApiProperties = grokApiProperties;
@@ -58,21 +58,24 @@ public class GrokAiService implements AiChatService {
 
         ChatHttpRequest chatHttpRequest = new ChatHttpRequest(
                 Arrays.asList(new Message("system", buildPrompt(promptMode, language, language)),
-                        new Message("user", prompt)), grokApiProperties.getModel());
+                        new Message("user", prompt)),
+                grokApiProperties.getModel());
 
         // Hypothetical request body (similar to OpenAI’s format)
         return call(headers, chatHttpRequest);
     }
 
     @Override
-    public String call(String prompt, AiPromptModeEnum promptMode, LanguageEnum targetLanguage, LanguageEnum nativeLanguage) {
+    public String call(String prompt, AiPromptModeEnum promptMode, LanguageEnum targetLanguage,
+            LanguageEnum nativeLanguage) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.put("Authorization", Collections.singletonList("Bearer " + grokApiProperties.getKey()));
 
         ChatHttpRequest chatHttpRequest = new ChatHttpRequest(
                 Arrays.asList(new Message("system", buildPrompt(promptMode, targetLanguage, nativeLanguage)),
-                        new Message("user", prompt)), grokApiProperties.getModel());
+                        new Message("user", prompt)),
+                grokApiProperties.getModel());
 
         // Hypothetical request body (similar to OpenAI's format)
         return call(headers, chatHttpRequest);
@@ -101,8 +104,8 @@ public class GrokAiService implements AiChatService {
         int batchSize = grokApiProperties.getThreadPromptsLineSize();
 
         // Get thread pool size from properties (default to available processors)
-        int threadPoolSize = grokApiProperties.getThreadPoolSize() != null ?
-                grokApiProperties.getThreadPoolSize() : Runtime.getRuntime().availableProcessors();
+        int threadPoolSize = grokApiProperties.getThreadPoolSize() != null ? grokApiProperties.getThreadPoolSize()
+                : Runtime.getRuntime().availableProcessors();
 
         // Calculate total number of batches
         int totalBatches = (int) Math.ceil((double) prompts.size() / batchSize);
@@ -173,31 +176,33 @@ public class GrokAiService implements AiChatService {
 
     @Override
     @KiwiCacheKeyPrefix(AiConstants.CACHE_KEY_PREFIX_GROK.SUBTITLE_TRANSLATION)
-    @Cacheable(cacheNames = AiConstants.CACHE_NAMES, keyGenerator = CacheConstants.CACHE_KEY_GENERATOR_BEAN,
-            unless = "#result == null")
-    public String batchCallForYtbAndCache(@KiwiCacheKey(1) String ytbUrl, List<String> prompt, @KiwiCacheKey(2) AiPromptModeEnum promptMode, @KiwiCacheKey(3) LanguageEnum language) {
+    @Cacheable(cacheNames = AiConstants.CACHE_NAMES, keyGenerator = CacheConstants.CACHE_KEY_GENERATOR_BEAN, unless = "#result == null")
+    public String batchCallForYtbAndCache(@KiwiCacheKey(1) String ytbUrl, List<String> prompt,
+            @KiwiCacheKey(2) AiPromptModeEnum promptMode, @KiwiCacheKey(3) LanguageEnum language) {
         return batchCall(prompt, promptMode, language);
     }
 
     @Override
     @KiwiCacheKeyPrefix(AiConstants.CACHE_KEY_PREFIX_GROK.SUBTITLE_TRANSLATION)
     @CacheEvict(cacheNames = AiConstants.CACHE_NAMES, keyGenerator = CacheConstants.CACHE_KEY_GENERATOR_BEAN)
-    public void cleanBatchCallForYtbAndCache(@KiwiCacheKey(1) String ytbUrl, @KiwiCacheKey(2) AiPromptModeEnum promptMode, @KiwiCacheKey(3) LanguageEnum language) {
+    public void cleanBatchCallForYtbAndCache(@KiwiCacheKey(1) String ytbUrl,
+            @KiwiCacheKey(2) AiPromptModeEnum promptMode, @KiwiCacheKey(3) LanguageEnum language) {
 
     }
 
     @Override
     @KiwiCacheKeyPrefix(AiConstants.CACHE_KEY_PREFIX_GROK.SUBTITLE_RETOUCH)
-    @Cacheable(cacheNames = AiConstants.CACHE_NAMES, keyGenerator = CacheConstants.CACHE_KEY_GENERATOR_BEAN,
-            unless = "#result == null")
-    public String callForYtbAndCache(@KiwiCacheKey(1) String ytbUrl, String prompt, @KiwiCacheKey(2) AiPromptModeEnum promptMode, @KiwiCacheKey(3) LanguageEnum language) {
+    @Cacheable(cacheNames = AiConstants.CACHE_NAMES, keyGenerator = CacheConstants.CACHE_KEY_GENERATOR_BEAN, unless = "#result == null")
+    public String callForYtbAndCache(@KiwiCacheKey(1) String ytbUrl, String prompt,
+            @KiwiCacheKey(2) AiPromptModeEnum promptMode, @KiwiCacheKey(3) LanguageEnum language) {
         return call(prompt, promptMode, language);
     }
 
     @Override
     @KiwiCacheKeyPrefix(AiConstants.CACHE_KEY_PREFIX_GROK.SUBTITLE_RETOUCH)
     @CacheEvict(cacheNames = AiConstants.CACHE_NAMES, keyGenerator = CacheConstants.CACHE_KEY_GENERATOR_BEAN)
-    public void cleanCallForYtbAndCache(@KiwiCacheKey(1) String ytbUrl, @KiwiCacheKey(2) AiPromptModeEnum promptMode, @KiwiCacheKey(3) LanguageEnum language) {
+    public void cleanCallForYtbAndCache(@KiwiCacheKey(1) String ytbUrl, @KiwiCacheKey(2) AiPromptModeEnum promptMode,
+            @KiwiCacheKey(3) LanguageEnum language) {
     }
 
     /**
@@ -223,7 +228,8 @@ public class GrokAiService implements AiChatService {
         // Build request with system prompt and combined user prompt
         ChatHttpRequest chatHttpRequest = new ChatHttpRequest(
                 Arrays.asList(new Message("system", buildPrompt(promptMode, language, language)),
-                        new Message("user", batchContent.toString())), grokApiProperties.getModel());
+                        new Message("user", batchContent.toString())),
+                grokApiProperties.getModel());
 
         // Convert request to JSON
         String requestBody = KiwiJsonUtils.toJsonStr(chatHttpRequest);
@@ -240,7 +246,8 @@ public class GrokAiService implements AiChatService {
         if (response.getStatusCode().is2xxSuccessful()) {
             return Objects.requireNonNull(response.getBody()).getChoices().get(0).getMessage().getContent();
         } else {
-            log.error("Grok API batch call failed: status code: {}; body: {}", response.getStatusCode(), response.getBody());
+            log.error("Grok API batch call failed: status code: {}; body: {}", response.getStatusCode(),
+                    response.getBody());
             throw new GrokAiException("Grok API batch call failed: " + response.getStatusCode());
         }
     }
@@ -277,4 +284,3 @@ public class GrokAiService implements AiChatService {
     }
 
 }
-

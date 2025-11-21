@@ -53,7 +53,7 @@ ai:
     api:
       key: ${GROK_API_KEY}  # Replace with the actual API key
       endpoint: https://api.x.ai/v1/chat/completions  # Hypothetical endpoint
-      model: "grok-4-fast-reasoning"
+      model: "grok-4-1-fast-reasoning"
       thread-prompts-line-size: 400
       thread-pool-size: 8
       thread-timeout-secs: 120
@@ -66,7 +66,7 @@ ai:
     synonym: "List 5–8 common synonyms in #[TL]. For each, briefly explain the nuance in #[NL] and give one example sentence in #[TL] with a #[NL] translation. Output plain text only—no Markdown or extra commentary."
     antonym: "List 5–8 common antonyms in #[TL]. For each, briefly explain the nuance in #[NL] and give one example sentence in #[TL] with a #[NL] translation. Output plain text only—no Markdown or extra commentary."
     subtitle-translator: "You need to calibrate the subtitle text, because the original subtitles may lack proper punctuation. You must identify each complete subtitle sentence and add accurate punctuation, ensuring each full sentence becomes one line. For each subtitle line, output two lines: Line 1 = the original line with corrected punctuation; Line 2 = #[NL] translation. Keep the same order and number of lines as the input. No extra text, no Markdown."
-    subtitle-retouch: "You need to calibrate the subtitle text, because the original subtitles may lack proper punctuation. You must identify each complete subtitle sentence and add accurate punctuation, ensuring each full sentence becomes one line. Then correct punctuation and casing. The language and number of lines must remain exactly the same as the input. Output one corrected line for each input line. No extra text, no Markdown."
+    subtitle-retouch: "Can you extract, clean, and calibrate the subtitle content without altering the original meaning? Remove only unused or redundant symbols while keeping the timeline and subtitle lines intact. The timeline should appear above each corresponding subtitle. Identify complete sentences within each subtitle line, correct punctuation and casing, and ensure each full sentence becomes one line. The language and number of subtitle lines must remain exactly the same as the input. Output one corrected subtitle line for each input line, with no extra text and no Markdown."
     subtitle-retouch-translator: "You need to calibrate the subtitle text, because the original subtitles may lack proper punctuation. You must identify each complete subtitle sentence and add accurate punctuation, ensuring each full sentence becomes one line. For each subtitle line: Line 1 = the corrected original; Line 2 = #[TL] translation. If a line is already in #[TL], output only the corrected line (no translation line). Keep the input order. No extra text, no Markdown."
     vocabulary-association: "List as many common #[TL] words/phrases as possible that can express the user prompt’s meaning. For each item, explain nuances, register, and usage differences in #[NL]. Group closely related items when helpful. Plain text only."
     phrases-association: "List as many common #[TL] phrases as possible that can express the user prompt’s meaning. For each phrase, explain nuances, register, and usage differences in #[NL]. Group by function or context when helpful. Plain text only."
@@ -105,7 +105,7 @@ youtube:
     command: yt-dlp
     # Ordered preferred subtitle languages (first match wins)
     subtitles:
-      langs: en,en-GB,en-US
+      langs: en-US,en-GB,en
     large-subtitles:
       threshold: 100
 

@@ -1,8 +1,5 @@
 package me.fengorz.kiwi.common.ytb;
 
-import lombok.Getter;
-
-@Getter
 public enum SubtitleTypeEnum {
 
     SMALL_AUTO_GENERATED_RETURN_STRING("auto_generated_return_string"),
@@ -15,5 +12,9 @@ public enum SubtitleTypeEnum {
 
     SubtitleTypeEnum(String value) {
         this.value = value;
+    }
+
+    public String getValue() {
+        return value;
     }
 }

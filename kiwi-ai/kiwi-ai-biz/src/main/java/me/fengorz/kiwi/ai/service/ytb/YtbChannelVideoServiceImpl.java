@@ -21,54 +21,60 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class YtbChannelVideoServiceImpl extends ServiceImpl<YtbChannelVideoMapper, YtbChannelVideoDO> implements YtbChannelVideoService {
+public class YtbChannelVideoServiceImpl extends ServiceImpl<YtbChannelVideoMapper, YtbChannelVideoDO>
+                implements YtbChannelVideoService {
 
-    private final YtbVideoFavoriteMapper videoFavoriteMapper;
+        private final YtbVideoFavoriteMapper videoFavoriteMapper;
 
-    @Override
-    public IPage<YtbChannelVideoVO> getVideosByChannelId(Page<YtbChannelVideoDO> page, Long channelId) {
-        IPage<YtbChannelVideoDO> videoPage = this.page(page, new LambdaQueryWrapper<YtbChannelVideoDO>()
-                .eq(YtbChannelVideoDO::getChannelId, channelId)
-                .eq(YtbChannelVideoDO::getIfValid, true)
-                .orderByDesc(YtbChannelVideoDO::getPublishedAt)
-                .orderByDesc(YtbChannelVideoDO::getCreateTime));
-        
-        // Batch favorite data
-        List<Long> videoIds = videoPage.getRecords().stream().map(YtbChannelVideoDO::getId).collect(Collectors.toList());
-        Integer userId = SecurityUtils.getCurrentUserId();
-        Set<Long> userFavSet = new HashSet<>();
-        Map<Long, Long> favCountMap = new HashMap<>();
-        if (!videoIds.isEmpty()) {
-            List<YtbVideoFavoriteDO> userFavs = videoFavoriteMapper.selectList(new LambdaQueryWrapper<YtbVideoFavoriteDO>()
-                    .eq(YtbVideoFavoriteDO::getUserId, userId)
-                    .in(YtbVideoFavoriteDO::getVideoId, videoIds)
-                    .eq(YtbVideoFavoriteDO::getIfValid, true));
-            userFavSet.addAll(userFavs.stream().map(YtbVideoFavoriteDO::getVideoId).collect(Collectors.toSet()));
+        @Override
+        public IPage<YtbChannelVideoVO> getVideosByChannelId(Page<YtbChannelVideoDO> page, Long channelId) {
+                IPage<YtbChannelVideoDO> videoPage = this.page(page, new LambdaQueryWrapper<YtbChannelVideoDO>()
+                                .eq(YtbChannelVideoDO::getChannelId, channelId)
+                                .eq(YtbChannelVideoDO::getIfValid, true)
+                                .orderByDesc(YtbChannelVideoDO::getPublishedAt)
+                                .orderByDesc(YtbChannelVideoDO::getCreateTime));
 
-            List<YtbVideoFavoriteDO> allFavs = videoFavoriteMapper.selectList(new LambdaQueryWrapper<YtbVideoFavoriteDO>()
-                    .in(YtbVideoFavoriteDO::getVideoId, videoIds)
-                    .eq(YtbVideoFavoriteDO::getIfValid, true));
-            favCountMap.putAll(allFavs.stream().collect(Collectors.groupingBy(YtbVideoFavoriteDO::getVideoId, Collectors.counting())));
+                // Batch favorite data
+                List<Long> videoIds = videoPage.getRecords().stream().map(YtbChannelVideoDO::getId)
+                                .collect(Collectors.toList());
+                Integer userId = SecurityUtils.getCurrentUserId();
+                Set<Long> userFavSet = new HashSet<>();
+                Map<Long, Long> favCountMap = new HashMap<>();
+                if (!videoIds.isEmpty()) {
+                        List<YtbVideoFavoriteDO> userFavs = videoFavoriteMapper
+                                        .selectList(new LambdaQueryWrapper<YtbVideoFavoriteDO>()
+                                                        .eq(YtbVideoFavoriteDO::getUserId, userId)
+                                                        .in(YtbVideoFavoriteDO::getVideoId, videoIds)
+                                                        .eq(YtbVideoFavoriteDO::getIfValid, true));
+                        userFavSet.addAll(userFavs.stream().map(YtbVideoFavoriteDO::getVideoId)
+                                        .collect(Collectors.toSet()));
+
+                        List<YtbVideoFavoriteDO> allFavs = videoFavoriteMapper
+                                        .selectList(new LambdaQueryWrapper<YtbVideoFavoriteDO>()
+                                                        .in(YtbVideoFavoriteDO::getVideoId, videoIds)
+                                                        .eq(YtbVideoFavoriteDO::getIfValid, true));
+                        favCountMap.putAll(allFavs.stream().collect(
+                                        Collectors.groupingBy(YtbVideoFavoriteDO::getVideoId, Collectors.counting())));
+                }
+
+                // Convert DO to VO
+                List<YtbChannelVideoVO> videoVOList = videoPage.getRecords().stream()
+                                .map(video -> {
+                                        YtbChannelVideoVO vo = new YtbChannelVideoVO();
+                                        BeanUtils.copyProperties(video, vo);
+                                        vo.setFavorited(userFavSet.contains(video.getId()));
+                                        vo.setFavoriteCount(favCountMap.getOrDefault(video.getId(), 0L));
+                                        return vo;
+                                })
+                                .collect(Collectors.toList());
+
+                // Create a new page with VO list
+                Page<YtbChannelVideoVO> voPage = new Page<>();
+                voPage.setCurrent(videoPage.getCurrent());
+                voPage.setSize(videoPage.getSize());
+                voPage.setTotal(videoPage.getTotal());
+                voPage.setRecords(videoVOList);
+
+                return voPage;
         }
-
-        // Convert DO to VO
-        List<YtbChannelVideoVO> videoVOList = videoPage.getRecords().stream()
-                .map(video -> {
-                    YtbChannelVideoVO vo = new YtbChannelVideoVO();
-                    BeanUtils.copyProperties(video, vo);
-                    vo.setFavorited(userFavSet.contains(video.getId()));
-                    vo.setFavoriteCount(favCountMap.getOrDefault(video.getId(), 0L));
-                    return vo;
-                })
-                .collect(Collectors.toList());
-        
-        // Create a new page with VO list
-        Page<YtbChannelVideoVO> voPage = new Page<>();
-        voPage.setCurrent(videoPage.getCurrent());
-        voPage.setSize(videoPage.getSize());
-        voPage.setTotal(videoPage.getTotal());
-        voPage.setRecords(videoVOList);
-        
-        return voPage;
-    }
 }

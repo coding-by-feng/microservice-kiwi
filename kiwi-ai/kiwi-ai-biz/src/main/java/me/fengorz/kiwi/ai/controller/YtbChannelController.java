@@ -30,8 +30,8 @@ public class YtbChannelController extends BaseController {
     private final YtbFavoriteService favoriteService;
 
     public YtbChannelController(@Qualifier("ytbChannelServiceV2") YtbChannelService channelService,
-                                YtbChannelVideoService videoService,
-                                YtbFavoriteService favoriteService) {
+            YtbChannelVideoService videoService,
+            YtbFavoriteService favoriteService) {
         this.channelService = channelService;
         this.videoService = videoService;
         this.favoriteService = favoriteService;
@@ -54,7 +54,8 @@ public class YtbChannelController extends BaseController {
     @LogMarker
     @PostMapping("/{channelId}/favorite")
     public R<Boolean> favoriteChannel(@PathVariable("channelId") Long channelId) {
-        if (channelId == null) return R.failed("Channel ID cannot be empty");
+        if (channelId == null)
+            return R.failed("Channel ID cannot be empty");
         favoriteService.favoriteChannel(getCurrentUserId(), channelId);
         return R.success(true);
     }
@@ -63,7 +64,8 @@ public class YtbChannelController extends BaseController {
     @LogMarker
     @DeleteMapping("/{channelId}/favorite")
     public R<Boolean> unfavoriteChannel(@PathVariable("channelId") Long channelId) {
-        if (channelId == null) return R.failed("Channel ID cannot be empty");
+        if (channelId == null)
+            return R.failed("Channel ID cannot be empty");
         favoriteService.unfavoriteChannel(getCurrentUserId(), channelId);
         return R.success(true);
     }
@@ -72,7 +74,8 @@ public class YtbChannelController extends BaseController {
     @LogMarker
     @PostMapping("/video/{videoId}/favorite")
     public R<Boolean> favoriteVideo(@PathVariable("videoId") Long videoId) {
-        if (videoId == null) return R.failed("Video ID cannot be empty");
+        if (videoId == null)
+            return R.failed("Video ID cannot be empty");
         favoriteService.favoriteVideo(getCurrentUserId(), videoId);
         return R.success(true);
     }
@@ -81,7 +84,8 @@ public class YtbChannelController extends BaseController {
     @LogMarker
     @DeleteMapping("/video/{videoId}/favorite")
     public R<Boolean> unfavoriteVideo(@PathVariable("videoId") Long videoId) {
-        if (videoId == null) return R.failed("Video ID cannot be empty");
+        if (videoId == null)
+            return R.failed("Video ID cannot be empty");
         favoriteService.unfavoriteVideo(getCurrentUserId(), videoId);
         return R.success(true);
     }
@@ -90,7 +94,8 @@ public class YtbChannelController extends BaseController {
     @LogMarker
     @GetMapping("/video/{videoId}/favorite")
     public R<Boolean> isVideoFavorited(@PathVariable("videoId") Long videoId) {
-        if (videoId == null) return R.failed("Video ID cannot be empty");
+        if (videoId == null)
+            return R.failed("Video ID cannot be empty");
         boolean favorited = favoriteService.isVideoFavorited(getCurrentUserId(), videoId);
         return R.success(favorited);
     }
@@ -99,9 +104,11 @@ public class YtbChannelController extends BaseController {
     @LogMarker
     @PostMapping("/video/favorite")
     public R<Boolean> favoriteVideoByUrl(@RequestParam("videoUrl") String videoUrl) {
-        if (!StringUtils.hasText(videoUrl)) return R.failed("Video URL cannot be empty");
+        if (!StringUtils.hasText(videoUrl))
+            return R.failed("Video URL cannot be empty");
         boolean ok = favoriteService.favoriteVideoByUrl(getCurrentUserId(), videoUrl);
-        if (!ok) return R.failed("Failed to create video record");
+        if (!ok)
+            return R.failed("Failed to create video record");
         return R.success(true);
     }
 
@@ -109,9 +116,11 @@ public class YtbChannelController extends BaseController {
     @LogMarker
     @DeleteMapping("/video/favorite")
     public R<Boolean> unfavoriteVideoByUrl(@RequestParam("videoUrl") String videoUrl) {
-        if (!StringUtils.hasText(videoUrl)) return R.failed("Video URL cannot be empty");
+        if (!StringUtils.hasText(videoUrl))
+            return R.failed("Video URL cannot be empty");
         boolean ok = favoriteService.unfavoriteVideoByUrl(getCurrentUserId(), videoUrl);
-        if (!ok) return R.failed("Video not found");
+        if (!ok)
+            return R.failed("Video not found");
         return R.success(true);
     }
 
@@ -119,7 +128,8 @@ public class YtbChannelController extends BaseController {
     @LogMarker
     @GetMapping("/video/favorite")
     public R<Boolean> isVideoFavoritedByUrl(@RequestParam("videoUrl") String videoUrl) {
-        if (!StringUtils.hasText(videoUrl)) return R.failed("Video URL cannot be empty");
+        if (!StringUtils.hasText(videoUrl))
+            return R.failed("Video URL cannot be empty");
         boolean favorited = favoriteService.isVideoFavoritedByUrl(getCurrentUserId(), videoUrl);
         return R.success(favorited);
     }

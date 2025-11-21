@@ -18,9 +18,12 @@ import java.util.*;
 /**
  * Service focusing on subtitle (caption) download via YouTube Data API.
  * Notes:
- * - Downloading caption content requires OAuth 2.0 with a token authorized for the video owner.
- * - API requires: Authorization: Bearer <ACCESS_TOKEN>, scope typically https://www.googleapis.com/auth/youtube.force-ssl
- * - Use alt=media to receive file bytes and tfmt to choose format (srt or ttml). Optional tlang for translation.
+ * - Downloading caption content requires OAuth 2.0 with a token authorized for
+ * the video owner.
+ * - API requires: Authorization: Bearer <ACCESS_TOKEN>, scope typically
+ * https://www.googleapis.com/auth/youtube.force-ssl
+ * - Use alt=media to receive file bytes and tfmt to choose format (srt or
+ * ttml). Optional tlang for translation.
  */
 @Slf4j
 @Service
@@ -43,7 +46,8 @@ public class YouTubeApiSubtitleService {
      * Download a caption track content by captionId with OAuth token.
      *
      * Contract:
-     * - Inputs: captionId (required), accessToken (required), tfmt (optional: srt or ttml), tlang (optional ISO-639-1).
+     * - Inputs: captionId (required), accessToken (required), tfmt (optional: srt
+     * or ttml), tlang (optional ISO-639-1).
      * - Output: caption file content as String (UTF-8).
      * - Errors: ServiceException wrapping 4xx/5xx, with helpful hints for 401/403.
      */
@@ -78,8 +82,7 @@ public class YouTubeApiSubtitleService {
                     url,
                     HttpMethod.GET,
                     new HttpEntity<>(headers),
-                    byte[].class
-            );
+                    byte[].class);
 
             if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
                 return new String(response.getBody(), StandardCharsets.UTF_8);
@@ -108,15 +111,17 @@ public class YouTubeApiSubtitleService {
     /**
      * Convenience: choose a caption track for a video and download it.
      * Selection rules:
-     * - Try to find track with exact language match. If preferAuto is specified, prioritize that kind.
-     * - Otherwise choose the first available caption (stable sort: non-draft preferred, then manual over auto).
+     * - Try to find track with exact language match. If preferAuto is specified,
+     * prioritize that kind.
+     * - Otherwise choose the first available caption (stable sort: non-draft
+     * preferred, then manual over auto).
      */
     public String downloadCaptionByVideo(String videoUrlOrId,
-                                         String language,
-                                         boolean preferAuto,
-                                         String accessToken,
-                                         String tfmt,
-                                         String tlang) {
+            String language,
+            boolean preferAuto,
+            String accessToken,
+            String tfmt,
+            String tlang) {
         List<CaptionResponse> tracks = youTubeApiService.getVideoCaptions(videoUrlOrId);
         if (tracks == null || tracks.isEmpty()) {
             throw new ServiceException("No caption tracks found for the video.");
@@ -129,25 +134,29 @@ public class YouTubeApiSubtitleService {
         return downloadCaption(picked.get().getId(), accessToken, tfmt, tlang);
     }
 
-    private Optional<CaptionResponse> pickCaptionTrack(List<CaptionResponse> tracks, String language, boolean preferAuto) {
+    private Optional<CaptionResponse> pickCaptionTrack(List<CaptionResponse> tracks, String language,
+            boolean preferAuto) {
         // Sort: drafts last, ASR last (manual first)
         List<CaptionResponse> sorted = new ArrayList<>(tracks);
         sorted.sort(Comparator
                 .comparing((CaptionResponse c) -> Boolean.TRUE.equals(c.getIsDraft()))
                 .thenComparing(c -> "ASR".equalsIgnoreCase(nullToEmpty(c.getTrackKind()))));
 
-        // If language provided, try exact language match first (prefer manual unless preferAuto)
+        // If language provided, try exact language match first (prefer manual unless
+        // preferAuto)
         if (StringUtils.hasText(language)) {
             if (!preferAuto) {
                 for (CaptionResponse c : sorted) {
-                    if (languageEquals(c.getLanguage(), language) && !"ASR".equalsIgnoreCase(nullToEmpty(c.getTrackKind()))) {
+                    if (languageEquals(c.getLanguage(), language)
+                            && !"ASR".equalsIgnoreCase(nullToEmpty(c.getTrackKind()))) {
                         return Optional.of(c);
                     }
                 }
             }
             // If preferAuto or manual not found, try auto track
             for (CaptionResponse c : sorted) {
-                if (languageEquals(c.getLanguage(), language) && "ASR".equalsIgnoreCase(nullToEmpty(c.getTrackKind()))) {
+                if (languageEquals(c.getLanguage(), language)
+                        && "ASR".equalsIgnoreCase(nullToEmpty(c.getTrackKind()))) {
                     return Optional.of(c);
                 }
             }
@@ -166,10 +175,12 @@ public class YouTubeApiSubtitleService {
     }
 
     private static boolean languageEquals(String a, String b) {
-        if (!StringUtils.hasText(a) || !StringUtils.hasText(b)) return false;
+        if (!StringUtils.hasText(a) || !StringUtils.hasText(b))
+            return false;
         String aNorm = a.toLowerCase();
         String bNorm = b.toLowerCase();
-        if (aNorm.equals(bNorm)) return true;
+        if (aNorm.equals(bNorm))
+            return true;
         // handle forms like en, en-US, en_US
         String aBase = aNorm.split("[-_]")[0];
         String bBase = bNorm.split("[-_]")[0];
@@ -180,5 +191,7 @@ public class YouTubeApiSubtitleService {
         return StringUtils.hasText(value) ? value : def;
     }
 
-    private static String nullToEmpty(String s) { return s == null ? "" : s; }
+    private static String nullToEmpty(String s) {
+        return s == null ? "" : s;
+    }
 }

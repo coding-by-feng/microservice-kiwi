@@ -22,7 +22,7 @@ public class OpenaiAudioService implements AiAudioService {
     private final Map<String, StringBuilder> transcriptionSessions = new ConcurrentHashMap<>();
 
     public OpenaiAudioService(@Qualifier("aiRestTemplate") RestTemplate restTemplate,
-                              OpenaiApiProperties openaiApiProperties) {
+            OpenaiApiProperties openaiApiProperties) {
         this.restTemplate = restTemplate;
         this.openaiApiProperties = openaiApiProperties;
     }
@@ -46,7 +46,8 @@ public class OpenaiAudioService implements AiAudioService {
 
         HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
 
-        ResponseEntity<String> response = restTemplate.exchange(openaiApiProperties.getSttEndpoint(), HttpMethod.POST, requestEntity, String.class);
+        ResponseEntity<String> response = restTemplate.exchange(openaiApiProperties.getSttEndpoint(), HttpMethod.POST,
+                requestEntity, String.class);
         return response.getBody();
     }
 

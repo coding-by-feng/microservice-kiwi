@@ -34,8 +34,8 @@ public class YouTuBeController {
     private final YtbSubtitleStreamingService subtitleStreamingService;
 
     public YouTuBeController(YouTubeClient youTubeClient,
-                             @Qualifier("grokAiService") AiChatService grokAiService,
-                             YtbSubtitleStreamingService subtitleStreamingService) {
+            @Qualifier("grokAiService") AiChatService grokAiService,
+            YtbSubtitleStreamingService subtitleStreamingService) {
         this.youTubeClient = youTubeClient;
         this.grokAiService = grokAiService;
         this.subtitleStreamingService = subtitleStreamingService;
@@ -70,7 +70,8 @@ public class YouTuBeController {
 
     /**
      * Download the translated/retouched subtitles as a .txt file.
-     * Optimized version using WebSocket streaming service internally for better performance.
+     * Optimized version using WebSocket streaming service internally for better
+     * performance.
      */
     @GetMapping("/subtitles/translated/download")
     public ResponseEntity<StreamingResponseBody> downloadTranslatedSubtitlesAsTxt(
@@ -106,60 +107,60 @@ public class YouTuBeController {
             // Use StreamingResponseBody for real-time streaming download
             StreamingResponseBody stream = outputStream -> {
                 StringBuilder contentBuilder = new StringBuilder();
-                final boolean[] hasError = {false};
-                final Exception[] streamException = {null};
+                final boolean[] hasError = { false };
+                final Exception[] streamException = { null };
                 final Object lock = new Object();
-                final boolean[] isComplete = {false};
+                final boolean[] isComplete = { false };
 
                 try {
                     // Use the optimized streaming service (same as WebSocket endpoint)
                     subtitleStreamingService.streamSubtitleTranslation(
-                        decodedUrl,
-                        language,
-                        // onChunk callback - stream each chunk as it arrives
-                        chunk -> {
-                            try {
-                                synchronized (lock) {
-                                    if (!hasError[0]) {
-                                        // Write chunk directly to output stream for real-time download
-                                        byte[] chunkBytes = chunk.getBytes(java.nio.charset.StandardCharsets.UTF_8);
-                                        outputStream.write(chunkBytes);
-                                        outputStream.flush();
+                            decodedUrl,
+                            language,
+                            // onChunk callback - stream each chunk as it arrives
+                            chunk -> {
+                                try {
+                                    synchronized (lock) {
+                                        if (!hasError[0]) {
+                                            // Write chunk directly to output stream for real-time download
+                                            byte[] chunkBytes = chunk.getBytes(java.nio.charset.StandardCharsets.UTF_8);
+                                            outputStream.write(chunkBytes);
+                                            outputStream.flush();
 
-                                        // Also accumulate for logging purposes
-                                        contentBuilder.append(chunk);
+                                            // Also accumulate for logging purposes
+                                            contentBuilder.append(chunk);
 
-                                        log.debug("Streamed chunk of {} bytes to download", chunkBytes.length);
+                                            log.debug("Streamed chunk of {} bytes to download", chunkBytes.length);
+                                        }
+                                    }
+                                } catch (Exception e) {
+                                    log.error("Error writing chunk to download stream: {}", e.getMessage(), e);
+                                    synchronized (lock) {
+                                        hasError[0] = true;
+                                        streamException[0] = e;
+                                        lock.notify();
                                     }
                                 }
-                            } catch (Exception e) {
-                                log.error("Error writing chunk to download stream: {}", e.getMessage(), e);
+                            },
+                            // onError callback
+                            error -> {
+                                log.error("Error in subtitle streaming for download: {}", error.getMessage(), error);
                                 synchronized (lock) {
                                     hasError[0] = true;
-                                    streamException[0] = e;
+                                    streamException[0] = error;
                                     lock.notify();
                                 }
-                            }
-                        },
-                        // onError callback
-                        error -> {
-                            log.error("Error in subtitle streaming for download: {}", error.getMessage(), error);
-                            synchronized (lock) {
-                                hasError[0] = true;
-                                streamException[0] = error;
-                                lock.notify();
-                            }
-                        },
-                        // onComplete callback
-                        () -> {
-                            log.info("Subtitle streaming completed for download. Total content length: {} characters",
-                                contentBuilder.length());
-                            synchronized (lock) {
-                                isComplete[0] = true;
-                                lock.notify();
-                            }
-                        }
-                    );
+                            },
+                            // onComplete callback
+                            () -> {
+                                log.info(
+                                        "Subtitle streaming completed for download. Total content length: {} characters",
+                                        contentBuilder.length());
+                                synchronized (lock) {
+                                    isComplete[0] = true;
+                                    lock.notify();
+                                }
+                            });
 
                     // Wait for completion or error
                     synchronized (lock) {
@@ -180,8 +181,9 @@ public class YouTuBeController {
                         throw new RuntimeException("Subtitle streaming failed", streamException[0]);
                     }
 
-                    log.info("Successfully completed streaming download for video: {}, language: {}, total size: {} bytes",
-                        videoUrl, language, contentBuilder.length());
+                    log.info(
+                            "Successfully completed streaming download for video: {}, language: {}, total size: {} bytes",
+                            videoUrl, language, contentBuilder.length());
 
                 } catch (Exception e) {
                     log.error("Error in streaming download: {}", e.getMessage(), e);
@@ -223,17 +225,20 @@ public class YouTuBeController {
 
     /**
      * HTTP endpoint for subtitle translation (backward compatibility)
-     * @deprecated Use WebSocket endpoint /ai/ws/ytb/subtitle for real-time streaming
+     * 
+     * @deprecated Use WebSocket endpoint /ai/ws/ytb/subtitle for real-time
+     *             streaming
      */
     @GetMapping("/subtitles/translated")
     @Deprecated
     public R<String> getTranslatedOrRetouchedSubtitles(@RequestParam("url") String videoUrl,
-                                                       @RequestParam(value = "language", required = false) String language) {
+            @RequestParam(value = "language", required = false) String language) {
         try {
             String decodedUrl = WebTools.decode(videoUrl);
             // Use caching service to fetch subtitles (cached by normalized videoId)
             YtbSubtitlesResult ytbSubtitlesResult = subtitleStreamingService.getScrollingSubtitles(videoUrl);
-            String translatedOrRetouchedSubtitles = buildTranslatedOrRetouchedSubtitles(decodedUrl, language, ytbSubtitlesResult);
+            String translatedOrRetouchedSubtitles = buildTranslatedOrRetouchedSubtitles(decodedUrl, language,
+                    ytbSubtitlesResult);
             return R.success(translatedOrRetouchedSubtitles);
         } catch (Exception e) {
             log.error("Error getting translated subtitles: {}", e.getMessage(), e);
@@ -253,7 +258,7 @@ public class YouTuBeController {
 
     @DeleteMapping("/subtitles")
     public R<Void> cleanSubtitles(@RequestParam("url") String videoUrl,
-                                  @RequestParam(value = "language", required = false) String language) {
+            @RequestParam(value = "language", required = false) String language) {
         try {
             subtitleStreamingService.cleanAllCaches(videoUrl, language);
             return R.success();
@@ -276,50 +281,58 @@ public class YouTuBeController {
 
     /**
      * Legacy method for backward compatibility - kept for existing HTTP clients
-     * @deprecated Use YtbSubtitleStreamingService.streamSubtitleTranslation() instead
+     * 
+     * @deprecated Use YtbSubtitleStreamingService.streamSubtitleTranslation()
+     *             instead
      */
     @Retryable(maxAttempts = 2, value = Exception.class)
-    @SuppressWarnings({"rawtypes", "unchecked"})
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     @Deprecated
-    private String buildTranslatedOrRetouchedSubtitles(String decodedUrl, String language, YtbSubtitlesResult ytbSubtitlesResult) {
+    private String buildTranslatedOrRetouchedSubtitles(String decodedUrl, String language,
+            YtbSubtitlesResult ytbSubtitlesResult) {
         log.info("ytbSubtitlesResult: {}", ytbSubtitlesResult);
-        boolean ifNeedTranslation = language != null && !"null".equals(language) && !LanguageEnum.EN.getCode().equals(language);
+        boolean ifNeedTranslation = language != null && !"null".equals(language)
+                && !LanguageEnum.EN.getCode().equals(language);
         LanguageEnum lang = LanguageConvertor.convertLanguageToEnum(language);
 
         switch (ytbSubtitlesResult.getType()) {
             case SMALL_AUTO_GENERATED_RETURN_STRING: {
-                String pendingToBeTranslatedOrRetouchedSubtitles = (String) ytbSubtitlesResult.getPendingToBeTranslatedOrRetouchedSubtitles();
-                return ifNeedTranslation ?
-                        grokAiService.callForYtbAndCache(decodedUrl, pendingToBeTranslatedOrRetouchedSubtitles,
-                                AiPromptModeEnum.SUBTITLE_RETOUCH_TRANSLATOR, lang) :
-                        grokAiService.callForYtbAndCache(decodedUrl, pendingToBeTranslatedOrRetouchedSubtitles,
+                String pendingToBeTranslatedOrRetouchedSubtitles = (String) ytbSubtitlesResult
+                        .getPendingToBeTranslatedOrRetouchedSubtitles();
+                return ifNeedTranslation
+                        ? grokAiService.callForYtbAndCache(decodedUrl, pendingToBeTranslatedOrRetouchedSubtitles,
+                                AiPromptModeEnum.SUBTITLE_RETOUCH_TRANSLATOR, lang)
+                        : grokAiService.callForYtbAndCache(decodedUrl, pendingToBeTranslatedOrRetouchedSubtitles,
                                 AiPromptModeEnum.SUBTITLE_RETOUCH, lang);
             }
             case LARGE_AUTO_GENERATED_RETURN_LIST: {
-                List<String> pendingToBeTranslatedOrRetouchedSubtitlesList = (List) ytbSubtitlesResult.getPendingToBeTranslatedOrRetouchedSubtitles();
-                return ifNeedTranslation ?
-                        grokAiService.batchCallForYtbAndCache(decodedUrl, pendingToBeTranslatedOrRetouchedSubtitlesList,
-                                AiPromptModeEnum.SUBTITLE_RETOUCH_TRANSLATOR, lang) :
-                        grokAiService.batchCallForYtbAndCache(decodedUrl, pendingToBeTranslatedOrRetouchedSubtitlesList,
+                List<String> pendingToBeTranslatedOrRetouchedSubtitlesList = (List) ytbSubtitlesResult
+                        .getPendingToBeTranslatedOrRetouchedSubtitles();
+                return ifNeedTranslation
+                        ? grokAiService.batchCallForYtbAndCache(decodedUrl,
+                                pendingToBeTranslatedOrRetouchedSubtitlesList,
+                                AiPromptModeEnum.SUBTITLE_RETOUCH_TRANSLATOR, lang)
+                        : grokAiService.batchCallForYtbAndCache(decodedUrl,
+                                pendingToBeTranslatedOrRetouchedSubtitlesList,
                                 AiPromptModeEnum.SUBTITLE_RETOUCH, lang);
             }
             case SMALL_PROFESSIONAL_RETURN_STRING: {
-                String pendingToBeTranslatedOrRetouchedSubtitles = (String) ytbSubtitlesResult.getPendingToBeTranslatedOrRetouchedSubtitles();
-                return ifNeedTranslation ?
-                        grokAiService.callForYtbAndCache(decodedUrl, pendingToBeTranslatedOrRetouchedSubtitles,
-                                AiPromptModeEnum.SUBTITLE_TRANSLATOR, lang) :
-                        GlobalConstants.EMPTY;
+                String pendingToBeTranslatedOrRetouchedSubtitles = (String) ytbSubtitlesResult
+                        .getPendingToBeTranslatedOrRetouchedSubtitles();
+                return ifNeedTranslation
+                        ? grokAiService.callForYtbAndCache(decodedUrl, pendingToBeTranslatedOrRetouchedSubtitles,
+                                AiPromptModeEnum.SUBTITLE_TRANSLATOR, lang)
+                        : GlobalConstants.EMPTY;
             }
             case LARGE_PROFESSIONAL_RETURN_LIST: {
-                List<String> pendingToBeTranslatedOrRetouchedSubtitlesList = (List) ytbSubtitlesResult.getPendingToBeTranslatedOrRetouchedSubtitles();
-                return ifNeedTranslation ?
-                        grokAiService.batchCallForYtbAndCache(decodedUrl, pendingToBeTranslatedOrRetouchedSubtitlesList,
-                                AiPromptModeEnum.SUBTITLE_TRANSLATOR, lang) :
-                        GlobalConstants.EMPTY;
+                List<String> pendingToBeTranslatedOrRetouchedSubtitlesList = (List) ytbSubtitlesResult
+                        .getPendingToBeTranslatedOrRetouchedSubtitles();
+                return ifNeedTranslation ? grokAiService.batchCallForYtbAndCache(decodedUrl,
+                        pendingToBeTranslatedOrRetouchedSubtitlesList,
+                        AiPromptModeEnum.SUBTITLE_TRANSLATOR, lang) : GlobalConstants.EMPTY;
             }
             default:
                 return GlobalConstants.EMPTY;
         }
     }
 }
-

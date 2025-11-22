@@ -30,33 +30,30 @@ public class YouTubeApiService {
     private final RestTemplate restTemplate;
     private final YouTubeApiProperties properties;
     private final ObjectMapper objectMapper;
-    
+
     // Patterns for extracting IDs from URLs
     private static final Pattern VIDEO_ID_PATTERN = Pattern.compile(
-        "(?:youtube\\.com/watch\\?v=|youtu\\.be/|youtube\\.com/embed/)([a-zA-Z0-9_-]{11})"
-    );
-    
+            "(?:youtube\\.com/watch\\?v=|youtu\\.be/|youtube\\.com/embed/)([a-zA-Z0-9_-]{11})");
+
     private static final Pattern CHANNEL_ID_PATTERN = Pattern.compile(
-        "youtube\\.com/channel/([a-zA-Z0-9_-]+)"
-    );
-    
+            "youtube\\.com/channel/([a-zA-Z0-9_-]+)");
+
     private static final Pattern CHANNEL_HANDLE_PATTERN = Pattern.compile(
-        "youtube\\.com/@([a-zA-Z0-9_.-]+)"
-    );
-    
+            "youtube\\.com/@([a-zA-Z0-9_.-]+)");
+
     private static final Pattern CHANNEL_USER_PATTERN = Pattern.compile(
-        "youtube\\.com/user/([a-zA-Z0-9_.-]+)"
-    );
+            "youtube\\.com/user/([a-zA-Z0-9_.-]+)");
 
     public YouTubeApiService(@Qualifier("aiRestTemplate") RestTemplate restTemplate,
-                           YouTubeApiProperties properties) {
+            YouTubeApiProperties properties) {
         this.restTemplate = restTemplate;
         this.properties = properties;
         this.objectMapper = new ObjectMapper();
     }
 
     /**
-     * Ensure API key is present, base URL is trusted, and not an unresolved placeholder.
+     * Ensure API key is present, base URL is trusted, and not an unresolved
+     * placeholder.
      */
     private String getApiKeyOrThrow() {
         // Validate base URL to avoid open redirect / untrusted host usage
@@ -69,7 +66,8 @@ public class YouTubeApiService {
         String key = properties.getKey();
         if (key == null || key.trim().isEmpty() || key.contains("{") || key.contains("}")) {
             log.warn("YouTube API key is missing or unresolved. Check env YTB_API_KEY or property 'youtube.api.key'.");
-            throw new ServiceException("YouTube API key is not configured. Set env YTB_API_KEY or property 'youtube.api.key'.");
+            throw new ServiceException(
+                    "YouTube API key is not configured. Set env YTB_API_KEY or property 'youtube.api.key'.");
         }
         return key;
     }
@@ -122,13 +120,24 @@ public class YouTubeApiService {
                     return VideoDetailsResponse.builder()
                             .videoId(videoId)
                             .title(title)
-                            .description(snippet != null && snippet.has("description") ? snippet.get("description").asText() : null)
-                            .channelId(snippet != null && snippet.has("channelId") ? snippet.get("channelId").asText() : null)
-                            .channelTitle(snippet != null && snippet.has("channelTitle") ? snippet.get("channelTitle").asText() : null)
-                            .publishedAt(snippet != null && snippet.has("publishedAt") ? snippet.get("publishedAt").asText() : null)
+                            .description(
+                                    snippet != null && snippet.has("description") ? snippet.get("description").asText()
+                                            : null)
+                            .channelId(snippet != null && snippet.has("channelId") ? snippet.get("channelId").asText()
+                                    : null)
+                            .channelTitle(snippet != null && snippet.has("channelTitle")
+                                    ? snippet.get("channelTitle").asText()
+                                    : null)
+                            .publishedAt(
+                                    snippet != null && snippet.has("publishedAt") ? snippet.get("publishedAt").asText()
+                                            : null)
                             .thumbnails(extractThumbnails(snippet != null ? snippet.get("thumbnails") : null))
-                            .duration(video.has("contentDetails") && video.get("contentDetails").has("duration") ? video.get("contentDetails").get("duration").asText() : null)
-                            .viewCount(video.has("statistics") && video.get("statistics").has("viewCount") ? video.get("statistics").get("viewCount").asLong() : 0L)
+                            .duration(video.has("contentDetails") && video.get("contentDetails").has("duration")
+                                    ? video.get("contentDetails").get("duration").asText()
+                                    : null)
+                            .viewCount(video.has("statistics") && video.get("statistics").has("viewCount")
+                                    ? video.get("statistics").get("viewCount").asLong()
+                                    : 0L)
                             .build();
                 } else {
                     log.warn("Video not found for id: {}", videoId);
@@ -192,14 +201,30 @@ public class YouTubeApiService {
                     return ChannelDetailsResponse.builder()
                             .channelId(channelId)
                             .title(title)
-                            .description(snippet != null && snippet.has("description") ? snippet.get("description").asText() : null)
-                            .customUrl(snippet != null && snippet.has("customUrl") ? snippet.get("customUrl").asText() : null)
-                            .publishedAt(snippet != null && snippet.has("publishedAt") ? snippet.get("publishedAt").asText() : null)
+                            .description(
+                                    snippet != null && snippet.has("description") ? snippet.get("description").asText()
+                                            : null)
+                            .customUrl(snippet != null && snippet.has("customUrl") ? snippet.get("customUrl").asText()
+                                    : null)
+                            .publishedAt(
+                                    snippet != null && snippet.has("publishedAt") ? snippet.get("publishedAt").asText()
+                                            : null)
                             .thumbnails(extractThumbnails(snippet != null ? snippet.get("thumbnails") : null))
-                            .subscriberCount(statistics != null && statistics.has("subscriberCount") ? statistics.get("subscriberCount").asLong() : 0)
-                            .videoCount(statistics != null && statistics.has("videoCount") ? statistics.get("videoCount").asLong() : 0)
-                            .viewCount(statistics != null && statistics.has("viewCount") ? statistics.get("viewCount").asLong() : 0)
-                            .uploadsPlaylistId(channel.has("contentDetails") && channel.get("contentDetails").has("relatedPlaylists") && channel.get("contentDetails").get("relatedPlaylists").has("uploads") ? channel.get("contentDetails").get("relatedPlaylists").get("uploads").asText() : null)
+                            .subscriberCount(statistics != null && statistics.has("subscriberCount")
+                                    ? statistics.get("subscriberCount").asLong()
+                                    : 0)
+                            .videoCount(statistics != null && statistics.has("videoCount")
+                                    ? statistics.get("videoCount").asLong()
+                                    : 0)
+                            .viewCount(statistics != null && statistics.has("viewCount")
+                                    ? statistics.get("viewCount").asLong()
+                                    : 0)
+                            .uploadsPlaylistId(channel.has("contentDetails")
+                                    && channel.get("contentDetails").has("relatedPlaylists")
+                                    && channel.get("contentDetails").get("relatedPlaylists").has("uploads")
+                                            ? channel.get("contentDetails").get("relatedPlaylists").get("uploads")
+                                                    .asText()
+                                            : null)
                             .build();
                 } else {
                     log.warn("Channel not found: {}", channelId);
@@ -239,7 +264,8 @@ public class YouTubeApiService {
             nextPageToken = response.getNextPageToken();
             totalFetched += pageSize;
 
-            log.info("Fetched page of videos: pageSize={}, totalFetched={}, nextPageToken={}", pageSize, totalFetched, nextPageToken);
+            log.info("Fetched page of videos: pageSize={}, totalFetched={}, nextPageToken={}", pageSize, totalFetched,
+                    nextPageToken);
 
             // Safety check to prevent infinite loops
             if (totalFetched >= properties.getMaxVideosPerChannel()) {
@@ -314,7 +340,8 @@ public class YouTubeApiService {
     }
 
     /**
-     * Download caption content (requires OAuth, limited functionality with API key only)
+     * Download caption content (requires OAuth, limited functionality with API key
+     * only)
      */
     public String downloadCaption(String captionId) {
         log.warn("Attempting to download caption (OAuth required). captionId={}", captionId);
@@ -328,7 +355,8 @@ public class YouTubeApiService {
 
         try {
             ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
-            log.debug("YouTube downloadCaption response status: {} for captionId={}", response.getStatusCode(), captionId);
+            log.debug("YouTube downloadCaption response status: {} for captionId={}", response.getStatusCode(),
+                    captionId);
 
             if (response.getStatusCode() == HttpStatus.OK) {
                 log.info("Downloaded caption content successfully. captionId={}", captionId);
@@ -361,7 +389,8 @@ public class YouTubeApiService {
 
         try {
             ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
-            log.debug("YouTube getPlaylistItems response status: {} for playlistId={}", response.getStatusCode(), playlistId);
+            log.debug("YouTube getPlaylistItems response status: {} for playlistId={}", response.getStatusCode(),
+                    playlistId);
 
             if (response.getStatusCode() == HttpStatus.OK) {
                 JsonNode root = objectMapper.readTree(response.getBody());
@@ -398,7 +427,8 @@ public class YouTubeApiService {
                                 .title(title)
                                 .description(snippet.has("description") ? snippet.get("description").asText() : null)
                                 .publishedAt(snippet.has("publishedAt") ? snippet.get("publishedAt").asText() : null)
-                                .thumbnails(extractThumbnails(snippet.has("thumbnails") ? snippet.get("thumbnails") : null))
+                                .thumbnails(
+                                        extractThumbnails(snippet.has("thumbnails") ? snippet.get("thumbnails") : null))
                                 .position(snippet.has("position") ? snippet.get("position").asLong() : null)
                                 .build();
 
@@ -407,8 +437,12 @@ public class YouTubeApiService {
                 }
 
                 String next = root.has("nextPageToken") ? root.get("nextPageToken").asText() : null;
-                long total = root.has("pageInfo") && root.get("pageInfo").has("totalResults") ? root.get("pageInfo").get("totalResults").asLong() : -1;
-                log.info("Processed playlist items page. playlistId={}, videosAdded={}, nextPageToken={}, totalResults={}", playlistId, videos.size(), next, total);
+                long total = root.has("pageInfo") && root.get("pageInfo").has("totalResults")
+                        ? root.get("pageInfo").get("totalResults").asLong()
+                        : -1;
+                log.info(
+                        "Processed playlist items page. playlistId={}, videosAdded={}, nextPageToken={}, totalResults={}",
+                        playlistId, videos.size(), next, total);
 
                 return PlaylistItemsResponse.builder()
                         .items(videos)
@@ -417,7 +451,8 @@ public class YouTubeApiService {
                         .build();
 
             } else {
-                log.error("YouTube API error for getPlaylistItems: playlistId={} -> {}", playlistId, response.getStatusCode());
+                log.error("YouTube API error for getPlaylistItems: playlistId={} -> {}", playlistId,
+                        response.getStatusCode());
                 throw new ServiceException("YouTube API error: " + response.getStatusCode());
             }
         } catch (IOException e) {
@@ -474,7 +509,8 @@ public class YouTubeApiService {
                     JsonNode first = items.get(0);
                     if (first.has("id") && first.get("id").has("channelId")) {
                         String resolved = first.get("id").get("channelId").asText();
-                        log.info("Resolved channelId={} via handle/username lookup for identifier={}", resolved, identifier);
+                        log.info("Resolved channelId={} via handle/username lookup for identifier={}", resolved,
+                                identifier);
                         return resolved;
                     }
                 }
@@ -540,7 +576,8 @@ public class YouTubeApiService {
             log.debug("Thumbnails node is null; returning empty map.");
             return thumbnails;
         }
-        thumbnailsNode.fields().forEachRemaining(entry -> thumbnails.put(entry.getKey(), entry.getValue().get("url").asText()));
+        thumbnailsNode.fields()
+                .forEachRemaining(entry -> thumbnails.put(entry.getKey(), entry.getValue().get("url").asText()));
         log.trace("Extracted {} thumbnail entries.", thumbnails.size());
         return thumbnails;
     }

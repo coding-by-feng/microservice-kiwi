@@ -41,7 +41,7 @@ public class YouTubeCaptionService {
 
         try {
             ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
-            
+
             if (response.getStatusCode() == HttpStatus.OK) {
                 return response.getBody();
             } else {

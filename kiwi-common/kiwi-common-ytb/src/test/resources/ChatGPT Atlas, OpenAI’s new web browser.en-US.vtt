@@ -1,0 +1,1477 @@
+WEBVTT
+Kind: captions
+Language: en-US
+
+00:00:00.800 --> 00:00:04.040
+What's your prediction? Do you think people are going to adopt Atlas like at scale? This is going
+
+00:00:04.040 --> 00:00:07.440
+to be a big winner for them? That's a good question because, I mean, I can see the benefit to
+
+00:00:07.480 --> 00:00:13.440
+OpenAI. What's the benefit to us as the user? All that and more on today's Mixture of Experts.
+
+00:00:17.520 --> 00:00:21.840
+I'm Tim Hwang and welcome to Mixture of Experts. Each week, MoE brings together a panel of
+
+00:00:21.840 --> 00:00:26.000
+brilliant, funny, thoughtful panelists to debate, discuss and think through the latest news in
+
+00:00:26.000 --> 00:00:30.440
+artificial intelligence. Joining us today are three incredible panelists. So a very warm welcome
+
+00:00:30.440 --> 00:00:35.320
+to Martin Keen, who is Master Inventor, Aaron Baughman, IBM Fellow and Master Inventor, and
+
+00:00:35.360 --> 00:00:39.880
+Abraham Daniels, who's a Senior Technical Product Manager for Granite. There's lots to talk about
+
+00:00:39.880 --> 00:00:44.880
+today. We're going to talk about ChatGPT Atlas, Andrej Karpathy's projections about the future of
+
+00:00:44.880 --> 00:00:49.960
+agents. We'll talk about an interesting paper out of DeepSeek on DeepSeek-OCR. And then finally,
+
+00:00:49.960 --> 00:00:54.840
+we'll ask the question of whether or not LLMs can get brain rot. But first, here's Aili with the news.
+
+00:00:59.040 --> 00:01:04.549
+Hey everyone, I'm Aili McConnon. I'm a Tech News Writer with IBM Think. I'm here with a few AI
+
+00:01:04.589 --> 00:01:10.269
+headlines you might have missed this busy week. The AI race is long underway and now Wall Street
+
+00:01:10.309 --> 00:01:16.189
+wants in. Banking giant Goldman Sachs has created a new team that is focusing on financing deals to
+
+00:01:16.230 --> 00:01:22.949
+build data centers and other AI projects. IBM and Groq have teamed up to combine Groq's
+
+00:01:22.989 --> 00:01:29.989
+high-speed inferencing with IBM's AI agent tools, so enterprises can deploy AI agents
+
+00:01:29.989 --> 00:01:36.189
+more quickly and cost effectively. It's no longer just companies experimenting with AI. Now, the
+
+00:01:36.190 --> 00:01:42.830
+military wants in too. Even top generals look to AI chatbots for answers as they practice making
+
+00:01:42.830 --> 00:01:48.350
+decisions quickly, a critical skill in the battlefield. Uber drivers can now earn a little
+
+00:01:48.350 --> 00:01:55.070
+extra cash between rides by doing small digital tasks that help train Uber's AI models, so it's a
+
+00:01:55.070 --> 00:02:00.489
+side hustle within a side hustle. Want to dive deeper into some of these topics? Subscribe to the
+
+00:02:00.489 --> 00:02:04.249
+Think newsletter, linked to the show notes. now back to the episode.
+
+00:02:08.130 --> 00:02:13.689
+First off, I really wanted to talk about the big product announcement of the week, which is ChatGPT
+
+00:02:13.729 --> 00:02:20.129
+Atlas. So if you missed this news, OpenAI is now out with its own browser, and we've talked about
+
+00:02:20.130 --> 00:02:24.449
+this in the past. But I guess, Abraham, do you want to give us some intuition for like, why is OpenAI
+
+00:02:24.449 --> 00:02:29.449
+in the browser game at all? Like why are they why are they doing what they're doing? A couple
+
+00:02:29.449 --> 00:02:34.929
+answers to that. I think there's been kind of breadcrumbs in terms of, you know,
+
+00:02:35.649 --> 00:02:41.209
+ChatGPT or OpenAI kind of entering this space with search functionality, you know, dropping last
+
+00:02:41.210 --> 00:02:48.129
+year as well as, you know, them really being the entry point to a lot of users in terms of how
+
+00:02:48.130 --> 00:02:53.289
+they navigate the Internet. So, I think one, you know, it was a natural kind of pivot for them, but
+
+00:02:53.289 --> 00:02:59.000
+two, with a lot of the antitrust with, you know, Chrome, um, as well as, you know, the idea that you
+
+00:02:59.000 --> 00:03:04.920
+could have your kind of history, uh, cached as part of your internet experience so that you have a
+
+00:03:04.920 --> 00:03:09.480
+better kind of navigation experience when using the internet. think it just makes perfect sense
+
+00:03:09.480 --> 00:03:15.600
+for them. Um, you know, model development is not necessarily as hot as it used to be. So I think
+
+00:03:15.600 --> 00:03:21.280
+OpenAI has been really diligent in terms of finding new avenues to, uh, capitalize on their
+
+00:03:21.280 --> 00:03:26.480
+user base, which is, you know, over 350 million people. So I think it's, um, personally, I think it's
+
+00:03:26.480 --> 00:03:32.759
+a really smart move. And I think, you know, with, with, uh, with LLMs kind of being in there already,
+
+00:03:32.800 --> 00:03:37.159
+you know, an entry point for most people in terms of how you use the internet, it just makes sense
+
+00:03:37.160 --> 00:03:43.079
+for them to actually, you know, you know, create a browser. I think these transitions are really hard.
+
+00:03:43.080 --> 00:03:49.360
+I remember like when I moved from like basic Chrome to Brave, it was like moving house. I like
+
+00:03:49.399 --> 00:03:53.520
+felt like it was like took a long time for me. Like they're both Chromium browsers and so
+
+00:03:53.520 --> 00:03:59.509
+they're like actually share very similar kind of DNA but like this, like transition from like one
+
+00:03:59.509 --> 00:04:05.150
+browser to another is like really feels quite high friction. Um, and I guess, Martin, if do you
+
+00:04:05.150 --> 00:04:08.309
+have any thoughts on kind of like adoption here, right. Because the other one that we've talked
+
+00:04:08.309 --> 00:04:13.310
+about in the past is Perplexity's Comet browser, which is like their bid in the space and they're
+
+00:04:13.310 --> 00:04:19.109
+it almost seems like, oh, well, if you have a company that sells AI as search, it'd become very
+
+00:04:19.109 --> 00:04:25.350
+obvious for you to do an AI browser, right? Because of like the kind of history of Google and Chrome,
+
+00:04:25.470 --> 00:04:28.750
+I guess. what's your predictions? Do you think people are going to adopt Atlas like at
+
+00:04:28.750 --> 00:04:31.989
+scale? This is going to be a big winner for them. Yeah, that's that's that's a good question because
+
+00:04:32.030 --> 00:04:37.910
+I mean, I can see the benefit to OpenAI. What's the benefit to us as the user? Um, yeah, that's a good
+
+00:04:37.910 --> 00:04:43.910
+question. Yeah. So yeah. Can I share two stories of how I've been using Atlas this week? Um, for sure.
+
+00:04:43.950 --> 00:04:48.549
+Yeah, I've tested it out. So, you know, I installed this on my Mac. And then the first thing I wanted
+
+00:04:48.549 --> 00:04:54.410
+to do was I had a scientific article that I just kind of open up in Atlas. And of course, now you
+
+00:04:54.410 --> 00:04:59.009
+can bring up the tab along the side, which gives you access to ChatGPT, and you can ask questions.
+
+00:04:59.010 --> 00:05:05.289
+And the questions use the opened web page's context. So I could ask questions about, tell me what the
+
+00:05:05.290 --> 00:05:08.689
+method and the purpose and the findings were of this experiment. And it gave me all that
+
+00:05:08.689 --> 00:05:13.609
+information. I mean, that stuff I could have done easily by just going into a regular ChatGPT
+
+00:05:13.649 --> 00:05:19.129
+window, right? And just pasting in the URL, but it was kind of handy that it was there. Um, but also
+
+00:05:19.130 --> 00:05:23.729
+in this scientific article, there were a bunch of pictures. So I wondered, can I start asking
+
+00:05:23.730 --> 00:05:28.689
+questions about the pictures and not reference any particular picture? Just see if it could
+
+00:05:28.689 --> 00:05:35.529
+figure out which one was appropriate. So, uh, I should say the the article was about a scientific
+
+00:05:35.530 --> 00:05:42.209
+study of a beer brewing method. And, uh, I wanted to ask, uh, did one of the beers look more oxidized
+
+00:05:42.209 --> 00:05:45.409
+than the other, which you can sort of tell because they get a little bit darker in color. So all I
+
+00:05:45.409 --> 00:05:51.399
+said is, did one look more oxidized than the other? And it found the one image that was actually
+
+00:05:51.399 --> 00:05:56.000
+related to that. And then it analyzed the image and it told me, actually, no, I can't see any
+
+00:05:56.000 --> 00:06:00.880
+difference. So it worked. It worked. Right. And now again, I could have done that in the ChatGPT
+
+00:06:00.920 --> 00:06:05.079
+browser, but it was just convenient that it was it was right there. I didn't have to have two windows
+
+00:06:05.079 --> 00:06:11.358
+open. Now the second thing that I tried was it has built in agent mode, where it's supposed to be
+
+00:06:11.359 --> 00:06:17.079
+able to basically control the browser for you, fire up a bunch of tabs, do a load of stuff So I'm
+
+00:06:17.079 --> 00:06:23.480
+a bit of a amateur book collector, and there's one Michael Connelly book that I don't have yet. So I
+
+00:06:23.480 --> 00:06:29.920
+was like, I wonder if the agent can find me the book. So I asked it. I said, look, I want to find
+
+00:06:29.920 --> 00:06:35.279
+this particular book. It's called Nine Dragons by Michael Connelly. I want it to be in hardcover, hardcover
+
+00:06:35.440 --> 00:06:40.559
+binding. I want a used copy. And the use condition needs to be very good. So it goes off,
+
+00:06:40.560 --> 00:06:43.920
+and it's searching a bunch of websites and you see it kind of working, and it's got some fun
+
+00:06:43.920 --> 00:06:49.939
+animations in Atlas. Um, and it came back with an answer and it's popped up the window with the one
+
+00:06:49.939 --> 00:06:56.179
+that it thinks is best fit, and it found the right book. But I looked at it, and it had the
+
+00:06:56.179 --> 00:07:01.099
+description of the book, and then it had a little picture of the front cover of the book, and I
+
+00:07:01.100 --> 00:07:05.178
+could see that the front cover of the book didn't look right to me. It didn't look like any of the
+
+00:07:05.179 --> 00:07:11.018
+other Michael Connelly books that I'd collected. So all I said was, this cover doesn't look right.
+
+00:07:11.019 --> 00:07:17.979
+what it did is it went and fired off a bunch more windows as part of the agent, and this time
+
+00:07:17.980 --> 00:07:22.299
+it looked up the ISBN number, and then it confirmed that that is the correct picture for
+
+00:07:22.300 --> 00:07:27.939
+that ISBN number. But then it pointed out this is the UK version of the book, not the USA version of
+
+00:07:27.939 --> 00:07:31.539
+the book. And you would actually need to use this other ISBN number if you want me to search for
+
+00:07:31.580 --> 00:07:36.739
+that. So again, this was like a really good example, right? Yeah. But the agent did all of the work for
+
+00:07:36.739 --> 00:07:42.979
+me. And again, I probably could have done that in my Chrome browser using ChatGPT, but I would have
+
+00:07:42.979 --> 00:07:47.779
+been kind of flipping between multiple tabs to do that. So it was beneficial to me just to kind of
+
+00:07:47.820 --> 00:07:53.929
+have it all there in one place. So you're pro, you actually are like, oh, you feel like a month from
+
+00:07:53.929 --> 00:07:59.848
+now you'll still be using Atlas. We'll see, I don't know. We'll see. Okay. Day one I liked it. All right.
+
+00:07:59.849 --> 00:08:05.249
+Great. Aaron, I've saved maybe the craziest question for you for last. Um, I'm sort of
+
+00:08:05.289 --> 00:08:12.249
+interested in, like, whether or not in, you know, 5 to 10 years, there will even be browsers, right?
+
+00:08:12.289 --> 00:08:17.328
+Like, uh, you know, I think one way of kind of reading the rise of chatbots is, well, if they get
+
+00:08:17.329 --> 00:08:22.249
+good enough or these agents get good enough, you'll never need to go directly to a website
+
+00:08:22.249 --> 00:08:27.450
+anymore, right? All of the information will be curated, assembled. You know, maybe everything will
+
+00:08:27.450 --> 00:08:34.009
+be working on MCP. And so like, you really will have an internet that is for agents by agents. And
+
+00:08:34.010 --> 00:08:39.769
+so the notion of like you having to browse the web is maybe like this artifact of the past. And
+
+00:08:39.770 --> 00:08:43.329
+so I guess one question for you is like over the long run, do browsers even make sense as like a
+
+00:08:43.329 --> 00:08:49.200
+category of of product? Yeah. You know. You know, so. So taking out the crystal ball, you know, and just
+
+00:08:49.200 --> 00:08:55.639
+thinking about the projection tech is going. Yeah. I mean, it's just fascinating, you know, because, you
+
+00:08:55.640 --> 00:09:00.479
+know, the paradigm is changing. You know, I think that OpenAI, you know, they're looking at turning
+
+00:09:00.480 --> 00:09:05.039
+our computer, you know, our computing devices into a playground, but it doesn't yet have control over
+
+00:09:05.039 --> 00:09:09.960
+the structure and function of that playground at least yet. Right. So we're trying to preserve some
+
+00:09:09.960 --> 00:09:16.679
+privacy, you know, pieces. And, and it looks like ChatGPT is trying to become more like an
+
+00:09:16.679 --> 00:09:20.639
+operating system. You know, where you can come and use these different applications, just like an
+
+00:09:20.679 --> 00:09:27.119
+operating system for AI apps. You know, where in this case, the OS role here is more about like
+
+00:09:27.159 --> 00:09:34.159
+orchestrating AI tools, workflows, plugins and such. So it's not going to replace Mac OS or
+
+00:09:34.159 --> 00:09:38.519
+Windows or Linux or so on. You know, it's not it's not aiming to act like a low-level OS that
+
+00:09:38.520 --> 00:09:44.719
+controls this kind of hardware, but it's abstracted up a level, you know, where it handles apps,
+
+00:09:44.780 --> 00:09:51.218
+SDKs, third-party apps, agents, right. And the line between apps and platform, you know, it's beginning
+
+00:09:51.260 --> 00:09:57.299
+to blur a bit, you know,and, and we have to think, too, that our computers really aren't built for AI
+
+00:09:57.340 --> 00:10:03.700
+per se. You know, we have to farm out lots of these models, powerful big models. Um, and even the agent
+
+00:10:03.700 --> 00:10:09.979
+wrappers up into the cloud or these big compute clusters. Right. And, and so we need something new. Right.
+
+00:10:10.020 --> 00:10:15.539
+And and so so this is where I think, you know, generative AI and generative computing
+
+00:10:15.539 --> 00:10:20.859
+combined together, you know, will help us, you know, achieve sort of the future, you know, of what's going,
+
+00:10:20.900 --> 00:10:25.419
+going to happen. You know, I think, I think some of the risks that we all just need to be
+
+00:10:25.419 --> 00:10:30.059
+aware of, right, is data and privacy. You know, that, you know, just making sure that we still can
+
+00:10:30.059 --> 00:10:36.739
+control and decide, you know, what this new OS, right, is, is going to do and what it can
+
+00:10:36.780 --> 00:10:43.219
+do. Right. There's, there could also be these hidden prompts or what we call comet Jackie. You know, where, where, where
+
+00:10:43.450 --> 00:10:48.209
+there's a lot of these agent risk, right? That ,could happen. And it just sort of does
+
+00:10:48.210 --> 00:10:54.569
+it by itself. You know, where it hijacks, you know, comment or hijacks, you know, Atlas. Right. There's
+
+00:10:54.569 --> 00:11:01.168
+also less transparency and control that we have as we go further into the future. AI can make
+
+00:11:01.169 --> 00:11:07.408
+mistakes. You know, as Martin was mentioning before, or at least it seemed like a cognitive mistake,
+
+00:11:07.570 --> 00:11:12.649
+but it actually went, you know, to the UK found a book rather than trying to find, you know, a book
+
+00:11:12.650 --> 00:11:17.209
+maybe where we currently live. Right. So, so, so it's like that information graph that it didn't
+
+00:11:17.210 --> 00:11:22.890
+associate correctly to the user. But, but but in essence, you know, that's that's where, where I
+
+00:11:22.890 --> 00:11:26.810
+think it's, it's going and it's and it's going to be fascinating to to watch the field, you know, as
+
+00:11:26.810 --> 00:11:31.728
+it sort of begins to change and turn. And it's going to change very quickly. I guess, Abraham, any
+
+00:11:31.770 --> 00:11:36.649
+thoughts on ultimately like where OpenAI goes with all this? I mean, Aaron kind of name-checked,
+
+00:11:36.690 --> 00:11:41.529
+sort of the idea of like, well, ultimately their ambition is world domination, right? Like
+
+00:11:41.600 --> 00:11:46.960
+ultimately, the ambition is not just a browser. They want to create a thing that, like, can use any
+
+00:11:47.000 --> 00:11:53.679
+app on your computer. Uh, and it starts to look like something which is maybe more akin to like
+
+00:11:53.719 --> 00:11:57.640
+what we would identify with, like a lower-level operating system. Is that, that where they're
+
+00:11:57.640 --> 00:12:01.599
+headed with this ultimately? We've already, you know, added features in which they can start to
+
+00:12:01.600 --> 00:12:08.559
+plug into apps on your your desktop, laptop and as part of just the ChatGPT feature. Um, so
+
+00:12:08.559 --> 00:12:14.079
+in terms of plugging into your apps, like I think that's, they've already gone down that route. Um,
+
+00:12:15.159 --> 00:12:20.400
+when I think about how people use the Internet today and when I say people, I don't mean, you know,
+
+00:12:20.440 --> 00:12:26.718
+researchers or individuals that may be a little bit more, um, acutely aware of generativeAI. I'm
+
+00:12:26.759 --> 00:12:33.358
+talking about your everyday user. They see it more as a fix-all tool. So they don't have the same, in
+
+00:12:33.359 --> 00:12:40.339
+my opinion, you know, guardrails or, you know, specific issues with some of
+
+00:12:40.340 --> 00:12:45.699
+the security around using it. They see it as kind of my generation would have saw Google, where this
+
+00:12:45.699 --> 00:12:50.059
+is, you know, this is a truth search engine. Whatever comes up is typically going to be right. Is real,
+
+00:12:50.179 --> 00:12:56.179
+right? Yeah. Yeah, exactly. So for the, for the average user, I think having something like Atlas,
+
+00:12:56.579 --> 00:13:03.219
+one, simplifies their internet experience. in terms of connecting with apps, I think they would
+
+00:13:03.219 --> 00:13:09.059
+gladly take it, to be honest. Uh, from OpenAI's perspective, obviously monetization is, you know, a
+
+00:13:09.059 --> 00:13:12.979
+big aspect of their business. So they think this opens up a huge role for them in terms of being
+
+00:13:12.979 --> 00:13:19.460
+able to monetize it, whether it's your ads or, you know, what have you. Um, but yeah, I personally and I
+
+00:13:19.460 --> 00:13:24.340
+may be biased here, but I think this was a, you know, a really smart move by them. I think it was, um,
+
+00:13:24.340 --> 00:13:28.299
+I think, everything that's happening in the, you know, the search industry right now, I think is
+
+00:13:28.299 --> 00:13:32.618
+only going to benefit them in terms of people adopting Atlas. Uh, I think they've done a great
+
+00:13:32.619 --> 00:13:38.968
+job of gaining mindshare and gaining a market before throwing this out, where it's a really easy
+
+00:13:38.969 --> 00:13:45.968
+switch. And to Martin's story, where, you know, he could have done it in GPT, but you know, he, why not
+
+00:13:45.969 --> 00:13:49.929
+just do it on the browser where you have all the context right in front of you? You can ask
+
+00:13:49.929 --> 00:13:54.609
+whatever question you want. Have the memory cache. Yeah. I think it just makes perfect sense, to be
+
+00:13:54.609 --> 00:13:58.609
+honest. Yeah. Martin, looks like you might want to jump in, Or. One thing I will say, though, is as soon
+
+00:13:58.609 --> 00:14:03.049
+as you launch that, that browser, of course. Now the decision is do you want to switch over to another
+
+00:14:03.049 --> 00:14:08.129
+browser? And it is not shy on asking. Within about two minutes, it was like, can I be your default
+
+00:14:08.129 --> 00:14:12.369
+browser now? Like, I haven't even put in like two search queries. We're just getting to know each
+
+00:14:12.369 --> 00:14:18.369
+other. It also asks for Bluetooth, which was I was like, why do you need Bluetoothfor, like, connecting my
+
+00:14:18.369 --> 00:14:22.090
+devices? You're like for reasons. Exactly. For reasons.
+
+00:14:26.690 --> 00:14:31.889
+Well, this is a nice segue to the next topic I want to cover. So Andrej Karpathy, who we've talked
+
+00:14:31.890 --> 00:14:37.709
+about before on the show, famously OpenAI co-founder, influencer in the generative AI
+
+00:14:37.749 --> 00:14:44.549
+movement, was on a very prominent AI podcast, the Dwarkesh podcast, fairly recently,
+
+00:14:44.549 --> 00:14:49.829
+and he had this kind of much-discussed set of comments that he made there, which I'll just kind
+
+00:14:49.829 --> 00:14:54.270
+of quote here. He's talking about agents. So he said, "They just don't work. They don't have
+
+00:14:54.270 --> 00:14:59.429
+enough intelligence. They're not multimodal enough. They can't do computer use and all this stuff." And
+
+00:14:59.429 --> 00:15:04.509
+he goes on to say it will take about a decade to work through all those issues. Um, and I think
+
+00:15:04.510 --> 00:15:08.349
+maybe this is actually a really nice thing to build off of,Abraham, what you just said, which is, um, is
+
+00:15:08.549 --> 00:15:14.589
+that going to be a barrier to agent adoption? Uh, I think like, Andrej's definitely is
+
+00:15:14.590 --> 00:15:18.710
+kind of like looking at this from the perspective of a researcher who's aware of the technological
+
+00:15:18.710 --> 00:15:23.949
+limitations of what's being built, but it sure seems like people have enough confidence in these
+
+00:15:23.949 --> 00:15:30.589
+systems that they're more than willing to adopt agents, use agents, um, you know, even even in the
+
+00:15:30.590 --> 00:15:34.389
+presence of these kinds of problems. Andso, I guess maybe, Martin, to throw it to you. Like, how
+
+00:15:34.389 --> 00:15:39.499
+big of a deal do you think, like, are the issues that Karpathy is kind of pointing out here? Should
+
+00:15:39.500 --> 00:15:43.979
+the space be worried that, you know, it's not going to be as advanced as we thought as quickly as we
+
+00:15:43.979 --> 00:15:49.619
+thought? Yeah. I think when somebody who's worked in prominent positions in two frontier AI labs in
+
+00:15:49.620 --> 00:15:55.858
+Tesla and then at OpenAI comes out and says agents are terrible, they're oversold, and they're
+
+00:15:55.859 --> 00:16:00.499
+ten years away from being useful. It's, it's amazing going to pick up right to to that sort of
+
+00:16:00.539 --> 00:16:05.819
+thing. I mean, it it was very interesting to hear him sort of give some of the reasons why he
+
+00:16:05.820 --> 00:16:10.258
+thinks that, that is the case. I mean, you know, in my experience with this book-buying agent, it
+
+00:16:10.259 --> 00:16:16.059
+already made a mistake that a human probably wouldn't do that. If I asked, if I asked, um, Aaron,
+
+00:16:16.099 --> 00:16:20.419
+like, hey, Aaron, my personal assistant, could you go out and find me that Michael Connelly book? He's
+
+00:16:20.419 --> 00:16:24.499
+probably not going to come back with the UK edition. Uh, you know, that would be part of the
+
+00:16:24.500 --> 00:16:30.938
+processing. So, so, yeah, you could see that. But he mentioned a couple of other things that can be
+
+00:16:30.979 --> 00:16:35.770
+sort of the cause of this. Why agents sometimes just don't do what would seem like the intuitive
+
+00:16:35.809 --> 00:16:41.529
+thing from the human perspective. one of the things he mentioned was training data. And he said
+
+00:16:41.530 --> 00:16:46.849
+that if you took the training data set of any large language model and you just picked out a
+
+00:16:46.849 --> 00:16:53.529
+random single document from that training data set, he said, chances are that is either going to
+
+00:16:53.570 --> 00:16:59.049
+be just irrelevant, like it will be a stock ticker figure with like some numbers in it or something,
+
+00:16:59.049 --> 00:17:05.769
+or it's going to contain just kind of nonsensical content And he said, you, on
+
+00:17:05.769 --> 00:17:09.249
+average, most of the content that it's kind of scraped off the internet is just kind of
+
+00:17:09.290 --> 00:17:14.969
+nonsensical or it's full of errors, but, you know, if you have enough of it, then you can see the
+
+00:17:14.970 --> 00:17:21.369
+signal for the noise. So it's the training data could be a big part of that. And the second sort
+
+00:17:21.370 --> 00:17:27.889
+of controversial reason he gave, was, were his opinions on reinforcement learning, where he also
+
+00:17:27.890 --> 00:17:34.709
+declared reinforcement learning, as well, pretty bad. He gave the example of a math problem
+
+00:17:34.709 --> 00:17:39.749
+that the reinforcement learning works by rewarding answers that are correct, and punishing
+
+00:17:39.749 --> 00:17:44.989
+answers that are not correct, but not necessarily caring too much about how they got there. So did
+
+00:17:44.990 --> 00:17:48.949
+you do the right calculations, or did you kind of stumble on it by accident? Or did you add in a
+
+00:17:48.949 --> 00:17:53.948
+whole lot of extra steps that you really didn't need to do? And I think those limitations of
+
+00:17:53.949 --> 00:18:00.029
+reinforcement learning appear quite prominently in the agent's chain of thought. So when you do
+
+00:18:00.069 --> 00:18:04.670
+set an agent out to do something, and you see it processing its chain of thought as it's trying to
+
+00:18:04.709 --> 00:18:08.869
+work through steps, it will often get stuck in these loops where it's doing things where you
+
+00:18:08.869 --> 00:18:15.629
+think, okay, let's just move on past that, you know, get get to the next thing. And I guess, my suspicion, I
+
+00:18:15.630 --> 00:18:19.749
+would suspect that reinforcement learning is a large part of that, that it's not always finding
+
+00:18:19.749 --> 00:18:25.109
+the most optimal ways to do things. But, but yeah, I think when somebody like that comes out and says
+
+00:18:25.150 --> 00:18:29.749
+agents are currently being oversold, it is going to affect the industry. People are going to listen
+
+00:18:29.749 --> 00:18:33.738
+to that. Yeah, definitely. Yeah. The downstream effect of this is going to be big because
+
+00:18:33.780 --> 00:18:39.899
+obviously there's been so much excitement about, say, what agents can do and the promise of it.
+
+00:18:40.060 --> 00:18:45.219
+And, you know, I think there have been kind of rumblings from certainly the business space, right.
+
+00:18:45.259 --> 00:18:48.778
+I think a couple of banks have come out and there's this report from, I feel a few months ago
+
+00:18:48.779 --> 00:18:52.259
+that was like, oh, a lot of these pilots are not quite working out, but it seems to be like the
+
+00:18:52.260 --> 00:18:57.380
+first case of a really kind of like strong, technical, influential technical voice being like,
+
+00:18:57.380 --> 00:19:03.259
+guys, this is this current research plan is not going to work. Um, Aaron, do you do you buy it? Like,
+
+00:19:03.300 --> 00:19:08.459
+should we really be tapping the brakes on our optimism around this stuff? I think history always
+
+00:19:08.459 --> 00:19:12.539
+repeats itself, right? We just need to learn from history so it doesn't, the bad parts of history
+
+00:19:12.579 --> 00:19:19.499
+don't, right. A surprisingly hard thing to do. Yeah. That's right. Right. If I look back in the '90s and
+
+00:19:19.499 --> 00:19:24.419
+even '80s, you know, we we have these knowledge, you know, base systems, right. And, and there's a lot of
+
+00:19:24.419 --> 00:19:31.169
+promise, you know, around them. Right. And and it sort of we entered in, you know, into a winter of
+
+00:19:31.169 --> 00:19:35.370
+AI, right. And, and a lot of that was fueled by the early neural networks that couldn't even solve
+
+00:19:35.370 --> 00:19:40.649
+the XOR problem, you know. And so therefore, we had to go to multilayer perceptrons, you know, to help
+
+00:19:40.649 --> 00:19:44.089
+solve that. But then we didn't have the computational ability, right. So, so there's always
+
+00:19:44.090 --> 00:19:48.608
+stumbling blocks and problems that have to be solved by science and engineering. Right. And this
+
+00:19:48.609 --> 00:19:54.929
+is no different. I think what he's doing is very smart. Right. And I think that we need to reel in,
+
+00:19:55.129 --> 00:20:01.129
+you know, lots of the overhype that we have because I do believe it's overhyped, right? You
+
+00:20:01.129 --> 00:20:07.209
+know, every single company is branding AI, and they may not even know how to spell AI. Right. And so, so
+
+00:20:07.209 --> 00:20:10.929
+we need to be careful about that. And I think Andrej is, you know, he's taking a long-call
+
+00:20:10.930 --> 00:20:16.489
+position, which I think is what, what a lot of us should do. Right. And he's and he's trying to
+
+00:20:16.530 --> 00:20:22.050
+mitigate, you know, some of this overhype. It's very risky, you know, because I mean, we've seen it time
+
+00:20:22.050 --> 00:20:27.430
+and time again, where, you know, a system doesn't live up to its to its hype, but it does do what
+
+00:20:27.430 --> 00:20:33.669
+it's built to do. You know, and and so by reining in and creating those benchmarks and
+
+00:20:33.670 --> 00:20:39.670
+guideposts, you know, it really, really helps us out. And AI agents, we are in the early stages. You know,
+
+00:20:39.710 --> 00:20:44.349
+and it's very exciting. You know, it's fun to play with. But I will say when I'm building a
+
+00:20:44.349 --> 00:20:49.750
+production system, whether it's for sports or for for entertainment, I always have a human in the
+
+00:20:49.750 --> 00:20:55.069
+loop, right? To make sure that what I'm producing is consumer-ready, right. And then when we go to
+
+00:20:55.109 --> 00:21:01.629
+scale, right, a 1 to 2% error rate, that's huge. You know, I mean that's that's one out of 100 requests.
+
+00:21:01.630 --> 00:21:07.629
+If I'm getting billions of requests, that's a lot of people are seeing incorrect problems. And and
+
+00:21:07.629 --> 00:21:12.109
+that's not not even to say that these systems are going out to use external tools with, say, for
+
+00:21:12.109 --> 00:21:17.949
+example, MCP to activate something outside of the ecosystem, right, which we need to be very careful.
+
+00:21:17.989 --> 00:21:24.030
+There's a lot of non-determinism right around these systems. And um, you know, I'm studying
+
+00:21:24.150 --> 00:21:29.060
+actually, you know, looking at when should we use, you know, machine learning versus generative AI?
+
+00:21:29.180 --> 00:21:33.819
+Because there's a place for both. And when should you combine them together to get the best of both
+
+00:21:33.819 --> 00:21:39.499
+worlds. But, but yeah, I, you know, I do think that he's taking a long-haul position, and it's a very
+
+00:21:39.500 --> 00:21:45.739
+smart thing to do. Abraham, I'll give you the last word on this topic. One of my favorite images from
+
+00:21:45.819 --> 00:21:50.379
+the moment that we're in an AI, we talked about it, I think, on a previous episode, was the chart of
+
+00:21:50.420 --> 00:21:56.938
+like how the money is flowing in AI, and it's just like, you know, it's like Nvidia gives
+
+00:21:56.939 --> 00:22:01.140
+money to OpenAI, OpenAI gives money to Nvidia. It's just like it's a circle. Basically it's where the money is
+
+00:22:01.140 --> 00:22:07.660
+flowing. Um, is uh, is this gonna, is, is Andrej's comments gonna pop the bubble? Is there a bubble? I
+
+00:22:07.660 --> 00:22:11.299
+don't know what your views on this are. I don't know if his view is going to pop the bubble.
+
+00:22:11.300 --> 00:22:16.979
+Whether there is a bubble or not, I think, you know, I'll let everybody decide for themselves.
+
+00:22:16.979 --> 00:22:21.499
+definitely think there's overhype. That's without question. Uh, and I think there's overhype for a
+
+00:22:21.500 --> 00:22:26.839
+specific reason that, you know, probably predicated on a financial reason. Um, but
+
+00:22:28.319 --> 00:22:32.240
+Aaron said something that kind of really resonated. Like the the current patterns for
+
+00:22:32.240 --> 00:22:37.400
+agents are non-deterministic. You know, whether, it's, you know, a planner or, you know, just hitting
+
+00:22:37.400 --> 00:22:43.840
+the models many times for inference scaling or, you know, they just they don't offer the, um, outputs, the
+
+00:22:43.880 --> 00:22:48.240
+guardrails around outputs in terms of I need a specific output every single time. And if
+
+00:22:48.240 --> 00:22:53.039
+it's not operating within this scope, then, you know, go back. Um, so I think from a agent's
+
+00:22:53.040 --> 00:22:56.959
+perspective, like, I think there's, there's good enough where, you know, you're doing a search
+
+00:22:56.960 --> 00:23:00.679
+function and the stakes are low. If you don't get it, you know, you can redo it. And then there's
+
+00:23:00.680 --> 00:23:07.039
+production-grade agents, where the stakes are high enough, where if it's not, you know, 99 plus percent,
+
+00:23:07.040 --> 00:23:11.799
+it's, you know, we can't move it to production. So I think there's different worlds in terms of, you
+
+00:23:11.800 --> 00:23:18.599
+know, whether agents are going to make it or not. Uh, personally, I think there's a, um, a
+
+00:23:18.800 --> 00:23:25.188
+need for more of a deterministic, um, outcome for these agents. I think, software is going to be kind
+
+00:23:25.189 --> 00:23:29.949
+of that. So generative computing specifically is kind of going to be that key piece in terms of
+
+00:23:29.989 --> 00:23:34.669
+making sure that agents are production-grade, whether that's through policy management, whether
+
+00:23:34.670 --> 00:23:39.629
+that's through requirements or IVR patterns or what have you. Um, ten years. I don't know if it's
+
+00:23:39.629 --> 00:23:44.029
+ten years or not, but I mean, I definitely do agree with the statement in terms of the overhype
+
+00:23:44.030 --> 00:23:48.749
+around agents. Um, but I also think that there's still a place for them today. It's just a matter
+
+00:23:48.750 --> 00:23:52.509
+of being able to define where. Yeah, use case. Yeah. Makes a lot of sense.
+
+00:23:55.829 --> 00:23:59.549
+I'm going to move this on to our next topic. Um, the next two segments we're going to talk a
+
+00:23:59.550 --> 00:24:03.989
+little bit about sort of interesting papers that have kind of come across our radar in the last
+
+00:24:03.990 --> 00:24:09.389
+few weeks. Um, and I guess, Martin, I'm going to pick on you. A few weeks ago, I picked on Chris. Hey, I
+
+00:24:09.389 --> 00:24:13.749
+was like, could you explain manifolds and exactly how they work in the context of machine learning?
+
+00:24:13.869 --> 00:24:19.390
+Um, I'm not going to do anything so mean to you today, but a super interesting paper out of DeepSeek
+
+00:24:19.390 --> 00:24:25.578
+called DeepSeek-OCR. The paper's DeepSeek's, DeepSeek-OCR context optical compression, and I
+
+00:24:25.579 --> 00:24:29.020
+guess, Martin, the first question to just toss to you is that the papers trying to deal with the
+
+00:24:29.020 --> 00:24:35.540
+problem of models having a like trouble dealing with long contexts. Um,
+
+00:24:35.540 --> 00:24:39.939
+and can you tell us a little bit about that problem? Like why does that happen? What are the
+
+00:24:39.939 --> 00:24:44.899
+kind of practical implications of that? If we look sort of the trend at large language models now,
+
+00:24:44.900 --> 00:24:49.180
+we're seeing bigger and bigger context windows to fit more and more stuff in. So the more and more
+
+00:24:49.180 --> 00:24:55.219
+stuff they can keep in mind, uh, is going to be prioritized when it comes up with the response. So
+
+00:24:55.220 --> 00:25:00.059
+how do you get as much information as you can in a certain context, when they're given how
+
+00:25:00.060 --> 00:25:04.338
+computationally expensive it is to expand the context window? So yeah, this was kind of an
+
+00:25:04.339 --> 00:25:10.819
+interesting idea of actually basically turning these tokens into visual tokens. And you could
+
+00:25:10.859 --> 00:25:16.819
+actually cram a lot more information into that But depending upon the algorithm that you used,
+
+00:25:16.860 --> 00:25:23.679
+there was a certain loss when you convert it back again into text, but quite a small loss. Um, for,
+
+00:25:23.760 --> 00:25:30.759
+for some. So I think the, the best model there was something like a 97%, uh, rate of
+
+00:25:30.759 --> 00:25:36.679
+being able to take text, basically do this conversion, convert it back again. So the decode-encode
+
+00:25:36.680 --> 00:25:43.640
+cycle and then 97% of the text was was about right. Not too bad. Not too bad. Right. Um, but
+
+00:25:43.640 --> 00:25:48.719
+you could have, if you have an image with basically less information in it that that can
+
+00:25:48.719 --> 00:25:55.000
+still go through this encoder-decoder loop and still bring back text, but the text has lost a
+
+00:25:55.000 --> 00:26:00.879
+little bit more information. Um, and what's really interesting is that they, they refer this around
+
+00:26:00.880 --> 00:26:07.680
+this idea of a forgetting mechanism, which kind of mimics human memory much more.
+
+00:26:07.680 --> 00:26:14.279
+So the big thing in the paper is how similar this mimics human memory. Uh, so, for
+
+00:26:14.279 --> 00:26:20.989
+example, if you run this through the the best model. It basically remembers almost everything,
+
+00:26:21.069 --> 00:26:26.909
+just like I remember, on this podcast, the question you just asked me now, Tim. But I was on this
+
+00:26:26.910 --> 00:26:33.588
+podcast a month ago, and I remember who the guests were and what the topics were, but my memory is
+
+00:26:33.589 --> 00:26:38.229
+not fully there now. I don't remember the specific questions that you asked me or the specific
+
+00:26:38.230 --> 00:26:43.910
+talking points that the other guests made, so it's a bit more fuzzy. Well, they kind of they, they
+
+00:26:43.949 --> 00:26:50.749
+model that, um, in this paper, and they say, well, actually that sounds like the base model or the
+
+00:26:50.749 --> 00:26:56.229
+small model that we have, because the small model that is considered a more blurry image and will
+
+00:26:56.270 --> 00:27:02.469
+be about the equivalent of one month of human memory. So something that happened to me one month
+
+00:27:02.469 --> 00:27:07.869
+ago, if you use their blurry model, then that will create an image that will be about the same. So
+
+00:27:07.870 --> 00:27:14.349
+about the same amount of stuff will be forgotten there. So it sort of brings up an interesting
+
+00:27:14.349 --> 00:27:20.738
+point. Is, is there actually some utility in that, in that having large language model context
+
+00:27:20.739 --> 00:27:26.819
+windows mimic human memory a bit more? Is there a reason that we evolved to remember things in the
+
+00:27:26.819 --> 00:27:32.379
+present very well, and then just to remember things more in abstract as time goes on? And the
+
+00:27:32.379 --> 00:27:37.539
+fact that this could model that as well. Yeah. And the answer there being like in the biology case
+
+00:27:37.539 --> 00:27:42.218
+that like essentially it's just in the same way that it's computationally intensive for machines,
+
+00:27:42.219 --> 00:27:47.540
+it's also kind of computationally intensive for us to have like increasingly large, um, context
+
+00:27:47.540 --> 00:27:53.618
+windows in effect. one practical import of this paper seems to be, look, we could feed in language
+
+00:27:53.619 --> 00:27:59.019
+tokens or we can feed in picture tokens, right? I guess to make it like a very simplistic kind of
+
+00:27:59.060 --> 00:28:03.859
+distinction. The end result is that we can we can do a lot more compression. Right? Which I guess
+
+00:28:03.900 --> 00:28:08.660
+this gets us to longer and longer contexts Is that kind of where this is all headed is like you
+
+00:28:08.660 --> 00:28:13.059
+can you can start to put even more in the window if this is actually something that becomes like
+
+00:28:13.099 --> 00:28:17.799
+more production-ready. I think about this as a document distillation. You know, much like model
+
+00:28:17.800 --> 00:28:22.399
+distilling. You have big model, you know, make a smaller model, right. We're here, we have a document,
+
+00:28:22.400 --> 00:28:27.359
+but we want to distill it down into principal components, you know, and it's and it's in this, you
+
+00:28:27.359 --> 00:28:31.759
+know, similar from a mathematical perspective perspective of principal component analysis, where
+
+00:28:31.759 --> 00:28:35.999
+you want to, you know, keep the largest eigenvectors. So you have the most variance that
+
+00:28:35.999 --> 00:28:41.959
+can explain, you know, your data. This to me seems a bit similar, except we're, you know, using these
+
+00:28:41.960 --> 00:28:47.399
+different vision encoders. So they have, you know, a two-stage system and have a vision encoder called
+
+00:28:47.399 --> 00:28:53.519
+deep encoder. And it's pretty cool, you know, because they take in a PDF file. Right. But a scanned,
+
+00:28:53.919 --> 00:28:59.198
+you know, piece and it's not just OCR, you know. So it's not just extracting text but it looks like
+
+00:28:59.199 --> 00:29:05.199
+it's liberating. Right. The, the, the text, we can actually see what it is. And it turns this messy, human-written
+
+00:29:05.280 --> 00:29:11.279
+world into something that AI can understand. And, and it helps to create these
+
+00:29:11.280 --> 00:29:17.469
+smaller tokens. So we can have this new way of document understanding. Right. And it helps with
+
+00:29:17.469 --> 00:29:21.989
+the core problem that LMMs struggled with these long context. Due to the, you know, quadratic
+
+00:29:21.990 --> 00:29:26.309
+scaling that the longer the context comes, you know, it becomes harder and harder, you know, for
+
+00:29:26.310 --> 00:29:32.189
+these systems to process it. Right. And therefore, you know, we leverage this efficient compression
+
+00:29:32.189 --> 00:29:39.149
+technique so that we can understand this information into a textual representation. And what
+
+00:29:39.150 --> 00:29:43.389
+I think is neat in this two-stage system, when you get down to the decoder. What if you
+
+00:29:43.390 --> 00:29:48.429
+could just take that vision encoder, right, and you've, you know, put it into a new language? Then
+
+00:29:48.430 --> 00:29:54.548
+you could, you know, train a new decoder, so it, like, translates it into any other kind of language
+
+00:29:54.549 --> 00:30:01.429
+such that it can be used by another, you know, large language model,a, a any sort of
+
+00:30:02.070 --> 00:30:08.109
+multimodal model. And it just produces something very different. You know,and, and so, so I think
+
+00:30:08.150 --> 00:30:12.979
+it'll become more of like an art form, you know, where you're putting together these different
+
+00:30:12.979 --> 00:30:18.420
+layers of encodings and decoders and finding out what best works. In fact, you could think of it
+
+00:30:18.420 --> 00:30:24.179
+like a search problem, you know, find the best set of models and decoders and encoders to solve a
+
+00:30:24.180 --> 00:30:31.019
+certain problem in the most efficient way, you know. But yeah, I'm excited. I liked it.
+
+00:30:31.220 --> 00:30:37.339
+You know what they showed here. Um, looking forward towards their next paper where I think they're
+
+00:30:37.340 --> 00:30:42.938
+going to have an expanded, um, you know, piece where they're going to add some more experiments to see
+
+00:30:42.980 --> 00:30:49.379
+how it works with multimodal and text and fuse together and so on. Abraham, maybe a final question
+
+00:30:49.380 --> 00:30:55.539
+for you is like just to zoom out a little bit. Um, you know, DeepSeek obviously kind of got on the
+
+00:30:55.540 --> 00:31:01.499
+map in a big way through the release of its kind of open-source models. Um, it is a it is a lab
+
+00:31:01.499 --> 00:31:06.819
+that's doing research and it's publishing papers. Do you have any speculation on, like, why it is
+
+00:31:06.819 --> 00:31:12.799
+DeepSeek is interested in these kinds of research questions? OCR is one of those really old
+
+00:31:12.799 --> 00:31:19.159
+problems, so it's a great question. Um, personally, I think this may be just one of those
+
+00:31:19.160 --> 00:31:23.599
+innovations that they found in the lab that, you know, demonstrated a step forward that was worth
+
+00:31:23.600 --> 00:31:30.279
+releasing. Um, also, I think that, you know, the idea of having this, you
+
+00:31:30.280 --> 00:31:37.239
+know, you know, quote unquote, infinite or longer context window is really applicable to particular
+
+00:31:37.239 --> 00:31:41.999
+RAG use cases that are, you know, really important and kind of something that hasn't been solved
+
+00:31:41.999 --> 00:31:48.280
+across the board. So I think both those answers, you know, kind of help them. One, uh, make sure that
+
+00:31:48.280 --> 00:31:51.519
+their name is still in the news, but two, demonstrate that the research lab is still doing
+
+00:31:51.520 --> 00:31:56.358
+some pretty cool things. In terms of this particular paper, what I what I thought was really
+
+00:31:56.359 --> 00:32:03.319
+neat was, you know, obviously shifting from a, um, uh, a different approach in
+
+00:32:03.320 --> 00:32:09.989
+terms of how you actually encode and embed a document. What I would love to have seen
+
+00:32:09.989 --> 00:32:15.229
+personally is, you know, is a semantic representation still kind of kept in terms of the,
+
+00:32:15.310 --> 00:32:20.510
+you know, moving from an image to text? And what does that actually mean for downstream
+
+00:32:20.510 --> 00:32:25.309
+applications? Because that's where you're really going to see a lot of the implementation here. Or,
+
+00:32:25.310 --> 00:32:31.949
+is this really just an OCR text extraction where, you know, there's some really quick, plug IBM, where
+
+00:32:31.989 --> 00:32:36.709
+Doclink does this extremely well, extremely efficient in a? You know, where you don't need an
+
+00:32:36.749 --> 00:32:42.469
+LLM to do that to be honest. So it's a little bit of overkill in that regard. But um, but yeah, I mean
+
+00:32:42.469 --> 00:32:46.949
+I'm excited to see the next version of this paper and the next version of this effort from DeepSeek. Yeah.
+
+00:32:46.989 --> 00:32:51.108
+I mean, I mean, it doesn't seem like a very flashy milestone, but it is definitely a critical
+
+00:32:51.109 --> 00:32:55.509
+piece of the AI stack. If you take the OCR part out of this, you know, it's a compression bridge,
+
+00:32:55.549 --> 00:33:01.870
+you know, to help other models to, you know, handle large-scale problems with very small number of
+
+00:33:01.870 --> 00:33:06.609
+tokens. Right? So it's pretty neat. You know, what they're doing here. It would be really cool, I
+
+00:33:06.609 --> 00:33:13.369
+think, Aaron already kind of commented on this, but um, in terms of the output, like the most models
+
+00:33:13.370 --> 00:33:18.969
+are text token-oriented, so it would be really cool if they can release some type of plugin that
+
+00:33:18.970 --> 00:33:24.089
+you can swap out different decoder models in place of their decoder model. So this is a little
+
+00:33:24.129 --> 00:33:29.089
+bit more, you know, from an adoption standpoint, you can kind of use what you what you from an LLM
+
+00:33:29.090 --> 00:33:32.689
+standpoint, what makes sense for your environment. Do you think the next stage of this is that we're
+
+00:33:32.690 --> 00:33:37.728
+going to be seeing kind of, we already have AI art, right, are we going to see AI art of context windows where
+
+00:33:37.729 --> 00:33:40.889
+there's like, Aaron, are you gonna have that picture behind you? Is that going to show some
+
+00:33:40.930 --> 00:33:46.009
+kind of visualization of your context window that we'll be able to pick up on now? That would be a
+
+00:33:46.010 --> 00:33:52.329
+scary proposition. You don't want to see my context window. Yeah. You do not want to see it.
+
+00:33:53.170 --> 00:33:57.610
+You know, the whole notion of like effective computing, you know, where these systems can, you
+
+00:33:57.610 --> 00:34:03.449
+know, understand how you're feeling, what you're thinking, you know, um, you know, I think that this
+
+00:34:03.449 --> 00:34:09.359
+might play into some of it. You know.Because. Because it's it's like another bridge, right, and to,
+
+00:34:09.360 --> 00:34:13.879
+understanding language from different areas. And that bridge could be between modalities or
+
+00:34:13.879 --> 00:34:20.599
+between a, you know, people and models. Uh, and in a sense and it creates this language
+
+00:34:20.840 --> 00:34:27.479
+such that we can have other interpretations and other agents, uh, you know, go ahead and run and
+
+00:34:27.479 --> 00:34:34.439
+change that image maybe behind me. All right. I'm going to move this on to
+
+00:34:34.439 --> 00:34:39.639
+our final topic of the day. So in the last paper we talked about DeepSeek-OCR, a little bit kind of in
+
+00:34:39.639 --> 00:34:44.479
+the guts of the system. Um, this other paper was just fun. It got talked around. I talked about a
+
+00:34:44.480 --> 00:34:49.120
+lot online, and I figured we'd kind of bring it up here. So the name of the title is very striking. It
+
+00:34:49.120 --> 00:34:56.039
+just says LLMs can get brain rot, exclamation point. Um, and the intuition of the paper is kind
+
+00:34:56.040 --> 00:35:02.359
+of a fun idea, basically says, look, there's a lot of, um, hand-wringing and concern that if we
+
+00:35:02.400 --> 00:35:08.789
+consume lots of junk media on social media that we will, as humans, literally get brain rot, right?
+
+00:35:08.830 --> 00:35:15.069
+Like that we we will think lesswell, we will do reasoning poorly, have all these cognitive defects
+
+00:35:15.070 --> 00:35:20.109
+from exposure to this content. And so the researchers just simply say like, well, what if we
+
+00:35:20.389 --> 00:35:27.309
+like, can LLMs get brain rot too? And so what they did is they kind of curated a couple of data sets
+
+00:35:27.350 --> 00:35:33.389
+of social media content that they considered short and popular or sensationalist, and they said,
+
+00:35:33.389 --> 00:35:37.349
+well, we can do kind of like a little post-training mix to the model where we say we're
+
+00:35:37.350 --> 00:35:43.550
+going to slowly increase the amount of junk web text is what they say or how they framed it up to
+
+00:35:43.550 --> 00:35:47.949
+the model. And then we see how it performs against certain benchmarks. And what they claim is that
+
+00:35:47.949 --> 00:35:54.069
+these models do experience a form of cognitive decline. And so they say that there's declines in
+
+00:35:54.070 --> 00:35:58.909
+reasoning, long-context understanding, safety, and then also even claim that there's the emergence
+
+00:35:58.909 --> 00:36:04.050
+of these these dark traits. Right. These models become like more narcissistic because they've
+
+00:36:04.090 --> 00:36:10.289
+like, seen this content. Um, so I guess, uh, maybe I'll throw it to you. Uh,
+
+00:36:11.010 --> 00:36:16.009
+what does this paper show? Does it show that, like, if we consume lots of bad material online, then
+
+00:36:16.010 --> 00:36:21.049
+our brains are literally going to rot? Or what is this? What what do we take from this paper? I mean,
+
+00:36:21.090 --> 00:36:26.289
+you know, the headline for me here was garbage in, garbage out. But I think the big flashing star was
+
+00:36:26.330 --> 00:36:31.730
+that the decline of these LLMs, it was persistent and systematic. Right. It wasn't like, you know, you
+
+00:36:31.730 --> 00:36:37.569
+could just quickly fix it. Right. And, you know, the risk is that, you know, as we put these systems in
+
+00:36:37.570 --> 00:36:42.409
+the wild and more training data, you know, becomes shallower and shallower, you know, for example, then
+
+00:36:42.409 --> 00:36:46.649
+we need to continually evaluate these models because, you know, this brain rot, you know, can can
+
+00:36:46.649 --> 00:36:51.329
+happen. And then, and then, I sort of ask myself, why does this happen? And, you know, I was thinking in
+
+00:36:51.330 --> 00:36:57.448
+terms of momentum and inertia, you know. So during these, you know, back propagation when you're
+
+00:36:57.449 --> 00:37:04.119
+training. Right. I was thinking maybe there's, you know, you know, this extra momentum, right?
+
+00:37:04.159 --> 00:37:11.039
+And and, the gradients start becoming, you know, much more marginal. Right. As you learn over time.
+
+00:37:11.439 --> 00:37:17.719
+But then once you stop training, then it's like you have this inertia where, where you can't get
+
+00:37:17.719 --> 00:37:23.239
+or unlearn, you know, fast enough. And it's, and it's like, you know, humans where we have, you know, kids
+
+00:37:23.239 --> 00:37:27.840
+and their brain, their brains are very plastic. They can learn very quickly. They can change very
+
+00:37:27.840 --> 00:37:34.279
+quickly. But then as adults, you know, you get older and older, you know, you have such large amounts of
+
+00:37:34.280 --> 00:37:39.759
+knowledge and about it, which is fantastic. But then on the other hand, right, because, because our
+
+00:37:39.759 --> 00:37:45.360
+brains are already wired, you know, very densely as opposed to, you know, kids, it seems as though these
+
+00:37:45.360 --> 00:37:51.159
+LLMs are becoming wired much more densely so quickly, right, where they're sort of moving out of
+
+00:37:51.200 --> 00:37:58.039
+their childhood, in essence. And it's harder to change that systematic perspective. And there
+
+00:37:58.110 --> 00:38:03.109
+might be other techniques that are needed, you know, such as you you could do some virtual
+
+00:38:03.110 --> 00:38:08.790
+legioning, right? You could do some neural damaging or find what the super weights are within the model,
+
+00:38:08.790 --> 00:38:15.669
+remove them and then trained, right, to sort of remove this rot that is happening. But it's
+
+00:38:15.669 --> 00:38:22.110
+definitely a, um, you know, a real problem here. And it does parallel, you know, human cognition. You
+
+00:38:22.110 --> 00:38:26.749
+know, you know, that we humans need to be careful, you know, what we learn and what we really focus
+
+00:38:26.750 --> 00:38:32.189
+our attention on as we're out, out in the wild, too. Um, so I guess, Martin, are you, you're not really
+
+00:38:32.189 --> 00:38:36.708
+surprised by this result, right? I guess in so far as you think that this is like Aaron's interpretation
+
+00:38:36.709 --> 00:38:41.230
+as well. Yeah, obviously, you feed in some bad content, model behavior will get worse because
+
+00:38:41.230 --> 00:38:46.109
+it's just mirroring that. Um, so I guess how shocked should we be about these results? Like, is
+
+00:38:46.110 --> 00:38:50.350
+there anything surprising here? I suppose I feel like this is catnip for every parent of a
+
+00:38:50.350 --> 00:38:55.748
+teenager who can say,look, look what happened to that chat model when we gave it all this joke? The
+
+00:38:55.749 --> 00:39:01.209
+thing that I found most surprising is. So you mentioned, Tim, that they kind of they categorized
+
+00:39:01.209 --> 00:39:06.329
+this brain rot content into really two types of engagement and semantic quality. So engagement
+
+00:39:06.370 --> 00:39:10.769
+were just kind of short pieces of information like a tweet or something. It's just a sentence or
+
+00:39:10.769 --> 00:39:15.489
+two. It's giving some kind of factual information, but really briefly, no room for nuance. It's just
+
+00:39:15.529 --> 00:39:21.489
+like, here's this fact. And then semantic quality was the sensational stuff that, you know, wow, look
+
+00:39:21.529 --> 00:39:27.810
+at this, that sort of thing. And there was actually a significant difference in when the model was
+
+00:39:27.810 --> 00:39:34.729
+fed M1 versus M2 junk data, the engagement versus the semantic stuff as to the outcome in terms
+
+00:39:34.729 --> 00:39:41.169
+of personality. And the M1 data, the engagement stuff that things like tweets affected
+
+00:39:41.169 --> 00:39:46.129
+personality a lot more than just the sensational stuff. It seems that that didn't really affect
+
+00:39:46.129 --> 00:39:52.530
+personality much at all. But the the engagement stuff, the the short tweet stuff that
+
+00:39:52.530 --> 00:39:58.519
+increased. When it was pushed to 100%, so all the model received was just like a bunch of tweets. It
+
+00:39:58.520 --> 00:40:05.319
+increased narcissism. It made the model less agreeable, and it made the model more
+
+00:40:05.320 --> 00:40:11.319
+extroverted. And I'm like, you know, that sounds an awful lot like an outspoken TV pundit or
+
+00:40:11.320 --> 00:40:16.479
+something like that. So if I were training to be a talking head, you know, like a shock jock kind of
+
+00:40:16.519 --> 00:40:20.759
+thing, this is where I need to get my training from. I need to just be looking at short-form stuff,
+
+00:40:20.759 --> 00:40:26.560
+and I'll get those traits too, as you just add to that the M1, when trained on the M1 data, it
+
+00:40:26.560 --> 00:40:33.000
+also you saw the the sharp increase in abrupt stop in thinking, so it didn't go through the full
+
+00:40:33.000 --> 00:40:38.399
+thinking process or would cut it short or not do it at all. it's just one of those weird things
+
+00:40:38.400 --> 00:40:43.038
+where it's, uh, you know, to your point, in terms of the personality of the individual who typically
+
+00:40:43.039 --> 00:40:47.720
+wants to shock enough versus actually have a conversation. Well, and I think that's kind of the
+
+00:40:47.720 --> 00:40:51.158
+interesting thing here. I mean, that's actually that's like one thing I do want to get to on this
+
+00:40:51.159 --> 00:40:55.339
+paper is like how much there are these like interesting kind of confounding variables here.
+
+00:40:55.379 --> 00:41:01.820
+Right. Because it like, it may not be that it's short content, right. But it may just be that it's
+
+00:41:01.820 --> 00:41:08.060
+short content drawn from Twitter, now X. Right. And so I wonder if like the presence of
+
+00:41:08.060 --> 00:41:13.979
+narcissistic, you know, adversarial traits comes less of the fact that like the content is short
+
+00:41:13.979 --> 00:41:19.019
+form and more because of like the culture of the place where the data is being drawn. Now, I guess,
+
+00:41:19.020 --> 00:41:23.458
+Abraham, the question for you is, I guess maybe like in the case of reasoning, because it is short,
+
+00:41:23.620 --> 00:41:27.979
+it actually limits how much reasoning it can do. And so maybe that's actually like there's these
+
+00:41:27.980 --> 00:41:31.859
+really interesting kind of effects here, some of them related to it being short, some of it being
+
+00:41:31.860 --> 00:41:37.700
+related to I think like the source of it, right, is like certainly my feeling about X is that it's a
+
+00:41:37.700 --> 00:41:42.300
+platform where you feel that there is a lot of aggressive anti-social behavior. No, that that's
+
+00:41:42.300 --> 00:41:48.019
+fair. You only get 105, 156 characters, what, 256 characters. So yeah, there's not going to be a lot
+
+00:41:48.060 --> 00:41:54.129
+of thinking kind of aloud. Um, what I think this, this paper really shows is obviously garbage in,
+
+00:41:54.129 --> 00:42:00.049
+garbage out. But there's always been this notion of more and more and more, instead of, you know,
+
+00:42:00.090 --> 00:42:07.009
+quality. So the paper really showed that quality is much more important than quantity, um, in terms of
+
+00:42:07.009 --> 00:42:11.769
+actually getting performance on your model. One thing that I thought was really interesting was
+
+00:42:11.769 --> 00:42:18.529
+the outline that the, the, the quality of the data degraded as it, as it
+
+00:42:18.529 --> 00:42:25.330
+was newer. So when they went through the actual corpus of training data, the more recent the data
+
+00:42:25.330 --> 00:42:30.850
+was, the lower quality it was, which was just very interesting to see that. You know, does that mean
+
+00:42:30.850 --> 00:42:36.729
+that our quality of content is just gradually, you know, getting to the lowest common denominator, or
+
+00:42:37.009 --> 00:42:42.729
+is this the product of just lazy literature? it was uh, yeah, the paper was interesting. I think
+
+00:42:42.729 --> 00:42:46.370
+there's a lot of parallels or philosophical questions you can ask yourself based on this
+
+00:42:46.370 --> 00:42:50.959
+paper, and but I'll leave that to other people. I've always thought that it's always best to, you
+
+00:42:50.959 --> 00:42:56.678
+know, train these large models on factually correct, dense, deep data. Right. And that's your
+
+00:42:56.679 --> 00:43:00.999
+foundation model. Right. And then if you want to change the personality of the tone, the pitch,
+
+00:43:01.040 --> 00:43:05.479
+prosody of speech even, that's where you use context engineering. And then you add in the
+
+00:43:05.479 --> 00:43:10.399
+traits of which you want it to behave. But it's not necessarily always the best, you know, to try
+
+00:43:10.440 --> 00:43:17.039
+to train the traits that you want it to act like within, embed it into the knowledge structure,
+
+00:43:17.040 --> 00:43:21.639
+because then you're sort of watering down, and it's kind of like brain loss amnesia, right?
+
+00:43:21.679 --> 00:43:27.519
+Because, because the models are really, um, um, they're forgetting about what they know and it's
+
+00:43:27.519 --> 00:43:33.278
+more about how should I act, right? And so therefore it becomes very watered down. And, and so
+
+00:43:33.320 --> 00:43:38.719
+because of that, the decline of its behavior or the way it reasons, it's not easily fixed by later
+
+00:43:38.720 --> 00:43:43.839
+instruction, tuning or even cleansing the data.And, and it couldn't recover the baseline capability
+
+00:43:43.840 --> 00:43:49.579
+because of that, right. And so therefore I do think that, you know, this is a lesson learned that when
+
+00:43:49.579 --> 00:43:55.979
+you do do training and you fine tune,be really, really careful about the kind of data that you do
+
+00:43:55.979 --> 00:44:01.939
+and make sure that you know you're marching towards the objectives that you want to have with
+
+00:44:01.939 --> 00:44:07.340
+the model. Yeah. And I think if we then extrapolate that to to us humans, if there is a parallel here,
+
+00:44:07.340 --> 00:44:12.339
+maybe we should be spending less time on Twitter and more time consuming, high-quality, long-form
+
+00:44:12.340 --> 00:44:19.220
+content like the Mixture of Experts podcast. Yes, exactly. Yeah. We highly recommend this. Yeah. Um, well,
+
+00:44:19.260 --> 00:44:24.099
+that's a great note to end on. Uh, Martin, Aaron, Abraham, always great to have you on the
+
+00:44:24.100 --> 00:44:28.739
+show and hope to see you guys soon. And that's all the time that we have for today. Thanks for
+
+00:44:28.739 --> 00:44:32.179
+joining us, listeners. If you enjoyed what you heard, you can get us on Apple Podcasts, Spotify
+
+00:44:32.180 --> 00:44:36.860
+and podcast platforms everywhere. And we'll see you next week on Mixture of Experts.
+

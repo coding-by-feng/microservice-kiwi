@@ -26,6 +26,10 @@ public enum AiPromptModeEnum {
      */
     GRAMMAR_CORRECTION("grammar-correction", "NA", 1),
     /**
+     * Natural, idiomatic rewrite in target language.
+     */
+    NATURAL_IDIOMATIC_RETOUCH("natural-idiomatic-retouch", "NA", 3),
+    /**
      * "Explain the vocabulary in %s language, please provide the paraphrase in English and %s of the vocabulary in different vocabulary classes,
      * for example, verb, noun, adverb, etc. and also provide the sentences that use this vocabulary with its translation in %s language of each class."
      */

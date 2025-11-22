@@ -51,8 +51,7 @@ public class YouTuBeApiHelper implements me.fengorz.kiwi.common.ytb.YouTubeClien
     }
 
     @KiwiCacheKeyPrefix(YtbConstants.CACHE_KEY_PREFIX_YTB.SUBTITLES)
-    @Cacheable(cacheNames = YtbConstants.CACHE_NAMES, keyGenerator = CacheConstants.CACHE_KEY_GENERATOR_BEAN,
-            unless = "#result == null")
+    @Cacheable(cacheNames = YtbConstants.CACHE_NAMES, keyGenerator = CacheConstants.CACHE_KEY_GENERATOR_BEAN, unless = "#result == null")
     @Override
     public YtbSubtitlesResult downloadSubtitles(@KiwiCacheKey(1) String videoUrl) {
         List<CaptionResponse> captions = youTubeApiService.getVideoCaptions(videoUrl);
@@ -163,7 +162,8 @@ public class YouTuBeApiHelper implements me.fengorz.kiwi.common.ytb.YouTubeClien
         List<String> clearSubtitles = VttFileCleaner.cleanTimestamp(subtitles);
         YtbSubtitlesResult result = YtbSubtitlesResult.builder()
                 .videoUrl(videoUrl)
-                .scrollingSubtitles(String.join(GlobalConstants.SYMBOL_LINE, VttFileCleaner.cleanDuplicatedLines(subtitles)))
+                .scrollingSubtitles(
+                        String.join(GlobalConstants.SYMBOL_LINE, VttFileCleaner.cleanDuplicatedLines(subtitles)))
                 .langCode(langCode)
                 .build();
         if (subtitles.size() > this.largeSubtitlesThreshold) {
@@ -171,7 +171,8 @@ public class YouTuBeApiHelper implements me.fengorz.kiwi.common.ytb.YouTubeClien
             result.setPendingToBeTranslatedOrRetouchedSubtitles(clearSubtitles);
         } else {
             result.setType(SubtitleTypeEnum.SMALL_AUTO_GENERATED_RETURN_STRING);
-            result.setPendingToBeTranslatedOrRetouchedSubtitles(String.join(GlobalConstants.SYMBOL_LINE, clearSubtitles));
+            result.setPendingToBeTranslatedOrRetouchedSubtitles(
+                    String.join(GlobalConstants.SYMBOL_LINE, clearSubtitles));
         }
         return result;
     }

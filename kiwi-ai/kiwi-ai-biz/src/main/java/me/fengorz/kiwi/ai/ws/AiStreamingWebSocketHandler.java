@@ -39,7 +39,7 @@ public class AiStreamingWebSocketHandler extends TextWebSocketHandler {
     private final Map<String, Boolean> activeStreams = new ConcurrentHashMap<>();
 
     public AiStreamingWebSocketHandler(@Qualifier("grokStreamingService") AiStreamingService aiStreamingService,
-                                       AiCallHistoryService aiCallHistoryService) {
+            AiCallHistoryService aiCallHistoryService) {
         this.aiStreamingService = aiStreamingService;
         this.aiCallHistoryService = aiCallHistoryService;
     }
@@ -71,7 +71,8 @@ public class AiStreamingWebSocketHandler extends TextWebSocketHandler {
             // Parse the incoming request
             AiStreamingRequest request = objectMapper.readValue(payload, AiStreamingRequest.class);
 
-            log.info("{} {} Parsed request - SessionId: {}, PromptMode: {}, TargetLanguage: {}, NativeLanguage: {}, AiUrl: {}, PromptLength: {}",
+            log.info(
+                    "{} {} Parsed request - SessionId: {}, PromptMode: {}, TargetLanguage: {}, NativeLanguage: {}, AiUrl: {}, PromptLength: {}",
                     LOG_PREFIX, REQUEST_PREFIX, sessionId,
                     request.getPromptMode(),
                     request.getTargetLanguage(),
@@ -141,7 +142,8 @@ public class AiStreamingWebSocketHandler extends TextWebSocketHandler {
 
         // Log specific details for abnormal closures
         if (status.getCode() == 1005) {
-            log.warn("{} Connection closed with code 1005 (No Status) - likely network issue or client disconnect", LOG_PREFIX);
+            log.warn("{} Connection closed with code 1005 (No Status) - likely network issue or client disconnect",
+                    LOG_PREFIX);
         } else if (status.getCode() != 1000) {
             log.warn("{} Connection closed abnormally - Code: {}", LOG_PREFIX, status.getCode());
         }
@@ -197,7 +199,8 @@ public class AiStreamingWebSocketHandler extends TextWebSocketHandler {
             LanguageEnum targetLang = LanguageConvertor.convertLanguageToEnum(request.getTargetLanguage());
             log.debug("{} {} Target language validation passed: {}", LOG_PREFIX, VALIDATION_PREFIX, targetLang);
         } catch (Exception e) {
-            return ValidationResult.invalid("Invalid target language: " + request.getTargetLanguage(), "INVALID_TARGET_LANGUAGE");
+            return ValidationResult.invalid("Invalid target language: " + request.getTargetLanguage(),
+                    "INVALID_TARGET_LANGUAGE");
         }
 
         // Validate native language if provided
@@ -206,7 +209,8 @@ public class AiStreamingWebSocketHandler extends TextWebSocketHandler {
                 LanguageEnum nativeLang = LanguageConvertor.convertLanguageToEnum(request.getNativeLanguage());
                 log.debug("{} {} Native language validation passed: {}", LOG_PREFIX, VALIDATION_PREFIX, nativeLang);
             } catch (Exception e) {
-                return ValidationResult.invalid("Invalid native language: " + request.getNativeLanguage(), "INVALID_NATIVE_LANGUAGE");
+                return ValidationResult.invalid("Invalid native language: " + request.getNativeLanguage(),
+                        "INVALID_NATIVE_LANGUAGE");
             }
         }
 
@@ -252,7 +256,8 @@ public class AiStreamingWebSocketHandler extends TextWebSocketHandler {
                             fullResponse.append(chunk);
                             AiStreamingResponse chunkResponse = AiStreamingResponse.chunk(chunk, request);
                             log.debug("🔍 Created chunk response - type: {}, chunk: '{}', chunkIsNull: {}",
-                                    chunkResponse.getType(), chunkResponse.getChunk(), chunkResponse.getChunk() == null);
+                                    chunkResponse.getType(), chunkResponse.getChunk(),
+                                    chunkResponse.getChunk() == null);
                             sendMessageWithLogging(session, chunkResponse, "CHUNK");
                         } else {
                             log.debug("{} Skipping chunk for inactive session: {}", LOG_PREFIX, sessionId);
@@ -286,8 +291,7 @@ public class AiStreamingWebSocketHandler extends TextWebSocketHandler {
                             sendMessageWithLogging(session, completedResponse, "COMPLETED");
                         }
                         cleanupSession(sessionId);
-                    }
-            );
+                    });
 
         } catch (Exception e) {
             log.error("{} Error processing AI streaming request - SessionId: {}, Error: {}",

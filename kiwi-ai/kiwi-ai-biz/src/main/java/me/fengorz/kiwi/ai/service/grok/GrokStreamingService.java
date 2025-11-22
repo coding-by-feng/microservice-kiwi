@@ -42,9 +42,9 @@ public class GrokStreamingService implements AiStreamingService {
     private static final Pattern CONTENT_PATTERN = Pattern.compile("\"content\"\\s*:\\s*\"([^\"]+)\"");
 
     public GrokStreamingService(@Qualifier("aiRestTemplate") RestTemplate restTemplate,
-                                @Qualifier("aiRetryTemplate") RetryTemplate retryTemplate,
-                                GrokApiProperties grokApiProperties,
-                                AiModeProperties modeProperties) {
+            @Qualifier("aiRetryTemplate") RetryTemplate retryTemplate,
+            GrokApiProperties grokApiProperties,
+            AiModeProperties modeProperties) {
         this.restTemplate = restTemplate;
         this.retryTemplate = retryTemplate;
         this.grokApiProperties = grokApiProperties;
@@ -53,12 +53,14 @@ public class GrokStreamingService implements AiStreamingService {
 
     @Override
     public void streamCall(String prompt, AiPromptModeEnum promptMode, LanguageEnum targetLanguage,
-                           LanguageEnum nativeLanguage, Consumer<String> onChunk, Consumer<Exception> onError,
-                           Runnable onComplete) {
+            LanguageEnum nativeLanguage, Consumer<String> onChunk, Consumer<Exception> onError,
+            Runnable onComplete) {
         CompletableFuture.runAsync(() -> {
             try {
                 GrokStreamingRequest grokStreamingRequest = new GrokStreamingRequest(
-                        Arrays.asList(new Message("system", buildSystemPrompt(prompt, promptMode, targetLanguage, nativeLanguage)),
+                        Arrays.asList(
+                                new Message("system",
+                                        buildSystemPrompt(prompt, promptMode, targetLanguage, nativeLanguage)),
                                 new Message("user", buildUserPrompt(prompt))),
                         grokApiProperties.getModel(),
                         true // Enable streaming
@@ -74,7 +76,8 @@ public class GrokStreamingService implements AiStreamingService {
 
     private static String buildUserPrompt(String prompt) {
         if (prompt.startsWith(AiPromptModeEnum.SELECTION_EXPLANATION.getTag())) {
-            return prompt.split(Pattern.quote(AiPromptModeEnum.SPLITTER))[0].replaceFirst(AiPromptModeEnum.SELECTION_EXPLANATION.getTag(), "");
+            return prompt.split(Pattern.quote(AiPromptModeEnum.SPLITTER))[0]
+                    .replaceFirst(AiPromptModeEnum.SELECTION_EXPLANATION.getTag(), "");
         }
         return prompt;
     }
@@ -83,7 +86,7 @@ public class GrokStreamingService implements AiStreamingService {
      * Stream request with retry logic using RetryTemplate
      */
     private void streamRequestWithRetry(GrokStreamingRequest grokStreamingRequest, Consumer<String> onChunk,
-                                        Consumer<Exception> onError, Runnable onComplete) {
+            Consumer<Exception> onError, Runnable onComplete) {
         try {
             // Use RetryTemplate to wrap the streaming call
             retryTemplate.execute(context -> {
@@ -101,7 +104,7 @@ public class GrokStreamingService implements AiStreamingService {
      * Core streaming request method
      */
     private void streamRequest(GrokStreamingRequest grokStreamingRequest, Consumer<String> onChunk,
-                               Consumer<Exception> onError, Runnable onComplete) {
+            Consumer<Exception> onError, Runnable onComplete) {
         try {
             String requestBody = KiwiJsonUtils.toJsonStr(grokStreamingRequest);
             log.debug("Sending Grok streaming request: {}", requestBody);
@@ -211,7 +214,8 @@ public class GrokStreamingService implements AiStreamingService {
 
     @NotNull
     @SuppressWarnings("DuplicatedCode")
-    private String buildSystemPrompt(String prompt, AiPromptModeEnum promptMode, LanguageEnum targetLanguage, LanguageEnum nativeLanguage) {
+    private String buildSystemPrompt(String prompt, AiPromptModeEnum promptMode, LanguageEnum targetLanguage,
+            LanguageEnum nativeLanguage) {
         String promptTemplate = modeProperties.getMode().get(promptMode.getMode());
 
         if (promptTemplate == null) {
@@ -233,7 +237,8 @@ public class GrokStreamingService implements AiStreamingService {
     }
 
     @NotNull
-    private static String buildSelectionExplanationPrompt(String prompt, LanguageEnum targetLanguage, String promptTemplate) {
+    private static String buildSelectionExplanationPrompt(String prompt, LanguageEnum targetLanguage,
+            String promptTemplate) {
         String[] segments = prompt.replaceFirst(Pattern.quote(AiPromptModeEnum.SELECTION_EXPLANATION.getTag()), "")
                 .split(Pattern.quote(AiPromptModeEnum.SPLITTER));
         String processedPrompt = promptTemplate.replace("#[TL]", targetLanguage.getCode());

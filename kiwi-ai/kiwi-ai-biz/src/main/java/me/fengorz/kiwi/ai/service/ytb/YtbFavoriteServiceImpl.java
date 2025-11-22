@@ -165,9 +165,10 @@ public class YtbFavoriteServiceImpl implements YtbFavoriteService {
 
     @Override
     public IPage<YtbChannelVO> getFavoriteChannels(Page<YtbChannelDO> page, Integer userId) {
-        List<YtbChannelFavoriteDO> favs = channelFavoriteMapper.selectList(new LambdaQueryWrapper<YtbChannelFavoriteDO>()
-                .eq(YtbChannelFavoriteDO::getUserId, userId)
-                .eq(YtbChannelFavoriteDO::getIfValid, true));
+        List<YtbChannelFavoriteDO> favs = channelFavoriteMapper
+                .selectList(new LambdaQueryWrapper<YtbChannelFavoriteDO>()
+                        .eq(YtbChannelFavoriteDO::getUserId, userId)
+                        .eq(YtbChannelFavoriteDO::getIfValid, true));
         if (org.apache.commons.collections4.CollectionUtils.isEmpty(favs)) {
             return new Page<>(page.getCurrent(), page.getSize(), 0);
         }
@@ -179,14 +180,17 @@ public class YtbFavoriteServiceImpl implements YtbFavoriteService {
                 .orderByDesc(YtbChannelDO::getCreateTime));
 
         // Batch favorite counts and user favorited set for the paged records
-        List<Long> pageChannelIds = channels.getRecords().stream().map(YtbChannelDO::getId).collect(Collectors.toList());
+        List<Long> pageChannelIds = channels.getRecords().stream().map(YtbChannelDO::getId)
+                .collect(Collectors.toList());
         Map<Long, Long> favCountMapLocal = new HashMap<>();
         Set<Long> userFavSet = favs.stream().map(YtbChannelFavoriteDO::getChannelId).collect(Collectors.toSet());
         if (!pageChannelIds.isEmpty()) {
-            List<YtbChannelFavoriteDO> allFavsForPage = channelFavoriteMapper.selectList(new LambdaQueryWrapper<YtbChannelFavoriteDO>()
-                    .in(YtbChannelFavoriteDO::getChannelId, pageChannelIds)
-                    .eq(YtbChannelFavoriteDO::getIfValid, true));
-            favCountMapLocal = allFavsForPage.stream().collect(Collectors.groupingBy(YtbChannelFavoriteDO::getChannelId, Collectors.counting()));
+            List<YtbChannelFavoriteDO> allFavsForPage = channelFavoriteMapper
+                    .selectList(new LambdaQueryWrapper<YtbChannelFavoriteDO>()
+                            .in(YtbChannelFavoriteDO::getChannelId, pageChannelIds)
+                            .eq(YtbChannelFavoriteDO::getIfValid, true));
+            favCountMapLocal = allFavsForPage.stream()
+                    .collect(Collectors.groupingBy(YtbChannelFavoriteDO::getChannelId, Collectors.counting()));
         }
         final Map<Long, Long> favCountMap = favCountMapLocal;
 
@@ -218,14 +222,17 @@ public class YtbFavoriteServiceImpl implements YtbFavoriteService {
                 .orderByDesc(YtbChannelVideoDO::getCreateTime));
 
         // Batch favorite counts and user favorited set for the paged records
-        List<Long> pageVideoIds = videos.getRecords().stream().map(YtbChannelVideoDO::getId).collect(Collectors.toList());
+        List<Long> pageVideoIds = videos.getRecords().stream().map(YtbChannelVideoDO::getId)
+                .collect(Collectors.toList());
         Map<Long, Long> favCountMapLocal = new HashMap<>();
         Set<Long> userFavSet = favs.stream().map(YtbVideoFavoriteDO::getVideoId).collect(Collectors.toSet());
         if (!pageVideoIds.isEmpty()) {
-            List<YtbVideoFavoriteDO> allFavsForPage = videoFavoriteMapper.selectList(new LambdaQueryWrapper<YtbVideoFavoriteDO>()
-                    .in(YtbVideoFavoriteDO::getVideoId, pageVideoIds)
-                    .eq(YtbVideoFavoriteDO::getIfValid, true));
-            favCountMapLocal = allFavsForPage.stream().collect(Collectors.groupingBy(YtbVideoFavoriteDO::getVideoId, Collectors.counting()));
+            List<YtbVideoFavoriteDO> allFavsForPage = videoFavoriteMapper
+                    .selectList(new LambdaQueryWrapper<YtbVideoFavoriteDO>()
+                            .in(YtbVideoFavoriteDO::getVideoId, pageVideoIds)
+                            .eq(YtbVideoFavoriteDO::getIfValid, true));
+            favCountMapLocal = allFavsForPage.stream()
+                    .collect(Collectors.groupingBy(YtbVideoFavoriteDO::getVideoId, Collectors.counting()));
         }
         final Map<Long, Long> favCountMap = favCountMapLocal;
 
@@ -280,7 +287,8 @@ public class YtbFavoriteServiceImpl implements YtbFavoriteService {
             String path = uri.getPath();
             if (path != null && path.contains("/shorts/")) {
                 String id = path.substring(path.indexOf("/shorts/") + 8);
-                if (!id.isEmpty()) return "YouTube Short " + id;
+                if (!id.isEmpty())
+                    return "YouTube Short " + id;
             }
         } catch (Exception ignore) {
         }

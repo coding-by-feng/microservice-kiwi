@@ -33,17 +33,17 @@ public class WebSocketAuthInterceptor implements HandshakeInterceptor {
 
     @Override
     public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response,
-                                   WebSocketHandler wsHandler, Map<String, Object> attributes) throws Exception {
+            WebSocketHandler wsHandler, Map<String, Object> attributes) throws Exception {
         log.debug("WebSocket handshake starting for: {}", request.getURI());
 
         try {
             // Extract token from Authorization header or query parameter
             String token = extractTokenFromRequest(request);
-            
+
             if (token != null) {
                 // Validate token and get user information
                 Integer userId = validateTokenAndGetUserId(token);
-                
+
                 if (userId != null) {
                     // Store user ID in WebSocket session attributes
                     attributes.put("userId", userId);
@@ -66,7 +66,7 @@ public class WebSocketAuthInterceptor implements HandshakeInterceptor {
 
     @Override
     public void afterHandshake(ServerHttpRequest request, ServerHttpResponse response,
-                              WebSocketHandler wsHandler, Exception exception) {
+            WebSocketHandler wsHandler, Exception exception) {
         if (exception != null) {
             log.error("WebSocket handshake failed", exception);
         } else {
@@ -122,10 +122,10 @@ public class WebSocketAuthInterceptor implements HandshakeInterceptor {
         try {
             // Try to read from token store
             OAuth2Authentication authentication = tokenStore.readAuthentication(token);
-            
+
             if (authentication != null && authentication.getUserAuthentication() != null) {
                 Authentication userAuth = authentication.getUserAuthentication();
-                
+
                 if (userAuth.getPrincipal() instanceof EnhancerUser) {
                     EnhancerUser user = (EnhancerUser) userAuth.getPrincipal();
                     return user.getId();
@@ -143,7 +143,7 @@ public class WebSocketAuthInterceptor implements HandshakeInterceptor {
         } catch (Exception e) {
             log.error("Error validating token: {}", e.getMessage(), e);
         }
-        
+
         return null;
     }
 }

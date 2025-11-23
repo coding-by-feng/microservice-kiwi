@@ -1,6 +1,10 @@
 youtube:
   video:
     command: yt-dlp
+    proxy:
+      enabled: true
+      # Override this in secure external config with an encrypted value, e.g. ENC(...) for socks5://127.0.0.1:40000
+      value: ENC(FGrA00PC+bW5FiLAVautt6lhpqOx8U92YLzFLeAGVf78Xj93B600jQ==)
     download:
       path: ENC(8ZJ3rI1uzmeliVVmWQwG8w==)
     large-subtitles:

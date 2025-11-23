@@ -37,6 +37,14 @@ public class YouTuBeHelper implements YouTubeClient {
     @Value("${youtube.video.command}")
     private String command = "yt-dlp";
 
+    // Whether to enable proxy for yt-dlp; defaults to false for backward compatibility
+    @Value("${youtube.video.proxy.enabled:false}")
+    private boolean proxyEnabled;
+
+    // Encrypted proxy value from YAML (e.g. socks5://127.0.0.1:40000), decrypted by Jasypt
+    @Value("${youtube.video.proxy.value:}")
+    private String proxyValue;
+
     @Value("${youtube.video.subtitles.langs}")
     private String subtitlesLangs;
 
@@ -45,6 +53,7 @@ public class YouTuBeHelper implements YouTubeClient {
         try {
             List<String> command = new ArrayList<>();
             command.add(this.command);
+            applyProxyIfEnabled(command);
             command.add("-o");
             String currentDownloadPath = getDownloadPath();
             command.add(currentDownloadPath + "/%(title)s.%(ext)s");
@@ -72,6 +81,21 @@ public class YouTuBeHelper implements YouTubeClient {
         }
     }
 
+    /**
+     * Append yt-dlp proxy arguments if proxy is enabled and value is non-blank.
+     */
+    private void applyProxyIfEnabled(List<String> command) {
+        if (!proxyEnabled) {
+            return;
+        }
+        if (StringUtils.isBlank(proxyValue)) {
+            log.warn("yt-dlp proxy is enabled but proxy value is blank, skipping proxy configuration.");
+            return;
+        }
+        command.add("--proxy");
+        command.add(proxyValue);
+    }
+
     private static Process prepareProcess(List<String> command) throws IOException {
         ProcessBuilder processBuilder = new ProcessBuilder(command);
         processBuilder.redirectErrorStream(true);
@@ -92,6 +116,7 @@ public class YouTuBeHelper implements YouTubeClient {
         try {
             List<String> command = new ArrayList<>();
             command.add(this.command);
+            applyProxyIfEnabled(command);
             command.add("--write-subs");
             command.add("--write-auto-sub");
             command.add("--sub-lang");
@@ -199,6 +224,7 @@ public class YouTuBeHelper implements YouTubeClient {
         try {
             List<String> command = new ArrayList<>();
             command.add(this.command);
+            applyProxyIfEnabled(command);
             command.add("--skip-download");
             command.add("--print");
             command.add("title");
@@ -345,13 +371,17 @@ public class YouTuBeHelper implements YouTubeClient {
      * @throws ServiceException If extraction fails
      */
     public String extractChannelNameWithYtDlp(String channelUrl) throws ServiceException {
-        ProcessBuilder processBuilder = new ProcessBuilder(
-                this.command,
-                "--skip-download",
-                "--print", "channel",
-                "--playlist-items", "1",
-                channelUrl);
+        List<String> cmd = new ArrayList<>();
+        cmd.add(this.command);
+        applyProxyIfEnabled(cmd);
+        cmd.add("--skip-download");
+        cmd.add("--print");
+        cmd.add("channel");
+        cmd.add("--playlist-items");
+        cmd.add("1");
+        cmd.add(channelUrl);
 
+        ProcessBuilder processBuilder = new ProcessBuilder(cmd);
         processBuilder.redirectErrorStream(true);
 
         try {
@@ -405,12 +435,14 @@ public class YouTuBeHelper implements YouTubeClient {
     public List<String> extractAllVideoLinks(String channelLink) throws ServiceException {
         List<String> videoLinks = new ArrayList<>();
 
-        ProcessBuilder processBuilder = new ProcessBuilder(
-                this.command,
-                "--flat-playlist",
-                "--get-id",
-                channelLink);
+        List<String> cmd = new ArrayList<>();
+        cmd.add(this.command);
+        applyProxyIfEnabled(cmd);
+        cmd.add("--flat-playlist");
+        cmd.add("--get-id");
+        cmd.add(channelLink);
 
+        ProcessBuilder processBuilder = new ProcessBuilder(cmd);
         processBuilder.redirectErrorStream(true);
 
         try {
@@ -461,6 +493,7 @@ public class YouTuBeHelper implements YouTubeClient {
         try {
             List<String> cmd = new ArrayList<>();
             cmd.add(this.command);
+            applyProxyIfEnabled(cmd);
             cmd.add("--print");
             // Try multiple fields; yt-dlp will print first non-empty due to | operator
             cmd.add("%(release_timestamp|timestamp|upload_date)s");

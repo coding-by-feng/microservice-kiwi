@@ -52,11 +52,11 @@ public enum AiPromptModeEnum {
     /**
      * Expand/associate a vocabulary item across parts of speech (verbs, nouns, adverbs, adjectives).
      */
-    VOCABULARY_CHARACTER_EXPANSION("vocabulary-character-expansion", "NA", 0),
+    VOCABULARY_CHARACTER_EXPANSION("vocabulary-character-expansion", "NA", 5),
     /**
      * Ambiguous vocabulary or phrase association/correction (spell-correction and commonly-confused items).
      */
-    AMBIGUOUS_ASSOCIATION_CORRECTION("ambiguous-association-correction", "NA", 0),
+    AMBIGUOUS_ASSOCIATION_CORRECTION("ambiguous-association-correction", "NA", 1),
     SELECTION_EXPLANATION("selection-explanation", "#[SM]", 0),
     CHAT("chat", "NA", 1),
     ;

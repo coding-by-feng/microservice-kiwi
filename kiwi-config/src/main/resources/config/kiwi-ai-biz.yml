@@ -53,7 +53,7 @@ ai:
     api:
       key: ${GROK_API_KEY}  # Replace with the actual API key
       endpoint: https://api.x.ai/v1/chat/completions  # Hypothetical endpoint
-      model: "grok-4-fast-reasoning"
+      model: "grok-4-1-fast-reasoning"
       thread-prompts-line-size: 400
       thread-pool-size: 8
       thread-timeout-secs: 120
@@ -72,8 +72,40 @@ ai:
     vocabulary-association: "List as many common #[TL] words/phrases as possible that can express the user prompt’s meaning. For each item, explain nuances, register, and usage differences in #[NL]. Group closely related items when helpful. Plain text only."
     phrases-association: "List as many common #[TL] phrases as possible that can express the user prompt’s meaning. For each phrase, explain nuances, register, and usage differences in #[NL]. Group by function or context when helpful. Plain text only."
     selection-explanation: "Respond only in #[TL]. Explain the selected phrase “#[S0]” strictly based on the sentence #[S1] in 1–2 concise paragraphs. No headings, labels, English, Markdown, bullet points, or backslashes. Do not restate the full sentence; focus on meaning, nuance, tense/aspect, and function in context."
-    vocabulary-character-expansion: "Verbs: v1 (#[NL] translation; #[NL] nuance), v2 (#[NL] translation; #[NL] nuance), v3 (#[NL] translation; #[NL] nuance) | Nouns: n1 (#[NL] translation; #[NL] nuance), n2 (#[NL] translation; #[NL] nuance) | Adjectives: a1 (#[NL] translation; #[NL] nuance), a2 (#[NL] translation; #[NL] nuance) | Adverbs: adv1 (#[NL] translation; #[NL] nuance), adv2 (#[NL] translation; #[NL] nuance)"
-    ambiguous-association-correction: "Correction:  | Alternatives: alt1, alt2, alt3; Detect and correct misspelled or ambiguous words/phrases. Provide the corrected form and list closely related or commonly confused alternatives, all in #[TL]. If no clear correction exists, set Correction to Unknown but still list Alternatives. Plain text only."
+    vocabulary-character-expansion: "vocabulary-family-expansion:
+For the input word, generate a complete word-family #[TL] map including:
+1) Verbs
+2) Nouns
+3) Adjectives
+4) Adverbs
+
+For each item, use the format:
+word (#[NL] Chinese translation; #[NL] nuance or usage explanation)
+
+Structure:
+Verbs: v1 (#[NL] translation; #[NL] nuance), v2 (...), v3 (...)
+Nouns: n1 (...), n2 (...)
+Adjectives: a1 (...), a2 (...)
+Adverbs: adv1 (...), adv2 (...)
+
+Rules:
+- Include only words that are truly related by root, morphology, or strong semantic relation
+- Prioritize the most common 3–6 items in each group
+- Nuance must be short, clear, and show how the word differs in use
+- Output only English except for the Chinese translations
+- Do not add any extra commentary outside the required structure"
+    ambiguous-association-correction: "Correction:
+Provide the corrected form of the input. If the input is misspelled, grammatically incorrect, or ambiguous, correct it or choose the most likely intended meaning. If no clear correction exists, set Correction to Unknown.
+
+Alternatives:
+List several closely related, commonly confused, or meaning-adjacent alternatives (alt1, alt2, alt3). All alternatives must be in #[TL].
+
+Rules:
+- Detect and correct misspellings, unclear expressions, or ambiguous phrases
+- Always output both Correction and Alternatives
+- Alternatives must be realistic confusion candidates, not random words
+- If Correction is Unknown, still provide Alternatives
+- Output in plain text only, no Markdown"
 
 youtube:
   # Select implementation: api (YouTube Data API) or yt-dlp (local CLI)

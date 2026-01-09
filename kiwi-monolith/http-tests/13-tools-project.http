@@ -1,0 +1,185 @@
+### ===================================
+### Project Management API Tests
+### Base Path: /rangi_windows/api
+### ===================================
+
+### ----- Project CRUD -----
+
+### List Projects (Default)
+GET {{baseUrl}}/rangi_windows/api/projects
+
+###
+
+### List Projects with Pagination
+GET {{baseUrl}}/rangi_windows/api/projects?page=1&pageSize=20
+
+###
+
+### List Projects with Search
+GET {{baseUrl}}/rangi_windows/api/projects?q=kitchen
+
+###
+
+### List Projects with Filters
+GET {{baseUrl}}/rangi_windows/api/projects?glass=true&frame=false&page=1&pageSize=20
+
+###
+
+### List Projects with Date Range
+GET {{baseUrl}}/rangi_windows/api/projects?start=2024-01-01&end=2024-12-31
+
+###
+
+### List Projects with Sorting
+GET {{baseUrl}}/rangi_windows/api/projects?sortBy=createdAt&sortOrder=desc
+
+###
+
+### List Archived Projects Only
+GET {{baseUrl}}/rangi_windows/api/projects?archived=true
+
+###
+
+### Include Archived Projects
+GET {{baseUrl}}/rangi_windows/api/projects?includeArchived=true
+
+###
+
+### Complex Query
+GET {{baseUrl}}/rangi_windows/api/projects?q=window&glass=true&purchase=true&start=2024-01-01&page=1&pageSize=10&sortBy=createdAt&sortOrder=desc
+
+###
+
+### Get Project by ID
+GET {{baseUrl}}/rangi_windows/api/projects/1
+
+###
+
+### Create Project
+POST {{baseUrl}}/rangi_windows/api/projects
+Content-Type: application/json
+
+{
+  "name": "New Kitchen Windows",
+  "description": "Replace all kitchen windows",
+  "clientName": "John Doe",
+  "clientPhone": "123-456-7890",
+  "address": "123 Main St",
+  "stages": {
+    "glass": false,
+    "frame": false,
+    "purchase": false,
+    "transport": false,
+    "install": false,
+    "repair": false
+  }
+}
+
+###
+
+### Update Project (Full)
+PUT {{baseUrl}}/rangi_windows/api/projects/1
+Content-Type: application/json
+
+{
+  "name": "Updated Kitchen Windows",
+  "description": "Updated description",
+  "clientName": "John Doe",
+  "clientPhone": "123-456-7890",
+  "address": "123 Main St, Apt 2"
+}
+
+###
+
+### Partial Update Project
+PATCH {{baseUrl}}/rangi_windows/api/projects/1
+Content-Type: application/json
+
+{
+  "description": "Partially updated description"
+}
+
+###
+
+### Archive Project
+POST {{baseUrl}}/rangi_windows/api/projects/1/archive
+
+###
+
+### Unarchive Project (toggle)
+POST {{baseUrl}}/rangi_windows/api/projects/1/archive
+
+###
+
+### Delete Project
+DELETE {{baseUrl}}/rangi_windows/api/projects/1
+
+###
+
+### ----- Stage Operations -----
+
+### Update Stages
+PATCH {{baseUrl}}/rangi_windows/api/projects/1/stages
+Content-Type: application/json
+
+{
+  "glass": true,
+  "frame": true,
+  "purchase": false
+}
+
+###
+
+### Mark All Stages Complete
+PATCH {{baseUrl}}/rangi_windows/api/projects/1/stages
+Content-Type: application/json
+
+{
+  "glass": true,
+  "frame": true,
+  "purchase": true,
+  "transport": true,
+  "install": true,
+  "repair": true
+}
+
+###
+
+### ----- Photo Operations -----
+
+### List Project Photos
+GET {{baseUrl}}/rangi_windows/api/projects/1/photos
+
+###
+
+### Upload Photo
+# Note: Use multipart/form-data in actual request
+POST {{baseUrl}}/rangi_windows/api/projects/1/photo
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary
+
+------WebKitFormBoundary
+Content-Disposition: form-data; name="file"; filename="photo.jpg"
+Content-Type: image/jpeg
+
+< ./test-photo.jpg
+------WebKitFormBoundary--
+
+###
+
+### Download Photo by Token
+GET {{baseUrl}}/rangi_windows/api/projects/1/photo/abc123token
+
+###
+
+### Delete Photo by ID
+DELETE {{baseUrl}}/rangi_windows/api/projects/1/photos/1
+
+###
+
+### Delete Photo by Token
+DELETE {{baseUrl}}/rangi_windows/api/projects/1/photo/abc123token
+
+###
+
+### Delete All Photos
+DELETE {{baseUrl}}/rangi_windows/api/projects/1/photos

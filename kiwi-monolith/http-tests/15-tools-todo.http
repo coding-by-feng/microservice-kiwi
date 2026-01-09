@@ -1,0 +1,177 @@
+### ===================================
+### Todo Tasks API Tests
+### Base Path: /todo
+### ===================================
+
+### ----- Task Management -----
+
+### List Tasks
+GET {{baseUrl}}/todo/tasks
+Authorization: Bearer {{authToken}}
+
+###
+
+### List Tasks with Filters
+GET {{baseUrl}}/todo/tasks?status=pending&priority=high
+Authorization: Bearer {{authToken}}
+
+###
+
+### Create Task
+POST {{baseUrl}}/todo/tasks
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "title": "Complete project documentation",
+  "description": "Write comprehensive API documentation",
+  "priority": "high",
+  "dueDate": "2025-01-15"
+}
+
+###
+
+### Create Task - Low Priority
+POST {{baseUrl}}/todo/tasks
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "title": "Review code changes",
+  "description": "Review pull requests from team",
+  "priority": "low"
+}
+
+###
+
+### Get Task by ID
+GET {{baseUrl}}/todo/tasks/1
+Authorization: Bearer {{authToken}}
+
+> {%
+    client.global.set("taskETag", response.headers.valueOf("ETag"));
+%}
+
+###
+
+### Update Task (with ETag)
+PATCH {{baseUrl}}/todo/tasks/1
+Authorization: Bearer {{authToken}}
+If-Match: {{taskETag}}
+Content-Type: application/json
+
+{
+  "title": "Updated Task Title",
+  "status": "in_progress"
+}
+
+###
+
+### Complete Task
+POST {{baseUrl}}/todo/tasks/1/complete
+Authorization: Bearer {{authToken}}
+
+###
+
+### Reset Task Status
+POST {{baseUrl}}/todo/tasks/1/reset-status
+Authorization: Bearer {{authToken}}
+
+###
+
+### Reset All Task Statuses
+POST {{baseUrl}}/todo/tasks/reset-statuses
+Authorization: Bearer {{authToken}}
+
+###
+
+### Delete Task (to Trash)
+DELETE {{baseUrl}}/todo/tasks/1
+Authorization: Bearer {{authToken}}
+
+###
+
+### ----- Trash Operations -----
+
+### List Deleted Tasks
+GET {{baseUrl}}/todo/trash
+Authorization: Bearer {{authToken}}
+
+###
+
+### Restore Task from Trash
+POST {{baseUrl}}/todo/trash/1/restore
+Authorization: Bearer {{authToken}}
+
+###
+
+### Permanently Delete Task
+DELETE {{baseUrl}}/todo/trash/1
+Authorization: Bearer {{authToken}}
+
+###
+
+### Clear Trash (Delete All)
+DELETE {{baseUrl}}/todo/trash
+Authorization: Bearer {{authToken}}
+
+###
+
+### ----- History & Analytics -----
+
+### List Completed Tasks by Date
+GET {{baseUrl}}/todo/history?date=2025-01-01
+Authorization: Bearer {{authToken}}
+
+###
+
+### Get Monthly Analytics
+GET {{baseUrl}}/todo/analytics/monthly?months=6
+Authorization: Bearer {{authToken}}
+
+###
+
+### Get Summary Stats
+GET {{baseUrl}}/todo/analytics/summary?month=2025-01
+Authorization: Bearer {{authToken}}
+
+###
+
+### Get User Ranking
+GET {{baseUrl}}/todo/ranking/current
+Authorization: Bearer {{authToken}}
+
+###
+
+### Get Rank Definitions
+GET {{baseUrl}}/todo/ranking/ranks
+
+###
+
+### ----- Import/Export -----
+
+### Export All Tasks
+GET {{baseUrl}}/todo/export/todo
+Authorization: Bearer {{authToken}}
+
+###
+
+### Import Tasks
+POST {{baseUrl}}/todo/import/todo
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "tasks": [
+    {
+      "title": "Imported Task 1",
+      "description": "Description 1",
+      "priority": "medium"
+    },
+    {
+      "title": "Imported Task 2",
+      "description": "Description 2",
+      "priority": "high"
+    }
+  ]
+}

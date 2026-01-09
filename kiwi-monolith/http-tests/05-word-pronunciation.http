@@ -1,0 +1,22 @@
+### ===================================
+### Pronunciation API Tests
+### Base Path: /api/word/pronunciation
+### ===================================
+
+### Get Pronunciation by ID
+GET {{baseUrl}}/api/word/pronunciation/1
+
+###
+
+### Get Pronunciations by Word ID
+GET {{baseUrl}}/api/word/pronunciation/word/1
+
+###
+
+### Get Pronunciations by Character ID
+GET {{baseUrl}}/api/word/pronunciation/character/1
+
+###
+
+### Download Pronunciation Audio
+GET {{baseUrl}}/api/word/pronunciation/download/1

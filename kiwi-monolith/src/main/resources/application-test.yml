@@ -1,0 +1,284 @@
+# ==================== Test Profile Configuration ====================
+# Test/Staging environment settings
+
+server:
+  port: 8080
+
+spring:
+  # ==================== Database ====================
+  datasource:
+    url: jdbc:mysql://${DB_HOST_TEST:kiwi-mysql}:${DB_PORT_TEST:3306}/${DB_NAME_TEST:kiwi_db_test}?useUnicode=true&characterEncoding=UTF-8&useSSL=true&requireSSL=true&allowPublicKeyRetrieval=true&serverTimezone=Pacific/Auckland
+    username: ${DB_USERNAME_TEST:ENC(2PE/BMMoNPbRCEaIyGfcSw==)}
+    password: ${DB_PASSWORD_TEST:ENC(zF1rDpn+u8RZX5OTor7BpHzprZyrH+3P)}
+    hikari:
+      maximum-pool-size: 30
+      minimum-idle: 10
+      max-lifetime: 1800000
+      connection-timeout: 60000
+      initialization-fail-timeout: 60000
+
+  jpa:
+    show-sql: false
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        format_sql: false
+
+  # ==================== Redis ====================
+  data:
+    redis:
+      host: ${REDIS_HOST_TEST:kiwi-redis}
+      port: ${REDIS_PORT_TEST:6379}
+      password: ${REDIS_PASSWORD_TEST:ENC(uxuSI1Bl5AelC8dYvJUvMhsRbasVD4zh)}
+      database: 1
+      timeout: 10000ms
+      lettuce:
+        pool:
+          max-active: 20
+          max-idle: 10
+          min-idle: 5
+          max-wait: 5000ms
+        shutdown-timeout: 100ms
+
+  # ==================== Redis (for Redisson) ====================
+  redis:
+    host: ${REDIS_HOST_TEST:kiwi-redis}
+    port: ${REDIS_PORT_TEST:6379}
+    password: ${REDIS_PASSWORD_TEST:ENC(uxuSI1Bl5AelC8dYvJUvMhsRbasVD4zh)}
+    database: 1
+
+  # ==================== Elasticsearch ====================
+  elasticsearch:
+    uris: ${ES_URIS_TEST:http://kiwi-es:9200}
+    username: ${ES_USERNAME_TEST:ENC(NKy6wa5SuHBhQmfLWf6Zv8wf8sPMaE0b)}
+    password: ${ES_PASSWORD_TEST:ENC(oj9wNYu52oQH1d9T0zHeGDLz7P7em71u)}
+
+  # ==================== File Upload ====================
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 10MB
+      max-request-size: 20MB
+
+  # ==================== GCP Configuration ====================
+  cloud:
+    gcp:
+      project-id: ${GCP_PROJECT_ID:ENC(5q3wUNe5RH6F8ORU+aaVqa5XK6bF5pJwdHzcloHX3Uz2PyTTN5C7kw==)}
+      credentials:
+        location: ${GCP_CREDENTIALS_LOCATION:ENC(cicvoPPUGdVt01NMX91FN2X7ud3c6Fiu5CchvC8LDYEFENPuURkzAL0TXBJSBpaqs1w2Gbv5nZg=)}
+
+  # ==================== Liquibase ====================
+  liquibase:
+    enabled: true
+    change-log: classpath:db/changelog/db.changelog-master.xml
+
+# ==================== Logging ====================
+logging:
+  level:
+    root: INFO
+    me.fengorz.kiwi: INFO
+    org.hibernate.SQL: INFO
+
+# ==================== Actuator ====================
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  health:
+    elasticsearch:
+      enabled: false
+
+# ==================== Application Custom Config ====================
+kiwi:
+  # FastDFS Configuration
+  dfs:
+    connect-timeout: 6000000
+    so-timeout: 6000000
+    tracker-list: ${FASTDFS_TRACKER_TEST:kiwi-fastdfs:22122}
+    gcp:
+      bucket-name: kiwidict-bucket-test
+
+  # File paths for test environment
+  file:
+    crawler:
+      voice:
+        tmp-path: ${VOICE_TMP_PATH:/wordTmp}
+    vocabulary:
+      word:
+        list:
+          path: ${WORD_LIST_PATH:/wordTmp}
+
+  # TTS Configuration
+  tts:
+    chattts:
+      base-url: http://kiwi-chattts:8000
+      timeout: 30
+      retry-count: 3
+    deepgram:
+      api-key: ${DEEPGRAM_API_KEY:}
+      base-url: https://api.deepgram.com/v1/speak
+      english-model: aura-asteria-en
+      chinese-model: aura-lingxi-zh
+    baidu:
+      app-id: "20116041"
+      api-key: ${BAIDU_TTS_API_KEY:ENC(/9nXqvG1VIte1VrACwZ683gw2o2K3fpRdAweh0edh1nFLd1CvjH4oA==)}
+      secret-key: ${BAIDU_TTS_SECRET_KEY:ENC(G1gyeiupF4SDLkxRGm6FJ5a+Xxpp36sIrrtUnu5xZFKtZGnA7WYCPy+t+XHO0Kaa)}
+      access-token: ${BAIDU_TTS_ACCESS_TOKEN:ENC(wykNby8I8mtu8pV5zd8khs8oUoF1GSFuS+y7zVGGhvHCF6+sUSUeSK3p3Q57wddHbZjYujpgoUMisz+fneF4E8tOpgTpdlThYC4j/tHtJfs=)}
+    voicerss:
+      url: 'https://api.voicerss.org/?key={}&r=-2&hl=en-us&v=Mary&c=MP3&f=16khz_16bit_stereo&src=test'
+      api-keys:
+        - '02df0a8f48b641548ec4224c24ebff0e'
+        - '0e3c0a35570543249f743f74c027ef8b'
+        - 'a65b84ea89b14011af581b3335e40d63'
+
+  # YouTube Configuration
+  youtube:
+    video:
+      command: yt-dlp
+      download:
+        path: ${YT_DOWNLOAD_PATH:/wordTmp}
+      large-subtitles:
+        threshold: 1000
+      batch:
+        enabled: false
+    proxy:
+      enabled: false
+      value: ""
+    migration:
+      enabled: true
+
+# ==================== AI Configuration ====================
+ai:
+  grok:
+    api:
+      key: ${GROK_API_KEY:}
+      endpoint: https://api.x.ai/v1/chat/completions
+      model: "grok-4-1-fast-reasoning"
+      thread-prompts-line-size: 400
+      thread-pool-size: 8
+      thread-timeout-secs: 120
+  mode:
+    directly-translation: "Translate the user prompt into #[TL]. Output the translation only—no labels, notes, or Markdown."
+    translation-and-explanation: "Translate the user prompt into #[TL] on the first line. Then, in #[NL], give a thorough explanation covering word choice, tone/register, key grammar, and cultural/usage notes. No Markdown or extra headers."
+    grammar-explanation: "Translate the user prompt into #[NL]. Then, in #[NL], explain the grammar (parts of speech, sentence structure, tense/aspect, key patterns, and tricky points). Keep it concise and clear."
+    grammar-correction: "1) Provide a grammatically corrected version of the text (original language). 2) Translate the corrected text into #[NL]. 3) In #[NL], explain each correction (what changed and why). Output in that order. No extra commentary."
+    natural-idiomatic-retouch: "Rewrite the text in #[TL] so that it is grammatically correct, natural, and idiomatic, as if written by an educated native speaker. Preserve the original meaning and tone, but improve word choice, sentence flow, and style. Output only the polished #[TL] version, with #[NL] explanations."
+    vocabulary-explanation: "Explain the vocabulary item in both #[TL] and #[NL]. Provide paraphrases in both languages grouped by part of speech (verb, noun, adjective, adverb, etc.). For each part of speech, give 1–3 demo sentences in #[TL] with #[NL] translations. Skip any part of speech that does not apply."
+    synonym: "List 5–8 common synonyms in #[TL]. For each, briefly explain the nuance in #[NL] and give one example sentence in #[TL] with a #[NL] translation. Output plain text only—no Markdown or extra commentary."
+    antonym: "List 5–8 common antonyms in #[TL]. For each, briefly explain the nuance in #[NL] and give one example sentence in #[TL] with a #[NL] translation. Output plain text only—no Markdown or extra commentary."
+    subtitle-translator: |
+      Translate subtitles line by line. For each input line:
+      1. First output the #[TL] line with corrected punctuation
+      2. On the NEXT LINE, output the #[NL] translation
+      3. Then add a BLANK LINE before the next pair
+
+      Format example:
+      [Corrected #[TL] sentence here]
+      [#[NL] translation here]
+
+      [Corrected #[TL] sentence here]
+      [#[NL] translation here]
+
+      Rules:
+      - Each #[TL] sentence must be on its own line
+      - Each #[NL] translation must be on the line immediately below
+      - Separate each pair with a blank line
+      - No Markdown, no labels, no extra commentary
+    subtitle-retouch: "Can you extract, clean, and calibrate the subtitle content without altering the original meaning? Remove only unused or redundant symbols while keeping the timeline and subtitle lines intact. The timeline should appear above each corresponding subtitle. Identify complete sentences within each subtitle line, correct punctuation and casing, and ensure each full sentence becomes one line. The language and number of subtitle lines must remain exactly the same as the input. Output one corrected subtitle line for each input line, with no extra text and no Markdown."
+    subtitle-retouch-translator: |
+      Reformat and translate subtitle lines. For each #[TL] sentence:
+      1. Fix grammar and add natural punctuation
+      2. Output the corrected #[TL] sentence on its own line
+      3. On the NEXT LINE, output the #[NL] translation
+      4. Add a BLANK LINE before the next pair
+
+      Format example:
+      [Corrected #[TL] sentence here]
+      [#[NL] translation here]
+
+      [Corrected #[TL] sentence here]
+      [#[NL] translation here]
+
+      Rules:
+      - Each corrected #[TL] sentence must be on its own line
+      - Each #[NL] translation must be on the line immediately below
+      - Separate each pair with a blank line
+      - If a line is already in #[NL], only correct and output that line without translation
+      - No Markdown, no labels, no extra commentary
+    subtitle-punctuation-only: |
+      Add punctuation and fix capitalization to each subtitle line.
+
+      CRITICAL RULES:
+      1. Keep EXACTLY the same number of lines as input
+      2. Do NOT merge lines or split lines
+      3. Do NOT change word order
+      4. Do NOT add or remove words
+      5. ONLY add punctuation marks (. , ? ! ' ") and fix capitalization
+      6. Each output line corresponds to exactly one input line
+
+      Input format:
+      [line 1 text]
+      [line 2 text]
+      ...
+
+      Output format (same number of lines):
+      [line 1 with punctuation]
+      [line 2 with punctuation]
+      ...
+
+      Example:
+      Input:
+      yo your place kind of fire though
+      this place be phantom taxing
+
+      Output:
+      Yo, your place kind of fire though.
+      This place be phantom taxing.
+    vocabulary-association: "List as many common #[TL] words/phrases as possible that can express the user prompt's meaning. For each item, explain nuances, register, and usage differences in #[NL]. Group closely related items when helpful. Plain text only."
+    phrases-association: "List as many common #[TL] phrases as possible that can express the user prompt's meaning. For each phrase, explain nuances, register, and usage differences in #[NL]. Group by function or context when helpful. Plain text only."
+    selection-explanation: "Respond only in #[TL]. Explain the selected phrase \"#[S0]\" strictly based on the sentence #[S1] in 1–2 concise paragraphs. No headings, labels, English, Markdown, bullet points, or backslashes. Do not restate the full sentence; focus on meaning, nuance, tense/aspect, and function in context."
+    vocabulary-character-expansion: |
+      vocabulary-family-expansion:
+      For the input word, generate a complete word-family #[TL] map including:
+      1) Verbs
+      2) Nouns
+      3) Adjectives
+      4) Adverbs
+
+      For each item, use the format:
+      word (#[NL] Chinese translation; #[NL] nuance or usage explanation)
+
+      Structure:
+      Verbs: v1 (#[NL] translation; #[NL] nuance), v2 (...), v3 (...)
+      Nouns: n1 (...), n2 (...)
+      Adjectives: adj1 (...), adj2 (...)
+      Adverbs: adv1 (...), adv2 (...)
+
+      Notes:
+      - If a category has no items, skip it
+      - Prioritize common vocabulary; include formal/informal variants if significant
+    ambiguous-association-correction: "If only the first input is ambiguous, list all possible corrections with brief explanations in #[NL]. If both inputs are present, compare them; if the second is a correction of the first, output only the corrected version without explanation; otherwise, list all possible corrections for the first input. Output #[TL] only, plain text, no Markdown."
+
+# ==================== Security Ignore URLs ====================
+ignore:
+  urls:
+    # Common
+    - /actuator/**
+    - /test/**
+    - /log/**
+    # UPMS Service (new /api prefix)
+    - /api/log/**
+    # Word Service (new /api prefix)
+    - /api/word/name/**
+    - /api/word/search
+    - /api/word/fuzzy
+    - /api/word/autocomplete
+    - /api/word/exists/**
+    - /api/word/pronunciation/download/**
+    - /api/word/fetch/**
+    # Tools Service (legacy paths)
+    - /rangi_windows/api/**
+    # Tools Service (new /api prefix)
+    - /api/rangi_windows/**

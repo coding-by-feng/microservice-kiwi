@@ -37,7 +37,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.*;
-import java.util.concurrent.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
 
 /**
  * Grok AI Service Implementation
@@ -50,17 +51,20 @@ public class GrokAiServiceImpl implements AiChatService {
 
     private final RestTemplate restTemplate;
     private final RetryTemplate retryTemplate;
+    private final Executor batchExecutor;
     private final GrokApiProperties grokApiProperties;
     private final AiModeProperties modeProperties;
     private final ObjectMapper objectMapper;
 
     public GrokAiServiceImpl(@Qualifier("aiRestTemplate") RestTemplate restTemplate,
                              @Qualifier("aiRetryTemplate") RetryTemplate retryTemplate,
+                             @Qualifier("aiBatchExecutor") Executor batchExecutor,
                              GrokApiProperties grokApiProperties,
                              AiModeProperties modeProperties,
                              ObjectMapper objectMapper) {
         this.restTemplate = restTemplate;
         this.retryTemplate = retryTemplate;
+        this.batchExecutor = batchExecutor;
         this.grokApiProperties = grokApiProperties;
         this.modeProperties = modeProperties;
         this.objectMapper = objectMapper;
@@ -124,20 +128,20 @@ public class GrokAiServiceImpl implements AiChatService {
     @Override
     public String batchCall(List<String> prompts, AiPromptModeEnum promptMode, LanguageEnum language) {
         int batchSize = grokApiProperties.getThreadPromptsLineSize();
-        int threadPoolSize = grokApiProperties.getThreadPoolSize() != null ?
-                grokApiProperties.getThreadPoolSize() : Runtime.getRuntime().availableProcessors();
         int totalBatches = (int) Math.ceil((double) prompts.size() / batchSize);
 
-        String[] results = new String[totalBatches];
-        ExecutorService executorService = Executors.newFixedThreadPool(threadPoolSize);
-        List<Future<BatchResult>> futures = new ArrayList<>();
+        log.info("Starting batch call: {} prompts, {} batches, batchSize={}", prompts.size(), totalBatches, batchSize);
+        long startTime = System.currentTimeMillis();
+
+        // Create CompletableFutures for parallel processing using shared executor
+        List<CompletableFuture<BatchResult>> futures = new ArrayList<>();
 
         for (int i = 0; i < prompts.size(); i += batchSize) {
             final int batchIndex = i / batchSize;
             final int startIndex = i;
             final int endIndex = Math.min(i + batchSize, prompts.size());
 
-            futures.add(executorService.submit(() -> {
+            CompletableFuture<BatchResult> future = CompletableFuture.supplyAsync(() -> {
                 try {
                     List<String> batchPrompts = prompts.subList(startIndex, endIndex);
                     return new BatchResult(batchIndex, processBatch(batchPrompts, promptMode, language));
@@ -145,29 +149,23 @@ public class GrokAiServiceImpl implements AiChatService {
                     log.error("Error processing batch {}: {}", batchIndex, e.getMessage(), e);
                     throw new ServiceException("Error processing batch " + batchIndex + ": " + e.getMessage(), e);
                 }
-            }));
+            }, batchExecutor);
+
+            futures.add(future);
         }
 
-        for (Future<BatchResult> future : futures) {
+        // Wait for all futures and collect results in order
+        String[] results = new String[totalBatches];
+        CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
+
+        for (CompletableFuture<BatchResult> future : futures) {
             try {
                 BatchResult result = future.get();
                 results[result.getBatchIndex()] = result.getContent();
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                throw new ServiceException("Batch processing was interrupted", e);
-            } catch (ExecutionException e) {
-                throw new ServiceException("Error executing batch: " + e.getCause().getMessage(), e.getCause());
+            } catch (Exception e) {
+                log.error("Error getting batch result: {}", e.getMessage(), e);
+                throw new ServiceException("Error executing batch: " + e.getMessage(), e);
             }
-        }
-
-        executorService.shutdown();
-        try {
-            if (!executorService.awaitTermination(grokApiProperties.getThreadTimeoutSecs(), TimeUnit.SECONDS)) {
-                executorService.shutdownNow();
-            }
-        } catch (InterruptedException e) {
-            executorService.shutdownNow();
-            Thread.currentThread().interrupt();
         }
 
         StringBuilder finalResult = new StringBuilder();
@@ -176,6 +174,10 @@ public class GrokAiServiceImpl implements AiChatService {
                 finalResult.append(result).append("\n\n");
             }
         }
+
+        long duration = System.currentTimeMillis() - startTime;
+        log.info("Batch call completed: {} batches in {}ms", totalBatches, duration);
+
         return finalResult.toString().trim();
     }
 

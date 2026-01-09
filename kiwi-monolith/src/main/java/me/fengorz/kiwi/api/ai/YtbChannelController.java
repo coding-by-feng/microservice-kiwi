@@ -192,6 +192,16 @@ public class YtbChannelController {
         return R.ok(true);
     }
 
+    @GetMapping("/id/{channelId}/videos")
+    @Operation(summary = "Get videos for a channel by ID with /id/ prefix")
+    public R<Page<YtbChannelVideo>> getChannelVideosById(
+            @PathVariable Long channelId,
+            @RequestParam(defaultValue = "1") long current,
+            @RequestParam(defaultValue = "20") long size) {
+        Page<YtbChannelVideo> page = new Page<>(current, size);
+        return R.ok(ytbChannelService.findVideosByChannelId(channelId, page));
+    }
+
     @GetMapping("/id/{channelId}/favorite")
     @Operation(summary = "Check if a channel is favorited")
     public R<Boolean> isChannelFavorited(

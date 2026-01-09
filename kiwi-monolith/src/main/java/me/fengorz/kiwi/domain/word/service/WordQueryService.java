@@ -271,6 +271,15 @@ public class WordQueryService {
             vo.setPhraseList(phraseList);
         }
 
+        // Assemble pronunciations by characterId
+        if (paraphrase.getCharacterId() != null) {
+            List<Pronunciation> pronunciations = pronunciationService.findByCharacterId(paraphrase.getCharacterId());
+            List<PronunciationVO> pronunciationVOList = pronunciations.stream()
+                    .map(this::assemblePronunciationVO)
+                    .collect(Collectors.toList());
+            vo.setPronunciationVOList(pronunciationVOList);
+        }
+
         return vo;
     }
 

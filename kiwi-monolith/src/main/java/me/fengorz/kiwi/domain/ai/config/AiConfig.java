@@ -15,27 +15,59 @@
  */
 package me.fengorz.kiwi.domain.ai.config;
 
+import lombok.extern.slf4j.Slf4j;
+import okhttp3.ConnectionPool;
+import okhttp3.OkHttpClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.client.SimpleClientHttpRequestFactory;
+import org.springframework.http.client.OkHttp3ClientHttpRequestFactory;
 import org.springframework.retry.backoff.ExponentialBackOffPolicy;
 import org.springframework.retry.policy.SimpleRetryPolicy;
 import org.springframework.retry.support.RetryTemplate;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.concurrent.TimeUnit;
+
 /**
- * AI Configuration
+ * AI Configuration with connection pooling for better performance
  *
  * @author codingByFeng
  */
+@Slf4j
 @Configuration
 public class AiConfig {
 
+    /**
+     * Shared OkHttpClient with connection pooling for AI API calls.
+     * This significantly improves performance by reusing connections.
+     */
+    @Bean("aiOkHttpClient")
+    public OkHttpClient aiOkHttpClient() {
+        ConnectionPool connectionPool = new ConnectionPool(
+                20,              // max idle connections
+                5, TimeUnit.MINUTES   // keep-alive duration
+        );
+
+        OkHttpClient client = new OkHttpClient.Builder()
+                .connectionPool(connectionPool)
+                .connectTimeout(30, TimeUnit.SECONDS)
+                .readTimeout(120, TimeUnit.SECONDS)
+                .writeTimeout(60, TimeUnit.SECONDS)
+                .retryOnConnectionFailure(true)
+                .build();
+
+        log.info("AI OkHttpClient initialized with connection pool: maxIdleConnections=20, keepAlive=5min");
+        return client;
+    }
+
+    /**
+     * RestTemplate with OkHttp3 backend for connection pooling.
+     * This replaces SimpleClientHttpRequestFactory which creates new connections per request.
+     */
     @Bean("aiRestTemplate")
-    public RestTemplate aiRestTemplate() {
-        SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
-        factory.setConnectTimeout(30000);
-        factory.setReadTimeout(120000);
+    public RestTemplate aiRestTemplate(OkHttpClient aiOkHttpClient) {
+        OkHttp3ClientHttpRequestFactory factory = new OkHttp3ClientHttpRequestFactory(aiOkHttpClient);
+        log.info("AI RestTemplate initialized with OkHttp3 connection pooling");
         return new RestTemplate(factory);
     }
 

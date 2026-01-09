@@ -165,7 +165,7 @@ ai:
     api:
       key: ${GEMINI_API_KEY:}
       endpoint: https://generativelanguage.googleapis.com/v1beta/models
-      model: "gemini-2.5-flash-preview-05-20"
+      model: "gemini-2.5-flash"
       # Gemini 2.5 Flash has 1M context window - can handle very large batches
       # This sends more subtitle lines per AI request, reducing total API calls
       thread-prompts-line-size: 2000

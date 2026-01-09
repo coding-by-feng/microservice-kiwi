@@ -22,6 +22,10 @@
         <module>kiwi-gateway</module>
         <module>kiwi-common</module>
         <module>kiwi-test</module>
+        <!-- New monolith module - Spring Boot 3.2 + Java 17 -->
+        <!-- Note: This module has its own parent (spring-boot-starter-parent 3.2.1) -->
+        <!-- Build separately: cd kiwi-monolith && mvn clean install -->
+        <!-- <module>kiwi-monolith</module> -->
     </modules>
 
     <properties>

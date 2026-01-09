@@ -25,7 +25,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @Component
 @EnableScheduling
 @RequiredArgsConstructor
-@ConditionalOnProperty(name = "youtube.video.batch.enabled", havingValue = "true")
+@ConditionalOnProperty(name = "kiwi.youtube.video.batch.enabled", havingValue = "true")
 public class YtbChannelSyncScheduler {
 
     private final YtbChannelService ytbChannelService;

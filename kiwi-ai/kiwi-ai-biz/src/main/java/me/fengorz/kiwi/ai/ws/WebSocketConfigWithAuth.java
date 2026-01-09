@@ -27,17 +27,17 @@ public class WebSocketConfigWithAuth implements WebSocketConfigurer {
         @Override
         public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
                 // Audio WebSocket handler
-                registry.addHandler(audioWebSocketHandler, "/ai/ws/stt/audio")
+                registry.addHandler(audioWebSocketHandler, "/api/ai/ws/stt/audio")
                                 .setAllowedOrigins("*")
                                 .addInterceptors(webSocketAuthInterceptor);
 
                 // AI streaming WebSocket handler
-                registry.addHandler(aiStreamingWebSocketHandler, "/ai/ws/stream")
+                registry.addHandler(aiStreamingWebSocketHandler, "/api/ai/ws/stream")
                                 .setAllowedOrigins("*")
                                 .addInterceptors(webSocketAuthInterceptor);
 
                 // YouTube subtitle WebSocket handler
-                registry.addHandler(ytbSubtitleWebSocketHandler, "/ai/ws/ytb/subtitle")
+                registry.addHandler(ytbSubtitleWebSocketHandler, "/api/ai/ws/ytb/subtitle")
                                 .setAllowedOrigins("*")
                                 .addInterceptors(webSocketAuthInterceptor);
         }

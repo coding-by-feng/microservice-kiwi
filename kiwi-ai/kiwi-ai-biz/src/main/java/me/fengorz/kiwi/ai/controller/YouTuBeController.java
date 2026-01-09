@@ -26,7 +26,7 @@ import java.util.UUID;
 
 @Slf4j
 @RestController
-@RequestMapping("/ai/ytb/video")
+@RequestMapping("/api/ai/ytb/video")
 public class YouTuBeController {
 
     private final YouTubeClient youTubeClient;
@@ -225,8 +225,8 @@ public class YouTuBeController {
 
     /**
      * HTTP endpoint for subtitle translation (backward compatibility)
-     * 
-     * @deprecated Use WebSocket endpoint /ai/ws/ytb/subtitle for real-time
+     *
+     * @deprecated Use WebSocket endpoint /api/ai/ws/ytb/subtitle for real-time
      *             streaming
      */
     @GetMapping("/subtitles/translated")
@@ -252,7 +252,7 @@ public class YouTuBeController {
     @GetMapping("/subtitles/translated/stream")
     public R<String> getTranslatedSubtitlesStreamInfo() {
         return R.success("For real-time subtitle translation with streaming support, " +
-                "please use the WebSocket endpoint: ws://your-domain/ai/ws/ytb/subtitle. " +
+                "please use the WebSocket endpoint: ws://your-domain/api/ai/ws/ytb/subtitle. " +
                 "This provides real-time streaming of translation results with better performance.");
     }
 

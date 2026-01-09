@@ -24,7 +24,7 @@ CREATE TABLE `ytb_channel_user` (
 
 CREATE TABLE `ytb_channel_video` (
                                      `id` int NOT NULL COMMENT 'Primary key',
-                                     `channel_id` int NOT NULL COMMENT 'Channel ID',
+                                     `channel_id` int NULL COMMENT 'Channel ID (nullable for standalone favorited videos)',
                                      `video_title` varchar(500) NOT NULL COMMENT 'Video title',
                                      `video_link` varchar(100) NOT NULL COMMENT 'Video link',
                                      `published_at` datetime NULL COMMENT 'Video publication time',

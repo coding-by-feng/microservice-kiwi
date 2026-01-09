@@ -1,0 +1,179 @@
+### ===================================
+### UPMS (User Permission Management) API Tests
+### ===================================
+
+### ----- User Management -----
+### Base Path: /api/upms/user
+
+### Get Current User Info
+GET {{baseUrl}}/api/upms/user/current
+Authorization: Bearer {{authToken}}
+
+###
+
+### Get Current User Permissions
+GET {{baseUrl}}/api/upms/user/current/permissions
+Authorization: Bearer {{authToken}}
+
+###
+
+### Get Current User Roles
+GET {{baseUrl}}/api/upms/user/current/roles
+Authorization: Bearer {{authToken}}
+
+###
+
+### Get User by ID (Admin)
+GET {{baseUrl}}/api/upms/user/1
+Authorization: Bearer {{authToken}}
+
+###
+
+### Get User by Username (Admin)
+GET {{baseUrl}}/api/upms/user/username/admin
+Authorization: Bearer {{authToken}}
+
+###
+
+### Get All Users (Paginated)
+GET {{baseUrl}}/api/upms/user?page=0&size=20
+Authorization: Bearer {{authToken}}
+
+###
+
+### Create New User (Admin)
+POST {{baseUrl}}/api/upms/user
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "username": "testuser",
+  "email": "testuser@example.com",
+  "password": "password123",
+  "phone": "1234567890"
+}
+
+###
+
+### Update User (Admin)
+PUT {{baseUrl}}/api/upms/user/2
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "email": "updated@example.com",
+  "phone": "0987654321"
+}
+
+###
+
+### Lock User Account (Admin)
+POST {{baseUrl}}/api/upms/user/2/lock
+Authorization: Bearer {{authToken}}
+
+###
+
+### Unlock User Account (Admin)
+POST {{baseUrl}}/api/upms/user/2/unlock
+Authorization: Bearer {{authToken}}
+
+###
+
+### Change Password
+POST {{baseUrl}}/api/upms/user/change-password
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "oldPassword": "oldpass123",
+  "newPassword": "newpass123"
+}
+
+###
+
+### ----- Department Management -----
+### Base Path: /api/sys/dept
+
+### Get Departments (Paginated)
+GET {{baseUrl}}/api/sys/dept/page?page=0&size=20
+
+###
+
+### Get Department by ID
+GET {{baseUrl}}/api/sys/dept/1
+
+###
+
+### Get Departments by Parent ID
+GET {{baseUrl}}/api/sys/dept/parent/0
+
+###
+
+### Get Department Tree
+GET {{baseUrl}}/api/sys/dept/tree
+
+###
+
+### Create Department (Admin)
+POST {{baseUrl}}/api/sys/dept
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "deptName": "New Department",
+  "parentId": 0,
+  "sort": 1
+}
+
+###
+
+### Update Department (Admin)
+PUT {{baseUrl}}/api/sys/dept/1
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "deptName": "Updated Department",
+  "sort": 2
+}
+
+###
+
+### ----- Menu Management -----
+### Base Path: /api/sys/menu
+
+### Get Menus (Paginated)
+GET {{baseUrl}}/api/sys/menu/page?page=0&size=20
+
+###
+
+### Get Menu by ID
+GET {{baseUrl}}/api/sys/menu/1
+
+###
+
+### Get Menus by Parent ID
+GET {{baseUrl}}/api/sys/menu/parent/0
+
+###
+
+### Get Menus by Type
+GET {{baseUrl}}/api/sys/menu/type/0
+
+###
+
+### ----- Role Management -----
+### Base Path: /api/sys/role
+
+### Get Roles (Paginated)
+GET {{baseUrl}}/api/sys/role/page?page=0&size=20
+
+###
+
+### Get Role by ID
+GET {{baseUrl}}/api/sys/role/1
+
+###
+
+### Get Role by Code
+GET {{baseUrl}}/api/sys/role/code/ROLE_ADMIN

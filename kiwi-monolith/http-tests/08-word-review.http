@@ -1,0 +1,76 @@
+### ===================================
+### Word Review API Tests
+### Base Path: /api/word/review
+### ===================================
+
+### Get Review Breakpoint Page Number
+GET {{baseUrl}}/api/word/review/getReviewBreakpointPageNumber/1
+
+###
+
+### Create Review Days for Current User
+POST {{baseUrl}}/api/word/review/createTheDays
+Authorization: Bearer {{authToken}}
+
+###
+
+### Refresh All TTS API Keys
+GET {{baseUrl}}/api/word/review/refreshAllApiKey
+
+###
+
+### Get Review Counter by Type
+GET {{baseUrl}}/api/word/review/getReviewCounterVO/1
+Authorization: Bearer {{authToken}}
+
+###
+
+### Get All Review Counters
+GET {{baseUrl}}/api/word/review/getAllReviewCounterVO
+Authorization: Bearer {{authToken}}
+
+###
+
+### Download Review Audio
+GET {{baseUrl}}/api/word/review/downloadReviewAudio/1/1
+
+###
+
+### Download Character Review Audio
+GET {{baseUrl}}/api/word/review/character/downloadReviewAudio/a
+
+###
+
+### Generate TTS Voice from Paraphrase ID (Deprecated)
+POST {{baseUrl}}/api/word/review/generateTtsVoiceFromParaphraseId/1
+
+###
+
+### Increase Review Counter
+PUT {{baseUrl}}/api/word/review/increaseCounter/1
+Authorization: Bearer {{authToken}}
+
+###
+
+### Auto Select API Key
+GET {{baseUrl}}/api/word/review/autoSelectApiKey
+
+###
+
+### Increase API Key Used Time
+PUT {{baseUrl}}/api/word/review/increaseApiKeyUsedTime/test-api-key
+
+###
+
+### Deprecate API Key for Today
+PUT {{baseUrl}}/api/word/review/deprecateApiKeyToday/test-api-key
+
+###
+
+### Deprecate Review Audio
+DELETE {{baseUrl}}/api/word/review/deprecate-review-audio/1
+
+###
+
+### Regenerate Review Audio
+DELETE {{baseUrl}}/api/word/review/reGenReviewAudio/1

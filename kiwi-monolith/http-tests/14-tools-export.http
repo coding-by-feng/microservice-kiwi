@@ -1,0 +1,42 @@
+### ===================================
+### Export API Tests
+### Base Path: /rangi_windows/api/export
+### ===================================
+
+### Export to Excel - All Projects
+GET {{baseUrl}}/rangi_windows/api/export/excel
+
+###
+
+### Export to Excel - Date Range
+GET {{baseUrl}}/rangi_windows/api/export/excel?start=2024-01-01&end=2024-12-31
+
+###
+
+### Export to Excel - Archived Only
+GET {{baseUrl}}/rangi_windows/api/export/excel?archived=true
+
+###
+
+### Export to Excel - With All Filters
+GET {{baseUrl}}/rangi_windows/api/export/excel?start=2024-01-01&end=2024-12-31&archived=false
+
+###
+
+### Export to PDF - All Projects
+GET {{baseUrl}}/rangi_windows/api/export/pdf
+
+###
+
+### Export to PDF - Date Range
+GET {{baseUrl}}/rangi_windows/api/export/pdf?start=2024-01-01&end=2024-12-31
+
+###
+
+### Export to PDF - Archived Only
+GET {{baseUrl}}/rangi_windows/api/export/pdf?archived=true
+
+###
+
+### Export to PDF - With All Filters
+GET {{baseUrl}}/rangi_windows/api/export/pdf?start=2024-01-01&end=2024-12-31&archived=false

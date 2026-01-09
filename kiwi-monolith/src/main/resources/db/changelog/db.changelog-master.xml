@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <!--
+        Kiwi Monolith Database Changelog
+
+        Note: Since we're migrating from existing microservices,
+        the database tables already exist. This changelog is for
+        future schema changes only.
+
+        The existing tables are:
+        - UPMS: sys_user, sys_role, sys_dept, sys_menu, sys_user_role_rel, sys_role_menu_rel
+        - Word: word_main, word_character, word_paraphrase, word_paraphrase_example,
+                word_pronunciation, word_fetch_queue, word_star_list, word_star_rel, etc.
+        - AI: ytb_channel, ytb_channel_video, ytb_video_subtitles,
+              ytb_video_subtitles_translation, ai_call_history, etc.
+        - Tools: project, project_photo, project_stage_status, todo_task, etc.
+    -->
+
+    <!-- Include existing AI module changelogs if needed -->
+    <!-- <include file="db/changelog/ai/ai-changelog.xml"/> -->
+
+    <!-- Future schema changes go here -->
+
+</databaseChangeLog>

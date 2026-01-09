@@ -1,0 +1,52 @@
+### ===================================
+### Word Main API Tests
+### Base Path: /api/word/main
+### ===================================
+
+### Query Gate - English Word
+POST {{baseUrl}}/api/word/main/query/gate/hello?current=1&size=20
+
+###
+
+### Query Gate - Chinese Search
+POST {{baseUrl}}/api/word/main/query/gate/%E4%BD%A0%E5%A5%BD?current=1&size=20
+
+###
+
+### Query Word by Name
+GET {{baseUrl}}/api/word/main/query/hello
+
+###
+
+### Query Word by Name (URL Encoded)
+GET {{baseUrl}}/api/word/main/query/world
+
+###
+
+### Query Word by ID
+GET {{baseUrl}}/api/word/main/queryById/1
+
+###
+
+### Fuzzy Query List
+POST {{baseUrl}}/api/word/main/fuzzyQueryList?wordName=hel&page=0&size=20
+
+###
+
+### Fuzzy Query - Multiple Results
+POST {{baseUrl}}/api/word/main/fuzzyQueryList?wordName=test&page=0&size=10
+
+###
+
+### List Overlapping Words
+GET {{baseUrl}}/api/word/main/listOverlapAnyway
+
+###
+
+### Insert Word Variant
+POST {{baseUrl}}/api/word/main/variant/insertVariant/running/run
+
+###
+
+### Remove Word by Name and Re-fetch
+DELETE {{baseUrl}}/api/word/main/removeByWordName/obsoleteword

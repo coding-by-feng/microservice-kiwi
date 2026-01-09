@@ -1,0 +1,66 @@
+### ===================================
+### Word Star List API Tests
+### Base Path: /api/word/star/list
+### ===================================
+
+### Create Word Star List
+POST {{baseUrl}}/api/word/star/list/save
+Authorization: Bearer {{authToken}}
+Content-Type: application/x-www-form-urlencoded
+
+listName=My Vocabulary&remark=Daily words to review
+
+###
+
+### Get Current User's Word Star Lists
+GET {{baseUrl}}/api/word/star/list/getCurrentUserList
+Authorization: Bearer {{authToken}}
+
+###
+
+### Get Star List by ID
+GET {{baseUrl}}/api/word/star/list/1
+
+###
+
+### Update Word Star List
+PUT {{baseUrl}}/api/word/star/list/updateById
+Content-Type: application/x-www-form-urlencoded
+
+id=1&listName=Updated Vocabulary&remark=Updated remark&sort=1
+
+###
+
+### Get Word Star List Items (Paginated)
+# Path: /getListItems/{size}/{current}/{listId}
+GET {{baseUrl}}/api/word/star/list/getListItems/20/0/1
+
+###
+
+### Get List Items - Page 2
+GET {{baseUrl}}/api/word/star/list/getListItems/20/1/1
+
+###
+
+### Add Word to Star List
+PUT {{baseUrl}}/api/word/star/list/putWordStarList?wordId=1&listId=1
+
+###
+
+### Add Another Word to Star List
+PUT {{baseUrl}}/api/word/star/list/putWordStarList?wordId=2&listId=1
+
+###
+
+### Find All Word IDs in List
+GET {{baseUrl}}/api/word/star/list/findAllWordId/1
+
+###
+
+### Remove Word from Star List
+DELETE {{baseUrl}}/api/word/star/list/removeWordStarList?wordId=1&listId=1
+
+###
+
+### Delete Word Star List
+DELETE {{baseUrl}}/api/word/star/list/del/1

@@ -31,7 +31,7 @@ import org.springframework.web.bind.annotation.*;
 @Validated
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/ai")
+@RequestMapping("/api/ai")
 public class AiController extends BaseController {
 
     private final AiChatService aiService;

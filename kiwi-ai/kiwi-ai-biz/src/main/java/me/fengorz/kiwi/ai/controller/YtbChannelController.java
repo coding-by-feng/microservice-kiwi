@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @Validated
 @RestController
-@RequestMapping("/ai/ytb/channel")
+@RequestMapping("/api/ai/ytb/channel")
 public class YtbChannelController extends BaseController {
 
     private final YtbChannelService channelService;
@@ -52,7 +52,7 @@ public class YtbChannelController extends BaseController {
 
     /** Favorite a channel */
     @LogMarker
-    @PostMapping("/{channelId}/favorite")
+    @PostMapping("/id/{channelId}/favorite")
     public R<Boolean> favoriteChannel(@PathVariable("channelId") Long channelId) {
         if (channelId == null)
             return R.failed("Channel ID cannot be empty");
@@ -62,7 +62,7 @@ public class YtbChannelController extends BaseController {
 
     /** Unfavorite a channel */
     @LogMarker
-    @DeleteMapping("/{channelId}/favorite")
+    @DeleteMapping("/id/{channelId}/favorite")
     public R<Boolean> unfavoriteChannel(@PathVariable("channelId") Long channelId) {
         if (channelId == null)
             return R.failed("Channel ID cannot be empty");
@@ -199,7 +199,7 @@ public class YtbChannelController extends BaseController {
      * Get videos by channel ID
      */
     @LogMarker
-    @GetMapping("/{channelId}/videos")
+    @GetMapping("/id/{channelId}/videos")
     public R<IPage<YtbChannelVideoVO>> getVideosByChannelId(
             @PathVariable("channelId") Long channelId,
             @RequestParam(value = "current", defaultValue = "1") Integer current,

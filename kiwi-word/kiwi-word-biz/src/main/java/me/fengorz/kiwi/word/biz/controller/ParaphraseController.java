@@ -22,6 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.api.R;
 import me.fengorz.kiwi.common.db.service.SeqService;
 import me.fengorz.kiwi.common.sdk.annotation.log.LogMarker;
+import me.fengorz.kiwi.common.sdk.constant.GlobalConstants;
 import me.fengorz.kiwi.common.sdk.controller.BaseController;
 import me.fengorz.kiwi.common.sdk.web.security.SecurityUtils;
 import me.fengorz.kiwi.word.api.common.enumeration.ReviseDailyCounterTypeEnum;
@@ -77,6 +78,7 @@ public class ParaphraseController extends BaseController {
     public R<Boolean> save(ParaphraseStarListVO vo) {
         vo.setOwner(SecurityUtils.getCurrentUserId());
         vo.setId(seqService.genCommonIntSequence());
+        vo.setIsDel(GlobalConstants.FLAG_N);
         return R.success(starListService.save(vo));
     }
 

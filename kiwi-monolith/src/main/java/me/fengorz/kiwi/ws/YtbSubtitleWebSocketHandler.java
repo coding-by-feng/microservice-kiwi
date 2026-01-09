@@ -22,6 +22,7 @@ import me.fengorz.kiwi.domain.ai.service.YtbSubtitleService;
 import me.fengorz.kiwi.ws.model.ValidationResult;
 import me.fengorz.kiwi.ws.model.YtbSubtitleRequest;
 import me.fengorz.kiwi.ws.model.YtbSubtitleResponse;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.socket.CloseStatus;
@@ -33,6 +34,7 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executor;
 
 /**
  * YouTube Subtitle WebSocket Handler
@@ -46,12 +48,15 @@ public class YtbSubtitleWebSocketHandler extends TextWebSocketHandler {
     private static final String LOG_PREFIX = "[YTB-SUBTITLE-WS]";
 
     private final YtbSubtitleService ytbSubtitleService;
+    private final Executor webSocketExecutor;
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final Map<String, WebSocketSession> sessions = new ConcurrentHashMap<>();
     private final Map<String, Boolean> activeStreams = new ConcurrentHashMap<>();
 
-    public YtbSubtitleWebSocketHandler(YtbSubtitleService ytbSubtitleService) {
+    public YtbSubtitleWebSocketHandler(YtbSubtitleService ytbSubtitleService,
+                                       @Qualifier("webSocketExecutor") Executor webSocketExecutor) {
         this.ytbSubtitleService = ytbSubtitleService;
+        this.webSocketExecutor = webSocketExecutor;
     }
 
     @Override
@@ -194,7 +199,7 @@ public class YtbSubtitleWebSocketHandler extends TextWebSocketHandler {
                     sendMessage(session, YtbSubtitleResponse.error("Subtitle processing failed: " + e.getMessage(), "PROCESSING_ERROR", request));
                 }
             }
-        });
+        }, webSocketExecutor);
     }
 
     private void sendMessage(WebSocketSession session, YtbSubtitleResponse response) {

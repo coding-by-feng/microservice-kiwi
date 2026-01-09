@@ -26,13 +26,13 @@ import me.fengorz.kiwi.domain.ai.model.request.ChatHttpRequest;
 import me.fengorz.kiwi.domain.ai.model.request.Message;
 import me.fengorz.kiwi.domain.ai.service.AiStreamingService;
 import okhttp3.*;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Arrays;
-import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
 /**
@@ -51,15 +51,12 @@ public class GrokStreamingServiceImpl implements AiStreamingService {
 
     public GrokStreamingServiceImpl(GrokApiProperties grokApiProperties,
                                      AiModeProperties modeProperties,
-                                     ObjectMapper objectMapper) {
+                                     ObjectMapper objectMapper,
+                                     @Qualifier("aiOkHttpClient") OkHttpClient httpClient) {
         this.grokApiProperties = grokApiProperties;
         this.modeProperties = modeProperties;
         this.objectMapper = objectMapper;
-        this.httpClient = new OkHttpClient.Builder()
-                .connectTimeout(60, TimeUnit.SECONDS)
-                .readTimeout(120, TimeUnit.SECONDS)
-                .writeTimeout(60, TimeUnit.SECONDS)
-                .build();
+        this.httpClient = httpClient;
     }
 
     @Override

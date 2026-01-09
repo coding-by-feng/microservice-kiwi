@@ -369,6 +369,8 @@ ignore:
     - /api/word/exists/**
     - /api/word/pronunciation/download/**
     - /api/word/fetch/**
+    - /api/word/main/fuzzyQueryList
+    - /api/word/main/query/**
     # Tools Service (legacy paths)
     - /rangi_windows/api/**
     # Tools Service (new /api prefix)

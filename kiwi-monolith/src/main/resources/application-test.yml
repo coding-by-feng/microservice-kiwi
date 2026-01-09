@@ -151,6 +151,8 @@ kiwi:
 
 # ==================== AI Configuration ====================
 ai:
+  # AI Provider Selection: "grok" or "gemini"
+  provider: gemini
   grok:
     api:
       key: ${GROK_API_KEY:}
@@ -159,6 +161,20 @@ ai:
       thread-prompts-line-size: 400
       thread-pool-size: 8
       thread-timeout-secs: 120
+  gemini:
+    api:
+      key: ${GEMINI_API_KEY:}
+      endpoint: https://generativelanguage.googleapis.com/v1beta/models
+      model: "gemini-2.5-flash-preview-05-20"
+      # Gemini 2.5 Flash has 1M context window - can handle very large batches
+      # This sends more subtitle lines per AI request, reducing total API calls
+      thread-prompts-line-size: 2000
+      # Higher concurrency - Gemini handles more parallel requests (1500+ RPM)
+      thread-pool-size: 20
+      thread-timeout-secs: 300
+      temperature: 1.0
+      # Gemini 2.5 Flash supports up to 65K output tokens
+      max-output-tokens: 32768
   mode:
     directly-translation: "Translate the user prompt into #[TL]. Output the translation only—no labels, notes, or Markdown."
     translation-and-explanation: "Translate the user prompt into #[TL] on the first line. Then, in #[NL], give a thorough explanation covering word choice, tone/register, key grammar, and cultural/usage notes. No Markdown or extra headers."

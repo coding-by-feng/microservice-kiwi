@@ -68,7 +68,7 @@ public class PronunciationService extends ServiceImpl<PronunciationMapper, Pronu
     public List<Pronunciation> findByCharacterId(Integer characterId) {
         return list(new LambdaQueryWrapper<Pronunciation>()
                 .eq(Pronunciation::getCharacterId, characterId)
-                .eq(Pronunciation::getIsDel, 0));
+                .eq(Pronunciation::getIsDel, GlobalConstants.FLAG_N));
     }
 
     /**

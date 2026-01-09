@@ -213,44 +213,97 @@ ai:
     synonym: "List 5–8 common synonyms in #[TL]. For each, briefly explain the nuance in #[NL] and give one example sentence in #[TL] with a #[NL] translation. Output plain text only—no Markdown or extra commentary."
     antonym: "List 5–8 common antonyms in #[TL]. For each, briefly explain the nuance in #[NL] and give one example sentence in #[TL] with a #[NL] translation. Output plain text only—no Markdown or extra commentary."
     subtitle-translator: |
-      Translate subtitles line by line. For each input line:
-      1. First output the #[TL] line with corrected punctuation
-      2. On the NEXT LINE, output the #[NL] translation
-      3. Then add a BLANK LINE before the next pair
+      Translate subtitle fragments line by line. CRITICAL: Maintain exact 1:1 line mapping.
 
-      Format example:
-      [Corrected #[TL] sentence here]
-      [#[NL] translation here]
+      RULES:
+      1. Each INPUT line produces exactly TWO OUTPUT lines (original + translation)
+      2. Do NOT merge multiple input lines into one sentence
+      3. Do NOT split one input line into multiple output lines
+      4. Translate each fragment as-is, even if incomplete
+      5. Add punctuation only at natural pauses within each fragment
+      6. Separate each pair with exactly ONE blank line
 
-      [Corrected #[TL] sentence here]
-      [#[NL] translation here]
+      FORMAT (for each input line):
+      [Original #[TL] text with minimal punctuation fixes]
+      [#[NL] translation of that exact fragment]
 
-      Rules:
-      - Each #[TL] sentence must be on its own line
-      - Each #[NL] translation must be on the line immediately below
-      - Separate each pair with a blank line
-      - No Markdown, no labels, no extra commentary
-    subtitle-retouch: "Can you extract, clean, and calibrate the subtitle content without altering the original meaning? Remove only unused or redundant symbols while keeping the timeline and subtitle lines intact. The timeline should appear above each corresponding subtitle. Identify complete sentences within each subtitle line, correct punctuation and casing, and ensure each full sentence becomes one line. The language and number of subtitle lines must remain exactly the same as the input. Output one corrected subtitle line for each input line, with no extra text and no Markdown."
+      [Next original #[TL] text]
+      [#[NL] translation]
+
+      EXAMPLE:
+      Input:
+      It's America versus China today as we
+      put the Tesla Model Y refresh up against
+      the new BYD Sealion 7
+
+      Output:
+      It's America versus China today as we
+      今天是美国对战中国，我们
+
+      put the Tesla Model Y refresh up against
+      将特斯拉 Model Y 改款版与
+
+      the new BYD Sealion 7
+      全新比亚迪海狮07进行对比
+
+      No Markdown, no labels, no extra commentary.
+    subtitle-retouch: |
+      Retouch auto-generated subtitle fragments. CRITICAL: Maintain exact 1:1 line mapping.
+
+      RULES:
+      1. Each INPUT line produces exactly ONE OUTPUT line
+      2. Do NOT merge multiple input lines into one
+      3. Do NOT split one input line into multiple output lines
+      4. Fix capitalization and add punctuation ONLY at natural pauses within each fragment
+      5. Keep fragments as-is, even if sentences are incomplete
+      6. Remove redundant symbols but preserve meaning
+
+      EXAMPLE:
+      Input:
+      its america versus china today as we
+      put the tesla model y refresh up against
+
+      Output:
+      It's America versus China today as we
+      put the Tesla Model Y refresh up against
+
+      No Markdown, no labels, no extra commentary.
     subtitle-retouch-translator: |
-      Reformat and translate subtitle lines. For each #[TL] sentence:
-      1. Fix grammar and add natural punctuation
-      2. Output the corrected #[TL] sentence on its own line
-      3. On the NEXT LINE, output the #[NL] translation
-      4. Add a BLANK LINE before the next pair
+      Retouch and translate auto-generated subtitle fragments. CRITICAL: Maintain exact 1:1 line mapping.
 
-      Format example:
-      [Corrected #[TL] sentence here]
-      [#[NL] translation here]
+      RULES:
+      1. Each INPUT line produces exactly TWO OUTPUT lines (retouched original + translation)
+      2. Do NOT merge multiple input lines into one sentence
+      3. Do NOT split one input line into multiple output lines
+      4. Fix capitalization and add punctuation ONLY at natural pauses within each fragment
+      5. Translate each fragment as-is, even if the sentence is incomplete
+      6. Separate each pair with exactly ONE blank line
+      7. If a line is already in #[NL], only correct it and output without translation
 
-      [Corrected #[TL] sentence here]
-      [#[NL] translation here]
+      FORMAT (for each input line):
+      [Retouched #[TL] fragment with capitalization and punctuation fixes]
+      [#[NL] translation of that exact fragment]
 
-      Rules:
-      - Each corrected #[TL] sentence must be on its own line
-      - Each #[NL] translation must be on the line immediately below
-      - Separate each pair with a blank line
-      - If a line is already in #[NL], only correct and output that line without translation
-      - No Markdown, no labels, no extra commentary
+      [Next retouched #[TL] fragment]
+      [#[NL] translation]
+
+      EXAMPLE:
+      Input:
+      its america versus china today as we
+      put the tesla model y refresh up against
+      the new byd sealion 7 to see which of
+
+      Output:
+      It's America versus China today as we
+      今天是美国对战中国，我们
+
+      put the Tesla Model Y refresh up against
+      将特斯拉 Model Y 改款版与
+
+      the new BYD Sealion 7 to see which of
+      全新比亚迪海狮07进行对比，看看哪款
+
+      No Markdown, no labels, no extra commentary.
     subtitle-punctuation-only: |
       Add punctuation and fix capitalization to each subtitle line.
 

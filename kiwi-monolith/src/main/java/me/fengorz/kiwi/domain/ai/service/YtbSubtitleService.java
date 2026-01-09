@@ -20,19 +20,24 @@ import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.constant.GlobalConstants;
 import me.fengorz.kiwi.common.enumeration.AiPromptModeEnum;
 import me.fengorz.kiwi.common.enumeration.LanguageEnum;
+import me.fengorz.kiwi.domain.ai.entity.YtbChannelVideo;
+import me.fengorz.kiwi.domain.ai.entity.YtbVideoSubtitles;
 import me.fengorz.kiwi.domain.ai.ytb.SubtitleTypeEnum;
 import me.fengorz.kiwi.domain.ai.ytb.YouTubeClient;
 import me.fengorz.kiwi.domain.ai.ytb.YtbSubtitlesResult;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.net.URI;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * YouTube Subtitle Service - handles subtitle operations
@@ -48,6 +53,9 @@ public class YtbSubtitleService {
 
     private final YouTubeClient youTubeClient;
     private final AiChatService aiChatService;
+    private final YtbChannelVideoService ytbChannelVideoService;
+    private final YtbVideoSubtitlesService ytbVideoSubtitlesService;
+    private final YtbVideoSubtitlesTranslationService ytbVideoSubtitlesTranslationService;
 
     private String decode(String url) {
         try {
@@ -301,18 +309,61 @@ public class YtbSubtitleService {
         return result.toString();
     }
 
+    /**
+     * Clean all subtitle data for a video URL:
+     * 1. Evict Spring Cache (ytbSubtitles)
+     * 2. Clean AI response cache
+     * 3. Delete subtitle translations from DB
+     * 4. Delete subtitles from DB
+     *
+     * @param videoUrl the YouTube video URL
+     * @param language the language code (optional)
+     */
+    @Transactional
     @CacheEvict(cacheNames = CACHE_NAME, allEntries = true)
     public void cleanSubtitlesCache(String videoUrl, String language) {
-        log.info("Cleaning subtitles cache for: {}, language: {}", videoUrl, language);
+        log.info("Cleaning subtitles cache and DB records for: {}, language: {}", videoUrl, language);
         String decodedUrl = decode(videoUrl);
         LanguageEnum lang = convertLanguage(language);
 
+        // 1. Clean AI response cache
         aiChatService.cleanBatchCallForYtbAndCache(decodedUrl, AiPromptModeEnum.SUBTITLE_RETOUCH_TRANSLATOR, lang);
         aiChatService.cleanBatchCallForYtbAndCache(decodedUrl, AiPromptModeEnum.SUBTITLE_RETOUCH, lang);
         aiChatService.cleanBatchCallForYtbAndCache(decodedUrl, AiPromptModeEnum.SUBTITLE_TRANSLATOR, lang);
         aiChatService.cleanCallForYtbAndCache(decodedUrl, AiPromptModeEnum.SUBTITLE_RETOUCH_TRANSLATOR, lang);
         aiChatService.cleanCallForYtbAndCache(decodedUrl, AiPromptModeEnum.SUBTITLE_TRANSLATOR, lang);
         aiChatService.cleanCallForYtbAndCache(decodedUrl, AiPromptModeEnum.SUBTITLE_RETOUCH, lang);
+        aiChatService.cleanCallForYtbAndCache(decodedUrl, AiPromptModeEnum.SUBTITLE_PUNCTUATION_ONLY, lang);
+
+        // 2. Find video by URL and delete related DB records
+        Optional<YtbChannelVideo> videoOpt = ytbChannelVideoService.findByVideoLink(decodedUrl);
+        if (videoOpt.isPresent()) {
+            Long videoId = videoOpt.get().getId();
+            log.info("Found video ID: {} for URL: {}, deleting subtitles and translations", videoId, decodedUrl);
+
+            // 2.1 Find all subtitles for this video
+            List<YtbVideoSubtitles> subtitlesList = ytbVideoSubtitlesService.findByVideoId(videoId);
+            if (!subtitlesList.isEmpty()) {
+                // 2.2 Get all subtitle IDs
+                List<Long> subtitleIds = subtitlesList.stream()
+                        .map(YtbVideoSubtitles::getId)
+                        .collect(Collectors.toList());
+
+                // 2.3 Delete all translations for these subtitles
+                log.info("Deleting {} translations for {} subtitles", subtitleIds.size(), subtitleIds.size());
+                ytbVideoSubtitlesTranslationService.deleteBySubtitlesIds(subtitleIds);
+
+                // 2.4 Delete all subtitles for this video
+                log.info("Deleting {} subtitles for video ID: {}", subtitlesList.size(), videoId);
+                ytbVideoSubtitlesService.deleteByVideoId(videoId);
+            } else {
+                log.info("No subtitles found in DB for video ID: {}", videoId);
+            }
+        } else {
+            log.info("No video found in DB for URL: {}, skipping DB cleanup", decodedUrl);
+        }
+
+        log.info("Completed cleaning subtitles for: {}", videoUrl);
     }
 
     private LanguageEnum convertLanguage(String language) {

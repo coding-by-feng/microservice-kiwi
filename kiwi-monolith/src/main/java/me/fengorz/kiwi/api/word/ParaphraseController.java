@@ -241,9 +241,14 @@ public class ParaphraseController {
     @Operation(summary = "Mark paraphrase as forgotten")
     public R<Void> forgetOne(
             @NotNull @RequestParam Integer paraphraseId,
-            @NotNull @RequestParam Integer listId) {
-        log.info("Forgetting paraphrase {} in list {}", paraphraseId, listId);
-        paraphraseStarRelService.forgetOne(paraphraseId, listId);
+            @RequestParam(required = false) Integer listId) {
+        if (listId != null) {
+            log.info("Forgetting paraphrase {} in list {}", paraphraseId, listId);
+            paraphraseStarRelService.forgetOne(paraphraseId, listId);
+        } else {
+            log.info("Forgetting paraphrase {} in all lists", paraphraseId);
+            paraphraseStarRelService.forgetOneInAllLists(paraphraseId);
+        }
         return R.ok();
     }
 

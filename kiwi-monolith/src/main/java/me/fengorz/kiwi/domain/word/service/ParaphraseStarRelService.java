@@ -151,7 +151,7 @@ public class ParaphraseStarRelService extends ServiceImpl<ParaphraseStarRelMappe
     }
 
     /**
-     * Mark paraphrase as forgotten
+     * Mark paraphrase as forgotten in a specific list
      */
     @Transactional
     @CacheEvict(value = CACHE_NAME, allEntries = true)
@@ -163,6 +163,24 @@ public class ParaphraseStarRelService extends ServiceImpl<ParaphraseStarRelMappe
                     return updateById(rel);
                 })
                 .orElse(false);
+    }
+
+    /**
+     * Mark paraphrase as forgotten in all lists
+     */
+    @Transactional
+    @CacheEvict(value = CACHE_NAME, allEntries = true)
+    public boolean forgetOneInAllLists(Integer paraphraseId) {
+        List<ParaphraseStarRel> relations = list(new LambdaQueryWrapper<ParaphraseStarRel>()
+                .eq(ParaphraseStarRel::getParaphraseId, paraphraseId));
+        if (relations.isEmpty()) {
+            return false;
+        }
+        relations.forEach(rel -> {
+            rel.setIsRemember(0);
+            rel.setIsKeepInMind(0);
+        });
+        return updateBatchById(relations);
     }
 
     /**

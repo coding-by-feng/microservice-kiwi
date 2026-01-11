@@ -112,6 +112,8 @@ kiwi:
 
   # TTS Configuration
   tts:
+    # TTS Provider Selection: voicerss, baidu, gcp, deepgram, openai
+    provider: ${TTS_PROVIDER:openai}
     chattts:
       base-url: http://kiwi-chattts:8000
       timeout: 30
@@ -128,10 +130,31 @@ kiwi:
       access-token: ${BAIDU_TTS_ACCESS_TOKEN:ENC(wykNby8I8mtu8pV5zd8khs8oUoF1GSFuS+y7zVGGhvHCF6+sUSUeSK3p3Q57wddHbZjYujpgoUMisz+fneF4E8tOpgTpdlThYC4j/tHtJfs=)}
     voicerss:
       url: 'https://api.voicerss.org/?key={}&r=-2&hl=en-us&v=Mary&c=MP3&f=16khz_16bit_stereo&src=test'
-      api-keys:
-        - '02df0a8f48b641548ec4224c24ebff0e'
-        - '0e3c0a35570543249f743f74c027ef8b'
-        - 'a65b84ea89b14011af581b3335e40d63'
+      api-keys: ${VOICERSS_API_KEYS:[]}
+    # OpenAI TTS - $15/1M chars (tts-1) or $30/1M chars (tts-1-hd)
+    openai:
+      api-key: ${OPENAI_API_KEY:}
+      base-url: https://api.openai.com/v1/audio/speech
+      model: tts-1
+      english-voice: alloy
+      chinese-voice: nova
+      response-format: mp3
+      speed: 1.0
+
+  # Review Audio Configuration
+  review:
+    audio:
+      enabled: ${REVIEW_AUDIO_ENABLED:true}
+      max-generation-count: ${REVIEW_AUDIO_MAX_COUNT:100}
+      storage-path: ${REVIEW_AUDIO_PATH:/wordTmp/review-audio}
+      async-generation: true
+      content-mode: both
+      api-call-delay-ms: 200
+      scheduler:
+        enabled: ${REVIEW_AUDIO_SCHEDULER_ENABLED:false}
+        cron: ${REVIEW_AUDIO_SCHEDULER_CRON:0 0 3 * * *}
+        max-per-run: ${REVIEW_AUDIO_SCHEDULER_MAX:500}
+        lookback-days: ${REVIEW_AUDIO_SCHEDULER_LOOKBACK:30}
 
   # YouTube Configuration
   youtube:
@@ -148,6 +171,12 @@ kiwi:
       value: ""
     migration:
       enabled: true
+    # Channel Video Sync Scheduler - fetches new videos and caches subtitles
+    sync:
+      enabled: ${YT_SYNC_ENABLED:false}  # Disabled by default in test
+      cron: ${YT_SYNC_CRON:0 0 */6 * * *}  # Every 6 hours
+      fetch-subtitles: ${YT_SYNC_FETCH_SUBTITLES:true}
+      max-videos-per-channel: ${YT_SYNC_MAX_VIDEOS:50}
 
 # ==================== AI Configuration ====================
 ai:
@@ -305,7 +334,20 @@ ai:
       Output:
       Yo, your place kind of fire though.
       This place be phantom taxing.
-    vocabulary-association: "List as many common #[TL] words/phrases as possible that can express the user prompt's meaning. For each item, explain nuances, register, and usage differences in #[NL]. Group closely related items when helpful. Plain text only."
+    vocabulary-association: |
+      List 8-10 common #[TL] words/phrases that express the user prompt's meaning.
+      For each word, provide in this exact format:
+
+      📖 **Word** (Part of Speech) — Register
+      Definition in one sentence
+      Translation in #[NL]
+      ✏️ Example sentence in #[TL]
+      ✏️ Translation of example in #[NL]
+
+      Separate each entry with a blank line.
+      Register options: Formal / Neutral / Informal / Technical
+      Prioritize high-frequency, practical vocabulary.
+      Do not include language labels like "EN:" or "ZH_CN:" in output.
     phrases-association: "List as many common #[TL] phrases as possible that can express the user prompt's meaning. For each phrase, explain nuances, register, and usage differences in #[NL]. Group by function or context when helpful. Plain text only."
     selection-explanation: "Respond only in #[TL]. Explain the selected phrase \"#[S0]\" strictly based on the sentence #[S1] in 1–2 concise paragraphs. No headings, labels, English, Markdown, bullet points, or backslashes. Do not restate the full sentence; focus on meaning, nuance, tense/aspect, and function in context."
     vocabulary-character-expansion: |
@@ -330,6 +372,18 @@ ai:
       - Prioritize common vocabulary; include formal/informal variants if significant
     ambiguous-association-correction: "If only the first input is ambiguous, list all possible corrections with brief explanations in #[NL]. If both inputs are present, compare them; if the second is a correction of the first, output only the corrected version without explanation; otherwise, list all possible corrections for the first input. Output #[TL] only, plain text, no Markdown."
 
+# ==================== Google OAuth2 Configuration ====================
+google:
+  oauth2:
+    client-id: ${GOOGLE_CLIENT_ID:}
+    client-secret: ${GOOGLE_CLIENT_SECRET:}
+    redirect-uri: ${GOOGLE_REDIRECT_URI:https://test.kason.app/auth/oauth/google/callback}
+    scopes:
+      - openid
+      - profile
+      - email
+    home-page: ${GOOGLE_HOME_PAGE:https://test.kason.app}
+
 # ==================== Security Ignore URLs ====================
 ignore:
   urls:
@@ -337,6 +391,8 @@ ignore:
     - /actuator/**
     - /test/**
     - /log/**
+    # Auth endpoints (public)
+    - /auth/oauth/google/**
     # UPMS Service (new /api prefix)
     - /api/log/**
     # Word Service (new /api prefix)

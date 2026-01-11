@@ -29,7 +29,7 @@ import lombok.Getter;
 public enum TtsSourceEnum {
 
     VOICERSS("voicerss"), BAIDU("baidu"), COMBO("combo"),
-    GCP("gcp"), DEEPGRAM("deepgram");
+    GCP("gcp"), DEEPGRAM("deepgram"), OPENAI("openai");
 
     @Getter
     private final String source;

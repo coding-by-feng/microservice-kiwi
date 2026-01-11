@@ -48,7 +48,7 @@ import java.util.Map;
  */
 @Slf4j
 @RestController
-@RequestMapping("/oauth/google")
+@RequestMapping("/auth/oauth/google")
 @RequiredArgsConstructor
 @Tag(name = "Google OAuth", description = "Google OAuth2 authentication endpoints")
 public class GoogleOAuthController {

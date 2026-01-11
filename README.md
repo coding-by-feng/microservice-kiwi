@@ -30,7 +30,6 @@ A modular Spring Cloud (Hoxton) / Spring Boot 2.3 based microservice platform th
 | kiwi-test | Test scaffolding / integration experiments |
 | kiwi-deploy | Infra + deployment scripts, docker resources |
 | kiwi-sql | Database initialization & maintenance SQL scripts |
-| kiwi-docs | Supplemental design / integration notes |
 
 Additional domain modules (finance, flow, generator, aws, etc.) are experimental or auxiliary.
 
@@ -321,8 +320,7 @@ redis-cli KEYS 'KIWI:GROK:SUBTITLE:*' | xargs -r redis-cli DEL
 1. Review service logs (`easy-check` or docker logs)
 2. Verify env variables loaded
 3. Inspect network / DNS for service discovery issues
-4. Consult `kiwi-docs/` for integration specifics
-5. Open an issue referencing reproduction steps
+4. Open an issue referencing reproduction steps
 
 ---
 > This README is a condensed, modernized rewrite emphasizing architecture, extensibility, and the AI streaming subtitle workflow. For legacy step-by-step provisioning details, consult earlier revisions or the deployment scripts themselves.

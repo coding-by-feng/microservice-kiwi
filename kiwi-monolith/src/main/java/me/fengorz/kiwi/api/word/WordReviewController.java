@@ -22,17 +22,22 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.R;
 import me.fengorz.kiwi.common.exception.AuthException;
+import me.fengorz.kiwi.domain.word.config.ReviewAudioProperties;
+import me.fengorz.kiwi.domain.word.service.ReviewAudioService;
+import me.fengorz.kiwi.domain.word.vo.ReviewAudioGenerationResult;
 import me.fengorz.kiwi.security.KiwiUser;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 /**
  * Word Review Controller
- * Aligned with original microservice WordReviewController
+ * Handles word review, spaced repetition, and audio generation operations
  *
  * @author codingByFeng
  */
@@ -43,7 +48,134 @@ import java.util.Map;
 @Tag(name = "Word Review", description = "Word review and spaced repetition operations")
 public class WordReviewController {
 
-    // TODO: Inject ReviewService, TtsService, DfsService when implemented
+    private final ReviewAudioService reviewAudioService;
+    private final ReviewAudioProperties reviewAudioProperties;
+
+    // ==================== Audio Generation Endpoints ====================
+
+    /**
+     * Generate audio for all paraphrases in a star list
+     */
+    @PostMapping("/audio/generate/list/{listId}")
+    @Operation(summary = "Generate audio for all paraphrases in a star list")
+    public R<ReviewAudioGenerationResult> generateAudioForStarList(
+            @PathVariable Integer listId,
+            @AuthenticationPrincipal KiwiUser user) {
+        checkUserAuthenticated(user);
+        log.info("Generating audio for star list {} by user {}", listId, user.getUserId());
+        ReviewAudioGenerationResult result = reviewAudioService.generateAudioForStarList(listId);
+        return R.ok(result);
+    }
+
+    /**
+     * Generate audio for review items only (not remembered yet)
+     */
+    @PostMapping("/audio/generate/review-items/{listId}")
+    @Operation(summary = "Generate audio for review items in a star list")
+    public R<ReviewAudioGenerationResult> generateAudioForReviewItems(
+            @PathVariable Integer listId,
+            @AuthenticationPrincipal KiwiUser user) {
+        checkUserAuthenticated(user);
+        log.info("Generating audio for review items in list {} by user {}", listId, user.getUserId());
+        ReviewAudioGenerationResult result = reviewAudioService.generateAudioForReviewItems(listId);
+        return R.ok(result);
+    }
+
+    /**
+     * Generate audio for a single paraphrase
+     */
+    @PostMapping("/audio/generate/paraphrase/{paraphraseId}")
+    @Operation(summary = "Generate audio for a single paraphrase")
+    public R<Boolean> generateAudioForParaphrase(
+            @PathVariable Integer paraphraseId,
+            @AuthenticationPrincipal KiwiUser user) {
+        checkUserAuthenticated(user);
+        log.info("Generating audio for paraphrase {} by user {}", paraphraseId, user.getUserId());
+        boolean success = reviewAudioService.generateAudioForParaphrase(paraphraseId);
+        return R.ok(success);
+    }
+
+    /**
+     * Check if audio exists for a paraphrase
+     */
+    @GetMapping("/audio/exists/{paraphraseId}")
+    @Operation(summary = "Check if audio exists for a paraphrase")
+    public R<Boolean> hasAudio(@PathVariable Integer paraphraseId) {
+        return R.ok(reviewAudioService.hasAudio(paraphraseId));
+    }
+
+    /**
+     * Download/stream audio for a paraphrase
+     */
+    @GetMapping("/audio/download/{paraphraseId}")
+    @Operation(summary = "Download audio for a paraphrase")
+    public void downloadAudio(
+            HttpServletResponse response,
+            @PathVariable Integer paraphraseId) {
+        log.debug("Downloading audio for paraphrase {}", paraphraseId);
+
+        byte[] audioBytes = reviewAudioService.getAudioBytes(paraphraseId);
+        if (audioBytes == null) {
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            return;
+        }
+
+        response.setContentType("audio/mpeg");
+        response.setContentLength(audioBytes.length);
+        response.setHeader("Content-Disposition", "inline; filename=\"paraphrase_" + paraphraseId + ".mp3\"");
+
+        try (OutputStream os = response.getOutputStream()) {
+            os.write(audioBytes);
+            os.flush();
+        } catch (IOException e) {
+            log.error("Failed to stream audio for paraphrase {}", paraphraseId, e);
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
+     * Delete audio for a paraphrase
+     */
+    @DeleteMapping("/audio/{paraphraseId}")
+    @Operation(summary = "Delete audio for a paraphrase")
+    public R<Boolean> deleteAudio(
+            @PathVariable Integer paraphraseId,
+            @AuthenticationPrincipal KiwiUser user) {
+        checkUserAuthenticated(user);
+        log.info("Deleting audio for paraphrase {} by user {}", paraphraseId, user.getUserId());
+        boolean success = reviewAudioService.deleteAudio(paraphraseId);
+        return R.ok(success);
+    }
+
+    /**
+     * Regenerate audio for a paraphrase
+     */
+    @PostMapping("/audio/regenerate/{paraphraseId}")
+    @Operation(summary = "Regenerate audio for a paraphrase")
+    public R<Boolean> regenerateAudio(
+            @PathVariable Integer paraphraseId,
+            @AuthenticationPrincipal KiwiUser user) {
+        checkUserAuthenticated(user);
+        log.info("Regenerating audio for paraphrase {} by user {}", paraphraseId, user.getUserId());
+        boolean success = reviewAudioService.regenerateAudio(paraphraseId);
+        return R.ok(success);
+    }
+
+    /**
+     * Get audio configuration/limits
+     */
+    @GetMapping("/audio/config")
+    @Operation(summary = "Get audio generation configuration")
+    public R<Map<String, Object>> getAudioConfig() {
+        Map<String, Object> config = new HashMap<>();
+        config.put("enabled", reviewAudioProperties.isEnabled());
+        config.put("maxGenerationCount", reviewAudioProperties.getMaxGenerationCount());
+        config.put("contentMode", reviewAudioProperties.getContentMode());
+        config.put("asyncGeneration", reviewAudioProperties.isAsyncGeneration());
+        return R.ok(config);
+    }
+
+    // ==================== Legacy Review Endpoints ====================
 
     /**
      * Get review breakpoint page number for a list
@@ -62,7 +194,6 @@ public class WordReviewController {
     @Operation(summary = "Create review days for current user")
     public R<Void> createTheDays(@AuthenticationPrincipal KiwiUser user) {
         checkUserAuthenticated(user);
-        // TODO: Implement with ReviewService.createTheDays(userId)
         log.info("Creating review days for user: {}", user.getUserId());
         return R.ok();
     }
@@ -73,7 +204,6 @@ public class WordReviewController {
     @GetMapping("/refreshAllApiKey")
     @Operation(summary = "Refresh all TTS API keys")
     public R<Void> refreshAllApiKey() {
-        // TODO: Implement with TtsService.refreshAllApiKey()
         log.info("Refreshing all API keys");
         return R.ok();
     }
@@ -87,7 +217,6 @@ public class WordReviewController {
             @PathVariable("type") Integer type,
             @AuthenticationPrincipal KiwiUser user) {
         checkUserAuthenticated(user);
-        // TODO: Implement with ReviewService.findReviewCounterVO(userId, type)
         Map<String, Object> counter = new HashMap<>();
         counter.put("type", type);
         counter.put("userId", user.getUserId());
@@ -102,22 +231,25 @@ public class WordReviewController {
     @Operation(summary = "Get all review counters for current user")
     public R<List<Map<String, Object>>> getAllReviewCounterVO(@AuthenticationPrincipal KiwiUser user) {
         checkUserAuthenticated(user);
-        // TODO: Implement with ReviewService.listReviewCounterVO(userId)
         return R.ok(List.of());
     }
 
     /**
-     * Download review audio
+     * Download review audio (legacy endpoint - redirects to new endpoint)
      */
     @GetMapping("/downloadReviewAudio/{sourceId}/{type}")
-    @Operation(summary = "Download review audio")
+    @Operation(summary = "Download review audio (legacy)")
     public void downloadReviewAudio(
             HttpServletResponse response,
             @PathVariable("sourceId") Integer sourceId,
             @PathVariable("type") Integer type) {
-        log.info("downloadReviewAudio, sourceId={}, type={}", sourceId, type);
-        // TODO: Implement with ReviewService and DfsService
-        response.setContentType("audio/mpeg");
+        log.info("downloadReviewAudio (legacy), sourceId={}, type={}", sourceId, type);
+        // Type 1 = paraphrase
+        if (type == 1) {
+            downloadAudio(response, sourceId);
+        } else {
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+        }
     }
 
     /**
@@ -129,20 +261,21 @@ public class WordReviewController {
             HttpServletResponse response,
             @PathVariable("characterCode") String characterCode) {
         log.info("downloadCharacterReviewAudio, characterCode={}", characterCode);
-        // TODO: Implement with ReviewService and DfsService
+        // TODO: Implement character audio
         response.setContentType("audio/mpeg");
+        response.setStatus(HttpServletResponse.SC_NOT_FOUND);
     }
 
     /**
-     * Generate TTS voice from paraphrase ID (deprecated)
+     * Generate TTS voice from paraphrase ID (deprecated - use new endpoint)
      */
     @Deprecated
     @PostMapping("/generateTtsVoiceFromParaphraseId/{paraphraseId}")
-    @Operation(summary = "Generate TTS voice from paraphrase ID")
-    public R<Void> generateTtsVoiceFromParaphraseId(@PathVariable("paraphraseId") Integer paraphraseId) {
-        // TODO: Implement with ReviewService.generateTtsVoiceFromParaphraseId(paraphraseId)
-        log.info("Generating TTS voice for paraphraseId={}", paraphraseId);
-        return R.ok();
+    @Operation(summary = "Generate TTS voice from paraphrase ID (deprecated)")
+    public R<Boolean> generateTtsVoiceFromParaphraseId(@PathVariable("paraphraseId") Integer paraphraseId) {
+        log.info("Generating TTS voice for paraphraseId={} (deprecated endpoint)", paraphraseId);
+        boolean success = reviewAudioService.generateAudioForParaphrase(paraphraseId);
+        return R.ok(success);
     }
 
     /**
@@ -154,7 +287,6 @@ public class WordReviewController {
             @PathVariable("type") Integer type,
             @AuthenticationPrincipal KiwiUser user) {
         checkUserAuthenticated(user);
-        // TODO: Implement with ReviewService.increase(type, userId)
         log.info("Increasing counter type={} for user={}", type, user.getUserId());
         return R.ok();
     }
@@ -165,7 +297,6 @@ public class WordReviewController {
     @GetMapping("/autoSelectApiKey")
     @Operation(summary = "Auto select API key")
     public R<String> autoSelectApiKey() {
-        // TODO: Implement with TtsService.autoSelectApiKey()
         return R.ok("");
     }
 
@@ -175,7 +306,6 @@ public class WordReviewController {
     @PutMapping("/increaseApiKeyUsedTime/{apiKey}")
     @Operation(summary = "Increase API key used time")
     public R<Void> increaseApiKeyUsedTime(@PathVariable("apiKey") String apiKey) {
-        // TODO: Implement with TtsService.increaseApiKeyUsedTime(apiKey)
         log.info("Increasing API key used time: {}", apiKey);
         return R.ok();
     }
@@ -186,31 +316,30 @@ public class WordReviewController {
     @PutMapping("/deprecateApiKeyToday/{apiKey}")
     @Operation(summary = "Deprecate API key for today")
     public R<Void> deprecateApiKeyToday(@PathVariable("apiKey") String apiKey) {
-        // TODO: Implement with TtsService.deprecateApiKeyToday(apiKey)
         log.info("Deprecating API key for today: {}", apiKey);
         return R.ok();
     }
 
     /**
-     * Deprecate review audio
+     * Deprecate review audio (legacy - use DELETE /audio/{paraphraseId})
      */
     @DeleteMapping("/deprecate-review-audio/{sourceId}")
-    @Operation(summary = "Deprecate review audio")
-    public R<Void> deprecateReviewAudio(@PathVariable("sourceId") Integer sourceId) {
-        // TODO: Implement with ReviewService.removeWordReviewAudio(sourceId)
+    @Operation(summary = "Deprecate review audio (legacy)")
+    public R<Boolean> deprecateReviewAudio(@PathVariable("sourceId") Integer sourceId) {
         log.info("Deprecating review audio for sourceId={}", sourceId);
-        return R.ok();
+        boolean success = reviewAudioService.deleteAudio(sourceId);
+        return R.ok(success);
     }
 
     /**
-     * Regenerate review audio for paraphrase
+     * Regenerate review audio for paraphrase (legacy - use POST /audio/regenerate/{paraphraseId})
      */
     @DeleteMapping("/reGenReviewAudio/{sourceId}")
-    @Operation(summary = "Regenerate review audio for paraphrase")
-    public R<Void> reGenReviewAudioForParaphrase(@PathVariable("sourceId") Integer sourceId) {
-        // TODO: Implement with ReviewService.reGenReviewAudioForParaphrase(sourceId)
+    @Operation(summary = "Regenerate review audio (legacy)")
+    public R<Boolean> reGenReviewAudioForParaphrase(@PathVariable("sourceId") Integer sourceId) {
         log.info("Regenerating review audio for sourceId={}", sourceId);
-        return R.ok();
+        boolean success = reviewAudioService.regenerateAudio(sourceId);
+        return R.ok(success);
     }
 
     private void checkUserAuthenticated(KiwiUser user) {

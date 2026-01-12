@@ -24,8 +24,17 @@ import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry
 /**
  * WebSocket Configuration
  *
+ * @deprecated These WebSocket endpoints are deprecated. Please migrate to SSE/REST endpoints:
+ * <ul>
+ *     <li>/api/ai/ws/stream -> /api/ai/sse/stream (GET or POST)</li>
+ *     <li>/api/ai/ws/ytb/subtitle -> /api/ai/sse/ytb/subtitle (GET or POST)</li>
+ *     <li>/api/ai/ws/stt/audio -> /api/ai/audio/speech-to-text (POST with multipart/form-data)</li>
+ * </ul>
+ * SSE provides better compatibility with proxies, load balancers, and is simpler to implement on the client side.
+ *
  * @author codingByFeng
  */
+@Deprecated
 @Configuration
 @EnableWebSocket
 @RequiredArgsConstructor

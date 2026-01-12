@@ -162,7 +162,7 @@ storage:
 
 ftp:
   host: ${TEST_FTP_HOST:localhost}
-  port: ${TEST_FTP_PORT:21}
+  port: ${TEST_FTP_PORT:22}
   username: ${TEST_FTP_USER:testuser}
   password: ${TEST_FTP_PASSWORD:testpass}
   baseDir: /test

@@ -16,12 +16,28 @@
     <name>microservice-kiwi</name>
 
     <modules>
-        <module>kiwi-cloud-service</module>
-        <module>kiwi-eureka</module>
-        <module>kiwi-config</module>
-        <module>kiwi-gateway</module>
+        <!-- Legacy modules retained for reference/utilities -->
         <module>kiwi-common</module>
         <module>kiwi-test</module>
+
+        <!-- ============================================================ -->
+        <!-- REMOVED MODULES (migrated to kiwi-monolith):                 -->
+        <!-- - kiwi-cloud-service (parent pom for microservices)          -->
+        <!-- - kiwi-eureka (service registry - not needed for monolith)   -->
+        <!-- - kiwi-config (config server - not needed for monolith)      -->
+        <!-- - kiwi-gateway (API gateway - not needed for monolith)       -->
+        <!-- - kiwi-upms (user management - migrated)                     -->
+        <!-- - kiwi-word (dictionary service - migrated)                  -->
+        <!-- - kiwi-ai (AI service - migrated)                            -->
+        <!-- - kiwi-auth (authentication - migrated)                      -->
+        <!-- - kiwi-tools (tools service - migrated)                      -->
+        <!-- - kiwi-flow (flowable workflow - migrated)                   -->
+        <!-- - kiwi-bdf (base dev framework - migrated)                   -->
+        <!-- ============================================================ -->
+
+        <!-- Main application - builds separately with Spring Boot 3.2 + Java 17 -->
+        <!-- Build: cd kiwi-monolith && mvn clean package -->
+        <!-- <module>kiwi-monolith</module> -->
     </modules>
 
     <properties>

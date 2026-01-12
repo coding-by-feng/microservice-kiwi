@@ -1,0 +1,71 @@
+### ===================================
+### YouTube Channel API Tests
+### Base Path: /api/ai/ytb/channel
+### ===================================
+
+### Get All Channels (Paginated)
+GET {{baseUrl}}/api/ai/ytb/channel?page=0&size=20
+
+###
+
+### Get Channel by ID
+GET {{baseUrl}}/api/ai/ytb/channel/1
+
+###
+
+### Get Channel by Link
+GET {{baseUrl}}/api/ai/ytb/channel/link?channelLink=https://www.youtube.com/@ChannelName
+
+###
+
+### Get Enabled Channels
+GET {{baseUrl}}/api/ai/ytb/channel/enabled
+
+###
+
+### Get Videos for Channel
+GET {{baseUrl}}/api/ai/ytb/channel/1/videos?page=0&size=20
+
+###
+
+### Create New Channel (Admin)
+POST {{baseUrl}}/api/ai/ytb/channel
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "channelName": "English Learning Channel",
+  "channelLink": "https://www.youtube.com/@EnglishLearning",
+  "description": "Great channel for learning English",
+  "enabled": true
+}
+
+###
+
+### Update Channel (Admin)
+PUT {{baseUrl}}/api/ai/ytb/channel/1
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "channelName": "Updated Channel Name",
+  "description": "Updated description"
+}
+
+###
+
+### Enable Channel (Admin)
+POST {{baseUrl}}/api/ai/ytb/channel/1/enable
+Authorization: Bearer {{authToken}}
+
+###
+
+### Disable Channel (Admin)
+POST {{baseUrl}}/api/ai/ytb/channel/1/disable
+Authorization: Bearer {{authToken}}
+
+###
+
+### Delete Channel (Admin)
+DELETE {{baseUrl}}/api/ai/ytb/channel/1
+Authorization: Bearer {{authToken}}

@@ -1,0 +1,58 @@
+### ===================================
+### AI Call History API Tests
+### Base Path: /api/ai/history
+### ===================================
+
+### Get History by ID
+GET {{baseUrl}}/api/ai/history/1
+
+###
+
+### Get Current User's History (Paginated)
+GET {{baseUrl}}/api/ai/history?page=0&size=20
+Authorization: Bearer {{authToken}}
+
+###
+
+### Get History - Page 2
+GET {{baseUrl}}/api/ai/history?page=1&size=20
+Authorization: Bearer {{authToken}}
+
+###
+
+### Get Current User's Favorites
+GET {{baseUrl}}/api/ai/history/favorites
+Authorization: Bearer {{authToken}}
+
+###
+
+### Get Current User's Archived History
+GET {{baseUrl}}/api/ai/history/archived?page=0&size=20
+Authorization: Bearer {{authToken}}
+
+###
+
+### Get History by Prompt Mode - Translation
+GET {{baseUrl}}/api/ai/history/mode/directly-translation?page=0&size=20
+Authorization: Bearer {{authToken}}
+
+###
+
+### Get History by Prompt Mode - Grammar
+GET {{baseUrl}}/api/ai/history/mode/grammar-explanation?page=0&size=20
+Authorization: Bearer {{authToken}}
+
+###
+
+### Toggle Favorite Status
+POST {{baseUrl}}/api/ai/history/1/favorite
+
+###
+
+### Archive History Item
+POST {{baseUrl}}/api/ai/history/1/archive
+
+###
+
+### Delete History (Soft Delete)
+DELETE {{baseUrl}}/api/ai/history/1

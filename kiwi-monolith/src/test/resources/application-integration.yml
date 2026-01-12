@@ -1,0 +1,169 @@
+# ==================== Integration Test Configuration ====================
+# Uses TestContainers for MySQL and Redis, connects to real test environment services
+
+server:
+  port: 0  # Random port for tests
+
+spring:
+  application:
+    name: kiwi-monolith-test
+
+  # Disable Flowable for tests (tables may not exist in test DB)
+  autoconfigure:
+    exclude:
+      - org.flowable.spring.boot.FlowableSecurityAutoConfiguration
+      - org.flowable.spring.boot.ProcessEngineServicesAutoConfiguration
+      - org.flowable.spring.boot.ProcessEngineAutoConfiguration
+      - org.flowable.spring.boot.EndpointAutoConfiguration
+      - org.flowable.spring.boot.actuate.autoconfigure.ProcessEngineEndpointAutoConfiguration
+      - org.flowable.spring.boot.app.AppEngineServicesAutoConfiguration
+      - org.flowable.spring.boot.app.AppEngineAutoConfiguration
+      - org.flowable.spring.boot.idm.IdmEngineAutoConfiguration
+      - org.flowable.spring.boot.idm.IdmEngineServicesAutoConfiguration
+      - org.flowable.spring.boot.cmmn.CmmnEngineAutoConfiguration
+      - org.flowable.spring.boot.cmmn.CmmnEngineServicesAutoConfiguration
+      - org.flowable.spring.boot.dmn.DmnEngineAutoConfiguration
+      - org.flowable.spring.boot.dmn.DmnEngineServicesAutoConfiguration
+      - org.flowable.spring.boot.eventregistry.EventRegistryAutoConfiguration
+      - org.flowable.spring.boot.eventregistry.EventRegistryServicesAutoConfiguration
+      - org.flowable.spring.boot.FlowableTransactionAutoConfiguration
+
+  # ==================== Database (TestContainer or external) ====================
+  datasource:
+    url: ${TEST_DB_URL:jdbc:mysql://localhost:3306/kiwi_db?useUnicode=true&characterEncoding=UTF-8&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Pacific/Auckland}
+    username: ${TEST_DB_USERNAME:root}
+    password: ${TEST_DB_PASSWORD:kiwi123}
+    hikari:
+      maximum-pool-size: 5
+      minimum-idle: 2
+      connection-timeout: 30000
+
+  jpa:
+    database-platform: org.hibernate.dialect.MySQLDialect
+    hibernate:
+      ddl-auto: none  # Skip schema validation for tests - rely on existing schema
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+  # ==================== Redis ====================
+  data:
+    redis:
+      host: ${TEST_REDIS_HOST:localhost}
+      port: ${TEST_REDIS_PORT:6379}
+      password: ${TEST_REDIS_PASSWORD:kiwi123}
+      database: 2
+      timeout: 5000ms
+      lettuce:
+        pool:
+          max-active: 5
+          max-idle: 3
+          min-idle: 1
+          max-wait: 5000ms
+  # ==================== Redisson ====================
+  redis:
+    redisson:
+      config: |
+        singleServerConfig:
+          address: "redis://${TEST_REDIS_HOST:localhost}:${TEST_REDIS_PORT:6379}"
+          password: "${TEST_REDIS_PASSWORD:kiwi123}"
+          database: 2
+          connectionMinimumIdleSize: 2
+          connectionPoolSize: 10
+          idleConnectionTimeout: 10000
+          connectTimeout: 10000
+          timeout: 3000
+
+  # ==================== Elasticsearch (disabled for basic tests) ====================
+  elasticsearch:
+    uris: ${TEST_ES_URIS:http://localhost:9200}
+
+  # ==================== Security ====================
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: https://accounts.google.com
+          jwk-set-uri: https://www.googleapis.com/oauth2/v3/certs
+
+  # ==================== Liquibase ====================
+  liquibase:
+    enabled: false  # Disabled for tests, assume schema exists
+
+  # ==================== Main Configuration ====================
+  main:
+    allow-bean-definition-overriding: true
+
+# ==================== Jasypt (use simple password for tests) ====================
+jasypt:
+  encryptor:
+    password: ${KIWI_ENC_PASSWORD:test-password}
+    algorithm: PBEWithMD5AndDES
+
+# ==================== Logging ====================
+logging:
+  level:
+    root: INFO
+    me.fengorz.kiwi: DEBUG
+    org.springframework.web: DEBUG
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+
+# ==================== Actuator ====================
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  health:
+    elasticsearch:
+      enabled: false
+
+# ==================== Application Custom Config ====================
+kiwi:
+  messaging:
+    enabled: false  # Disable messaging for tests
+
+  dfs:
+    connect-timeout: 5000
+    so-timeout: 5000
+
+# ==================== AI Configuration ====================
+ai:
+  grok:
+    api:
+      key: ${TEST_GROK_API_KEY:test-api-key}
+      endpoint: ${TEST_GROK_ENDPOINT:https://api.x.ai/v1/chat/completions}
+      model: grok-2-latest
+      threadPromptsLineSize: 10
+      threadPoolSize: 2
+      threadTimeoutSecs: 60
+  mode:
+    directly-translation: "Translate to #[TL]"
+    vocabulary-explanation: "Explain vocabulary in #[TL]"
+
+# ==================== Google OAuth2 ====================
+google:
+  oauth2:
+    clientId: ${TEST_GOOGLE_CLIENT_ID:test-client-id}
+    clientSecret: ${TEST_GOOGLE_CLIENT_SECRET:test-client-secret}
+    redirectUri: http://localhost:8080/oauth2/callback
+    scopes:
+      - openid
+      - profile
+      - email
+
+# ==================== Storage ====================
+storage:
+  backend: ftp
+
+ftp:
+  host: ${TEST_FTP_HOST:localhost}
+  port: ${TEST_FTP_PORT:22}
+  username: ${TEST_FTP_USER:testuser}
+  password: ${TEST_FTP_PASSWORD:testpass}
+  baseDir: /test
+  passiveMode: true

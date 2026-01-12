@@ -1,0 +1,56 @@
+### ===================================
+### Fetch Queue API Tests
+### Base Path: /api/word/fetch
+### ===================================
+
+### Get Queue Statistics
+GET {{baseUrl}}/api/word/fetch/stats
+
+###
+
+### Get Waiting Items (Paginated)
+GET {{baseUrl}}/api/word/fetch/waiting?page=0&size=20
+
+###
+
+### Get Queue Item by ID
+GET {{baseUrl}}/api/word/fetch/1
+
+###
+
+### Get Queue Item by Word Name
+GET {{baseUrl}}/api/word/fetch/word/hello
+
+###
+
+### Add Word to Fetch Queue
+POST {{baseUrl}}/api/word/fetch?wordName=newword&priority=100
+
+###
+
+### Add Word with High Priority
+POST {{baseUrl}}/api/word/fetch?wordName=urgentword&priority=1
+
+###
+
+### Mark Fetch as Success (Admin)
+POST {{baseUrl}}/api/word/fetch/1/success?wordId=123
+Authorization: Bearer {{authToken}}
+
+###
+
+### Mark Fetch as Failed (Admin)
+POST {{baseUrl}}/api/word/fetch/1/fail?errorMessage=Connection%20timeout
+Authorization: Bearer {{authToken}}
+
+###
+
+### Reset Failed Items (Admin)
+POST {{baseUrl}}/api/word/fetch/reset-failed?maxRetries=3
+Authorization: Bearer {{authToken}}
+
+###
+
+### Delete Queue Item (Admin)
+DELETE {{baseUrl}}/api/word/fetch/1
+Authorization: Bearer {{authToken}}

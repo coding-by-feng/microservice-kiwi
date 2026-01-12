@@ -1,0 +1,74 @@
+### ===================================
+### YouTube Video API Tests
+### Base Path: /api/ai/ytb/video
+### ===================================
+
+# Note: Replace the video URL with an actual YouTube video URL for testing
+
+@testVideoUrl = https://www.youtube.com/watch?v=dQw4w9WgXcQ
+
+### Get Video Title
+GET {{baseUrl}}/api/ai/ytb/video/title?url={{testVideoUrl}}
+
+###
+
+### Get Scrolling Subtitles
+GET {{baseUrl}}/api/ai/ytb/video/subtitles/scrolling?url={{testVideoUrl}}
+
+###
+
+### Get Translated Subtitles - Chinese
+GET {{baseUrl}}/api/ai/ytb/video/subtitles/translated?url={{testVideoUrl}}&language=zh
+
+###
+
+### Get Translated Subtitles - Japanese
+GET {{baseUrl}}/api/ai/ytb/video/subtitles/translated?url={{testVideoUrl}}&language=ja
+
+###
+
+### Get Translated Subtitles - No Translation (English)
+GET {{baseUrl}}/api/ai/ytb/video/subtitles/translated?url={{testVideoUrl}}&language=en
+
+###
+
+### Download Translated Subtitles as File - Chinese
+GET {{baseUrl}}/api/ai/ytb/video/subtitles/translated/download?url={{testVideoUrl}}&language=zh
+
+###
+
+### Download Translated Subtitles as File - Japanese
+GET {{baseUrl}}/api/ai/ytb/video/subtitles/translated/download?url={{testVideoUrl}}&language=ja
+
+###
+
+### Get WebSocket Streaming Info
+GET {{baseUrl}}/api/ai/ytb/video/subtitles/translated/stream
+
+###
+
+### Download YouTube Video (Streaming)
+# Warning: This may take a long time and consume bandwidth
+GET {{baseUrl}}/api/ai/ytb/video/download?url={{testVideoUrl}}
+
+###
+
+### Clean Subtitle Cache - Chinese
+DELETE {{baseUrl}}/api/ai/ytb/video/subtitles?url={{testVideoUrl}}&language=zh
+
+###
+
+### Clean Subtitle Cache - All Languages
+DELETE {{baseUrl}}/api/ai/ytb/video/subtitles?url={{testVideoUrl}}
+
+###
+
+### ----- Test with URL Encoded -----
+
+### Get Title with Encoded URL
+GET {{baseUrl}}/api/ai/ytb/video/title?url=https%3A%2F%2Fwww.youtube.com%2Fwatch%3Fv%3DdQw4w9WgXcQ
+
+###
+
+### Get Subtitles with Short URL
+GET {{baseUrl}}/api/ai/ytb/video/subtitles/scrolling?url=https://youtu.be/dQw4w9WgXcQ

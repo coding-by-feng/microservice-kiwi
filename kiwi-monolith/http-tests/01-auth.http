@@ -1,0 +1,54 @@
+### ===================================
+### Authentication API Tests
+### Base Path: /auth
+### ===================================
+
+### Login
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "username": "admin",
+  "password": "123456"
+}
+
+> {%
+    client.global.set("authToken", response.body.data.token);
+    client.global.set("refreshToken", response.body.data.refreshToken);
+%}
+
+###
+
+### Get Current User
+GET {{baseUrl}}/auth/me
+Authorization: Bearer {{authToken}}
+
+###
+
+### Refresh Token
+POST {{baseUrl}}/auth/refresh
+Content-Type: application/json
+
+{
+  "refreshToken": "{{refreshToken}}"
+}
+
+> {%
+    client.global.set("authToken", response.body.data.token);
+%}
+
+###
+
+### Logout
+POST {{baseUrl}}/auth/logout
+Authorization: Bearer {{authToken}}
+
+###
+
+### Health Check
+GET {{baseUrl}}/actuator/health
+
+###
+
+### Actuator Info
+GET {{baseUrl}}/actuator/info

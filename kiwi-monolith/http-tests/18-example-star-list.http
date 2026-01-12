@@ -1,0 +1,51 @@
+### ===================================
+### Example Star List API Tests
+### Base Path: /api/word/example/star/list
+### ===================================
+
+### Get User's Example Star Lists
+GET {{baseUrl}}/api/word/example/star/list
+Authorization: Bearer {{authToken}}
+
+###
+
+### Get Example Star List by ID
+GET {{baseUrl}}/api/word/example/star/list/1
+
+###
+
+### Create Example Star List
+POST {{baseUrl}}/api/word/example/star/list
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "listName": "My Example Sentences",
+  "remark": "Useful example sentences"
+}
+
+###
+
+### Update Example Star List
+PUT {{baseUrl}}/api/word/example/star/list/1
+Content-Type: application/json
+
+{
+  "listName": "Updated Example List",
+  "remark": "Updated remark"
+}
+
+###
+
+### Add Example to List
+POST {{baseUrl}}/api/word/example/star/list/1/example/1
+
+###
+
+### Remove Example from List
+DELETE {{baseUrl}}/api/word/example/star/list/1/example/1
+
+###
+
+### Delete Example Star List
+DELETE {{baseUrl}}/api/word/example/star/list/1

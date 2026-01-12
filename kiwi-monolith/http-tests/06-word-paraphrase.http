@@ -1,0 +1,86 @@
+### ===================================
+### Paraphrase API Tests
+### Base Path: /api/word/paraphrase
+### ===================================
+
+### Get Paraphrase by ID
+GET {{baseUrl}}/api/word/paraphrase/1
+
+###
+
+### Get Paraphrase Detail
+GET {{baseUrl}}/api/word/paraphrase/star/list/getItemDetail/1
+
+###
+
+### Modify Paraphrase Chinese Meaning
+PUT {{baseUrl}}/api/word/paraphrase/modifyMeaningChinese
+Content-Type: application/x-www-form-urlencoded
+
+paraphraseId=1&meaningChinese=新的中文释义
+
+###
+
+### ----- Paraphrase Star List Operations -----
+
+### Create Paraphrase Star List
+POST {{baseUrl}}/api/word/paraphrase/star/list/save?listName=My%20Paraphrases&remark=Test%20List
+Authorization: Bearer {{authToken}}
+
+###
+
+### Get Current User's Paraphrase Star Lists
+GET {{baseUrl}}/api/word/paraphrase/star/list/getCurrentUserList
+Authorization: Bearer {{authToken}}
+
+###
+
+### Update Paraphrase Star List
+PUT {{baseUrl}}/api/word/paraphrase/star/list/updateById?id=1&listName=Updated%20List&remark=Updated%20Remark
+
+###
+
+### Delete Paraphrase Star List
+DELETE {{baseUrl}}/api/word/paraphrase/star/list/delById/1
+
+###
+
+### Add Paraphrase to Star List
+PUT {{baseUrl}}/api/word/paraphrase/star/list/putIntoStarList?paraphraseId=1&listId=1
+
+###
+
+### Get Paraphrase Star List Items
+GET {{baseUrl}}/api/word/paraphrase/star/list/getListItems/20/0/1
+
+###
+
+### Get Review List Items
+GET {{baseUrl}}/api/word/paraphrase/star/list/getReviewListItems/20/0/1
+
+###
+
+### Get Remember List Items
+GET {{baseUrl}}/api/word/paraphrase/star/list/getRememberListItems/20/0/1
+
+###
+
+### Mark Paraphrase as Remembered
+PUT {{baseUrl}}/api/word/paraphrase/star/list/rememberOne?paraphraseId=1&listId=1
+Authorization: Bearer {{authToken}}
+
+###
+
+### Keep Paraphrase in Mind
+PUT {{baseUrl}}/api/word/paraphrase/star/list/keepInMind?paraphraseId=1&listId=1
+Authorization: Bearer {{authToken}}
+
+###
+
+### Mark Paraphrase as Forgotten
+PUT {{baseUrl}}/api/word/paraphrase/star/list/forgetOne?paraphraseId=1&listId=1
+
+###
+
+### Remove Paraphrase from Star List
+DELETE {{baseUrl}}/api/word/paraphrase/star/list/removeParaphraseStar?paraphraseId=1&listId=1

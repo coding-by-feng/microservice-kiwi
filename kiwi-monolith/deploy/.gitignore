@@ -1,0 +1,14 @@
+# Environment files with secrets
+.env
+.env.local
+
+# Keep example/template files
+!.env.dev
+!.env.test
+!.env.prod
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp

@@ -1,0 +1,92 @@
+### ===================================
+### AI Assistant API Tests
+### Base Path: /api/ai
+### ===================================
+
+### ----- Translation -----
+
+### Direct Translation - English to Chinese
+GET {{baseUrl}}/api/ai/directly-translation/zh/Hello%20World
+
+###
+
+### Direct Translation - English to Japanese
+GET {{baseUrl}}/api/ai/directly-translation/ja/Good%20morning
+
+###
+
+### Direct Translation - English to Korean
+GET {{baseUrl}}/api/ai/directly-translation/ko/Thank%20you
+
+###
+
+### Direct Translation - Long Text
+GET {{baseUrl}}/api/ai/directly-translation/zh/The%20quick%20brown%20fox%20jumps%20over%20the%20lazy%20dog
+
+###
+
+### ----- Translation with Explanation -----
+
+### Translation and Explanation - Chinese
+GET {{baseUrl}}/api/ai/translation-and-explanation/zh/Break%20a%20leg
+
+###
+
+### Translation and Explanation - Japanese
+GET {{baseUrl}}/api/ai/translation-and-explanation/ja/It%27s%20raining%20cats%20and%20dogs
+
+###
+
+### ----- Grammar -----
+
+### Grammar Explanation
+GET {{baseUrl}}/api/ai/grammar-explanation/zh/I%20have%20been%20working%20here%20for%20five%20years
+
+###
+
+### Grammar Explanation - Complex Sentence
+GET {{baseUrl}}/api/ai/grammar-explanation/zh/Had%20I%20known%20about%20the%20meeting%2C%20I%20would%20have%20attended
+
+###
+
+### Grammar Correction
+GET {{baseUrl}}/api/ai/grammar-correction/zh/She%20don%27t%20like%20apples
+
+###
+
+### Grammar Correction - Multiple Errors
+GET {{baseUrl}}/api/ai/grammar-correction/zh/Me%20and%20him%20goes%20to%20school%20everyday
+
+###
+
+### ----- Vocabulary -----
+
+### Vocabulary Explanation
+GET {{baseUrl}}/api/ai/vocabulary-explanation/zh/serendipity
+
+###
+
+### Vocabulary Explanation - Technical Term
+GET {{baseUrl}}/api/ai/vocabulary-explanation/zh/algorithm
+
+###
+
+### ----- Synonyms & Antonyms -----
+
+### Find Synonyms
+GET {{baseUrl}}/api/ai/synonym/zh/happy
+
+###
+
+### Find Synonyms - Verb
+GET {{baseUrl}}/api/ai/synonym/zh/run
+
+###
+
+### Find Antonyms
+GET {{baseUrl}}/api/ai/antonym/zh/happy
+
+###
+
+### Find Antonyms - Adjective
+GET {{baseUrl}}/api/ai/antonym/zh/beautiful

@@ -1,0 +1,414 @@
+# ==================== Production Profile Configuration ====================
+# Production environment settings - secured and optimized
+
+server:
+  port: 8080
+
+spring:
+  # ==================== Database ====================
+  datasource:
+    url: jdbc:mysql://${DB_HOST_PROD:kiwi-mysql}:${DB_PORT_PROD:3306}/${DB_NAME_PROD:kiwi_db}?useUnicode=true&characterEncoding=UTF-8&useSSL=true&requireSSL=true&autoReconnect=true&serverTimezone=Pacific/Auckland
+    username: ${DB_USERNAME_PROD:ENC(KH/GJ05cpFBSAV5u8IruRw==)}
+    password: ${DB_PASSWORD_PROD:ENC(Dh6vV+rX9HyZgiOP83BIiQAZ1+9KOGVh)}
+    hikari:
+      maximum-pool-size: 100
+      minimum-idle: 20
+      max-lifetime: 60000
+      connection-timeout: 60000
+
+  jpa:
+    show-sql: false
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        format_sql: false
+        generate_statistics: false
+
+  # ==================== Redis ====================
+  data:
+    redis:
+      host: ${REDIS_HOST_PROD:kiwi-redis}
+      port: ${REDIS_PORT_PROD:6379}
+      password: ${REDIS_PASSWORD_PROD:ENC(uxuSI1Bl5AelC8dYvJUvMhsRbasVD4zh)}
+      database: 0
+      timeout: 10000ms
+      lettuce:
+        pool:
+          max-active: 20
+          max-idle: 10
+          min-idle: 5
+          max-wait: 5000ms
+        shutdown-timeout: 100ms
+
+  # ==================== Redis (for Redisson) ====================
+  redis:
+    host: ${REDIS_HOST_PROD:kiwi-redis}
+    port: ${REDIS_PORT_PROD:6379}
+    password: ${REDIS_PASSWORD_PROD:ENC(uxuSI1Bl5AelC8dYvJUvMhsRbasVD4zh)}
+    database: 0
+
+  # ==================== Elasticsearch ====================
+  elasticsearch:
+    uris: ${ES_URIS_PROD:http://kiwi-es:9200}
+    username: ${ES_USERNAME_PROD:ENC(NKy6wa5SuHBhQmfLWf6Zv8wf8sPMaE0b)}
+    password: ${ES_PASSWORD_PROD:ENC(oj9wNYu52oQH1d9T0zHeGDLz7P7em71u)}
+
+  # ==================== File Upload ====================
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 10MB
+      max-request-size: 20MB
+
+  # ==================== GCP Configuration ====================
+  cloud:
+    gcp:
+      project-id: ${GCP_PROJECT_ID:ENC(5q3wUNe5RH6F8ORU+aaVqa5XK6bF5pJwdHzcloHX3Uz2PyTTN5C7kw==)}
+      credentials:
+        location: ${GCP_CREDENTIALS_LOCATION:ENC(Nfvxt6bll1kBRfZsBHzJuOFe+Nn6PWPROfyeMfdbaclUAZSgHRp0DxHkWcvLsrkn)}
+
+  # ==================== Liquibase ====================
+  liquibase:
+    enabled: true
+    change-log: classpath:db/changelog/db.changelog-master.xml
+
+# ==================== Logging ====================
+logging:
+  level:
+    root: WARN
+    me.fengorz.kiwi: INFO
+    org.hibernate.SQL: WARN
+
+# ==================== Actuator ====================
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: when_authorized
+  health:
+    elasticsearch:
+      enabled: false
+
+# ==================== Application Custom Config ====================
+kiwi:
+  # FastDFS Configuration
+  dfs:
+    connect-timeout: 6000000
+    so-timeout: 6000000
+    tracker-list: ${FASTDFS_TRACKER_PROD:kiwi-fastdfs:22122}
+    gcp:
+      bucket-name: kiwidict-bucket
+
+  # File paths for prod environment
+  file:
+    crawler:
+      voice:
+        tmp-path: ${VOICE_TMP_PATH:/wordTmp}
+    vocabulary:
+      word:
+        list:
+          path: ${WORD_LIST_PATH:/wordTmp}
+
+  # TTS Configuration
+  tts:
+    # TTS Provider Selection: voicerss, baidu, gcp, deepgram, openai
+    provider: ${TTS_PROVIDER:openai}
+    chattts:
+      base-url: http://kiwi-chattts:8000
+      timeout: 30
+      retry-count: 3
+    deepgram:
+      api-key: ${DEEPGRAM_API_KEY:}
+      base-url: https://api.deepgram.com/v1/speak
+      english-model: aura-asteria-en
+      chinese-model: aura-lingxi-zh
+    baidu:
+      app-id: "20116041"
+      api-key: ${BAIDU_TTS_API_KEY:ENC(/9nXqvG1VIte1VrACwZ683gw2o2K3fpRdAweh0edh1nFLd1CvjH4oA==)}
+      secret-key: ${BAIDU_TTS_SECRET_KEY:ENC(G1gyeiupF4SDLkxRGm6FJ5a+Xxpp36sIrrtUnu5xZFKtZGnA7WYCPy+t+XHO0Kaa)}
+      access-token: ${BAIDU_TTS_ACCESS_TOKEN:ENC(wykNby8I8mtu8pV5zd8khs8oUoF1GSFuS+y7zVGGhvHCF6+sUSUeSK3p3Q57wddHbZjYujpgoUMisz+fneF4E8tOpgTpdlThYC4j/tHtJfs=)}
+    voicerss:
+      url: 'https://api.voicerss.org/?key={}&r=-2&hl=en-us&v=Mary&c=MP3&f=16khz_16bit_stereo&src=test'
+      api-keys: ${VOICERSS_API_KEYS:[]}
+    # OpenAI TTS - $15/1M chars (tts-1) or $30/1M chars (tts-1-hd)
+    openai:
+      api-key: ${OPENAI_API_KEY:}
+      base-url: https://api.openai.com/v1/audio/speech
+      model: ${OPENAI_TTS_MODEL:tts-1}
+      english-voice: ${OPENAI_TTS_EN_VOICE:alloy}
+      chinese-voice: ${OPENAI_TTS_ZH_VOICE:nova}
+      response-format: mp3
+      speed: 1.0
+
+  # Review Audio Configuration
+  review:
+    audio:
+      enabled: ${REVIEW_AUDIO_ENABLED:false}
+      max-generation-count: ${REVIEW_AUDIO_MAX_COUNT:100}
+      storage-path: ${REVIEW_AUDIO_PATH:/wordTmp/review-audio}
+      async-generation: true
+      content-mode: both
+      api-call-delay-ms: 200
+      scheduler:
+        enabled: ${REVIEW_AUDIO_SCHEDULER_ENABLED:true}
+        cron: ${REVIEW_AUDIO_SCHEDULER_CRON:0 0 3 * * *}
+        max-per-run: ${REVIEW_AUDIO_SCHEDULER_MAX:500}
+        lookback-days: ${REVIEW_AUDIO_SCHEDULER_LOOKBACK:30}
+
+  # YouTube Configuration
+  youtube:
+    video:
+      command: yt-dlp
+      download:
+        path: ${YT_DOWNLOAD_PATH:ENC(8ZJ3rI1uzmeliVVmWQwG8w==)}
+      large-subtitles:
+        threshold: 1000
+      batch:
+        enabled: false
+    proxy:
+      enabled: true
+      value: ${YT_PROXY_VALUE:ENC(FGrA00PC+bW5FiLAVautt6lhpqOx8U92YLzFLeAGVf78Xj93B600jQ==)}
+    migration:
+      enabled: false
+    # Channel Video Sync Scheduler - fetches new videos and caches subtitles
+    sync:
+      enabled: ${YT_SYNC_ENABLED:true}  # Enabled by default in prod
+      cron: ${YT_SYNC_CRON:0 0 */6 * * *}  # Every 6 hours
+      fetch-subtitles: ${YT_SYNC_FETCH_SUBTITLES:true}
+      max-videos-per-channel: ${YT_SYNC_MAX_VIDEOS:100}
+
+# ==================== AI Configuration ====================
+ai:
+  # AI Provider Selection: "grok" or "gemini"
+  provider: gemini
+  grok:
+    api:
+      key: ${GROK_API_KEY:}
+      endpoint: https://api.x.ai/v1/chat/completions
+      model: "grok-4-1-fast-reasoning"
+      thread-prompts-line-size: 400
+      thread-pool-size: 8
+      thread-timeout-secs: 120
+  gemini:
+    api:
+      key: ${GEMINI_API_KEY:}
+      endpoint: https://generativelanguage.googleapis.com/v1beta/models
+      model: "gemini-2.5-flash"
+      # Gemini 2.5 Flash has 1M context window - can handle very large batches
+      # This sends more subtitle lines per AI request, reducing total API calls
+      thread-prompts-line-size: 2000
+      # Higher concurrency - Gemini handles more parallel requests (1500+ RPM)
+      thread-pool-size: 20
+      thread-timeout-secs: 300
+      temperature: 1.0
+      # Gemini 2.5 Flash supports up to 65K output tokens
+      max-output-tokens: 32768
+  mode:
+    directly-translation: "Translate the user prompt into #[TL]. Output the translation only—no labels, notes, or Markdown."
+    translation-and-explanation: "Translate the user prompt into #[TL] on the first line. Then, in #[NL], give a thorough explanation covering word choice, tone/register, key grammar, and cultural/usage notes. No Markdown or extra headers."
+    grammar-explanation: "Translate the user prompt into #[NL]. Then, in #[NL], explain the grammar (parts of speech, sentence structure, tense/aspect, key patterns, and tricky points). Keep it concise and clear."
+    grammar-correction: "1) Provide a grammatically corrected version of the text (original language). 2) Translate the corrected text into #[NL]. 3) In #[NL], explain each correction (what changed and why). Output in that order. No extra commentary."
+    natural-idiomatic-retouch: "Rewrite the text in #[TL] so that it is grammatically correct, natural, and idiomatic, as if written by an educated native speaker. Preserve the original meaning and tone, but improve word choice, sentence flow, and style. Output only the polished #[TL] version, with #[NL] explanations."
+    vocabulary-explanation: "Explain the vocabulary item in both #[TL] and #[NL]. Provide paraphrases in both languages grouped by part of speech (verb, noun, adjective, adverb, etc.). For each part of speech, give 1–3 demo sentences in #[TL] with #[NL] translations. Skip any part of speech that does not apply."
+    synonym: "List 5–8 common synonyms in #[TL]. For each, briefly explain the nuance in #[NL] and give one example sentence in #[TL] with a #[NL] translation. Output plain text only—no Markdown or extra commentary."
+    antonym: "List 5–8 common antonyms in #[TL]. For each, briefly explain the nuance in #[NL] and give one example sentence in #[TL] with a #[NL] translation. Output plain text only—no Markdown or extra commentary."
+    subtitle-translator: |
+      Translate subtitle fragments line by line. CRITICAL: Maintain exact 1:1 line mapping.
+
+      RULES:
+      1. Each INPUT line produces exactly TWO OUTPUT lines (original + translation)
+      2. Do NOT merge multiple input lines into one sentence
+      3. Do NOT split one input line into multiple output lines
+      4. Translate each fragment as-is, even if incomplete
+      5. Add punctuation only at natural pauses within each fragment
+      6. Separate each pair with exactly ONE blank line
+
+      FORMAT (for each input line):
+      [Original #[TL] text with minimal punctuation fixes]
+      [#[NL] translation of that exact fragment]
+
+      [Next original #[TL] text]
+      [#[NL] translation]
+
+      EXAMPLE:
+      Input:
+      It's America versus China today as we
+      put the Tesla Model Y refresh up against
+      the new BYD Sealion 7
+
+      Output:
+      It's America versus China today as we
+      今天是美国对战中国，我们
+
+      put the Tesla Model Y refresh up against
+      将特斯拉 Model Y 改款版与
+
+      the new BYD Sealion 7
+      全新比亚迪海狮07进行对比
+
+      No Markdown, no labels, no extra commentary.
+    subtitle-retouch: |
+      Retouch auto-generated subtitle fragments. CRITICAL: Maintain exact 1:1 line mapping.
+
+      RULES:
+      1. Each INPUT line produces exactly ONE OUTPUT line
+      2. Do NOT merge multiple input lines into one
+      3. Do NOT split one input line into multiple output lines
+      4. Fix capitalization and add punctuation ONLY at natural pauses within each fragment
+      5. Keep fragments as-is, even if sentences are incomplete
+      6. Remove redundant symbols but preserve meaning
+
+      EXAMPLE:
+      Input:
+      its america versus china today as we
+      put the tesla model y refresh up against
+
+      Output:
+      It's America versus China today as we
+      put the Tesla Model Y refresh up against
+
+      No Markdown, no labels, no extra commentary.
+    subtitle-retouch-translator: |
+      Retouch and translate auto-generated subtitle fragments. CRITICAL: Maintain exact 1:1 line mapping.
+
+      RULES:
+      1. Each INPUT line produces exactly TWO OUTPUT lines (retouched original + translation)
+      2. Do NOT merge multiple input lines into one sentence
+      3. Do NOT split one input line into multiple output lines
+      4. Fix capitalization and add punctuation ONLY at natural pauses within each fragment
+      5. Translate each fragment as-is, even if the sentence is incomplete
+      6. Separate each pair with exactly ONE blank line
+      7. If a line is already in #[NL], only correct it and output without translation
+
+      FORMAT (for each input line):
+      [Retouched #[TL] fragment with capitalization and punctuation fixes]
+      [#[NL] translation of that exact fragment]
+
+      [Next retouched #[TL] fragment]
+      [#[NL] translation]
+
+      EXAMPLE:
+      Input:
+      its america versus china today as we
+      put the tesla model y refresh up against
+      the new byd sealion 7 to see which of
+
+      Output:
+      It's America versus China today as we
+      今天是美国对战中国，我们
+
+      put the Tesla Model Y refresh up against
+      将特斯拉 Model Y 改款版与
+
+      the new BYD Sealion 7 to see which of
+      全新比亚迪海狮07进行对比，看看哪款
+
+      No Markdown, no labels, no extra commentary.
+    subtitle-punctuation-only: |
+      Add punctuation and fix capitalization to each subtitle line.
+
+      CRITICAL RULES:
+      1. Keep EXACTLY the same number of lines as input
+      2. Do NOT merge lines or split lines
+      3. Do NOT change word order
+      4. Do NOT add or remove words
+      5. ONLY add punctuation marks (. , ? ! ' ") and fix capitalization
+      6. Each output line corresponds to exactly one input line
+
+      Input format:
+      [line 1 text]
+      [line 2 text]
+      ...
+
+      Output format (same number of lines):
+      [line 1 with punctuation]
+      [line 2 with punctuation]
+      ...
+
+      Example:
+      Input:
+      yo your place kind of fire though
+      this place be phantom taxing
+
+      Output:
+      Yo, your place kind of fire though.
+      This place be phantom taxing.
+    vocabulary-association: |
+      List 8-10 common #[TL] words/phrases that express the user prompt's meaning.
+      For each word, provide in this exact format:
+
+      📖 **Word** (Part of Speech) — Register
+      Definition in one sentence
+      Translation in #[NL]
+      ✏️ Example sentence in #[TL]
+      ✏️ Translation of example in #[NL]
+
+      Separate each entry with a blank line.
+      Register options: Formal / Neutral / Informal / Technical
+      Prioritize high-frequency, practical vocabulary.
+      Do not include language labels like "EN:" or "ZH_CN:" in output.
+    phrases-association: "List as many common #[TL] phrases as possible that can express the user prompt's meaning. For each phrase, explain nuances, register, and usage differences in #[NL]. Group by function or context when helpful. Plain text only."
+    selection-explanation: "Respond only in #[TL]. Explain the selected phrase \"#[S0]\" strictly based on the sentence #[S1] in 1–2 concise paragraphs. No headings, labels, English, Markdown, bullet points, or backslashes. Do not restate the full sentence; focus on meaning, nuance, tense/aspect, and function in context."
+    vocabulary-character-expansion: |
+      vocabulary-family-expansion:
+      For the input word, generate a complete word-family #[TL] map including:
+      1) Verbs
+      2) Nouns
+      3) Adjectives
+      4) Adverbs
+
+      For each item, use the format:
+      word (#[NL] Chinese translation; #[NL] nuance or usage explanation)
+
+      Structure:
+      Verbs: v1 (#[NL] translation; #[NL] nuance), v2 (...), v3 (...)
+      Nouns: n1 (...), n2 (...)
+      Adjectives: adj1 (...), adj2 (...)
+      Adverbs: adv1 (...), adv2 (...)
+
+      Notes:
+      - If a category has no items, skip it
+      - Prioritize common vocabulary; include formal/informal variants if significant
+    ambiguous-association-correction: "If only the first input is ambiguous, list all possible corrections with brief explanations in #[NL]. If both inputs are present, compare them; if the second is a correction of the first, output only the corrected version without explanation; otherwise, list all possible corrections for the first input. Output #[TL] only, plain text, no Markdown."
+
+# ==================== Google OAuth2 Configuration ====================
+google:
+  oauth2:
+    client-id: ${GOOGLE_CLIENT_ID:}
+    client-secret: ${GOOGLE_CLIENT_SECRET:}
+    redirect-uri: ${GOOGLE_REDIRECT_URI:https://kason.app/auth/oauth/google/callback}
+    scopes:
+      - openid
+      - profile
+      - email
+    home-page: ${GOOGLE_HOME_PAGE:https://kason.app}
+
+# ==================== Security Ignore URLs ====================
+ignore:
+  urls:
+    # Common
+    - /actuator/**
+    - /test/**
+    # Auth endpoints (public)
+    - /auth/oauth/google/**
+    - /log/**
+    # UPMS Service (new /api prefix)
+    - /api/log/**
+    # Word Service (new /api prefix)
+    - /api/word/name/**
+    - /api/word/search
+    - /api/word/fuzzy
+    - /api/word/autocomplete
+    - /api/word/exists/**
+    - /api/word/pronunciation/download/**
+    - /api/word/fetch/**
+    - /api/word/main/fuzzyQueryList
+    - /api/word/main/query/**
+    # Tools Service (legacy paths)
+    - /rangi_windows/api/**
+    # Tools Service (new /api prefix)
+    - /api/rangi_windows/**

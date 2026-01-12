@@ -1,0 +1,22 @@
+### ===================================
+### Grammar API Tests
+### Base Path: /api/grammar
+### ===================================
+
+### Download Grammar MP3 - Type 1
+GET {{baseUrl}}/api/grammar/mp3/1
+
+###
+
+### Download Grammar MP3 - Type 2
+GET {{baseUrl}}/api/grammar/mp3/2
+
+###
+
+### Download Grammar SRT - Type 1
+GET {{baseUrl}}/api/grammar/srt/1
+
+###
+
+### Download Grammar SRT - Type 2
+GET {{baseUrl}}/api/grammar/srt/2

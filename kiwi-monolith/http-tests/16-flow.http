@@ -1,0 +1,40 @@
+### ===================================
+### Flow (Flowable) API Tests
+### Base Path: /api/flow
+### Note: Flowable is disabled in dev profile
+### ===================================
+
+### Start Process Instance
+POST {{baseUrl}}/api/flow/process
+Content-Type: application/json
+
+{
+  "processDefinitionKey": "simple-process",
+  "variables": {
+    "initiator": "admin",
+    "description": "Test process instance"
+  }
+}
+
+###
+
+### Get Tasks by Assignee
+GET {{baseUrl}}/api/flow/tasks?assignee=admin
+
+###
+
+### Complete Task
+POST {{baseUrl}}/api/flow/tasks/task-123/complete
+Content-Type: application/json
+
+{
+  "variables": {
+    "approved": true,
+    "comments": "Approved by admin"
+  }
+}
+
+###
+
+### Get Tasks for Process
+GET {{baseUrl}}/api/flow/process/process-123/tasks

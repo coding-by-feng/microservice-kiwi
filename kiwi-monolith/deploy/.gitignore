@@ -12,3 +12,8 @@
 
 # Temporary files
 *.tmp
+
+# Database backups
+backups/*.sql
+backups/*.sql.gz
+backups/*.dump

@@ -68,4 +68,9 @@ public class ConversationProperties {
      * Cache TTL for conversation data in seconds
      */
     private int cacheTtlSeconds = 3600;
+
+    /**
+     * Maximum concurrent TTS API calls (rate limit protection)
+     */
+    private int ttsMaxConcurrency = 3;
 }

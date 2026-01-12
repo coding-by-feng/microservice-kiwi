@@ -40,7 +40,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
+import java.util.concurrent.Semaphore;
 import java.util.stream.Collectors;
 
 /**
@@ -58,20 +60,30 @@ public class ConversationService extends ServiceImpl<ConversationMapper, Convers
     private final ConversationMessageMapper messageMapper;
     private final ConversationProperties properties;
     private final Executor taskExecutor;
+    private final Executor ttsExecutor;
+    private final Semaphore ttsSemaphore;
 
     public ConversationService(ConversationScriptService scriptService,
                                ConversationTtsService ttsService,
                                ConversationSpeakerMapper speakerMapper,
                                ConversationMessageMapper messageMapper,
                                ConversationProperties properties,
-                               @Qualifier("webSocketExecutor") Executor taskExecutor) {
+                               @Qualifier("webSocketExecutor") Executor taskExecutor,
+                               @Qualifier("ttsExecutor") Executor ttsExecutor) {
         this.scriptService = scriptService;
         this.ttsService = ttsService;
         this.speakerMapper = speakerMapper;
         this.messageMapper = messageMapper;
         this.properties = properties;
         this.taskExecutor = taskExecutor;
+        this.ttsExecutor = ttsExecutor;
+        this.ttsSemaphore = new Semaphore(properties.getTtsMaxConcurrency());
     }
+
+    /**
+     * Result of audio generation for a single message
+     */
+    private record AudioResult(Long messageId, String audioUrl, int durationMs, boolean success, String error) {}
 
     private static final String CACHE_NAME = "conversation";
 
@@ -136,12 +148,11 @@ public class ConversationService extends ServiceImpl<ConversationMapper, Convers
                     .totalMessageCount(script.getMessages().size())
                     .build());
 
-            // 6. Generate audio for each message and stream
+            // 6. Generate audio for each message concurrently
             updateConversationStatus(conversation, ConversationStatus.GENERATING_AUDIO);
 
-            long totalAudioDuration = 0;
-            int completedCount = 0;
-
+            // Create all message records first
+            List<MessageWithSpeaker> messagesWithSpeakers = new ArrayList<>();
             for (ConversationScriptService.Message scriptMessage : script.getMessages()) {
                 ConversationSpeaker speaker = speakerMap.get(scriptMessage.getSpeakerIndex());
                 if (speaker == null) {
@@ -149,68 +160,76 @@ public class ConversationService extends ServiceImpl<ConversationMapper, Convers
                     continue;
                 }
 
-                // Create message record
                 ConversationMessage message = createMessage(
                         conversation.getId(),
                         speaker.getId(),
                         scriptMessage.getSequence(),
                         scriptMessage.getText()
                 );
+                message.setAudioStatusEnum(AudioStatus.GENERATING);
+                messageMapper.updateById(message);
 
-                try {
-                    // Update status to generating
-                    message.setAudioStatusEnum(AudioStatus.GENERATING);
-                    messageMapper.updateById(message);
+                messagesWithSpeakers.add(new MessageWithSpeaker(message, speaker));
+            }
 
-                    // Generate and upload audio
-                    String audioUrl = ttsService.generateAndUpload(
-                            scriptMessage.getText(),
-                            speaker.getVoice(),
-                            request.getAccent(),
-                            conversation.getId(),
-                            message.getId()
-                    );
+            final Long conversationId = conversation.getId();
+            final OpenAiTtsProperties.AccentType accent = request.getAccent();
 
-                    // Estimate duration
-                    int audioDuration = ttsService.estimateAudioDuration(scriptMessage.getText());
-                    totalAudioDuration += audioDuration;
+            // Submit concurrent audio generation tasks with rate limiting
+            log.info("Starting concurrent audio generation for {} messages with concurrency limit {}",
+                    messagesWithSpeakers.size(), properties.getTtsMaxConcurrency());
 
+            List<CompletableFuture<AudioResult>> futures = messagesWithSpeakers.stream()
+                    .map(mws -> CompletableFuture.supplyAsync(
+                            () -> generateAudioForMessage(mws, accent, conversationId),
+                            ttsExecutor))
+                    .toList();
+
+            // Wait for all audio generation to complete
+            CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
+
+            // Process results in order and send SSE events
+            long totalAudioDuration = 0;
+            int completedCount = 0;
+            int totalMessages = messagesWithSpeakers.size();
+
+            for (int i = 0; i < totalMessages; i++) {
+                AudioResult result = futures.get(i).join();
+                MessageWithSpeaker mws = messagesWithSpeakers.get(i);
+                ConversationMessage message = mws.message();
+
+                if (result.success()) {
                     // Update message with audio info
-                    message.setAudioUrl(audioUrl);
-                    message.setAudioDurationMs(audioDuration);
+                    message.setAudioUrl(result.audioUrl());
+                    message.setAudioDurationMs(result.durationMs());
                     message.setAudioStatusEnum(AudioStatus.READY);
                     messageMapper.updateById(message);
 
-                    // Send message event
-                    message.setSpeakerName(speaker.getName());
-                    sendEvent(emitter, "message", MessageVO.fromEntity(message));
-
+                    totalAudioDuration += result.durationMs();
                     completedCount++;
 
-                    // Send progress event
-                    int percentage = (completedCount * 100) / script.getMessages().size();
-                    sendEvent(emitter, "progress", ConversationSseEvent.ProgressPayload.builder()
-                            .completed(completedCount)
-                            .total(script.getMessages().size())
-                            .percentage(percentage)
-                            .build());
-
-                    // Delay to avoid rate limiting
-                    if (properties.getTtsDelayMs() > 0) {
-                        Thread.sleep(properties.getTtsDelayMs());
-                    }
-
-                } catch (Exception e) {
-                    log.error("Failed to generate audio for message {}", message.getId(), e);
+                    // Send message event
+                    message.setSpeakerName(mws.speaker().getName());
+                    sendEvent(emitter, "message", MessageVO.fromEntity(message));
+                } else {
+                    // Mark as failed
                     message.setAudioStatusEnum(AudioStatus.FAILED);
                     messageMapper.updateById(message);
 
                     // Send error but continue with other messages
                     sendEvent(emitter, "error", ConversationSseEvent.ErrorPayload.builder()
-                            .message("Failed to generate audio for message " + message.getSequence())
+                            .message("Failed to generate audio for message " + message.getSequence() + ": " + result.error())
                             .code("TTS_ERROR")
                             .build());
                 }
+
+                // Send progress event
+                int percentage = ((i + 1) * 100) / totalMessages;
+                sendEvent(emitter, "progress", ConversationSseEvent.ProgressPayload.builder()
+                        .completed(i + 1)
+                        .total(totalMessages)
+                        .percentage(percentage)
+                        .build());
             }
 
             // 7. Update conversation as completed
@@ -227,7 +246,8 @@ public class ConversationService extends ServiceImpl<ConversationMapper, Convers
                     .build());
 
             emitter.complete();
-            log.info("Conversation {} generation completed in {}ms", conversation.getId(), generationTime);
+            log.info("Conversation {} generation completed in {}ms with {} successful messages",
+                    conversation.getId(), generationTime, completedCount);
 
         } catch (Exception e) {
             log.error("Conversation generation failed", e);
@@ -243,6 +263,59 @@ public class ConversationService extends ServiceImpl<ConversationMapper, Convers
             } catch (Exception ex) {
                 log.error("Failed to send error event", ex);
             }
+        }
+    }
+
+    /**
+     * Helper record to associate a message with its speaker
+     */
+    private record MessageWithSpeaker(ConversationMessage message, ConversationSpeaker speaker) {}
+
+    /**
+     * Generate audio for a single message with rate limiting via semaphore
+     */
+    private AudioResult generateAudioForMessage(MessageWithSpeaker mws,
+                                                 OpenAiTtsProperties.AccentType accent,
+                                                 Long conversationId) {
+        ConversationMessage message = mws.message();
+        ConversationSpeaker speaker = mws.speaker();
+
+        try {
+            ttsSemaphore.acquire();
+            try {
+                log.debug("Generating audio for message {} (semaphore acquired)", message.getId());
+
+                // Generate and upload audio
+                String audioUrl = ttsService.generateAndUpload(
+                        message.getText(),
+                        speaker.getVoice(),
+                        accent,
+                        conversationId,
+                        message.getId()
+                );
+
+                // Estimate duration
+                int audioDuration = ttsService.estimateAudioDuration(message.getText());
+
+                log.debug("Audio generated for message {}: url={}, duration={}ms",
+                        message.getId(), audioUrl, audioDuration);
+
+                return new AudioResult(message.getId(), audioUrl, audioDuration, true, null);
+
+            } finally {
+                ttsSemaphore.release();
+                // Small delay after releasing semaphore to further space out API calls
+                if (properties.getTtsDelayMs() > 0) {
+                    Thread.sleep(properties.getTtsDelayMs());
+                }
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            log.error("Audio generation interrupted for message {}", message.getId(), e);
+            return new AudioResult(message.getId(), null, 0, false, "Interrupted: " + e.getMessage());
+        } catch (Exception e) {
+            log.error("Failed to generate audio for message {}", message.getId(), e);
+            return new AudioResult(message.getId(), null, 0, false, e.getMessage());
         }
     }
 

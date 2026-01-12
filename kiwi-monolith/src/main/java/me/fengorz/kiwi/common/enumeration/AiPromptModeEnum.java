@@ -42,7 +42,8 @@ public enum AiPromptModeEnum {
     VOCABULARY_CHARACTER_EXPANSION("vocabulary-character-expansion", "NA", 5),
     AMBIGUOUS_ASSOCIATION_CORRECTION("ambiguous-association-correction", "NA", 1),
     SELECTION_EXPLANATION("selection-explanation", "#[SM]", 0),
-    CHAT("chat", "NA", 1);
+    CHAT("chat", "NA", 1),
+    CONVERSATION_GENERATION("conversation-generation", "NA", 0);
 
     private final String mode;
     private final String tag;

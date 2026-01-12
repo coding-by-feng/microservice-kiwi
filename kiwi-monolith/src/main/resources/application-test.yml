@@ -144,7 +144,7 @@ kiwi:
   # Review Audio Configuration
   review:
     audio:
-      enabled: ${REVIEW_AUDIO_ENABLED:true}
+      enabled: ${REVIEW_AUDIO_ENABLED:false}
       max-generation-count: ${REVIEW_AUDIO_MAX_COUNT:100}
       storage-path: ${REVIEW_AUDIO_PATH:/wordTmp/review-audio}
       async-generation: true

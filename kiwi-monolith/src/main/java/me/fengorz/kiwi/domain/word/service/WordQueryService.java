@@ -71,7 +71,10 @@ public class WordQueryService {
 
         // If still not found, add to fetch queue and return empty
         if (wordOpt.isEmpty()) {
-            fetchQueueService.addToQueue(wordName, 100);
+            // Only add valid words to fetch queue (not sentences or strings that are too long)
+            if (isValidWordForFetching(wordName)) {
+                fetchQueueService.addToQueue(wordName, 100);
+            }
             return Optional.empty();
         }
 
@@ -163,6 +166,25 @@ public class WordQueryService {
     @CacheEvict(value = CACHE_NAME, key = "'word:' + #wordName")
     public void evictWordCache(String wordName) {
         log.debug("Evicted word cache for: {}", wordName);
+    }
+
+    // ==================== Private Helper Methods ====================
+
+    /**
+     * Check if word name is valid for fetching.
+     * Invalid cases: too long (>100 chars), contains too many spaces (likely a sentence)
+     */
+    private boolean isValidWordForFetching(String wordName) {
+        if (wordName == null || wordName.isEmpty()) {
+            return false;
+        }
+        // Reject if too long (database column likely has length limit)
+        if (wordName.length() > 100) {
+            return false;
+        }
+        // Reject if it looks like a sentence (more than 3 spaces = likely 4+ words)
+        long spaceCount = wordName.chars().filter(c -> c == ' ').count();
+        return spaceCount <= 3;
     }
 
     // ==================== Private Assembly Methods ====================

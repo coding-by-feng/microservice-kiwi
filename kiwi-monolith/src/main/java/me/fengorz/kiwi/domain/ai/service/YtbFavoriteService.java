@@ -34,6 +34,9 @@ import me.fengorz.kiwi.domain.ai.ytb.YouTubeClient;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.net.URI;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -133,18 +136,21 @@ public class YtbFavoriteService {
 
     @Transactional
     public boolean favoriteVideoByUrl(Long userId, String videoUrl) {
+        String normalizedUrl = normalizeVideoUrl(videoUrl);
+        log.debug("[FAVORITE] Normalized URL: {} -> {}", videoUrl, normalizedUrl);
+
         YtbChannelVideo video = videoMapper.selectOne(
                 new LambdaQueryWrapper<YtbChannelVideo>()
-                        .eq(YtbChannelVideo::getVideoLink, videoUrl));
+                        .eq(YtbChannelVideo::getVideoLink, normalizedUrl));
 
         if (video == null) {
             video = new YtbChannelVideo();
-            video.setVideoLink(videoUrl);
+            video.setVideoLink(normalizedUrl);
 
             // Fetch actual video title from YouTube
-            String videoTitle = fetchVideoTitle(videoUrl);
+            String videoTitle = fetchVideoTitle(normalizedUrl);
             video.setVideoTitle(videoTitle);
-            log.info("[FAVORITE] Created new video record - URL: {}, Title: {}", videoUrl, videoTitle);
+            log.info("[FAVORITE] Created new video record - URL: {}, Title: {}", normalizedUrl, videoTitle);
 
             video.setStatus(YtbChannelVideo.STATUS_READY);
             video.setCreateTime(LocalDateTime.now());
@@ -169,9 +175,11 @@ public class YtbFavoriteService {
 
     @Transactional
     public boolean unfavoriteVideoByUrl(Long userId, String videoUrl) {
+        String normalizedUrl = normalizeVideoUrl(videoUrl);
+
         YtbChannelVideo video = videoMapper.selectOne(
                 new LambdaQueryWrapper<YtbChannelVideo>()
-                        .eq(YtbChannelVideo::getVideoLink, videoUrl));
+                        .eq(YtbChannelVideo::getVideoLink, normalizedUrl));
 
         if (video == null) {
             return false;
@@ -259,9 +267,11 @@ public class YtbFavoriteService {
     }
 
     public boolean isVideoFavoritedByUrl(Long userId, String videoUrl) {
+        String normalizedUrl = normalizeVideoUrl(videoUrl);
+
         YtbChannelVideo video = videoMapper.selectOne(
                 new LambdaQueryWrapper<YtbChannelVideo>()
-                        .eq(YtbChannelVideo::getVideoLink, videoUrl));
+                        .eq(YtbChannelVideo::getVideoLink, normalizedUrl));
 
         if (video == null) {
             return false;
@@ -294,5 +304,81 @@ public class YtbFavoriteService {
                 new LambdaQueryWrapper<YtbVideoFavorite>()
                         .eq(YtbVideoFavorite::getVideoId, videoId)
                         .eq(YtbVideoFavorite::getIfValid, true));
+    }
+
+    private String normalizeVideoUrl(String rawUrl) {
+        String videoId = extractVideoId(rawUrl);
+        if (videoId != null && !videoId.equals(rawUrl)) {
+            return "https://youtu.be/" + videoId;
+        }
+        return rawUrl;
+    }
+
+    private String extractVideoId(String rawUrl) {
+        if (rawUrl == null || rawUrl.isEmpty()) {
+            return null;
+        }
+        String url = decodeUrl(rawUrl).trim();
+        try {
+            if (!url.startsWith("http://") && !url.startsWith("https://")) {
+                url = "https://" + url;
+            }
+            URI uri = URI.create(url);
+            String host = uri.getHost() == null ? "" : uri.getHost().toLowerCase();
+            String path = uri.getPath() == null ? "" : uri.getPath();
+            String query = uri.getQuery();
+
+            if (host.contains("youtu.be")) {
+                String p = path.startsWith("/") ? path.substring(1) : path;
+                return trimIdTail(p);
+            }
+
+            if (host.contains("youtube.com")) {
+                if (path.startsWith("/watch") && query != null) {
+                    for (String kv : query.split("&")) {
+                        String[] arr = kv.split("=", 2);
+                        if (arr.length == 2 && "v".equals(arr[0])) {
+                            return trimIdTail(arr[1]);
+                        }
+                    }
+                }
+                if (path.startsWith("/shorts/")) {
+                    return trimIdTail(path.substring("/shorts/".length()));
+                }
+                if (path.startsWith("/embed/")) {
+                    return trimIdTail(path.substring("/embed/".length()));
+                }
+            }
+        } catch (Exception e) {
+            log.warn("Failed to extract video ID from URL: {}", rawUrl, e);
+        }
+        return null;
+    }
+
+    private String trimIdTail(String id) {
+        if (id == null) {
+            return null;
+        }
+        int q = id.indexOf('?');
+        if (q >= 0) {
+            id = id.substring(0, q);
+        }
+        int amp = id.indexOf('&');
+        if (amp >= 0) {
+            id = id.substring(0, amp);
+        }
+        int slash = id.indexOf('/');
+        if (slash >= 0) {
+            id = id.substring(0, slash);
+        }
+        return id;
+    }
+
+    private String decodeUrl(String url) {
+        try {
+            return URLDecoder.decode(url, StandardCharsets.UTF_8);
+        } catch (Exception e) {
+            return url;
+        }
     }
 }

@@ -7,7 +7,8 @@ set -e
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 MONOLITH_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 JAR_NAME="kiwi-monolith-3.0.0.jar"
-LOG_FILE="app.log"
+JAR_PATH="$HOME/$JAR_NAME"
+LOG_FILE="$HOME/app.log"
 
 # Remote server config (for upload)
 REMOTE_HOST="139.180.180.203"
@@ -18,7 +19,8 @@ do_build() {
     echo "=== Building ==="
     cd "$MONOLITH_DIR"
     mvn clean package -DskipTests -q
-    echo "Build complete: $(find target -name '*.jar' -type f | head -1)"
+    cp target/$JAR_NAME "$HOME/"
+    echo "Build complete: $JAR_PATH"
 }
 
 do_upload() {
@@ -39,10 +41,12 @@ do_kill() {
 
 do_start() {
     echo "=== Starting ==="
-    nohup java -jar "$JAR_NAME" > "$LOG_FILE" 2>&1 &
+    cd "$HOME"
+    nohup java -jar "$JAR_PATH" > "$LOG_FILE" 2>&1 &
     sleep 2
     if lsof -i:8080 > /dev/null 2>&1; then
         echo "Started! PID: $(lsof -t -i:8080)"
+        echo "Log: $LOG_FILE"
     else
         echo "Failed to start. Check $LOG_FILE"
     fi
@@ -55,6 +59,12 @@ case "${1:-menu}" in
     upload)
         do_build
         do_upload
+        ;;
+    deploy)
+        do_build
+        do_upload
+        do_kill
+        do_start
         ;;
     kill)
         do_kill
@@ -70,17 +80,19 @@ case "${1:-menu}" in
         echo "=== Kiwi Monolith Deploy ==="
         echo "1) Build only"
         echo "2) Build and upload to remote"
-        echo "3) Kill (stop app on port 8080)"
-        echo "4) Start (run jar with nohup)"
-        echo "5) Restart (kill + start)"
+        echo "3) Build, upload, kill, and start (full deploy)"
+        echo "4) Kill (stop app on port 8080)"
+        echo "5) Start (run jar with nohup)"
+        echo "6) Restart (kill + start)"
         echo ""
-        read -p "Select [1-5]: " choice
+        read -p "Select [1-6]: " choice
         case $choice in
             1) do_build ;;
             2) do_build; do_upload ;;
-            3) do_kill ;;
-            4) do_start ;;
-            5) do_kill; do_start ;;
+            3) do_build; do_upload; do_kill; do_start ;;
+            4) do_kill ;;
+            5) do_start ;;
+            6) do_kill; do_start ;;
             *) echo "Invalid choice" ;;
         esac
         ;;

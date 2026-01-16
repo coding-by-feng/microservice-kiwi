@@ -43,13 +43,10 @@ do_start() {
     echo "=== Starting ==="
     cd "$HOME"
     nohup java -jar "$JAR_PATH" > "$LOG_FILE" 2>&1 &
+    echo "Waiting for startup... (tail -f $LOG_FILE)"
+    echo "Press Ctrl+C to stop watching logs (app will continue running)"
     sleep 2
-    if lsof -i:8080 > /dev/null 2>&1; then
-        echo "Started! PID: $(lsof -t -i:8080)"
-        echo "Log: $LOG_FILE"
-    else
-        echo "Failed to start. Check $LOG_FILE"
-    fi
+    tail -f "$LOG_FILE"
 }
 
 case "${1:-menu}" in
@@ -62,7 +59,6 @@ case "${1:-menu}" in
         ;;
     deploy)
         do_build
-        do_upload
         do_kill
         do_start
         ;;
@@ -80,7 +76,7 @@ case "${1:-menu}" in
         echo "=== Kiwi Monolith Deploy ==="
         echo "1) Build only"
         echo "2) Build and upload to remote"
-        echo "3) Build, upload, kill, and start (full deploy)"
+        echo "3) Build, kill, and start (full deploy)"
         echo "4) Kill (stop app on port 8080)"
         echo "5) Start (run jar with nohup)"
         echo "6) Restart (kill + start)"
@@ -89,7 +85,7 @@ case "${1:-menu}" in
         case $choice in
             1) do_build ;;
             2) do_build; do_upload ;;
-            3) do_build; do_upload; do_kill; do_start ;;
+            3) do_build; do_kill; do_start ;;
             4) do_kill ;;
             5) do_start ;;
             6) do_kill; do_start ;;

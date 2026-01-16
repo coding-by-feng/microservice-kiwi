@@ -169,6 +169,12 @@ kiwi:
         threshold: 1000
       batch:
         enabled: false
+      # JavaScript runtime for yt-dlp (node, deno, etc.)
+      js-runtimes: node
+      # YouTube cookies file path for authentication (bypasses bot detection)
+      cookies:
+        enabled: true
+        path: /root/.config/yt-dlp/cookies.txt
     proxy:
       enabled: true
       value: ${YT_PROXY_VALUE:ENC(FGrA00PC+bW5FiLAVautt6lhpqOx8U92YLzFLeAGVf78Xj93B600jQ==)}

@@ -18,7 +18,6 @@
     <modules>
         <!-- Legacy modules retained for reference/utilities -->
         <module>kiwi-common</module>
-        <module>kiwi-test</module>
 
         <!-- ============================================================ -->
         <!-- REMOVED MODULES (migrated to kiwi-monolith):                 -->

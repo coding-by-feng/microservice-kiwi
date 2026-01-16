@@ -35,8 +35,8 @@ do_upload() {
 }
 
 do_kill() {
-    echo "=== Killing port 8080 ==="
-    kill -9 $(lsof -t -i:8080) 2>/dev/null || echo "No process on 8080"
+    echo "=== Killing port 8088 ==="
+    kill -9 $(lsof -t -i:8088) 2>/dev/null || echo "No process on 8088"
 }
 
 do_start() {
@@ -77,7 +77,7 @@ case "${1:-menu}" in
         echo "1) Build only"
         echo "2) Build and upload to remote"
         echo "3) Build, kill, and start (full deploy)"
-        echo "4) Kill (stop app on port 8080)"
+        echo "4) Kill (stop app on port 8088)"
         echo "5) Start (run jar with nohup)"
         echo "6) Restart (kill + start)"
         echo ""

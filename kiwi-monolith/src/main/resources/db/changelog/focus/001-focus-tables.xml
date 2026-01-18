@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <!-- Focus Session Table -->
+    <changeSet id="001-create-focus-session-table" author="codingByFeng">
+        <createTable tableName="focus_session">
+            <column name="id" type="VARCHAR(64)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="user_id" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="duration" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="tree_type" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="potential_points" type="INT" defaultValue="0"/>
+            <column name="start_time" type="DATETIME">
+                <constraints nullable="false"/>
+            </column>
+            <column name="end_time" type="DATETIME"/>
+            <column name="status" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="completed_at" type="DATETIME"/>
+            <column name="cancelled_at" type="DATETIME"/>
+            <column name="failed_at" type="DATETIME"/>
+            <column name="fail_reason" type="VARCHAR(50)"/>
+            <column name="points" type="INT" defaultValue="0"/>
+            <column name="penalty" type="INT" defaultValue="0"/>
+            <column name="created_at" type="DATETIME">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="DATETIME">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <createIndex tableName="focus_session" indexName="idx_focus_session_user_id">
+            <column name="user_id"/>
+        </createIndex>
+        <createIndex tableName="focus_session" indexName="idx_focus_session_status">
+            <column name="status"/>
+        </createIndex>
+        <createIndex tableName="focus_session" indexName="idx_focus_session_start_time">
+            <column name="start_time"/>
+        </createIndex>
+    </changeSet>
+
+    <!-- Focus Stats Table -->
+    <changeSet id="002-create-focus-stats-table" author="codingByFeng">
+        <createTable tableName="focus_stats">
+            <column name="id" type="VARCHAR(64)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="user_id" type="INT">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="today_trees" type="INT" defaultValue="0"/>
+            <column name="today_minutes" type="INT" defaultValue="0"/>
+            <column name="current_streak" type="INT" defaultValue="0"/>
+            <column name="total_trees" type="INT" defaultValue="0"/>
+            <column name="total_minutes" type="INT" defaultValue="0"/>
+            <column name="total_points" type="INT" defaultValue="0"/>
+            <column name="last_session_date" type="DATE"/>
+            <column name="stats_date" type="DATE"/>
+            <column name="created_at" type="DATETIME">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="DATETIME">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <!-- Planted Tree Table -->
+    <changeSet id="003-create-planted-tree-table" author="codingByFeng">
+        <createTable tableName="planted_tree">
+            <column name="id" type="VARCHAR(64)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="user_id" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="session_id" type="VARCHAR(64)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="tree_type" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="color" type="VARCHAR(10)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="planted_at" type="DATETIME">
+                <constraints nullable="false"/>
+            </column>
+            <column name="duration" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="points" type="INT" defaultValue="0"/>
+            <column name="position" type="INT"/>
+            <column name="created_at" type="DATETIME">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <createIndex tableName="planted_tree" indexName="idx_planted_tree_user_id">
+            <column name="user_id"/>
+        </createIndex>
+        <createIndex tableName="planted_tree" indexName="idx_planted_tree_planted_at">
+            <column name="planted_at"/>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>

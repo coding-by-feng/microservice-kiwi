@@ -39,10 +39,39 @@ do_kill() {
     kill -9 $(lsof -t -i:8088) 2>/dev/null || echo "No process on 8088"
 }
 
+select_memory() {
+    echo "=== Select Memory Configuration ==="
+    echo "1) 215m (minimal)"
+    echo "2) 512m (small)"
+    echo "3) 1g (medium)"
+    echo "4) 2g (large)"
+    echo "5) 4g (extra large)"
+    echo "6) Custom"
+    echo ""
+    read -p "Select [1-6]: " mem_choice
+    case $mem_choice in
+        1) JAVA_OPTS="-Xms215m -Xmx215m" ;;
+        2) JAVA_OPTS="-Xms512m -Xmx512m" ;;
+        3) JAVA_OPTS="-Xms1g -Xmx1g" ;;
+        4) JAVA_OPTS="-Xms2g -Xmx2g" ;;
+        5) JAVA_OPTS="-Xms4g -Xmx4g" ;;
+        6)
+            read -p "Enter Xms (e.g., 256m, 1g): " xms
+            read -p "Enter Xmx (e.g., 512m, 2g): " xmx
+            JAVA_OPTS="-Xms$xms -Xmx$xmx"
+            ;;
+        *) JAVA_OPTS="-Xms512m -Xmx512m" ;;
+    esac
+    echo "Using: $JAVA_OPTS"
+}
+
 do_start() {
     echo "=== Starting ==="
+    if [ -z "$JAVA_OPTS" ]; then
+        select_memory
+    fi
     cd "$HOME"
-    nohup java -jar "$JAR_PATH" > "$LOG_FILE" 2>&1 &
+    nohup java $JAVA_OPTS -jar "$JAR_PATH" > "$LOG_FILE" 2>&1 &
     echo "Waiting for startup... (tail -f $LOG_FILE)"
     echo "Press Ctrl+C to stop watching logs (app will continue running)"
     sleep 2

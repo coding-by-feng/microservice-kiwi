@@ -26,4 +26,7 @@
 
     <!-- Future schema changes go here -->
 
+    <!-- Focus Timer tables -->
+    <include file="db/changelog/focus/001-focus-tables.xml"/>
+
 </databaseChangeLog>

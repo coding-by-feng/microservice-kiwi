@@ -23,7 +23,10 @@ import me.fengorz.kiwi.common.R;
 import me.fengorz.kiwi.common.dfs.DfsService;
 import me.fengorz.kiwi.domain.ai.config.ConversationProperties;
 import me.fengorz.kiwi.domain.ai.dto.conversation.ConversationGenerateRequest;
+import me.fengorz.kiwi.domain.ai.dto.conversation.ConversationTopicRequest;
 import me.fengorz.kiwi.domain.ai.service.conversation.ConversationService;
+import me.fengorz.kiwi.domain.ai.service.conversation.ConversationTopicService;
+import me.fengorz.kiwi.domain.ai.vo.conversation.ConversationTopicVO;
 import me.fengorz.kiwi.domain.ai.vo.conversation.ConversationVO;
 import me.fengorz.kiwi.security.KiwiUser;
 import org.springframework.core.io.InputStreamResource;
@@ -52,6 +55,7 @@ import java.util.List;
 public class ConversationController {
 
     private final ConversationService conversationService;
+    private final ConversationTopicService topicService;
     private final ConversationProperties properties;
     private final DfsService dfsService;
 
@@ -142,6 +146,25 @@ public class ConversationController {
             log.error("Failed to stream audio for message {}", messageId, e);
             return ResponseEntity.internalServerError().build();
         }
+    }
+
+    /**
+     * Generate a random conversation topic
+     */
+    @PostMapping("/topic/random")
+    @Operation(summary = "Generate a random conversation topic")
+    public R<ConversationTopicVO> generateRandomTopic(
+            @AuthenticationPrincipal KiwiUser user,
+            @RequestBody(required = false) ConversationTopicRequest request) {
+
+        log.info("Generating random topic for user {}", user.getUserId());
+
+        if (request == null) {
+            request = new ConversationTopicRequest();
+        }
+
+        ConversationTopicVO topic = topicService.generateRandomTopic(request);
+        return R.ok(topic);
     }
 
     /**

@@ -87,6 +87,7 @@ case "${1:-menu}" in
         do_upload
         ;;
     deploy)
+        select_memory
         do_build
         do_kill
         do_start
@@ -95,9 +96,11 @@ case "${1:-menu}" in
         do_kill
         ;;
     start)
+        select_memory
         do_start
         ;;
     restart)
+        select_memory
         do_kill
         do_start
         ;;
@@ -111,6 +114,10 @@ case "${1:-menu}" in
         echo "6) Restart (kill + start)"
         echo ""
         read -p "Select [1-6]: " choice
+        # Prompt for memory upfront if action includes start
+        case $choice in
+            3|5|6) select_memory ;;
+        esac
         case $choice in
             1) do_build ;;
             2) do_build; do_upload ;;

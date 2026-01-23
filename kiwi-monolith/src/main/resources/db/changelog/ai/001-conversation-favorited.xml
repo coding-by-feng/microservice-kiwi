@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <!-- Add favorited column to ai_conversation table -->
+    <changeSet id="001-add-favorited-column" author="codingByFeng">
+        <addColumn tableName="ai_conversation">
+            <column name="favorited" type="TINYINT(1)" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+
+        <!-- Composite index for efficient favorites filtering -->
+        <createIndex tableName="ai_conversation" indexName="idx_ai_conversation_user_favorited">
+            <column name="user_id"/>
+            <column name="favorited"/>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>

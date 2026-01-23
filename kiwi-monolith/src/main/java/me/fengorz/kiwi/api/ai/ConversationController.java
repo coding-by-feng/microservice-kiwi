@@ -96,8 +96,11 @@ public class ConversationController {
      */
     @GetMapping("/list")
     @Operation(summary = "List user's conversations")
-    public R<List<ConversationVO>> listConversations(@AuthenticationPrincipal KiwiUser user) {
-        return R.ok(conversationService.listUserConversations(user.getUserId().longValue()));
+    public R<List<ConversationVO>> listConversations(
+            @AuthenticationPrincipal KiwiUser user,
+            @RequestParam(required = false) Boolean favoritedOnly) {
+        return R.ok(conversationService.listUserConversations(
+                user.getUserId().longValue(), favoritedOnly));
     }
 
     /**
@@ -111,6 +114,17 @@ public class ConversationController {
 
         conversationService.deleteConversation(id, user.getUserId().longValue());
         return R.ok(null);
+    }
+
+    /**
+     * Toggle favorite status for a conversation
+     */
+    @PostMapping("/{id}/favorite")
+    @Operation(summary = "Toggle favorite status")
+    public R<Boolean> toggleFavorite(
+            @AuthenticationPrincipal KiwiUser user,
+            @PathVariable Long id) {
+        return R.ok(conversationService.toggleFavorite(id, user.getUserId().longValue()));
     }
 
     /**

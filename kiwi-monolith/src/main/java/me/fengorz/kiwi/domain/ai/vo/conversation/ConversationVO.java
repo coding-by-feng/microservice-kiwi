@@ -49,6 +49,7 @@ public class ConversationVO {
     private List<SpeakerVO> speakers;
     private List<MessageVO> messages;
     private LocalDateTime createTime;
+    private Boolean favorited;
 
     public static ConversationVO fromEntity(Conversation entity) {
         if (entity == null) {
@@ -76,6 +77,7 @@ public class ConversationVO {
                 .speakers(speakers)
                 .messages(messages)
                 .createTime(entity.getCreateTime())
+                .favorited(entity.getFavorited())
                 .build();
     }
 }

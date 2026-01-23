@@ -29,4 +29,7 @@
     <!-- Focus Timer tables -->
     <include file="db/changelog/focus/001-focus-tables.xml"/>
 
+    <!-- AI module changes -->
+    <include file="db/changelog/ai/001-conversation-favorited.xml"/>
+
 </databaseChangeLog>

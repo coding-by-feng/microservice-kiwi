@@ -437,15 +437,18 @@ public class ConversationService extends ServiceImpl<ConversationMapper, Convers
     /**
      * List user's conversations
      */
-    @Cacheable(value = CACHE_NAME, key = "'user:' + #userId + ':list'")
-    public List<ConversationVO> listUserConversations(Long userId) {
-        List<Conversation> conversations = list(
-                new LambdaQueryWrapper<Conversation>()
-                        .eq(Conversation::getUserId, userId)
-                        .eq(Conversation::getIsDel, "N")
-                        .orderByDesc(Conversation::getCreateTime)
-        );
+    @Cacheable(value = CACHE_NAME, key = "'user:' + #userId + ':list:' + (#favoritedOnly != null ? #favoritedOnly : 'all')")
+    public List<ConversationVO> listUserConversations(Long userId, Boolean favoritedOnly) {
+        LambdaQueryWrapper<Conversation> query = new LambdaQueryWrapper<Conversation>()
+                .eq(Conversation::getUserId, userId)
+                .eq(Conversation::getIsDel, "N")
+                .orderByDesc(Conversation::getCreateTime);
 
+        if (Boolean.TRUE.equals(favoritedOnly)) {
+            query.eq(Conversation::getFavorited, true);
+        }
+
+        List<Conversation> conversations = list(query);
         return conversations.stream()
                 .map(ConversationVO::fromEntity)
                 .collect(Collectors.toList());
@@ -455,7 +458,8 @@ public class ConversationService extends ServiceImpl<ConversationMapper, Convers
      * Delete conversation (soft delete)
      */
     @Caching(evict = {
-            @CacheEvict(value = CACHE_NAME, key = "'user:' + #userId + ':list'"),
+            @CacheEvict(value = CACHE_NAME, key = "'user:' + #userId + ':list:all'"),
+            @CacheEvict(value = CACHE_NAME, key = "'user:' + #userId + ':list:true'"),
             @CacheEvict(value = CACHE_NAME, key = "'id:' + #id")
     })
     @Transactional
@@ -473,6 +477,32 @@ public class ConversationService extends ServiceImpl<ConversationMapper, Convers
         conversation.setIsDel("Y");
         conversation.setUpdateTime(LocalDateTime.now());
         updateById(conversation);
+    }
+
+    /**
+     * Toggle favorite status for a conversation
+     */
+    @Caching(evict = {
+            @CacheEvict(value = CACHE_NAME, key = "'user:' + #userId + ':list:all'"),
+            @CacheEvict(value = CACHE_NAME, key = "'user:' + #userId + ':list:true'"),
+            @CacheEvict(value = CACHE_NAME, key = "'id:' + #id")
+    })
+    @Transactional
+    public Boolean toggleFavorite(Long id, Long userId) {
+        Conversation conversation = getById(id);
+        if (conversation == null || "Y".equals(conversation.getIsDel())) {
+            throw new ServiceException("Conversation not found");
+        }
+
+        if (!conversation.getUserId().equals(userId)) {
+            throw new ServiceException("Access denied");
+        }
+
+        conversation.toggleFavorite();
+        conversation.setUpdateTime(LocalDateTime.now());
+        updateById(conversation);
+
+        return conversation.getFavorited();
     }
 
     /**

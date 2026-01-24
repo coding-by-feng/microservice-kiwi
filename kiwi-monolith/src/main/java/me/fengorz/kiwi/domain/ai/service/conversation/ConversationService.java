@@ -454,7 +454,7 @@ public class ConversationService extends ServiceImpl<ConversationMapper, Convers
     }
 
     /**
-     * Delete conversation (soft delete)
+     * Delete conversation (hard delete)
      */
     @CacheEvict(value = CACHE_NAME, key = "'id:' + #id")
     @Transactional
@@ -469,9 +469,16 @@ public class ConversationService extends ServiceImpl<ConversationMapper, Convers
             throw new ServiceException("Access denied");
         }
 
-        conversation.setIsDel("Y");
-        conversation.setUpdateTime(LocalDateTime.now());
-        updateById(conversation);
+        // Delete related messages
+        messageMapper.delete(new LambdaQueryWrapper<ConversationMessage>()
+                .eq(ConversationMessage::getConversationId, id));
+
+        // Delete related speakers
+        speakerMapper.delete(new LambdaQueryWrapper<ConversationSpeaker>()
+                .eq(ConversationSpeaker::getConversationId, id));
+
+        // Delete the conversation
+        removeById(id);
     }
 
     /**

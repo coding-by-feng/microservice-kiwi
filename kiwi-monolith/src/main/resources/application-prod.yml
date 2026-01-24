@@ -7,7 +7,7 @@ server:
 spring:
   # ==================== Database ====================
   datasource:
-    url: jdbc:mysql://kiwi-mysql:3306/kiwi_db?useUnicode=true&characterEncoding=UTF-8&useSSL=true&requireSSL=true&autoReconnect=true&serverTimezone=Pacific/Auckland
+    url: jdbc:mysql://kiwi-mysql:3307/kiwi_db?useUnicode=true&characterEncoding=UTF-8&useSSL=true&requireSSL=true&autoReconnect=true&serverTimezone=Pacific/Auckland
     username: ENC(KH/GJ05cpFBSAV5u8IruRw==)
     password: ENC(Dh6vV+rX9HyZgiOP83BIiQAZ1+9KOGVh)
     hikari:
@@ -29,7 +29,7 @@ spring:
   data:
     redis:
       host: kiwi-redis
-      port: 6379
+      port: 6380
       password: ENC(uxuSI1Bl5AelC8dYvJUvMhsRbasVD4zh)
       database: 0
       timeout: 10000ms
@@ -43,7 +43,7 @@ spring:
 
   # ==================== Elasticsearch ====================
   elasticsearch:
-    uris: http://kiwi-es:9200
+    uris: http://kiwi-es:9201
     username: ENC(NKy6wa5SuHBhQmfLWf6Zv8wf8sPMaE0b)
     password: ENC(oj9wNYu52oQH1d9T0zHeGDLz7P7em71u)
 
@@ -85,6 +85,19 @@ management:
   health:
     elasticsearch:
       enabled: false
+
+# ==================== Storage ====================
+storage:
+  backend: minio
+
+minio:
+  endpoint: http://kiwi-minio:9000
+  accessKey: ${MINIO_ACCESS_KEY}
+  secretKey: ${MINIO_SECRET_KEY}
+  bucket: kiwi
+  connectTimeout: 10000
+  readTimeout: 30000
+  writeTimeout: 60000
 
 # ==================== Application Custom Config ====================
 kiwi:

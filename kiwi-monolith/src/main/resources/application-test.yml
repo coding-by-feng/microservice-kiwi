@@ -90,6 +90,19 @@ management:
     elasticsearch:
       enabled: false
 
+# ==================== Storage ====================
+storage:
+  backend: minio
+
+minio:
+  endpoint: http://kiwi-minio:9000
+  accessKey: ${MINIO_ACCESS_KEY}
+  secretKey: ${MINIO_SECRET_KEY}
+  bucket: kiwi
+  connectTimeout: 10000
+  readTimeout: 30000
+  writeTimeout: 60000
+
 # ==================== Application Custom Config ====================
 kiwi:
   # FastDFS Configuration

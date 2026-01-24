@@ -511,6 +511,16 @@ ai:
       - Include one relevant emoji per message
       - Make dialogue authentic and engaging
       - No Markdown, no extra text outside JSON
+    topic-generation: |
+      Generate a creative conversation topic for language learning. Output ONLY valid JSON:
+      {
+        "topic": "Descriptive topic/scenario",
+        "suggestedSpeakerCount": 2,
+        "suggestedDuration": "FIVE_MINUTES",
+        "keywords": ["keyword1", "keyword2", "keyword3", "keyword4"]
+      }
+      Duration options: TWO_MINUTES, FIVE_MINUTES, TEN_MINUTES
+      No extra text outside JSON.
 
 # ==================== Google OAuth2 Configuration ====================
 google:

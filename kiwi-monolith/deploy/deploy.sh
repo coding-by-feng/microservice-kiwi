@@ -4,6 +4,11 @@
 
 set -e
 
+# Source bashrc to load environment variables
+if [ -f "$HOME/.bashrc" ]; then
+    source "$HOME/.bashrc"
+fi
+
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 MONOLITH_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 JAR_NAME="kiwi-monolith-3.0.0.jar"

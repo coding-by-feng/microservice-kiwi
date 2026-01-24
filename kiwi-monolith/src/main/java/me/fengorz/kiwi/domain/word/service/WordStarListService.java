@@ -59,7 +59,6 @@ public class WordStarListService extends ServiceImpl<WordStarListMapper, WordSta
     /**
      * Find lists by owner
      */
-    @Cacheable(value = CACHE_NAME, key = "'owner:' + #owner")
     public List<WordStarList> findByOwner(Integer owner) {
         return list(new LambdaQueryWrapper<WordStarList>()
                 .eq(WordStarList::getOwner, owner)

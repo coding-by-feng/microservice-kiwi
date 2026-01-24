@@ -56,7 +56,6 @@ public class ParaphraseStarListService extends ServiceImpl<ParaphraseStarListMap
     /**
      * Find lists by owner
      */
-    @Cacheable(value = CACHE_NAME, key = "'owner:' + #owner")
     public List<ParaphraseStarList> findByOwner(Integer owner) {
         return list(new LambdaQueryWrapper<ParaphraseStarList>()
                 .eq(ParaphraseStarList::getOwner, owner)

@@ -65,7 +65,6 @@ public class SysDeptService extends ServiceImpl<SysDeptMapper, SysDept> {
     /**
      * Find all root departments (top-level)
      */
-    @Cacheable(value = CACHE_NAME, key = "'root'")
     public List<SysDept> findRootDepartments() {
         return list(new LambdaQueryWrapper<SysDept>()
                 .and(w -> w.isNull(SysDept::getParentId).or().eq(SysDept::getParentId, 0))
@@ -76,7 +75,6 @@ public class SysDeptService extends ServiceImpl<SysDeptMapper, SysDept> {
     /**
      * Find children departments by parent ID
      */
-    @Cacheable(value = CACHE_NAME, key = "'children:' + #parentId")
     public List<SysDept> findByParentId(Integer parentId) {
         return list(new LambdaQueryWrapper<SysDept>()
                 .eq(SysDept::getParentId, parentId)

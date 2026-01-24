@@ -31,5 +31,6 @@
 
     <!-- AI module changes -->
     <include file="db/changelog/ai/001-conversation-favorited.xml"/>
+    <include file="db/changelog/ai/002-add-ai-response-column.xml"/>
 
 </databaseChangeLog>

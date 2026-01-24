@@ -22,12 +22,15 @@ import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.enumeration.AiPromptModeEnum;
 import me.fengorz.kiwi.common.enumeration.LanguageEnum;
 import me.fengorz.kiwi.common.util.WebTools;
+import me.fengorz.kiwi.domain.ai.entity.AiCallHistory;
 import me.fengorz.kiwi.domain.ai.service.AiCallHistoryService;
 import me.fengorz.kiwi.domain.ai.service.AiStreamingService;
+import me.fengorz.kiwi.security.KiwiUser;
 import me.fengorz.kiwi.ws.model.AiStreamingRequest;
 import me.fengorz.kiwi.ws.model.AiStreamingResponse;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -107,24 +110,26 @@ public class AiStreamingSseController {
             return emitter;
         }
 
-        // Log call history
+        // Log call history and capture ID for response update
+        Long historyId = null;
         if (userId != null) {
             try {
-                aiCallHistoryService.logCall(
+                historyId = aiCallHistoryService.logCall(
                         userId,
                         null,
                         request.getPrompt(),
                         request.getPromptMode(),
                         request.getTargetLanguage(),
                         request.getNativeLanguage()
-                );
+                ).getId();
             } catch (Exception e) {
                 log.error("{} Failed to save call history: {}", LOG_PREFIX, e.getMessage());
             }
         }
 
         // Process AI streaming in background
-        taskExecutor.execute(() -> processAiStreaming(emitter, request));
+        final Long finalHistoryId = historyId;
+        taskExecutor.execute(() -> processAiStreaming(emitter, request, finalHistoryId));
 
         return emitter;
     }
@@ -159,24 +164,83 @@ public class AiStreamingSseController {
             return emitter;
         }
 
-        // Log call history
+        // Log call history and capture ID for response update
+        Long historyId = null;
         if (userId != null) {
             try {
-                aiCallHistoryService.logCall(
+                historyId = aiCallHistoryService.logCall(
                         userId,
                         request.getAiUrl(),
                         request.getPrompt(),
                         request.getPromptMode(),
                         request.getTargetLanguage(),
                         request.getNativeLanguage()
-                );
+                ).getId();
             } catch (Exception e) {
                 log.error("{} Failed to save call history: {}", LOG_PREFIX, e.getMessage());
             }
         }
 
         // Process AI streaming in background
-        taskExecutor.execute(() -> processAiStreaming(emitter, request));
+        final Long finalHistoryId = historyId;
+        taskExecutor.execute(() -> processAiStreaming(emitter, request, finalHistoryId));
+
+        return emitter;
+    }
+
+    /**
+     * Regenerate AI response for an existing history item
+     * Re-calls the AI API with the same prompt/settings and updates the stored response
+     */
+    @PostMapping(value = "/regenerate/{historyId}", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    @Operation(summary = "Regenerate AI response", description = "Re-call AI with same settings and update stored response")
+    public SseEmitter regenerate(
+            @PathVariable Long historyId,
+            @AuthenticationPrincipal KiwiUser user) {
+
+        log.info("{} Regenerate request for history ID: {}", LOG_PREFIX, historyId);
+
+        SseEmitter emitter = new SseEmitter(SSE_TIMEOUT_MS);
+
+        emitter.onCompletion(() -> log.info("{} SSE connection completed (regenerate)", LOG_PREFIX));
+        emitter.onTimeout(() -> log.warn("{} SSE connection timed out (regenerate)", LOG_PREFIX));
+        emitter.onError(e -> log.error("{} SSE error (regenerate): {}", LOG_PREFIX, e.getMessage()));
+
+        // Fetch existing history record
+        var historyOpt = aiCallHistoryService.findById(historyId);
+        if (historyOpt.isEmpty()) {
+            sendErrorAndComplete(emitter, "History record not found", "NOT_FOUND", null);
+            return emitter;
+        }
+
+        AiCallHistory history = historyOpt.get();
+
+        // Validate user owns this record
+        if (!history.getUserId().equals(user.getUserId().longValue())) {
+            sendErrorAndComplete(emitter, "Unauthorized access to history record", "UNAUTHORIZED", null);
+            return emitter;
+        }
+
+        // Build request from history
+        AiStreamingRequest request = AiStreamingRequest.builder()
+                .prompt(history.getPrompt())
+                .promptMode(history.getPromptMode())
+                .targetLanguage(history.getTargetLanguage())
+                .nativeLanguage(history.getNativeLanguage())
+                .aiUrl(history.getAiUrl())
+                .timestamp(System.currentTimeMillis())
+                .build();
+
+        // Validate the reconstructed request
+        String validationError = validateRequest(request);
+        if (validationError != null) {
+            log.warn("{} Regenerate validation failed: {}", LOG_PREFIX, validationError);
+            sendErrorAndComplete(emitter, validationError, "VALIDATION_ERROR", request);
+            return emitter;
+        }
+
+        // Process AI streaming in background and update the same history record
+        taskExecutor.execute(() -> processAiStreaming(emitter, request, historyId));
 
         return emitter;
     }
@@ -217,7 +281,7 @@ public class AiStreamingSseController {
         return null;
     }
 
-    private void processAiStreaming(SseEmitter emitter, AiStreamingRequest request) {
+    private void processAiStreaming(SseEmitter emitter, AiStreamingRequest request, Long historyId) {
         try {
             log.info("{} Starting AI streaming", LOG_PREFIX);
 
@@ -254,6 +318,17 @@ public class AiStreamingSseController {
                     () -> {
                         long duration = System.currentTimeMillis() - startTime;
                         log.info("{} Streaming completed - Duration: {}ms", LOG_PREFIX, duration);
+
+                        // Save AI response to history
+                        if (historyId != null) {
+                            try {
+                                aiCallHistoryService.updateResponse(historyId, fullResponse.toString());
+                                log.info("{} AI response saved to history ID: {}", LOG_PREFIX, historyId);
+                            } catch (Exception e) {
+                                log.error("{} Failed to save AI response to history: {}", LOG_PREFIX, e.getMessage());
+                            }
+                        }
+
                         sendEvent(emitter, "completed",
                                 AiStreamingResponse.completed("AI streaming completed", request, fullResponse.toString(), duration));
                         emitter.complete();

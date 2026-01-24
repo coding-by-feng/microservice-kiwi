@@ -7,9 +7,9 @@ server:
 spring:
   # ==================== Database ====================
   datasource:
-    url: jdbc:mysql://${DB_HOST_PROD:kiwi-mysql}:${DB_PORT_PROD:3306}/${DB_NAME_PROD:kiwi_db}?useUnicode=true&characterEncoding=UTF-8&useSSL=true&requireSSL=true&autoReconnect=true&serverTimezone=Pacific/Auckland
-    username: ${DB_USERNAME_PROD:ENC(KH/GJ05cpFBSAV5u8IruRw==)}
-    password: ${DB_PASSWORD_PROD:ENC(Dh6vV+rX9HyZgiOP83BIiQAZ1+9KOGVh)}
+    url: jdbc:mysql://kiwi-mysql:3306/kiwi_db?useUnicode=true&characterEncoding=UTF-8&useSSL=true&requireSSL=true&autoReconnect=true&serverTimezone=Pacific/Auckland
+    username: ENC(KH/GJ05cpFBSAV5u8IruRw==)
+    password: ENC(Dh6vV+rX9HyZgiOP83BIiQAZ1+9KOGVh)
     hikari:
       maximum-pool-size: 100
       minimum-idle: 20
@@ -28,9 +28,9 @@ spring:
   # ==================== Redis ====================
   data:
     redis:
-      host: ${REDIS_HOST_PROD:kiwi-redis}
-      port: ${REDIS_PORT_PROD:6379}
-      password: ${REDIS_PASSWORD_PROD:ENC(uxuSI1Bl5AelC8dYvJUvMhsRbasVD4zh)}
+      host: kiwi-redis
+      port: 6379
+      password: ENC(uxuSI1Bl5AelC8dYvJUvMhsRbasVD4zh)
       database: 0
       timeout: 10000ms
       lettuce:
@@ -41,18 +41,11 @@ spring:
           max-wait: 5000ms
         shutdown-timeout: 100ms
 
-  # ==================== Redis (for Redisson) ====================
-  redis:
-    host: ${REDIS_HOST_PROD:kiwi-redis}
-    port: ${REDIS_PORT_PROD:6379}
-    password: ${REDIS_PASSWORD_PROD:ENC(uxuSI1Bl5AelC8dYvJUvMhsRbasVD4zh)}
-    database: 0
-
   # ==================== Elasticsearch ====================
   elasticsearch:
-    uris: ${ES_URIS_PROD:http://kiwi-es:9200}
-    username: ${ES_USERNAME_PROD:ENC(NKy6wa5SuHBhQmfLWf6Zv8wf8sPMaE0b)}
-    password: ${ES_PASSWORD_PROD:ENC(oj9wNYu52oQH1d9T0zHeGDLz7P7em71u)}
+    uris: http://kiwi-es:9200
+    username: ENC(NKy6wa5SuHBhQmfLWf6Zv8wf8sPMaE0b)
+    password: ENC(oj9wNYu52oQH1d9T0zHeGDLz7P7em71u)
 
   # ==================== File Upload ====================
   servlet:
@@ -99,7 +92,7 @@ kiwi:
   dfs:
     connect-timeout: 6000000
     so-timeout: 6000000
-    tracker-list: ${FASTDFS_TRACKER_PROD:kiwi-fastdfs:22122}
+    tracker-list: kiwi-fastdfs:22122
     gcp:
       bucket-name: kiwidict-bucket
 
@@ -107,16 +100,16 @@ kiwi:
   file:
     crawler:
       voice:
-        tmp-path: ${VOICE_TMP_PATH:/wordTmp}
+        tmp-path: /wordTmp
     vocabulary:
       word:
         list:
-          path: ${WORD_LIST_PATH:/wordTmp}
+          path: /wordTmp
 
   # TTS Configuration
   tts:
     # TTS Provider Selection: voicerss, baidu, gcp, deepgram, openai
-    provider: ${TTS_PROVIDER:openai}
+    provider: openai
     chattts:
       base-url: http://kiwi-chattts:8000
       timeout: 30
@@ -138,26 +131,26 @@ kiwi:
     openai:
       api-key: ${OPENAI_API_KEY:}
       base-url: https://api.openai.com/v1/audio/speech
-      model: ${OPENAI_TTS_MODEL:tts-1}
-      english-voice: ${OPENAI_TTS_EN_VOICE:alloy}
-      chinese-voice: ${OPENAI_TTS_ZH_VOICE:nova}
+      model: tts-1
+      english-voice: alloy
+      chinese-voice: nova
       response-format: mp3
       speed: 1.0
 
   # Review Audio Configuration
   review:
     audio:
-      enabled: ${REVIEW_AUDIO_ENABLED:false}
-      max-generation-count: ${REVIEW_AUDIO_MAX_COUNT:100}
-      storage-path: ${REVIEW_AUDIO_PATH:/wordTmp/review-audio}
+      enabled: false
+      max-generation-count: 100
+      storage-path: /wordTmp/review-audio
       async-generation: true
       content-mode: both
       api-call-delay-ms: 200
       scheduler:
-        enabled: ${REVIEW_AUDIO_SCHEDULER_ENABLED:true}
-        cron: ${REVIEW_AUDIO_SCHEDULER_CRON:0 0 3 * * *}
-        max-per-run: ${REVIEW_AUDIO_SCHEDULER_MAX:500}
-        lookback-days: ${REVIEW_AUDIO_SCHEDULER_LOOKBACK:30}
+        enabled: true
+        cron: "0 0 3 * * *"
+        max-per-run: 500
+        lookback-days: 30
 
   # YouTube Configuration
   youtube:
@@ -182,10 +175,10 @@ kiwi:
       enabled: false
     # Channel Video Sync Scheduler - fetches new videos and caches subtitles
     sync:
-      enabled: ${YT_SYNC_ENABLED:true}  # Enabled by default in prod
-      cron: ${YT_SYNC_CRON:0 0 */6 * * *}  # Every 6 hours
-      fetch-subtitles: ${YT_SYNC_FETCH_SUBTITLES:true}
-      max-videos-per-channel: ${YT_SYNC_MAX_VIDEOS:100}
+      enabled: true
+      cron: "0 0 */6 * * *"
+      fetch-subtitles: true
+      max-videos-per-channel: 100
 
 # ==================== AI Configuration ====================
 ai:
@@ -384,14 +377,14 @@ ai:
 # ==================== Google OAuth2 Configuration ====================
 google:
   oauth2:
-    client-id: ${GOOGLE_OAUTH2_CLIENT_ID:}
-    client-secret: ${GOOGLE_OAUTH2_CLIENT_SECRET:}
-    redirect-uri: ${GOOGLE_OAUTH2_REDIRECT_URI:https://kason.app/auth/oauth/google/callback}
+    client-id: ${GOOGLE_CLIENT_ID:}
+    client-secret: ${GOOGLE_CLIENT_SECRET:}
+    redirect-uri: https://kason.app/auth/oauth/google/callback
     scopes:
       - openid
       - profile
       - email
-    home-page: ${HOME_PAGE:https://kason.app}
+    home-page: https://kason.app
 
 # ==================== Security Ignore URLs ====================
 ignore:

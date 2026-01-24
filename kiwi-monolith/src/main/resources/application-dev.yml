@@ -82,7 +82,7 @@ spring:
 
   # ==================== Liquibase ====================
   liquibase:
-    enabled: false
+    enabled: true
 
 # ==================== Flowable (Disabled) ====================
 flowable:

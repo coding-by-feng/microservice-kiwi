@@ -30,7 +30,7 @@ spring:
     redis:
       host: kiwi-redis
       port: 6380
-      password: ENC(uxuSI1Bl5AelC8dYvJUvMhsRbasVD4zh)
+      password: ${SPRING_DATA_REDIS_PASSWORD}
       database: 0
       timeout: 10000ms
       lettuce:
@@ -40,6 +40,13 @@ spring:
           min-idle: 5
           max-wait: 5000ms
         shutdown-timeout: 100ms
+
+  # ==================== Redis (for Redisson) ====================
+  redis:
+    host: kiwi-redis
+    port: 6380
+    password: ${SPRING_DATA_REDIS_PASSWORD}
+    database: 0
 
   # ==================== Elasticsearch ====================
   elasticsearch:

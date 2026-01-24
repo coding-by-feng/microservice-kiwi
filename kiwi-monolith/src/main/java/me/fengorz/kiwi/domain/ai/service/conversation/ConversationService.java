@@ -437,7 +437,6 @@ public class ConversationService extends ServiceImpl<ConversationMapper, Convers
     /**
      * List user's conversations
      */
-    @Cacheable(value = CACHE_NAME, key = "'user:' + #userId + ':list:' + (#favoritedOnly != null ? #favoritedOnly : 'all')")
     public List<ConversationVO> listUserConversations(Long userId, Boolean favoritedOnly) {
         LambdaQueryWrapper<Conversation> query = new LambdaQueryWrapper<Conversation>()
                 .eq(Conversation::getUserId, userId)
@@ -457,11 +456,7 @@ public class ConversationService extends ServiceImpl<ConversationMapper, Convers
     /**
      * Delete conversation (soft delete)
      */
-    @Caching(evict = {
-            @CacheEvict(value = CACHE_NAME, key = "'user:' + #userId + ':list:all'"),
-            @CacheEvict(value = CACHE_NAME, key = "'user:' + #userId + ':list:true'"),
-            @CacheEvict(value = CACHE_NAME, key = "'id:' + #id")
-    })
+    @CacheEvict(value = CACHE_NAME, key = "'id:' + #id")
     @Transactional
     public void deleteConversation(Long id, Long userId) {
         Conversation conversation = getById(id);
@@ -482,11 +477,7 @@ public class ConversationService extends ServiceImpl<ConversationMapper, Convers
     /**
      * Toggle favorite status for a conversation
      */
-    @Caching(evict = {
-            @CacheEvict(value = CACHE_NAME, key = "'user:' + #userId + ':list:all'"),
-            @CacheEvict(value = CACHE_NAME, key = "'user:' + #userId + ':list:true'"),
-            @CacheEvict(value = CACHE_NAME, key = "'id:' + #id")
-    })
+    @CacheEvict(value = CACHE_NAME, key = "'id:' + #id")
     @Transactional
     public Boolean toggleFavorite(Long id, Long userId) {
         Conversation conversation = getById(id);

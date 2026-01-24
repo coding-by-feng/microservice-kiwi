@@ -71,7 +71,7 @@ do_start() {
         select_memory
     fi
     cd "$HOME"
-    nohup java $JAVA_OPTS -jar "$JAR_PATH" > "$LOG_FILE" 2>&1 &
+    nohup java $JAVA_OPTS -Dspring.profiles.active=prod -jar "$JAR_PATH" > "$LOG_FILE" 2>&1 &
     echo "Waiting for startup... (tail -f $LOG_FILE)"
     echo "Press Ctrl+C to stop watching logs (app will continue running)"
     sleep 2

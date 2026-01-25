@@ -188,9 +188,9 @@ kiwi:
       cookies:
         enabled: true
         path: /root/.config/yt-dlp/cookies.txt
-    proxy:
-      enabled: true
-      value: ${YT_PROXY_VALUE:ENC(FGrA00PC+bW5FiLAVautt6lhpqOx8U92YLzFLeAGVf78Xj93B600jQ==)}
+      proxy:
+        enabled: true
+        value: ${YT_PROXY_VALUE:ENC(FGrA00PC+bW5FiLAVautt6lhpqOx8U92YLzFLeAGVf78Xj93B600jQ==)}
     migration:
       enabled: false
     # Channel Video Sync Scheduler - fetches new videos and caches subtitles

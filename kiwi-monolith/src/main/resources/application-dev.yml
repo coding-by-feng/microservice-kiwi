@@ -42,7 +42,7 @@ spring:
     redis:
       host: ${REDIS_HOST_DEV:localhost}
       port: ${REDIS_PORT_DEV:6380}
-      password: ${REDIS_PASSWORD_DEV}
+      password: ${REDIS_PASSWORD_DEV:kiwi123}
       database: 0
       timeout: 10000ms
       lettuce:
@@ -57,7 +57,7 @@ spring:
   redis:
     host: ${REDIS_HOST_DEV:localhost}
     port: ${REDIS_PORT_DEV:6380}
-    password: ${REDIS_PASSWORD_DEV}
+    password: ${REDIS_PASSWORD_DEV:kiwi123}
     database: 0
 
   # ==================== Elasticsearch ====================
@@ -483,6 +483,10 @@ ai:
       - Alternatives must be realistic confusion candidates, not random words
       - If Correction is Unknown, still provide Alternatives
       - Output in plain text only, no Markdown
+    topic-generation: |
+      You are a creative conversation topic generator for language learning.
+      Generate topics based on the user's requirements.
+      Output ONLY valid JSON, no other text, no Markdown formatting.
     conversation-generation: |
       Generate a natural English conversation. Output ONLY valid JSON with this structure:
       {

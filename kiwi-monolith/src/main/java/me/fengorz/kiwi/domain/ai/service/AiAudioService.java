@@ -13,22 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-<<<<<<<< HEAD:kiwi-monolith/src/main/java/me/fengorz/kiwi/common/constant/CacheConstants.java
-package me.fengorz.kiwi.common.constant;
-
-/**
- * Cache Constants
- *
- * @author codingByFeng
- */
-public interface CacheConstants {
-
-    String CACHE_KEY_GENERATOR_BEAN = "cacheKeyGenerator";
-
-    String CACHE_MANAGER_WORD = "cacheManagerWord";
-
-    String CLIENT_DETAILS = "client_detail";
-========
 package me.fengorz.kiwi.domain.ai.service;
 
 /**
@@ -45,5 +29,4 @@ public interface AiAudioService {
     String speechToText(byte[] audio);
 
     String speechToText(byte[] audio, String language);
->>>>>>>> bdd29dca841417badfb46f6e52424b773f3abdc7:kiwi-monolith/src/main/java/me/fengorz/kiwi/domain/ai/service/AiAudioService.java
 }

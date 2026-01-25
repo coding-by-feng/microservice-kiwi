@@ -371,6 +371,31 @@ ai:
       - If a category has no items, skip it
       - Prioritize common vocabulary; include formal/informal variants if significant
     ambiguous-association-correction: "If only the first input is ambiguous, list all possible corrections with brief explanations in #[NL]. If both inputs are present, compare them; if the second is a correction of the first, output only the corrected version without explanation; otherwise, list all possible corrections for the first input. Output #[TL] only, plain text, no Markdown."
+    topic-generation: |
+      You are a creative conversation topic generator for language learning.
+      Generate topics based on the user's requirements.
+      Output ONLY valid JSON, no other text, no Markdown formatting.
+    conversation-generation: |
+      Generate a natural English conversation. Output ONLY valid JSON with this structure:
+      {
+        "topic": "A refined, concise topic title",
+        "speakers": [
+          {"index": 0, "name": "FirstName", "personality": "brief personality", "emoji": "avatar emoji"},
+          {"index": 1, "name": "FirstName", "personality": "brief personality", "emoji": "avatar emoji"}
+        ],
+        "messages": [
+          {"speakerIndex": 0, "text": "Message text", "emoji": "relevant emoji"},
+          {"speakerIndex": 1, "text": "Response text", "emoji": "relevant emoji"}
+        ]
+      }
+
+      Rules:
+      - Create distinct speaker personalities and speaking styles
+      - Include natural conversational elements (greetings, reactions, follow-ups)
+      - Each message should be 1-3 sentences, suitable for TTS
+      - Include one relevant emoji per message
+      - Make dialogue authentic and engaging
+      - No Markdown, no extra text outside JSON
 
 # ==================== Google OAuth2 Configuration ====================
 google:

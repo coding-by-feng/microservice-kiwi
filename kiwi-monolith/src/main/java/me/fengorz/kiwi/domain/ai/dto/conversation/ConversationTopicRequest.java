@@ -50,4 +50,11 @@ public class ConversationTopicRequest {
      */
     @Builder.Default
     private String language = "en";
+
+    /**
+     * Custom prompt for topic generation.
+     * If provided, the AI will generate a topic based on this prompt instead of random generation.
+     * Example: "I want to practice ordering food at a restaurant"
+     */
+    private String prompt;
 }

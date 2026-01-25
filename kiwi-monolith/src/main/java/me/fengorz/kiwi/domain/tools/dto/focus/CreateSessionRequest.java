@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-<<<<<<<< HEAD:kiwi-monolith/src/main/java/me/fengorz/kiwi/domain/tools/dto/focus/CreateSessionRequest.java
 package me.fengorz.kiwi.domain.tools.dto.focus;
 
 import lombok.Data;
@@ -31,15 +30,4 @@ public class CreateSessionRequest {
     private String treeType;
 
     private Integer potentialPoints;
-========
-package me.fengorz.kiwi.domain.tools.dto;
-
-import lombok.Data;
-
-import java.util.Map;
-
-@Data
-public class AnalyticsSummaryResponse {
-    private Map<String, Object> data;
->>>>>>>> bdd29dca841417badfb46f6e52424b773f3abdc7:kiwi-monolith/src/main/java/me/fengorz/kiwi/domain/tools/dto/AnalyticsSummaryResponse.java
 }

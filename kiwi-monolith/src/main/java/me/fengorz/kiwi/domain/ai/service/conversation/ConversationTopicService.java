@@ -74,6 +74,30 @@ public class ConversationTopicService {
             Notes for suggestedSpeakerCount: Use 2 for personal conversations, 3-4 for group discussions or scenarios with multiple roles.
             """;
 
+    private static final String CUSTOM_PROMPT_TEMPLATE = """
+            Based on the user's idea, generate a refined conversation topic for language learning practice.
+
+            User's idea: %s
+
+            Requirements:
+            - Difficulty: %s (%s)
+            - Language: %s
+            - Expand and refine the user's idea into a specific, engaging scenario
+            - The topic should be suitable for a conversation between 2-4 people
+            - Provide 4-6 related vocabulary keywords that learners might use
+
+            IMPORTANT: Output ONLY valid JSON in this exact format, no other text:
+            {
+              "topic": "A descriptive conversation topic/scenario based on the user's idea",
+              "suggestedSpeakerCount": 2,
+              "suggestedDuration": "FIVE_MINUTES",
+              "keywords": ["keyword1", "keyword2", "keyword3", "keyword4"]
+            }
+
+            Notes for suggestedDuration: Use "TWO_MINUTES" for simple topics, "FIVE_MINUTES" for moderate topics, "TEN_MINUTES" for complex discussions.
+            Notes for suggestedSpeakerCount: Use 2 for personal conversations, 3-4 for group discussions or scenarios with multiple roles.
+            """;
+
     /**
      * Generate a random conversation topic based on the request parameters
      *
@@ -84,16 +108,29 @@ public class ConversationTopicService {
         TopicCategory category = request.getCategory() != null ? request.getCategory() : TopicCategory.LIFESTYLE;
         TopicDifficulty difficulty = request.getDifficulty() != null ? request.getDifficulty() : TopicDifficulty.INTERMEDIATE;
         String language = request.getLanguage() != null ? request.getLanguage() : "en";
+        String customPrompt = request.getPrompt();
 
-        log.info("Generating random topic for category: {}, difficulty: {}, language: {}",
-                category.getCode(), difficulty.getCode(), language);
+        String formattedPrompt;
+        if (customPrompt != null && !customPrompt.isBlank()) {
+            log.info("Generating topic from custom prompt: {}, difficulty: {}, language: {}",
+                    customPrompt.substring(0, Math.min(50, customPrompt.length())), difficulty.getCode(), language);
 
-        String formattedPrompt = String.format(PROMPT_TEMPLATE,
-                category.getCode(),
-                category.getDescription(),
-                difficulty.getCode(),
-                difficulty.getDescription(),
-                language);
+            formattedPrompt = String.format(CUSTOM_PROMPT_TEMPLATE,
+                    customPrompt,
+                    difficulty.getCode(),
+                    difficulty.getDescription(),
+                    language);
+        } else {
+            log.info("Generating random topic for category: {}, difficulty: {}, language: {}",
+                    category.getCode(), difficulty.getCode(), language);
+
+            formattedPrompt = String.format(PROMPT_TEMPLATE,
+                    category.getCode(),
+                    category.getDescription(),
+                    difficulty.getCode(),
+                    difficulty.getDescription(),
+                    language);
+        }
 
         try {
             LanguageEnum languageEnum = LanguageEnum.fromCode(language);

@@ -76,25 +76,4 @@ public class AsyncConfig {
                 executor.getCorePoolSize(), executor.getMaxPoolSize(), 200);
         return executor;
     }
-
-    /**
-     * Dedicated thread pool for TTS (Text-to-Speech) audio generation.
-     * Limited concurrency to respect external API rate limits.
-     */
-    @Bean("ttsExecutor")
-    public Executor ttsExecutor() {
-        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(3);
-        executor.setMaxPoolSize(5);
-        executor.setQueueCapacity(100);
-        executor.setThreadNamePrefix("tts-");
-        executor.setKeepAliveSeconds(60);
-        executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
-        executor.setWaitForTasksToCompleteOnShutdown(true);
-        executor.setAwaitTerminationSeconds(30);
-        executor.initialize();
-        log.info("TTS thread pool initialized: core={}, max={}, queue={}",
-                executor.getCorePoolSize(), executor.getMaxPoolSize(), 100);
-        return executor;
-    }
 }

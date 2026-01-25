@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+<<<<<<<< HEAD:kiwi-monolith/src/main/java/me/fengorz/kiwi/domain/tools/dto/focus/FailSessionRequest.java
 package me.fengorz.kiwi.domain.tools.dto.focus;
 
 import lombok.Data;
@@ -28,4 +29,15 @@ public class FailSessionRequest {
     private String reason;
 
     private Integer penalty;
+========
+package me.fengorz.kiwi.domain.tools.dto;
+
+import lombok.Data;
+
+import java.util.Map;
+
+@Data
+public class AnalyticsMonthlyResponse {
+    private Map<String, Object> data;
+>>>>>>>> bdd29dca841417badfb46f6e52424b773f3abdc7:kiwi-monolith/src/main/java/me/fengorz/kiwi/domain/tools/dto/AnalyticsMonthlyResponse.java
 }

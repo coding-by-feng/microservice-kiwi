@@ -19,9 +19,9 @@ spring:
 
   # ==================== Database ====================
   datasource:
-    url: jdbc:mysql://localhost:3307/kiwi_db?useUnicode=true&characterEncoding=UTF-8&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Pacific/Auckland
-    username: root
-    password: ${DB_PASSWORD}
+    url: jdbc:mysql://${DB_HOST_DEV:localhost}:${DB_PORT_DEV:3307}/${DB_NAME_DEV:kiwi_db}?useUnicode=true&characterEncoding=UTF-8&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Pacific/Auckland
+    username: ${DB_USERNAME_DEV:root}
+    password: ${DB_PASSWORD_DEV}
     hikari:
       maximum-pool-size: 20
       minimum-idle: 10
@@ -40,9 +40,9 @@ spring:
   # ==================== Redis ====================
   data:
     redis:
-      host: localhost
-      port: 6380
-      password: ${REDIS_PASSWORD}
+      host: ${REDIS_HOST_DEV:localhost}
+      port: ${REDIS_PORT_DEV:6380}
+      password: ${REDIS_PASSWORD_DEV}
       database: 0
       timeout: 10000ms
       lettuce:
@@ -55,16 +55,16 @@ spring:
 
   # ==================== Redis (for Redisson) ====================
   redis:
-    host: localhost
-    port: 6380
-    password: ${REDIS_PASSWORD}
+    host: ${REDIS_HOST_DEV:localhost}
+    port: ${REDIS_PORT_DEV:6380}
+    password: ${REDIS_PASSWORD_DEV}
     database: 0
 
   # ==================== Elasticsearch ====================
   elasticsearch:
-    uris: http://localhost:9201
-    username: elastic
-    password: ${ES_PASSWORD}
+    uris: ${ES_URIS_DEV:http://localhost:9201}
+    username: ${ES_USERNAME_DEV:elastic}
+    password: ${ES_PASSWORD_DEV}
 
   # ==================== File Upload ====================
   servlet:
@@ -82,8 +82,7 @@ spring:
 
   # ==================== Liquibase ====================
   liquibase:
-    enabled: true
-    change-log: classpath:db/changelog/db.changelog-master.xml
+    enabled: false
 
 # ==================== Flowable (Disabled) ====================
 flowable:
@@ -104,23 +103,23 @@ flowable:
 
 # ==================== Storage ====================
 storage:
-  backend: minio
+  backend: ${STORAGE_BACKEND_DEV:minio}
 
 ftp:
-  host: localhost
-  port: 22
-  username: ftpuser
-  password: ${FTP_PASSWORD}
+  host: ${FTP_HOST_DEV:localhost}
+  port: ${FTP_PORT_DEV:22}
+  username: ${FTP_USER_DEV:ftpuser}
+  password: ${FTP_PASSWORD_DEV}
   baseDir: /kason-tools
   passiveMode: true
   connectTimeout: 15000
   dataTimeout: 30000
 
 minio:
-  endpoint: http://localhost:9001
-  accessKey: ${MINIO_ACCESS_KEY}
-  secretKey: ${MINIO_SECRET_KEY}
-  bucket: kiwi
+  endpoint: ${MINIO_ENDPOINT_DEV:http://localhost:9001}
+  accessKey: ${MINIO_ACCESS_KEY_DEV:kiwi}
+  secretKey: ${MINIO_SECRET_KEY_DEV:kiwi123456}
+  bucket: ${MINIO_BUCKET_DEV:kiwi}
   connectTimeout: 10000
   readTimeout: 30000
   writeTimeout: 60000
@@ -148,7 +147,7 @@ management:
 kiwi:
   # One-time code authentication (for anonymous access to trusted apps)
   auth:
-    one-time-code: ""
+    one-time-code: ${KIWI_ONE_TIME_CODE:}
 
   # HTTP Request/Response Logging (enable for debugging)
   logging:
@@ -161,7 +160,7 @@ kiwi:
   dfs:
     connect-timeout: 6000000
     so-timeout: 6000000
-    tracker-list: localhost:22122
+    tracker-list: ${FASTDFS_TRACKER_DEV:localhost:22122}
     gcp:
       bucket-name: kiwidict-bucket
 
@@ -169,11 +168,11 @@ kiwi:
   file:
     crawler:
       voice:
-        tmp-path: /Users/zhanshifeng/Documents/myDocument/temp/microSerivceVocabularyEnhancer
+        tmp-path: ${VOICE_TMP_PATH:/Users/zhanshifeng/Documents/myDocument/temp/microSerivceVocabularyEnhancer}
     vocabulary:
       word:
         list:
-          path: /Users/zhanshifeng/Downloads
+          path: ${WORD_LIST_PATH:/Users/zhanshifeng/Downloads}
 
   # TTS Configuration
   tts:
@@ -237,7 +236,7 @@ kiwi:
       # Maximum number of audio files to generate per batch/request
       max-generation-count: 100
       # Audio storage path (local filesystem)
-      storage-path: /Users/kasonzhan/Documents/kason-tools/review-audio
+      storage-path: ${REVIEW_AUDIO_PATH:/Users/kasonzhan/Documents/kason-tools/review-audio}
       # Whether to generate audio asynchronously
       async-generation: true
       # Content to include in audio: english, chinese, both
@@ -258,17 +257,11 @@ kiwi:
     video:
       command: yt-dlp
       download:
-        path: /Users/kasonzhan/Documents/kason-tools/ytb-data
+        path: ${YT_DOWNLOAD_PATH:/Users/kasonzhan/Documents/kason-tools/ytb-data}
       large-subtitles:
         threshold: 1000
       batch:
         enabled: false
-      # JavaScript runtime for yt-dlp (node, deno, etc.)
-      js-runtimes: node
-      # YouTube cookies file path for authentication (bypasses bot detection)
-      cookies:
-        enabled: true
-        path: /root/.config/yt-dlp/cookies.txt
     proxy:
       enabled: false
       value: ""
@@ -517,12 +510,12 @@ google:
   oauth2:
     client-id: ${GOOGLE_CLIENT_ID:}
     client-secret: ${GOOGLE_CLIENT_SECRET:}
-    redirect-uri: http://localhost:8080/auth/oauth/google/callback
+    redirect-uri: ${GOOGLE_REDIRECT_URI:http://localhost:8080/auth/oauth/google/callback}
     scopes:
       - openid
       - profile
       - email
-    home-page: http://localhost:8080
+    home-page: ${GOOGLE_HOME_PAGE:http://localhost:8080}
 
 # ==================== Security Ignore URLs ====================
 ignore:

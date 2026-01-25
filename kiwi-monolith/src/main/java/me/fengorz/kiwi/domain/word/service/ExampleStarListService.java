@@ -51,6 +51,7 @@ public class ExampleStarListService extends ServiceImpl<ExampleStarListMapper, E
     /**
      * Find lists by owner
      */
+    @Cacheable(value = CACHE_NAME, key = "'owner:' + #owner")
     public List<ExampleStarList> findByOwner(Integer owner) {
         return list(new LambdaQueryWrapper<ExampleStarList>()
                 .eq(ExampleStarList::getOwner, owner)

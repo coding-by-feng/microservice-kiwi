@@ -55,8 +55,6 @@ public class AiCallHistory extends Model<AiCallHistory> {
 
     private String nativeLanguage;
 
-    private String aiResponse;
-
     private LocalDateTime timestamp;
 
     private Boolean isDelete;

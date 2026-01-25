@@ -86,21 +86,6 @@ public class AiCallHistoryController {
         return R.ok(historyService.findByPromptMode(user.getUserId().longValue(), promptMode, page));
     }
 
-    @PostMapping
-    @Operation(summary = "Create a new history item")
-    public R<AiCallHistory> create(
-            @AuthenticationPrincipal KiwiUser user,
-            @RequestBody AiCallHistory request) {
-        AiCallHistory history = historyService.logCall(
-                user.getUserId().longValue(),
-                request.getAiUrl(),
-                request.getPrompt(),
-                request.getPromptMode(),
-                request.getTargetLanguage(),
-                request.getNativeLanguage());
-        return R.ok(history);
-    }
-
     @PostMapping("/{id}/favorite")
     @Operation(summary = "Toggle favorite status")
     public R<Void> toggleFavorite(@PathVariable Long id) {

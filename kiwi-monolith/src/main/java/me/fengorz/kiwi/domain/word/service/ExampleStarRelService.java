@@ -53,6 +53,7 @@ public class ExampleStarRelService extends ServiceImpl<ExampleStarRelMapper, Exa
     /**
      * Find relations by list ID
      */
+    @Cacheable(value = CACHE_NAME, key = "'list:' + #listId")
     public List<ExampleStarRel> findByListId(Integer listId) {
         return list(new LambdaQueryWrapper<ExampleStarRel>()
                 .eq(ExampleStarRel::getListId, listId));

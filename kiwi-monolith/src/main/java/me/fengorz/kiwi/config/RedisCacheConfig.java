@@ -94,7 +94,6 @@ public class RedisCacheConfig {
         cacheConfigurations.put("pronunciation", wordCacheConfig);
         cacheConfigurations.put("user", defaultConfig);
         cacheConfigurations.put("ai", defaultConfig);
-        cacheConfigurations.put("conversation", defaultConfig);
 
         return RedisCacheManager.builder(connectionFactory)
                 .cacheDefaults(defaultConfig)

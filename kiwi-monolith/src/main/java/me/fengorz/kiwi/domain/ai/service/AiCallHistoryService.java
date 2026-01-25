@@ -156,18 +156,6 @@ public class AiCallHistoryService extends ServiceImpl<AiCallHistoryMapper, AiCal
                 .orElse(false);
     }
 
-    /**
-     * Update AI response for a history record
-     */
-    @Transactional
-    public void updateResponse(Long historyId, String aiResponse) {
-        findById(historyId).ifPresent(history -> {
-            history.setAiResponse(aiResponse);
-            history.setUpdateTime(LocalDateTime.now());
-            updateById(history);
-        });
-    }
-
     // ==================== Methods for Controller ====================
 
     /**
@@ -254,7 +242,7 @@ public class AiCallHistoryService extends ServiceImpl<AiCallHistoryMapper, AiCal
                 .setPromptMode(entity.getPromptMode())
                 .setLanguage(entity.getTargetLanguage())
                 .setOriginalText(entity.getPrompt())
-                .setResult(entity.getAiResponse())
+                .setResult(null) // response field not available in entity
                 .setFavorite(entity.getIsFavorite())
                 .setArchived(entity.getIsArchive())
                 .setCreateTime(entity.getCreateTime());

@@ -23,10 +23,7 @@ import me.fengorz.kiwi.common.R;
 import me.fengorz.kiwi.common.dfs.DfsService;
 import me.fengorz.kiwi.domain.ai.config.ConversationProperties;
 import me.fengorz.kiwi.domain.ai.dto.conversation.ConversationGenerateRequest;
-import me.fengorz.kiwi.domain.ai.dto.conversation.ConversationTopicRequest;
 import me.fengorz.kiwi.domain.ai.service.conversation.ConversationService;
-import me.fengorz.kiwi.domain.ai.service.conversation.ConversationTopicService;
-import me.fengorz.kiwi.domain.ai.vo.conversation.ConversationTopicVO;
 import me.fengorz.kiwi.domain.ai.vo.conversation.ConversationVO;
 import me.fengorz.kiwi.security.KiwiUser;
 import org.springframework.core.io.InputStreamResource;
@@ -55,7 +52,6 @@ import java.util.List;
 public class ConversationController {
 
     private final ConversationService conversationService;
-    private final ConversationTopicService topicService;
     private final ConversationProperties properties;
     private final DfsService dfsService;
 
@@ -96,11 +92,8 @@ public class ConversationController {
      */
     @GetMapping("/list")
     @Operation(summary = "List user's conversations")
-    public R<List<ConversationVO>> listConversations(
-            @AuthenticationPrincipal KiwiUser user,
-            @RequestParam(required = false) Boolean favoritedOnly) {
-        return R.ok(conversationService.listUserConversations(
-                user.getUserId().longValue(), favoritedOnly));
+    public R<List<ConversationVO>> listConversations(@AuthenticationPrincipal KiwiUser user) {
+        return R.ok(conversationService.listUserConversations(user.getUserId().longValue()));
     }
 
     /**
@@ -114,17 +107,6 @@ public class ConversationController {
 
         conversationService.deleteConversation(id, user.getUserId().longValue());
         return R.ok(null);
-    }
-
-    /**
-     * Toggle favorite status for a conversation
-     */
-    @PostMapping("/{id}/favorite")
-    @Operation(summary = "Toggle favorite status")
-    public R<Boolean> toggleFavorite(
-            @AuthenticationPrincipal KiwiUser user,
-            @PathVariable Long id) {
-        return R.ok(conversationService.toggleFavorite(id, user.getUserId().longValue()));
     }
 
     /**
@@ -160,25 +142,6 @@ public class ConversationController {
             log.error("Failed to stream audio for message {}", messageId, e);
             return ResponseEntity.internalServerError().build();
         }
-    }
-
-    /**
-     * Generate a random conversation topic
-     */
-    @PostMapping("/topic/random")
-    @Operation(summary = "Generate a random conversation topic")
-    public R<ConversationTopicVO> generateRandomTopic(
-            @AuthenticationPrincipal KiwiUser user,
-            @RequestBody(required = false) ConversationTopicRequest request) {
-
-        log.info("Generating random topic for user {}", user.getUserId());
-
-        if (request == null) {
-            request = new ConversationTopicRequest();
-        }
-
-        ConversationTopicVO topic = topicService.generateRandomTopic(request);
-        return R.ok(topic);
     }
 
     /**

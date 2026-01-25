@@ -1,136 +1,104 @@
 #!/bin/bash
-# Deploy script for kiwi-monolith
-# Usage: ./deploy.sh [build|restart|kill|start]
+# Deployment script for Kiwi Monolith
+# Usage: ./deploy.sh [dev|test|prod]
 
 set -e
 
-# Source bashrc to load environment variables
-if [ -f "$HOME/.bashrc" ]; then
-    source "$HOME/.bashrc"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+ROOT_DIR="$(cd "$PROJECT_DIR/.." && pwd)"
+
+# Default environment
+ENV=${1:-dev}
+
+# Colors
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+NC='\033[0m'
+
+log_info() {
+    echo -e "${GREEN}[INFO]${NC} $1"
+}
+
+log_warn() {
+    echo -e "${YELLOW}[WARN]${NC} $1"
+}
+
+log_error() {
+    echo -e "${RED}[ERROR]${NC} $1"
+}
+
+log_step() {
+    echo -e "${BLUE}[STEP]${NC} $1"
+}
+
+# Load environment
+ENV_FILE="$SCRIPT_DIR/.env.$ENV"
+if [ -f "$ENV_FILE" ]; then
+    set -a
+    source "$ENV_FILE"
+    set +a
 fi
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-MONOLITH_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
-JAR_NAME="kiwi-monolith-3.0.0.jar"
-JAR_PATH="$HOME/$JAR_NAME"
-LOG_FILE="$HOME/app.log"
+echo ""
+echo "=========================================="
+echo "  Kiwi Monolith Deployment"
+echo "  Environment: $ENV"
+echo "=========================================="
+echo ""
 
-# Remote server config (for upload)
-REMOTE_HOST="139.180.180.203"
-REMOTE_USER="root"
-REMOTE_DIR="~"
+# Step 1: Check prerequisites
+log_step "Checking prerequisites..."
 
-do_build() {
-    echo "=== Building ==="
-    cd "$MONOLITH_DIR"
-    mvn clean package -DskipTests -q
-    cp target/$JAR_NAME "$HOME/"
-    echo "Build complete: $JAR_PATH"
-}
+if ! command -v java &> /dev/null; then
+    log_error "Java is not installed!"
+    exit 1
+fi
 
-do_upload() {
-    echo "=== Uploading ==="
-    JAR_FILE=$(find "$MONOLITH_DIR/target" -name "*.jar" -type f | head -1)
-    if [ -z "$JAR_FILE" ]; then
-        echo "ERROR: No JAR file found. Run build first."
-        exit 1
-    fi
-    scp -O "$JAR_FILE" "$REMOTE_USER@$REMOTE_HOST:$REMOTE_DIR/"
-    echo "Uploaded: $(basename "$JAR_FILE")"
-}
+JAVA_VERSION=$(java -version 2>&1 | awk -F '"' '/version/ {print $2}' | cut -d'.' -f1)
+if [ "$JAVA_VERSION" -lt 17 ]; then
+    log_error "Java 17+ is required. Current version: $JAVA_VERSION"
+    exit 1
+fi
+log_info "Java version: OK"
 
-do_kill() {
-    echo "=== Killing port 8088 ==="
-    kill -9 $(lsof -t -i:8088) 2>/dev/null || echo "No process on 8088"
-}
+if ! command -v mvn &> /dev/null; then
+    log_error "Maven is not installed!"
+    exit 1
+fi
+log_info "Maven: OK"
 
-select_memory() {
-    echo "=== Select Memory Configuration ==="
-    echo "1) 215m (minimal)"
-    echo "2) 512m (small)"
-    echo "3) 1g (medium)"
-    echo "4) 2g (large)"
-    echo "5) 4g (extra large)"
-    echo "6) Custom"
-    echo ""
-    read -p "Select [1-6]: " mem_choice
-    case $mem_choice in
-        1) JAVA_OPTS="-Xms215m -Xmx215m" ;;
-        2) JAVA_OPTS="-Xms512m -Xmx512m" ;;
-        3) JAVA_OPTS="-Xms1g -Xmx1g" ;;
-        4) JAVA_OPTS="-Xms2g -Xmx2g" ;;
-        5) JAVA_OPTS="-Xms4g -Xmx4g" ;;
-        6)
-            read -p "Enter Xms (e.g., 256m, 1g): " xms
-            read -p "Enter Xmx (e.g., 512m, 2g): " xmx
-            JAVA_OPTS="-Xms$xms -Xmx$xmx"
-            ;;
-        *) JAVA_OPTS="-Xms512m -Xmx512m" ;;
-    esac
-    echo "Using: $JAVA_OPTS"
-}
+if ! command -v docker &> /dev/null; then
+    log_warn "Docker is not installed. Infrastructure services must be running externally."
+else
+    log_info "Docker: OK"
+fi
 
-do_start() {
-    echo "=== Starting ==="
-    if [ -z "$JAVA_OPTS" ]; then
-        select_memory
-    fi
-    cd "$HOME"
-    nohup java $JAVA_OPTS -Dspring.profiles.active=prod -jar "$JAR_PATH" > "$LOG_FILE" 2>&1 &
-    echo "Waiting for startup... (tail -f $LOG_FILE)"
-    echo "Press Ctrl+C to stop watching logs (app will continue running)"
-    sleep 2
-    tail -f "$LOG_FILE"
-}
+# Step 2: Start infrastructure (dev only)
+if [ "$ENV" = "dev" ]; then
+    log_step "Starting infrastructure services..."
+    "$SCRIPT_DIR/infra.sh" start
+fi
 
-case "${1:-menu}" in
-    build)
-        do_build
-        ;;
-    upload)
-        do_build
-        do_upload
-        ;;
-    deploy)
-        select_memory
-        do_build
-        do_kill
-        do_start
-        ;;
-    kill)
-        do_kill
-        ;;
-    start)
-        select_memory
-        do_start
-        ;;
-    restart)
-        select_memory
-        do_kill
-        do_start
-        ;;
-    menu|*)
-        echo "=== Kiwi Monolith Deploy ==="
-        echo "1) Build only"
-        echo "2) Build and upload to remote"
-        echo "3) Build, kill, and start (full deploy)"
-        echo "4) Kill (stop app on port 8088)"
-        echo "5) Start (run jar with nohup)"
-        echo "6) Restart (kill + start)"
-        echo ""
-        read -p "Select [1-6]: " choice
-        # Prompt for memory upfront if action includes start
-        case $choice in
-            3|5|6) select_memory ;;
-        esac
-        case $choice in
-            1) do_build ;;
-            2) do_build; do_upload ;;
-            3) do_build; do_kill; do_start ;;
-            4) do_kill ;;
-            5) do_start ;;
-            6) do_kill; do_start ;;
-            *) echo "Invalid choice" ;;
-        esac
-        ;;
-esac
+# Step 3: Build application
+log_step "Building application..."
+cd "$ROOT_DIR"
+
+# Build only the monolith module
+mvn clean package -pl kiwi-monolith -am -DskipTests -q
+log_info "Build successful!"
+
+# Step 4: Find JAR
+JAR_FILE=$(find "$PROJECT_DIR/target" -name "*.jar" -type f 2>/dev/null | head -1)
+if [ -z "$JAR_FILE" ]; then
+    log_error "Build failed - no JAR file found"
+    exit 1
+fi
+
+log_info "JAR file: $JAR_FILE"
+
+# Step 5: Run application
+log_step "Starting application..."
+"$SCRIPT_DIR/run.sh" "$ENV"

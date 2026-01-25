@@ -71,8 +71,6 @@ public class Conversation extends Model<Conversation> {
 
     private LocalDateTime updateTime;
 
-    private Boolean favorited;
-
     @TableField(exist = false)
     private List<ConversationSpeaker> speakers;
 
@@ -93,9 +91,5 @@ public class Conversation extends Model<Conversation> {
 
     public boolean isFailed() {
         return ConversationStatus.FAILED.getCode().equals(this.status);
-    }
-
-    public void toggleFavorite() {
-        this.favorited = !Boolean.TRUE.equals(this.favorited);
     }
 }

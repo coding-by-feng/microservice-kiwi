@@ -26,6 +26,9 @@
 
     <!-- Future schema changes go here -->
 
+    <!-- AI module -->
+    <include file="db/changelog/ai/002-add-ai-response-column.xml"/>
+
     <!-- Notes module -->
     <include file="db/changelog/notes/001-notes-tables.xml"/>
 

@@ -27,13 +27,19 @@ import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.enumeration.AiPromptModeEnum;
 import me.fengorz.kiwi.common.enumeration.LanguageEnum;
 import me.fengorz.kiwi.common.exception.ServiceException;
+import me.fengorz.kiwi.domain.ai.config.ConversationProperties;
 import me.fengorz.kiwi.domain.ai.dto.conversation.DurationOption;
+import me.fengorz.kiwi.domain.ai.dto.conversation.TopicGenerationRequest;
 import me.fengorz.kiwi.domain.ai.service.AiChatService;
+import me.fengorz.kiwi.domain.ai.vo.conversation.TopicGenerationVO;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 
 /**
  * Service for generating conversation scripts using AI
@@ -47,6 +53,7 @@ public class ConversationScriptService {
 
     @Qualifier("aiChatService")
     private final AiChatService aiChatService;
+    private final ConversationProperties conversationProperties;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     private static final String PROMPT_TEMPLATE = """
@@ -103,6 +110,66 @@ public class ConversationScriptService {
         } catch (Exception e) {
             log.error("Failed to generate conversation script", e);
             throw new ServiceException("Failed to generate conversation script: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Generate a conversation topic based on custom prompt or category
+     *
+     * @param request topic generation request
+     * @return generated topic with suggestions
+     */
+    public TopicGenerationVO generateTopic(TopicGenerationRequest request) {
+        String topicInput;
+        if (StringUtils.hasText(request.getPrompt())) {
+            // Use custom prompt
+            topicInput = "User's topic idea: " + request.getPrompt();
+            log.info("Generating topic from custom prompt: {}", request.getPrompt());
+        } else {
+            // Generate random topic from category
+            topicInput = "Generate a random topic about: " + request.getCategory().getDescription();
+            log.info("Generating random topic for category: {}", request.getCategory());
+        }
+
+        String formattedPrompt = String.format(conversationProperties.getTopicGenerationPrompt(),
+                topicInput,
+                request.getDifficulty().getDescription());
+
+        try {
+            String aiResponse = aiChatService.call(formattedPrompt, AiPromptModeEnum.CONVERSATION_GENERATION, LanguageEnum.EN);
+            log.debug("Topic generation AI response: {}", aiResponse);
+
+            return parseTopicResponse(aiResponse, request);
+        } catch (Exception e) {
+            log.error("Failed to generate conversation topic", e);
+            throw new ServiceException("Failed to generate conversation topic: " + e.getMessage());
+        }
+    }
+
+    private TopicGenerationVO parseTopicResponse(String aiResponse, TopicGenerationRequest request) {
+        try {
+            String jsonContent = extractJson(aiResponse);
+            JsonNode root = objectMapper.readTree(jsonContent);
+
+            List<String> keywords = new ArrayList<>();
+            JsonNode keywordsNode = root.path("keywords");
+            if (keywordsNode.isArray()) {
+                for (JsonNode keyword : keywordsNode) {
+                    keywords.add(keyword.asText());
+                }
+            }
+
+            return TopicGenerationVO.builder()
+                    .topic(root.path("topic").asText("A conversation practice scenario"))
+                    .category(request.getCategory().name())
+                    .difficulty(request.getDifficulty().name())
+                    .suggestedSpeakerCount(root.path("suggestedSpeakerCount").asInt(2))
+                    .suggestedDuration(root.path("suggestedDuration").asText("FIVE_MINUTES"))
+                    .keywords(keywords)
+                    .build();
+        } catch (JsonProcessingException e) {
+            log.error("Failed to parse topic generation response: {}", aiResponse, e);
+            throw new ServiceException("Failed to parse topic generation response: Invalid JSON format");
         }
     }
 

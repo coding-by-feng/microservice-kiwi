@@ -68,4 +68,31 @@ public class ConversationProperties {
      * Cache TTL for conversation data in seconds
      */
     private int cacheTtlSeconds = 3600;
+
+    /**
+     * Topic generation prompt template.
+     * Placeholders: %s (topic input), %s (difficulty description)
+     */
+    private String topicGenerationPrompt = """
+            Generate a detailed, engaging conversation topic/scenario based on the following:
+
+            %s
+
+            Difficulty level: %s
+
+            Requirements:
+            - Create a realistic scenario with context and setting
+            - The topic should be suitable for a conversation practice session
+            - Include 4 relevant vocabulary keywords for this topic
+            - Suggest an appropriate number of speakers (2-4) based on the scenario
+            - Suggest an appropriate duration (TWO_MINUTES, FIVE_MINUTES, or TEN_MINUTES)
+
+            IMPORTANT: Output ONLY valid JSON in this exact format, no other text:
+            {
+              "topic": "A detailed, engaging scenario description in 2-3 sentences",
+              "suggestedSpeakerCount": 2,
+              "suggestedDuration": "FIVE_MINUTES",
+              "keywords": ["keyword1", "keyword2", "keyword3", "keyword4"]
+            }
+            """;
 }

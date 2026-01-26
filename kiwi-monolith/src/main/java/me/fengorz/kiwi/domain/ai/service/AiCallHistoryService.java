@@ -233,6 +233,29 @@ public class AiCallHistoryService extends ServiceImpl<AiCallHistoryMapper, AiCal
     }
 
     /**
+     * Update AI response for a history record
+     */
+    @Transactional
+    public void updateAiResponse(Long historyId, String aiResponse) {
+        findById(historyId).ifPresent(history -> {
+            history.setAiResponse(aiResponse);
+            history.setUpdateTime(LocalDateTime.now());
+            updateById(history);
+            log.debug("Updated AI response for history {}", historyId);
+        });
+    }
+
+    /**
+     * Find by ID and user ID (for authorization check)
+     */
+    public Optional<AiCallHistory> findByIdAndUserId(Long id, Long userId) {
+        return Optional.ofNullable(getOne(new LambdaQueryWrapper<AiCallHistory>()
+                .eq(AiCallHistory::getId, id)
+                .eq(AiCallHistory::getUserId, userId)
+                .eq(AiCallHistory::getIsDelete, false)));
+    }
+
+    /**
      * Convert entity to VO
      */
     private AiCallHistoryVO toVO(AiCallHistory entity) {
@@ -242,7 +265,7 @@ public class AiCallHistoryService extends ServiceImpl<AiCallHistoryMapper, AiCal
                 .setPromptMode(entity.getPromptMode())
                 .setLanguage(entity.getTargetLanguage())
                 .setOriginalText(entity.getPrompt())
-                .setResult(null) // response field not available in entity
+                .setResult(entity.getAiResponse())
                 .setFavorite(entity.getIsFavorite())
                 .setArchived(entity.getIsArchive())
                 .setCreateTime(entity.getCreateTime());

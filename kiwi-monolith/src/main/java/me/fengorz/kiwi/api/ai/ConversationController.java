@@ -23,8 +23,11 @@ import me.fengorz.kiwi.common.R;
 import me.fengorz.kiwi.common.dfs.DfsService;
 import me.fengorz.kiwi.domain.ai.config.ConversationProperties;
 import me.fengorz.kiwi.domain.ai.dto.conversation.ConversationGenerateRequest;
+import me.fengorz.kiwi.domain.ai.dto.conversation.TopicGenerationRequest;
+import me.fengorz.kiwi.domain.ai.service.conversation.ConversationScriptService;
 import me.fengorz.kiwi.domain.ai.service.conversation.ConversationService;
 import me.fengorz.kiwi.domain.ai.vo.conversation.ConversationVO;
+import me.fengorz.kiwi.domain.ai.vo.conversation.TopicGenerationVO;
 import me.fengorz.kiwi.security.KiwiUser;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
@@ -52,6 +55,7 @@ import java.util.List;
 public class ConversationController {
 
     private final ConversationService conversationService;
+    private final ConversationScriptService scriptService;
     private final ConversationProperties properties;
     private final DfsService dfsService;
 
@@ -142,6 +146,26 @@ public class ConversationController {
             log.error("Failed to stream audio for message {}", messageId, e);
             return ResponseEntity.internalServerError().build();
         }
+    }
+
+    /**
+     * Generate a random conversation topic
+     * Supports custom prompts or category-based random generation
+     */
+    @PostMapping("/topic/random")
+    @Operation(summary = "Generate a conversation topic",
+            description = "Generate a topic from custom prompt or random based on category")
+    public R<TopicGenerationVO> generateTopic(
+            @AuthenticationPrincipal KiwiUser user,
+            @RequestBody TopicGenerationRequest request) {
+
+        log.info("Generating topic for user {} - prompt: {}, category: {}, difficulty: {}",
+                user.getUserId(),
+                request.getPrompt(),
+                request.getCategory(),
+                request.getDifficulty());
+
+        return R.ok(scriptService.generateTopic(request));
     }
 
     /**

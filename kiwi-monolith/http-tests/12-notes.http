@@ -1,0 +1,281 @@
+### ===========================================
+### Private Notes API Tests
+### ===========================================
+### Prerequisites: Run 01-auth.http first to get bearer token
+
+### ==================== Category CRUD ====================
+
+### List all categories
+GET {{base_url}}/api/notes/category/list
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+
+### Create a new category
+POST {{base_url}}/api/notes/category
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+
+{
+  "name": "Most Important",
+  "description": "Key principles and reminders for daily life",
+  "color": "#FF5733",
+  "icon": "star",
+  "sortOrder": 1
+}
+
+### Create another category
+POST {{base_url}}/api/notes/category
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+
+{
+  "name": "Physical Health",
+  "description": "Health and wellness reminders",
+  "color": "#33FF57",
+  "icon": "heart",
+  "sortOrder": 2
+}
+
+### Get category by ID
+GET {{base_url}}/api/notes/category/1
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+
+### Update category
+PUT {{base_url}}/api/notes/category/1
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+
+{
+  "name": "Most Important Notes",
+  "description": "Updated description",
+  "color": "#FF0000",
+  "icon": "star-filled",
+  "sortOrder": 1
+}
+
+### Delete category (physical delete - also deletes all items in category)
+DELETE {{base_url}}/api/notes/category/1
+Authorization: Bearer {{access_token}}
+
+### ==================== Note Item CRUD ====================
+
+### List items in a category
+GET {{base_url}}/api/notes/item/list/1
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+
+### Create a note item
+POST {{base_url}}/api/notes/item
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+
+{
+  "categoryId": 1,
+  "content": "Confronted with challenging tasks, challenge yourself to endure for at least 10 seconds. Extend this persistence to longer durations, like 1 or 5 minutes. Persist, stay focused, and avoid assuming success through luck. Instead, maintain determination until the task is successfully completed.",
+  "imageStyle": "minimalist illustration"
+}
+
+### Create another note item
+POST {{base_url}}/api/notes/item
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+
+{
+  "categoryId": 1,
+  "content": "I need to experience every moment where I am the one Lulu loves, and I need to deeply perceive that I am the one who is so good as to deserve being loved.",
+  "imageStyle": "warm watercolor"
+}
+
+### Create a third note item
+POST {{base_url}}/api/notes/item
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+
+{
+  "categoryId": 1,
+  "content": "Disable WeChat Moment, for the WeChat Channel, only focus on technical content. Don't develop the habit of frequently pulling down the notification bar to check for new messages.",
+  "imageStyle": "clean modern"
+}
+
+### Get note item by ID
+GET {{base_url}}/api/notes/item/1
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+
+### Update note item
+PUT {{base_url}}/api/notes/item/1
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+
+{
+  "categoryId": 1,
+  "content": "Challenge yourself to endure challenging tasks for at least 10 seconds, then extend to 1 or 5 minutes. Stay focused and determined until success.",
+  "imageStyle": "motivational poster"
+}
+
+### Delete note item (physical delete)
+DELETE {{base_url}}/api/notes/item/1
+Authorization: Bearer {{access_token}}
+
+### ==================== Navigation ====================
+
+### Get next item (loops to first if at end)
+GET {{base_url}}/api/notes/item/1/next
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+
+### Get previous item (loops to last if at beginning)
+GET {{base_url}}/api/notes/item/1/previous
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+
+### Reorder items in category
+PUT {{base_url}}/api/notes/item/reorder/1
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+
+[3, 1, 2]
+
+### ==================== Audio Generation ====================
+
+### Generate audio for a note item (US accent)
+POST {{base_url}}/api/notes/item/audio/generate
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+
+{
+  "noteItemId": 1,
+  "accent": "US",
+  "voice": "alloy"
+}
+
+### Generate audio with UK accent
+POST {{base_url}}/api/notes/item/audio/generate
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+
+{
+  "noteItemId": 2,
+  "accent": "UK",
+  "voice": "nova"
+}
+
+### Generate audio with Australian accent
+POST {{base_url}}/api/notes/item/audio/generate
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+
+{
+  "noteItemId": 3,
+  "accent": "AU",
+  "voice": "echo"
+}
+
+### Stream audio for a note item (with header - for API clients)
+GET {{base_url}}/api/notes/item/1/audio/stream
+Authorization: Bearer {{access_token}}
+
+### Stream audio for a note item (with query param - for browser media elements)
+# Use this format when embedding in <audio> elements
+GET {{base_url}}/api/notes/item/1/audio/stream?access_token={{access_token}}
+
+### Delete audio for a note item
+DELETE {{base_url}}/api/notes/item/1/audio
+Authorization: Bearer {{access_token}}
+
+### ==================== Image Generation ====================
+
+### Generate image for a note item
+POST {{base_url}}/api/notes/item/image/generate
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+
+{
+  "noteItemId": 1,
+  "customPrompt": "A person staying focused and determined",
+  "style": "minimalist illustration with warm colors"
+}
+
+### Generate image with different style
+POST {{base_url}}/api/notes/item/image/generate
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+
+{
+  "noteItemId": 2,
+  "customPrompt": "Self love and appreciation",
+  "style": "watercolor painting, soft pastel colors"
+}
+
+### Stream image for a note item (with header - for API clients)
+GET {{base_url}}/api/notes/item/1/image/stream
+Authorization: Bearer {{access_token}}
+
+### Stream image for a note item (with query param - for browser <img> elements)
+# Use this format when embedding in <img> elements
+GET {{base_url}}/api/notes/item/1/image/stream?access_token={{access_token}}
+
+### Delete image for a note item
+DELETE {{base_url}}/api/notes/item/1/image
+Authorization: Bearer {{access_token}}
+
+### ==================== Lock/Passcode Management ====================
+### Note: When notes are locked, all category/item APIs will return error
+
+### Get lock status (check if passcode is set and if locked)
+GET {{base_url}}/api/notes/lock/status
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+
+### Set initial passcode (no currentPasscode needed for first time)
+POST {{base_url}}/api/notes/lock/passcode
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+
+{
+  "newPasscode": "1234"
+}
+
+### Change passcode (requires currentPasscode)
+POST {{base_url}}/api/notes/lock/passcode
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+
+{
+  "currentPasscode": "1234",
+  "newPasscode": "5678"
+}
+
+### Lock notes (requires passcode to be set first)
+POST {{base_url}}/api/notes/lock
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+
+### Try to access categories while locked (should fail with "Notes are locked")
+# GET {{base_url}}/api/notes/category/list
+# Authorization: Bearer {{access_token}}
+
+### Unlock notes with passcode
+POST {{base_url}}/api/notes/lock/unlock
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+
+{
+  "passcode": "5678"
+}
+
+### Remove passcode protection (requires current passcode)
+DELETE {{base_url}}/api/notes/lock/passcode?currentPasscode=5678
+Authorization: Bearer {{access_token}}
+
+### ==================== Privacy Test ====================
+### These tests should fail with "Access denied" if trying to access another user's notes
+
+### Try to access another user's category (should fail)
+# GET {{base_url}}/api/notes/category/999
+# Authorization: Bearer {{access_token}}
+
+### Try to access another user's note item (should fail)
+# GET {{base_url}}/api/notes/item/999
+# Authorization: Bearer {{access_token}}

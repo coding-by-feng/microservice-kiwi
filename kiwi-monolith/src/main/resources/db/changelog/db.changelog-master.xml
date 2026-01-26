@@ -26,4 +26,7 @@
 
     <!-- Future schema changes go here -->
 
+    <!-- Notes module -->
+    <include file="db/changelog/notes/001-notes-tables.xml"/>
+
 </databaseChangeLog>

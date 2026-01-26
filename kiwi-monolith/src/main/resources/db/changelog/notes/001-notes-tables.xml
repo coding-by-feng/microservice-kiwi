@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <!-- Notes Category Table -->
+    <changeSet id="001-create-notes-category-table" author="codingByFeng">
+        <createTable tableName="notes_category">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="user_id" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="VARCHAR(500)"/>
+            <column name="color" type="VARCHAR(20)"/>
+            <column name="icon" type="VARCHAR(50)"/>
+            <column name="sort_order" type="INT" defaultValue="0"/>
+            <column name="is_del" type="VARCHAR(1)" defaultValue="N">
+                <constraints nullable="false"/>
+            </column>
+            <column name="create_time" type="DATETIME">
+                <constraints nullable="false"/>
+            </column>
+            <column name="update_time" type="DATETIME">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <createIndex tableName="notes_category" indexName="idx_notes_category_user_id">
+            <column name="user_id"/>
+        </createIndex>
+    </changeSet>
+
+    <!-- Notes Item Table -->
+    <changeSet id="002-create-notes-item-table" author="codingByFeng">
+        <createTable tableName="notes_item">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="category_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="user_id" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="title" type="VARCHAR(200)"/>
+            <column name="content" type="TEXT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="display_order" type="INT" defaultValue="0">
+                <constraints nullable="false"/>
+            </column>
+            <!-- Image fields -->
+            <column name="image_prompt" type="VARCHAR(1000)"/>
+            <column name="image_style" type="VARCHAR(100)"/>
+            <column name="image_url" type="VARCHAR(500)"/>
+            <column name="image_status" type="VARCHAR(20)" defaultValue="NONE"/>
+            <!-- Audio fields -->
+            <column name="audio_url" type="VARCHAR(500)"/>
+            <column name="audio_accent" type="VARCHAR(10)"/>
+            <column name="audio_voice" type="VARCHAR(20)"/>
+            <column name="audio_duration_ms" type="INT" defaultValue="0"/>
+            <column name="audio_status" type="VARCHAR(20)" defaultValue="NONE"/>
+            <!-- Metadata -->
+            <column name="is_del" type="VARCHAR(1)" defaultValue="N">
+                <constraints nullable="false"/>
+            </column>
+            <column name="create_time" type="DATETIME">
+                <constraints nullable="false"/>
+            </column>
+            <column name="update_time" type="DATETIME">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <createIndex tableName="notes_item" indexName="idx_notes_item_category_id">
+            <column name="category_id"/>
+        </createIndex>
+        <createIndex tableName="notes_item" indexName="idx_notes_item_user_id">
+            <column name="user_id"/>
+        </createIndex>
+        <createIndex tableName="notes_item" indexName="idx_notes_item_display_order">
+            <column name="category_id"/>
+            <column name="display_order"/>
+        </createIndex>
+        <addForeignKeyConstraint
+                baseTableName="notes_item"
+                baseColumnNames="category_id"
+                constraintName="fk_notes_item_category"
+                referencedTableName="notes_category"
+                referencedColumnNames="id"/>
+    </changeSet>
+
+    <!-- Drop title column - notes items only need content -->
+    <changeSet id="003-drop-notes-item-title" author="codingByFeng">
+        <dropColumn tableName="notes_item" columnName="title"/>
+    </changeSet>
+
+    <!-- Notes User Lock Table - for passcode protection -->
+    <changeSet id="004-create-notes-user-lock-table" author="codingByFeng">
+        <createTable tableName="notes_user_lock">
+            <column name="user_id" type="INT">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="passcode_hash" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_locked" type="TINYINT(1)" defaultValue="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="lock_time" type="DATETIME"/>
+            <column name="failed_attempts" type="INT" defaultValue="0"/>
+            <column name="last_failed_time" type="DATETIME"/>
+            <column name="create_time" type="DATETIME">
+                <constraints nullable="false"/>
+            </column>
+            <column name="update_time" type="DATETIME">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+</databaseChangeLog>

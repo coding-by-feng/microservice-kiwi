@@ -7,9 +7,9 @@ server:
 spring:
   # ==================== Database ====================
   datasource:
-    url: jdbc:mysql://${DB_HOST_PROD:kiwi-mysql}:${DB_PORT_PROD:3306}/${DB_NAME_PROD:kiwi_db}?useUnicode=true&characterEncoding=UTF-8&useSSL=true&requireSSL=true&autoReconnect=true&serverTimezone=Pacific/Auckland
-    username: ${DB_USERNAME_PROD:ENC(KH/GJ05cpFBSAV5u8IruRw==)}
-    password: ${DB_PASSWORD_PROD:ENC(Dh6vV+rX9HyZgiOP83BIiQAZ1+9KOGVh)}
+    url: jdbc:mysql://kiwi-mysql:3307/kiwi_db?useUnicode=true&characterEncoding=UTF-8&useSSL=true&requireSSL=true&autoReconnect=true&serverTimezone=Pacific/Auckland
+    username: ENC(KH/GJ05cpFBSAV5u8IruRw==)
+    password: ENC(Dh6vV+rX9HyZgiOP83BIiQAZ1+9KOGVh)
     hikari:
       maximum-pool-size: 100
       minimum-idle: 20
@@ -28,9 +28,9 @@ spring:
   # ==================== Redis ====================
   data:
     redis:
-      host: ${REDIS_HOST_PROD:kiwi-redis}
-      port: ${REDIS_PORT_PROD:6379}
-      password: ${REDIS_PASSWORD_PROD:ENC(uxuSI1Bl5AelC8dYvJUvMhsRbasVD4zh)}
+      host: kiwi-redis
+      port: 6380
+      password: ${SPRING_DATA_REDIS_PASSWORD}
       database: 0
       timeout: 10000ms
       lettuce:
@@ -43,16 +43,16 @@ spring:
 
   # ==================== Redis (for Redisson) ====================
   redis:
-    host: ${REDIS_HOST_PROD:kiwi-redis}
-    port: ${REDIS_PORT_PROD:6379}
-    password: ${REDIS_PASSWORD_PROD:ENC(uxuSI1Bl5AelC8dYvJUvMhsRbasVD4zh)}
+    host: kiwi-redis
+    port: 6380
+    password: ${SPRING_DATA_REDIS_PASSWORD}
     database: 0
 
   # ==================== Elasticsearch ====================
   elasticsearch:
-    uris: ${ES_URIS_PROD:http://kiwi-es:9200}
-    username: ${ES_USERNAME_PROD:ENC(NKy6wa5SuHBhQmfLWf6Zv8wf8sPMaE0b)}
-    password: ${ES_PASSWORD_PROD:ENC(oj9wNYu52oQH1d9T0zHeGDLz7P7em71u)}
+    uris: http://kiwi-es:9201
+    username: ENC(NKy6wa5SuHBhQmfLWf6Zv8wf8sPMaE0b)
+    password: ENC(oj9wNYu52oQH1d9T0zHeGDLz7P7em71u)
 
   # ==================== File Upload ====================
   servlet:
@@ -93,13 +93,26 @@ management:
     elasticsearch:
       enabled: false
 
+# ==================== Storage ====================
+storage:
+  backend: minio
+
+minio:
+  endpoint: http://kiwi-minio:9000
+  accessKey: ${MINIO_ACCESS_KEY}
+  secretKey: ${MINIO_SECRET_KEY}
+  bucket: kiwi
+  connectTimeout: 10000
+  readTimeout: 30000
+  writeTimeout: 60000
+
 # ==================== Application Custom Config ====================
 kiwi:
   # FastDFS Configuration
   dfs:
     connect-timeout: 6000000
     so-timeout: 6000000
-    tracker-list: ${FASTDFS_TRACKER_PROD:kiwi-fastdfs:22122}
+    tracker-list: kiwi-fastdfs:22122
     gcp:
       bucket-name: kiwidict-bucket
 
@@ -107,16 +120,16 @@ kiwi:
   file:
     crawler:
       voice:
-        tmp-path: ${VOICE_TMP_PATH:/wordTmp}
+        tmp-path: /wordTmp
     vocabulary:
       word:
         list:
-          path: ${WORD_LIST_PATH:/wordTmp}
+          path: /wordTmp
 
   # TTS Configuration
   tts:
     # TTS Provider Selection: voicerss, baidu, gcp, deepgram, openai
-    provider: ${TTS_PROVIDER:openai}
+    provider: openai
     chattts:
       base-url: http://kiwi-chattts:8000
       timeout: 30
@@ -138,26 +151,26 @@ kiwi:
     openai:
       api-key: ${OPENAI_API_KEY:}
       base-url: https://api.openai.com/v1/audio/speech
-      model: ${OPENAI_TTS_MODEL:tts-1}
-      english-voice: ${OPENAI_TTS_EN_VOICE:alloy}
-      chinese-voice: ${OPENAI_TTS_ZH_VOICE:nova}
+      model: tts-1
+      english-voice: alloy
+      chinese-voice: nova
       response-format: mp3
       speed: 1.0
 
   # Review Audio Configuration
   review:
     audio:
-      enabled: ${REVIEW_AUDIO_ENABLED:false}
-      max-generation-count: ${REVIEW_AUDIO_MAX_COUNT:100}
-      storage-path: ${REVIEW_AUDIO_PATH:/wordTmp/review-audio}
+      enabled: false
+      max-generation-count: 100
+      storage-path: /wordTmp/review-audio
       async-generation: true
       content-mode: both
       api-call-delay-ms: 200
       scheduler:
-        enabled: ${REVIEW_AUDIO_SCHEDULER_ENABLED:true}
-        cron: ${REVIEW_AUDIO_SCHEDULER_CRON:0 0 3 * * *}
-        max-per-run: ${REVIEW_AUDIO_SCHEDULER_MAX:500}
-        lookback-days: ${REVIEW_AUDIO_SCHEDULER_LOOKBACK:30}
+        enabled: true
+        cron: "0 0 3 * * *"
+        max-per-run: 500
+        lookback-days: 30
 
   # YouTube Configuration
   youtube:
@@ -169,17 +182,23 @@ kiwi:
         threshold: 1000
       batch:
         enabled: false
-    proxy:
-      enabled: true
-      value: ${YT_PROXY_VALUE:ENC(FGrA00PC+bW5FiLAVautt6lhpqOx8U92YLzFLeAGVf78Xj93B600jQ==)}
+      # JavaScript runtime for yt-dlp (node, deno, etc.)
+      js-runtimes: node
+      # YouTube cookies file path for authentication (bypasses bot detection)
+      cookies:
+        enabled: true
+        path: /root/.config/yt-dlp/cookies.txt
+      proxy:
+        enabled: true
+        value: ${YT_PROXY_VALUE:ENC(FGrA00PC+bW5FiLAVautt6lhpqOx8U92YLzFLeAGVf78Xj93B600jQ==)}
     migration:
       enabled: false
     # Channel Video Sync Scheduler - fetches new videos and caches subtitles
     sync:
-      enabled: ${YT_SYNC_ENABLED:true}  # Enabled by default in prod
-      cron: ${YT_SYNC_CRON:0 0 */6 * * *}  # Every 6 hours
-      fetch-subtitles: ${YT_SYNC_FETCH_SUBTITLES:true}
-      max-videos-per-channel: ${YT_SYNC_MAX_VIDEOS:100}
+      enabled: true
+      cron: "0 0 */6 * * *"
+      fetch-subtitles: true
+      max-videos-per-channel: 100
 
 # ==================== AI Configuration ====================
 ai:
@@ -374,43 +393,18 @@ ai:
       - If a category has no items, skip it
       - Prioritize common vocabulary; include formal/informal variants if significant
     ambiguous-association-correction: "If only the first input is ambiguous, list all possible corrections with brief explanations in #[NL]. If both inputs are present, compare them; if the second is a correction of the first, output only the corrected version without explanation; otherwise, list all possible corrections for the first input. Output #[TL] only, plain text, no Markdown."
-    topic-generation: |
-      You are a creative conversation topic generator for language learning.
-      Generate topics based on the user's requirements.
-      Output ONLY valid JSON, no other text, no Markdown formatting.
-    conversation-generation: |
-      Generate a natural English conversation. Output ONLY valid JSON with this structure:
-      {
-        "topic": "A refined, concise topic title",
-        "speakers": [
-          {"index": 0, "name": "FirstName", "personality": "brief personality", "emoji": "avatar emoji"},
-          {"index": 1, "name": "FirstName", "personality": "brief personality", "emoji": "avatar emoji"}
-        ],
-        "messages": [
-          {"speakerIndex": 0, "text": "Message text", "emoji": "relevant emoji"},
-          {"speakerIndex": 1, "text": "Response text", "emoji": "relevant emoji"}
-        ]
-      }
-
-      Rules:
-      - Create distinct speaker personalities and speaking styles
-      - Include natural conversational elements (greetings, reactions, follow-ups)
-      - Each message should be 1-3 sentences, suitable for TTS
-      - Include one relevant emoji per message
-      - Make dialogue authentic and engaging
-      - No Markdown, no extra text outside JSON
 
 # ==================== Google OAuth2 Configuration ====================
 google:
   oauth2:
     client-id: ${GOOGLE_CLIENT_ID:}
     client-secret: ${GOOGLE_CLIENT_SECRET:}
-    redirect-uri: ${GOOGLE_REDIRECT_URI:https://kason.app/auth/oauth/google/callback}
+    redirect-uri: https://kason.app/auth/oauth/google/callback
     scopes:
       - openid
       - profile
       - email
-    home-page: ${GOOGLE_HOME_PAGE:https://kason.app}
+    home-page: https://kason.app
 
 # ==================== Security Ignore URLs ====================
 ignore:

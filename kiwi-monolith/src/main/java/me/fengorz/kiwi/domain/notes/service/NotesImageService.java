@@ -21,10 +21,12 @@ import me.fengorz.kiwi.common.constant.GlobalConstants;
 import me.fengorz.kiwi.common.dfs.DfsService;
 import me.fengorz.kiwi.common.exception.ServiceException;
 import me.fengorz.kiwi.common.gemini.GeminiImageClient;
+import me.fengorz.kiwi.domain.notes.config.NotesImageStyleProperties;
 import me.fengorz.kiwi.domain.notes.dto.NotesImageRequest;
 import me.fengorz.kiwi.domain.notes.entity.MediaStatus;
 import me.fengorz.kiwi.domain.notes.entity.NotesItem;
 import me.fengorz.kiwi.domain.notes.mapper.NotesItemMapper;
+import me.fengorz.kiwi.domain.notes.vo.ImageStyleVO;
 import me.fengorz.kiwi.domain.notes.vo.NotesItemVO;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +35,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.ByteArrayInputStream;
 import java.time.LocalDateTime;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Notes Image Service - Integrates with Gemini Imagen API for image generation
@@ -46,9 +51,41 @@ public class NotesImageService {
 
     private final NotesItemMapper notesItemMapper;
     private final DfsService dfsService;
+    private final NotesImageStyleProperties styleProperties;
 
     @Autowired(required = false)
     private GeminiImageClient geminiImageClient;
+
+    /**
+     * List all available image generation styles
+     */
+    public List<ImageStyleVO> listAvailableStyles() {
+        return styleProperties.getImageStyles().stream()
+                .filter(NotesImageStyleProperties.ImageStyle::isEnabled)
+                .sorted(Comparator.comparingInt(NotesImageStyleProperties.ImageStyle::getSortOrder))
+                .map(style -> ImageStyleVO.builder()
+                        .id(style.getId())
+                        .name(style.getName())
+                        .description(style.getDescription())
+                        .previewUrl(style.getPreviewUrl())
+                        .sortOrder(style.getSortOrder())
+                        .build())
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Get style prompt by style ID
+     */
+    private String getStylePromptById(String styleId) {
+        if (styleId == null) {
+            return null;
+        }
+        return styleProperties.getImageStyles().stream()
+                .filter(s -> s.isEnabled() && styleId.equals(s.getId()))
+                .findFirst()
+                .map(NotesImageStyleProperties.ImageStyle::getPrompt)
+                .orElse(styleId); // Fall back to raw style string if not found
+    }
 
     /**
      * Generate image for a note item using Gemini Imagen API
@@ -117,23 +154,32 @@ public class NotesImageService {
     }
 
     /**
-     * Build image prompt from note content, custom additions, and style
+     * Build image prompt from note content and style.
+     * Uses a structured format that prioritizes the content while applying the artistic style.
+     *
+     * @param noteContent the note content to describe
+     * @param customPrompt optional additional context (currently unused, reserved for future)
+     * @param styleId the style ID to look up, or raw style string as fallback
      */
-    private String buildImagePrompt(String noteContent, String customPrompt, String style) {
+    private String buildImagePrompt(String noteContent, String customPrompt, String styleId) {
         StringBuilder prompt = new StringBuilder();
 
-        // Extract key concepts from note content (first 200 chars)
-        String contentSummary = noteContent.length() > 200
-                ? noteContent.substring(0, 200) + "..."
+        // Extract key concepts from note content (first 300 chars for better context)
+        String contentSummary = noteContent.length() > 300
+                ? noteContent.substring(0, 300) + "..."
                 : noteContent;
-        prompt.append("Image description: ").append(contentSummary);
 
-        if (StringUtils.isNotBlank(customPrompt)) {
-            prompt.append(". Additional context: ").append(customPrompt);
-        }
+        // Structured prompt format that prioritizes content
+        prompt.append("Create an image that visually represents and captures the essence of this concept:\n\n");
+        prompt.append("\"").append(contentSummary).append("\"\n\n");
+        prompt.append("The image should clearly convey the meaning, emotion, and message of this text through visual storytelling.");
 
-        if (StringUtils.isNotBlank(style)) {
-            prompt.append(". Image style: ").append(style);
+        // Get the style prompt (resolve ID to full prompt, or use raw string)
+        String stylePrompt = getStylePromptById(styleId);
+        if (StringUtils.isNotBlank(stylePrompt)) {
+            prompt.append("\n\nArtistic style to apply: ").append(stylePrompt);
+            prompt.append("\n\nImportant: The subject matter and core message must be the primary focus. ");
+            prompt.append("Use the artistic style to enhance the visual presentation without overshadowing the content's meaning.");
         }
 
         return prompt.toString();

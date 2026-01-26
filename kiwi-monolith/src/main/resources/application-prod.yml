@@ -182,6 +182,51 @@ kiwi:
     number-of-images: 1
     enabled: true
 
+  # Notes Feature Configuration
+  notes:
+    image-styles:
+      - id: ghibli
+        name: Studio Ghibli
+        description: Hand-drawn animation inspired by Hayao Miyazaki with vibrant watercolor textures
+        prompt: "Studio Ghibli style, hand-drawn animation, inspired by Hayao Miyazaki, vibrant watercolor textures, lush greenery, nostalgic atmosphere, high aesthetic, detailed scenery, soft sunlight, 8k resolution."
+        enabled: true
+        sort-order: 1
+
+      - id: cyberpunk
+        name: Cyberpunk
+        description: Futuristic metropolis at night with neon lights and rain-slicked streets
+        prompt: "Cyberpunk aesthetic, futuristic sprawling metropolis at night, rain-slicked streets reflecting neon signs, towering skyscrapers with holographic advertisements, flying vehicles leaving light trails, detailed cybernetic implants, high contrast lighting, deep blues, purples, and electric greens, gritty and highly detailed, Blade Runner inspired, 8k resolution."
+        enabled: true
+        sort-order: 2
+
+      - id: oil-painting
+        name: Classical Oil Painting
+        description: Renaissance-inspired fine art with rich colors and dramatic lighting
+        prompt: "Classical oil painting style, Renaissance era inspiration, rich and deep color palette, visible textured brushstrokes on aged canvas, dramatic chiaroscuro lighting (strong contrast between light and dark), highly detailed fabric drapery and anatomical precision, museum quality fine art, Rembrandt inspired, somber and grand atmosphere."
+        enabled: true
+        sort-order: 3
+
+      - id: pixar
+        name: Pixar 3D Animation
+        description: Modern 3D animated movie style with polished rendering and expressive characters
+        prompt: "Modern 3D animated movie style, Pixar or Disney animation inspiration, highly polished and clean rendering, expressive character designs with large eyes, vibrant and warm cinematic lighting, photorealistic textures for hair, fur, and cloth, volumetric fog and particle effects, high-budget CGI look, sharp focus, 8k 3D render."
+        enabled: true
+        sort-order: 4
+
+      - id: graphic-novel
+        name: Graphic Novel
+        description: Sin City inspired black and white illustration with stark contrast
+        prompt: "Graphic novel illustration style, Sin City inspiration, stark black and white with high contrast, no greyscale, heavy ink outlines and cross-hatching shadows, gritty texture, dramatic silhouettes, intense and moody atmosphere, vintage detective comic feel, sharp angles."
+        enabled: true
+        sort-order: 5
+
+      - id: minimalist
+        name: Minimalist Vector
+        description: Clean flat design with bold lines and limited colors
+        prompt: "Minimalist vector illustration, flat design style, clean and bold lines, limited solid color palette with no gradients or shadows, geometric shapes, modern graphic design aesthetic, simplified forms, abstract composition, cheerful and clean, corporate art style."
+        enabled: true
+        sort-order: 6
+
   # YouTube Configuration
   youtube:
     video:

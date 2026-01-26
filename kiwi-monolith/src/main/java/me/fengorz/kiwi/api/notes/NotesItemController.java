@@ -27,6 +27,7 @@ import me.fengorz.kiwi.domain.notes.service.NotesAudioService;
 import me.fengorz.kiwi.domain.notes.service.NotesImageService;
 import me.fengorz.kiwi.domain.notes.service.NotesItemService;
 import me.fengorz.kiwi.domain.notes.service.NotesLockService;
+import me.fengorz.kiwi.domain.notes.vo.ImageStyleVO;
 import me.fengorz.kiwi.domain.notes.vo.NotesItemVO;
 import me.fengorz.kiwi.security.KiwiUser;
 import org.springframework.http.HttpHeaders;
@@ -187,6 +188,12 @@ public class NotesItemController {
     }
 
     // ==================== Image Operations ====================
+
+    @GetMapping("/image/styles")
+    @Operation(summary = "List available image generation styles")
+    public R<List<ImageStyleVO>> listImageStyles() {
+        return R.ok(imageService.listAvailableStyles());
+    }
 
     @PostMapping("/image/generate")
     @Operation(summary = "Generate image for note item via Gemini Imagen")

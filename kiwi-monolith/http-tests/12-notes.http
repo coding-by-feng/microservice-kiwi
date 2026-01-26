@@ -186,26 +186,79 @@ Authorization: Bearer {{access_token}}
 
 ### ==================== Image Generation ====================
 
-### Generate image for a note item
+### List available image styles (new feature)
+GET {{base_url}}/api/notes/item/image/styles
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+
+### Generate image with Studio Ghibli style (using style ID)
 POST {{base_url}}/api/notes/item/image/generate
 Authorization: Bearer {{access_token}}
 Content-Type: application/json
 
 {
   "noteItemId": 1,
-  "customPrompt": "A person staying focused and determined",
-  "style": "minimalist illustration with warm colors"
+  "style": "ghibli"
 }
 
-### Generate image with different style
+### Generate image with Cyberpunk style
 POST {{base_url}}/api/notes/item/image/generate
 Authorization: Bearer {{access_token}}
 Content-Type: application/json
 
 {
   "noteItemId": 2,
-  "customPrompt": "Self love and appreciation",
-  "style": "watercolor painting, soft pastel colors"
+  "style": "cyberpunk"
+}
+
+### Generate image with Classical Oil Painting style
+POST {{base_url}}/api/notes/item/image/generate
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+
+{
+  "noteItemId": 3,
+  "style": "oil-painting"
+}
+
+### Generate image with Pixar 3D Animation style
+POST {{base_url}}/api/notes/item/image/generate
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+
+{
+  "noteItemId": 1,
+  "style": "pixar"
+}
+
+### Generate image with Graphic Novel style
+POST {{base_url}}/api/notes/item/image/generate
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+
+{
+  "noteItemId": 2,
+  "style": "graphic-novel"
+}
+
+### Generate image with Minimalist Vector style
+POST {{base_url}}/api/notes/item/image/generate
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+
+{
+  "noteItemId": 3,
+  "style": "minimalist"
+}
+
+### Generate image with custom style (fallback - raw style string)
+POST {{base_url}}/api/notes/item/image/generate
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+
+{
+  "noteItemId": 1,
+  "style": "watercolor painting, soft pastel colors, dreamy atmosphere"
 }
 
 ### Stream image for a note item (with header - for API clients)

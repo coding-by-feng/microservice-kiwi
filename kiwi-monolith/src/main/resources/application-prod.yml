@@ -172,6 +172,16 @@ kiwi:
         max-per-run: 500
         lookback-days: 30
 
+  # Gemini Image Generation Configuration
+  gemini:
+    api-key: ${GEMINI_API_KEY:}
+    image-model: imagen-4.0-generate-001
+    base-url: https://generativelanguage.googleapis.com/v1beta
+    image-width: 1024
+    image-height: 1024
+    number-of-images: 1
+    enabled: true
+
   # YouTube Configuration
   youtube:
     video:

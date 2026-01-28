@@ -148,6 +148,32 @@ public class NotesItemController {
         return R.ok();
     }
 
+    @PutMapping("/{id}/move-up")
+    @Operation(summary = "Move item up (swap with previous item)")
+    public R<NotesItemVO> moveItemUp(
+            @AuthenticationPrincipal KiwiUser user,
+            @PathVariable Long id) {
+        lockService.verifyUnlocked(user.getUserId());
+        NotesItemVO result = itemService.moveUp(id, user.getUserId());
+        if (result == null) {
+            return R.failed("Item is already at the top position");
+        }
+        return R.ok(result);
+    }
+
+    @PutMapping("/{id}/move-down")
+    @Operation(summary = "Move item down (swap with next item)")
+    public R<NotesItemVO> moveItemDown(
+            @AuthenticationPrincipal KiwiUser user,
+            @PathVariable Long id) {
+        lockService.verifyUnlocked(user.getUserId());
+        NotesItemVO result = itemService.moveDown(id, user.getUserId());
+        if (result == null) {
+            return R.failed("Item is already at the bottom position");
+        }
+        return R.ok(result);
+    }
+
     // ==================== Audio Operations ====================
 
     @PostMapping("/audio/generate")

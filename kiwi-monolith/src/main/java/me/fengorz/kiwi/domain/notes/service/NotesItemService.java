@@ -231,4 +231,80 @@ public class NotesItemService extends ServiceImpl<NotesItemMapper, NotesItem> {
 
         log.info("Reordered {} items in category {} for user {}", itemIds.size(), categoryId, userId);
     }
+
+    /**
+     * Move item up (swap with previous item)
+     * @return updated item with navigation flags, or null if already at top
+     */
+    @Transactional
+    public NotesItemVO moveUp(Long id, Integer userId) {
+        NotesItem current = getById(id);
+        if (current == null || GlobalConstants.FLAG_Y.equals(current.getIsDel())) {
+            throw new ServiceException("Note item not found");
+        }
+        if (!current.getUserId().equals(userId)) {
+            throw new ServiceException("Access denied");
+        }
+
+        NotesItem previous = baseMapper.findPreviousItem(current.getCategoryId(), current.getDisplayOrder());
+        if (previous == null) {
+            // Already at top position
+            return null;
+        }
+
+        // Swap display orders
+        Integer tempOrder = current.getDisplayOrder();
+        current.setDisplayOrder(previous.getDisplayOrder());
+        current.setUpdateTime(LocalDateTime.now());
+        previous.setDisplayOrder(tempOrder);
+        previous.setUpdateTime(LocalDateTime.now());
+
+        updateById(current);
+        updateById(previous);
+
+        log.info("Moved notes item {} up for user {}", id, userId);
+
+        NotesItemVO vo = NotesItemVO.fromEntity(current);
+        vo.setHasPrevious(baseMapper.findPreviousItem(current.getCategoryId(), current.getDisplayOrder()) != null);
+        vo.setHasNext(true); // We know there's at least the item we swapped with
+        return vo;
+    }
+
+    /**
+     * Move item down (swap with next item)
+     * @return updated item with navigation flags, or null if already at bottom
+     */
+    @Transactional
+    public NotesItemVO moveDown(Long id, Integer userId) {
+        NotesItem current = getById(id);
+        if (current == null || GlobalConstants.FLAG_Y.equals(current.getIsDel())) {
+            throw new ServiceException("Note item not found");
+        }
+        if (!current.getUserId().equals(userId)) {
+            throw new ServiceException("Access denied");
+        }
+
+        NotesItem next = baseMapper.findNextItem(current.getCategoryId(), current.getDisplayOrder());
+        if (next == null) {
+            // Already at bottom position
+            return null;
+        }
+
+        // Swap display orders
+        Integer tempOrder = current.getDisplayOrder();
+        current.setDisplayOrder(next.getDisplayOrder());
+        current.setUpdateTime(LocalDateTime.now());
+        next.setDisplayOrder(tempOrder);
+        next.setUpdateTime(LocalDateTime.now());
+
+        updateById(current);
+        updateById(next);
+
+        log.info("Moved notes item {} down for user {}", id, userId);
+
+        NotesItemVO vo = NotesItemVO.fromEntity(current);
+        vo.setHasPrevious(true); // We know there's at least the item we swapped with
+        vo.setHasNext(baseMapper.findNextItem(current.getCategoryId(), current.getDisplayOrder()) != null);
+        return vo;
+    }
 }

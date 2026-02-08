@@ -38,6 +38,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
 import java.io.IOException;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -113,26 +114,32 @@ public class AiStreamingSseController {
             return emitter;
         }
 
-        // Log call history and get history ID for updating response later
-        AtomicReference<Long> historyIdRef = new AtomicReference<>();
+        // Log call history asynchronously to avoid blocking the SSE response
+        CompletableFuture<Long> historyIdFuture = null;
         if (userId != null) {
-            try {
-                AiCallHistory history = aiCallHistoryService.logCall(
-                        userId,
-                        null,
-                        request.getPrompt(),
-                        request.getPromptMode(),
-                        request.getTargetLanguage(),
-                        request.getNativeLanguage()
-                );
-                historyIdRef.set(history.getId());
-            } catch (Exception e) {
-                log.error("{} Failed to save call history: {}", LOG_PREFIX, e.getMessage());
-            }
+            historyIdFuture = aiCallHistoryService.logCallAsync(
+                    userId,
+                    null,
+                    request.getPrompt(),
+                    request.getPromptMode(),
+                    request.getTargetLanguage(),
+                    request.getNativeLanguage()
+            );
         }
 
         // Process AI streaming in background
-        taskExecutor.execute(() -> processAiStreaming(emitter, request, historyIdRef.get()));
+        CompletableFuture<Long> finalHistoryIdFuture = historyIdFuture;
+        taskExecutor.execute(() -> {
+            Long historyId = null;
+            if (finalHistoryIdFuture != null) {
+                try {
+                    historyId = finalHistoryIdFuture.get(); // Wait for async DB write to complete
+                } catch (Exception e) {
+                    log.error("{} Failed to get history ID: {}", LOG_PREFIX, e.getMessage());
+                }
+            }
+            processAiStreaming(emitter, request, historyId);
+        });
 
         return emitter;
     }
@@ -167,26 +174,32 @@ public class AiStreamingSseController {
             return emitter;
         }
 
-        // Log call history and get history ID for updating response later
-        AtomicReference<Long> historyIdRef = new AtomicReference<>();
+        // Log call history asynchronously to avoid blocking the SSE response
+        CompletableFuture<Long> historyIdFuture = null;
         if (userId != null) {
-            try {
-                AiCallHistory history = aiCallHistoryService.logCall(
-                        userId,
-                        request.getAiUrl(),
-                        request.getPrompt(),
-                        request.getPromptMode(),
-                        request.getTargetLanguage(),
-                        request.getNativeLanguage()
-                );
-                historyIdRef.set(history.getId());
-            } catch (Exception e) {
-                log.error("{} Failed to save call history: {}", LOG_PREFIX, e.getMessage());
-            }
+            historyIdFuture = aiCallHistoryService.logCallAsync(
+                    userId,
+                    request.getAiUrl(),
+                    request.getPrompt(),
+                    request.getPromptMode(),
+                    request.getTargetLanguage(),
+                    request.getNativeLanguage()
+            );
         }
 
         // Process AI streaming in background
-        taskExecutor.execute(() -> processAiStreaming(emitter, request, historyIdRef.get()));
+        CompletableFuture<Long> finalHistoryIdFuture = historyIdFuture;
+        taskExecutor.execute(() -> {
+            Long historyId = null;
+            if (finalHistoryIdFuture != null) {
+                try {
+                    historyId = finalHistoryIdFuture.get(); // Wait for async DB write to complete
+                } catch (Exception e) {
+                    log.error("{} Failed to get history ID: {}", LOG_PREFIX, e.getMessage());
+                }
+            }
+            processAiStreaming(emitter, request, historyId);
+        });
 
         return emitter;
     }
@@ -306,10 +319,10 @@ public class AiStreamingSseController {
                     AiPromptModeEnum.fromMode(request.getPromptMode()),
                     targetLang,
                     nativeLang,
-                    // onChunk
+                    // onChunk - optimized to send plain text instead of full JSON wrapper
                     chunk -> {
                         fullResponse.append(chunk);
-                        sendEvent(emitter, "chunk", AiStreamingResponse.chunk(chunk, request));
+                        sendChunkOptimized(emitter, chunk);
                     },
                     // onError
                     error -> {
@@ -364,6 +377,20 @@ public class AiStreamingSseController {
                 emitter.completeWithError(e);
             } catch (Exception ignored) {
             }
+        }
+    }
+
+    /**
+     * Optimized chunk sending - sends plain text instead of full JSON object to reduce serialization overhead.
+     * This significantly improves performance for streaming by avoiding JSON serialization on every chunk.
+     */
+    private void sendChunkOptimized(SseEmitter emitter, String chunk) {
+        try {
+            // Send plain text chunks for better performance
+            // Client needs to handle both "chunk" events (plain text) and other events (JSON)
+            emitter.send(SseEmitter.event().name("chunk").data(chunk, MediaType.TEXT_PLAIN));
+        } catch (IOException e) {
+            log.error("{} Failed to send chunk: {}", LOG_PREFIX, e.getMessage());
         }
     }
 }

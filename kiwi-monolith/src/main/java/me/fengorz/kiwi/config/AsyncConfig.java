@@ -41,9 +41,12 @@ public class AsyncConfig {
     @Bean("webSocketExecutor")
     public Executor webSocketExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(8);
-        executor.setMaxPoolSize(32);
-        executor.setQueueCapacity(100);
+        // Increased from 8 to 32 for better handling of concurrent AI streaming requests
+        executor.setCorePoolSize(32);
+        // Increased from 32 to 128 to handle burst traffic
+        executor.setMaxPoolSize(128);
+        // Increased from 100 to 500 to queue more requests during peak load
+        executor.setQueueCapacity(500);
         executor.setThreadNamePrefix("ws-async-");
         executor.setKeepAliveSeconds(60);
         executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
@@ -51,7 +54,7 @@ public class AsyncConfig {
         executor.setAwaitTerminationSeconds(30);
         executor.initialize();
         log.info("WebSocket thread pool initialized: core={}, max={}, queue={}",
-                executor.getCorePoolSize(), executor.getMaxPoolSize(), 100);
+                executor.getCorePoolSize(), executor.getMaxPoolSize(), executor.getQueueCapacity());
         return executor;
     }
 
@@ -63,9 +66,11 @@ public class AsyncConfig {
     public Executor aiBatchExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
         int processors = Runtime.getRuntime().availableProcessors();
-        executor.setCorePoolSize(processors);
-        executor.setMaxPoolSize(processors * 2);
-        executor.setQueueCapacity(200);
+        // Increased multipliers for better batch processing throughput
+        executor.setCorePoolSize(processors * 2);
+        executor.setMaxPoolSize(processors * 4);
+        // Increased from 200 to 1000 to handle larger batches
+        executor.setQueueCapacity(1000);
         executor.setThreadNamePrefix("ai-batch-");
         executor.setKeepAliveSeconds(120);
         executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
@@ -73,7 +78,7 @@ public class AsyncConfig {
         executor.setAwaitTerminationSeconds(60);
         executor.initialize();
         log.info("AI batch thread pool initialized: core={}, max={}, queue={}",
-                executor.getCorePoolSize(), executor.getMaxPoolSize(), 200);
+                executor.getCorePoolSize(), executor.getMaxPoolSize(), executor.getQueueCapacity());
         return executor;
     }
 }

@@ -22,12 +22,14 @@ import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.domain.ai.entity.AiCallHistory;
 import me.fengorz.kiwi.domain.ai.mapper.AiCallHistoryMapper;
 import me.fengorz.kiwi.domain.ai.vo.AiCallHistoryVO;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 /**
@@ -102,7 +104,7 @@ public class AiCallHistoryService extends ServiceImpl<AiCallHistoryMapper, AiCal
     }
 
     /**
-     * Log AI call
+     * Log AI call (synchronous)
      */
     @Transactional
     public AiCallHistory logCall(Long userId, String aiUrl, String prompt, String promptMode,
@@ -118,6 +120,24 @@ public class AiCallHistoryService extends ServiceImpl<AiCallHistoryMapper, AiCal
 
         save(history);
         return history;
+    }
+
+    /**
+     * Log AI call asynchronously to avoid blocking streaming requests.
+     * Returns a CompletableFuture with the history ID for later updates.
+     */
+    @Async("webSocketExecutor")
+    @Transactional
+    public CompletableFuture<Long> logCallAsync(Long userId, String aiUrl, String prompt, String promptMode,
+                                                 String targetLanguage, String nativeLanguage) {
+        try {
+            AiCallHistory history = logCall(userId, aiUrl, prompt, promptMode, targetLanguage, nativeLanguage);
+            log.debug("Async call history logged: {}", history.getId());
+            return CompletableFuture.completedFuture(history.getId());
+        } catch (Exception e) {
+            log.error("Failed to log call history asynchronously: {}", e.getMessage(), e);
+            return CompletableFuture.completedFuture(null);
+        }
     }
 
     /**

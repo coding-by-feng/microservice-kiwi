@@ -44,19 +44,21 @@ public class AiConfig {
     @Bean("aiOkHttpClient")
     public OkHttpClient aiOkHttpClient() {
         ConnectionPool connectionPool = new ConnectionPool(
-                20,              // max idle connections
+                50,              // max idle connections (increased from 20)
                 5, TimeUnit.MINUTES   // keep-alive duration
         );
 
         OkHttpClient client = new OkHttpClient.Builder()
                 .connectionPool(connectionPool)
                 .connectTimeout(30, TimeUnit.SECONDS)
-                .readTimeout(120, TimeUnit.SECONDS)
-                .writeTimeout(60, TimeUnit.SECONDS)
+                // Increased from 120s to 300s (5min) for long AI streaming responses
+                .readTimeout(300, TimeUnit.SECONDS)
+                // Increased from 60s to 120s for sending large prompts
+                .writeTimeout(120, TimeUnit.SECONDS)
                 .retryOnConnectionFailure(true)
                 .build();
 
-        log.info("AI OkHttpClient initialized with connection pool: maxIdleConnections=20, keepAlive=5min");
+        log.info("AI OkHttpClient initialized with connection pool: maxIdleConnections=50, keepAlive=5min, readTimeout=300s");
         return client;
     }
 

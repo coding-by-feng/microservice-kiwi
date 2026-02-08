@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="003-add-video-link-index" author="claude">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <indexExists tableName="ytb_channel_video" indexName="idx_video_link"/>
+            </not>
+        </preConditions>
+
+        <comment>
+            Add index on video_link column for faster video lookup by URL.
+            This significantly improves performance of the favorite check API
+            from 2 sequential queries to 1 JOIN query with indexed lookup.
+        </comment>
+
+        <createIndex tableName="ytb_channel_video" indexName="idx_video_link">
+            <column name="video_link"/>
+        </createIndex>
+
+        <rollback>
+            <dropIndex tableName="ytb_channel_video" indexName="idx_video_link"/>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

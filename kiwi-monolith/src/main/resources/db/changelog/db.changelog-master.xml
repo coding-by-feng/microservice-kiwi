@@ -28,6 +28,7 @@
 
     <!-- AI module -->
     <include file="db/changelog/ai/002-add-ai-response-column.xml"/>
+    <include file="db/changelog/ai/003-add-video-link-index.xml"/>
 
     <!-- Notes module -->
     <include file="db/changelog/notes/001-notes-tables.xml"/>

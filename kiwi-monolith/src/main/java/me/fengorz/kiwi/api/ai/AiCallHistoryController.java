@@ -18,8 +18,10 @@ package me.fengorz.kiwi.api.ai;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import me.fengorz.kiwi.common.R;
+import me.fengorz.kiwi.domain.ai.dto.AiCallHistoryCreateDTO;
 import me.fengorz.kiwi.domain.ai.entity.AiCallHistory;
 import me.fengorz.kiwi.domain.ai.service.AiCallHistoryService;
 import me.fengorz.kiwi.security.KiwiUser;
@@ -47,6 +49,27 @@ public class AiCallHistoryController {
         return historyService.findById(id)
                 .map(R::ok)
                 .orElse(R.failed("History not found"));
+    }
+
+    @PostMapping
+    @Operation(summary = "Create new AI call history item")
+    public R<AiCallHistory> create(
+            @AuthenticationPrincipal KiwiUser user,
+            @Valid @RequestBody AiCallHistoryCreateDTO dto) {
+        AiCallHistory history = AiCallHistory.builder()
+                .userId(user.getUserId().longValue())
+                .aiUrl(dto.getAiUrl())
+                .prompt(dto.getPrompt())
+                .promptMode(dto.getPromptMode())
+                .targetLanguage(dto.getTargetLanguage())
+                .nativeLanguage(dto.getNativeLanguage())
+                .aiResponse(dto.getAiResponse())
+                .isDelete(false)
+                .isArchive(false)
+                .isFavorite(false)
+                .build();
+        AiCallHistory saved = historyService.saveHistory(history);
+        return R.ok(saved);
     }
 
     @GetMapping

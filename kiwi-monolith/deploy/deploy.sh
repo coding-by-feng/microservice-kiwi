@@ -107,8 +107,8 @@ do_build() {
         exit 1
     fi
 
-    cd "$ROOT_DIR"
-    mvn clean package -pl kiwi-monolith -am -DskipTests -q
+    cd "$PROJECT_DIR"
+    mvn clean package -DskipTests -q
 
     JAR_FILE=$(find_jar)
     log_info "Build successful: $JAR_FILE"

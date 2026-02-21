@@ -232,7 +232,7 @@ kiwi:
     video:
       command: yt-dlp-tor
       download:
-        path: ${YT_DOWNLOAD_PATH:ENC(8ZJ3rI1uzmeliVVmWQwG8w==)}
+        path: ${YT_DOWNLOAD_PATH:/root/ytb-data}
       large-subtitles:
         threshold: 1000
       batch:

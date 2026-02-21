@@ -254,6 +254,7 @@ kiwi:
       cron: "0 0 */6 * * *"
       fetch-subtitles: true
       max-videos-per-channel: 100
+      run-on-startup: true
 
 # ==================== AI Configuration ====================
 ai:

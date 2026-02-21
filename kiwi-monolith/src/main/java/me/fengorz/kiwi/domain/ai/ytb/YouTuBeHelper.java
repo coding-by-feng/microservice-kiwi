@@ -40,22 +40,22 @@ import java.util.Optional;
 @Service
 public class YouTuBeHelper implements YouTubeClient {
 
-    @Value("${youtube.video.download.path:/tmp/youtube}")
+    @Value("${kiwi.youtube.video.download.path:/tmp/youtube}")
     private String downloadPath;
 
-    @Value("${youtube.video.large-subtitles.threshold:1000}")
+    @Value("${kiwi.youtube.video.large-subtitles.threshold:1000}")
     private int largeSubtitlesThreshold;
 
-    @Value("${youtube.video.command:yt-dlp}")
+    @Value("${kiwi.youtube.video.command:yt-dlp}")
     private String command;
 
-    @Value("${youtube.video.proxy.enabled:false}")
+    @Value("${kiwi.youtube.video.proxy.enabled:false}")
     private boolean proxyEnabled;
 
-    @Value("${youtube.video.proxy.value:}")
+    @Value("${kiwi.youtube.video.proxy.value:}")
     private String proxyValue;
 
-    @Value("${youtube.video.subtitles.langs:en}")
+    @Value("${kiwi.youtube.video.subtitles.langs:en}")
     private String subtitlesLangs;
 
     @Override

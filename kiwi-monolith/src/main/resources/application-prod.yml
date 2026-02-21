@@ -254,7 +254,7 @@ kiwi:
       cron: "0 0 */6 * * *"
       fetch-subtitles: true
       max-videos-per-channel: 100
-      run-on-startup: true
+      run-on-startup: false
 
 # ==================== AI Configuration ====================
 ai:
@@ -487,3 +487,5 @@ ignore:
     - /rangi_windows/api/**
     # Tools Service (new /api prefix)
     - /api/rangi_windows/**
+    # YouTube sync trigger (temporary public access)
+    - /api/ai/ytb/channel/sync/trigger

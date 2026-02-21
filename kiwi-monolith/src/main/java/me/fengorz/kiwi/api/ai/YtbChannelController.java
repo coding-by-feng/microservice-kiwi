@@ -20,9 +20,11 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.R;
 import me.fengorz.kiwi.domain.ai.entity.YtbChannel;
 import me.fengorz.kiwi.domain.ai.entity.YtbChannelVideo;
+import me.fengorz.kiwi.domain.ai.scheduler.YtbChannelVideoSyncScheduler;
 import me.fengorz.kiwi.domain.ai.service.YtbChannelService;
 import me.fengorz.kiwi.domain.ai.service.YtbFavoriteService;
 import me.fengorz.kiwi.domain.ai.vo.ytb.YtbChannelVO;
@@ -33,12 +35,14 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * YouTube Channel REST Controller
  *
  * @author codingByFeng
  */
+@Slf4j
 @RestController
 @RequestMapping("/api/ai/ytb/channel")
 @RequiredArgsConstructor
@@ -47,6 +51,7 @@ public class YtbChannelController {
 
     private final YtbChannelService ytbChannelService;
     private final YtbFavoriteService favoriteService;
+    private final Optional<YtbChannelVideoSyncScheduler> syncScheduler;
 
     @GetMapping("/{channelId}")
     @Operation(summary = "Get channel by ID")
@@ -310,5 +315,22 @@ public class YtbChannelController {
             @RequestParam(value = "size", defaultValue = "10") Integer size) {
         Page<YtbChannelVideo> page = new Page<>(current, size);
         return R.ok(favoriteService.getFavoriteVideos(page, user.getUserId().longValue()));
+    }
+
+    // ==================== Sync Trigger Endpoint (temporary public) ====================
+
+    @PostMapping("/sync/trigger")
+    @Operation(summary = "Manually trigger YouTube channel video sync")
+    public R<String> triggerSync() {
+        if (syncScheduler.isEmpty()) {
+            return R.failed("Sync scheduler is not enabled");
+        }
+        YtbChannelVideoSyncScheduler scheduler = syncScheduler.get();
+        if (scheduler.isRunning()) {
+            return R.failed("Sync job is already running");
+        }
+        log.info("[YTB-SYNC] Manual sync triggered via API");
+        new Thread(scheduler::syncChannelVideos, "ytb-sync-manual").start();
+        return R.ok("Sync job triggered successfully");
     }
 }

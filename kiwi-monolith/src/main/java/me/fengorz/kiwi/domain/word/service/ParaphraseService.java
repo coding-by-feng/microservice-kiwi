@@ -51,7 +51,7 @@ public class ParaphraseService extends ServiceImpl<ParaphraseMapper, Paraphrase>
     /**
      * Find paraphrase by ID with examples
      */
-    @Cacheable(value = CACHE_NAME, key = "'id:' + #paraphraseId")
+    @Cacheable(value = CACHE_NAME, key = "'id:' + #paraphraseId", unless = "#result == null")
     public Optional<Paraphrase> findByIdWithExamples(Integer paraphraseId) {
         return findById(paraphraseId);
     }
@@ -69,7 +69,7 @@ public class ParaphraseService extends ServiceImpl<ParaphraseMapper, Paraphrase>
     /**
      * Find paraphrases by word ID with examples
      */
-    @Cacheable(value = CACHE_NAME, key = "'word:' + #wordId")
+    @Cacheable(value = CACHE_NAME, key = "'word:' + #wordId", unless = "#result == null")
     public List<Paraphrase> findByWordIdWithExamples(Integer wordId) {
         return findByWordId(wordId);
     }

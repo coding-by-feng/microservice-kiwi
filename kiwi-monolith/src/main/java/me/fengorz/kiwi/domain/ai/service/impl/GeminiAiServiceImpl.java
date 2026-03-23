@@ -22,6 +22,7 @@ import me.fengorz.kiwi.common.enumeration.LanguageEnum;
 import me.fengorz.kiwi.common.exception.ServiceException;
 import me.fengorz.kiwi.domain.ai.config.AiModeProperties;
 import me.fengorz.kiwi.domain.ai.config.GeminiApiProperties;
+import me.fengorz.kiwi.domain.ai.config.VertexAiCredentialProvider;
 import me.fengorz.kiwi.domain.ai.model.BatchResult;
 import me.fengorz.kiwi.domain.ai.model.request.GeminiRequest;
 import me.fengorz.kiwi.domain.ai.model.response.GeminiResponse;
@@ -55,19 +56,22 @@ public class GeminiAiServiceImpl implements AiChatService {
     private final GeminiApiProperties geminiApiProperties;
     private final AiModeProperties modeProperties;
     private final ObjectMapper objectMapper;
+    private final VertexAiCredentialProvider credentialProvider;
 
     public GeminiAiServiceImpl(@Qualifier("aiRestTemplate") RestTemplate restTemplate,
                                @Qualifier("aiRetryTemplate") RetryTemplate retryTemplate,
                                @Qualifier("aiBatchExecutor") Executor batchExecutor,
                                GeminiApiProperties geminiApiProperties,
                                AiModeProperties modeProperties,
-                               ObjectMapper objectMapper) {
+                               ObjectMapper objectMapper,
+                               VertexAiCredentialProvider credentialProvider) {
         this.restTemplate = restTemplate;
         this.retryTemplate = retryTemplate;
         this.batchExecutor = batchExecutor;
         this.geminiApiProperties = geminiApiProperties;
         this.modeProperties = modeProperties;
         this.objectMapper = objectMapper;
+        this.credentialProvider = credentialProvider;
     }
 
     @Override
@@ -122,16 +126,16 @@ public class GeminiAiServiceImpl implements AiChatService {
     private HttpHeaders buildHeaders() {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.setBearerAuth(credentialProvider.getAccessToken());
         return headers;
     }
 
     private String buildApiUrl(boolean streaming) {
         String action = streaming ? "streamGenerateContent" : "generateContent";
-        return String.format("%s/%s:%s?key=%s",
-                geminiApiProperties.getEndpoint(),
+        return String.format("%s/%s:%s",
+                geminiApiProperties.getVertexAiEndpoint(),
                 geminiApiProperties.getModel(),
-                action,
-                geminiApiProperties.getKey());
+                action);
     }
 
     @Override

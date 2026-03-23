@@ -36,14 +36,14 @@ log_error() {
 
 start_infra() {
     log_info "Starting infrastructure services..."
-    docker-compose up -d
+    docker compose up -d
 
     log_info "Waiting for services to be healthy..."
     sleep 5
 
     # Wait for MySQL
     log_info "Waiting for MySQL..."
-    until docker exec kiwi-mysql mysqladmin ping -h localhost -u root -p${DB_PASSWORD:-kiwi123} --silent 2>/dev/null; do
+    until docker exec kiwi-mysql mysqladmin ping -h 127.0.0.1 -P 3307 -u root -p${DB_PASSWORD:-kiwi123} --silent 2>/dev/null; do
         sleep 2
     done
     log_info "MySQL is ready!"
@@ -57,7 +57,7 @@ start_infra() {
 
     # Wait for Elasticsearch
     log_info "Waiting for Elasticsearch..."
-    until curl -s -u elastic:${ES_PASSWORD:-changeme} http://localhost:${ES_PORT:-9201}/_cluster/health 2>/dev/null | grep -q '"status"'; do
+    until curl -s -u elastic:${ES_PASSWORD:-changeme} http://localhost:9201/_cluster/health 2>/dev/null | grep -q '"status"'; do
         sleep 3
     done
     log_info "Elasticsearch is ready!"
@@ -71,7 +71,7 @@ start_infra() {
 
 stop_infra() {
     log_info "Stopping infrastructure services..."
-    docker-compose down
+    docker compose down
     log_info "Infrastructure stopped."
 }
 
@@ -84,21 +84,23 @@ show_status() {
     echo ""
     log_info "Infrastructure Status:"
     echo "----------------------------------------"
-    docker-compose ps
+    docker compose ps
     echo ""
     echo "Connection Info:"
-    echo "  MySQL:         localhost:${DB_PORT:-3307} (user: root, password: ${DB_PASSWORD:-kiwi123})"
-    echo "  Redis:         localhost:${REDIS_PORT:-6380} (password: ${REDIS_PASSWORD:-kiwi123})"
-    echo "  Elasticsearch: http://localhost:${ES_PORT:-9201} (user: elastic, password: ${ES_PASSWORD:-changeme})"
+    echo "  MySQL:         localhost:3307 (user: root, password: ${DB_PASSWORD:-kiwi123})"
+    echo "  Redis:         localhost:6380 (password: ${REDIS_PASSWORD:-kiwi123})"
+    echo "  Elasticsearch: http://localhost:9201 (user: elastic, password: ${ES_PASSWORD:-changeme})"
+    echo "  MinIO:         http://localhost:9000 (console: http://localhost:9001)"
+    echo "  App:           http://localhost:8080"
     echo ""
 }
 
 show_logs() {
     SERVICE=${2:-}
     if [ -z "$SERVICE" ]; then
-        docker-compose logs -f
+        docker compose logs -f
     else
-        docker-compose logs -f "$SERVICE"
+        docker compose logs -f "$SERVICE"
     fi
 }
 
@@ -107,7 +109,7 @@ clean_infra() {
     read -r response
     if [[ "$response" =~ ^[Yy]$ ]]; then
         log_info "Stopping and removing containers and volumes..."
-        docker-compose down -v
+        docker compose down -v
         log_info "Cleanup complete."
     else
         log_info "Cleanup cancelled."
@@ -115,7 +117,7 @@ clean_infra() {
 }
 
 create_es_index() {
-    ES_URL="http://localhost:${ES_PORT:-9201}"
+    ES_URL="http://localhost:9201"
     ES_AUTH="elastic:${ES_PASSWORD:-changeme}"
     INDEX_NAME="kiwi_vocabulary"
 
@@ -170,6 +172,7 @@ backup_db() {
     # Create backup using mysqldump
     docker exec kiwi-mysql mysqldump \
         -u root \
+        -P 3307 \
         -p"${DB_PASSWORD:-kiwi123}" \
         --single-transaction \
         --routines \
@@ -233,6 +236,7 @@ restore_db() {
     # Restore from backup
     gunzip -c "$BACKUP_FILE" | docker exec -i kiwi-mysql mysql \
         -u root \
+        -P 3307 \
         -p"${DB_PASSWORD:-kiwi123}" \
         2>/dev/null
 

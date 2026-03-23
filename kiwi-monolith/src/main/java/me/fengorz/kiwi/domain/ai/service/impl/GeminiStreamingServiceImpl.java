@@ -22,6 +22,7 @@ import me.fengorz.kiwi.common.enumeration.AiPromptModeEnum;
 import me.fengorz.kiwi.common.enumeration.LanguageEnum;
 import me.fengorz.kiwi.domain.ai.config.AiModeProperties;
 import me.fengorz.kiwi.domain.ai.config.GeminiApiProperties;
+import me.fengorz.kiwi.domain.ai.config.VertexAiCredentialProvider;
 import me.fengorz.kiwi.domain.ai.model.request.GeminiRequest;
 import me.fengorz.kiwi.domain.ai.service.AiStreamingService;
 import okhttp3.*;
@@ -46,15 +47,18 @@ public class GeminiStreamingServiceImpl implements AiStreamingService {
     private final AiModeProperties modeProperties;
     private final ObjectMapper objectMapper;
     private final OkHttpClient httpClient;
+    private final VertexAiCredentialProvider credentialProvider;
 
     public GeminiStreamingServiceImpl(GeminiApiProperties geminiApiProperties,
                                        AiModeProperties modeProperties,
                                        ObjectMapper objectMapper,
-                                       @Qualifier("aiOkHttpClient") OkHttpClient httpClient) {
+                                       @Qualifier("aiOkHttpClient") OkHttpClient httpClient,
+                                       VertexAiCredentialProvider credentialProvider) {
         this.geminiApiProperties = geminiApiProperties;
         this.modeProperties = modeProperties;
         this.objectMapper = objectMapper;
         this.httpClient = httpClient;
+        this.credentialProvider = credentialProvider;
     }
 
     @Override
@@ -77,6 +81,7 @@ public class GeminiStreamingServiceImpl implements AiStreamingService {
             Request request = new Request.Builder()
                     .url(url)
                     .addHeader("Content-Type", "application/json")
+                    .addHeader("Authorization", "Bearer " + credentialProvider.getAccessToken())
                     .post(RequestBody.create(requestBody, MediaType.parse("application/json")))
                     .build();
 
@@ -190,10 +195,9 @@ public class GeminiStreamingServiceImpl implements AiStreamingService {
     }
 
     private String buildStreamingUrl() {
-        return String.format("%s/%s:streamGenerateContent?alt=sse&key=%s",
-                geminiApiProperties.getEndpoint(),
-                geminiApiProperties.getModel(),
-                geminiApiProperties.getKey());
+        return String.format("%s/%s:streamGenerateContent?alt=sse",
+                geminiApiProperties.getVertexAiEndpoint(),
+                geminiApiProperties.getModel());
     }
 
     private String buildPrompt(AiPromptModeEnum promptMode, LanguageEnum targetLanguage, LanguageEnum nativeLanguage) {

@@ -217,6 +217,13 @@
             <version>${google-cloud-texttospeech.version}</version>
         </dependency>
 
+        <!-- ==================== Google Auth (for Vertex AI ADC) ==================== -->
+        <dependency>
+            <groupId>com.google.auth</groupId>
+            <artifactId>google-auth-library-oauth2-http</artifactId>
+            <version>1.23.0</version>
+        </dependency>
+
         <!-- ==================== HTTP Client ==================== -->
         <dependency>
             <groupId>com.squareup.okhttp3</groupId>

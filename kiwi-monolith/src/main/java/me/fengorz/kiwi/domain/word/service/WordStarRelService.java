@@ -53,7 +53,7 @@ public class WordStarRelService extends ServiceImpl<WordStarRelMapper, WordStarR
     /**
      * Find relations by list ID
      */
-    @Cacheable(value = CACHE_NAME, key = "'list:' + #listId")
+    @Cacheable(value = CACHE_NAME, key = "'list:' + #listId", unless = "#result == null")
     public List<WordStarRel> findByListId(Integer listId) {
         return list(new LambdaQueryWrapper<WordStarRel>()
                 .eq(WordStarRel::getListId, listId));

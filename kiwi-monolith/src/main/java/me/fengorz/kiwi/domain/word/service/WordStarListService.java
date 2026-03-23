@@ -51,7 +51,7 @@ public class WordStarListService extends ServiceImpl<WordStarListMapper, WordSta
     /**
      * Find list by ID with word relations
      */
-    @Cacheable(value = CACHE_NAME, key = "'id:' + #listId")
+    @Cacheable(value = CACHE_NAME, key = "'id:' + #listId", unless = "#result == null")
     public Optional<WordStarList> findByIdWithWordRelations(Integer listId) {
         return findById(listId);
     }
@@ -59,7 +59,7 @@ public class WordStarListService extends ServiceImpl<WordStarListMapper, WordSta
     /**
      * Find lists by owner
      */
-    @Cacheable(value = CACHE_NAME, key = "'owner:' + #owner")
+    @Cacheable(value = CACHE_NAME, key = "'owner:' + #owner", unless = "#result == null")
     public List<WordStarList> findByOwner(Integer owner) {
         return list(new LambdaQueryWrapper<WordStarList>()
                 .eq(WordStarList::getOwner, owner)

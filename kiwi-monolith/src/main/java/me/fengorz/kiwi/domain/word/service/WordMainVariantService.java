@@ -50,7 +50,7 @@ public class WordMainVariantService extends ServiceImpl<WordMainVariantMapper, W
     /**
      * Find variants by word ID
      */
-    @Cacheable(value = CACHE_NAME, key = "'word:' + #wordId")
+    @Cacheable(value = CACHE_NAME, key = "'word:' + #wordId", unless = "#result == null")
     public List<WordMainVariant> findByWordId(Integer wordId) {
         return list(new LambdaQueryWrapper<WordMainVariant>()
                 .eq(WordMainVariant::getWordId, wordId)
@@ -60,7 +60,7 @@ public class WordMainVariantService extends ServiceImpl<WordMainVariantMapper, W
     /**
      * Find by variant name
      */
-    @Cacheable(value = CACHE_NAME, key = "'name:' + #variantName")
+    @Cacheable(value = CACHE_NAME, key = "'name:' + #variantName", unless = "#result == null")
     public Optional<WordMainVariant> findByVariantName(String variantName) {
         return Optional.ofNullable(getOne(new LambdaQueryWrapper<WordMainVariant>()
                 .eq(WordMainVariant::getVariantName, variantName)

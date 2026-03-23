@@ -16,7 +16,6 @@
 package me.fengorz.kiwi.common.tts;
 
 import lombok.Data;
-import lombok.Getter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
@@ -88,32 +87,4 @@ public class OpenAiTtsProperties {
         return englishAccent.getInstruction();
     }
 
-    /**
-     * Supported English accents for steerable TTS
-     */
-    @Getter
-    public enum AccentType {
-        US("Speak with an American English accent. Use American pronunciation and intonation patterns."),
-        UK("Speak with a British English accent. Use British pronunciation, vocabulary and intonation patterns typical of England."),
-        AU("Speak with an Australian English accent. Use Australian pronunciation and intonation patterns."),
-        IN("Speak with an Indian English accent. Use Indian English pronunciation patterns, with characteristic intonation and rhythm typical of Indian speakers.");
-
-        private final String instruction;
-
-        AccentType(String instruction) {
-            this.instruction = instruction;
-        }
-
-        public static AccentType fromCode(String code) {
-            if (code == null) {
-                return US;
-            }
-            for (AccentType type : values()) {
-                if (type.name().equalsIgnoreCase(code)) {
-                    return type;
-                }
-            }
-            return US;
-        }
-    }
 }

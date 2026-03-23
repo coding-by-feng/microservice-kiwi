@@ -22,7 +22,7 @@ import org.springframework.stereotype.Component;
 import java.io.Serializable;
 
 /**
- * Gemini API Properties Configuration
+ * Gemini API Properties Configuration (Vertex AI)
  *
  * @author codingByFeng
  */
@@ -34,21 +34,19 @@ public class GeminiApiProperties implements Serializable {
     private static final long serialVersionUID = -367572969083407340L;
 
     /**
-     * Gemini API key
+     * GCP Project ID for Vertex AI
      */
-    private String key;
+    private String projectId;
 
     /**
-     * Gemini API endpoint (default: Google AI Studio endpoint)
-     * For streaming: https://generativelanguage.googleapis.com/v1beta/models/{model}:streamGenerateContent
-     * For non-streaming: https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent
+     * GCP region for Vertex AI (e.g., us-central1, europe-west1)
      */
-    private String endpoint = "https://generativelanguage.googleapis.com/v1beta/models";
+    private String location = "us-central1";
 
     /**
-     * Gemini model name (e.g., gemini-3-flash-preview, gemini-2.0-flash, gemini-1.5-pro)
+     * Gemini model name (e.g., gemini-2.5-flash, gemini-2.0-flash, gemini-1.5-pro)
      */
-    private String model = "gemini-3-flash-preview";
+    private String model = "gemini-2.5-flash";
 
     /**
      * Number of prompts per batch for batch processing
@@ -74,4 +72,12 @@ public class GeminiApiProperties implements Serializable {
      * Maximum output tokens
      */
     private Integer maxOutputTokens = 8192;
+
+    /**
+     * Build the Vertex AI base endpoint URL
+     */
+    public String getVertexAiEndpoint() {
+        return String.format("https://%s-aiplatform.googleapis.com/v1/projects/%s/locations/%s/publishers/google/models",
+                location, projectId, location);
+    }
 }

@@ -51,7 +51,7 @@ public class ParaphraseExampleService extends ServiceImpl<ParaphraseExampleMappe
     /**
      * Find examples by paraphrase ID
      */
-    @Cacheable(value = CACHE_NAME, key = "'paraphrase:' + #paraphraseId")
+    @Cacheable(value = CACHE_NAME, key = "'paraphrase:' + #paraphraseId", unless = "#result == null")
     public List<ParaphraseExample> findByParaphraseId(Integer paraphraseId) {
         return list(new LambdaQueryWrapper<ParaphraseExample>()
                 .eq(ParaphraseExample::getParaphraseId, paraphraseId)

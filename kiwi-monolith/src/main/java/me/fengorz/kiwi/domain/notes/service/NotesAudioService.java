@@ -20,8 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.constant.GlobalConstants;
 import me.fengorz.kiwi.common.dfs.DfsService;
 import me.fengorz.kiwi.common.exception.ServiceException;
-import me.fengorz.kiwi.common.tts.OpenAiTtsProperties.AccentType;
-import me.fengorz.kiwi.common.tts.OpenAiTtsService;
+import me.fengorz.kiwi.common.tts.TtsService;
 import me.fengorz.kiwi.domain.notes.dto.NotesAudioRequest;
 import me.fengorz.kiwi.domain.notes.entity.MediaStatus;
 import me.fengorz.kiwi.domain.notes.entity.NotesItem;
@@ -44,7 +43,7 @@ import java.time.LocalDateTime;
 public class NotesAudioService {
 
     private final NotesItemMapper notesItemMapper;
-    private final OpenAiTtsService openAiTtsService;
+    private final TtsService ttsService;
     private final DfsService dfsService;
 
     /**
@@ -73,7 +72,7 @@ public class NotesAudioService {
 
         try {
             // Generate audio via OpenAI TTS
-            byte[] audioBytes = openAiTtsService.speechWithAccent(
+            byte[] audioBytes = ttsService.speechWithAccent(
                     item.getContent(),
                     request.getVoice(),
                     request.getAccent()

@@ -75,7 +75,8 @@ public class OpenAiTtsService implements TtsService {
      * @param accent the accent type (US, UK, AU, IN)
      * @return audio bytes
      */
-    public byte[] speechWithAccent(String text, String voice, OpenAiTtsProperties.AccentType accent) {
+    @Override
+    public byte[] speechWithAccent(String text, String voice, AccentType accent) {
         if (properties.isSteerableTts() && accent != null) {
             log.info("Generating TTS with accent: {} | voice: {} | instruction: {}",
                     accent.name(), voice, accent.getInstruction());

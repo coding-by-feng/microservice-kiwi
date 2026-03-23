@@ -22,6 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.domain.word.entity.FetchQueue;
 import me.fengorz.kiwi.domain.word.mapper.FetchQueueMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
@@ -109,7 +110,7 @@ public class FetchQueueService extends ServiceImpl<FetchQueueMapper, FetchQueue>
     /**
      * Add word to fetch queue
      */
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public FetchQueue addToQueue(String wordName, Integer priority) {
         if (existsByWordName(wordName)) {
             log.debug("Word already in queue: {}", wordName);

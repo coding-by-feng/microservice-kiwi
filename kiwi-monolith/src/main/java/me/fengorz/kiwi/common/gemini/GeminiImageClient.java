@@ -19,6 +19,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.exception.ServiceException;
+import me.fengorz.kiwi.domain.ai.config.VertexAiCredentialProvider;
 import okhttp3.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -44,9 +45,11 @@ public class GeminiImageClient {
     private final OkHttpClient httpClient;
     private final GeminiImageProperties properties;
     private final ObjectMapper objectMapper;
+    private final VertexAiCredentialProvider credentialProvider;
 
-    public GeminiImageClient(GeminiImageProperties properties) {
+    public GeminiImageClient(GeminiImageProperties properties, VertexAiCredentialProvider credentialProvider) {
         this.properties = properties;
+        this.credentialProvider = credentialProvider;
         this.objectMapper = new ObjectMapper();
         this.httpClient = new OkHttpClient.Builder()
                 .connectTimeout(60, TimeUnit.SECONDS)
@@ -54,7 +57,7 @@ public class GeminiImageClient {
                 .writeTimeout(60, TimeUnit.SECONDS)
                 .build();
 
-        log.info("Gemini Image Client initialized with model: {}", properties.getImageModel());
+        log.info("Gemini Image Client initialized with Vertex AI, model: {}", properties.getImageModel());
     }
 
     /**
@@ -68,14 +71,7 @@ public class GeminiImageClient {
             throw new ServiceException("Image prompt cannot be empty");
         }
 
-        if (StringUtils.isBlank(properties.getApiKey())) {
-            throw new ServiceException("Gemini API key is not configured");
-        }
-
-        String url = String.format("%s/models/%s:predict?key=%s",
-                properties.getBaseUrl(),
-                properties.getImageModel(),
-                properties.getApiKey());
+        String url = properties.getVertexAiEndpoint();
 
         String jsonPayload = buildJsonPayload(prompt);
 
@@ -83,6 +79,7 @@ public class GeminiImageClient {
         Request request = new Request.Builder()
                 .url(url)
                 .addHeader("Content-Type", "application/json")
+                .addHeader("Authorization", "Bearer " + credentialProvider.getAccessToken())
                 .post(body)
                 .build();
 

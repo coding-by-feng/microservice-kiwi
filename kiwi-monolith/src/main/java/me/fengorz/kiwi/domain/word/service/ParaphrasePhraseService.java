@@ -51,7 +51,7 @@ public class ParaphrasePhraseService extends ServiceImpl<ParaphrasePhraseMapper,
     /**
      * Find phrases by paraphrase ID
      */
-    @Cacheable(value = CACHE_NAME, key = "'paraphrase:' + #paraphraseId")
+    @Cacheable(value = CACHE_NAME, key = "'paraphrase:' + #paraphraseId", unless = "#result == null")
     public List<ParaphrasePhrase> findByParaphraseId(Integer paraphraseId) {
         return list(new LambdaQueryWrapper<ParaphrasePhrase>()
                 .eq(ParaphrasePhrase::getParaphraseId, paraphraseId)

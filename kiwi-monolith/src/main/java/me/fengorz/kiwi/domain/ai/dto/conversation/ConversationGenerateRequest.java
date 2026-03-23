@@ -23,7 +23,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import me.fengorz.kiwi.common.tts.OpenAiTtsProperties;
+import me.fengorz.kiwi.common.tts.AccentType;
 
 /**
  * Conversation generation request DTO
@@ -46,7 +46,7 @@ public class ConversationGenerateRequest {
      * English accent: US, UK, AU, IN
      */
     @NotNull(message = "Accent must be specified")
-    private OpenAiTtsProperties.AccentType accent;
+    private AccentType accent;
 
     /**
      * Target conversation duration

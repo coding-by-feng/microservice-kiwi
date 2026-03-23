@@ -51,7 +51,7 @@ public class WordCharacterService extends ServiceImpl<WordCharacterMapper, WordC
     /**
      * Find character by ID with paraphrases
      */
-    @Cacheable(value = CACHE_NAME, key = "'id:' + #characterId")
+    @Cacheable(value = CACHE_NAME, key = "'id:' + #characterId", unless = "#result == null")
     public Optional<WordCharacter> findByIdWithParaphrases(Integer characterId) {
         return findById(characterId);
     }
@@ -66,7 +66,7 @@ public class WordCharacterService extends ServiceImpl<WordCharacterMapper, WordC
     /**
      * Find characters by word ID
      */
-    @Cacheable(value = CACHE_NAME, key = "'word:' + #wordId")
+    @Cacheable(value = CACHE_NAME, key = "'word:' + #wordId", unless = "#result == null")
     public List<WordCharacter> findByWordId(Integer wordId) {
         return list(new LambdaQueryWrapper<WordCharacter>()
                 .eq(WordCharacter::getWordId, wordId)

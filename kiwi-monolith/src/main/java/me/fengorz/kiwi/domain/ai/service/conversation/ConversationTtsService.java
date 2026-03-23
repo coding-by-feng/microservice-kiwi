@@ -18,8 +18,8 @@ package me.fengorz.kiwi.domain.ai.service.conversation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.dfs.DfsService;
-import me.fengorz.kiwi.common.tts.OpenAiTtsProperties;
-import me.fengorz.kiwi.common.tts.OpenAiTtsService;
+import me.fengorz.kiwi.common.tts.AccentType;
+import me.fengorz.kiwi.common.tts.TtsService;
 import me.fengorz.kiwi.domain.ai.config.ConversationProperties;
 import org.springframework.stereotype.Service;
 
@@ -38,7 +38,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ConversationTtsService {
 
-    private final OpenAiTtsService openAiTtsService;
+    private final TtsService ttsService;
     private final DfsService dfsService;
     private final ConversationProperties properties;
 
@@ -79,11 +79,11 @@ public class ConversationTtsService {
      * @param accent the accent type
      * @return audio bytes
      */
-    public byte[] generateAudio(String text, String voice, OpenAiTtsProperties.AccentType accent) {
+    public byte[] generateAudio(String text, String voice, AccentType accent) {
         log.debug("Generating audio for text length {} with voice {} and accent {}",
                 text.length(), voice, accent);
 
-        return openAiTtsService.speechWithAccent(text, voice, accent);
+        return ttsService.speechWithAccent(text, voice, accent);
     }
 
     /**
@@ -96,7 +96,7 @@ public class ConversationTtsService {
      * @param messageId      the message ID
      * @return FTP file path
      */
-    public String generateAndUpload(String text, String voice, OpenAiTtsProperties.AccentType accent,
+    public String generateAndUpload(String text, String voice, AccentType accent,
                                     Long conversationId, Long messageId) {
         byte[] audioBytes = generateAudio(text, voice, accent);
 

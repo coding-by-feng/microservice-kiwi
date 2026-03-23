@@ -62,8 +62,11 @@ public class YtbChannelVideoSyncScheduler {
     @Value("${kiwi.youtube.sync.fetch-subtitles:true}")
     private boolean fetchSubtitles;
 
-    @Value("${kiwi.youtube.sync.max-videos-per-channel:50}")
-    private int maxVideosPerChannel;
+    @Value("${kiwi.youtube.sync.max-new-videos-per-channel:50}")
+    private int maxNewVideosPerChannel;
+
+    @Value("${kiwi.youtube.sync.consecutive-existing-threshold:10}")
+    private int consecutiveExistingThreshold;
 
     @Value("${kiwi.youtube.sync.run-on-startup:false}")
     private boolean runOnStartup;
@@ -75,8 +78,8 @@ public class YtbChannelVideoSyncScheduler {
      */
     @PostConstruct
     public void onStartup() {
-        log.info("[YTB-SYNC] Scheduler initialized - fetchSubtitles={}, maxVideosPerChannel={}, runOnStartup={}",
-                fetchSubtitles, maxVideosPerChannel, runOnStartup);
+        log.info("[YTB-SYNC] Scheduler initialized - fetchSubtitles={}, maxNewVideosPerChannel={}, consecutiveExistingThreshold={}, runOnStartup={}",
+                fetchSubtitles, maxNewVideosPerChannel, consecutiveExistingThreshold, runOnStartup);
         if (runOnStartup) {
             log.info("[YTB-SYNC] run-on-startup is enabled, triggering initial sync...");
             syncChannelVideos();
@@ -96,7 +99,8 @@ public class YtbChannelVideoSyncScheduler {
 
         String jobId = String.valueOf(System.currentTimeMillis());
         log.info("[YTB-SYNC] ========== Job {} started at {} ==========", jobId, LocalDateTime.now());
-        log.info("[YTB-SYNC] Job config - fetchSubtitles={}, maxVideosPerChannel={}", fetchSubtitles, maxVideosPerChannel);
+        log.info("[YTB-SYNC] Job config - fetchSubtitles={}, maxNewVideosPerChannel={}, consecutiveExistingThreshold={}",
+                fetchSubtitles, maxNewVideosPerChannel, consecutiveExistingThreshold);
 
         try {
             long startTime = System.currentTimeMillis();
@@ -165,31 +169,43 @@ public class YtbChannelVideoSyncScheduler {
             List<String> videoLinks = youTuBeHelper.extractAllVideoLinks(channel.getChannelLink());
             log.info("[YTB-SYNC] Found {} total videos in channel: {}", videoLinks.size(), channel.getChannelName());
 
-            int processedCount = 0;
+            int consecutiveExisting = 0;
+            int scannedCount = 0;
             for (String videoLink : videoLinks) {
-                if (processedCount >= maxVideosPerChannel) {
-                    log.info("[YTB-SYNC] Reached max videos limit ({}) for channel: {}, remaining {} videos skipped",
-                            maxVideosPerChannel, channel.getChannelName(), videoLinks.size() - processedCount);
+                // Stop if we've found enough new videos
+                if (newVideosCount >= maxNewVideosPerChannel) {
+                    log.info("[YTB-SYNC] Reached max new videos limit ({}) for channel: {}",
+                            maxNewVideosPerChannel, channel.getChannelName());
                     break;
                 }
 
+                // Early exit: N consecutive existing videos means we've reached already-synced territory
+                if (consecutiveExisting >= consecutiveExistingThreshold) {
+                    log.info("[YTB-SYNC] Hit {} consecutive existing videos for channel: {}, assuming all new videos found (scanned {}/{})",
+                            consecutiveExistingThreshold, channel.getChannelName(), scannedCount, videoLinks.size());
+                    break;
+                }
+
+                scannedCount++;
                 try {
                     // Check if video already exists
                     if (ytbChannelVideoService.existsByVideoLink(videoLink)) {
                         log.debug("[YTB-SYNC] Video already exists, skipping: {}", videoLink);
                         skippedExistingCount++;
-                        processedCount++;
+                        consecutiveExisting++;
                         continue;
                     }
+
+                    // New video found - reset consecutive counter
+                    consecutiveExisting = 0;
 
                     // Create new video record
                     log.debug("[YTB-SYNC] Creating new video record for: {}", videoLink);
                     YtbChannelVideo video = createVideoRecord(channel.getId(), videoLink);
                     if (video != null) {
                         newVideosCount++;
-                        log.info("[YTB-SYNC] Added new video {}/{}: \"{}\" (ID: {}) - {}",
-                                processedCount + 1, Math.min(videoLinks.size(), maxVideosPerChannel),
-                                video.getVideoTitle(), video.getId(), videoLink);
+                        log.info("[YTB-SYNC] Added new video #{}: \"{}\" (ID: {}) - {}",
+                                newVideosCount, video.getVideoTitle(), video.getId(), videoLink);
 
                         // Cache subtitles if enabled
                         if (fetchSubtitles) {
@@ -207,7 +223,6 @@ public class YtbChannelVideoSyncScheduler {
                         failedVideosCount++;
                         log.warn("[YTB-SYNC] Failed to create video record for: {}", videoLink);
                     }
-                    processedCount++;
                 } catch (Exception e) {
                     failedVideosCount++;
                     log.warn("[YTB-SYNC] Error processing video {}: {}", videoLink, e.getMessage(), e);
@@ -215,8 +230,8 @@ public class YtbChannelVideoSyncScheduler {
             }
 
             long channelDuration = System.currentTimeMillis() - channelStartTime;
-            log.info("[YTB-SYNC] Channel {} sync completed in {}ms - processed={}, new={}, skipped={}, failed={}, subtitles={}",
-                    channel.getChannelName(), channelDuration, processedCount, newVideosCount,
+            log.info("[YTB-SYNC] Channel {} sync completed in {}ms - scanned={}, new={}, skipped={}, failed={}, subtitles={}",
+                    channel.getChannelName(), channelDuration, scannedCount, newVideosCount,
                     skippedExistingCount, failedVideosCount, subtitlesCachedCount);
         } catch (Exception e) {
             long channelDuration = System.currentTimeMillis() - channelStartTime;

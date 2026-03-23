@@ -17,7 +17,7 @@ package me.fengorz.kiwi.domain.notes.dto;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
-import me.fengorz.kiwi.common.tts.OpenAiTtsProperties.AccentType;
+import me.fengorz.kiwi.common.tts.AccentType;
 
 /**
  * Notes Audio Generation Request DTO

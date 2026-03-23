@@ -20,7 +20,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
 /**
- * Gemini Image Generation Properties
+ * Gemini Image Generation Properties (Vertex AI)
  *
  * @author codingByFeng
  */
@@ -30,19 +30,19 @@ import org.springframework.stereotype.Component;
 public class GeminiImageProperties {
 
     /**
-     * Gemini API key
+     * GCP Project ID for Vertex AI
      */
-    private String apiKey;
+    private String projectId;
+
+    /**
+     * GCP region for Vertex AI (e.g., us-central1)
+     */
+    private String location = "us-central1";
 
     /**
      * Gemini image generation model
      */
     private String imageModel = "imagen-4.0-generate-001";
-
-    /**
-     * Gemini API base URL
-     */
-    private String baseUrl = "https://generativelanguage.googleapis.com/v1beta";
 
     /**
      * Image width
@@ -63,4 +63,12 @@ public class GeminiImageProperties {
      * Whether the feature is enabled
      */
     private boolean enabled = true;
+
+    /**
+     * Build the Vertex AI Imagen predict endpoint URL
+     */
+    public String getVertexAiEndpoint() {
+        return String.format("https://%s-aiplatform.googleapis.com/v1/projects/%s/locations/%s/publishers/google/models/%s:predict",
+                location, projectId, location, imageModel);
+    }
 }

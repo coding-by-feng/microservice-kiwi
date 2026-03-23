@@ -28,11 +28,10 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Google OAuth2 Service
@@ -45,7 +44,7 @@ import java.util.Map;
 public class GoogleOAuth2Service {
 
     private static final String GOOGLE_AUTH_URL = "https://accounts.google.com/o/oauth2/v2/auth";
-    private static final String GOOGLE_TOKEN_URL = "https://www.googleapis.com/oauth2/v4/token";
+    private static final String GOOGLE_TOKEN_URL = "https://oauth2.googleapis.com/token";
     private static final String GOOGLE_USER_INFO_URL = "https://www.googleapis.com/oauth2/v2/userinfo";
 
     private final GoogleOAuth2Properties googleOAuth2Properties;
@@ -65,7 +64,7 @@ public class GoogleOAuth2Service {
                 .queryParam("prompt", "consent");
 
         if (state != null && !state.trim().isEmpty()) {
-            builder.queryParam("state", URLEncoder.encode(state, StandardCharsets.UTF_8.name()));
+            builder.queryParam("state", state);
         }
 
         return builder.toUriString();
@@ -130,8 +129,33 @@ public class GoogleOAuth2Service {
     public SysUser findOrCreateUser(GoogleUserInfo googleUserInfo) {
         log.info("Finding or creating user for email: {}", googleUserInfo.getEmail());
 
-        return sysUserService.findByUsername(googleUserInfo.getEmail())
-                .orElseGet(() -> createNewGoogleUser(googleUserInfo));
+        // 1. Try to find by Google OpenID (returning Google user)
+        Optional<SysUser> byGoogleOpenid = sysUserService.findByGoogleOpenid(googleUserInfo.getId());
+        if (byGoogleOpenid.isPresent()) {
+            SysUser user = byGoogleOpenid.get();
+            // Update avatar/name in case they changed on Google side
+            user.setAvatar(googleUserInfo.getPicture());
+            user.setRealName(googleUserInfo.getName());
+            user.setUpdateTime(LocalDateTime.now());
+            sysUserService.updateById(user);
+            return user;
+        }
+
+        // 2. Try to find by email (user registered normally, first Google login)
+        Optional<SysUser> byEmail = sysUserService.findByEmail(googleUserInfo.getEmail());
+        if (byEmail.isPresent()) {
+            SysUser user = byEmail.get();
+            // Link Google account to existing user
+            user.setGoogleOpenid(googleUserInfo.getId());
+            user.setAvatar(googleUserInfo.getPicture());
+            user.setUpdateTime(LocalDateTime.now());
+            sysUserService.updateById(user);
+            log.info("Linked Google account to existing user: {}", user.getUsername());
+            return user;
+        }
+
+        // 3. Create new user
+        return createNewGoogleUser(googleUserInfo);
     }
 
     private SysUser createNewGoogleUser(GoogleUserInfo googleUserInfo) {

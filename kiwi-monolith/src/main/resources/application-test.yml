@@ -176,13 +176,14 @@ kiwi:
       enabled: ${YT_SYNC_ENABLED:false}  # Disabled by default in test
       cron: ${YT_SYNC_CRON:0 0 */6 * * *}  # Every 6 hours
       fetch-subtitles: ${YT_SYNC_FETCH_SUBTITLES:true}
-      max-videos-per-channel: ${YT_SYNC_MAX_VIDEOS:50}
+      max-new-videos-per-channel: ${YT_SYNC_MAX_VIDEOS:50}
+      consecutive-existing-threshold: ${YT_SYNC_CONSECUTIVE_THRESHOLD:10}
 
-  # Gemini Image Generation Configuration
+  # Gemini Image Generation Configuration (Vertex AI)
   gemini:
-    api-key: ${GEMINI_API_KEY:}
+    project-id: ${GCP_PROJECT_ID:ENC(5q3wUNe5RH6F8ORU+aaVqa5XK6bF5pJwdHzcloHX3Uz2PyTTN5C7kw==)}
+    location: us-central1
     image-model: imagen-4.0-generate-001
-    base-url: https://generativelanguage.googleapis.com/v1beta
     image-width: 1024
     image-height: 1024
     number-of-images: 1
@@ -247,8 +248,8 @@ ai:
       thread-timeout-secs: 120
   gemini:
     api:
-      key: ${GEMINI_API_KEY:}
-      endpoint: https://generativelanguage.googleapis.com/v1beta/models
+      project-id: ${GCP_PROJECT_ID:ENC(5q3wUNe5RH6F8ORU+aaVqa5XK6bF5pJwdHzcloHX3Uz2PyTTN5C7kw==)}
+      location: us-central1
       model: "gemini-2.5-flash"
       # Gemini 2.5 Flash has 1M context window - can handle very large batches
       # This sends more subtitle lines per AI request, reducing total API calls

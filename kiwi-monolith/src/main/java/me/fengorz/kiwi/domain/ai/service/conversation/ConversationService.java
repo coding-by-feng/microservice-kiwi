@@ -19,7 +19,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import me.fengorz.kiwi.common.exception.ServiceException;
-import me.fengorz.kiwi.common.tts.OpenAiTtsProperties;
+import me.fengorz.kiwi.common.tts.AccentType;
 import me.fengorz.kiwi.domain.ai.config.ConversationProperties;
 import me.fengorz.kiwi.domain.ai.dto.conversation.ConversationGenerateRequest;
 import me.fengorz.kiwi.domain.ai.entity.conversation.*;
@@ -323,7 +323,7 @@ public class ConversationService extends ServiceImpl<ConversationMapper, Convers
     /**
      * Get conversation by ID with full details
      */
-    @Cacheable(value = CACHE_NAME, key = "'id:' + #id")
+    @Cacheable(value = CACHE_NAME, key = "'id:' + #id", unless = "#result == null")
     public ConversationVO getConversationById(Long id, Long userId) {
         Conversation conversation = getById(id);
         if (conversation == null || "Y".equals(conversation.getIsDel())) {
@@ -363,7 +363,7 @@ public class ConversationService extends ServiceImpl<ConversationMapper, Convers
     /**
      * List user's conversations
      */
-    @Cacheable(value = CACHE_NAME, key = "'user:' + #userId + ':list'")
+    @Cacheable(value = CACHE_NAME, key = "'user:' + #userId + ':list'", unless = "#result == null")
     public List<ConversationVO> listUserConversations(Long userId) {
         List<Conversation> conversations = list(
                 new LambdaQueryWrapper<Conversation>()
@@ -446,7 +446,7 @@ public class ConversationService extends ServiceImpl<ConversationMapper, Convers
 
         try {
             // Get accent from conversation
-            OpenAiTtsProperties.AccentType accent = OpenAiTtsProperties.AccentType.fromCode(conversation.getAccent());
+            AccentType accent = AccentType.fromCode(conversation.getAccent());
 
             // Generate and upload audio
             String audioUrl = ttsService.generateAndUpload(

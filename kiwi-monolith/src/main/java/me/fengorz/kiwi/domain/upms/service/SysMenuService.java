@@ -57,7 +57,7 @@ public class SysMenuService extends ServiceImpl<SysMenuMapper, SysMenu> {
     /**
      * Find all root menus (top-level)
      */
-    @Cacheable(value = CACHE_NAME, key = "'root'")
+    @Cacheable(value = CACHE_NAME, key = "'root'", unless = "#result == null")
     public List<SysMenu> findRootMenus() {
         return list(new LambdaQueryWrapper<SysMenu>()
                 .eq(SysMenu::getParentId, -1)
@@ -67,7 +67,7 @@ public class SysMenuService extends ServiceImpl<SysMenuMapper, SysMenu> {
     /**
      * Find children menus by parent ID
      */
-    @Cacheable(value = CACHE_NAME, key = "'children:' + #parentId")
+    @Cacheable(value = CACHE_NAME, key = "'children:' + #parentId", unless = "#result == null")
     public List<SysMenu> findByParentId(Integer parentId) {
         return list(new LambdaQueryWrapper<SysMenu>()
                 .eq(SysMenu::getParentId, parentId)

@@ -53,7 +53,7 @@ public class WordMainService extends ServiceImpl<WordMainMapper, WordMain> {
     /**
      * Find word by name
      */
-    @Cacheable(value = CACHE_NAME, key = "'name:' + #wordName")
+    @Cacheable(value = CACHE_NAME, key = "'name:' + #wordName", unless = "#result == null")
     public Optional<WordMain> findByWordName(String wordName) {
         return Optional.ofNullable(getOne(new LambdaQueryWrapper<WordMain>()
                 .eq(WordMain::getWordName, wordName)

@@ -32,6 +32,10 @@ public interface TtsService {
         throw new ServiceException("Method speechChinese hasn't implemented yet.");
     }
 
+    default byte[] speechWithAccent(String text, String voice, AccentType accent) {
+        return speechEnglish(text);
+    }
+
     default String autoSelectApiKey() {
         throw new ServiceException("Method autoSelectApiKey is not supported.");
     }

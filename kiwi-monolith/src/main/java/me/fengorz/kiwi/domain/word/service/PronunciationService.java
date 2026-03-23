@@ -55,7 +55,7 @@ public class PronunciationService extends ServiceImpl<PronunciationMapper, Pronu
     /**
      * Find pronunciations by word ID
      */
-    @Cacheable(value = CACHE_NAME, key = "'word:' + #wordId")
+    @Cacheable(value = CACHE_NAME, key = "'word:' + #wordId", unless = "#result == null")
     public List<Pronunciation> findByWordId(Integer wordId) {
         return list(new LambdaQueryWrapper<Pronunciation>()
                 .eq(Pronunciation::getWordId, wordId)

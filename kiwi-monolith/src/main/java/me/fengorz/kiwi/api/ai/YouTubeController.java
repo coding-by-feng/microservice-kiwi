@@ -146,8 +146,18 @@ public class YouTubeController {
             } catch (Exception ex) {
                 rawTitle = UUID.randomUUID().toString();
             }
-            String safeTitle = (rawTitle == null || rawTitle.isEmpty()) ? UUID.randomUUID().toString()
-                    : rawTitle.replaceAll("[\\\\/:*?\"<>|\\r\\n]", "_").trim();
+            String safeTitle;
+            if (rawTitle == null || rawTitle.isEmpty()) {
+                safeTitle = UUID.randomUUID().toString();
+            } else {
+                safeTitle = rawTitle
+                        .replaceAll("[\\\\/:*?\"<>|\\r\\n%]", "_")
+                        .replace("..", "_")
+                        .trim();
+                if (safeTitle.length() > 200) {
+                    safeTitle = safeTitle.substring(0, 200);
+                }
+            }
             String filename = "subtitles-" + safeTitle + (language != null ? "-" + language : "") + ".txt";
 
             HttpHeaders headers = new HttpHeaders();

@@ -19,6 +19,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import me.fengorz.kiwi.common.PasswordValidator;
 import me.fengorz.kiwi.common.R;
 import me.fengorz.kiwi.domain.upms.entity.SysRole;
 import me.fengorz.kiwi.domain.upms.entity.SysUser;
@@ -155,6 +156,12 @@ public class SysUserController {
     public R<Void> changePassword(@AuthenticationPrincipal KiwiUser principal,
                                    @RequestParam String oldPassword,
                                    @RequestParam String newPassword) {
+        // Validate new password strength
+        String passwordError = PasswordValidator.validate(newPassword);
+        if (passwordError != null) {
+            return R.failed(passwordError);
+        }
+
         SysUser user = userService.findById(principal.getUserId())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 

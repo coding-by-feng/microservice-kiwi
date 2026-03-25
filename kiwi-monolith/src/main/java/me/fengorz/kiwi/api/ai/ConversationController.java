@@ -136,12 +136,18 @@ public class ConversationController {
             String groupName = parts.length > 1 ? parts[0] : "";
             String path = parts.length > 1 ? parts[1] : audioUrl;
 
+            // Validate DFS path to prevent SSRF and path traversal
+            validateDfsPath(groupName, path);
+
             InputStream audioStream = dfsService.downloadStream(groupName, path);
 
             return ResponseEntity.ok()
                     .contentType(MediaType.parseMediaType("audio/mpeg"))
                     .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"message_" + messageId + ".mp3\"")
                     .body(new InputStreamResource(audioStream));
+        } catch (IllegalArgumentException e) {
+            log.warn("Invalid DFS path for message {}: {}", messageId, e.getMessage());
+            return ResponseEntity.badRequest().build();
         } catch (Exception e) {
             log.error("Failed to stream audio for message {}", messageId, e);
             return ResponseEntity.internalServerError().build();
@@ -180,6 +186,23 @@ public class ConversationController {
                 .maxSpeakers(properties.getMaxSpeakers())
                 .minSpeakers(properties.getMinSpeakers())
                 .build());
+    }
+
+    private void validateDfsPath(String groupName, String path) {
+        String combined = groupName + "/" + path;
+        if (combined.contains("://")) {
+            throw new IllegalArgumentException("Invalid DFS path: protocol schemes not allowed");
+        }
+        if (combined.contains("..")) {
+            throw new IllegalArgumentException("Invalid DFS path: path traversal not allowed");
+        }
+        String lower = combined.toLowerCase();
+        if (lower.contains("127.0.0.1") || lower.contains("0.0.0.0") || lower.contains("localhost")
+                || lower.matches(".*\\b10\\.\\d+\\.\\d+\\.\\d+.*")
+                || lower.matches(".*\\b172\\.(1[6-9]|2\\d|3[01])\\.\\d+\\.\\d+.*")
+                || lower.matches(".*\\b192\\.168\\.\\d+\\.\\d+.*")) {
+            throw new IllegalArgumentException("Invalid DFS path: internal network references not allowed");
+        }
     }
 
     @lombok.Data

@@ -54,6 +54,10 @@ public class ProjectController {
     private final ProjectService projectService;
     private final ProjectPhotoService projectPhotoService;
 
+    private static final List<String> ALLOWED_IMAGE_TYPES = List.of(
+            "image/jpeg", "image/png", "image/gif", "image/webp");
+    private static final long MAX_IMAGE_SIZE = 5L * 1024 * 1024; // 5MB
+
     @GetMapping("/projects")
     @Operation(summary = "List projects with filter/sort/pagination")
     public R<Map<String, Object>> listProjects(
@@ -188,6 +192,11 @@ public class ProjectController {
         if (pic == null || pic.isEmpty()) {
             return R.failed("File is required");
         }
+        try {
+            validateImageUpload(pic);
+        } catch (IllegalArgumentException e) {
+            return R.failed(e.getMessage());
+        }
         // TODO: Implement actual file storage
         ProjectPhoto projectPhoto = new ProjectPhoto();
         projectPhoto.setProjectId(projectId);
@@ -195,6 +204,30 @@ public class ProjectController {
         projectPhoto.setContentType(pic.getContentType());
         projectPhoto.setSize(pic.getSize());
         return R.ok(projectPhotoService.savePhoto(projectPhoto));
+    }
+
+    private void validateImageUpload(MultipartFile file) {
+        String contentType = file.getContentType();
+        if (contentType == null || !ALLOWED_IMAGE_TYPES.contains(contentType.toLowerCase())) {
+            throw new IllegalArgumentException("Only JPEG, PNG, GIF, and WebP images are allowed");
+        }
+        if (file.getSize() > MAX_IMAGE_SIZE) {
+            throw new IllegalArgumentException("File size must not exceed 5MB");
+        }
+        String originalFilename = file.getOriginalFilename();
+        if (originalFilename != null) {
+            String extension = originalFilename.substring(originalFilename.lastIndexOf('.') + 1).toLowerCase();
+            boolean extensionMatches = switch (contentType.toLowerCase()) {
+                case "image/jpeg" -> "jpg".equals(extension) || "jpeg".equals(extension);
+                case "image/png" -> "png".equals(extension);
+                case "image/gif" -> "gif".equals(extension);
+                case "image/webp" -> "webp".equals(extension);
+                default -> false;
+            };
+            if (!extensionMatches) {
+                throw new IllegalArgumentException("File extension does not match content type");
+            }
+        }
     }
 
     @GetMapping("/projects/{id}/photos")

@@ -61,6 +61,9 @@ spring:
     database: 0
 
   # ==================== Elasticsearch ====================
+  # SECURITY: Elasticsearch should use HTTPS in production.
+  # Change http:// to https:// and configure SSL trust store when ES TLS is enabled.
+  # See: https://www.elastic.co/guide/en/elasticsearch/reference/current/security-basic-setup-https.html
   elasticsearch:
     uris: http://kiwi-es:9201
     username: ENC(NKy6wa5SuHBhQmfLWf6Zv8wf8sPMaE0b)
@@ -105,6 +108,13 @@ management:
     elasticsearch:
       enabled: false
 
+# ==================== Swagger (Disabled in Production) ====================
+springdoc:
+  api-docs:
+    enabled: false
+  swagger-ui:
+    enabled: false
+
 # ==================== Storage ====================
 storage:
   backend: minio
@@ -120,6 +130,11 @@ minio:
 
 # ==================== Application Custom Config ====================
 kiwi:
+  # CORS Configuration
+  security:
+    cors:
+      allowed-origins: ${CORS_ALLOWED_ORIGINS:https://kiwi.fengorz.me}
+
   # FastDFS Configuration
   dfs:
     connect-timeout: 6000000
@@ -303,13 +318,131 @@ ai:
       max-output-tokens: 32768
   mode:
     directly-translation: "Translate the user prompt into #[TL]. Output the translation only—no labels, notes, or Markdown."
-    translation-and-explanation: "Translate the user prompt into #[TL] on the first line. Then, in #[NL], give a thorough explanation covering word choice, tone/register, key grammar, and cultural/usage notes. No Markdown or extra headers."
-    grammar-explanation: "Translate the user prompt into #[NL]. Then, in #[NL], explain the grammar (parts of speech, sentence structure, tense/aspect, key patterns, and tricky points). Keep it concise and clear."
-    grammar-correction: "1) Provide a grammatically corrected version of the text (original language). 2) Translate the corrected text into #[NL]. 3) In #[NL], explain each correction (what changed and why). Output in that order. No extra commentary."
-    natural-idiomatic-retouch: "Rewrite the text in #[TL] so that it is grammatically correct, natural, and idiomatic, as if written by an educated native speaker. Preserve the original meaning and tone, but improve word choice, sentence flow, and style. Output only the polished #[TL] version, with #[NL] explanations."
-    vocabulary-explanation: "Explain the vocabulary item in both #[TL] and #[NL]. Provide paraphrases in both languages grouped by part of speech (verb, noun, adjective, adverb, etc.). For each part of speech, give 1–3 demo sentences in #[TL] with #[NL] translations. Skip any part of speech that does not apply."
-    synonym: "List 5–8 common synonyms in #[TL]. For each, briefly explain the nuance in #[NL] and give one example sentence in #[TL] with a #[NL] translation. Output plain text only—no Markdown or extra commentary."
-    antonym: "List 5–8 common antonyms in #[TL]. For each, briefly explain the nuance in #[NL] and give one example sentence in #[TL] with a #[NL] translation. Output plain text only—no Markdown or extra commentary."
+    translation-and-explanation: |
+      #[TL] tutor for #[NL] speakers.
+
+      RULES:
+      - The learner is a native #[NL] speaker. NEVER include romanization, pinyin, furigana, or phonetic aids for #[NL].
+      - Be concise. Every sentence must teach something. No filler, no redundancy, no restating what the learner can already see.
+      - Only provide pronunciation help for #[TL] words when non-obvious.
+
+      ## Translation
+      Natural #[TL] translation.
+
+      ---
+
+      ## Key Vocabulary
+      3–5 most useful words/phrases:
+      - **word** (*pos*): #[NL] definition — how it differs from simpler alternatives
+
+      ## Grammar Points
+      1–2 key structures. For each in #[NL]: what the pattern is, why it's used here, and a common learner mistake.
+
+      ## Tone & Usage
+      One #[NL] paragraph: register, context, and when a native speaker would choose this phrasing.
+    grammar-explanation: |
+      #[TL] grammar tutor for #[NL] speakers.
+
+      RULES:
+      - The learner is a native #[NL] speaker. NEVER include romanization, pinyin, furigana, or phonetic aids for #[NL].
+      - Be concise. Every sentence must teach something. No filler, no redundancy, no restating what the learner can already see.
+      - Only provide pronunciation help for #[TL] words when non-obvious.
+
+      ## #[NL] Translation
+      Natural #[NL] translation.
+
+      ---
+
+      ## Sentence Structure
+      Break down: subject, predicate, objects, clauses. Mark clause relationships.
+
+      ## Grammar Analysis
+      For each key point:
+      - **Pattern** — #[NL]: what it is, how it works, the relevant sentence part, and how it differs from #[NL] structure
+
+      ## Takeaway
+      1–2 #[NL] bullet points the learner should remember.
+    grammar-correction: |
+      #[TL] writing tutor for #[NL] speakers.
+
+      RULES:
+      - The learner is a native #[NL] speaker. NEVER include romanization, pinyin, furigana, or phonetic aids for #[NL].
+      - Be concise. Every sentence must teach something. No filler, no redundancy, no restating what the learner can already see.
+      - Only provide pronunciation help for #[TL] words when non-obvious.
+
+      ## Corrected Version
+      Corrected #[TL] text.
+
+      ---
+
+      ## Corrections
+      1. **Original** → **Corrected** — #[NL]: what rule was broken and how to avoid it
+
+      ## Takeaway
+      1–2 #[NL] lessons to internalize.
+    natural-idiomatic-retouch: |
+      #[TL] writing coach for #[NL] speakers.
+
+      RULES:
+      - The learner is a native #[NL] speaker. NEVER include romanization, pinyin, furigana, or phonetic aids for #[NL].
+      - Be concise. Every sentence must teach something. No filler, no redundancy, no restating what the learner can already see.
+      - Only provide pronunciation help for #[TL] words when non-obvious.
+
+      ## Polished Version
+      Natural, idiomatic #[TL] rewrite. Preserve meaning.
+
+      ---
+
+      ## Changes
+      - **Original** → **Improved** — #[NL]: why the change sounds more native
+    vocabulary-explanation: |
+      #[TL] vocabulary tutor for #[NL] speakers.
+
+      RULES:
+      - The learner is a native #[NL] speaker. NEVER include romanization, pinyin, furigana, or phonetic aids for #[NL].
+      - Be concise. Every sentence must teach something. No filler, no redundancy, no restating what the learner can already see.
+      - Only provide pronunciation help for #[TL] words when non-obvious.
+
+      ## **Word** — #[NL] core meaning
+
+      For each applicable part of speech (skip inapplicable ones):
+      ### As a [pos]
+      - #[NL] definition
+      - #[TL] example → #[NL]
+
+      ## Collocations
+      3–5 common combinations with #[NL] meanings.
+
+      ## Tips
+      1–2 #[NL] practical tips a textbook won't tell you.
+    synonym: |
+      #[TL] vocabulary tutor for #[NL] speakers.
+
+      RULES:
+      - The learner is a native #[NL] speaker. NEVER include romanization, pinyin, furigana, or phonetic aids for #[NL].
+      - Be concise. Every sentence must teach something. No filler, no redundancy, no restating what the learner can already see.
+      - Only provide pronunciation help for #[TL] words when non-obvious.
+
+      ## Synonyms (5–8, most → least similar)
+      - **word** (*pos*, register) — #[NL] meaning; #[NL] nuance vs input word
+        #[TL] example → #[NL]
+
+      ## When to Use Which
+      #[NL] decision guide by context.
+    antonym: |
+      #[TL] vocabulary tutor for #[NL] speakers.
+
+      RULES:
+      - The learner is a native #[NL] speaker. NEVER include romanization, pinyin, furigana, or phonetic aids for #[NL].
+      - Be concise. Every sentence must teach something. No filler, no redundancy, no restating what the learner can already see.
+      - Only provide pronunciation help for #[TL] words when non-obvious.
+
+      ## Antonyms (5–8, most → least direct)
+      - **word** (*pos*, register) — #[NL] meaning; #[NL] type of opposition
+        #[TL] example → #[NL]
+
+      ## Comparison
+      #[NL] summary by degree, formality, and context.
     subtitle-translator: |
       Translate subtitle fragments line by line. CRITICAL: Maintain exact 1:1 line mapping.
 
@@ -432,42 +565,91 @@ ai:
       Yo, your place kind of fire though.
       This place be phantom taxing.
     vocabulary-association: |
-      List 8-10 common #[TL] words/phrases that express the user prompt's meaning.
-      For each word, provide in this exact format:
+      #[TL] vocabulary tutor for #[NL] speakers.
 
-      📖 **Word** (Part of Speech) — Register
-      Definition in one sentence
-      Translation in #[NL]
-      ✏️ Example sentence in #[TL]
-      ✏️ Translation of example in #[NL]
+      RULES:
+      - The learner is a native #[NL] speaker. NEVER include romanization, pinyin, furigana, or phonetic aids for #[NL].
+      - Be concise. Every sentence must teach something. No filler, no redundancy, no restating what the learner can already see.
+      - Only provide pronunciation help for #[TL] words when non-obvious.
 
-      Separate each entry with a blank line.
-      Register options: Formal / Neutral / Informal / Technical
-      Prioritize high-frequency, practical vocabulary.
-      Do not include language labels like "EN:" or "ZH_CN:" in output.
-    phrases-association: "List as many common #[TL] phrases as possible that can express the user prompt's meaning. For each phrase, explain nuances, register, and usage differences in #[NL]. Group by function or context when helpful. Plain text only."
-    selection-explanation: "Respond only in #[TL]. Explain the selected phrase \"#[S0]\" strictly based on the sentence #[S1] in 1–2 concise paragraphs. No headings, labels, English, Markdown, bullet points, or backslashes. Do not restate the full sentence; focus on meaning, nuance, tense/aspect, and function in context."
+      ## Related Words (8–10, grouped by relationship)
+      - **word** (*pos*) — #[NL] meaning; how it relates to input
+        #[TL] example → #[NL]
+
+      ## Vocabulary Map
+      #[NL] grouping by theme with learning priority. High-frequency words only.
+    phrases-association: |
+      #[TL] tutor for #[NL] speakers.
+
+      RULES:
+      - The learner is a native #[NL] speaker. NEVER include romanization, pinyin, furigana, or phonetic aids for #[NL].
+      - Be concise. Every sentence must teach something. No filler, no redundancy, no restating what the learner can already see.
+      - Only provide pronunciation help for #[TL] words when non-obvious.
+
+      List phrases expressing the user prompt's meaning by register:
+
+      ## Formal / Written
+      - **phrase** — #[NL] meaning; when to use
+
+      ## Neutral / Everyday
+      - **phrase** — #[NL] meaning; when to use
+
+      ## Informal / Spoken
+      - **phrase** — #[NL] meaning; when to use
+
+      Include many relevant phrases. No filler.
+    selection-explanation: |
+      #[TL] tutor for #[NL] speakers.
+
+      RULES:
+      - The learner is a native #[NL] speaker. NEVER include romanization, pinyin, furigana, or phonetic aids for #[NL].
+      - Be concise. Every sentence must teach something. No filler, no redundancy, no restating what the learner can already see.
+      - Only provide pronunciation help for #[TL] words when non-obvious.
+
+      Explain "#[S0]" in context: #[S1]
+
+      ## Meaning
+      #[NL]: what it means here, why this expression was chosen (tone, intent), and any grammar worth noting.
+
+      ## Alternatives
+      2–3 #[TL] alternatives with #[NL] nuance differences.
+
+      Do not restate the full sentence.
     vocabulary-character-expansion: |
-      vocabulary-family-expansion:
-      For the input word, generate a complete word-family #[TL] map including:
-      1) Verbs
-      2) Nouns
-      3) Adjectives
-      4) Adverbs
+      #[TL] vocabulary tutor for #[NL] speakers.
 
-      For each item, use the format:
-      word (#[NL] Chinese translation; #[NL] nuance or usage explanation)
+      RULES:
+      - The learner is a native #[NL] speaker. NEVER include romanization, pinyin, furigana, or phonetic aids for #[NL].
+      - Be concise. Every sentence must teach something. No filler, no redundancy, no restating what the learner can already see.
+      - Only provide pronunciation help for #[TL] words when non-obvious.
 
-      Structure:
-      Verbs: v1 (#[NL] translation; #[NL] nuance), v2 (...), v3 (...)
-      Nouns: n1 (...), n2 (...)
-      Adjectives: adj1 (...), adj2 (...)
-      Adverbs: adv1 (...), adv2 (...)
+      ## Word Family: **[input word]**
 
-      Notes:
-      - If a category has no items, skip it
-      - Prioritize common vocabulary; include formal/informal variants if significant
-    ambiguous-association-correction: "If only the first input is ambiguous, list all possible corrections with brief explanations in #[NL]. If both inputs are present, compare them; if the second is a correction of the first, output only the corrected version without explanation; otherwise, list all possible corrections for the first input. Output #[TL] only, plain text, no Markdown."
+      Group by part of speech (skip inapplicable). 3–6 per group, only morphologically related words:
+      - **word** — #[NL] translation; typical collocation
+
+      ## Memory Tip
+      1 #[NL] mnemonic connecting the family by root or pattern.
+    ambiguous-association-correction: |
+      #[TL] tutor for #[NL] speakers.
+
+      RULES:
+      - The learner is a native #[NL] speaker. NEVER include romanization, pinyin, furigana, or phonetic aids for #[NL].
+      - Be concise. Every sentence must teach something. No filler, no redundancy, no restating what the learner can already see.
+      - Only provide pronunciation help for #[TL] words when non-obvious.
+
+      ## Correction
+      **Corrected**: intended #[TL] word/phrase — #[NL] meaning
+
+      ## What Went Wrong
+      #[NL]: error type (misspelling, false friend, L1 interference) and why.
+
+      ## Alternatives
+      Realistic confusion candidates only:
+      - **alt** — #[NL] meaning; how it differs
+
+      ## How to Remember
+      1 #[NL] mnemonic.
 
 # ==================== Google OAuth2 Configuration ====================
 google:
@@ -485,7 +667,6 @@ google:
 ignore:
   urls:
     # Common
-    - /actuator/**
     - /test/**
     # Auth endpoints (public)
     - /auth/oauth/google/**
@@ -506,5 +687,3 @@ ignore:
     - /rangi_windows/api/**
     # Tools Service (new /api prefix)
     - /api/rangi_windows/**
-    # YouTube sync trigger (temporary public access)
-    - /api/ai/ytb/channel/sync/trigger

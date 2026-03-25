@@ -82,9 +82,12 @@ public class BearerTokenAuthenticationFilter extends OncePerRequestFilter {
             return bearerToken.substring(BEARER_PREFIX.length());
         }
 
-        // Fallback to query parameter for WebSocket connections
+        // SECURITY NOTE: Query parameter tokens are a known limitation for WebSocket connections.
+        // Tokens in URLs may appear in server/proxy logs. Consider migrating to Sec-WebSocket-Protocol auth.
         String accessToken = request.getParameter("access_token");
         if (StringUtils.hasText(accessToken)) {
+            log.warn("Token received via query parameter for URI: {} - consider migrating to subprotocol auth",
+                    request.getRequestURI());
             return accessToken;
         }
 

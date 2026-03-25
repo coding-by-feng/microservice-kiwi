@@ -23,6 +23,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -58,8 +60,34 @@ public class YouTuBeHelper implements YouTubeClient {
     @Value("${kiwi.youtube.video.subtitles.langs:en}")
     private String subtitlesLangs;
 
+    private static final List<String> ALLOWED_YOUTUBE_HOSTS = List.of(
+            "youtube.com", "www.youtube.com", "youtu.be", "m.youtube.com", "music.youtube.com");
+
+    private void validateYouTubeUrl(String url) {
+        if (url == null || url.isBlank()) {
+            throw new IllegalArgumentException("URL cannot be empty");
+        }
+        try {
+            URI uri = new URI(url);
+            String host = uri.getHost();
+            if (host == null) {
+                throw new IllegalArgumentException("Invalid URL: no host");
+            }
+            host = host.toLowerCase();
+            if (ALLOWED_YOUTUBE_HOSTS.stream().noneMatch(host::equals)) {
+                throw new IllegalArgumentException("Only YouTube URLs are allowed");
+            }
+        } catch (URISyntaxException e) {
+            throw new IllegalArgumentException("Invalid URL format: " + e.getMessage());
+        }
+        if (url.matches(".*[`$;|&><\\n\\r].*")) {
+            throw new IllegalArgumentException("URL contains forbidden characters");
+        }
+    }
+
     @Override
     public FileInputStream downloadVideo(String videoUrl) {
+        validateYouTubeUrl(videoUrl);
         try {
             List<String> cmdList = new ArrayList<>();
             cmdList.add(this.command);
@@ -84,6 +112,8 @@ public class YouTuBeHelper implements YouTubeClient {
             log.info("Video downloaded successfully: {}", fileName);
             File downloadedFile = new File(currentDownloadPath, fileName);
             return new FileInputStream(downloadedFile);
+        } catch (IllegalArgumentException e) {
+            throw e;
         } catch (Exception e) {
             log.error("Error downloading video for URL: {}", videoUrl, e);
             throw new RuntimeException("Failed to download video: " + e.getMessage(), e);
@@ -115,6 +145,7 @@ public class YouTuBeHelper implements YouTubeClient {
 
     @Override
     public YtbSubtitlesResult downloadSubtitles(String videoUrl) {
+        validateYouTubeUrl(videoUrl);
         try {
             List<String> cmdList = new ArrayList<>();
             cmdList.add(this.command);
@@ -176,6 +207,8 @@ public class YouTuBeHelper implements YouTubeClient {
                 }
                 return result;
             }
+        } catch (IllegalArgumentException e) {
+            throw e;
         } catch (Exception e) {
             log.error("Error downloading subtitles for URL: {}", videoUrl, e);
             throw new RuntimeException("Failed to download subtitles: " + e.getMessage(), e);
@@ -212,6 +245,7 @@ public class YouTuBeHelper implements YouTubeClient {
 
     @Override
     public String getVideoTitle(String videoUrl) {
+        validateYouTubeUrl(videoUrl);
         try {
             return getVideoTitleInternal(videoUrl);
         } catch (Exception e) {
@@ -343,6 +377,7 @@ public class YouTuBeHelper implements YouTubeClient {
     }
 
     public String extractChannelNameWithYtDlp(String channelUrl) throws ServiceException {
+        validateYouTubeUrl(channelUrl);
         List<String> cmd = new ArrayList<>();
         cmd.add(this.command);
         applyProxyIfEnabled(cmd);
@@ -393,6 +428,7 @@ public class YouTuBeHelper implements YouTubeClient {
     }
 
     public List<String> extractAllVideoLinks(String channelLink) throws ServiceException {
+        validateYouTubeUrl(channelLink);
         List<String> videoLinks = new ArrayList<>();
 
         List<String> cmd = new ArrayList<>();
@@ -439,6 +475,7 @@ public class YouTuBeHelper implements YouTubeClient {
 
     @Override
     public LocalDateTime getVideoPublishedAt(String videoUrl) {
+        validateYouTubeUrl(videoUrl);
         try {
             List<String> cmd = new ArrayList<>();
             cmd.add(this.command);
@@ -481,6 +518,8 @@ public class YouTuBeHelper implements YouTubeClient {
             }
             log.warn("Unrecognized publish time format from yt-dlp: '{}' for {}", output, videoUrl);
             return null;
+        } catch (IllegalArgumentException e) {
+            throw e;
         } catch (Exception e) {
             log.warn("Failed to get publish time via yt-dlp for {}: {}", videoUrl, e.getMessage());
             return null;

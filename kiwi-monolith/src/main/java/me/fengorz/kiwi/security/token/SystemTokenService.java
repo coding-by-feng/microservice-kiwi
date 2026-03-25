@@ -42,8 +42,10 @@ public class SystemTokenService {
     private static final String REFRESH_TOKEN_PREFIX = "kiwi:token:refresh:";
     private static final String USER_TOKEN_PREFIX = "kiwi:token:user:";
 
-    private static final long ACCESS_TOKEN_VALIDITY_SECONDS = 30 * 24 * 60 * 60L; // 30 days
-    private static final long REFRESH_TOKEN_VALIDITY_SECONDS = 90 * 24 * 60 * 60L; // 90 days
+    // Shorter token lifetimes reduce the window of exposure if a token is compromised.
+    // Access tokens are short-lived; refresh tokens allow session continuity without re-authentication.
+    private static final long ACCESS_TOKEN_VALIDITY_SECONDS = 7 * 24 * 60 * 60L; // 7 days
+    private static final long REFRESH_TOKEN_VALIDITY_SECONDS = 30 * 24 * 60 * 60L; // 30 days
 
     private final RedisTemplate<String, Object> redisTemplate;
 

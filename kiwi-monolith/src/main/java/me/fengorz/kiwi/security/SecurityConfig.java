@@ -17,6 +17,7 @@ package me.fengorz.kiwi.security;
 
 import lombok.RequiredArgsConstructor;
 import me.fengorz.kiwi.security.token.BearerTokenAuthenticationFilter;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -32,6 +33,7 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -54,11 +56,18 @@ public class SecurityConfig {
     private final IgnoreUrlsProperties ignoreUrlsProperties;
     private final BearerTokenAuthenticationFilter bearerTokenAuthenticationFilter;
 
+    @Value("${kiwi.security.cors.allowed-origins:http://localhost:3000}")
+    private List<String> allowedOrigins;
+
     /**
      * Default public endpoints that don't require authentication
      */
+    /**
+     * Public endpoints - only health check and auth endpoints are truly public.
+     * Swagger/API docs access is controlled by springdoc.enabled (disabled in prod).
+     */
     private static final String[] DEFAULT_PUBLIC_ENDPOINTS = {
-            "/actuator/**",
+            "/actuator/health",
             "/actuator/health/**",
             "/swagger-ui/**",
             "/swagger-ui.html",
@@ -101,8 +110,16 @@ public class SecurityConfig {
                 // Add custom Bearer token filter before UsernamePasswordAuthenticationFilter
                 .addFilterBefore(bearerTokenAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
 
-                // Disable frame options for H2 console (development)
-                .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()));
+                // Security headers
+                .headers(headers -> headers
+                        .frameOptions(frame -> frame.deny())
+                        .contentTypeOptions(contentType -> {})
+                        .httpStrictTransportSecurity(hsts -> hsts
+                                .includeSubDomains(true)
+                                .maxAgeInSeconds(31536000))
+                        .referrerPolicy(referrer -> referrer
+                                .policy(ReferrerPolicyHeaderWriter.ReferrerPolicy.STRICT_ORIGIN_WHEN_CROSS_ORIGIN))
+                );
 
         return http.build();
     }
@@ -122,15 +139,16 @@ public class SecurityConfig {
     }
 
     /**
-     * CORS Configuration
+     * CORS Configuration - uses allowed origins from kiwi.security.cors.allowed-origins property.
+     * Production should restrict to specific frontend domains only.
      */
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOriginPatterns(List.of("*"));
+        configuration.setAllowedOriginPatterns(allowedOrigins);
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
-        configuration.setAllowedHeaders(List.of("*"));
-        configuration.setExposedHeaders(Arrays.asList("Authorization", "Content-Type"));
+        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "Accept", "Origin", "X-Requested-With"));
+        configuration.setExposedHeaders(Arrays.asList("Authorization", "Content-Type", "X-RateLimit-Limit", "X-RateLimit-Remaining"));
         configuration.setAllowCredentials(true);
         configuration.setMaxAge(3600L);
 

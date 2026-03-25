@@ -16,10 +16,13 @@
 package me.fengorz.kiwi.ws;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.socket.config.annotation.EnableWebSocket;
 import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
 import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
+
+import java.util.List;
 
 /**
  * WebSocket Configuration
@@ -45,21 +48,26 @@ public class WebSocketConfig implements WebSocketConfigurer {
     private final AudioWebSocketHandler audioWebSocketHandler;
     private final WebSocketAuthInterceptor webSocketAuthInterceptor;
 
+    @Value("${kiwi.security.cors.allowed-origins:http://localhost:3000}")
+    private List<String> allowedOrigins;
+
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
+        String[] origins = allowedOrigins.toArray(new String[0]);
+
         // AI streaming WebSocket handler
         registry.addHandler(aiStreamingWebSocketHandler, "/api/ai/ws/stream")
-                .setAllowedOrigins("*")
+                .setAllowedOrigins(origins)
                 .addInterceptors(webSocketAuthInterceptor);
 
         // YouTube subtitle WebSocket handler
         registry.addHandler(ytbSubtitleWebSocketHandler, "/api/ai/ws/ytb/subtitle")
-                .setAllowedOrigins("*")
+                .setAllowedOrigins(origins)
                 .addInterceptors(webSocketAuthInterceptor);
 
         // Audio WebSocket handler
         registry.addHandler(audioWebSocketHandler, "/api/ai/ws/stt/audio")
-                .setAllowedOrigins("*")
+                .setAllowedOrigins(origins)
                 .addInterceptors(webSocketAuthInterceptor);
     }
 }

@@ -20,6 +20,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import me.fengorz.kiwi.common.PasswordValidator;
 import me.fengorz.kiwi.common.R;
 import me.fengorz.kiwi.domain.upms.entity.SysUser;
 import me.fengorz.kiwi.domain.upms.service.SysUserService;
@@ -38,6 +39,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Authentication Controller
@@ -126,9 +128,10 @@ public class AuthController {
             return R.failed("Email is required");
         }
 
-        // Validate password length
-        if (request.getPassword().length() < 6) {
-            return R.failed("Password must be at least 6 characters");
+        // Validate password strength
+        String passwordError = PasswordValidator.validate(request.getPassword());
+        if (passwordError != null) {
+            return R.failed(passwordError);
         }
 
         // Check if username already exists
@@ -266,6 +269,12 @@ public class AuthController {
             return R.failed("Username is required");
         }
         boolean available = !sysUserService.existsByUsername(username);
+        // Random delay to prevent timing-based enumeration attacks
+        try {
+            Thread.sleep(ThreadLocalRandom.current().nextLong(50, 150));
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
         return R.ok(available);
     }
 
@@ -279,6 +288,12 @@ public class AuthController {
             return R.failed("Email is required");
         }
         boolean available = !sysUserService.existsByEmail(email);
+        // Random delay to prevent timing-based enumeration attacks
+        try {
+            Thread.sleep(ThreadLocalRandom.current().nextLong(50, 150));
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
         return R.ok(available);
     }
 

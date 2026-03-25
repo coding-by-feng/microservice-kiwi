@@ -76,11 +76,16 @@ spring.main:
   allow-bean-definition-overriding: true
 
 # ==================== Jasypt Encryption ====================
+# WARNING: Algorithm upgraded from PBEWithMD5AndDES to PBEWITHHMACSHA512ANDAES_256.
+# Existing ENC() values in prod/test configs were encrypted with the OLD algorithm.
+# After changing the algorithm, ALL encrypted values must be re-encrypted with the new algorithm.
+# Use: java -cp jasypt-1.9.3.jar org.jasypt.intf.cli.JasyptPBEStringEncryptionCLI algorithm=PBEWITHHMACSHA512ANDAES_256 password=YOUR_ENC_PASSWORD input=YOUR_SECRET
 jasypt:
   encryptor:
     password: ${KIWI_ENC_PASSWORD}
     pool-size: 2
-    algorithm: PBEWithMD5AndDES
+    algorithm: PBEWITHHMACSHA512ANDAES_256
+    iv-generator-classname: org.jasypt.iv.RandomIvGenerator
 
 # ==================== Resilience4j ====================
 resilience4j:

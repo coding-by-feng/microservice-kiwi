@@ -74,15 +74,18 @@ public class YtbChannelVideoSyncScheduler {
     private final AtomicBoolean running = new AtomicBoolean(false);
 
     /**
-     * Run sync job on application startup if configured
+     * Run sync job on application startup if configured.
+     * Runs in a separate thread to avoid blocking Spring Boot startup (Tomcat must bind first).
      */
     @PostConstruct
     public void onStartup() {
         log.info("[YTB-SYNC] Scheduler initialized - fetchSubtitles={}, maxNewVideosPerChannel={}, consecutiveExistingThreshold={}, runOnStartup={}",
                 fetchSubtitles, maxNewVideosPerChannel, consecutiveExistingThreshold, runOnStartup);
         if (runOnStartup) {
-            log.info("[YTB-SYNC] run-on-startup is enabled, triggering initial sync...");
-            syncChannelVideos();
+            log.info("[YTB-SYNC] run-on-startup is enabled, triggering initial sync in background thread...");
+            Thread startupSyncThread = new Thread(this::syncChannelVideos, "ytb-sync-startup");
+            startupSyncThread.setDaemon(true);
+            startupSyncThread.start();
         }
     }
 

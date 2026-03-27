@@ -65,10 +65,28 @@ public class GeminiImageProperties {
     private boolean enabled = true;
 
     /**
+     * Gemini API key for fallback (generativelanguage.googleapis.com)
+     */
+    private String apiKey;
+
+    /**
+     * Gemini model for image generation fallback (e.g., gemini-2.0-flash-exp)
+     */
+    private String geminiModel = "imagen-3.0-generate-002";
+
+    /**
      * Build the Vertex AI Imagen predict endpoint URL
      */
     public String getVertexAiEndpoint() {
         return String.format("https://%s-aiplatform.googleapis.com/v1/projects/%s/locations/%s/publishers/google/models/%s:predict",
                 location, projectId, location, imageModel);
+    }
+
+    /**
+     * Build the Gemini API Imagen predict endpoint URL (fallback)
+     */
+    public String getGeminiApiEndpoint() {
+        return String.format("https://generativelanguage.googleapis.com/v1beta/models/%s:predict?key=%s",
+                geminiModel, apiKey);
     }
 }

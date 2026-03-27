@@ -63,6 +63,89 @@ services:
       timeout: 10s
       retries: 5
 
+  # MinIO Object Storage
+  kiwi-minio:
+    image: minio/minio
+    container_name: kiwi-minio
+    restart: unless-stopped
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ACCESS_KEY:-minioadmin}
+      MINIO_ROOT_PASSWORD: ${MINIO_SECRET_KEY:-minioadmin}
+      TZ: ${TZ:-Pacific/Auckland}
+    command: server /data --console-address ":9001"
+    volumes:
+      - minio_data:/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # MinIO bucket initialization (one-shot)
+  kiwi-minio-init:
+    image: minio/mc
+    container_name: kiwi-minio-init
+    depends_on:
+      kiwi-minio:
+        condition: service_healthy
+    restart: "no"
+    entrypoint: >
+      /bin/sh -c "
+      mc alias set kiwi http://kiwi-minio:9000 $${MINIO_ACCESS_KEY:-minioadmin} $${MINIO_SECRET_KEY:-minioadmin};
+      mc mb --ignore-existing kiwi/$${MINIO_BUCKET:-kiwi};
+      exit 0;
+      "
+
+  # Kiwi Application
+  kiwi-app:
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile
+    image: kiwi-monolith:latest
+    container_name: kiwi-app
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      KIWI_REDIS_PASSWORD: ${REDIS_PASSWORD:-kiwi123}
+      MINIO_ACCESS_KEY: ${MINIO_ACCESS_KEY:-minioadmin}
+      MINIO_SECRET_KEY: ${MINIO_SECRET_KEY:-minioadmin}
+      KIWI_ENC_PASSWORD: ${KIWI_ENC_PASSWORD:-}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET:-}
+      GCP_PROJECT_ID: ${GCP_PROJECT_ID:-}
+      GOOGLE_APPLICATION_CREDENTIALS: /app/credentials/application_default_credentials.json
+      GCP_CREDENTIALS_LOCATION: /app/credentials/application_default_credentials.json
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      TZ: ${TZ:-Pacific/Auckland}
+      JVM_OPTS: >-
+        -Xms256m -Xmx512m -XX:+UseG1GC
+        -Dspring.profiles.active=prod
+        -Djasypt.encryptor.password=${KIWI_ENC_PASSWORD:-changeme}
+        -Dserver.port=8080
+        -Dspring.datasource.username=root
+        -Dspring.datasource.password=${DB_PASSWORD:-changeme}
+        -Dspring.elasticsearch.username=elastic
+        -Dspring.elasticsearch.password=${ES_PASSWORD:-changeme}
+        -Dspring.autoconfigure.exclude=org.flowable.spring.boot.ProcessEngineAutoConfiguration,org.flowable.spring.boot.app.AppEngineAutoConfiguration,org.flowable.spring.boot.idm.IdmEngineAutoConfiguration,org.flowable.spring.boot.idm.IdmEngineServicesAutoConfiguration,org.flowable.spring.boot.cmmn.CmmnEngineAutoConfiguration,org.flowable.spring.boot.dmn.DmnEngineAutoConfiguration,org.flowable.spring.boot.FlowableSecurityAutoConfiguration,org.flowable.spring.boot.eventregistry.EventRegistryAutoConfiguration,org.flowable.spring.boot.eventregistry.EventRegistryServicesAutoConfiguration,org.flowable.spring.boot.ProcessEngineServicesAutoConfiguration,org.flowable.spring.boot.app.AppEngineServicesAutoConfiguration,org.flowable.spring.boot.cmmn.CmmnEngineServicesAutoConfiguration,org.flowable.spring.boot.dmn.DmnEngineServicesAutoConfiguration,org.flowable.spring.boot.EndpointAutoConfiguration
+    depends_on:
+      kiwi-mysql:
+        condition: service_healthy
+      kiwi-redis:
+        condition: service_healthy
+      kiwi-es:
+        condition: service_healthy
+      kiwi-minio:
+        condition: service_healthy
+    volumes:
+      - wordtmp_data:/wordTmp
+      - ${YT_DOWNLOAD_PATH:-/home/kason/ytb-data}:/data/ytb-data
+      - ${YT_COOKIES_PATH:-/home/kason/.config/yt-dlp/cookies.txt}:/data/cookies.txt:ro
+      - ./application_default_credentials.json:/app/credentials/application_default_credentials.json:ro
+
 volumes:
   mysql_data:
     name: kiwi_mysql_data
@@ -70,3 +153,7 @@ volumes:
     name: kiwi_redis_data
   es_data:
     name: kiwi_es_data
+  minio_data:
+    name: kiwi_minio_data
+  wordtmp_data:
+    name: kiwi_wordtmp_data

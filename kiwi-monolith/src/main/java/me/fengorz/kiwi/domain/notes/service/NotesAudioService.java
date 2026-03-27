@@ -84,7 +84,7 @@ public class NotesAudioService {
 
             // Upload to DFS/MinIO
             ByteArrayInputStream inputStream = new ByteArrayInputStream(audioBytes);
-            String audioUrl = dfsService.uploadFile(inputStream, audioBytes.length, "mp3");
+            String audioUrl = dfsService.uploadFile(inputStream, audioBytes.length, ttsService.getAudioFormat());
 
             // Estimate duration (~12.5 characters per second for English)
             int durationMs = (int) (item.getContent().length() / 12.5 * 1000);

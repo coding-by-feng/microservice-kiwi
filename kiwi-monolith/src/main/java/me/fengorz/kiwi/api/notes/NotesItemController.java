@@ -193,9 +193,14 @@ public class NotesItemController {
         lockService.verifyUnlocked(user.getUserId());
         try {
             byte[] audioBytes = audioService.getAudioBytes(id, user.getUserId());
+            // Detect format: WAV starts with "RIFF"
+            boolean isWav = audioBytes.length > 4 && audioBytes[0] == 'R' && audioBytes[1] == 'I'
+                    && audioBytes[2] == 'F' && audioBytes[3] == 'F';
+            String contentType = isWav ? "audio/wav" : "audio/mpeg";
+            String ext = isWav ? "wav" : "mp3";
             return ResponseEntity.ok()
-                    .contentType(MediaType.parseMediaType("audio/mpeg"))
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"note_" + id + ".mp3\"")
+                    .contentType(MediaType.parseMediaType(contentType))
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"note_" + id + "." + ext + "\"")
                     .body(audioBytes);
         } catch (Exception e) {
             log.error("Failed to stream audio for note {}", id, e);

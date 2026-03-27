@@ -14,11 +14,11 @@
         "hooks": [
           {
             "type": "command",
-            "command": "afplay /System/Library/Sounds/Hero.aiff"
+            "command": "aplay -q /usr/share/sounds/freedesktop/stereo/dialog-warning.oga 2>/dev/null || paplay /usr/share/sounds/freedesktop/stereo/dialog-warning.oga 2>/dev/null || true"
           },
           {
             "type": "command",
-            "command": "osascript -e 'display notification \"Bash command needs approval\" with title \"Claude Code\"'"
+            "command": "notify-send 'Claude Code' 'Bash command needs approval' 2>/dev/null || true"
           }
         ]
       }
@@ -28,11 +28,11 @@
         "hooks": [
           {
             "type": "command",
-            "command": "afplay /System/Library/Sounds/Purr.aiff"
+            "command": "aplay -q /usr/share/sounds/freedesktop/stereo/complete.oga 2>/dev/null || paplay /usr/share/sounds/freedesktop/stereo/complete.oga 2>/dev/null || true"
           },
           {
             "type": "command",
-            "command": "osascript -e 'display notification \"Claude done ✅\" with title \"Claude Code\"'"
+            "command": "notify-send 'Claude Code' 'Claude done ✅' 2>/dev/null || true"
           }
         ]
       }

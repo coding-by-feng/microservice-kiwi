@@ -31,7 +31,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * Gemini Image Generation Client
- * Uses Google Gemini Imagen API to generate images
+ * Uses Vertex AI Imagen API as primary, Gemini API as fallback
  *
  * @author codingByFeng
  */
@@ -57,23 +57,36 @@ public class GeminiImageClient {
                 .writeTimeout(60, TimeUnit.SECONDS)
                 .build();
 
-        log.info("Gemini Image Client initialized with Vertex AI, model: {}", properties.getImageModel());
+        log.info("Gemini Image Client initialized with Vertex AI, model: {}, fallback model: {}",
+                properties.getImageModel(), properties.getGeminiModel());
     }
 
     /**
-     * Generate an image from a text prompt
-     *
-     * @param prompt the text prompt describing the image
-     * @return byte array of the generated image (PNG format)
+     * Generate an image from a text prompt.
+     * Tries Vertex AI first, falls back to Gemini API on auth/permission errors.
      */
     public byte[] generateImage(String prompt) {
         if (StringUtils.isBlank(prompt)) {
             throw new ServiceException("Image prompt cannot be empty");
         }
 
-        String url = properties.getVertexAiEndpoint();
+        try {
+            return generateViaVertexAi(prompt);
+        } catch (ServiceException e) {
+            if (e.getMessage() != null && (e.getMessage().contains("403") || e.getMessage().contains("401"))) {
+                log.warn("Vertex AI image generation failed with auth error, falling back to Gemini API: {}", e.getMessage());
+                return generateViaGeminiApi(prompt);
+            }
+            throw e;
+        }
+    }
 
-        String jsonPayload = buildJsonPayload(prompt);
+    /**
+     * Primary: Vertex AI Imagen predict endpoint with Bearer token
+     */
+    private byte[] generateViaVertexAi(String prompt) {
+        String url = properties.getVertexAiEndpoint();
+        String jsonPayload = buildVertexAiPayload(prompt);
 
         RequestBody body = RequestBody.create(JSON_MEDIA_TYPE, jsonPayload);
         Request request = new Request.Builder()
@@ -86,25 +99,65 @@ public class GeminiImageClient {
         try (Response response = httpClient.newCall(request).execute()) {
             if (!response.isSuccessful()) {
                 String errorBody = response.body() != null ? response.body().string() : "No error body";
-                log.error("Gemini image generation failed with status {}: {}", response.code(), errorBody);
-                throw new ServiceException("Gemini image generation failed: " + response.code());
+                log.error("Vertex AI image generation failed with status {}: {}", response.code(), errorBody);
+                throw new ServiceException("Vertex AI image generation failed: " + response.code());
             }
 
             ResponseBody responseBody = response.body();
             if (responseBody == null) {
-                throw new ServiceException("Gemini image generation response body is empty");
+                throw new ServiceException("Vertex AI image generation response body is empty");
             }
 
             String responseJson = responseBody.string();
-            return extractImageBytes(responseJson);
+            return extractVertexAiImageBytes(responseJson);
 
         } catch (IOException e) {
-            log.error("Gemini image API call failed", e);
-            throw new ServiceException("Gemini image API call failed: " + e.getMessage());
+            log.error("Vertex AI image API call failed", e);
+            throw new ServiceException("Vertex AI image API call failed: " + e.getMessage());
         }
     }
 
-    private String buildJsonPayload(String prompt) {
+    /**
+     * Fallback: Gemini API Imagen predict endpoint with API key
+     * Uses the same instances/predictions format as Vertex AI
+     */
+    private byte[] generateViaGeminiApi(String prompt) {
+        if (StringUtils.isBlank(properties.getApiKey())) {
+            throw new ServiceException("Gemini API key not configured for image generation fallback");
+        }
+
+        String url = properties.getGeminiApiEndpoint();
+        String jsonPayload = buildVertexAiPayload(prompt);
+
+        RequestBody body = RequestBody.create(JSON_MEDIA_TYPE, jsonPayload);
+        Request request = new Request.Builder()
+                .url(url)
+                .addHeader("Content-Type", "application/json")
+                .post(body)
+                .build();
+
+        try (Response response = httpClient.newCall(request).execute()) {
+            if (!response.isSuccessful()) {
+                String errorBody = response.body() != null ? response.body().string() : "No error body";
+                log.error("Gemini API image generation failed with status {}: {}", response.code(), errorBody);
+                throw new ServiceException("Gemini API image generation failed: " + response.code());
+            }
+
+            ResponseBody responseBody = response.body();
+            if (responseBody == null) {
+                throw new ServiceException("Gemini API image generation response body is empty");
+            }
+
+            String responseJson = responseBody.string();
+            return extractVertexAiImageBytes(responseJson);
+
+        } catch (IOException e) {
+            log.error("Gemini API image call failed", e);
+            throw new ServiceException("Gemini API image call failed: " + e.getMessage());
+        }
+    }
+
+    private String buildVertexAiPayload(String prompt) {
         return String.format("""
             {
                 "instances": [
@@ -124,31 +177,31 @@ public class GeminiImageClient {
                 properties.getNumberOfImages());
     }
 
-    private byte[] extractImageBytes(String responseJson) {
+    private byte[] extractVertexAiImageBytes(String responseJson) {
         try {
             JsonNode root = objectMapper.readTree(responseJson);
             JsonNode predictions = root.get("predictions");
 
             if (predictions == null || !predictions.isArray() || predictions.isEmpty()) {
-                throw new ServiceException("No image generated in Gemini response");
+                throw new ServiceException("No image generated in Vertex AI response");
             }
 
             JsonNode firstPrediction = predictions.get(0);
             JsonNode bytesBase64 = firstPrediction.get("bytesBase64Encoded");
 
             if (bytesBase64 == null) {
-                throw new ServiceException("No base64 image data in Gemini response");
+                throw new ServiceException("No base64 image data in Vertex AI response");
             }
 
             String base64String = bytesBase64.asText();
             byte[] imageBytes = Base64.getDecoder().decode(base64String);
 
-            log.debug("Successfully generated image: {} bytes", imageBytes.length);
+            log.debug("Successfully generated image via Vertex AI: {} bytes", imageBytes.length);
             return imageBytes;
 
         } catch (IOException e) {
-            log.error("Failed to parse Gemini response", e);
-            throw new ServiceException("Failed to parse Gemini image response: " + e.getMessage());
+            log.error("Failed to parse Vertex AI response", e);
+            throw new ServiceException("Failed to parse Vertex AI image response: " + e.getMessage());
         }
     }
 

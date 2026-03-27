@@ -149,11 +149,10 @@ public class YtbChannelService extends ServiceImpl<YtbChannelMapper, YtbChannel>
     }
 
     /**
-     * Find enabled channels
+     * Find enabled channels (all valid channels are eligible for sync)
      */
     public List<YtbChannel> findEnabledChannels() {
         return list(new LambdaQueryWrapper<YtbChannel>()
-                .eq(YtbChannel::getStatus, 1)
                 .eq(YtbChannel::getIfValid, true));
     }
 

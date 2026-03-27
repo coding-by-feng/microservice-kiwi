@@ -105,15 +105,17 @@ public class ConversationTtsService {
             return null;
         }
 
-        // Build FTP path: /conversation-audio/{conversationId}/message_{messageId}.mp3
-        String fileName = String.format("%s/%d/message_%d.mp3",
+        String audioFormat = ttsService.getAudioFormat();
+        // Build FTP path: /conversation-audio/{conversationId}/message_{messageId}.{format}
+        String fileName = String.format("%s/%d/message_%d.%s",
                 properties.getAudioStoragePath(),
                 conversationId,
-                messageId);
+                messageId,
+                audioFormat);
 
         try {
             ByteArrayInputStream inputStream = new ByteArrayInputStream(audioBytes);
-            String ftpPath = dfsService.uploadFile(inputStream, audioBytes.length, "mp3");
+            String ftpPath = dfsService.uploadFile(inputStream, audioBytes.length, audioFormat);
             log.info("Uploaded audio to FTP: {} ({} bytes)", ftpPath, audioBytes.length);
             return ftpPath;
         } catch (Exception e) {

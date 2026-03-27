@@ -141,9 +141,12 @@ public class ConversationController {
 
             InputStream audioStream = dfsService.downloadStream(groupName, path);
 
+            boolean isWav = audioUrl.endsWith(".wav");
+            String contentType = isWav ? "audio/wav" : "audio/mpeg";
+            String ext = isWav ? "wav" : "mp3";
             return ResponseEntity.ok()
-                    .contentType(MediaType.parseMediaType("audio/mpeg"))
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"message_" + messageId + ".mp3\"")
+                    .contentType(MediaType.parseMediaType(contentType))
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"message_" + messageId + "." + ext + "\"")
                     .body(new InputStreamResource(audioStream));
         } catch (IllegalArgumentException e) {
             log.warn("Invalid DFS path for message {}: {}", messageId, e.getMessage());

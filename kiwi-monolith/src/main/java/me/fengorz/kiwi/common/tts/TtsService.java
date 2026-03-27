@@ -36,6 +36,10 @@ public interface TtsService {
         return speechEnglish(text);
     }
 
+    default String getAudioFormat() {
+        return "mp3";
+    }
+
     default String autoSelectApiKey() {
         throw new ServiceException("Method autoSelectApiKey is not supported.");
     }

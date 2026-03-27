@@ -184,8 +184,8 @@ kiwi:
 
   # TTS Configuration
   tts:
-    # TTS Provider Selection: voicerss, baidu, gcp, deepgram, openai
-    provider: openai
+    # TTS Provider Selection: voicerss, baidu, gcp, deepgram, openai, gemini
+    provider: gemini
     chattts:
       base-url: http://kiwi-chattts:8000
       timeout: 30
@@ -218,6 +218,25 @@ kiwi:
       english-accent: UK
       response-format: mp3  # mp3, opus, aac, flac, wav, pcm
       speed: 1.0  # 0.25 to 4.0
+    # GCP Cloud Text-to-Speech (Vertex AI)
+    gcp:
+      english-voice: en-US-Journey-D
+      chinese-voice: cmn-CN-Wavenet-A
+      speaking-rate: 1.0
+      pitch: 0.0
+    # Gemini TTS (Vertex AI primary, Gemini API key fallback)
+    gemini:
+      api-key: ${GEMINI_API_KEY:}
+      model: gemini-2.5-flash-preview-tts
+      english-voice: Kore
+      chinese-voice: Kore
+      voice-mapping:
+        alloy: Kore
+        echo: Charon
+        fable: Aoede
+        onyx: Fenrir
+        nova: Puck
+        shimmer: Leda
 
   # AI Conversation Generator Configuration
   ai:
@@ -237,7 +256,7 @@ kiwi:
       # Cache TTL in seconds
       cache-ttl-seconds: 3600
 
-  # Gemini Image Generation Configuration (Vertex AI)
+  # Gemini Image Generation Configuration (Vertex AI primary, Gemini API fallback)
   gemini:
     project-id: ${GCP_PROJECT_ID:ENC(5q3wUNe5RH6F8ORU+aaVqa5XK6bF5pJwdHzcloHX3Uz2PyTTN5C7kw==)}
     location: us-central1
@@ -246,6 +265,9 @@ kiwi:
     image-height: 1024
     number-of-images: 1
     enabled: true
+    # Gemini API fallback for image generation
+    api-key: ${GEMINI_API_KEY:}
+    gemini-model: imagen-3.0-generate-002
 
   # Notes Feature Configuration
   notes:
@@ -332,9 +354,10 @@ kiwi:
       enabled: true
     # Channel Video Sync Scheduler - fetches new videos and caches subtitles
     sync:
-      enabled: true  # Disabled by default in dev
-      cron: "0 0 */6 * * *"  # Every 6 hours
+      enabled: true
+      cron: "0 0 */3 * * *"  # Every 3 hours
       fetch-subtitles: true  # Download and cache subtitles for new videos
+      download-video: false  # Metadata-only sync for speed
       max-new-videos-per-channel: 50  # Max new videos to sync per channel per run
       consecutive-existing-threshold: 10  # Stop scanning after N consecutive already-synced videos
       run-on-startup: true  # Run immediately on application startup (for testing)

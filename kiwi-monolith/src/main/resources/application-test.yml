@@ -112,8 +112,8 @@ kiwi:
 
   # TTS Configuration
   tts:
-    # TTS Provider Selection: voicerss, baidu, gcp, deepgram, openai
-    provider: ${TTS_PROVIDER:openai}
+    # TTS Provider Selection: voicerss, baidu, gcp, deepgram, openai, gemini
+    provider: ${TTS_PROVIDER:gemini}
     chattts:
       base-url: http://kiwi-chattts:8000
       timeout: 30
@@ -140,6 +140,25 @@ kiwi:
       chinese-voice: nova
       response-format: mp3
       speed: 1.0
+    # GCP Cloud Text-to-Speech (Vertex AI)
+    gcp:
+      english-voice: en-US-Journey-D
+      chinese-voice: cmn-CN-Wavenet-A
+      speaking-rate: 1.0
+      pitch: 0.0
+    # Gemini TTS (Vertex AI primary, Gemini API key fallback)
+    gemini:
+      api-key: ${GEMINI_API_KEY:}
+      model: gemini-2.5-flash-preview-tts
+      english-voice: Kore
+      chinese-voice: Kore
+      voice-mapping:
+        alloy: Kore
+        echo: Charon
+        fable: Aoede
+        onyx: Fenrir
+        nova: Puck
+        shimmer: Leda
 
   # Review Audio Configuration
   review:
@@ -179,7 +198,7 @@ kiwi:
       max-new-videos-per-channel: ${YT_SYNC_MAX_VIDEOS:50}
       consecutive-existing-threshold: ${YT_SYNC_CONSECUTIVE_THRESHOLD:10}
 
-  # Gemini Image Generation Configuration (Vertex AI)
+  # Gemini Image Generation Configuration (Vertex AI primary, Gemini API fallback)
   gemini:
     project-id: ${GCP_PROJECT_ID:ENC(5q3wUNe5RH6F8ORU+aaVqa5XK6bF5pJwdHzcloHX3Uz2PyTTN5C7kw==)}
     location: us-central1
@@ -188,6 +207,9 @@ kiwi:
     image-height: 1024
     number-of-images: 1
     enabled: true
+    # Gemini API fallback for image generation
+    api-key: ${GEMINI_API_KEY:}
+    gemini-model: imagen-3.0-generate-002
 
   # Notes Feature Configuration
   notes:

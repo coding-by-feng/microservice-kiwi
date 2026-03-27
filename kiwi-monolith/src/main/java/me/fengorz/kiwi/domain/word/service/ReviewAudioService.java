@@ -338,6 +338,6 @@ public class ReviewAudioService {
     }
 
     private String buildAudioFilePath(Integer paraphraseId) {
-        return properties.getStoragePath() + File.separator + "paraphrase_" + paraphraseId + ".mp3";
+        return properties.getStoragePath() + File.separator + "paraphrase_" + paraphraseId + "." + ttsService.getAudioFormat();
     }
 }

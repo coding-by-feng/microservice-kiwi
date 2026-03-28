@@ -133,7 +133,8 @@ kiwi:
   # CORS Configuration
   security:
     cors:
-      allowed-origins: ${CORS_ALLOWED_ORIGINS:https://kiwi.fengorz.me}
+      allowed-origins:
+        - https://kason.app
 
   # FastDFS Configuration
   dfs:
@@ -281,7 +282,7 @@ kiwi:
     video:
       command: yt-dlp-tor
       download:
-        path: ${YT_DOWNLOAD_PATH:/root/ytb-data}
+        path: ${YT_DOWNLOAD_PATH:/data/ytb-data}
       large-subtitles:
         threshold: 1000
       batch:
@@ -291,7 +292,7 @@ kiwi:
       # YouTube cookies file path for authentication (bypasses bot detection)
       cookies:
         enabled: true
-        path: /root/.config/yt-dlp/cookies.txt
+        path: /data/cookies.txt
       proxy:
         enabled: true
         value: ${YT_PROXY_VALUE:}

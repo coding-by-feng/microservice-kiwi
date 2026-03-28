@@ -98,6 +98,7 @@ public class YouTuBeHelper implements YouTubeClient {
             List<String> cmdList = new ArrayList<>();
             cmdList.add(this.command);
             applyProxyIfEnabled(cmdList);
+            applyCookiesIfEnabled(cmdList);
             cmdList.add("-o");
             String currentDownloadPath = getDownloadPath();
             cmdList.add(currentDownloadPath + "/%(title)s.%(ext)s");
@@ -168,6 +169,7 @@ public class YouTuBeHelper implements YouTubeClient {
             List<String> cmdList = new ArrayList<>();
             cmdList.add(this.command);
             applyProxyIfEnabled(cmdList);
+            applyCookiesIfEnabled(cmdList);
             cmdList.add("--write-subs");
             cmdList.add("--write-auto-sub");
             cmdList.add("--sub-lang");
@@ -339,6 +341,7 @@ public class YouTuBeHelper implements YouTubeClient {
             List<String> cmdList = new ArrayList<>();
             cmdList.add(this.command);
             applyProxyIfEnabled(cmdList);
+            applyCookiesIfEnabled(cmdList);
             cmdList.add("--skip-download");
             cmdList.add("--print");
             cmdList.add("title");
@@ -461,6 +464,7 @@ public class YouTuBeHelper implements YouTubeClient {
         List<String> cmd = new ArrayList<>();
         cmd.add(this.command);
         applyProxyIfEnabled(cmd);
+        applyCookiesIfEnabled(cmd);
         cmd.add("--skip-download");
         cmd.add("--print");
         cmd.add("channel");
@@ -514,6 +518,7 @@ public class YouTuBeHelper implements YouTubeClient {
         List<String> cmd = new ArrayList<>();
         cmd.add(this.command);
         applyProxyIfEnabled(cmd);
+        applyCookiesIfEnabled(cmd);
         cmd.add("--flat-playlist");
         cmd.add("--get-id");
         cmd.add(channelLink);
@@ -538,13 +543,17 @@ public class YouTuBeHelper implements YouTubeClient {
 
             int exitCode = process.waitFor();
 
-            if (exitCode != 0) {
-                log.error("yt-dlp exited with code {} when extracting video links from channel: {}",
+            if (exitCode != 0 && videoLinks.isEmpty()) {
+                log.error("yt-dlp exited with code {} and no results when extracting video links from channel: {}",
                         exitCode, channelLink);
                 throw new ServiceException("Failed to extract video links: yt-dlp exited with code " + exitCode);
             }
-
-            log.info("Successfully extracted {} video links from channel: {}", videoLinks.size(), channelLink);
+            if (exitCode != 0) {
+                log.warn("yt-dlp exited with code {} but extracted {} video links from channel: {} (proceeding with results)",
+                        exitCode, videoLinks.size(), channelLink);
+            } else {
+                log.info("Successfully extracted {} video links from channel: {}", videoLinks.size(), channelLink);
+            }
             return videoLinks;
 
         } catch (IOException | InterruptedException e) {
@@ -560,6 +569,7 @@ public class YouTuBeHelper implements YouTubeClient {
             List<String> cmd = new ArrayList<>();
             cmd.add(this.command);
             applyProxyIfEnabled(cmd);
+            applyCookiesIfEnabled(cmd);
             cmd.add("--print");
             cmd.add("%(release_timestamp|timestamp|upload_date)s");
             cmd.add(videoUrl);

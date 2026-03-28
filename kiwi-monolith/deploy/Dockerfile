@@ -19,13 +19,14 @@ FROM eclipse-temurin:17-jre
 
 WORKDIR /app
 
-RUN apt-get update && apt-get install -y --no-install-recommends curl && rm -rf /var/lib/apt/lists/*
-RUN groupadd -r kiwi && useradd -r -g kiwi kiwi
+RUN apt-get update && apt-get install -y --no-install-recommends curl python3 nodejs ffmpeg \
+    && curl -L https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp -o /usr/local/bin/yt-dlp \
+    && chmod a+rx /usr/local/bin/yt-dlp \
+    && ln -s /usr/local/bin/yt-dlp /usr/local/bin/yt-dlp-tor \
+    && mkdir -p /data/ytb-data \
+    && rm -rf /var/lib/apt/lists/*
 
 COPY --from=builder /app/target/*.jar app.jar
-RUN chown kiwi:kiwi app.jar
-
-USER kiwi
 
 ENV TZ=Pacific/Auckland \
     JVM_OPTS="-Xms256m -Xmx512m -XX:+UseG1GC -Dspring.profiles.active=prod -Dserver.port=8080"

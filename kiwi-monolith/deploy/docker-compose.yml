@@ -145,7 +145,7 @@ services:
     volumes:
       - wordtmp_data:/wordTmp
       - ${YT_DOWNLOAD_PATH:-/home/kason/ytb-data}:/data/ytb-data
-      - ${YT_COOKIES_PATH:-/home/kason/.config/yt-dlp/cookies.txt}:/data/cookies.txt:ro
+      - ${YT_COOKIES_PATH:-/home/kason/.config/yt-dlp/cookies.txt}:/data/cookies.txt
       - ./application_default_credentials.json:/app/credentials/application_default_credentials.json:ro
 
 volumes:

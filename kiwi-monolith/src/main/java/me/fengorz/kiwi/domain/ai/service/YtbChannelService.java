@@ -162,7 +162,8 @@ public class YtbChannelService extends ServiceImpl<YtbChannelMapper, YtbChannel>
     public Page<YtbChannelVideo> findVideosByChannelId(Long channelId, Page<YtbChannelVideo> page) {
         return videoMapper.selectPage(page, new LambdaQueryWrapper<YtbChannelVideo>()
                 .eq(YtbChannelVideo::getChannelId, channelId)
-                .eq(YtbChannelVideo::getIfValid, true));
+                .eq(YtbChannelVideo::getIfValid, true)
+                .orderByDesc(YtbChannelVideo::getPublishedAt));
     }
 
     /**

@@ -279,9 +279,15 @@ public class YouTuBeHelper implements YouTubeClient {
             cmd.add(videoUrl);
 
             Process process = prepareProcess(cmd);
-            String line;
+            String line = null;
             try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
-                line = reader.readLine();
+                String rawLine;
+                while ((rawLine = reader.readLine()) != null) {
+                    if (!skipWarning(rawLine)) {
+                        line = rawLine;
+                        break;
+                    }
+                }
             }
             process.waitFor();
 
@@ -348,7 +354,14 @@ public class YouTuBeHelper implements YouTubeClient {
             cmdList.add(videoUrl);
             Process process = prepareProcess(cmdList);
             BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            String title = reader.readLine();
+            String title = null;
+            String line;
+            while ((line = reader.readLine()) != null) {
+                if (!skipWarning(line)) {
+                    title = line;
+                    break;
+                }
+            }
             process.waitFor();
             return title;
         } catch (Exception e) {
@@ -576,9 +589,15 @@ public class YouTuBeHelper implements YouTubeClient {
 
             Process process = prepareProcess(cmd);
 
-            String output;
+            String output = null;
             try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
-                output = reader.readLine();
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    if (!skipWarning(line)) {
+                        output = line;
+                        break;
+                    }
+                }
             }
 
             int exit = process.waitFor();

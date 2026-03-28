@@ -60,6 +60,12 @@ public class YouTuBeHelper implements YouTubeClient {
     @Value("${kiwi.youtube.video.subtitles.langs:en}")
     private String subtitlesLangs;
 
+    @Value("${kiwi.youtube.video.cookies.enabled:false}")
+    private boolean cookiesEnabled;
+
+    @Value("${kiwi.youtube.video.cookies.path:}")
+    private String cookiesPath;
+
     private static final List<String> ALLOWED_YOUTUBE_HOSTS = List.of(
             "youtube.com", "www.youtube.com", "youtu.be", "m.youtube.com", "music.youtube.com");
 
@@ -130,6 +136,18 @@ public class YouTuBeHelper implements YouTubeClient {
         }
         cmdList.add("--proxy");
         cmdList.add(proxyValue);
+    }
+
+    private void applyCookiesIfEnabled(List<String> cmdList) {
+        if (!cookiesEnabled) {
+            return;
+        }
+        if (StringUtils.isBlank(cookiesPath)) {
+            log.warn("yt-dlp cookies enabled but path is blank, skipping.");
+            return;
+        }
+        cmdList.add("--cookies");
+        cmdList.add(cookiesPath);
     }
 
     private static Process prepareProcess(List<String> cmdList) throws IOException {

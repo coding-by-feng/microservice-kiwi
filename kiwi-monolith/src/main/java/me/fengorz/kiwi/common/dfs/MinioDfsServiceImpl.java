@@ -183,8 +183,7 @@ public class MinioDfsServiceImpl implements DfsService {
             }
         } catch (Exception e) {
             long cost = System.currentTimeMillis() - start;
-            log.warn("MinIO download failed | objectName={} | cost={}ms", objectName, cost);
-            log.error(DfsConstants.DOWNLOAD_FILE_EXCEPTION, e);
+            log.warn("MinIO download failed | objectName={} | cost={}ms | error={}", objectName, cost, e.getMessage());
             throw new ServiceException(DfsConstants.DOWNLOAD_FILE_EXCEPTION, e);
         }
     }

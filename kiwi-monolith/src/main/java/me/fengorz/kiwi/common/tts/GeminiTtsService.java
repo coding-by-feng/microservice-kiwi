@@ -193,6 +193,7 @@ public class GeminiTtsService implements TtsService {
                 {
                     "contents": [
                         {
+                            "role": "user",
                             "parts": [
                                 {"text": %s}
                             ]

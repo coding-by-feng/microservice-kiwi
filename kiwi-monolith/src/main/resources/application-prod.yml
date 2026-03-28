@@ -20,8 +20,8 @@ spring:
   # ==================== Database ====================
   datasource:
     url: jdbc:mysql://kiwi-mysql:3307/kiwi_db?useUnicode=true&characterEncoding=UTF-8&useSSL=true&requireSSL=true&autoReconnect=true&serverTimezone=Pacific/Auckland
-    username: ENC(KH/GJ05cpFBSAV5u8IruRw==)
-    password: ENC(Dh6vV+rX9HyZgiOP83BIiQAZ1+9KOGVh)
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:changeme}
     hikari:
       maximum-pool-size: 100
       minimum-idle: 20
@@ -65,9 +65,9 @@ spring:
   # Change http:// to https:// and configure SSL trust store when ES TLS is enabled.
   # See: https://www.elastic.co/guide/en/elasticsearch/reference/current/security-basic-setup-https.html
   elasticsearch:
-    uris: http://kiwi-es:9201
-    username: ENC(NKy6wa5SuHBhQmfLWf6Zv8wf8sPMaE0b)
-    password: ENC(oj9wNYu52oQH1d9T0zHeGDLz7P7em71u)
+    uris: http://kiwi-elasticsearch:9201
+    username: ${ES_USERNAME:elastic}
+    password: ${ES_PASSWORD:changeme}
 
   # ==================== File Upload ====================
   servlet:
@@ -79,9 +79,9 @@ spring:
   # ==================== GCP Configuration ====================
   cloud:
     gcp:
-      project-id: ${GCP_PROJECT_ID:ENC(5q3wUNe5RH6F8ORU+aaVqa5XK6bF5pJwdHzcloHX3Uz2PyTTN5C7kw==)}
+      project-id: ${GCP_PROJECT_ID:}
       credentials:
-        location: ${GCP_CREDENTIALS_LOCATION:ENC(Nfvxt6bll1kBRfZsBHzJuOFe+Nn6PWPROfyeMfdbaclUAZSgHRp0DxHkWcvLsrkn)}
+        location: ${GCP_CREDENTIALS_LOCATION:}
 
   # ==================== Liquibase ====================
   liquibase:
@@ -187,9 +187,9 @@ kiwi:
       chinese-model: aura-lingxi-zh
     baidu:
       app-id: "20116041"
-      api-key: ${BAIDU_TTS_API_KEY:ENC(/9nXqvG1VIte1VrACwZ683gw2o2K3fpRdAweh0edh1nFLd1CvjH4oA==)}
-      secret-key: ${BAIDU_TTS_SECRET_KEY:ENC(G1gyeiupF4SDLkxRGm6FJ5a+Xxpp36sIrrtUnu5xZFKtZGnA7WYCPy+t+XHO0Kaa)}
-      access-token: ${BAIDU_TTS_ACCESS_TOKEN:ENC(wykNby8I8mtu8pV5zd8khs8oUoF1GSFuS+y7zVGGhvHCF6+sUSUeSK3p3Q57wddHbZjYujpgoUMisz+fneF4E8tOpgTpdlThYC4j/tHtJfs=)}
+      api-key: ${BAIDU_TTS_API_KEY:}
+      secret-key: ${BAIDU_TTS_SECRET_KEY:}
+      access-token: ${BAIDU_TTS_ACCESS_TOKEN:}
     voicerss:
       url: 'https://api.voicerss.org/?key={}&r=-2&hl=en-us&v=Mary&c=MP3&f=16khz_16bit_stereo&src=test'
       api-keys: ${VOICERSS_API_KEYS:[]}
@@ -220,7 +220,7 @@ kiwi:
 
   # Gemini Image Generation Configuration (Vertex AI primary, Gemini API fallback)
   gemini:
-    project-id: ${GCP_PROJECT_ID:ENC(5q3wUNe5RH6F8ORU+aaVqa5XK6bF5pJwdHzcloHX3Uz2PyTTN5C7kw==)}
+    project-id: ${GCP_PROJECT_ID:}
     location: us-central1
     image-model: imagen-4.0-generate-001
     image-width: 1024
@@ -294,7 +294,7 @@ kiwi:
         path: /root/.config/yt-dlp/cookies.txt
       proxy:
         enabled: true
-        value: ${YT_PROXY_VALUE:ENC(FGrA00PC+bW5FiLAVautt6lhpqOx8U92YLzFLeAGVf78Xj93B600jQ==)}
+        value: ${YT_PROXY_VALUE:}
     migration:
       enabled: false
     # Channel Video Sync Scheduler - fetches new videos and caches subtitles
@@ -321,7 +321,7 @@ ai:
       thread-timeout-secs: 120
   gemini:
     api:
-      project-id: ${GCP_PROJECT_ID:ENC(5q3wUNe5RH6F8ORU+aaVqa5XK6bF5pJwdHzcloHX3Uz2PyTTN5C7kw==)}
+      project-id: ${GCP_PROJECT_ID:}
       location: us-central1
       model: "gemini-2.5-flash"
       # Gemini 2.5 Flash has 1M context window - can handle very large batches

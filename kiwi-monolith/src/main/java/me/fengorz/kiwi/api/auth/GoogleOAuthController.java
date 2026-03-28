@@ -129,10 +129,10 @@ public class GoogleOAuthController {
             // Cache Google token info
             cacheGoogleTokenInfo(systemToken.getAccessToken(), tokenResponse, googleUserInfo);
 
-            // Redirect to frontend with token in URL fragment (#) instead of query string (?)
-            // Fragments are not sent to the server in subsequent requests and are not logged by proxies
+            // Redirect to frontend with token in query string for hash-mode router compatibility
+            // The frontend oauth.js handler reads from window.location.search, strips params, and reloads
             String successUrl = String.format(
-                    "%s?active=search#token=%s&user=%s",
+                    "%s?token=%s&user=%s",
                     homePage,
                     systemToken.getAccessToken(),
                     URLEncoder.encode(googleUserInfo.getName(), StandardCharsets.UTF_8)

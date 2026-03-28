@@ -203,7 +203,7 @@ public class NotesItemController {
                     .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"note_" + id + "." + ext + "\"")
                     .body(audioBytes);
         } catch (Exception e) {
-            log.error("Failed to stream audio for note {}", id, e);
+            log.warn("Failed to stream audio for note {}: {}", id, e.getMessage());
             return ResponseEntity.notFound().build();
         }
     }
@@ -248,7 +248,7 @@ public class NotesItemController {
                     .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"note_" + id + ".png\"")
                     .body(imageBytes);
         } catch (Exception e) {
-            log.error("Failed to stream image for note {}", id, e);
+            log.warn("Failed to stream image for note {}: {}", id, e.getMessage());
             return ResponseEntity.notFound().build();
         }
     }

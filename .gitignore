@@ -194,3 +194,15 @@ kiwi-word/kiwi-word-biz/src/main/resources/rebel-remote.xml
 kiwi-word/kiwi-word-biz/src/test/com/test/
 kiwi-word/kiwi-word-crawler/src/main/resources/rebel-remote.xml
 /logs/
+
+# --- security: never commit secrets/keys ---
+*.pem
+*.key
+*.jks
+*.p12
+*.keystore
+.env
+.env.*
+**/client_secret*.json
+**/*service-account*.json
+**/tokens/StoredCredential
